@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>근태관리 시스템</title>
+    <!-- Bootstrap CSS -->
+    <style type="text/css">
+        *{padding:0;margin:0;border:0;outline:0}
+        body{font-size:13px;line-height:1.3;color:#666; font-weight: 600;}
+        h1{padding-left:20px;font-size:24px;height:50px;line-height:40px;border-bottom:3px solid #008fd5;font-size:1.8em;letter-spacing:-1px}
+        h1 img{display: inline-block; vertical-align: middle;}
+        h1 span{vertical-align: middle;}
+        table{margin-bottom:50px; table-layout:fixed;border-collapse:collapse;width:100%;border-top:2px solid #ccc;border-bottom:1px solid #ccc}
+        table thead th{height:30px;border-left:1px solid #ccc;border-bottom:1px solid #ccc;background:#f5f5f5}
+        table thead th:first-child{border-left:0}
+        table tbody td{padding:10px 15px;border-left:1px solid #ccc;border-top:1px solid #ccc;word-wrap:break-word; text-align:left;}
+        table tbody td.check{background:#ffdbda;}
+        table tbody td.txt-c{text-align: center;}
+        table tbody td.bg{background-color:#f5f5f5;}
+    </style>
+</head>
+<body>
+    <h1>
+        <span><img
+                src="data:image/png;base64,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"
+                alt=""></span>
+        <span>근태관리 시스템</span>
+    </h1>
+    <div>
+        <table cellspacing="0">
+            <colgroup>
+                <col width="5%" />
+                <col width="5%" />
+                <col width="20%" />
+                <col width="25%" />
+                <col width="*" />
+                <col width="20%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>분류</th>
+                    <th>번호</th>
+                    <th>메뉴명</th>
+                    <th>페이지명</th>
+                    <th>파일명</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="txt-c">-</td>
+                    <td class="txt-c">-</td>
+                    <td>디자인 리소스 페이지</td>
+                    <td>동원그룹 채용시스템 디자인</td>
+                    <td>
+                        <a href="https://app.zeplin.io/project/5a5876db04b3caaec8242574/dashboard" target="_blank"
+                            title="새 창으로 zeplin 페이지 이동">https://app.zeplin.io/project/5a5876db04b3caaec8242574/dashboard</a>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="txt-c">-</td>
+                    <td class="txt-c">0</td>
+                    <td>기본 UI 참고 페이지</td>
+                    <td>AdminLTE-2.4.2 데모 페이지</td>
+                    <td>
+                        <a
+                            href="https://adminlte.io/themes/AdminLTE/index2.html">https://adminlte.io/themes/AdminLTE/index2.html</a>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>bootstrap</li>
+                            <li>AdminLTE.css</li>
+                            <li>isu_custom.css</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="txt-c">HR</td>
+                    <td class="txt-c">1</td>
+                    <td>신청서</td>
+                    <td>연장근무신청서</td>
+                    <td>
+                        <a href="" target="_blank"></a>
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0/EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+    </settings> 
+    <typeAliases>
+    	<typeAlias type="com.isu.ifw.vo.Login" alias="login"/>
+    	<typeAlias type="com.isu.ifw.vo.StdManagement" alias="stdmanagement"/>
+		<typeAlias type="com.isu.ifw.vo.EmpSearch" alias="empsearch"/>
+    	<typeAlias type="com.isu.ifw.vo.School" alias="school"/>
+    	<typeAlias type="com.isu.ifw.vo.Language" alias="language"/>
+    	<typeAlias type="com.isu.ifw.vo.License" alias="license"/>
+    </typeAliases>
+</configuration>
