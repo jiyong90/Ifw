@@ -20,7 +20,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body class="">
+<body class="application-form">
     <!-- <div class="navbar navbar-expand-lg navbar-light bg-light">
         <nav class="container">
             <h1>신청 - 공통 레이아웃</h1>
@@ -32,7 +32,7 @@
     <div class="container-fluid">
         <div class="container">
             <div class="content inner-wrap">
-                <form action="" class="application-form">
+                <form class="application-form">
                     <div class="modal-header">
                         <h5 class="modal-title">신청서</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -40,13 +40,13 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <h2 class="title">연장근무신청<br>
+                        <h2 class="title">근태 사유서 신청<br>
                             <span class="sub-desc point-color">(* 표기된 항목은 필수 입력 항목입니다.)</span>
                         </h2>
                         <div class="form-group row align-items-center">
                             <label for="title" class="col-sm-4 col-md-3 col-lg-2 col-form-label">제목</label>
                             <div class="col-sm-8 col-md-9 col-lg-10">
-                                <input type="text" class="form-control" id="title" placeholder="연장근무신청">
+                                <input type="text" class="form-control" id="title" placeholder="근태 사유서 신청">
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
@@ -54,66 +54,57 @@
                                     class=" require"></span>근무일</label>
                             <div class="col-sm-5 col-md-5 col-lg-5">
                                 <div class="input-group date" id="workDay" data-provide="datepicker">
-                                    <input type="text" class="form-control " id="inputWorkDate" placeholder="" required="" value="">
+                                    <input type="text" class="form-control " id="inputWorkDate" placeholder=""
+                                        required="" value="">
                                     <div class="input-group-append">
-                                        <span class="input-group-text " id="inputWorkDateAppend"><i class="far fa-calendar-alt"></i></span>
+                                        <span class="input-group-text " id="inputWorkDateAppend"><i
+                                                class="far fa-calendar-alt"></i></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
-                            <label for="workTime" class="col-sm-4 col-md-3 col-lg-2 col-form-label">근무시간</label>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <input type="text" class="form-control" id="workTime1" placeholder="" aria-describedby="inputGroupPrepend"
-                                    required="">
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1 text-center">~</div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <input type="text" class="form-control" id="workTim2" placeholder="" aria-describedby="inputGroupPrepend"
-                                    required="">
+                            <label for="planWorkTime" class="col-sm-4 col-md-3 col-lg-2 col-form-label">계획근무시간</label>
+                            <div class="col-sm-5 col-md-5 col-lg-5">
+                                <input type="text" class="form-control" id="planWorkTime" placeholder=""
+                                    aria-describedby="inputGroupPrepend" required="" readonly>
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
-                            <label for="workTimeBefore" class="col-sm-4 col-md-3 col-lg-2 col-form-label">출근시간 전 (조출)</label>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <input type="text" class="form-control" id="workTimeBefore1" placeholder="" aria-describedby="inputGroupPrepend"
-                                    required="">
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1 text-center">~</div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <input type="text" class="form-control" id="workTimeBefore2" placeholder="" aria-describedby="inputGroupPrepend"
-                                    required="">
+                            <label for="inputWorkTime" class="col-sm-4 col-md-3 col-lg-2 col-form-label">입력근무시간</label>
+                            <div class="col-sm-5 col-md-5 col-lg-5">
+                                <input type="text" class="form-control" id="inputWorkTime" placeholder=""
+                                    aria-describedby="inputGroupPrepend" required="" readonly>
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
-                            <label for="workTimeAfter" class="col-sm-4 col-md-3 col-lg-2 col-form-label">퇴근시간 후 (잔업)</label>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <input type="text" class="form-control" id="workTimeAfter1" placeholder="" aria-describedby="inputGroupPrepend"
-                                    required="">
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1 text-center">~</div>
-                            <div class="col-sm-2 col-md-2 col-lg-2 ">
-                                <input type="text" class="form-control" id="workTimeAfter2" placeholder="" aria-describedby="inputGroupPrepend"
-                                    required="">
-                            </div>
-                        </div>
-                        <div class="form-group row align-items-center">
-                            <label for="remainWorkTime" class="col-sm-4 col-md-3 col-lg-2 col-form-label">잔여연장가능시간</label>
+                            <label for="changeStartWorktime" class="col-sm-4 col-md-3 col-lg-2 col-form-label">변경출근시각</label>
                             <div class="col-sm-5">
-                                <input type="text" class="form-control" id="remainWorkTime" placeholder="" readonly>
-                            </div>
-                            <div class="col-sm-3">
-                                <p class="text-danger">(<span></span>/52)</p>
+                                <div class="input-group date" data-provide="datepicker">
+                                    <input type="text" class="form-control " id="changeStartWorktime" placeholder=""
+                                        required="" value="">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text " id="changeStartWorktimeAppend"><i
+                                                class="far fa-clock"></i></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
-                            <label for="applyWorkTime" class="col-sm-4 col-md-3 col-lg-2 col-form-label">신청시간</label>
-                            <div class="col-sm-8 col-md-9 col-lg-10">
-                                <input type="text" class="form-control" id="applyWorkTime" placeholder="">
+                            <label for="changeEndWorktime" class="col-sm-4 col-md-3 col-lg-2 col-form-label">변경퇴근시각</label>
+                            <div class="col-sm-5">
+                                <div class="input-group date" data-provide="datepicker">
+                                    <input type="text" class="form-control " id="changeEndWorktime" placeholder=""
+                                        required="" value="">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text " id="changeEndWorktimeAppend"><i
+                                                class="far fa-clock"></i></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="reason" class="col-sm-4 col-md-3 col-lg-2 col-form-label"><span class=" require"></span>사유</label>
+                            <label for="reason" class="col-sm-4 col-md-3 col-lg-2 col-form-label"><span class="require"></span>사유</label>
                             <div class="col-sm-8 col-md-9 col-lg-10">
                                 <textarea class="form-control" id="reason" rows="3"></textarea>
                             </div>
@@ -122,20 +113,21 @@
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-secondary">임시저장</button>
                         <button type="submit" class="btn btn-primary">신청</button>
-                        <button type="submit" class="btn btn-outline-primary modal-close" data-dismiss="modal">닫기</button>
+                        <button type="submit" class="btn btn-outline-primary modal-close">닫기</button>
                     </div>
                 </form>
             </div>
             <!-- modal 꾸러미 -->
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">신청서 팝업 예시</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">신청서 팝업
+                예시</button>
 
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-                        <form action="" class="application-form">
+                        <form class="application-form">
                             <div class="modal-header">
                                 <h5 class="modal-title">신청서</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -143,13 +135,13 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <h2 class="title">연장근무신청<br>
+                                <h2 class="title">근태 사유서 신청<br>
                                     <span class="sub-desc point-color">(* 표기된 항목은 필수 입력 항목입니다.)</span>
                                 </h2>
                                 <div class="form-group row align-items-center">
                                     <label for="title" class="col-sm-4 col-md-3 col-lg-2 col-form-label">제목</label>
                                     <div class="col-sm-8 col-md-9 col-lg-10">
-                                        <input type="text" class="form-control" id="title" placeholder="연장근무신청">
+                                        <input type="text" class="form-control" id="title" placeholder="근태 사유서 신청">
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
@@ -167,64 +159,54 @@
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="workTime" class="col-sm-4 col-md-3 col-lg-2 col-form-label">근무시간</label>
-                                    <div class="col-sm-2 col-md-2 col-lg-2">
-                                        <input type="text" class="form-control" id="workTime1" placeholder=""
-                                            aria-describedby="inputGroupPrepend" required="">
-                                    </div>
-                                    <div class="col-sm-1 col-md-1 col-lg-1 text-center">~</div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2">
-                                        <input type="text" class="form-control" id="workTim2" placeholder=""
-                                            aria-describedby="inputGroupPrepend" required="">
+                                    <label for="planWorkTime"
+                                        class="col-sm-4 col-md-3 col-lg-2 col-form-label">계획근무시간</label>
+                                    <div class="col-sm-5 col-md-5 col-lg-5">
+                                        <input type="text" class="form-control" id="planWorkTime" placeholder=""
+                                            aria-describedby="inputGroupPrepend" required="" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="workTimeBefore" class="col-sm-4 col-md-3 col-lg-2 col-form-label">출근시간 전
-                                        (조출)</label>
-                                    <div class="col-sm-2 col-md-2 col-lg-2">
-                                        <input type="text" class="form-control" id="workTimeBefore1" placeholder=""
-                                            aria-describedby="inputGroupPrepend" required="">
-                                    </div>
-                                    <div class="col-sm-1 col-md-1 col-lg-1 text-center">~</div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2">
-                                        <input type="text" class="form-control" id="workTimeBefore2" placeholder=""
-                                            aria-describedby="inputGroupPrepend" required="">
+                                    <label for="inputWorkTime"
+                                        class="col-sm-4 col-md-3 col-lg-2 col-form-label">입력근무시간</label>
+                                    <div class="col-sm-5 col-md-5 col-lg-5">
+                                        <input type="text" class="form-control" id="inputWorkTime" placeholder=""
+                                            aria-describedby="inputGroupPrepend" required="" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="workTimeAfter" class="col-sm-4 col-md-3 col-lg-2 col-form-label">퇴근시간 후
-                                        (잔업)</label>
-                                    <div class="col-sm-2 col-md-2 col-lg-2">
-                                        <input type="text" class="form-control" id="workTimeAfter1" placeholder=""
-                                            aria-describedby="inputGroupPrepend" required="">
-                                    </div>
-                                    <div class="col-sm-1 col-md-1 col-lg-1 text-center">~</div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2 ">
-                                        <input type="text" class="form-control" id="workTimeAfter2" placeholder=""
-                                            aria-describedby="inputGroupPrepend" required="">
-                                    </div>
-                                </div>
-                                <div class="form-group row align-items-center">
-                                    <label for="remainWorkTime"
-                                        class="col-sm-4 col-md-3 col-lg-2 col-form-label">잔여연장가능시간</label>
+                                    <label for="changeStartWorktime"
+                                        class="col-sm-4 col-md-3 col-lg-2 col-form-label"><span
+                                            class="require"></span>변경출근시각</label>
                                     <div class="col-sm-5">
-                                        <input type="text" class="form-control" id="remainWorkTime" placeholder=""
-                                            readonly>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <p class="text-danger">(<span></span>/52)</p>
+                                        <div class="input-group date" data-provide="datepicker">
+                                            <input type="text" class="form-control " id="changeStartWorktime"
+                                                placeholder="" required="" value="">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text " id="changeStartWorktimeAppend"><i
+                                                        class="far fa-clock"></i></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="applyWorkTime"
-                                        class="col-sm-4 col-md-3 col-lg-2 col-form-label">신청시간</label>
-                                    <div class="col-sm-8 col-md-9 col-lg-10">
-                                        <input type="text" class="form-control" id="applyWorkTime" placeholder="">
+                                    <label for="changeEndWorktime"
+                                        class="col-sm-4 col-md-3 col-lg-2 col-form-label"><span
+                                            class="require"></span>변경퇴근시각</label>
+                                    <div class="col-sm-5">
+                                        <div class="input-group date" data-provide="datepicker">
+                                            <input type="text" class="form-control " id="changeEndWorktime"
+                                                placeholder="" required="" value="">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text " id="changeEndWorktimeAppend"><i
+                                                        class="far fa-clock"></i></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="reason" class="col-sm-4 col-md-3 col-lg-2 col-form-label"><span
-                                            class=" require"></span>사유</label>
+                                            class="require"></span>사유</label>
                                     <div class="col-sm-8 col-md-9 col-lg-10">
                                         <textarea class="form-control" id="reason" rows="3"></textarea>
                                     </div>
@@ -233,8 +215,7 @@
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-secondary">임시저장</button>
                                 <button type="submit" class="btn btn-primary">신청</button>
-                                <button type="submit" class="btn btn-outline-primary modal-close"
-                                    data-dismiss="modal">닫기</button>
+                                <button type="submit" class="btn btn-outline-primary modal-close">닫기</button>
                             </div>
                         </form>
                     </div>

@@ -1,8 +1,19 @@
 @charset "utf-8";
 
 .point-color{color:#DC3545;}
-.necessary{position:relative; color:#DC3545;}
-.necessary::after{content:'*'; position:absolute; top:0px; left:-10px;display:inline-block;}
-.application-form .inner-wrap{padding: 40px 0px;}
-.application-form .title{margin-bottom:30px; font-size: 20px;} 
+
+/*필수*/
+.require{position:relative; color:#DC3545;}
+.require::after{content:'*'; position:absolute; top:0px; left:-10px;display:inline-block;}
+
+/* application-form */
+.inner-wrap .application-form .modal-header button{display:none;}
+.inner-wrap .application-form .modal-body .title{margin-top:20px;}
+.inner-wrap .application-form .modal-footer button.modal-close{display:none;}
+/* only modal */
+.application-form .title{margin-top:10px; margin-bottom:40px; font-size: 30px;} 
+.application-form .sub-title{margin-top:40px; margin-bottom:20px; font-size: 20px;} 
+.application-form .sub-desc{font-size: 14px;}
+.application-form .guide{font-size: 14px; color:#007BFF;}
+.application-form .col-form-label{word-break: keep-all;}
 .application-form .btn-wrap{padding-top: 40px;}

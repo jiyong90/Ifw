@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="${rc.getContextPath()}/bootstrap-4.3.1-dist/css/bootstrap-grid.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/NotosansKR.css">
-    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/style.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/common.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/all.min.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -29,6 +29,7 @@
 	<script src="${rc.getContextPath()}/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script>
   
   <style type="text/css">
+  	/* for Vue.js */
   	[v-cloak] {display: none}
   </style>
   
