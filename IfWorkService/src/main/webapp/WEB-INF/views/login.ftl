@@ -16,7 +16,7 @@
             <label><input type="checkbox" value="remember-me"> 아이디 저장</label>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
-        <p class="mt-5 mb-3 text-muted">© 2019 ISU SYTEM.</p>
+        <p class="mt-5 mb-3 text-muted">Copyright © 2019 ISUSYSTEM. All rights reserved</p>
     </form>
     <script type="text/javascript">
         $(function () {
