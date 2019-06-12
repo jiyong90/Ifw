@@ -66,6 +66,7 @@
 		</dependency>
 					
 		<!-- Oracle -->
+		<!--  
 		<dependency>
 			<groupId>oracle</groupId>
 			<artifactId>OracleDriver</artifactId>
@@ -74,7 +75,20 @@
 			<systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc6.jar
 			</systemPath>
 		</dependency>  
-				
+		-->
+		
+		<!-- mysql -->		
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>5.1.35</version>
+		</dependency>
 				
 		<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-mybatis -->
 		<dependency>
