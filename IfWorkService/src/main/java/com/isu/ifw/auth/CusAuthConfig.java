@@ -48,13 +48,14 @@ public class CusAuthConfig implements AuthConfig {
 	//클라우드 버전에서는 사용안한다. DB에서 테넌트별로 관리되어야 한다..... 2018.11.26 jyp
 	@Override
 	public String getCertificateMethod() {
-		return AuthConfig.CERTIFICATE_TYPE_REST;
-		//return AuthConfig.CERTIFICATE_TYPE_SQL;
+		//return AuthConfig.CERTIFICATE_TYPE_REST;
+		return AuthConfig.CERTIFICATE_TYPE_SQL;
 	}
 
 	@Override
 	public String getCertificateQuery() {
-		return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id=:loginId and a.tenant_id = :tenantId";
+		//return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id = :loginId and a.tenant_id = :tenantId";
+		return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id = (select F_AES_ENCRYPT(:loginId, info_data) from comm_management_infomation where tenant_id=:tenantId and info_key='SECURITY.AES.KEY') and a.tenant_id = :tenantId";
 	}
 
 	@Override
@@ -86,21 +87,22 @@ public class CusAuthConfig implements AuthConfig {
 
 	@Override
 	public Endpoint getLoginPageEndpoint() {
-		RestEndpoint ep = new RestEndpoint("/login/"+tsId);
+		RestEndpoint ep = new RestEndpoint("/resource/login/"+tsId);
 		ep.setMethod(RestEndpoint.METHOD_GET);
 		return ep;
 	}
 
 	@Override
 	public Endpoint getSessionValidationFailRedirectionPageEndpoint() {
-		RestEndpoint ep = new RestEndpoint("/login/"+tsId);
+		RestEndpoint ep = new RestEndpoint("/resource/login/"+tsId);
 		ep.setMethod(RestEndpoint.METHOD_GET);
 		return ep;
 	}
 
 	@Override
 	public Endpoint getMainPageEndpoint() {
-		String url = "/console/"+this.tsId+"/";
+		//String url = "/console/"+this.tsId+"/";
+		String url = "/resource/main";
 		Endpoint ep = new Endpoint(url);
 		return ep;
 	}
