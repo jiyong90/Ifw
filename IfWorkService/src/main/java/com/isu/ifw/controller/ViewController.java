@@ -1,25 +1,30 @@
 package com.isu.ifw.controller;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.isu.auth.config.AuthConfigProvider;
 import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
+import com.isu.ifw.StringUtil;
 
 @RestController
 @RequestMapping(value="/resource")
 public class ViewController {
+	
+	private StringUtil stringUtil;
 	
 	@Autowired
 	AuthConfigProvider authConfigProvider;
@@ -57,6 +62,42 @@ public class ViewController {
 		mv.addObject("AUTH_CONFIG", authConfig);
 		return mv;
 	}*/
+	
+	@RequestMapping(value="/logout/{tsId}", method=RequestMethod.GET)
+	public void logout(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response){
+		
+
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+            cookie.setMaxAge(0);
+            cookie.setValue(null);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
+		
+		HttpSession session = request.getSession();
+		if(session != null)
+			session.invalidate();
+		
+		
+		String endPointUrl;
+		try {
+			Long tenantId = tenantDao.findTenantId(tsId);
+			AuthConfig authConfig = authConfigProvider.initConfig(tenantId, tsId);
+			
+			endPointUrl = stringUtil.appendUri(request,authConfig.getMainPageEndpoint().getUrl(), null).toString();
+
+			String url = request.getRequestURL().toString();
+			if(url.startsWith("http://") && url.indexOf("localhost") == -1) {
+				endPointUrl = endPointUrl.replace("http://", "https://");
+			}
+			System.out.println("endPointUrl : " + endPointUrl);
+			response.sendRedirect(endPointUrl);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@RequestMapping(value = "/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView views(@PathVariable String viewPage) throws Exception {
