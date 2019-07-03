@@ -102,7 +102,7 @@ public class CusAuthConfig implements AuthConfig {
 	@Override
 	public Endpoint getMainPageEndpoint() {
 		//String url = "/console/"+this.tsId+"/";
-		String url = "/resource/login/"+this.tsId;
+		String url = "/resource/main";
 		Endpoint ep = new Endpoint(url);
 		return ep;
 	}
