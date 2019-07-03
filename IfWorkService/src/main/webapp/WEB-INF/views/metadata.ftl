@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="${rc.getContextPath()}/bootstrap-4.3.1-dist/css/bootstrap-grid.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/NotosansKR.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/layout.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/common.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/all.min.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
