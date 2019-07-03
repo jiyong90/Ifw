@@ -79,6 +79,7 @@
         	</div>
     	</div>
     </div>
+    <#include "/metaScript.ftl">
     <script type="text/javascript">
         $(function () {
                 $('#inputWorkDate').datetimepicker({

@@ -21,6 +21,7 @@
 		</#if>
         <p class="mt-5 mb-3 text-muted">Copyright © 2019 ISUSYSTEM. All rights reserved</p>
     </form>
+    <#include "/metaScript.ftl">
     <script type="text/javascript">
         $(function () {
          
