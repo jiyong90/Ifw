@@ -429,4 +429,41 @@ public class IfwLoginController {
 
 		return map;
 	}
+		
+	@RequestMapping(value="/logout/{tsId}", method=RequestMethod.GET)
+	public void logout(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response){
+		
+
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+            cookie.setMaxAge(0);
+            cookie.setValue(null);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
+		
+		HttpSession session = request.getSession();
+		if(session != null)
+			session.invalidate();
+		
+		
+		String endPointUrl;
+		try {
+			Long tenantId = tenantDao.findTenantId(tsId);
+			AuthConfig authConfig = authConfigProvider.initConfig(tenantId, tsId);
+			
+			//endPointUrl = stringUtil.appendUri(request,authConfig.getMainPageEndpoint().getUrl(), null).toString();
+			endPointUrl = stringUtil.appendUri(request,authConfig.getLoginPageEndpoint().getUrl(), null).toString();
+
+			String url = request.getRequestURL().toString();
+			if(url.startsWith("http://") && url.indexOf("localhost") == -1) {
+				endPointUrl = endPointUrl.replace("http://", "https://");
+			}
+			System.out.println("endPointUrl : " + endPointUrl);
+			response.sendRedirect(endPointUrl);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

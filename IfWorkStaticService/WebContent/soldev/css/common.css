@@ -1,17 +1,35 @@
 @charset "utf-8";
 
 .point-color{color:#DC3545;}
+.sub-title{font-size: 20px;}
+.sub-title .caution{display:inline-block; margin-left: 14px; font-size: 16px;}
+.btn-wrap select{padding-top:2px;}
 
+/* 필수 */
+.require{position:relative; color:#DC3545;}
+.require::after{content:'*'; position:absolute; top:0px; left:-10px;display:inline-block;}
+
+/* application-form */
+.inner-wrap .application-form .modal-header button{display:none;}
+.inner-wrap .application-form .modal-body .title{margin-top:20px;}
+.inner-wrap .application-form .modal-footer button.modal-close{display:none;}
+
+/* application-form inner modal */
+.application-form .title{margin-top:10px; margin-bottom:40px; font-size: 30px;} 
+.application-form .sub-title{margin-top:40px; margin-bottom:20px; font-size: 20px;} 
+.application-form .sub-desc{font-size: 14px;}
+.application-form .guide{font-size: 14px; color:#007BFF;}
+.application-form .col-form-label{word-break: keep-all;}
+.application-form .btn-wrap{padding-top: 40px;}
 
 /* login Page */
-html{
-  height: 100%;
-}
-
 .login {display: -ms-flexbox; display: flex; height:100%;-ms-flex-align: center;align-items: center;padding-top: 40px;padding-bottom: 40px;background-color: #f5f5f5;}
 .form-login {width: 100%;max-width: 330px;padding: 15px;margin: auto;}
 .form-login .logo{width:auto; height:72px;}
 .form-login .checkbox {font-weight: 400}
+.form-login .checkbox label{float:left;}
+.form-login .checkbox .find-pw{float:right;}
+.form-login .checkbox::after {content:''; clear: both; display: table;}
 .form-login .form-control {position: relative;box-sizing: border-box;height: auto;padding: 10px;font-size: 16px;}
 .form-login .form-control:focus {z-index: 2;}
 .form-login input[type="text"] {
@@ -24,21 +42,32 @@ html{
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+.form-login .find-pw{display:inline-block; margin-left:auto;}
 
-/* 필수 */
-.require{position:relative; color:#DC3545;}
-.require::after{content:'*'; position:absolute; top:0px; left:-10px;display:inline-block;}
+/* Calendar */
+#calendar-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 
-/* application-form */
-.inner-wrap .application-form .modal-header button{display:none;}
-.inner-wrap .application-form .modal-body .title{margin-top:20px;}
-.inner-wrap .application-form .modal-footer button.modal-close{display:none;}
+#calendar-container .fc-header-toolbar {
+  /*
+    the calendar will be butting up against the edges,
+    but let's scoot in the header's buttons
+    */
+  padding-top: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+}
 
-/* only modal */
-.application-form .title{margin-top:10px; margin-bottom:40px; font-size: 30px;} 
-.application-form .sub-title{margin-top:40px; margin-bottom:20px; font-size: 20px;} 
-.application-form .sub-desc{font-size: 14px;}
-.application-form .guide{font-size: 14px; color:#007BFF;}
-.application-form .col-form-label{word-break: keep-all;}
-.application-form .btn-wrap{padding-top: 40px;}
+/**/
+.fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{
+  text-decoration: underline;
+}
 
+
+/* 페이지 마다 sub-header */
+.sub-header{padding:16px 16px 20px 16px;}

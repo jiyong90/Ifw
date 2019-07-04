@@ -16,10 +16,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.isu.auth.config.AuthConfigProvider;
 import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
+import com.isu.ifw.StringUtil;
 
 @RestController
 @RequestMapping(value="/resource")
 public class ViewController {
+	
+	private StringUtil stringUtil;
 	
 	@Autowired
 	AuthConfigProvider authConfigProvider;
@@ -57,13 +60,32 @@ public class ViewController {
 		mv.addObject("AUTH_CONFIG", authConfig);
 		return mv;
 	}*/
-
-	@RequestMapping(value = "/{viewPage}", method = RequestMethod.GET)
+	
+	/*@RequestMapping(value = "/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView views(@PathVariable String viewPage) throws Exception {
 		ModelAndView mv = new ModelAndView(viewPage);
 		mv.addObject("tsId", "isu");
 		return mv;
 		 
+	}*/
+	
+	@GetMapping(value = "/{tsId}")
+	public ModelAndView login(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return main(tsId, request);
+	}
+	
+	@GetMapping(value="/{tsId}/main")
+	public ModelAndView main(@PathVariable String tsId, HttpServletRequest request) throws JsonProcessingException {
+		ModelAndView mv = new ModelAndView("main");
+		mv.addObject("tsId", tsId);
+		return mv;
+	}
+	
+	@RequestMapping(value = "/{tsId}/{viewPage}", method = RequestMethod.GET)
+	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
+		ModelAndView mv = new ModelAndView(viewPage);
+		mv.addObject("tsId", tsId);
+		return mv;
 	}
 	
 }

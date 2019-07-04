@@ -79,7 +79,7 @@
                                 <textarea class="form-control" id="reason" rows="3"></textarea>
                             </div>
                         </div>
-                        <h2 class="sub-title">탄력근무제 근무계획<br>
+                        <h2 class="sub-title mt-5 mb-3">탄력근무제 근무계획<br>
                         </h2>
                         <div class="sheet-wrap">
 
@@ -94,6 +94,7 @@
         	</div>
     	</div>
     </div>
+    <#include "/metaScript.ftl">
     <script type="text/javascript">
         $(function () {
                 $('#inputWorkDate').datetimepicker({
