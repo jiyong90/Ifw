@@ -12,6 +12,7 @@
         <input type="text" id="inputEmail" name="${AUTH_CONFIG.getLoginIdParameterName()}" class="form-control" placeholder="아이디를 입력해주세요." required="" autofocus="">
         <label for="inputPassword" class="sr-only">비밀번호를 입력해주세요.</label>
         <input type="password" id="inputPassword" name="${AUTH_CONFIG.getPasswordParameterName()}" class="form-control" placeholder="비밀번호를 입력해주세요." required="">
+        <input type="text" id="companyCd" name="companyCd"  class="form-control" value="ISU_ST" hidden>
         <div class="checkbox mb-3">
             <label><input type="checkbox" value="remember-me"> 아이디 저장</label>
         </div>

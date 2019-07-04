@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.security.cert.CertificateException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,14 +17,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -39,10 +46,13 @@ import com.isu.ifw.StringUtil;
 import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.vo.Login;
+import com.isu.option.service.TenantConfigManagerService;
 import com.isu.option.util.Sha256;
 
 @RestController
 public class IfwLoginController {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private StringUtil stringUtil;
 	
@@ -67,10 +77,15 @@ public class IfwLoginController {
 	@Autowired
 	AuthConfigProvider authConfigProvider;
 	
+	@Autowired
+	TenantConfigManagerService tcms;
+
+	
 	@RequestMapping(value = "/login/certificate/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void loginForRecruitManagement(@PathVariable String tsId, HttpServletRequest request,
 										  HttpServletResponse response, RedirectAttributes redirectAttr) {
 	
+		logger.debug("test");
 		System.out.println("call /login/certificate/" + tsId);
 		
 		AuthConfig authConfig = null;
@@ -111,93 +126,269 @@ public class IfwLoginController {
 			String loginId = "";
 			String requestedPassword = request.getParameter(passwordParamName);
 
+			// 인증 방법을 가져온다.
+			//String certificateMethod = authConfig.getCertificateMethod();
+			String certificateMethod = tcms.getConfigValue(tenantId, "WTMS.LOGIN.CERTIFICATE_METHOD", true, "");			
 			// 사용자 인증 후, 서버에 세션 값으로 채울 데이터를 담을 저장소
 			Map<String, Object> userData = null;
-			
+
 			// 사용자 정보를 조회하는 데 사용할 맵
 			Map<String, Object> paramMap = null;
-			
-			String query = authConfig.getCertificateQuery();
-			Enumeration<String> paramKeys = request.getParameterNames();
-	
-			while (paramKeys.hasMoreElements()) {
-				String paramKey = paramKeys.nextElement();
-	
-				if (paramMap == null)
-					paramMap = new HashMap<String, Object>();
-				
-				//id는 DB로 암호화
-//				if((paramKey.toUpperCase()).endsWith("ID")) {
-//					String encParam = request.getParameter(paramKey);
-//					encParam = DBEncryptDecryptModule.encrypt(encParam);
-//					paramMap.put(paramKey, encParam);
-//					loginId = encParam;
-//				}else {
-					paramMap.put(paramKey, request.getParameter(paramKey));
-//				}
-	
-			}
-			
-			System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
-			 
-			try {
-				userData = tenantDao.getUserInfo(query, tenantId, paramMap);
-			} catch (Exception e) {
-				request.setAttribute("certificateError", "등록된 이메일이 없습니다.");
-				request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
-				return;
-			}
-			
-			// 사용자 비밀번호를 체크한다.
-			if (userData != null) {
-				boolean validYn = true;
-				String msg = "";
-				String password = (String) userData.get("password");
-	
-//				String encKey = authConfig.getEncryptKey();
-//				int repeatCount = authConfig.getHashIterationCount();
-//	
-//				requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
-				
-				paramMap.put("encryptStr", requestedPassword);
-				Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
-				if(rMap!=null && rMap.get("encryptStr")!=null) {
-					requestedPassword = rMap.get("encryptStr").toString();
-					System.out.println("requestedPassword : " + requestedPassword);
-				}
-				
-				if(userData.containsKey("account_lockout_yn") && "Y".equals(userData.get("account_lockout_yn"))) {
-					validYn = false;
-					msg = "계정잠김 : 비밀번호를 변경하세요.";
-				}
-				
-//				if(userData.containsKey("valid_yn") && "N".equals(userData.get("valid_yn"))) {
-//					validYn = false;
-//					msg = "휴면계정 : 비밀번호를 변경하세요.";
-//				}
-				
-				if(password == null || !password.equals(requestedPassword)){
-					//throw new CertificateException("사용자가 없거나, 인증에 실패했습니다.");
-					validYn = false;
-					msg = "사용자가 없거나, 인증에 실패했습니다.";
+
+			// 인증방법에 따라 적합한 방식을 사용한다.
+			if (AuthConfig.CERTIFICATE_TYPE_REST.equalsIgnoreCase(certificateMethod)) {
+				RestEndpoint rep = (RestEndpoint) authConfig.getCertificationEndpoint();
+				//널이면 데이터베이스에서 URL를 가지고 오자
+				int method;
+				String endPointUrl = "";
+				if(rep == null) {
 					
-//					userMgrService.loginFailureCountUp(loginId, tenantId);
-//					int wrongCount = userMgrService.getLoginFailureCount(loginId, tenantId);
-//					if(wrongCount > 4) {
-//						userMgrService.accountLockOut(loginId, tenantId);
-//						msg = "계정잠김 : 비밀번호를 변경하세요.";
-//					} else {
-//						msg =  wrongCount + "회 로그인 실패! " +  "ID 또는 비밀번호를 다시 확인하세요.";
-//					}
+					endPointUrl = tcms.getConfigValue(tenantId, "WTMS.LOGIN.CERTIFICATE_ENDPOINT", true, "");
+					String m = tcms.getConfigValue(tenantId, "WTMS.LOGIN.CERTIFICATE_ENDPOINT_METHOD", true, "");;
+					if(m.equalsIgnoreCase("POST")) {
+						method = RestEndpoint.METHOD_POST;
+					}else {
+						method = RestEndpoint.METHOD_GET;
+					}
+				} else {
+					endPointUrl = rep.getUrl();
+					method = rep.getMethod();
 				}
 				
-				if(!validYn) {
-					request.setAttribute("certificateError", msg);
+				// REST URL을 호출하게 될 엔드포인트
+				RestTemplate restTemplate = new RestTemplate();
+				// 유효성 검사 결과
+				Map<String, Object> validationResult = null;
+				Map<String, Object> map = new HashMap<String, Object>();
+				ResponseEntity<String> responseEntity = null;
+
+				// GET 방식 호출인 경우 URL을 get 방식으로 구성하여 반환한다.
+				if (method == RestEndpoint.METHOD_GET) {
+					Enumeration<String> paramNames = request.getParameterNames();
+					String params = "";
+					
+					while (paramNames != null && paramNames.hasMoreElements()) {
+						String paramName = paramNames.nextElement();
+
+						if (params.length() > 0)
+							params = params + "&";
+						String value = request.getParameter(paramName);
+
+						params = params + URLEncoder.encode(value, request.getCharacterEncoding());
+					}
+					responseEntity = restTemplate.getForEntity(endPointUrl + params, String.class, map);
+					
+				} else if (method == RestEndpoint.METHOD_POST) {
+					// POST 방식 호출인 경우, URL을 POST 방식으로 구성하여 반환한다 
+					// http:// 나 https:// 등의 url 선행 문자열이 없으면, 기본으로 요청한 request 정보로 앞에 붙여줌
+					if (endPointUrl != null && endPointUrl.indexOf("://") < 0) {
+						String urlPrefix = request.getRequestURL().toString();
+
+						urlPrefix = urlPrefix.substring(0,
+								urlPrefix.indexOf(request.getContextPath()) + request.getContextPath().length());
+
+						endPointUrl = urlPrefix + endPointUrl;
+					}
+					
+					Map<String, String> requestMap = new HashMap<String, String>();
+					//requestMap.put("loginEnterCd", "SIM");
+					//requestMap.put("locale", "ko_KR");
+					Enumeration<String> itor = request.getParameterNames();
+					while(itor.hasMoreElements()) {
+						String k = itor.nextElement();
+						requestMap.put(k, request.getParameter(k));
+					}
+					
+//					
+//					requestMap.put("loginId", request.getParameter("loginId"));
+//
+//					String password = (String) userData.get("password");
+//
+//					String encKey = authConfig.getEncryptKey();
+//					int repeatCount = authConfig.getHashIterationCount();
+//
+//					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
+//
+//					requestMap.put("password", requestedPassword);
+//					requestMap.put("tenantId", tm.getTenantId().toString());
+//					requestMap.put("tenantModuleId", tm.getTenantModuleId().toString());
+//					
+					
+					try {
+						responseEntity = restTemplate.postForEntity(endPointUrl, requestMap, String.class);
+						Map<String, Object> responseMap = mapper.readValue(responseEntity.getBody(), new HashMap<>().getClass());
+						
+					} catch (Exception e) {
+						request.setAttribute("certificateError", "서버 접속 시 에러가 발생했습니다.");
+						request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
+						return;
+					}
+					
+//					
+//					if(responseMap.get("status").toString().equalsIgnoreCase("FAIL")){
+//						logger.debug("authConfig.getLoginPageEndpoint().getUrl() : " + authConfig.getLoginPageEndpoint().getUrl());
+//						request.setAttribute("certificateError", responseMap.get("message").toString());
+//						request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
+//						return;
+//					}
+//					
+				}
+				// 정상 처리가 안된 모든 경우에 대해 오류 처리함
+				//logger.debug("HttpStatus:" + responseEntity.getStatusCode());
+				if (responseEntity.getStatusCode() != HttpStatus.OK) {
+					request.setAttribute("certificateError", "로그인에 실패했습니다");
+					request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
+				}
+				//logger.debug("pass1:");
+				// logger.debug("this.getClass():"+this.getClass());
+				// if(this.getClass() != null){
+				// response.sendRedirect("http://www.naver.com");
+				// return;
+				// }
+
+				// 결과를 Map형태로 반환
+				Map<String, Object> responseData = null;
+				String responseBody = responseEntity.getBody();
+				
+
+				try {
+					responseData = mapper.readValue(responseBody, new HashMap().getClass());
+					// 만일 결과가 null이 아니라면 status를 찾는다.
+//					if (responseData != null && responseData.containsKey("status")) {
+//						String status = (String) responseData.get("status");
+//						if (!"OK".equals(status)) {
+//							
+//							logger.debug(" isViolated ===================================>>1");
+//							logger.debug(" isViolated ===================================>>1");
+//							isViolated =false;
+//							request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
+//							// response.sendRedirect(authConfig.getLoginPageEndpoint().getUrl());
+//							logger.debug(" isViolated ===================================>>2");
+//							logger.debug(" isViolated ===================================>>2");
+//							
+//							return;
+//														
+//							//throw new CertificateException("사용자가 없거나, 인증에 실패했습니다.");
+//						}
+//							
+//					} 
+					//userData = (Map<String, Object>) ((Map<String, Object>) responseData.get("result")).get("sessionData"); // 이 중 일부를 발췌해야 할 수도 있음.
+					//userData.put("userKey", userData.get("id"));
+					
+					if(responseData.containsKey("message")) {
+						if(responseData.get("message") != null && !"".equals(responseData.get("message"))) {
+							request.setAttribute("certificateError", responseData.get("message"));
+							request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
+							return;
+						}
+							
+					}
+					
+					userData = (Map<String, Object>) responseData.get("userData");
+					//System.out.println("userData: " + mapper.writeValueAsString(userData));
+					userData.put("userKey", responseData.get("empKey"));
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new CertificateException("사용자가 없거나, 인증에 실패했습니다.");
+				}
+			} else if (AuthConfig.CERTIFICATE_TYPE_SQL.equalsIgnoreCase(certificateMethod)) {
+				String query = authConfig.getCertificateQuery();
+				Enumeration<String> paramKeys = request.getParameterNames();
+		
+				while (paramKeys.hasMoreElements()) {
+					String paramKey = paramKeys.nextElement();
+		
+					if (paramMap == null)
+						paramMap = new HashMap<String, Object>();
+					
+					//id는 DB로 암호화
+//					if((paramKey.toUpperCase()).endsWith("ID")) {
+//						String encParam = request.getParameter(paramKey);
+//						encParam = DBEncryptDecryptModule.encrypt(encParam);
+//						paramMap.put(paramKey, encParam);
+//						loginId = encParam;
+//					}else {
+						paramMap.put(paramKey, request.getParameter(paramKey));
+//					}
+		
+				}
+				
+				System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
+				 
+				try {
+					userData = tenantDao.getUserInfo(query, tenantId, paramMap);
+				} catch (Exception e) {
+					request.setAttribute("certificateError", "등록된 이메일이 없습니다.");
 					request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
 					return;
-				} else {
-//					userMgrService.loginFailureCountInit(loginId, tenantId);
-//					userMgrService.renewLastLoginTime(loginId, tenantId);
+				}
+				
+				// 사용자 비밀번호를 체크한다.
+				if (userData != null) {
+					boolean validYn = true;
+					String msg = "";
+					String password = (String) userData.get("password");
+		
+//					String encKey = authConfig.getEncryptKey();
+//					int repeatCount = authConfig.getHashIterationCount();
+	//	
+//					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
+					
+					paramMap.put("encryptStr", requestedPassword);
+					Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
+					if(rMap!=null && rMap.get("encryptStr")!=null) {
+						requestedPassword = rMap.get("encryptStr").toString();
+						System.out.println("requestedPassword : " + requestedPassword);
+					}
+					
+					if(userData.containsKey("account_lockout_yn") && "Y".equals(userData.get("account_lockout_yn"))) {
+						validYn = false;
+						msg = "계정잠김 : 비밀번호를 변경하세요.";
+					}
+					
+//					if(userData.containsKey("valid_yn") && "N".equals(userData.get("valid_yn"))) {
+//						validYn = false;
+//						msg = "휴면계정 : 비밀번호를 변경하세요.";
+//					}
+					
+					if(password == null || !password.equals(requestedPassword)){
+						//throw new CertificateException("사용자가 없거나, 인증에 실패했습니다.");
+						validYn = false;
+						msg = "사용자가 없거나, 인증에 실패했습니다.";
+						
+//						userMgrService.loginFailureCountUp(loginId, tenantId);
+//						int wrongCount = userMgrService.getLoginFailureCount(loginId, tenantId);
+//						if(wrongCount > 4) {
+//							userMgrService.accountLockOut(loginId, tenantId);
+//							msg = "계정잠김 : 비밀번호를 변경하세요.";
+//						} else {
+//							msg =  wrongCount + "회 로그인 실패! " +  "ID 또는 비밀번호를 다시 확인하세요.";
+//						}
+					}
+					
+					if(!validYn) {
+						request.setAttribute("certificateError", msg);
+						request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
+						return;
+					} else {
+//						userMgrService.loginFailureCountInit(loginId, tenantId);
+//						userMgrService.renewLastLoginTime(loginId, tenantId);
+					}
+				}
+				
+				// 추가로 (외부 서비스에서)세션 데이터로 집어 넣어야 할 데이터를 요청받아 넣는다.
+
+				RestEndpoint rp = (RestEndpoint) authConfig.getSessionInformationEndpoint();
+				//logger.debug("pass2:");
+		
+				if (rp != null && rp.getUrl() != null) {
+					Map<String, Object> extendedSessionData = authService.getMapFromEndpoint(rp, paramMap);
+					
+					// 이미 구성된 세션 정보에 추가로 값을 더 넣는다.
+					if (extendedSessionData != null) {
+						userData.putAll(extendedSessionData);
+					}
 				}
 			}
 			
@@ -220,7 +411,7 @@ public class IfwLoginController {
 			}
 			
 			// Map 데이터를 세션 DB에 넣는다.
-			userData.put("clientIp", stringUtil.getClientIP(request));
+			//userData.put("clientIp", stringUtil.getClientIP(request));
 			
 			String userToken = oAuthService.createNewOAuthSession(tsId, userData, null);
 			//logger.debug("+++userToken+++ : " + userToken);
