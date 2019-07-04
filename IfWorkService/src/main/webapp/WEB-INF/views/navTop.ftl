@@ -13,16 +13,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#"><span class="icon-wrap mr-sm-2"> <i class="fas fa-exchange-alt"></i></span>권한모드 전환</a>
+                    <a class="nav-link" href="#"><span class="icon-wrap mr-sm-2"><i class="fas fa-exchange-alt"></i></span><span>권한모드 전환</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><span class="icon-wrap mr-sm-2"><i class="far fa-plus-square"></i></span>세션 늘리기</a>
+                    <a class="nav-link" href="#"><span class="icon-wrap mr-sm-2"><i class="far fa-plus-square"></i></span><span>세션 늘리기</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><span class="icon-wrap mr-sm-2"><i class="fas fa-cog"></i></span>설정</a>
+                    <a class="nav-link" href="#"><span class="icon-wrap mr-sm-2"><i class="fas fa-cog"></i></span><span>설정</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" onClick="location.href='${rc.getContextPath()}/logout/${tsId}';"><span class="icon-wrap mr-sm-2"><i class="fas fa-power-off"></i></span>로그아웃</a>
+                    <a class="nav-link" href="#" onClick="location.href='${rc.getContextPath()}/logout/${tsId}';"><span class="icon-wrap mr-sm-2"><i class="fas fa-power-off"></i></span><span>로그아웃</span></a>
                 </li>
             </ul>
         </div>
