@@ -115,7 +115,7 @@
                                 <a class="nav-link" href="#"><span class="icon-wrap mr-sm-2"><i class="fas fa-cog"></i></span>설정</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#" onClick="location.href='${rc.getContextPath()}/resource/logout/${tsId}';"><span class="icon-wrap mr-sm-2"><i class="fas fa-power-off"></i></span>로그아웃</a>
+                                <a class="nav-link" href="#" onClick="location.href='${rc.getContextPath()}/logout/${tsId}';"><span class="icon-wrap mr-sm-2"><i class="fas fa-power-off"></i></span>로그아웃</a>
                             </li>
                         </ul>
                     </div>
