@@ -19,7 +19,7 @@ import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
 
 @RestController
-@RequestMapping(value="/resource")
+//@RequestMapping(value="/resource")
 public class ViewController {
 	
 	private StringUtil stringUtil;
