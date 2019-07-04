@@ -87,14 +87,14 @@ public class CusAuthConfig implements AuthConfig {
 
 	@Override
 	public Endpoint getLoginPageEndpoint() {
-		RestEndpoint ep = new RestEndpoint("/resource/login/"+tsId);
+		RestEndpoint ep = new RestEndpoint("/login/"+tsId);
 		ep.setMethod(RestEndpoint.METHOD_GET);
 		return ep;
 	}
 
 	@Override
 	public Endpoint getSessionValidationFailRedirectionPageEndpoint() {
-		RestEndpoint ep = new RestEndpoint("/resource/login/"+tsId);
+		RestEndpoint ep = new RestEndpoint("/login/"+tsId);
 		ep.setMethod(RestEndpoint.METHOD_GET);
 		return ep;
 	}
@@ -102,7 +102,7 @@ public class CusAuthConfig implements AuthConfig {
 	@Override
 	public Endpoint getMainPageEndpoint() {
 		//String url = "/console/"+this.tsId+"/";
-		String url = "/resource/"+this.tsId+"/";
+		String url = "/"+this.tsId+"/";
 		Endpoint ep = new Endpoint(url);
 		return ep;
 	}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WorkTimeCalendarMapper">
+    <select id="getWorkTimeCalendar" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			select info_key
+			     , info_name
+			     , info_data
+			  from comm_management_infomation
+			 where tenant_id = #{tenantId}
+        ]]>
+    </select>
+</mapper>
