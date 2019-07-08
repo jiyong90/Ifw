@@ -1,5 +1,8 @@
 package com.isu.ifw.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,6 +88,12 @@ public class ViewController {
 	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
 		ModelAndView mv = new ModelAndView(viewPage);
 		mv.addObject("tsId", tsId);
+		
+		Calendar date = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date.getTime());
+		mv.addObject("today", today);
+		
 		return mv;
 	}
 	

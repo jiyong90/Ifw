@@ -6,18 +6,18 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.isu.ifw.mapper.WorkTimeCalendarMapper;
+import com.isu.ifw.mapper.WtmCalendarMapper;
 
 /**
  * 근태 달력 관리 service
  * @author 
  *
  */
-@Service("WorkTimeCalendarService")
-public class WorkTimeCalendarService {
+@Service("WtmCalendarService")
+public class WtmCalendarService {
 	
 	@Autowired
-	WorkTimeCalendarMapper workTimeCalendarMapper;
+	WtmCalendarMapper wtmCalendarMapper;
 	
 	
 	/**
@@ -27,7 +27,7 @@ public class WorkTimeCalendarService {
 	 * @throws Exception
 	 */
 	public List<Map<String, Object>> getWorkTimeCalendar(Map<String, Object> paramMap) throws Exception {
-		return workTimeCalendarMapper.getWorkTimeCalendar(paramMap);
+		return wtmCalendarMapper.getWorkTimeCalendar(paramMap);
 	}
 	
 }

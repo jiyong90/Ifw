@@ -1,6 +1,5 @@
 package com.isu.ifw.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,14 +14,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isu.ifw.service.WorkTimeCalendarService;
+import com.isu.ifw.service.WtmCalendarService;
 
 @RestController
-@RequestMapping(value="/workTime/calendar")
-public class WorkTimeCalendarController {
+@RequestMapping(value="/calendar")
+public class WtmCalendarController {
 
 	@Autowired
-	WorkTimeCalendarService workTimeCalendarService;
+	WtmCalendarService wtmCalendarService;
 	
 	
 	/**
@@ -41,7 +40,7 @@ public class WorkTimeCalendarController {
 		
 		paramMap.put("tenantId", tenantId);
 		
-		List<Map<String, Object>> resultMap = workTimeCalendarService.getWorkTimeCalendar(paramMap);
+		List<Map<String, Object>> resultMap = wtmCalendarService.getWorkTimeCalendar(paramMap);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println("result : " + mapper.writeValueAsString(resultMap));

@@ -6,6 +6,11 @@
 	<script src="${rc.getContextPath()}/moment/moment.js"></script>
 	<script src="${rc.getContextPath()}/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
 	<script src="${rc.getContextPath()}/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script>
+	
+  <!-- Vue 2.5.13 -->
+  <script src="${rc.getContextPath()}/vue-2.5.13/dist/vue.min.js"></script>
+  <script src="${rc.getContextPath()}/vue-2.5.13/vue-cookies.js"></script>
+  <script src="${rc.getContextPath()}/vue-2.5.13/vue-upload-component/vue-upload-component.js"></script>
   
   <script type="text/javascript">
   	var Util = {
