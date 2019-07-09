@@ -25,7 +25,8 @@
 				type : Array,
 				required: false,
 				default : function(){
-					return ['interaction', 'dayGrid', 'timeGrid', 'list', 'bootstrap'];
+					//return ['interaction', 'dayGrid', 'timeGrid', 'list', 'bootstrap'];
+					return ['interaction', 'dayGrid', 'timeGrid', 'bootstrap'];
 				}
 			},
 			themeSystem : {
@@ -56,7 +57,8 @@
 					return {
 				       left: 'prev,next today',
 				       center: 'title',
-				       right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+				       //right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+				       right: 'dayGridMonth,timeGridWeek,timeGridDay'
 					};
 				}
 			},
@@ -74,6 +76,17 @@
 					return '${today}';
 				}
 			},
+			/* views: {
+				type: Object,
+				required: false,
+				default : function(){
+					return {
+					    dayGrid: {
+					    	titleFormat: { year: 'numeric', month: '2-digit', day: '2-digit' }
+					    }
+					};
+				}
+			}, */
 			navLinks : {
 				type: Boolean,
 				required: false,
@@ -119,6 +132,7 @@
 		}, 
 		computed: {
 			calOptions : function(){
+				var $this = this;
 				return {
 					plugins: this.plugins,
 			        themeSystem: this.themeSystem,
@@ -127,30 +141,13 @@
 			        header: this.header,
 			        defaultView: this.defaultView,
 			        defaultDate: this.defaultDate,
+			        //views: this.views,
 			        navLinks: this.navLinks, 
 			        selectable: this.selectable,
 			        selectMirror: this.selectMirror,
 			        editable: this.editable,
 			        eventLimit: this.eventLimit, 
-			        events: this.events,
-			        select: function(arg) {
-			            var title = prompt('시작일 지정');
-			            if (title) {
-			                calendar.addEvent({
-			                    title: title,
-			                    start: arg.start,
-			                    end: arg.end,
-			                    allDay: arg.allDay,
-			                    
-			                })
-			            }
-			            calendar.unselect();
-			        },
-			        eventClick: function(event, element) {
-			            // Display the modal and set the values to the event values.
-			            $('.modal').modal('show');
-			            $('.modal').find('#startDate').val(event.start);
-			        }
+			        events: this.events
 				};
 			}
 		},
@@ -159,9 +156,40 @@
 			document.addEventListener('DOMContentLoaded', function() {
 				var calendarEl = document.getElementById('calendar');
 				var calendarOptions = $this.calOptions;
-				var calendar = new FullCalendar.Calendar(calendarEl,calendarOptions);
-		        calendar.render();
+				
+				calendarOptions.datesRender = function(info){
+					$this.datesRenderCallBack(info);
+				}
+				//calendarOptions.dayRender = function(dayRenderInfo){
+				//	$this.dayRenderCallBack(dayRenderInfo);
+				//}
+				
+				$this.cal = new FullCalendar.Calendar(calendarEl,calendarOptions);
+				$this.cal.render();
+				
+				$this.renderCallback();
 			});
+			
+			
+        },
+        methods: {
+        	renderCallback: function(){
+        		this.$emit('update');
+        	},
+        	datesRenderCallBack: function(info){
+        		this.$emit('datesrender', info);
+        	}/* ,
+        	dayRenderCallBack: function(dayRenderInfo){
+        		
+        		var formattedDate = this.cal.formatDate(dayRenderInfo.date, {
+	    			year: 'numeric',
+	    			month: '2-digit',
+	    			day: 'numeric'
+	    		});
+        		dayRenderInfo.date = formattedDate;
+        		
+        		this.$emit('dayrender', dayRenderInfo);
+        	} */
         }
 	};
 

@@ -23,6 +23,33 @@ public class WtmCalendarController {
 	@Autowired
 	WtmCalendarService wtmCalendarService;
 	
+	/**
+	 * 달력 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getCalendar(@RequestParam Map<String, Object> paramMap
+													   		 , HttpServletRequest request) throws Exception {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String userKey = sessionData.get("userKey").toString();
+		String enterCd = null;
+		String bisinessPlaceCd = null;
+		if(sessionData.get("enterCd")!=null)
+			enterCd = sessionData.get("enterCd").toString();
+		if(sessionData.get("bisinessPlaceCd")!=null)
+			bisinessPlaceCd = sessionData.get("bisinessPlaceCd").toString();
+		
+		Map<String, Object> resultMap = wtmCalendarService.getCalendar(tenantId, enterCd, bisinessPlaceCd, paramMap);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println("result : " + mapper.writeValueAsString(resultMap));
+
+		return resultMap;
+	}
 	
 	/**
 	 * 근태 달력 조회
@@ -31,7 +58,7 @@ public class WtmCalendarController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/worktime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> getWorkTimeCalendar(@RequestParam Map<String, Object> paramMap
 													   				 , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());

@@ -41,7 +41,7 @@
             </a>
             <ul class="collapse list-unstyled" id="pageSubmenu">
                 <li>
-                    <a href="#"><span>Page 1</span></a>
+                    <a href="${rc.getContextPath()}/${tsId}/views/workTimeCalendar"><span>유연근무제 신청</span></a>
                 </li>
                 <li>
                     <a href="#"><span>Page 2</span></a>

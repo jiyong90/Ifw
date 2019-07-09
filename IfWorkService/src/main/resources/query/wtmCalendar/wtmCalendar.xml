@@ -3,7 +3,28 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="com.isu.ifw.mapper.WorkTimeCalendarMapper">
+<mapper namespace="com.isu.ifw.mapper.WtmCalendarMapper">
+	<select id="getCalendar" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT F_DATE_FORMAT(d.SUN_YMD,'%Y-%m-%d') as sunYmd
+			     , d.DAY_NM as dayNm
+			     , d.NOTE as note
+			     , F_DATE_FORMAT(d.MOON_YMD,'%Y-%m-%d') as moonYmd
+			     , F_DATE_FORMAT(h.HOLIDAY_YMD,'%Y-%m-%d') as holidayYmd
+			     , h.HOLIDAY_NM as holidayNm
+			  FROM WTM_DAY_MGR d
+			  LEFT OUTER JOIN WTM_HOLIDAY_MGR h
+			    ON 'Y' = ( CASE WHEN h.SUN_YN = 'Y' AND d.SUN_YMD = h.HOLIDAY_YMD THEN 'Y'
+			                    WHEN h.SUN_YN = 'N' AND d.MOON_YMD = h.HOLIDAY_YMD THEN 'Y'
+			                    ELSE 'N' END ) 
+			 WHERE (h.TENANT_ID IS NULL OR h.TENANT_ID = #{tenantId})
+			   AND (#{enterCd, jdbcType=VARCHAR} IS NULL OR h.ENTER_CD IS NULL OR h.ENTER_CD = #{enterCd, jdbcType=VARCHAR})
+			   AND (#{bisinessPlaceCd, jdbcType=VARCHAR} IS NULL OR h.BISINESS_PLACE_CD IS NULL OR h.BISINESS_PLACE_CD = #{bisinessPlaceCd, jdbcType=VARCHAR})
+			   AND F_DATE_FORMAT(F_TO_DATE(SUN_YMD,'%Y%m%d'),'%Y%m') = #{ym}
+			ORDER BY d.SUN_YMD
+        ]]>
+    </select>
+
     <select id="getWorkTimeCalendar" parameterType="map" resultType="hashmap">
         <![CDATA[
 			select info_key

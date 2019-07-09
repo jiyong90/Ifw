@@ -1,7 +1,10 @@
 package com.isu.ifw.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,16 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.auth.config.AuthConfigProvider;
 import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
+import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
 //@RequestMapping(value="/resource")
 public class ViewController {
 	
 	private StringUtil stringUtil;
+	
+	@Autowired
+	private TenantConfigManagerService tcms;
 	
 	@Autowired
 	AuthConfigProvider authConfigProvider;
@@ -48,6 +56,15 @@ public class ViewController {
         AuthConfig authConfig = authConfigProvider.initConfig(tenantId, tsId);
         
 		mv.addObject("AUTH_CONFIG", authConfig);
+		
+		String company = tcms.getConfigValue(tenantId, "WTMS.LOGIN.COMPANY_LIST", true, "");
+        List<Map<String, Object>> companyList = new ArrayList<Map<String, Object>>();
+        
+        ObjectMapper mapper = new ObjectMapper();
+        if(company != null && !"".equals(company)) 
+        	companyList = mapper.readValue(company, new ArrayList<Map<String, Object>>().getClass());
+        mv.addObject("companyList", companyList);
+        
 		return mv;
 	}
 	
@@ -74,7 +91,8 @@ public class ViewController {
 	
 	@GetMapping(value = "/{tsId}")
 	public ModelAndView login(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return main(tsId, request);
+		//return main(tsId, request);
+		return views(tsId, "main");
 	}
 	
 	@GetMapping(value="/{tsId}/main")
@@ -85,9 +103,23 @@ public class ViewController {
 	}
 	
 	@RequestMapping(value = "/{tsId}/{viewPage}", method = RequestMethod.GET)
-	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
+	public ModelAndView viewPage(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
 		ModelAndView mv = new ModelAndView(viewPage);
 		mv.addObject("tsId", tsId);
+		
+		Calendar date = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date.getTime());
+		mv.addObject("today", today);
+		
+		return mv;
+	}
+	
+	@RequestMapping(value = "/{tsId}/views/{viewPage}", method = RequestMethod.GET)
+	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
+		ModelAndView mv = new ModelAndView("template");
+		mv.addObject("tsId", tsId);
+		mv.addObject("pageName", viewPage);
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
