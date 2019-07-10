@@ -14,7 +14,6 @@
             <footer class="text-center mt-auto pt-4">Copyright © 2019 ISUSYSTEM. All rights reserved</footer>
         </div>
     </div>
-    <#include "/metaScript.ftl">
     <script type="text/javascript">
         $(function () {
             $('#sidebarCollapse').on('click', function () {
