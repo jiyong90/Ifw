@@ -10,6 +10,7 @@ import java.security.cert.CertificateException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,6 +44,7 @@ import com.isu.auth.dao.TenantDao;
 import com.isu.auth.entity.CommTenantModule;
 import com.isu.auth.repository.CommTenantModuleRepository;
 import com.isu.auth.service.OAuthService;
+import com.isu.ifw.LogUtil;
 import com.isu.ifw.StringUtil;
 import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
@@ -52,7 +55,7 @@ import com.isu.option.util.Sha256;
 @RestController
 public class IfwLoginController {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
 
 	private StringUtil stringUtil;
 	
@@ -84,9 +87,11 @@ public class IfwLoginController {
 	@RequestMapping(value = "/login/certificate/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void loginForRecruitManagement(@PathVariable String tsId, HttpServletRequest request,
 										  HttpServletResponse response, RedirectAttributes redirectAttr) {
-	
-		logger.debug("test");
-		System.out.println("call /login/certificate/" + tsId);
+
+		MDC.put("sessionId", request.getSession().getId());
+		MDC.put("logId", UUID.randomUUID().toString());
+		MDC.put("type", "C");
+		logger.debug("loginController Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 		
 		AuthConfig authConfig = null;
 		try {
@@ -112,10 +117,14 @@ public class IfwLoginController {
 			request.setAttribute("tenantId", tenantId);
 			request.setAttribute("tenantModuleId", tenantModuleId);
 			request.setAttribute("tsId", tsId);
-			
+		
 			// 기타 정보 제공자를 찾는다.
 			authConfig = authConfigProvider.initConfig(tenantId, tsId);
-
+			MDC.put("tenantId", String.valueOf(tenantId));
+	    	MDC.put("enterCd", request.getParameter("companyCd"));
+	    	MDC.put("userId", request.getParameter(authConfig.getLoginIdParameterName()));
+	    	    	
+	    	
 			String passwordParamName = authConfig.getPasswordParameterName();
 			if(passwordParamName == null) passwordParamName = "password";
 			
@@ -137,12 +146,12 @@ public class IfwLoginController {
 
 			// 인증방법에 따라 적합한 방식을 사용한다.
 			if (AuthConfig.CERTIFICATE_TYPE_REST.equalsIgnoreCase(certificateMethod)) {
+				MDC.put("loginType", AuthConfig.CERTIFICATE_TYPE_REST);
 				RestEndpoint rep = (RestEndpoint) authConfig.getCertificationEndpoint();
 				//널이면 데이터베이스에서 URL를 가지고 오자
 				int method;
 				String endPointUrl = "";
 				if(rep == null) {
-					
 					endPointUrl = tcms.getConfigValue(tenantId, "WTMS.LOGIN.CERTIFICATE_ENDPOINT", true, "");
 					String m = tcms.getConfigValue(tenantId, "WTMS.LOGIN.CERTIFICATE_ENDPOINT_METHOD", true, "");;
 					if(m.equalsIgnoreCase("POST")) {
@@ -191,97 +200,45 @@ public class IfwLoginController {
 					}
 					
 					Map<String, String> requestMap = new HashMap<String, String>();
-					//requestMap.put("loginEnterCd", "SIM");
-					//requestMap.put("locale", "ko_KR");
 					Enumeration<String> itor = request.getParameterNames();
 					while(itor.hasMoreElements()) {
 						String k = itor.nextElement();
 						requestMap.put(k, request.getParameter(k));
 					}
 					
-//					
-//					requestMap.put("loginId", request.getParameter("loginId"));
-//
-//					String password = (String) userData.get("password");
-//
-//					String encKey = authConfig.getEncryptKey();
-//					int repeatCount = authConfig.getHashIterationCount();
-//
-//					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
-//
-//					requestMap.put("password", requestedPassword);
-//					requestMap.put("tenantId", tm.getTenantId().toString());
-//					requestMap.put("tenantModuleId", tm.getTenantModuleId().toString());
-//					
-					
+					MDC.put("requestMap", requestMap.toString());					
+			
 					try {
 						responseEntity = restTemplate.postForEntity(endPointUrl, requestMap, String.class);
 						Map<String, Object> responseMap = mapper.readValue(responseEntity.getBody(), new HashMap<>().getClass());
-						
+						MDC.put("responseMap", responseMap.toString());
 					} catch (Exception e) {
+						logger.warn("certificateError", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 						request.setAttribute("certificateError", "서버 접속 시 에러가 발생했습니다.");
 						request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
 						return;
 					}
-					
-//					
-//					if(responseMap.get("status").toString().equalsIgnoreCase("FAIL")){
-//						logger.debug("authConfig.getLoginPageEndpoint().getUrl() : " + authConfig.getLoginPageEndpoint().getUrl());
-//						request.setAttribute("certificateError", responseMap.get("message").toString());
-//						request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
-//						return;
-//					}
-//					
 				}
 				// 정상 처리가 안된 모든 경우에 대해 오류 처리함
-				//logger.debug("HttpStatus:" + responseEntity.getStatusCode());
 				if (responseEntity.getStatusCode() != HttpStatus.OK) {
+					logger.warn("certificateError responseEntity " + responseEntity.getStatusCode(),  MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));					
 					request.setAttribute("certificateError", "로그인에 실패했습니다");
 					request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
 				}
-				//logger.debug("pass1:");
-				// logger.debug("this.getClass():"+this.getClass());
-				// if(this.getClass() != null){
-				// response.sendRedirect("http://www.naver.com");
-				// return;
-				// }
 
 				// 결과를 Map형태로 반환
 				Map<String, Object> responseData = null;
 				String responseBody = responseEntity.getBody();
-				
 
 				try {
 					responseData = mapper.readValue(responseBody, new HashMap().getClass());
-					// 만일 결과가 null이 아니라면 status를 찾는다.
-//					if (responseData != null && responseData.containsKey("status")) {
-//						String status = (String) responseData.get("status");
-//						if (!"OK".equals(status)) {
-//							
-//							logger.debug(" isViolated ===================================>>1");
-//							logger.debug(" isViolated ===================================>>1");
-//							isViolated =false;
-//							request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
-//							// response.sendRedirect(authConfig.getLoginPageEndpoint().getUrl());
-//							logger.debug(" isViolated ===================================>>2");
-//							logger.debug(" isViolated ===================================>>2");
-//							
-//							return;
-//														
-//							//throw new CertificateException("사용자가 없거나, 인증에 실패했습니다.");
-//						}
-//							
-//					} 
-					//userData = (Map<String, Object>) ((Map<String, Object>) responseData.get("result")).get("sessionData"); // 이 중 일부를 발췌해야 할 수도 있음.
-					//userData.put("userKey", userData.get("id"));
-					
+					MDC.put("responseData", responseData.toString());
 					if(responseData.containsKey("message")) {
 						if(responseData.get("message") != null && !"".equals(responseData.get("message"))) {
 							request.setAttribute("certificateError", responseData.get("message"));
 							request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
 							return;
 						}
-							
 					}
 					
 					userData = (Map<String, Object>) responseData.get("userData");
@@ -290,10 +247,12 @@ public class IfwLoginController {
 					
 				} catch (Exception e) {
 					e.printStackTrace();
+					logger.warn("사용자가 없거나, 인증에 실패했습니다.", e);
 					throw new CertificateException("사용자가 없거나, 인증에 실패했습니다.");
 				}
 			} else if (AuthConfig.CERTIFICATE_TYPE_SQL.equalsIgnoreCase(certificateMethod)) {
 				String query = authConfig.getCertificateQuery();
+				MDC.put("query", query);
 				Enumeration<String> paramKeys = request.getParameterNames();
 		
 				while (paramKeys.hasMoreElements()) {
@@ -302,23 +261,17 @@ public class IfwLoginController {
 					if (paramMap == null)
 						paramMap = new HashMap<String, Object>();
 					
-					//id는 DB로 암호화
-//					if((paramKey.toUpperCase()).endsWith("ID")) {
-//						String encParam = request.getParameter(paramKey);
-//						encParam = DBEncryptDecryptModule.encrypt(encParam);
-//						paramMap.put(paramKey, encParam);
-//						loginId = encParam;
-//					}else {
-						paramMap.put(paramKey, request.getParameter(paramKey));
-//					}
-		
+					paramMap.put(paramKey, request.getParameter(paramKey));
 				}
+				MDC.put("paramMap", paramMap.toString());
 				
 				System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
 				 
 				try {
 					userData = tenantDao.getUserInfo(query, tenantId, paramMap);
+					MDC.put("userData", userData.toString());
 				} catch (Exception e) {
+					logger.warn("등록된 이메일이 없습니다.",  MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 					request.setAttribute("certificateError", "등록된 이메일이 없습니다.");
 					request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
 					return;
@@ -329,11 +282,6 @@ public class IfwLoginController {
 					boolean validYn = true;
 					String msg = "";
 					String password = (String) userData.get("password");
-		
-//					String encKey = authConfig.getEncryptKey();
-//					int repeatCount = authConfig.getHashIterationCount();
-	//	
-//					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
 					
 					paramMap.put("encryptStr", requestedPassword);
 					Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
@@ -345,35 +293,20 @@ public class IfwLoginController {
 					if(userData.containsKey("account_lockout_yn") && "Y".equals(userData.get("account_lockout_yn"))) {
 						validYn = false;
 						msg = "계정잠김 : 비밀번호를 변경하세요.";
+						logger.warn("계정잠김",  MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 					}
 					
-//					if(userData.containsKey("valid_yn") && "N".equals(userData.get("valid_yn"))) {
-//						validYn = false;
-//						msg = "휴면계정 : 비밀번호를 변경하세요.";
-//					}
-					
 					if(password == null || !password.equals(requestedPassword)){
-						//throw new CertificateException("사용자가 없거나, 인증에 실패했습니다.");
 						validYn = false;
 						msg = "사용자가 없거나, 인증에 실패했습니다.";
-						
-//						userMgrService.loginFailureCountUp(loginId, tenantId);
-//						int wrongCount = userMgrService.getLoginFailureCount(loginId, tenantId);
-//						if(wrongCount > 4) {
-//							userMgrService.accountLockOut(loginId, tenantId);
-//							msg = "계정잠김 : 비밀번호를 변경하세요.";
-//						} else {
-//							msg =  wrongCount + "회 로그인 실패! " +  "ID 또는 비밀번호를 다시 확인하세요.";
-//						}
 					}
 					
 					if(!validYn) {
+						logger.warn(msg, MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 						request.setAttribute("certificateError", msg);
 						request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
 						return;
 					} else {
-//						userMgrService.loginFailureCountInit(loginId, tenantId);
-//						userMgrService.renewLastLoginTime(loginId, tenantId);
 					}
 				}
 				
@@ -392,29 +325,17 @@ public class IfwLoginController {
 				}
 			}
 			
-			// 추가로 (외부 서비스에서)세션 데이터로 집어 넣어야 할 데이터를 요청받아 넣는다.
-
-			RestEndpoint rp = (RestEndpoint) authConfig.getSessionInformationEndpoint();
-			//logger.debug("pass2:");
-	
-			if (rp != null && rp.getUrl() != null) {
-				Map<String, Object> extendedSessionData = authService.getMapFromEndpoint(rp, paramMap);
-				
-				// 이미 구성된 세션 정보에 추가로 값을 더 넣는다.
-				if (extendedSessionData != null) {
-					userData.putAll(extendedSessionData);
-				}
-			}
 			// 만일 위의 과정에서 로그인 id가 (의도한)조작에 의해 바뀔 수 있으면 바꾼다.
 			if (userData != null && userData.containsKey("loginId")) {
 				loginId = (String) userData.get("loginId");
 			}
 			
-			// Map 데이터를 세션 DB에 넣는다.
-			//userData.put("clientIp", stringUtil.getClientIP(request));
+			if(request.getParameter("companyCd") != null) {
+				userData.put("enterCd", request.getParameter("companyCd"));
+			}
 			
 			String userToken = oAuthService.createNewOAuthSession(tsId, userData, null);
-			//logger.debug("+++userToken+++ : " + userToken);
+			MDC.put("userToken", userToken);
 			// 세션 아이디를 담는 쿠키 생성
 			Cookie cookie = null;
 			cookie = new Cookie("userToken", userToken);
@@ -423,6 +344,7 @@ public class IfwLoginController {
 			response.addCookie(cookie);
 
 			session.setAttribute("loginIp", stringUtil.getClientIP(request));
+			session.setAttribute("enterCd", request.getParameter("companyCd"));
 			
 			String endPointUrl = (String) request.getParameter("o");
 			//2018.03.16
@@ -441,6 +363,8 @@ public class IfwLoginController {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.warn(e.toString(), e);
+			
 			String endPointUrl = authConfig.getMainPageEndpoint().getUrl(); //"/login/" + tsId;
 			endPointUrl = stringUtil.appendUri(request, endPointUrl, request.getQueryString()).toString();
 			
@@ -452,9 +376,12 @@ public class IfwLoginController {
 			try {
 				response.sendRedirect(endPointUrl);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				logger.warn(e1.toString(), e);
 				e1.printStackTrace();
 			}
+		} finally {
+			logger.info("loginController End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			MDC.clear();
 		}	
 		
 	}

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/${LOG_FILE}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+       		<layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+         	   <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSSX</timestampFormat>
+               <timestampFormatTimezoneId>Etc/UTC</timestampFormatTimezoneId>
+               <appendLineSeparator>false</appendLineSeparator>
+         	   <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+         	   		<prettyPrint>true</prettyPrint>
+         	   </jsonFormatter>
+            </layout>
+        </encoder>
+    </appender>
+
+    <springProperty name="spring.datasource.driverClassName" source="spring.datasource.hikari.driverClassName"/>
+	<springProperty name="spring.datasource.jdbcUrl" source="spring.datasource.hikari.jdbcUrl"/>
+	<springProperty name="spring.datasource.username" source="spring.datasource.hikari.username"/>
+	<springProperty name="spring.datasource.password" source="spring.datasource.hikari.password"/>
+
+	<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+		<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+			<driverClass>${spring.datasource.driverClassName}</driverClass>
+			<url>${spring.datasource.jdbcUrl}</url>
+			<user>${spring.datasource.username}</user>
+			<password>${spring.datasource.password}</password>
+		</connectionSource>
+	</appender>
+	
+	<appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold> <!-- default 20, means drop lower event when has 20% capacity remaining -->
+        <appender-ref ref="DB" />
+        <queueSize>512</queueSize> <!-- default 256 -->
+        <includeCallerData>false</includeCallerData><!-- default false -->
+        <maxFlushTime>60000</maxFlushTime>
+        <neverBlock>false</neverBlock><!-- default false, set to true to cause the 
+            Appender not block the application and just drop the messages -->
+    </appender>
+
+	<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+		<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+			<driverClass>${spring.datasource.driverClassName}</driverClass>
+			<url>${spring.datasource.jdbcUrl}</url>
+			<user>${spring.datasource.username}</user>
+			<password>${spring.datasource.password}</password>
+		</connectionSource>
+	</appender>
+
+	<appender name="DB2" class="ch.qos.logback.access.db.DBAppender">
+		<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+			<driverClass>${spring.datasource.driverClassName}</driverClass>
+			<url>${spring.datasource.jdbcUrl}</url>
+			<user>${spring.datasource.username}</user>
+			<password>${spring.datasource.password}</password>
+		</connectionSource>
+	</appender>
+
+
+	<logger name="ifwDBLog" level="DEBUG">
+		<appender-ref ref="ASYNC" />
+		<appender-ref ref="FILE_JSON" />
+		<appender-ref ref="DB2" />
+	</logger>
+
+	<root level="DEBUG">
+        <appender-ref ref="CONSOLE"/> 
+    </root>
+
+</configuration>
