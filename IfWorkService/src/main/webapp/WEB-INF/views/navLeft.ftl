@@ -1,77 +1,45 @@
-<nav id="sidebar">
-    <div class="sidebar-header">
-        <a href="#">
-            <h3 class="full-logo CTAs"><img src="${rc.getContextPath()}/soldev/img/logo_ko_60px.png" alt=""></h3>
-            <strong class="logo text-center"><img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt=""></strong>
-        </a>
-    </div>
-
+<nav id="sidebar" class="active">
     <ul class="list-unstyled components">
-        <li>
-            <a href="#">
-                <i class="fas fa-user-cog"></i>
-                <span>나의 정보</span>
-            </a>
-        </li>
-        <li class="active">
+        <!-- <li class="active">
             <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                 <i class="fas fa-home"></i>
-                <span>Home</span>
+                Home
             </a>
             <ul class="collapse list-unstyled" id="homeSubmenu">
                 <li>
-                    <a href="#"><span>Home 1</span></a>
+                    <a href="#">Home 1</a>
                 </li>
                 <li>
-                    <a href="#"><span>Home 2</span></a>
+                    <a href="#">Home 2</a>
                 </li>
                 <li>
-                    <a href="#"><span>Home 3</span></a>
+                    <a href="#">Home 3</a>
                 </li>
             </ul>
-        </li>
-        <li>
+        </li> -->
+        <li class="active">
             <a href="#">
-                <i class="fas fa-briefcase"></i>
-                <span>About</span>
-            </a>
-            <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                <i class="fas fa-copy"></i>
-                <span>Pages</span>
-            </a>
-            <ul class="collapse list-unstyled" id="pageSubmenu">
-                <li>
-                    <a href="${rc.getContextPath()}/${tsId}/views/workTimeCalendar"><span>유연근무제 신청</span></a>
-                </li>
-                <li>
-                    <a href="#"><span>Page 2</span></a>
-                </li>
-                <li>
-                    <a href="#"><span>Page 3</span></a>
-                </li>
-            </ul>
-        </li>
-        
-        <li>
-            <a href="#">
-                <i class="fas fa-question"></i>
-                <span>FAQ</span>
+                <i class="fas fa-calendar-alt"></i>
+                <span class="title">나의 정보</span>
             </a>
         </li>
-        <li>
+        <li class="">
             <a href="#">
-                <i class="fas fa-paper-plane"></i>
-                <span>Contact</span>
+                <i class="fas fa-calendar-alt"></i>
+                <span class="title">결재</span>
             </a>
+        </li>
+        <li class="">
+            <a href="${rc.getContextPath()}/${tsId}/views/workTimeCalendar"><span>유연근무제 신청</span></a>
         </li>
     </ul>
 
-        <!-- <ul class="list-unstyled CTAs">
-    <li>
-        <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
-    </li>
-    <li>
-        <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
-    </li>
+    <!-- <ul class="list-unstyled CTAs">
+        <li>
+            <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+        </li>
+        <li>
+            <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+        </li>
     </ul> -->
 </nav>
