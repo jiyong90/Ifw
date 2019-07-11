@@ -11,7 +11,6 @@
         <#include "/navLeft.ftl">
         <div id="content">
             <#include "/${pageName}.ftl">
-            <#include "/navLeft.ftl">
             <#include "/footer.ftl">
         </div>
     </div>
