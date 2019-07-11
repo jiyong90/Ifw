@@ -9,7 +9,6 @@
 	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog">
         <div class="modal-dialog " role="document">
             <div class="modal-content">
-                <!-- alert 메세지일 경우, header 생략 -->
                 <!-- <div class="modal-header">
     	                <h5 class="modal-title"></h5>
     	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
