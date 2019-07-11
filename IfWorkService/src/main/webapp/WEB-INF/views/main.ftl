@@ -15,10 +15,27 @@
 	            </div>
 	            <div class="modal-body">
 	                <p>사용할 근무제를 선택하세요.</p>
+	                <div class="mt-2">
+	                	<button class="btn btn-outline btn-flat btn-block text-left" type="button" data-toggle="collapse" data-target="#collapWork" aria-expanded="false" aria-controls="collapseExample">근무제</button>
+                        <div class="collapse" id="collapWork">
+                            <ul class="list-group select-work-list">
+                                <li class="list-group-item active">
+                                    <span class="tag part">부분</span>
+                                    <div class="title">이수 선근제 기본</div>
+                                    <div class="desc">근무구간: 08:00 ~ 22:00<span class="bar"></span>코어구간: 10:00 ~ 15:00</div>
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="tag full">부분</span>
+                                    <div class="title">이수연구직</div>
+                                    <div class="desc">근무구간: 08:00 ~ 22:00<span class="bar"></span>코어구간: 10:00 ~ 15:00</div>
+                                </li>
+                            </ul>
+                        </div>
+	                </div>
 	            </div>
 	            <div class="modal-footer">
 	                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-	                <button type="button" class="btn btn-default">적용하기</button>
+	                <button type="button" class="btn btn-default" disabled>적용하기</button>
 	            </div>
 	        </div>
 	    </div>
@@ -40,8 +57,8 @@
 	            </div>
 	            <div class="col">
 	            </div>
-	            <div class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-1">
-	                <div class="btn-wrap">
+	            <div class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+	                <div class="btn-wrap text-right">
 	                    <button type="button" class="btn btn-block btn-apply" data-toggle="modal" data-target="#workSystemModal">근무제 적용하기</button>
 	                </div>
 	            </div>
@@ -68,8 +85,8 @@
 	    </form>
 	</div>
 	<div class="container-fluid">
-	    <div class="row">
-	        <div class="col-12 col-md-3">
+                <div class="row no-gutters">
+                    <div class="col-12 col-md-3" style="padding-right:14px;">
 	            <div class="work-info-wrap">
 	                <div class="main-title">2019년 6월 10일 ~ 2019년 6월 16일</div>
 	                <div class="main-desc">일반근무제</div>
@@ -95,24 +112,55 @@
 	            <div class="work-plan-wrap">
 	                <ul class="main-wrap">
 	                    <li>
-	                        <div class="main-title"></div>
-	                        <div class="main-desc"></div>
+                                    <div class="main-title">해당일의 근무계획 구분</div>
+                                    <div class="main-desc">근무일</div>
 	                    </li>
 	                    <li>
-	                        <div class="main-title"></div>
-	                        <div class="main-desc"></div>
+                                    <div class="main-title">계획 근무시간</div>
+                                    <div class="main-desc">09:00 ~ 21:00 (10:00)</div>
 	                    </li>
 	                    <li>
-	                        <div class="main-title"></div>
-	                        <div class="main-desc"></div>
+                                    <div class="main-title">실적 근무시간</div>
+                                    <div class="main-desc">09:00 ~ 21:00 (10:00)</div>
 	                    </li>
 	                    <li>
-	                        <div class="main-title"></div>
-	                        <div class="main-desc"></div>
+                                    <div class="main-title">해당일 근태</div>
+                                    <div class="main-desc">연차, 반차</div>
 	                    </li>
 	                </ul>
 	                <div class="sub-wrap">
-	
+                                <div class="sub-big-title">근무시간 요약 (근무시간 분류별 합산)</div>
+                                <li>
+                                    <span class="sub-title">소정근로</span>
+                                    <span class="sub-desc">8:00</span>
+                                </li>
+                                <li>
+                                    <span class="sub-title">연장근로</span>
+                                    <span class="sub-desc">2:00</span>
+                                    <ul class="sub-desc-list">
+                                        <li>
+                                            <span class="sub-title">일반연장</span>
+                                            <span class="sub-desc">1:00</span>
+                                        </li>
+                                        <li>
+                                            <span class="sub-title">야간근무</span>
+                                            <span class="sub-desc">1:00</span>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span class="sub-title">근태현황</span>
+                                    <ul class="sub-desc-list">
+                                        <li>
+                                            <span class="sub-title">오후반차</span>
+                                            <span class="sub-desc">4:00</span>
+                                        </li>
+                                        <li>
+                                            <span class="sub-title">외출</span>
+                                            <span class="sub-desc">2:00</span>
+                                        </li>
+                                    </ul>
+                                </li>
 	                </div>
 	            </div>
 	        </div>

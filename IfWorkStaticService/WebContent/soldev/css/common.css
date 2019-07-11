@@ -2,6 +2,9 @@
 
 /* S : bootstrap custom */
 /* button style */
+.btn-flat{
+  border-radius:0;
+}
 .btn-apply {
   color: #fff;
   background-color: #32c9b6;
@@ -14,9 +17,25 @@
   border-color: #26978a;
 }
 
+.btn-outline{
+  color: #c4c4c4;
+  border-color: #cfcfcf;
+}
+
+.btn-outline:hover {
+  color: #c4c4c4;
+}
+
 .btn-default {
   color: #ffffff;
   background-color: #4d84fe;
+  border-color: #3472f8;
+}
+
+.btn-default:hover {
+  color: #ffffff;
+  background-color: #4f7bd8;
+  border-color: #325fc0;
 }
 
 /*list style none*/
@@ -116,23 +135,109 @@ ul, ol, li{
 
 .work-plan-wrap{
   padding: 14px;
+  margin-top: 10px;
   background-color: #ffffff;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
-/* calendar */
+.work-plan-wrap .main-wrap{
+  text-align: left;
+}
+.work-plan-wrap .main-wrap li{
+  margin-top: 4px;
+}
+.work-plan-wrap .main-wrap li:first-child {
+  margin-top: 0px;
+}
+.work-plan-wrap .main-title{
+  font-size:10px;
+  line-height: 1.5;
+  letter-spacing: -0.5px;
+  color: #6b6b80;
+}
+.work-plan-wrap .main-desc{
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  color: #292944;
+}
+
+.select-work-list .list-group-item{
+  position: relative;
+}
+.select-work-list .list-group-item .tag{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display:inline-block;
+  width: 38px;
+  padding: 1px 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: #ffffff;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+.select-work-list .list-group-item .tag.part {
+  background-color:#32c9b6;
+}
+.select-work-list .list-group-item .tag.full {
+  background-color: #213977;
+}
+.select-work-list .list-group-item:first-child {
+  border-top-left-radius:0;
+  border-top-right-radius:0;
+}
+.select-work-list .list-group-item:last-child {
+  border-bottom-right-radius:0;
+  border-bottom-left-radius:0;
+}
+
+.select-work-list .list-group-item.active .title,
+.select-work-list .list-group-item.active .desc{
+  color:#ffffff;
+}
+.select-work-list .list-group-item.active .bar{
+  border-left: 0.5px solid #ffffff;
+  border-right: 0.5px solid #ffffff;
+}
+
+.select-work-list .list-group-item .title{
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  text-align: left;
+  color: #3e3e4c;
+}
+
+.select-work-list .list-group-item .desc {
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  color: #3e3e4c;
+}
+
+.select-work-list .list-group-item .bar{
+  height: 12px;
+  border-left: 0.5px solid #3e3e4c;
+  border-right: 0.5px solid #3e3e4c;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+  /* calendar */
 .calendar-wrap {
     position: relative;
     height: 80vh;
     background-color:#ffffff;
     border-top: 3px solid #4d84fe;
 }
+
 .calendar-wrap .fc-view-container{padding:0px 10px 10px;}
 
-
-
-
-/* Calendar */
 #calendar-container {
   position: absolute;
   top: 0;
