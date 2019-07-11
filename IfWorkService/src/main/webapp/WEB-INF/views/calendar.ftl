@@ -4,13 +4,18 @@
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
 
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/interaction/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/daygrid/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/timegrid/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/bootstrap/main.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/main.min.js'></script>
 <script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/locales-all.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/moment/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
+
 <script type="text/javascript">
 	
 	var fullCalendarComponent = {

@@ -1,10 +1,155 @@
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/interaction/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/daygrid/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/timegrid/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/bootstrap/main.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/main.min.js'></script>
 <script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/locales-all.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/moment/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['interaction', 'dayGrid', 'timeGrid', 'list', 'bootstrap', 'rrule', 'luxon'],
+            themeSystem: 'bootstrap',
+            height: 'parent',
+            locale: 'ko',
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            defaultView: 'dayGridMonth',
+            defaultDate: '2019-06-19',
+            navLinks: true, // can click day/week names to navigate views
+            selectable: true,
+            selectMirror: true,
+            select: function (arg) {
+                var title = prompt('시작일 지정');
+                if (title) {
+                    calendar.addEvent({
+                        title: title,
+                        start: arg.start,
+                        end: arg.end,
+                        allDay: arg.allDay,
+
+                    })
+                }
+                calendar.unselect();
+            },
+            // select: function(start, end) {
+            //     // Display the modal.
+            //     // You could fill in the start and end fields based on the parameters
+            //     $('.modal').modal('show');
+            // },
+            eventClick: function (event, element) {
+                // Display the modal and set the values to the event values.
+                $('.modal').modal('show');
+                $('.modal').find('#startDate').val(event.start);
+            },
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            events: [{
+                    title: 'Business Lunch',
+                    start: '2019-06-03T13:00:00',
+                    constraint: 'businessHours'
+                },
+
+                {
+                    title: 'Conference',
+                    start: '2019-06-18',
+                    end: '2019-06-20'
+                },
+                {
+                    title: 'Party',
+                    start: '2019-06-29T20:00:00'
+                },
+
+                // areas where "Meeting" must be dropped
+                {
+                    groupId: 'availableForMeeting',
+                    start: '2019-06-11T10:00:00',
+                    end: '2019-06-11T16:00:00',
+                    rendering: 'background'
+                },
+                {
+
+                    title: '출근',
+                    start: '2019-06-13T10:00:00',
+                    end: '2019-06-13T16:00:00',
+                    rendering: 'background',
+                    color: 'red',
+
+                },
+
+                // red areas where no events can be dropped
+                {
+                    start: '2019-06-24',
+                    end: '2019-06-28',
+                    overlap: true,
+                    rendering: 'background',
+                    color: '#ff9f89'
+                },
+                {
+                    title: 'test',
+                    start: '2019-06-06',
+                    end: '2019-06-08',
+                    overlap: false,
+                    rendering: 'background',
+                    color: '#ff9f89'
+                },
+                {
+                    title: 'Business Lunch',
+                    start: '2019-06-03T13:00:00',
+                    constraint: 'businessHours'
+                },
+
+                {
+                    title: 'Conference',
+                    start: '2019-06-18',
+                    end: '2019-06-20'
+                },
+                {
+                    title: 'Party',
+                    start: '2019-06-29T20:00:00'
+                },
+
+                // areas where "Meeting" must be dropped
+                {
+                    groupId: 'availableForMeeting',
+                    start: '2019-06-11T10:00:00',
+                    end: '2019-06-11T16:00:00',
+                    rendering: 'background'
+                },
+
+                // red areas where no events can be dropped
+                {
+                    title: '출근',
+                    start: '2019-06-24',
+                    end: '2019-06-28',
+                    overlap: true,
+                    rendering: 'background',
+                    color: '#ff9f89'
+                },
+                {
+                    start: '2019-06-06',
+                    end: '2019-06-08',
+                    overlap: true,
+                    rendering: 'background',
+                    color: '#ff9f89'
+                }
+            ]
+
+        });
+
+        calendar.render();
+    });
+</script>
+
 <div class="modal fade" id="workSystemModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -145,154 +290,4 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-	document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-        plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list', 'bootstrap'],
-        themeSystem: 'bootstrap',
-        height: 'parent',
-        locale: 'ko',
-        header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-        },
-        defaultView: 'dayGridMonth',
-        defaultDate: '2019-06-19',
-        navLinks: true, // can click day/week names to navigate views
-        selectable: true,
-        selectMirror: true,
-        select: function(arg) {
-            var title = prompt('시작일 지정');
-            if (title) {
-                calendar.addEvent({
-                    title: title,
-                    start: arg.start,
-                    end: arg.end,
-                    allDay: arg.allDay,
-                    
-                })
-            }
-            calendar.unselect();
-        },
-        // select: function(start, end) {
-        //     // Display the modal.
-        //     // You could fill in the start and end fields based on the parameters
-        //     $('.modal').modal('show');
-        // },
-        eventClick: function(event, element) {
-            // Display the modal and set the values to the event values.
-            $('.modal').modal('show');
-            $('.modal').find('#startDate').val(event.start);
-        },
-        editable: true,
-        eventLimit: true, // allow "more" link when too many events
-        events: [
-            {
-                title: 'Business Lunch',
-                start: '2019-06-03T13:00:00',
-                constraint: 'businessHours'
-            },
-             
-            {
-                title: 'Conference',
-                start: '2019-06-18',
-                end: '2019-06-20'
-            },
-            {
-                title: 'Party',
-                start: '2019-06-29T20:00:00'
-            },
-
-            // areas where "Meeting" must be dropped
-            {
-                groupId: 'availableForMeeting',
-                start: '2019-06-11T10:00:00',
-                end: '2019-06-11T16:00:00',
-                rendering: 'background'
-            },
-            {
-                groupId: 'availableForMeeting',
-                start: '2019-06-13T10:00:00',
-                end: '2019-06-13T16:00:00',
-                rendering: 'background'
-            },
-
-            // red areas where no events can be dropped
-            {
-                start: '2019-06-24',
-                end: '2019-06-28',
-                overlap: true,
-                rendering: 'background',
-                color: '#ff9f89'
-            },
-            {
-                start: '2019-06-06',
-                end: '2019-06-08',
-                overlap: false,
-                rendering: 'background',
-                color: '#ff9f89'
-            },
-            {
-                title: 'Business Lunch',
-                start: '2019-06-03T13:00:00',
-                constraint: 'businessHours'
-            },
-            
-            {
-                title: 'Conference',
-                start: '2019-06-18',
-                end: '2019-06-20'
-            },
-            {
-                title: 'Party',
-                start: '2019-06-29T20:00:00'
-            },
-
-            // areas where "Meeting" must be dropped
-            {
-                groupId: 'availableForMeeting',
-                start: '2019-06-11T10:00:00',
-                end: '2019-06-11T16:00:00',
-                rendering: 'background'
-            },
-            {
-                title: '출근',
-                start: '2019-06-13T10:00:00',
-                end: '2019-06-13T10:20:00',
-                overlap: false,
-                rendering : 'background',
-                color : 'red'
-            },
-            {
-                title: '출근',
-                start: '2019-06-13T10:00:00',
-                end: '2019-06-13T10:05:00',
-                overlap: true,
-                color : 'blue'
-            },
-
-            // red areas where no events can be dropped
-            {
-                start: '2019-06-24',
-                end: '2019-06-28',
-                overlap: true,
-                rendering: 'background',
-                color: '#ff9f89'
-            },
-            {
-                start: '2019-06-06',
-                end: '2019-06-08',
-                overlap: true,
-                rendering: 'background',
-                color: '#ff9f89'
-            }
-            ]
-        });
-
-        calendar.render();
-	});
-</script>
 

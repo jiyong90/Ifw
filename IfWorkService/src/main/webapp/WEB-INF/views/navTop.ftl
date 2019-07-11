@@ -5,7 +5,7 @@
     </button> -->
 
     <h1 class="logo">
-        <a href="#">
+        <a href="${rc.getContextPath()}/${tsId}/">
             <img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
         </a>
     </h1>
@@ -26,7 +26,7 @@
                 <a class="" href="#"><i class="fas fa-power-off"></i></a>
             </li>
             <li class="nav-item">
-                 <a class="nav-link" href="#" onClick="location.href='${rc.getContextPath()}/logout/${tsId}';"><span class="icon-wrap mr-sm-2"><i class="fas fa-power-off"></i></span><span>로그아웃</span></a>
+            	<a class="" href="location.href='${rc.getContextPath()}/logout/${tsId}'"><i class="fas fa-power-off"></i>로그아웃</a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
