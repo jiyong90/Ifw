@@ -4,6 +4,11 @@
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
     </appender>
 
     <appender name="FILE_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -70,11 +75,8 @@
 		</connectionSource>
 	</appender>
 
-
 	<logger name="ifwDBLog" level="DEBUG">
 		<appender-ref ref="ASYNC" />
-		<appender-ref ref="FILE_JSON" />
-		<appender-ref ref="DB2" />
 	</logger>
 
 	<root level="DEBUG">
