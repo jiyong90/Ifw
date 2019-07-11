@@ -44,7 +44,6 @@ import com.isu.auth.dao.TenantDao;
 import com.isu.auth.entity.CommTenantModule;
 import com.isu.auth.repository.CommTenantModuleRepository;
 import com.isu.auth.service.OAuthService;
-import com.isu.ifw.LogUtil;
 import com.isu.ifw.StringUtil;
 import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
