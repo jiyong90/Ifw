@@ -158,11 +158,18 @@
 				var calendarOptions = $this.calOptions;
 				
 				calendarOptions.datesRender = function(info){
-					$this.datesRenderCallBack(info);
-				}
+					$this.datesRenderCallback(info);
+				};
 				//calendarOptions.dayRender = function(dayRenderInfo){
-				//	$this.dayRenderCallBack(dayRenderInfo);
-				//}
+				//	$this.dayRenderCallback(dayRenderInfo);
+				//};
+				calendarOptions.select = function(info){
+					$this.selectCallback(info);
+				};
+				calendarOptions.eventClick = function(info){
+					$this.eventClickCallback(info);
+				};
+				
 				
 				$this.cal = new FullCalendar.Calendar(calendarEl,calendarOptions);
 				$this.cal.render();
@@ -176,10 +183,11 @@
         	renderCallback: function(){
         		this.$emit('update');
         	},
-        	datesRenderCallBack: function(info){
+        	datesRenderCallback: function(info){
         		this.$emit('datesrender', info);
-        	}/* ,
-        	dayRenderCallBack: function(dayRenderInfo){
+        	},
+        	/* ,
+        	dayRenderCallback: function(dayRenderInfo){
         		
         		var formattedDate = this.cal.formatDate(dayRenderInfo.date, {
 	    			year: 'numeric',
@@ -190,6 +198,13 @@
         		
         		this.$emit('dayrender', dayRenderInfo);
         	} */
+        	selectCallback: function(info){
+        		this.$emit('select', info);
+        	},
+        	eventClickCallback: function(info){
+        		this.$emit('eventclick', info);
+        	}
+        	
         }
 	};
 

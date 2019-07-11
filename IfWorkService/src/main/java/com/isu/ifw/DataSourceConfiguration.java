@@ -33,7 +33,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @EnableJpaRepositories(
 		entityManagerFactoryRef = "entityManager", 
 		transactionManagerRef = "jpaTransactionManager", 
-		basePackages = {"com.isu.auth", "com.isu.option", "com.isu.rem", "com.pb"}
+		basePackages = {"com.isu.auth", "com.isu.option", "com.isu.ifw", "com.pb"}
 )
 @MapperScan(	basePackages = {"com.isu.ifw.mapper"})
 public class DataSourceConfiguration {

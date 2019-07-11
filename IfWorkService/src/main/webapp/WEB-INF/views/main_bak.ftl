@@ -12,10 +12,10 @@
     <!-- E : calendar -->
 </head>
 <body>
+	<#include "/navTop.ftl">
     <div class="wrapper">
         <#include "/navLeft.ftl">
         <div id="content">
-            <#include "/navTop.ftl">
             <!-- <div class="navbar navbar-expand-lg navbar-light bg-light ">
                 <div class="container-fluid">
                     <form>
