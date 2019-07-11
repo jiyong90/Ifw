@@ -11,7 +11,8 @@
         <#include "/navLeft.ftl">
         <div id="content">
             <#include "/${pageName}.ftl">
-            <footer class="text-center mt-auto pt-4">Copyright © 2019 ISUSYSTEM. All rights reserved</footer>
+            <#include "/navLeft.ftl">
+            <#include "/footer.ftl">
         </div>
     </div>
     <script type="text/javascript">
