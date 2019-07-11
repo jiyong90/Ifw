@@ -17,9 +17,9 @@
     	                </button>
     	            </div> -->
                 <div class="modal-body">
-                    <p class="text-center">달력에서 근무제 시작일을 선택해주세요.</p>
+                    <p id="alertText" class="text-center"></p>
                 </div>
-                <div class="modal-footer text-center">
+                <div class="modal-body text-center">
                     <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
                 </div>
             </div>
