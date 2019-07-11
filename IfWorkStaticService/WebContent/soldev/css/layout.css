@@ -4,27 +4,32 @@ html {
     height: 100%;
 }
 
+/*layout*/
 .wrapper {
-    display: flex;
-    align-items: stretch;
+  display: flex;
+  width: 100%;
+  align-items: stretch;
 }
 
 /* ---------------------------------------------------
     GNB BAR STYLE
 ----------------------------------------------------- */
 .navbar {
-    padding: 10px;
+    height: 70px;
+    padding: 0px;
     background: #fff;
     border: none;
     border-radius: 0;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
-.navbar-btn {
-    box-shadow: none;
-    outline: none !important;
-    border: none;
-}
+.navbar  h1.logo{height:70px; padding-left:30px;}
+.navbar .logo a{display:inline-block; padding:20px 0px;}
+.navbar .logo a img{display:inline-block; width:auto; height:30px;}
+
 
 /* ---------------------------------------------------
     SIDEBAR STYLE (LEFT)
@@ -33,9 +38,10 @@ html {
 #sidebar {
   min-width: 250px;
   max-width: 250px;
-  background: #008FD4;
+  background: #4d84fe;
   color: #fff;
   transition: all 0.3s;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 
 #sidebar ul li a {
@@ -43,12 +49,14 @@ html {
 }
 
 #sidebar.active {
-  min-width: 80px;
-  max-width: 80px;
+  min-width: 100px;
+  max-width: 100px;
   text-align: center;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 
-#sidebar.active .sidebar-header h3,
 #sidebar.active .CTAs {
   display: none;
 }
@@ -66,18 +74,34 @@ html {
 
 
 #sidebar.active ul li a {
-  padding: 20px 10px;
+  padding: 25px 0px;
   text-align: center;
-  font-size: 0.85em;
-  color:#ffffff;
   text-decoration: none;
 }
 
 #sidebar.active ul li a i {
-  margin-right: 0;
   display: block;
   font-size: 1.8em;
-  margin-bottom: 5px;
+  margin-right:0px;
+  font-weight: 500;
+}
+
+#sidebar.active ul li a span.title {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.68;
+  letter-spacing: -0.6px;
+  color: #ffffff;
+}
+#sidebar.active ul li.active a span.title{
+  color: #4d84fe;
+}
+
+#sidebar.active ul li a:hover span.title {
+  color: #4d84fe;
 }
 
 #sidebar.active ul ul a {
@@ -93,31 +117,9 @@ html {
   transform: translateX(50%);
 }
 
-#sidebar.active .sidebar-header{
-  padding: 10px 0px;
-}
-
-#sidebar .sidebar-header {
-  padding: 10px;
-  background: #f5f5f5;
-}
-#sidebar .sidebar-header strong {
-  display: none;
-  font-size: 1.8em;
-}
-
-#sidebar .sidebar-header .full-logo {
-  line-height: 1;
-}
-
-#sidebar .sidebar-header .full-logo img {
-  display: inline-block;
-  width: auto;
-  height: 40px;
-}
 
 #sidebar ul.components {
-  padding: 20px 0;
+  padding: 0px;
 }
 
 #sidebar ul li a {
@@ -128,8 +130,15 @@ html {
 }
 
 #sidebar ul li a:hover {
-  color: #0E79B4;
+  color: #4d84fe;
   background: #fff;
+}
+
+#sidebar ul li a.dropdown-toggle{
+  color: #ffffff;
+}
+#sidebar ul li a.dropdown-toggle.collapsed {
+  color:#4d84fe;
 }
 
 #sidebar ul li a i {
@@ -138,8 +147,8 @@ html {
 
 #sidebar ul li.active>a,
 a[aria-expanded="true"] {
-  color: #fff;
-  background: #0E79B4;
+  color: #4d84fe;
+  background: #ffffff;
 }
 
 a[data-toggle="collapse"] {
@@ -189,9 +198,9 @@ a.article:hover {
 
 #content {
   width: 100%;
-  /* padding: 20px; */
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
   transition: all 0.3s;
+  background: #e2e5ed;
 }
 
 /* ---------------------------------------------------
@@ -262,7 +271,35 @@ a.article:hover {
   }
 }
 
-.inner-wrap {
-    position: relative;
-    height: 80vh;
+/* sub-nav */
+#sub-nav{
+  width:100%;
+  padding: 16px 20px 14px 24px;
+  margin-bottom: 14px;
+  background-color:#ffffff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+#sub-nav .work-time-wrap{
+  padding-bottom:17px;
+  border-bottom:1px solid #d2d2d2;
+  margin-bottom:10px;
+}
+#sub-nav .work-time-wrap .title{
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-align: left;
+  color: #6b6b80;
+}
+#sub-nav .work-time-wrap .desc{
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.43;
+  letter-spacing: normal;
+  text-align: left;
+  color: #292944;
 }

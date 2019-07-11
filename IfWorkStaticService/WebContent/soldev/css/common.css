@@ -1,5 +1,42 @@
 @charset "utf-8";
 
+/* S : bootstrap custom */
+/* padding */
+.row.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+
+  &>[class^="col-"],
+  &>[class*=" col-"] {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+/* button style */
+.btn-apply {
+  color: #fff;
+  background-color: #32c9b6;
+  border-color: #0bb39e;
+}
+
+.btn-apply:hover {
+  color: #fff;
+  background-color: #2aa89a;
+  border-color: #26978a;
+}
+
+.btn-primary {
+  color: #ffffff;
+  background-color: #4d84fe;
+}
+
+/*list style none*/
+ul, ol, li{
+  list-style: none;
+}
+/* E : bootstrap custom */
+
 .point-color{color:#DC3545;}
 .sub-title{font-size: 20px;}
 .sub-title .caution{display:inline-block; margin-left: 14px; font-size: 16px;}
@@ -43,6 +80,64 @@
   border-top-right-radius: 0;
 }
 .form-login .find-pw{display:inline-block; margin-left:auto;}
+
+
+/* main */
+.work-info-wrap{
+  padding:14px;
+  text-align: left;
+  background-color:#1f3b78;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+.work-info-wrap .main-title,
+.work-info-wrap .main-desc{
+  font-size: 12px;
+  font-weight: bold;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  color: #ffffff;
+}
+
+.work-info-wrap .sub-wrap{
+  margin-top: 8px;
+}
+
+.work-info-wrap .sub-wrap li{
+  margin-top:4px;
+}
+
+.work-info-wrap .sub-wrap li:first-child {
+  margin-top: 0px;
+}
+
+.work-info-wrap .sub-title{
+    font-size: 10px;
+    font-weight: normal;
+    line-height: 1.5;
+    letter-spacing: -0.5px;
+    color: #c6d2f2;
+}
+.work-info-wrap .sub-desc {
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+
+/* calendar */
+.calendar-wrap {
+    position: relative;
+    height: 80vh;
+    background-color:#ffffff;
+    border-top: 3px solid #4d84fe;
+}
+.calendar-wrap .fc-view-container{padding:0px 10px 10px;}
+
+
+
 
 /* Calendar */
 #calendar-container {

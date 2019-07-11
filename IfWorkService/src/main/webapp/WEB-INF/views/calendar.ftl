@@ -4,13 +4,18 @@
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
 
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/interaction/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/daygrid/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/timegrid/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.js'></script>
-<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/bootstrap/main.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/main.min.js'></script>
 <script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/locales-all.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/moment/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
+<script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
+
 <script type="text/javascript">
 	
 	var fullCalendarComponent = {
@@ -158,11 +163,18 @@
 				var calendarOptions = $this.calOptions;
 				
 				calendarOptions.datesRender = function(info){
-					$this.datesRenderCallBack(info);
-				}
+					$this.datesRenderCallback(info);
+				};
 				//calendarOptions.dayRender = function(dayRenderInfo){
-				//	$this.dayRenderCallBack(dayRenderInfo);
-				//}
+				//	$this.dayRenderCallback(dayRenderInfo);
+				//};
+				calendarOptions.select = function(info){
+					$this.selectCallback(info);
+				};
+				calendarOptions.eventClick = function(info){
+					$this.eventClickCallback(info);
+				};
+				
 				
 				$this.cal = new FullCalendar.Calendar(calendarEl,calendarOptions);
 				$this.cal.render();
@@ -176,10 +188,11 @@
         	renderCallback: function(){
         		this.$emit('update');
         	},
-        	datesRenderCallBack: function(info){
+        	datesRenderCallback: function(info){
         		this.$emit('datesrender', info);
-        	}/* ,
-        	dayRenderCallBack: function(dayRenderInfo){
+        	},
+        	/* ,
+        	dayRenderCallback: function(dayRenderInfo){
         		
         		var formattedDate = this.cal.formatDate(dayRenderInfo.date, {
 	    			year: 'numeric',
@@ -190,6 +203,13 @@
         		
         		this.$emit('dayrender', dayRenderInfo);
         	} */
+        	selectCallback: function(info){
+        		this.$emit('select', info);
+        	},
+        	eventClickCallback: function(info){
+        		this.$emit('eventclick', info);
+        	}
+        	
         }
 	};
 

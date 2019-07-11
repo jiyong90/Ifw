@@ -49,7 +49,6 @@ import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.vo.Login;
 import com.isu.option.service.TenantConfigManagerService;
-import com.isu.option.util.Sha256;
 
 @RestController
 public class IfwLoginController {

@@ -59,7 +59,7 @@
                 <div class="content inner-wrap">
                     <div id='calendar-container'>
                         <!-- <full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dayrender="dayRenderCallback"></full-calendar> -->
-                        <full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback"></full-calendar>
+                        <full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
                     </div>
                 </div>
             </div>
@@ -74,11 +74,41 @@
   				FullCalendar : fullCalendarComponent
   		    },
   		    data : {
-  		    	events: [{
-  	                title: 'Business Lunch',
-  	                start: '2019-07-03T13:00:00',
-  	                constraint: 'businessHours'
-  	            }]
+  		    	events: [
+  		    		{
+  		    			title: '점심시간',
+	  		    		start: '2019-07-10T12:00:00',
+	  		        	end: '2019-07-10T13:00:00',
+	  		        	rendering: 'background',
+	  		        	color: '#ff9f89'
+  		      		},
+  		    		{
+  		    			title: '휴식시간(무급)',
+	  		    		start: '2019-07-10T13:00:00',
+	  		        	end: '2019-07-10T13:30:00',
+	  		        	rendering: 'background',
+	  		        	color: '#ff9f89'
+  		      		},
+  		      		{
+  		                title: '소정근로시간',
+  		                start: '2019-07-10T13:30:00',
+  		                end: '2019-07-10T18:00:00',
+	  		        	color: 'blue'
+  		            },
+  		          	{
+  		    			title: '저녁시간',
+	  		    		start: '2019-07-10T18:00:00',
+	  		        	end: '2019-07-10T19:00:00',
+	  		        	rendering: 'background',
+	  		        	color: '#ff9f89'
+  		      		},
+  		      		{
+  		    			title: '일반 잔업',
+	  		    		start: '2019-07-10T18:50:00',
+	  		        	end: '2019-07-10T20:00:00',
+	  		        	color: 'red'
+  		      		}
+  		    	]
   		    },
   		    mounted: function(){
   		    	//var ym = '${today?date("yyyy-MM-dd")?string("yyyyMM")}';
@@ -120,6 +150,12 @@
 						}
 					});
   		    		}
+  		    	},
+  		    	selectCallback : function(info){
+  		    		console.log('select');
+  		    	},
+  		    	eventClickCallback : function(info){
+  		    		console.log('eventClick');
   		    	},
   		    	dayRenderCallback : function(dayRenderInfo){ //day render
   		    		var date = dayRenderInfo.date;
