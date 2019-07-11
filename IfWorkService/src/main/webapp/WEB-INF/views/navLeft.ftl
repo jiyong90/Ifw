@@ -18,7 +18,7 @@
             </ul>
         </li> -->
         <li class="active">
-            <a href="#">
+            <a href="${rc.getContextPath()}/${tsId}/views/workTimeCalendar">
                 <i class="fas fa-calendar-alt"></i>
                 <span class="title">나의 정보</span>
             </a>
@@ -28,9 +28,6 @@
                 <i class="fas fa-calendar-alt"></i>
                 <span class="title">결재</span>
             </a>
-        </li>
-        <li class="">
-            <a href="${rc.getContextPath()}/${tsId}/views/workTimeCalendar"><span>유연근무제 신청</span></a>
         </li>
     </ul>
 

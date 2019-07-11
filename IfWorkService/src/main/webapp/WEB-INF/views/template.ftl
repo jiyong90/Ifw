@@ -15,12 +15,12 @@
         </div>
     </div>
     <script type="text/javascript">
-        $(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-            });
-
-        });
+	    $(function () {
+	        $('#sidebarCollapse').on('click', function () {
+	            $('#sidebar').toggleClass('active');
+	        });
+	
+	    });
     </script>
 </body>
 

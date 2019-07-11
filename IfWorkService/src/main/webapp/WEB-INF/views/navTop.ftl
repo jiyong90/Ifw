@@ -6,7 +6,7 @@
 
     <h1 class="logo">
         <a href="#">
-        	<img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
+            <img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
         </a>
     </h1>
     <div class="pr-3 d-lg-none">
@@ -26,7 +26,7 @@
                 <a class="" href="#"><i class="fas fa-power-off"></i></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onClick="location.href='${rc.getContextPath()}/logout/${tsId}';"><span class="icon-wrap mr-sm-2"><i class="fas fa-power-off"></i></span><span>로그아웃</span></a>
+                 <a class="nav-link" href="#" onClick="location.href='${rc.getContextPath()}/logout/${tsId}';"><span class="icon-wrap mr-sm-2"><i class="fas fa-power-off"></i></span><span>로그아웃</span></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
