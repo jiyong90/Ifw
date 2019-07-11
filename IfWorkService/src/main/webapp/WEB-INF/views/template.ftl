@@ -9,7 +9,6 @@
 	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog">
         <div class="modal-dialog " role="document">
             <div class="modal-content">
-                <!-- alert 메세지일 경우, header 생략 -->
                 <!-- <div class="modal-header">
     	                <h5 class="modal-title"></h5>
     	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -19,7 +18,7 @@
                 <div class="modal-body">
                     <p class="text-center">달력에서 근무제 시작일을 선택해주세요.</p>
                 </div>
-                <div class="modal-footer text-center">
+                <div class="modal-body text-center">
                     <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
                 </div>
             </div>
