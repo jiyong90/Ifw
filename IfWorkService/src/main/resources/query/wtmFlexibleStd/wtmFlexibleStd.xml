@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmFlexibleStdMapper">
+    <select id="getWtmFlexibleStd" parameterType="map" resultType="wtmFlexibleStd">
+        <![CDATA[
+			SELECT * 
+			  FROM WTM_FLEXIBLE_STD_MGR S 
+			  JOIN WTM_CODE C
+			    ON C.ENTER_CD = S.ENTER_CD
+			   AND C.TENANT_ID = S.TENANT_ID
+			   AND C.GRP_CODE_CD = 'WORK_TYPE_CD'
+			   AND S.WORK_TYPE_CD = C.CODE_CD
+			 WHERE S.TENANT_ID = #{tenantId}
+			   AND S.ENTER_CD = #{enterCd}
+			   AND #{d} BETWEEN S.USE_SYMD AND S.USE_EYMD
+        ]]>
+    </select>
+</mapper>

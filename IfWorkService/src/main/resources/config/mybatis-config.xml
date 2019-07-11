@@ -12,5 +12,6 @@
     	<typeAlias type="com.isu.ifw.vo.School" alias="school"/>
     	<typeAlias type="com.isu.ifw.vo.Language" alias="language"/>
     	<typeAlias type="com.isu.ifw.vo.License" alias="license"/>
+    	<typeAlias type="com.isu.ifw.vo.WtmFlexibleStdVO" alias="wtmFlexibleStd"/>
     </typeAliases>
 </configuration>
