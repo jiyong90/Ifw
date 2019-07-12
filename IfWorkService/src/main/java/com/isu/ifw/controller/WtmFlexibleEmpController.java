@@ -27,21 +27,16 @@ public class WtmFlexibleEmpController {
 													    , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String userKey = sessionData.get("userKey").toString();
-		String enterCd = null;
-		String bisinessPlaceCd = null;
-		if(sessionData.get("enterCd")!=null)
-			enterCd = sessionData.get("enterCd").toString();
-		if(sessionData.get("bisinessPlaceCd")!=null)
-			bisinessPlaceCd = sessionData.get("bisinessPlaceCd").toString();
-		
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
 		Map<String, Object> prevFlexible = null;
 		
 		try {
-			prevFlexible = wtmFlexibleEmpService.getPrevFlexible(tenantId, enterCd, userKey);
+			prevFlexible = wtmFlexibleEmpService.getPrevFlexible(tenantId, enterCd, empNo);
 			rp.put("prevFlexible", prevFlexible);
 		} catch(Exception e) {
 			e.printStackTrace();

@@ -17,20 +17,13 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	WtmFlexibleEmpMapper flexEmpMapper;
 	
 	@Override
-	public Map<String, Object> getPrevFlexible(Long tenantId, String enterCd, String userKey) {
+	public Map<String, Object> getPrevFlexible(Long tenantId, String enterCd, String empNo) {
 		// TODO Auto-generated method stub
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
-		paramMap.put("userKey", userKey);
+		paramMap.put("empNo", empNo);
 		//paramMap.put("today", WtmUtil.parseDateStr(new Date(), null));
-		ObjectMapper mapper=  new ObjectMapper();
-		try {
-			System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		return flexEmpMapper.getPrevFlexible(paramMap);
 	}

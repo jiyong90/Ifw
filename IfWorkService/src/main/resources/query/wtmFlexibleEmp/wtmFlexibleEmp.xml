@@ -12,7 +12,7 @@
 			  FROM WTM_FLEXIBLE_EMP E 
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
-			   AND E.SABUN = #{userKey}
+			   AND E.SABUN = #{empNo}
 			GROUP BY E.SABUN
         ]]>
     </select>

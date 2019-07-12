@@ -24,13 +24,8 @@ public class WtmFlexibleApplController {
 													    , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String userKey = sessionData.get("userKey").toString();
-		String enterCd = null;
-		String bisinessPlaceCd = null;
-		if(sessionData.get("enterCd")!=null)
-			enterCd = sessionData.get("enterCd").toString();
-		if(sessionData.get("bisinessPlaceCd")!=null)
-			bisinessPlaceCd = sessionData.get("bisinessPlaceCd").toString();
+		String enterCd = sessionData.get("enterCd").toString();
+		String userKey = sessionData.get("empNo").toString();
 		
 		return null;
 	}
