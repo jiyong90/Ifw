@@ -177,7 +177,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="white-box-wrap mb-3">
+                <div class="white-box-wrap full-height mb-3">
                     <div class="work-plan-wrap">
                         <div class="main-wrap">
                             <div class="main-title">해당일의 근무계획 구분</div>
@@ -227,7 +227,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="white-box-wrap mb-3">
+                <div class="white-box-wrap full-height mb-3">
 	                <div class="work-plan-wrap">
 	                    <div class="big-title">2019년 6월 3일 ~ 2019년 6월 7일 (5일)</div>
 	                    <div class="inner-wrap">
