@@ -20,7 +20,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	WtmFlexibleStdMapper flexStdMapper;
 	
 	@Override
-	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, String userId) {
+	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, String userKey) {
 		// TODO Auto-generated method stub
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);

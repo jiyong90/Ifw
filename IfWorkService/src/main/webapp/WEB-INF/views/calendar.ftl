@@ -91,7 +91,18 @@
 					    }
 					};
 				}
-			}, */
+			}, 
+			validRange: {
+			    type: Object,
+			    required: false,
+			    default: function(){
+			    	return {
+			    		//start: '2019-07-01',
+					    //end: '2019-08-15' //해당 기간의 날짜를 아예 안보이게 함
+			    	};
+			    }
+			},
+			*/
 			navLinks : {
 				type: Boolean,
 				required: false,
@@ -147,6 +158,7 @@
 			        defaultView: this.defaultView,
 			        defaultDate: this.defaultDate,
 			        //views: this.views,
+			        //validRange: this.validRange,
 			        navLinks: this.navLinks, 
 			        selectable: this.selectable,
 			        selectMirror: this.selectMirror,
@@ -171,6 +183,9 @@
 				calendarOptions.select = function(info){
 					$this.selectCallback(info);
 				};
+				//calendarOptions.selectAllow = function(info){
+				//	$this.selectAllowCallback(info);
+				//};
 				calendarOptions.eventClick = function(info){
 					$this.eventClickCallback(info);
 				};
@@ -205,6 +220,9 @@
         	} */
         	selectCallback: function(info){
         		this.$emit('select', info);
+        	},
+        	selectAllowCallback: function(info){
+        		this.$emit('selectallow', info);
         	},
         	eventClickCallback: function(info){
         		this.$emit('eventclick', info);

@@ -26,7 +26,7 @@
                 <a class="" href="#"><i class="fas fa-power-off"></i></a>
             </li>
             <li class="nav-item">
-            	<a class="" href="location.href='${rc.getContextPath()}/logout/${tsId}'"><i class="fas fa-power-off"></i>로그아웃</a>
+            	<a class="" href="${rc.getContextPath()}/logout/${tsId}"><i class="fas fa-power-off"></i>로그아웃</a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>

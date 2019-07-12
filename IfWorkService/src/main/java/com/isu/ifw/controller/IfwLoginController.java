@@ -269,8 +269,8 @@ public class IfwLoginController {
 					userData = tenantDao.getUserInfo(query, tenantId, paramMap);
 					MDC.put("userData", userData.toString());
 				} catch (Exception e) {
-					logger.warn("등록된 이메일이 없습니다.",  MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-					request.setAttribute("certificateError", "등록된 이메일이 없습니다.");
+					logger.warn("등록된 사용자가 없습니다.",  MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+					request.setAttribute("certificateError", "등록된 사용자가 없습니다.");
 					request.getRequestDispatcher(authConfig.getLoginPageEndpoint().getUrl()).forward(request, response);
 					return;
 				}

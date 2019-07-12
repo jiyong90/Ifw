@@ -6,7 +6,9 @@
 <mapper namespace="com.isu.ifw.mapper.WtmFlexibleStdMapper">
     <select id="getWtmFlexibleStd" parameterType="map" resultType="wtmFlexibleStd">
         <![CDATA[
-			SELECT * 
+			SELECT S.*
+			     , C.*
+			     , C.CODE_NM AS WORK_TYPE_NM 
 			  FROM WTM_FLEXIBLE_STD_MGR S 
 			  JOIN WTM_CODE C
 			    ON C.ENTER_CD = S.ENTER_CD
