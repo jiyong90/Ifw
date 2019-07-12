@@ -92,6 +92,7 @@ ul, ol, li{
 /* main */
 .work-info-wrap{
   padding:14px;
+  /* margin-bottom: 10px; */
   text-align: left;
   background-color:#1f3b78;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
@@ -135,13 +136,14 @@ ul, ol, li{
 
 .work-plan-wrap{
   padding: 14px;
-  margin-top: 10px;
+  /* margin-bottom: 10px; */
   background-color: #ffffff;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
 .work-plan-wrap .main-wrap{
   text-align: left;
+  padding-bottom: 8px;
 }
 .work-plan-wrap .main-wrap li{
   margin-top: 4px;
@@ -163,6 +165,58 @@ ul, ol, li{
   color: #292944;
 }
 
+.work-plan-wrap .sub-wrap{
+  border-top: 1px solid #e2e5ed;
+}
+
+.work-plan-wrap .sub-big-title {
+  margin-top: 13px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  text-align: left;
+  color: #3e3e4c;
+}
+
+.work-plan-wrap .sub-list {
+  padding: 10px;
+}
+.work-plan-wrap .sub-list>li {
+  padding: 10px 0px;
+  border-top: 1px solid #e2e5ed;
+}
+
+.work-plan-wrap .sub-list>li:first-child{
+  border-top: 0px;
+}
+
+.work-plan-wrap .sub-list .sub-title {
+  font-size: 11px;
+  line-height: 1.55;
+  letter-spacing: -0.55px;
+  color: #6b6b80;
+}
+
+.work-plan-wrap .sub-list .sub-desc {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.5;
+    letter-spacing: -0.6px;
+    text-align: left;
+    color: #292944;
+}
+
+.work-plan-wrap .sub-desc-list{
+  padding-left:10px;
+}
+
+.work-plan-wrap .sub-desc-list li::before{
+  content : '·';
+  display: inline-block;
+}
+
+/*  */
 .select-work-list .list-group-item{
   position: relative;
 }
@@ -181,11 +235,25 @@ ul, ol, li{
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
-.select-work-list .list-group-item .tag.part {
+/* 탄력근무 */
+.select-work-list .list-group-item .tag.ELAS {
   background-color:#32c9b6;
 }
-.select-work-list .list-group-item .tag.full {
+/* 완전선택근무 */
+.select-work-list .list-group-item .tag.SELE_F {
   background-color: #213977;
+}
+/* 부분선택근무 */
+.select-work-list .list-group-item .tag.SELE_C {
+  background-color: #6b6b80;
+}
+/* 시차출퇴근 */
+.select-work-list .list-group-item .tag.DIFF {
+  background-color: #6b6b80;
+}
+/* 자율출퇴근 */
+.select-work-list .list-group-item .tag.AUTO {
+  background-color: #6b6b80;
 }
 .select-work-list .list-group-item:first-child {
   border-top-left-radius:0;
@@ -196,14 +264,18 @@ ul, ol, li{
   border-bottom-left-radius:0;
 }
 
-.select-work-list .list-group-item.active .title,
+.select-work-list .list-group-item.active{
+  background-color:#E5E5E5;
+  border: 1px solid rgba(0, 0, 0, .125);
+}
+/* .select-work-list .list-group-item.active .title,
 .select-work-list .list-group-item.active .desc{
   color:#ffffff;
 }
 .select-work-list .list-group-item.active .bar{
   border-left: 0.5px solid #ffffff;
   border-right: 0.5px solid #ffffff;
-}
+} */
 
 .select-work-list .list-group-item .title{
   font-size: 12px;
