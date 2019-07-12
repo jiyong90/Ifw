@@ -227,6 +227,47 @@
                         </form>
                     </div>
                 </div>
+                <div class="white-box-wrap mb-3">
+	                <div class="work-plan-wrap">
+	                    <div class="big-title">2019년 6월 3일 ~ 2019년 6월 7일 (5일)</div>
+	                    <div class="inner-wrap">
+	                        <div class="main-title">근무시간표</div>
+	                        <div class="main-desc">기본근무시간표</div>
+	                    </div>
+	                    <div class="time-input-form">
+	                        <div class="form-row no-gutters">
+	                            <div class="form-group col-5">
+	                                <label for="startDay">출근시간</label>
+	                                <input type="time" class="form-control" id="startDay" placeholder="">
+	                            </div>
+	                            <div class="form-group col-2 text-center">
+	                                <lable></lable>
+	                                <span>~</span>
+	                            </div>
+	                            <div class="form-group col-5">
+	                                <label for="endDay">퇴근시간</label>
+	                                <input type="time" class="form-control" id="endDay" placeholder="">
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="sub-wrap">
+	                    <ul class="time-block-list">
+	                        <li>
+	                            <div class="title">총 소정 근로 시간</div>
+	                            <div class="desc">120시간</div>
+	                        </li>
+	                        <li>
+	                            <div class="title">계획 시간</div>
+	                            <div class="desc">42시간</div>
+	                        </li>
+	                    </ul>
+	                </div>
+	                <div class="sub-desc">*연차는 표준근무시간 8시간 인정</div>
+	                <div class="btn-wrap mt-5">
+	                    <button type="button" class="btn btn-apply btn-block btn-lg">확정</button>
+	                </div>
+	            </div>
             </div>
 	        <div class="col-12 col-md-9">
 	            <div class="calendar-wrap">
