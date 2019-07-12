@@ -134,40 +134,57 @@ ul, ol, li{
   color: #ffffff;
 }
 
-.work-plan-wrap{
+.white-box-wrap {
   padding: 14px;
   /* margin-bottom: 10px; */
   background-color: #ffffff;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
-
-.work-plan-wrap .main-wrap{
-  text-align: left;
-  padding-bottom: 8px;
-}
-.work-plan-wrap .main-wrap li{
-  margin-top: 4px;
-}
-.work-plan-wrap .main-wrap li:first-child {
-  margin-top: 0px;
-}
-.work-plan-wrap .main-title{
-  font-size:10px;
+.white-box-wrap .main-title {
+  font-size: 10px;
   line-height: 1.5;
   letter-spacing: -0.5px;
   color: #6b6b80;
 }
-.work-plan-wrap .main-desc{
+.white-box-wrap .main-desc {
   font-size: 12px;
   font-weight: bold;
   line-height: 1.5;
   letter-spacing: -0.6px;
   color: #292944;
 }
-
-.work-plan-wrap .sub-wrap{
+.white-box-wrap .time-list{
+  margin-top: 6px;
+}
+.white-box-wrap .time-list li{
+  margin-top: 0px;
+}
+.white-box-wrap .time-list .title {
+  font-size: 12px;
+  letter-spacing: -0.6px;
+  color: #6b6b80;
+}
+.white-box-wrap .time-list .desc {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: -0.6px;
+  color: #292944;
+}
+.white-box-wrap .sub-wrap {
   border-top: 1px solid #e2e5ed;
 }
+
+.work-plan-wrap .main-wrap{
+  text-align: left;
+  padding-bottom: 8px;
+}
+.work-plan-wrap .main-wrap>li{
+  margin-top: 4px;
+}
+.work-plan-wrap .main-wrap>li:first-child {
+  margin-top: 0px;
+}
+
 
 .work-plan-wrap .sub-big-title {
   margin-top: 13px;
@@ -216,6 +233,22 @@ ul, ol, li{
   display: inline-block;
 }
 
+.time-input-form{
+  padding: 10px 5px 0;
+}
+.time-input-form label{
+    font-size: 12px;
+    letter-spacing: -0.6px;
+    text-align: left;
+    color: #6b6b80;
+}
+.time-input-form input,
+.time-input-form select,
+.time-input-form textarea {
+   font-size: 12px;
+   line-height: 1.5;
+   letter-spacing: -0.6px;
+}
 /*  */
 .select-work-list .list-group-item{
   position: relative;
@@ -225,7 +258,7 @@ ul, ol, li{
   top: 10px;
   right: 10px;
   display:inline-block;
-  width: 38px;
+  min-width: 38px;
   padding: 1px 8px;
   font-size: 12px;
   line-height: 1.5;
@@ -237,7 +270,7 @@ ul, ol, li{
 }
 /* 탄력근무 */
 .select-work-list .list-group-item .tag.ELAS {
-  background-color:#32c9b6;
+  background-color:#ffc421;
 }
 /* 완전선택근무 */
 .select-work-list .list-group-item .tag.SELE_F {
@@ -245,11 +278,11 @@ ul, ol, li{
 }
 /* 부분선택근무 */
 .select-work-list .list-group-item .tag.SELE_C {
-  background-color: #6b6b80;
+  background-color: #85d1f2;
 }
 /* 시차출퇴근 */
 .select-work-list .list-group-item .tag.DIFF {
-  background-color: #6b6b80;
+  background-color: #1fc486;
 }
 /* 자율출퇴근 */
 .select-work-list .list-group-item .tag.AUTO {
