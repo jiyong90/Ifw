@@ -57,6 +57,7 @@ public class CusAuthConfig implements AuthConfig {
 		//return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id = :loginId and a.tenant_id = :tenantId";
 		return " select a.*                                             "
 				+ "      , a.user_id as userKey                            "
+				+ "      , F_AES_DECRYPT(a.login_id, info_data) as empNo "
 				+ "      , F_AES_DECRYPT(a.enter_cd, info_data) as enterCd "
 				+ "   from comm_user a                                     "
 				+ "   join comm_management_infomation i                    "
