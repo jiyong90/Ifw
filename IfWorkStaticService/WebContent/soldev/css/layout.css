@@ -304,3 +304,25 @@ a.article:hover {
   color: #292944;
 }
 
+#sub-nav .work-check-wrap .title::after {
+  content:'';
+  display:inline-block;
+  height: 16px;
+  padding-left:12px;
+  border-right: 1px solid #6B6B80;
+  margin-bottom: -2px;
+}
+#sub-nav .work-check-wrap .custom-control {
+  padding-left: 2.5rem;
+}
+#sub-nav .work-check-wrap .custom-checkbox .custom-control-label::before {
+  border-radius: 0;
+}
+#sub-nav .work-check-wrap .custom-checkbox .custom-control-label::after {
+  border-radius: 0;
+}
+
+#sub-nav .work-check-wrap .custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+  border-color:#32c9b6;
+  background-color:#32c9b6;
+}
