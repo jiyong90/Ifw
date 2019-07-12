@@ -13,5 +13,6 @@
     	<typeAlias type="com.isu.ifw.vo.Language" alias="language"/>
     	<typeAlias type="com.isu.ifw.vo.License" alias="license"/>
     	<typeAlias type="com.isu.ifw.vo.WtmFlexibleStdVO" alias="wtmFlexibleStd"/>
+    	<typeAlias type="com.isu.ifw.vo.WtmFlexibleEmpVO" alias="wtmFlexibleEmp"/>
     </typeAliases>
 </configuration>

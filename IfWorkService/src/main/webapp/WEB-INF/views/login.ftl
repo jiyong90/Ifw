@@ -9,7 +9,7 @@
         <img class="mb-4 logo" src="soldev/img/bootstrap-solid.svg" alt="">
         <h1 class="h3 mb-3 font-weight-normal">이수시스템</h1>
         <#if companyList?exists && companyList?has_content>
-        	<select id="companyCd" name="companyCd" class="form-control" style="margin:0 0 20px;">
+        	<select id="enterCd" name="enterCd" class="form-control" style="margin:0 0 20px;">
         		<#list companyList as company>
         			<#list company?keys as key>
         			<option value="${key}">${company[key]}</option>

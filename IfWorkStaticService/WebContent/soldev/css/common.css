@@ -1,5 +1,49 @@
 @charset "utf-8";
 
+/* S : bootstrap custom */
+/* button style */
+.btn-flat{
+  border-radius:0;
+}
+.btn-apply {
+  color: #fff;
+  background-color: #32c9b6;
+  border-color: #0bb39e;
+}
+
+.btn-apply:hover {
+  color: #fff;
+  background-color: #2aa89a;
+  border-color: #26978a;
+}
+
+.btn-outline{
+  color: #c4c4c4;
+  border-color: #cfcfcf;
+}
+
+.btn-outline:hover {
+  color: #c4c4c4;
+}
+
+.btn-default {
+  color: #ffffff;
+  background-color: #4d84fe;
+  border-color: #3472f8;
+}
+
+.btn-default:hover {
+  color: #ffffff;
+  background-color: #4f7bd8;
+  border-color: #325fc0;
+}
+
+/*list style none*/
+ul, ol, li{
+  list-style: none;
+}
+/* E : bootstrap custom */
+
 .point-color{color:#DC3545;}
 .sub-title{font-size: 20px;}
 .sub-title .caution{display:inline-block; margin-left: 14px; font-size: 16px;}
@@ -44,7 +88,261 @@
 }
 .form-login .find-pw{display:inline-block; margin-left:auto;}
 
-/* Calendar */
+
+/* main */
+.work-info-wrap{
+  padding:14px;
+  /* margin-bottom: 10px; */
+  text-align: left;
+  background-color:#1f3b78;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+.work-info-wrap .main-title,
+.work-info-wrap .main-desc{
+  font-size: 12px;
+  font-weight: bold;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  color: #ffffff;
+}
+
+.work-info-wrap .sub-wrap{
+  margin-top: 8px;
+}
+
+.work-info-wrap .sub-wrap li{
+  margin-top:4px;
+}
+
+.work-info-wrap .sub-wrap li:first-child {
+  margin-top: 0px;
+}
+
+.work-info-wrap .sub-title{
+    font-size: 10px;
+    font-weight: normal;
+    line-height: 1.5;
+    letter-spacing: -0.5px;
+    color: #c6d2f2;
+}
+.work-info-wrap .sub-desc {
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+.white-box-wrap {
+  padding: 14px;
+  /* margin-bottom: 10px; */
+  background-color: #ffffff;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+.white-box-wrap .main-title {
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: -0.5px;
+  color: #6b6b80;
+}
+.white-box-wrap .main-desc {
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  color: #292944;
+}
+.white-box-wrap .time-list{
+  margin-top: 6px;
+}
+.white-box-wrap .time-list li{
+  margin-top: 0px;
+}
+.white-box-wrap .time-list .title {
+  font-size: 12px;
+  letter-spacing: -0.6px;
+  color: #6b6b80;
+}
+.white-box-wrap .time-list .desc {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: -0.6px;
+  color: #292944;
+}
+.white-box-wrap .sub-wrap {
+  border-top: 1px solid #e2e5ed;
+}
+
+.work-plan-wrap .main-wrap{
+  text-align: left;
+  padding-bottom: 8px;
+}
+.work-plan-wrap .main-wrap>li{
+  margin-top: 4px;
+}
+.work-plan-wrap .main-wrap>li:first-child {
+  margin-top: 0px;
+}
+
+
+.work-plan-wrap .sub-big-title {
+  margin-top: 13px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  text-align: left;
+  color: #3e3e4c;
+}
+
+.work-plan-wrap .sub-list {
+  padding: 10px;
+}
+.work-plan-wrap .sub-list>li {
+  padding: 10px 0px;
+  border-top: 1px solid #e2e5ed;
+}
+
+.work-plan-wrap .sub-list>li:first-child{
+  border-top: 0px;
+}
+
+.work-plan-wrap .sub-list .sub-title {
+  font-size: 11px;
+  line-height: 1.55;
+  letter-spacing: -0.55px;
+  color: #6b6b80;
+}
+
+.work-plan-wrap .sub-list .sub-desc {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.5;
+    letter-spacing: -0.6px;
+    text-align: left;
+    color: #292944;
+}
+
+.work-plan-wrap .sub-desc-list{
+  padding-left:10px;
+}
+
+.work-plan-wrap .sub-desc-list li::before{
+  content : '·';
+  display: inline-block;
+}
+
+.time-input-form{
+  padding: 10px 5px 0;
+}
+.time-input-form label{
+    font-size: 12px;
+    letter-spacing: -0.6px;
+    text-align: left;
+    color: #6b6b80;
+}
+.time-input-form input,
+.time-input-form select,
+.time-input-form textarea {
+   font-size: 12px;
+   line-height: 1.5;
+   letter-spacing: -0.6px;
+}
+/*  */
+.select-work-list .list-group-item{
+  position: relative;
+}
+.select-work-list .list-group-item .tag{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display:inline-block;
+  min-width: 38px;
+  padding: 1px 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: #ffffff;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+/* 탄력근무 */
+.select-work-list .list-group-item .tag.ELAS {
+  background-color:#ffc421;
+}
+/* 완전선택근무 */
+.select-work-list .list-group-item .tag.SELE_F {
+  background-color: #213977;
+}
+/* 부분선택근무 */
+.select-work-list .list-group-item .tag.SELE_C {
+  background-color: #85d1f2;
+}
+/* 시차출퇴근 */
+.select-work-list .list-group-item .tag.DIFF {
+  background-color: #1fc486;
+}
+/* 자율출퇴근 */
+.select-work-list .list-group-item .tag.AUTO {
+  background-color: #6b6b80;
+}
+.select-work-list .list-group-item:first-child {
+  border-top-left-radius:0;
+  border-top-right-radius:0;
+}
+.select-work-list .list-group-item:last-child {
+  border-bottom-right-radius:0;
+  border-bottom-left-radius:0;
+}
+
+.select-work-list .list-group-item.active{
+  background-color:#E5E5E5;
+  border: 1px solid rgba(0, 0, 0, .125);
+}
+/* .select-work-list .list-group-item.active .title,
+.select-work-list .list-group-item.active .desc{
+  color:#ffffff;
+}
+.select-work-list .list-group-item.active .bar{
+  border-left: 0.5px solid #ffffff;
+  border-right: 0.5px solid #ffffff;
+} */
+
+.select-work-list .list-group-item .title{
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  text-align: left;
+  color: #3e3e4c;
+}
+
+.select-work-list .list-group-item .desc {
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  color: #3e3e4c;
+}
+
+.select-work-list .list-group-item .bar{
+  height: 12px;
+  border-left: 0.5px solid #3e3e4c;
+  border-right: 0.5px solid #3e3e4c;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+  /* calendar */
+.calendar-wrap {
+    position: relative;
+    height: 80vh;
+    background-color:#ffffff;
+    border-top: 3px solid #4d84fe;
+}
+
+.calendar-wrap .fc-view-container{padding:0px 10px 10px;}
+
 #calendar-container {
   position: absolute;
   top: 0;

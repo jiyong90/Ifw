@@ -55,7 +55,18 @@ public class CusAuthConfig implements AuthConfig {
 	@Override
 	public String getCertificateQuery() {
 		//return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id = :loginId and a.tenant_id = :tenantId";
-		return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id = (select F_AES_ENCRYPT(:loginId, info_data) from comm_management_infomation where tenant_id=:tenantId and info_key='SECURITY.AES.KEY') and a.tenant_id = :tenantId";
+		return " select a.*                                             "
+				+ "      , a.user_id as userKey                            "
+				+ "      , F_AES_DECRYPT(a.login_id, info_data) as empNo "
+				+ "      , F_AES_DECRYPT(a.enter_cd, info_data) as enterCd "
+				+ "   from comm_user a                                     "
+				+ "   join comm_management_infomation i                    "
+				+ "     on a.tenant_id = i.tenant_id                       "
+				+ "  where a.tenant_id = :tenantId                                 "
+				+ "    and info_key= 'SECURITY.AES.KEY'                     "
+				+ "    and a.enter_cd = F_AES_ENCRYPT(:enterCd, info_data)    "
+				+ " 	and a.login_id = F_AES_ENCRYPT(:loginId, info_data)   "
+			 ;
 	}
 
 	@Override

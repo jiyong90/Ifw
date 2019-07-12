@@ -1,6 +1,8 @@
 package com.isu.ifw.vo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +26,7 @@ public class WtmFlexibleStdVO {
 	private String exhaystionYn;
 	private String holExceptYn;
 	private Map<String, Object> workDaysOpt;
+	private List<Map<String, Object>> usedTermOpt;
 	private String applShowYn;
 	public Long getFlexibleStdMgrId() {
 		return flexibleStdMgrId;
@@ -135,6 +138,23 @@ public class WtmFlexibleStdVO {
 			} catch (Exception e) {
 				e.printStackTrace();
 				this.workDaysOpt = null;
+			}
+		}
+	}
+	public List<Map<String, Object>> getUsedTermOpt() {
+		return usedTermOpt;
+	}
+	public void setUsedTermOpt(String usedTermOpt) {
+		
+		if(usedTermOpt.equals("") || usedTermOpt == null) {
+			this.usedTermOpt = null;
+		}else {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				this.usedTermOpt = mapper.readValue(usedTermOpt, new ArrayList<Map<String, Object>>().getClass());
+			} catch (Exception e) {
+				e.printStackTrace();
+				this.usedTermOpt = null;
 			}
 		}
 	}

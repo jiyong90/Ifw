@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmFlexibleEmpMapper">
+    <select id="getPrevFlexible" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT SABUN AS sabun
+			     , MAX(E.SYMD) AS sYmd
+			     , MAX(E.EYMD) AS eYmd
+			  FROM WTM_FLEXIBLE_EMP E 
+			 WHERE E.TENANT_ID = #{tenantId}
+			   AND E.ENTER_CD = #{enterCd}
+			   AND E.SABUN = #{empNo}
+			GROUP BY E.SABUN
+        ]]>
+    </select>
+</mapper>
