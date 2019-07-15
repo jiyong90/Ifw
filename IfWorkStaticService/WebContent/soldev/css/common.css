@@ -46,27 +46,27 @@ ul, ol, li{
 /* E : bootstrap custom */
 
 /* 탄력근무 */
-.tag.ELAS {
+.fc-bgevent.ELAS {
   background-color: #ffc421;
 }
 
 /* 완전선택근무 */
-.tag.SELE_F {
-  background-color: #213977;
+.fc-bgevent.SELE_F {
+  background-color: #4d84fe;
 }
 
 /* 부분선택근무 */
-.tag.SELE_C {
+.fc-bgevent.SELE_C {
   background-color: #85d1f2;
 }
 
 /* 시차출퇴근 */
-.tag.DIFF {
+.fc-bgevent.DIFF {
   background-color: #1fc486;
 }
 
 /* 자율출퇴근 */
-.tag.AUTO {
+.fc-bgevent.AUTO {
   background-color: #6b6b80;
 }
 
@@ -304,7 +304,7 @@ ul, ol, li{
 }
 /* 완전선택근무 */
 .select-work-list .list-group-item .tag.SELE_F {
-  background-color: #213977;
+  background-color: #4d84fe;
 }
 /* 부분선택근무 */
 .select-work-list .list-group-item .tag.SELE_C {
