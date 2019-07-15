@@ -5,8 +5,8 @@
     </button> -->
 
     <h1 class="logo">
-        <a href="${rc.getContextPath()}/${tsId}/">
-            <img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
+    <a href="${rc.getContextPath()}/${tsId}/">
+        <img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
         </a>
     </h1>
     <div class="pr-3 d-lg-none">
@@ -18,15 +18,15 @@
     </div>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="nav navbar-nav ml-auto nav-top">
+        <ul class="nav navbar-nav ml-auto nav-top gnb-nav-wrap">
             <li class="nav-item">
-                <a class="" href="#"><i class="fas fa-power-off"></i></a>
+                <a class="" href="#"><i class="sp_ico calendar"></i></a>
             </li>
             <li class="nav-item">
-                <a class="" href="#"><i class="fas fa-power-off"></i></a>
+                <a class="" href="#"><i class="sp_ico alarm"><span class="new"></span></i></a>
             </li>
             <li class="nav-item">
-            	<a class="" href="${rc.getContextPath()}/logout/${tsId}"><i class="fas fa-power-off"></i>로그아웃</a>
+                <a class="" href="${rc.getContextPath()}/logout/${tsId}"><i class="sp_ico power"></i></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>

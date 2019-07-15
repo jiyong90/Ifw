@@ -30,6 +30,44 @@ html {
 .navbar .logo a{display:inline-block; padding:20px 0px;}
 .navbar .logo a img{display:inline-block; width:auto; height:30px;}
 
+.navbar .gnb-nav-wrap li{
+  border-left: 1px solid #DFDFDF;
+}
+.navbar .gnb-nav-wrap li a{
+  display:inline-block;
+  padding:20px;
+}
+.navbar .gnb-nav-wrap .sp_ico {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+  background-image: url('../img/sp_gnb.png');
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+.navbar .gnb-nav-wrap .sp_ico .new{
+  position: absolute;
+  top: 4px;
+  right: 1px;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color:#4d84fe;
+  border:2px solid #ffffff;
+
+}
+.navbar .gnb-nav-wrap .sp_ico.calendar{
+  background-position: 0 0;
+}
+.navbar .gnb-nav-wrap .sp_ico.alarm {
+  background-position: -28px 0;
+}
+.navbar .gnb-nav-wrap .sp_ico.power {
+  background-position: -56px 0;
+}
 
 /* ---------------------------------------------------
     SIDEBAR STYLE (LEFT)
@@ -83,7 +121,7 @@ html {
   display: block;
   font-size: 1.8em;
   margin-right:0px;
-  font-weight: 500;
+  /* font-weight: 500; */
 }
 
 #sidebar.active ul li a span.title {
@@ -304,16 +342,32 @@ a.article:hover {
   color: #292944;
 }
 
+#sub-nav .work-check-wrap .title{
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b6b80;
+  vertical-align: middle;
+}
 #sub-nav .work-check-wrap .title::after {
   content:'';
   display:inline-block;
   height: 16px;
   padding-left:12px;
   border-right: 1px solid #6B6B80;
-  margin-bottom: -2px;
+  margin-bottom: -4px;
 }
 #sub-nav .work-check-wrap .custom-control {
   padding-left: 2.5rem;
+}
+#sub-nav .work-check-wrap .custom-checkbox .custom-control-label{
+  margin-top: 1px;
+  padding-top: 2px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #292944;
+}
+#sub-nav .work-check-wrap .custom-checkbox .custom-control-label span{
+  vertical-align: middle;
 }
 #sub-nav .work-check-wrap .custom-checkbox .custom-control-label::before {
   border-radius: 0;

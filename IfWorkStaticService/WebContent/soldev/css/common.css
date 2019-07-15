@@ -178,14 +178,27 @@ ul, ol, li{
 }
 
 .work-plan-wrap .sub-list>li:first-child{
+  padding-top: 0px;
   border-top: 0px;
 }
 
 .work-plan-wrap .sub-list .sub-title {
+  display: inline-block;
   font-size: 11px;
   line-height: 1.55;
   letter-spacing: -0.55px;
   color: #6b6b80;
+}
+
+.work-plan-wrap .sub-list>li .sub-title{
+  min-width: 40px;
+  margin-right:38px;
+}
+
+.work-plan-wrap .sub-list .sub-title>i.fas{
+  display:inline-block;
+  margin-right: 4px;
+  color:#4d84fe;
 }
 
 .work-plan-wrap .sub-list .sub-desc {
@@ -198,12 +211,17 @@ ul, ol, li{
 }
 
 .work-plan-wrap .sub-desc-list{
-  padding-left:10px;
+  padding-left:20px;
 }
 
 .work-plan-wrap .sub-desc-list li::before{
   content : '·';
   display: inline-block;
+}
+
+.work-plan-wrap .sub-desc-list>li .sub-title{
+  min-width: 44px;
+  margin-right: 16px;
 }
 
 .time-input-form{
@@ -350,24 +368,38 @@ ul, ol, li{
   padding-top: 1em;
   padding-left: 1em;
   padding-right: 1em;
+  margin-bottom:18px;
 }
 
+/* 이전,이후,오늘 */
 .fc-prev-button,
 .fc-next-button,
 .fc-today-button{
+  font-size: 12px;
   color:#292944;
   border-color:#cccccc;
   background-color:#ffffff;
 }
 
+/* 이전,이후,오늘 */
+.fc-prev-button:hover,
+.fc-next-button:hover,
+.fc-today-button:hover {
+  color: #292944;
+  border-color: #E5E5E5;
+  background-color: #E5E5E5;
+}
+
+/* 월,주,일 */
 .fc-dayGridMonth-button,
 .fc-timeGridWeek-button,
 .fc-timeGridDay-button {
   color:#a2a3a5;
   border-color:#3e3e4c;
   background-color:#3e3e4c;
+  font-size: 14px;
 }
-
+/* 월,주,일 active */
 .fc-dayGridMonth-button:not(:disabled):not(.disabled).active,
 .fc-timeGridWeek-button:not(:disabled):not(.disabled).active,
 .fc-timeGridDay-button:not(:disabled):not(.disabled).active {
@@ -375,6 +407,7 @@ ul, ol, li{
   border-color:#6b6b80;
   background-color:#6b6b80;
 }
+/* 월,주,일 hover  */
 .fc-dayGridMonth-button:hover,
 .fc-timeGridWeek-button:hover,
 .fc-timeGridDay-button:hover {
@@ -382,7 +415,8 @@ ul, ol, li{
   border-color: #6b6b80;
   background-color: #6b6b80;
 }
-/**/
+
+
 .fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{
   text-decoration: none;
 }
