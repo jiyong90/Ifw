@@ -130,14 +130,14 @@
                             </li>
                         </ul>
                         <div class="sub-wrap">
-                            <div class="sub-big-title">근무시간 요약 (근무시간 분류별 합산)</div>
+                            <div class="sub-big-title">근무시간 요약 <span style="font-size:10px;">(근무시간 분류별 합산)</span></div>
                             <ul class="sub-list">
                                 <li>
-                                    <span class="sub-title">소정근로</span>
+                                    <span class="sub-title"><i class="fas fa-clock"></i>소정근로</span>
                                     <span class="sub-desc">8:00</span>
                                 </li>
                                 <li>
-                                    <span class="sub-title">연장근로</span>
+                                    <span class="sub-title"><i class="fas fa-moon"></i>연장근로</span>
                                     <span class="sub-desc">2:00</span>
                                     <ul class="sub-desc-list">
                                         <li>
@@ -151,7 +151,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <span class="sub-title">근태현황</span>
+                                    <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <ul class="sub-desc-list">
                                         <li>
                                             <span class="sub-title">오후반차</span>
@@ -164,7 +164,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <span class="sub-title">휴식/휴게 현황</span>
+                                    <span class="sub-title"><i class="fas fa-couch"></i>휴식/휴게 현황</span>
                                     <ul class="sub-desc-list">
                                         <li>
                                             <span class="sub-title">무급</span>

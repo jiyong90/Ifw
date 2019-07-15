@@ -45,6 +45,31 @@ ul, ol, li{
 }
 /* E : bootstrap custom */
 
+/* 탄력근무 */
+.fc-bgevent.ELAS {
+  background-color: #ffc421;
+}
+
+/* 완전선택근무 */
+.fc-bgevent.SELE_F {
+  background-color: #4d84fe;
+}
+
+/* 부분선택근무 */
+.fc-bgevent.SELE_C {
+  background-color: #85d1f2;
+}
+
+/* 시차출퇴근 */
+.fc-bgevent.DIFF {
+  background-color: #1fc486;
+}
+
+/* 자율출퇴근 */
+.fc-bgevent.AUTO {
+  background-color: #6b6b80;
+}
+
 .point-color{color:#DC3545;}
 .sub-title{font-size: 20px;}
 .sub-title .caution{display:inline-block; margin-left: 14px; font-size: 16px;}
@@ -279,7 +304,7 @@ ul, ol, li{
 }
 /* 완전선택근무 */
 .select-work-list .list-group-item .tag.SELE_F {
-  background-color: #213977;
+  background-color: #4d84fe;
 }
 /* 부분선택근무 */
 .select-work-list .list-group-item .tag.SELE_C {
@@ -424,3 +449,23 @@ ul, ol, li{
 
 /* 페이지 마다 sub-header */
 .sub-header{padding:16px 16px 20px 16px;}
+
+/* 반응형 */
+/* Extra small devices (portrait phones, less than 576px) 
+No media query for `xs` since this is the default in Bootstrap */
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+}
