@@ -89,20 +89,20 @@ public class ViewController {
 		 
 	}*/
 	
-	@GetMapping(value = "/{tsId}")
+	@GetMapping(value = "/console/{tsId}")
 	public ModelAndView login(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//return main(tsId, request);
 		return views(tsId, "main");
 	}
 	
-	@GetMapping(value="/{tsId}/main")
+	@GetMapping(value="/console/{tsId}/main")
 	public ModelAndView main(@PathVariable String tsId, HttpServletRequest request) throws JsonProcessingException {
 		ModelAndView mv = new ModelAndView("main");
 		mv.addObject("tsId", tsId);
 		return mv;
 	}
 	
-	@RequestMapping(value = "/{tsId}/{viewPage}", method = RequestMethod.GET)
+	@RequestMapping(value = "/console/{tsId}/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView viewPage(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
 		ModelAndView mv = new ModelAndView(viewPage);
 		mv.addObject("tsId", tsId);
@@ -115,7 +115,7 @@ public class ViewController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/{tsId}/views/{viewPage}", method = RequestMethod.GET)
+	@RequestMapping(value = "/console/{tsId}/views/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
 		ModelAndView mv = new ModelAndView("template");
 		mv.addObject("tsId", tsId);

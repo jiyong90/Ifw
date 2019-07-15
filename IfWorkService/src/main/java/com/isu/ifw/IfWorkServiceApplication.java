@@ -43,7 +43,8 @@ public class IfWorkServiceApplication {
 	@Bean 
 	public FilterRegistrationBean getUserTokenFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(userTokenFilter);
-		registrationBean.addUrlPatterns("/*");
+		registrationBean.addUrlPatterns("/console/*");
+		registrationBean.addInitParameter("tenantKeyPath", "/console");
 		registrationBean.addInitParameter("freePassPath", "/error,/logout,/login,/login/certificate,/v2/api-docs,/api,/resource,/schedule,/we");
 		registrationBean.addInitParameter("moduleId", "1");
 		return registrationBean;

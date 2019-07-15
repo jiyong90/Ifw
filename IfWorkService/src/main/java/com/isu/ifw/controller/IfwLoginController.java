@@ -342,7 +342,8 @@ public class IfwLoginController {
 			response.addCookie(cookie);
 
 			session.setAttribute("loginIp", stringUtil.getClientIP(request));
-			session.setAttribute("enterCd", request.getParameter("companyCd"));
+			session.setAttribute("enterCd", request.getParameter("enterCd"));
+			session.setAttribute("loginId", userData.get("login_id"));
 			
 			String endPointUrl = (String) request.getParameter("o");
 			//2018.03.16

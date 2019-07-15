@@ -11,28 +11,6 @@
         </filter>
     </appender>
 
-    <appender name="FILE_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_PATH}/${LOG_FILE}</File>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>5MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>3</maxHistory>
-        </rollingPolicy>
-
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-       		<layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
-         	   <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSSX</timestampFormat>
-               <timestampFormatTimezoneId>Etc/UTC</timestampFormatTimezoneId>
-               <appendLineSeparator>false</appendLineSeparator>
-         	   <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
-         	   		<prettyPrint>true</prettyPrint>
-         	   </jsonFormatter>
-            </layout>
-        </encoder>
-    </appender>
-
     <springProperty name="spring.datasource.driverClassName" source="spring.datasource.hikari.driverClassName"/>
 	<springProperty name="spring.datasource.jdbcUrl" source="spring.datasource.hikari.jdbcUrl"/>
 	<springProperty name="spring.datasource.username" source="spring.datasource.hikari.username"/>
@@ -58,15 +36,6 @@
     </appender>
 
 	<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
-		<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
-			<driverClass>${spring.datasource.driverClassName}</driverClass>
-			<url>${spring.datasource.jdbcUrl}</url>
-			<user>${spring.datasource.username}</user>
-			<password>${spring.datasource.password}</password>
-		</connectionSource>
-	</appender>
-
-	<appender name="DB2" class="ch.qos.logback.access.db.DBAppender">
 		<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
 			<driverClass>${spring.datasource.driverClassName}</driverClass>
 			<url>${spring.datasource.jdbcUrl}</url>
