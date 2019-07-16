@@ -501,10 +501,11 @@ ul, ol, li{
 
 /* popover */
 #calendar-container .popover-inner-wrap{
+  padding:5px;
   text-align: center;
 }
 #calendar-container .popover-inner-wrap .msg {
-  margin: 10px 0px;
+  margin-bottom:10px;
 }
 #calendar-container .popover-inner-wrap .btn-default {
   font-size: 14px;
