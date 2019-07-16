@@ -20,9 +20,19 @@
                                     <span :class="['tag ' + f.workTypeCd]">{{f.workTypeNm}}</span>
                                     <div class="title">{{f.flexibleNm}}</div>
                                     <div class="desc">
-                                    	근무구간: {{f.workShm}} ~ {{f.workEhm}}
+                                    	<template v-if="f.workShm&&f.workEhm">
+                                    		근무구간: {{f.workShm}} ~ {{f.workEhm}}
+                                    	</template>
+                                    	<template v-else>
+                                    		근무구간: 없음
+                                    	</template>
                                     	<span class="bar"></span>
-                                    	코어구간: {{f.coreShm}} ~ {{f.coreEhm}}
+                                    	<template v-if="f.coreShm&&f.coreEhm">
+                                    		코어구간: {{f.coreShm}} ~ {{f.coreEhm}}
+                                    	</template>
+                                    	<template v-else>
+                                    		코어구간: 없음
+                                    	</template>
                                     </div>
                                 </li>
                             </ul>
@@ -228,6 +238,11 @@
                 	<div id="calendar-popover" style="display:none;">
                 		<div id="startDaySelect" class="btn btn-apply">
                 			<input id="startDay" type="hidden" value="">확인
+                		<div class="popover-inner-wrap">
+	                		<div class="msg">시작일로 지정</div>
+                			<span id="startDaySelect" class="btn btn-default btn-flat">
+                				<input id="startDay" type="hidden" value="">확인
+                			</span>
                 		</div>
                 	</div>
                     <div id='calendar-container'>
@@ -356,7 +371,7 @@
   		    		if(this.useYn=='Y' && (this.useSymd==null || this.useSymd=='')) {
   		    			$('.popover').remove();
   		    			
-  		    			if(moment(info.dateStr).diff($this.prevEdate)>0){
+  		    			if($this.prevEdate==''||moment(info.dateStr).diff($this.prevEdate)>0){
 	  		    			$(info.dayEl).popover({
 	  	  		    			html: true,
 	  					    	placement: 'bottom',
