@@ -5,7 +5,7 @@
     </button> -->
 
     <h1 class="logo">
-    <a href="${rc.getContextPath()}/${tsId}/">
+    <a href="${rc.getContextPath()}/console/${tsId}/">
         <img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
         </a>
     </h1>

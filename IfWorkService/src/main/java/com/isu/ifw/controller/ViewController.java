@@ -92,7 +92,7 @@ public class ViewController {
 	@GetMapping(value = "/console/{tsId}")
 	public ModelAndView login(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//return main(tsId, request);
-		return views(tsId, "main");
+		return views(tsId, "main", request);
 	}
 	
 	@GetMapping(value="/console/{tsId}/main")
@@ -103,7 +103,7 @@ public class ViewController {
 	}
 	
 	@RequestMapping(value = "/console/{tsId}/{viewPage}", method = RequestMethod.GET)
-	public ModelAndView viewPage(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
+	public ModelAndView viewPage(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView(viewPage);
 		mv.addObject("tsId", tsId);
 		
@@ -116,8 +116,9 @@ public class ViewController {
 	}
 	
 	@RequestMapping(value = "/console/{tsId}/views/{viewPage}", method = RequestMethod.GET)
-	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage) throws Exception {
+	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("template");
+		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
 		mv.addObject("tsId", tsId);
 		mv.addObject("pageName", viewPage);
 		

@@ -6,9 +6,13 @@
 <mapper namespace="com.isu.ifw.mapper.WtmFlexibleStdMapper">
     <select id="getWtmFlexibleStd" parameterType="map" resultType="wtmFlexibleStd">
         <![CDATA[
-			SELECT S.*
-			     , C.*
+			SELECT F_DATE_FORMAT(F_TO_DATE(F_STR_CONCAT(S.USE_SYMD, S.WORK_SHM), '%Y%m%d%H%i'), '%H:%i') AS WORK_SHM
+			     , F_DATE_FORMAT(F_TO_DATE(F_STR_CONCAT(S.USE_SYMD, S.WORK_EHM), '%Y%m%d%H%i'), '%H:%i') AS WORK_EHM
+			     , F_DATE_FORMAT(F_TO_DATE(F_STR_CONCAT(S.USE_SYMD, S.CORE_SHM), '%Y%m%d%H%i'), '%H:%i') AS CORE_SHM
+			     , F_DATE_FORMAT(F_TO_DATE(F_STR_CONCAT(S.USE_SYMD, S.CORE_EHM), '%Y%m%d%H%i'), '%H:%i') AS CORE_EHM
 			     , C.CODE_NM AS WORK_TYPE_NM 
+			     , S.*
+			     , C.*
 			  FROM WTM_FLEXIBLE_STD_MGR S 
 			  JOIN WTM_CODE C
 			    ON C.ENTER_CD = S.ENTER_CD

@@ -81,17 +81,19 @@
 					return '${today}';
 				}
 			},
-			/* views: {
+			views: {
 				type: Object,
 				required: false,
 				default : function(){
 					return {
 					    dayGrid: {
-					    	titleFormat: { year: 'numeric', month: '2-digit', day: '2-digit' }
+					    	eventLimit: 2 //화면에 보여줄 이벤트 개수
+					    	//titleFormat: { year: 'numeric', month: '2-digit', day: '2-digit' }
 					    }
 					};
 				}
-			}, 
+			},
+			/*
 			validRange: {
 			    type: Object,
 			    required: false,
