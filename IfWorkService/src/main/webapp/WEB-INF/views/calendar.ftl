@@ -182,23 +182,24 @@
 				//calendarOptions.dayRender = function(dayRenderInfo){
 				//	$this.dayRenderCallback(dayRenderInfo);
 				//};
-				calendarOptions.select = function(info){
-					$this.selectCallback(info);
-				};
+				//calendarOptions.select = function(info){
+				//	$this.selectCallback(info);
+				//};
 				//calendarOptions.selectAllow = function(info){
 				//	$this.selectAllowCallback(info);
 				//};
+				calendarOptions.dateClick = function(info){
+					$this.dateClickCallback(info);
+				};
 				calendarOptions.eventClick = function(info){
 					$this.eventClickCallback(info);
 				};
-				
-				
+				 
 				$this.cal = new FullCalendar.Calendar(calendarEl,calendarOptions);
 				$this.cal.render();
 				
 				$this.renderCallback();
 			});
-			
 			
         },
         methods: {
@@ -225,6 +226,9 @@
         	},
         	selectAllowCallback: function(info){
         		this.$emit('selectallow', info);
+        	},
+        	dateClickCallback: function(info){
+        		this.$emit('dateclick', info);
         	},
         	eventClickCallback: function(info){
         		this.$emit('eventclick', info);

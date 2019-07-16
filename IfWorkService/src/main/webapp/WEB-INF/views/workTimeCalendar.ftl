@@ -1,7 +1,3 @@
-
-
-
-
 <#include "/calendar.ftl">
 <div id="workTimeCalendar" v-cloak>
     <div class="modal fade" id="flexitimeModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
@@ -23,7 +19,11 @@
                                 <li class="list-group-item" v-for="(f, fIdx) in flexitimeList" @click="selectFlexitime(fIdx)">
                                     <span :class="['tag ' + f.workTypeCd]">{{f.workTypeNm}}</span>
                                     <div class="title">{{f.flexibleNm}}</div>
-                                    <div class="desc">근무구간: {{f.workShm}} ~ {{f.workEhm}}<span class="bar"></span>코어구간: {{f.coreShm}} ~ {{f.coreEhm}}</div>
+                                    <div class="desc">
+                                    	근무구간: {{f.workShm}} ~ {{f.workEhm}}
+                                    	<span class="bar"></span>
+                                    	코어구간: {{f.coreShm}} ~ {{f.coreEhm}}
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -225,8 +225,13 @@
             </div>
             <div class="col-12 col-md-9">
                 <div class="calendar-wrap">
+                	<div id="calendar-popover" style="display:none;">
+                		<div id="startDaySelect" class="btn btn-apply">
+                			<input id="startDay" type="hidden" value="">확인
+                		</div>
+                	</div>
                     <div id='calendar-container'>
-                		<full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
+                		<full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @eventclick="eventClickCallback"></full-calendar>
                     </div>
                 </div>
             </div>
@@ -251,6 +256,13 @@
   		    	workRange: '', //근무기간
   		    	workDaysOpt: [],
   		    	events: [
+  		    		{
+  		                title: '연차',
+  		              	description: '개인 휴가',
+  		                start: '2019-07-03',
+  		                end: '2019-07-03',
+  		                color: '#4d84fe'
+  		            },
   		    		{
   		                title: '출근',
   		                start: '2019-07-11T08:23:00',
@@ -335,23 +347,44 @@
   		    		
   		    	},
   		    	selectCallback : function(info){ //day select
+  		    	},
+  		    	dateClickCallback : function(info){
+  		    		
   		    		var $this = this;
-  		    	
+  	  		    	
   		    		//시작일 지정 팝업
   		    		if(this.useYn=='Y' && (this.useSymd==null || this.useSymd=='')) {
-  		    			$("#alertText").html(info.startStr + " 시작일 지정");
+  		    			$('.popover').remove();
+  		    			
+  		    			if(moment(info.dateStr).diff($this.prevEdate)>0){
+	  		    			$(info.dayEl).popover({
+	  	  		    			html: true,
+	  					    	placement: 'bottom',
+	  						    //animation:true,
+	  				            //delay: 100,
+	  				            content: function(){
+	  				            	$("#startDay").val(info.dateStr);
+	  				            	return $("#calendar-popover").html();
+	  				            },
+	  				            container:'#calendar'
+	  					    });
+	  		    			$(info.dayEl).popover('show');
+  		    			}
+  		    			
+  		    			/* $("#alertText").html(info.startStr + " 시작일 지정");
   	  	         		$("#alertModal").on('hidden.bs.modal',function(){
   	  	         			$("#alertModal").off('hidden.bs.modal');
-  	  	         			$this.useSymd = info.startStr;
   	  	         			
-  	  	         			//신청 화면 전환
-  		    				$this.viewFlexitimeAppl();
+  	  	         			$this.useSymd = info.startStr;
+  	  					
+  	  	    				//신청 화면 전환
+  	  	    				$this.viewFlexitimeAppl();
   	  	         		});
-  	  	         		$("#alertModal").modal("show"); 
+  	  	         		$("#alertModal").modal("show");  */
   		    		}
+  		    		
   		    	},
   		    	eventClickCallback : function(info){
-  		    		console.log('eventClick');
   		    	},
   		    	dayRenderCallback : function(dayRenderInfo){ //day render
   		    		var date = dayRenderInfo.date;
@@ -423,7 +456,6 @@
   		    		
   		    		//기존에 시행한 유연근무 기간의 경우 선택하지 못하게끔 함
   	         		calendar.setOption('selectAllow', function(i){
-  	         			
   	  		    		if($this.prevEdate!=null && $this.prevEdate!='')
   	  		    			return moment(i.startStr).diff($this.prevEdate)>0;
   	  		    		else
@@ -604,6 +636,13 @@
    	$('#flexitimeModal').on('hidden.bs.modal',function(){
    		$(".list-group-item").removeClass("active");
    		workTimeCalendarVue.prevEdate = '';
+   	});
+   	
+	$(document).on("click", "#startDaySelect", function() {
+		$('.popover').remove();
+		workTimeCalendarVue.useSymd = $("#startDay").val();
+		//신청 화면 전환
+		workTimeCalendarVue.viewFlexitimeAppl();
    	});
    	
 </script>
