@@ -226,8 +226,11 @@
             <div class="col-12 col-md-9">
                 <div class="calendar-wrap">
                 	<div id="calendar-popover" style="display:none;">
-                		<div id="startDaySelect" class="btn btn-apply">
-                			<input id="startDay" type="hidden" value="">확인
+                		<div class="popover-inner-wrap">
+	                		<div class="msg">시작일로 지정</div>
+                			<span id="startDaySelect" class="btn btn-default btn-flat">
+                				<input id="startDay" type="hidden" value="">확인
+                			</span>
                 		</div>
                 	</div>
                     <div id='calendar-container'>
