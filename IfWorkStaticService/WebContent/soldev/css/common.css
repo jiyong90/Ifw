@@ -506,6 +506,10 @@ ul, ol, li{
 }
 #calendar-container .popover-inner-wrap .msg {
   margin-bottom:10px;
+  font-size: 14px;
+  line-height: 1.07;
+  letter-spacing: -0.7px;
+  color: #292944;
 }
 #calendar-container .popover-inner-wrap .btn-default {
   font-size: 14px;
