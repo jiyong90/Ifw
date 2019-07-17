@@ -68,6 +68,6 @@ $(document).ready(function(){
 		}
 	});
 
-	connect("/api/${tsId}/${enterCd}/${loginId}/noti", inboxCountVue.webSocketCallback);
+	connect("/api/${tsId}/${enterCd}/${empNo}/noti", inboxCountVue.webSocketCallback);
 });
 </script>
