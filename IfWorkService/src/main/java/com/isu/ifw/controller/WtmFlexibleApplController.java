@@ -72,14 +72,11 @@ public class WtmFlexibleApplController {
 		String empNo = sessionData.get("empNo").toString();
 		
 		Long applId = null;
-		Long flexibleStdMgrId = null;
 		String workTypeCd = null;
-		if(paramMap.get("flexibleStdMgrId")!=null && !"".equals(paramMap.get("flexibleStdMgrId")))
-			flexibleStdMgrId = Long.valueOf(paramMap.get("flexibleStdMgrId").toString());
 		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
 			workTypeCd = paramMap.get("workTypeCd").toString();
 				
-		flexibleApplService.imsi(tenantId, enterCd, applId, flexibleStdMgrId, workTypeCd, paramMap, empNo);
+		flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, empNo);
 		rp.setSuccess("");
 		return rp;
 	}

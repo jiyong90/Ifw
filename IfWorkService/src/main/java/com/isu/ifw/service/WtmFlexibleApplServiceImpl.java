@@ -49,19 +49,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 
 	@Override
 	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
-<<<<<<< HEAD
-=======
-		// TODO Auto-generated method stub
-		paramMap.put("tenantId", tenantId);
-		paramMap.put("enterCd", enterCd);
-		paramMap.put("empNo", empNo);
-		
-		return flexApplMapper.getWtmFlexibleAppl(paramMap);
-	}
-	
-	@Override
-	public void apply() {
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
@@ -132,22 +119,11 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		appl.setUpdateId(sabun);
 		//appl.
 		
-<<<<<<< HEAD
 		return wtmApplRepo.save(appl);
 	}
 	
 	protected WtmFlexibleAppl saveWtmFlexibleAppl(Long tenantId, String enterCd, Long applId, Long flexibleStdMgrId, String sYmd, String eYmd, String sabun) {
-		//근무제 신청서 테이블 조회
-=======
-		appl = wtmApplRepo.save(appl);
-		
-		applId = appl.getApplId();
-		
-		String sYmd = paramMap.get("sYmd").toString();
-		String eYmd = paramMap.get("eYmd").toString();
-		String ym = sYmd.substring(0, 6);
-		
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
+		 
 		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
 		if(flexibleAppl == null) {
 			flexibleAppl = new WtmFlexibleAppl();

@@ -2,11 +2,8 @@ package com.isu.ifw.service;
 
 import java.util.Map;
 
-<<<<<<< HEAD
 import com.isu.ifw.entity.WtmAppl;
-=======
 import com.isu.ifw.vo.WtmFlexibleApplVO;
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 
 /**
  * 
@@ -31,14 +28,10 @@ public interface WtmApplService {
 	
 	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
 	
-<<<<<<< HEAD
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun);
 	public void apply(Long tenantId, String enterCd, Long applId, Map<String, Object> paramMap, String sabun);
 	public void reject(Long tenantId, String enterCd, Long applId, Map<String, Object> paramMap, String sabun);
 	
-=======
-	public void apply();
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 	/**
 	 * 
 	 * @param tenantId
