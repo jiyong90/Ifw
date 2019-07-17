@@ -1,5 +1,6 @@
 package com.isu.ifw.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.isu.ifw.vo.WtmFlexibleEmpVO;
@@ -10,6 +11,16 @@ import com.isu.ifw.vo.WtmFlexibleEmpVO;
  *
  */
 public interface WtmFlexibleEmpService {
+	
+	/**
+	 * 해당 월의 근무제 정보 조회
+	 * @param tenantId
+	 * @param enterCd
+	 * @param empNo
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
 
 	/**
 	 * 선택한 기간의 근무제 정보 조회

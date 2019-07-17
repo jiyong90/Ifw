@@ -2,6 +2,8 @@ package com.isu.ifw.service;
 
 import java.util.Map;
 
+import com.isu.ifw.vo.WtmFlexibleApplVO;
+
 /**
  * 
  * @author 
@@ -22,6 +24,8 @@ public interface WtmApplService {
 	final static String APPL_STATUS_CANCEL = "44";
 	//처리완료
 	final static String APPL_STATUS_APPR = "99";
+	
+	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
 	
 	public void apply();
 	/**

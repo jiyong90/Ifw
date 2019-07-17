@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.vo.WtmFlexibleApplVO;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
@@ -32,26 +33,53 @@ public class WtmFlexibleApplController {
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
 	
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getFlexitime(@RequestBody Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		
+		validateParamMap(paramMap, "sYmd");
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		
+		rp.setSuccess("");
+		
+		WtmFlexibleApplVO flexibleAppl = null;
+		try {		
+			flexibleAppl = flexibleApplService.getFlexibleAppl(tenantId, enterCd, empNo, paramMap);
+			rp.put("flexibleAppl", flexibleAppl);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 	
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getFlexitime(@RequestBody Map<String, Object> paramMap
+	public @ResponseBody ReturnParam imsiFlexitime(@RequestBody Map<String, Object> paramMap
 													    , HttpServletRequest request) throws Exception {
 		
 		validateParamMap(paramMap, "flexibleStdMgrId","workTypeCd", "sYmd", "eYmd");
 		
 		ReturnParam rp = new ReturnParam();
-		//Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		//Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		//String enterCd = sessionData.get("enterCd").toString();
-		//String userKey = sessionData.get("empNo").toString();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		
 		Long applId = null;
-		Long flexibleStdMgrId = new Long("1");
-		Long tenantId = new Long("1");
-		String enterCd = "ISU";
-		String workTypeCd = paramMap.get("workTypeCd").toString();
-		String userId = "11003";
+		Long flexibleStdMgrId = null;
+		String workTypeCd = null;
+		if(paramMap.get("flexibleStdMgrId")!=null && !"".equals(paramMap.get("flexibleStdMgrId")))
+			flexibleStdMgrId = Long.valueOf(paramMap.get("flexibleStdMgrId").toString());
+		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
+			workTypeCd = paramMap.get("workTypeCd").toString();
 				
-		flexibleApplService.imsi(tenantId, enterCd, applId, flexibleStdMgrId, workTypeCd, paramMap, userId);
+		flexibleApplService.imsi(tenantId, enterCd, applId, flexibleStdMgrId, workTypeCd, paramMap, empNo);
 		rp.setSuccess("");
 		return rp;
 	}

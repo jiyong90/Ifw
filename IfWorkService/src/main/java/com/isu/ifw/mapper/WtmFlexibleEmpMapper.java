@@ -1,10 +1,18 @@
 package com.isu.ifw.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 import com.isu.ifw.vo.WtmFlexibleEmpVO;
 
 public interface WtmFlexibleEmpMapper {
+	
+	/**
+	 * 해당 월의 근무제 정보 조회
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getFlexibleEmpList(Map<String, Object> paramMap);
 	
 	/**
 	 * 선택한 기간의 근무제 정보 조회

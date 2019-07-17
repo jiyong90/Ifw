@@ -20,6 +20,7 @@ import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
+import com.isu.ifw.vo.WtmFlexibleApplVO;
 
 @Service("wtmFlexibleApplService")
 public class WtmFlexibleApplServiceImpl implements WtmApplService {
@@ -43,6 +44,16 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
+	
+	@Override
+	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("empNo", empNo);
+		
+		return flexApplMapper.getWtmFlexibleAppl(paramMap);
+	}
 	
 	@Override
 	public void apply() {
@@ -79,7 +90,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		String sYmd = paramMap.get("sYmd").toString();
 		String eYmd = paramMap.get("eYmd").toString();
-		String ym = sYmd.substring(0, 4);
+		String ym = sYmd.substring(0, 6);
 		
 		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
 		if(flexibleAppl == null) {

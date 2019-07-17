@@ -20,14 +20,14 @@
                                     <span :class="['tag ' + f.workTypeCd]">{{f.workTypeNm}}</span>
                                     <div class="title">{{f.flexibleNm}}</div>
                                     <div class="desc">
-                                    	<template v-if="f.workShm&&f.workEhm">
+                                    	<template v-if="f.workShm && f.workEhm">
                                     		근무구간: {{f.workShm}} ~ {{f.workEhm}}
                                     	</template>
                                     	<template v-else>
                                     		근무구간: 없음
                                     	</template>
                                     	<span class="bar"></span>
-                                    	<template v-if="f.coreShm&&f.coreEhm">
+                                    	<template v-if="f.coreShm && f.coreEhm">
                                     		코어구간: {{f.coreShm}} ~ {{f.coreEhm}}
                                     	</template>
                                     	<template v-else>
@@ -183,7 +183,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="applForm" class="white-box-wrap full-height mb-3" style="display:none;">
+                <div id="flexibleAppl" class="white-box-wrap full-height mb-3" style="display:none;">
                     <div class="work-plan-wrap">
                         <div class="main-wrap">
                             <div class="main-title">해당일의 근무계획 구분</div>
@@ -191,21 +191,35 @@
                             <ul class="time-list">
                                 <li>
                                     <span class="title">근무가능시간</span>
-                                    <span class="desc">{{selectedFlexitime.workShm}} ~ {{selectedFlexitime.workEhm}}</span>
+                                    <span class="desc">
+                                    	<template v-if="selectedFlexitime.workShm && selectedFlexitime.workEhm">
+                                    	{{selectedFlexitime.workShm}} ~ {{selectedFlexitime.workEhm}}
+                                    	</template>
+                                    	<template v-else>
+                                    	없음
+                                    	</template>
+                                    </span>
                                 </li>
                                 <li>
                                     <span class="title">필수근무시간</span>
-                                    <span class="desc">{{selectedFlexitime.coreShm}} ~ {{selectedFlexitime.coreEhm}}</span>
+                                    <span class="desc">
+                                    	<template v-if="selectedFlexitime.coreShm && selectedFlexitime.coreEhm">
+                                    	{{selectedFlexitime.coreShm}} ~ {{selectedFlexitime.coreEhm}}
+                                    	</template>
+                                    	<template v-else>
+                                    	없음
+                                    	</template>
+                                    </span>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    <div class="sub-wrap">
+                    <div class="sub-wrap" v-show="applInfo.useSymd">
                         <form action="">
                             <div class="form-row no-gutters time-input-form">
                                 <div class="form-group col-5">
                                     <label for="useSymd">시작일자</label>
-                                    <input type="text" class="form-control" id="useSymd" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="YYYY-MM-DD" v-model="useSymd" @change="changeUseSymd">
+                                    <input type="text" class="form-control" id="useSymd" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="YYYY-MM-DD" v-model="applInfo.useSymd" @change="changeUseSymd">
                                 </div>
                                 <div class="form-group col-2 text-center">
                                     <lable></lable>
@@ -213,25 +227,66 @@
                                 </div>
                                 <div class="form-group col-5">
                                     <label for="useEymd">종료일자</label>
-                                    <input type="text" class="form-control" id="useEymd" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="YYYY-MM-DD" v-model="useEymd" disabled>
+                                    <input type="text" class="form-control" id="useEymd" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="YYYY-MM-DD" v-model="applInfo.useEymd" disabled>
                                 </div>
                                 <div class="form-group col-12">
                                     <label for="workTime">근무기간</label>
-                                    <select id="workTime" class="form-control" v-model="workRange" @change="changeWorkRange">
+                                    <select id="workTime" class="form-control" v-model="applInfo.workRange" @change="changeWorkRange">
                                         <option v-for="term in selectedFlexitime.usedTermOpt" :value="term.value">{{term.lable}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-12">
                                     <label for="reson">사유</label>
-                                    <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다."></textarea>
+                                    <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason"></textarea>
                                 </div>
                             </div>
                             <div class="btn-wrap mt-5">
-                                <button type="button" class="btn btn-apply btn-block btn-lg">확인요청</button>
+                                <button type="button" class="btn btn-apply btn-block btn-lg" @click="flexitimeAppl">확인요청</button>
                             </div>
                         </form>
                     </div>
                 </div>
+                <div id="flexibleDayPlan" class="white-box-wrap full-height mb-3" style="display:none;">
+	                <div class="work-plan-wrap">
+	                    <div class="big-title">2019년 6월 3일 ~ 2019년 6월 7일 (5일)</div>
+	                    <div class="inner-wrap">
+	                        <div class="main-title">근무시간표</div>
+	                        <div class="main-desc">기본근무시간표</div>
+	                    </div>
+	                    <div class="time-input-form">
+	                        <div class="form-row no-gutters">
+	                            <div class="form-group col-5">
+	                                <label for="startTime">출근시간</label>
+	                                <input type="time" class="form-control" id="startTime" placeholder="">
+	                            </div>
+	                            <div class="form-group col-2 text-center">
+	                                <lable></lable>
+	                                <span>~</span>
+	                            </div>
+	                            <div class="form-group col-5">
+	                                <label for="endTime">퇴근시간</label>
+	                                <input type="time" class="form-control" id="endTime" placeholder="">
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="sub-wrap">
+	                    <ul class="time-block-list">
+	                        <li>
+	                            <div class="title">총 소정 근로 시간</div>
+	                            <div class="desc">120시간</div>
+	                        </li>
+	                        <li>
+	                            <div class="title">계획 시간</div>
+	                            <div class="desc">42시간</div>
+	                        </li>
+	                    </ul>
+	                </div>
+	                <div class="sub-desc">*연차는 표준근무시간 8시간 인정</div>
+	                <div class="btn-wrap mt-5">
+	                    <button type="button" class="btn btn-apply btn-block btn-lg">확정</button>
+	                </div>
+	            </div>
             </div>
             <div class="col-12 col-md-9">
                 <div class="calendar-wrap">
@@ -260,14 +315,21 @@
   		    	useYn: 'N', //근무제 적용 여부
   		    	prevEdate: '', //이전 근무제 종료일
   		    	flexibleInfo: {}, //선택한 기간의 근무제 정보
+  		    	monthFlexitimeList: [], //해당 월의 근무제 리스트
   		    	flexitimeList: [], //사용할 근무제 리스트
   		    	selectedFlexitime: {}, //적용할 근무제
-  		    	useSymd: '', //시작일
-  		    	useEymd: '',
-  		    	workRange: '', //근무기간
-  		    	workDaysOpt: [],
+  		    	applInfo: { //신청 데이터
+  		    		applId:'',
+  		    		useSymd:'',
+  		    		useEymd:'',
+  		    		workRange:'',
+  		    		reason:'',
+  		    	}, 
+  		    	//useSymd: '', //시작일
+  		    	//useEymd: '',
+  		    	//workRange: '', //근무기간
   		    	events: [
-  		    		{
+  		    		/* {
   		                title: '연차',
   		              	description: '개인 휴가',
   		                start: '2019-07-03',
@@ -311,7 +373,7 @@
   		                start: '2019-07-11T19:00:00',
   		                end: '2019-07-11T21:05:00',
   		                color: '#f75353'
-  		            }
+  		            } */
   		    	]
   		    },
   		    mounted: function(){
@@ -352,9 +414,11 @@
 								
 							}
 						});
+	   		    		
+	   		    		$this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
 	  		    	}
   		    		
-  		    		$this.getWorkRangeInfo(calendar.getDate());
+  		    		//$this.getWorkRangeInfo(calendar.getDate());
   		    		
   		    	},
   		    	selectCallback : function(info){ //day select
@@ -364,7 +428,7 @@
   		    		var $this = this;
   	  		    	
   		    		//시작일 지정 팝업
-  		    		if(this.useYn=='Y' && (this.useSymd==null || this.useSymd=='')) {
+  		    		if(this.useYn=='Y' /* && (this.useSymd==null || this.useSymd=='') */) {
   		    			$('.popover').remove();
   		    			
   		    			if($this.prevEdate==''||moment(info.dateStr).diff($this.prevEdate)>0){
@@ -402,20 +466,80 @@
   	         		$('td').find(".fc-day-top[data-date='"+moment(date).format('YYYY-MM-DD')+"'] .fc-day-number").text(moment(date).format('D'));
   	         	},
   	         	addEvent : function(Obj){
-  	         		var calendar = this.$refs.fullCalendar.cal;
-  	         		var event = calendar.getEventById(Obj.id);
-         			if(event==null) {
-         				//이벤트 새로 생성
+  	         		if(Obj!=null) {
+  	         			var calendar = this.$refs.fullCalendar.cal;
+  	         			
+  	         			var event = calendar.getEventById(Obj.id);
+	         			/* if(event==null) {
+	         				//이벤트 새로 생성
+	         				calendar.batchRendering(function() {
+	  	  	         			calendar.addEvent(Obj);
+	  	  	         		});
+	         			} else {
+	         				//이벤트 날짜 수정
+	         				//event.setStart(Obj.start);
+	         				//event.setEnd(Obj.end);
+	         				//event.setProp("startRecur",Obj.startRecur);
+	         				//event.setProp("endRecur",Obj.endRecur);
+	         			} */
+	         			
+	         			if(event!=null) {
+	         				event.remove();
+	         			}
+	         			//이벤트 새로 생성
          				calendar.batchRendering(function() {
   	  	         			calendar.addEvent(Obj);
   	  	         		});
-         			} else {
-         				//이벤트 날짜 수정
-         				event.setStart(Obj.start);
-         				event.setEnd(Obj.end);
-         			}
+	         			
+  	         		}
   	         	},
-				getWorkRangeInfo : function(ymd){ //선택한 근무제 정보
+  	         	getFlexibleEmpList : function(sYmd, eYmd){ //해당월의 근무제 정보
+  	         		var $this = this;
+  		    		var calendar = this.$refs.fullCalendar.cal;
+  		    		
+					var param = {
+	   		    		sYmd : moment(sYmd).format('YYYYMM'),
+	   		    		eYmd :  moment(eYmd).format('YYYYMM')
+	   		    	};
+   		    		
+					$this.monthFlexitimeList = [];
+					
+   		    		Util.ajax({
+						url: "${rc.getContextPath()}/flexibleEmp/list",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							//console.log(data);
+							if(data.status=='OK' && data.flexibleList!=null) {
+								$this.monthFlexitimeList = data.flexibleList;
+								
+								$this.monthFlexitimeList.map(function(f){
+									var sYmd = moment(f.sYmd).format('YYYY-MM-DD');
+									var eYmd = new Date(moment(f.eYmd).format('YYYY-MM-DD'));
+									eYmd.setDate(eYmd.getDate()+1);
+									eYmd = moment(eYmd).format('YYYY-MM-DD');
+									
+									var classNames = [];
+									classNames.push(f.workTypeCd);
+									
+									$this.addEvent({
+										id: f.workTypeCd+''+f.applId,
+										start: sYmd,
+			  		  		        	end: eYmd,
+			  		  		        	rendering: 'background',
+			  		  		        	classNames: classNames
+									});
+								});
+							}
+						},
+						error: function(e) {
+							$this.monthFlexitimeList = [];
+						}
+					});
+  	         	},
+				getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
 					var $this = this;
   		    		var calendar = this.$refs.fullCalendar.cal;
   		    		
@@ -453,14 +577,11 @@
 								});
 							}
 						},
-						error: function() {
-							
+						error: function(e) {
+							$this.flexibleInfo = {};
 						}
 					});
   	         	},
-				getWorkDayInfo : function(ymd){ //해당일의 근무 정보
-					
-				},
 				selectAllow : function(){
   		    		var $this = this;
   		    		var calendar = $this.$refs.fullCalendar.cal;
@@ -473,6 +594,9 @@
   	  		    			return true;
   	         		});
   		    	},
+				getWorkDayInfo : function(ymd){ //해당일의 근무 정보
+					
+				},
   	         	getFlexitimeList : function(){ //사용할 근무제 리스트
   	         		var $this = this;
   	         		/* var param = {
@@ -480,7 +604,6 @@
 	   		    	}; */
    		    		
    		    		Util.ajax({
-						//url: "${rc.getContextPath()}/flexitime/list",
 						url: "${rc.getContextPath()}/flexibleStd",
 						type: "GET",
 						contentType: 'application/json',
@@ -538,15 +661,15 @@
   	         		if(workRangeEvent!=null)
   	         			workRangeEvent.remove();
   	         		
-  	         		$this.useSymd = '';
-         			$this.useEymd = '';
+  	         		$this.applInfo.useSymd = '';
+         			$this.applInfo.useEymd = '';
          			
   	         	},
   	         	applyFlexitime : function(){ //근무제 적용
   	         		var $this = this;
   	         	
   	         		$this.clearFlexitimeAppl();
-  		    		$this.workRange = '';
+  		    		$this.applInfo.workRange = '';
   	         	
   	         		$('#flexitimeModal').on('hidden.bs.modal',function(){
   	         			$('#flexitimeModal').off('hidden.bs.modal');
@@ -559,8 +682,10 @@
   	         			$("#alertText").html("달력에서 근무제 시작일을 선택해주세요.");
   	  	         		$("#alertModal").on('hidden.bs.modal',function(){
   	  	         			$("#alertModal").off('hidden.bs.modal');
-  	  	         			$this.useSymd='';
+  	  	         			$this.applInfo.useSymd='';
 	  	         			$this.useYn='Y';
+	  	         			
+	  	         			$("#flexibleAppl").show();
 	  	         			
 	  	         			//선택할 수 있는 근무기간 체크
 	  	         			$this.getPrevFlexitime();
@@ -573,15 +698,13 @@
   	         	viewFlexitimeAppl : function(){ //신청서 setting
   	         		var $this = this;
   	         	
-  	         		$("#applForm").show();
-  	         	
   	         		//적용기간은 첫번째 항목으로 기본 세팅
   	         		if($this.selectedFlexitime.hasOwnProperty("usedTermOpt") && $this.selectedFlexitime.usedTermOpt!=null) {
   	         			var workDateRangeItem = $this.selectedFlexitime.usedTermOpt[0]; 
   	         			
   	         			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null)
   	         				//$this.changeWorkRange(workDateRangeItem.value);
-  	         				$this.workRange = workDateRangeItem.value;
+  	         				$this.applInfo.workRange = workDateRangeItem.value;
   	         				$this.changeWorkRange();
   	         		}
   	         		
@@ -589,7 +712,7 @@
   	         	changeUseSymd : function(e){
   	         		var $this = this;
   	         		
-  	         		if(moment($this.useSymd).diff($this.prevEdate)<=0) {
+  	         		if(moment($this.applInfo.useSymd).diff($this.prevEdate)<=0) {
   	         			$this.clearFlexitimeAppl();
   	         			return false;
   	         		}
@@ -598,10 +721,10 @@
   	         	changeWorkRange : function(){ //근무기간 변경에 따라 background 변경
   	         		var $this = this;
   	         		var calendar = $this.$refs.fullCalendar.cal;
-  	         		if($this.workRange!=null && $this.workRange!='') {
-	  	         		var workDateRange = $this.workRange.split('_');
-	         		
-	         			var eYmd = new Date($this.useSymd);
+  	         		
+  	         		if($this.applInfo.useSymd!=null && $this.applInfo.useSymd!='' && $this.applInfo.workRange!=null && $this.applInfo.workRange!='') {
+	  	         		var workDateRange = $this.applInfo.workRange.split('_');
+	         			var eYmd = new Date($this.applInfo.useSymd);
 	         			if(workDateRange[1]=='week') {
 	         				eYmd.setDate(eYmd.getDate()+ (workDateRange[0]*7));
 	         			} else if(workDateRange[1]=='month') {
@@ -613,33 +736,107 @@
 						
 						//근무 요일이 아닌 경우 제외하고 event 생성
 						var daysOfWeek = ['일','월','화','수','목','금','토'];
+						var workDaysOpt = [];
 						$.each($this.selectedFlexitime.workDaysOpt, function(k, v){
 							if(v==true) {
 								if($.inArray(v, $this.selectedFlexitime.workDaysOpt) === -1) {
-									$this.workDaysOpt.push(daysOfWeek.indexOf(k));
+									workDaysOpt.push(daysOfWeek.indexOf(k));
 								}
 							}
 						});
 						
 	         			$this.addEvent({
   	         				id: 'workRange',
-  		  		    		start: $this.useSymd,
+  		  		    		start: $this.applInfo.useSymd,
   		  		        	end: moment(eYmd).format('YYYY-MM-DD'),
   		  		        	rendering: 'background',
-  		  		        	daysOfWeek: $this.workDaysOpt,
-  		  		        	startRecur: $this.useSymd,
+  		  		        	daysOfWeek: workDaysOpt,
+  		  		        	startRecur: $this.applInfo.useSymd,
   		  		        	endRecur: moment(eYmd).format('YYYY-MM-DD'),
   		  		        	classNames: classNames
   	  	  		      	});
 	         			
 	         			eYmd.setDate(eYmd.getDate()-1);
-	         			$this.useEymd = moment(eYmd).format('YYYY-MM-DD');
+	         			$this.applInfo.useEymd = moment(eYmd).format('YYYY-MM-DD');
 	         			
-	         			calendar.gotoDate($this.useSymd);
+	         			calendar.gotoDate($this.applInfo.useSymd);
+	         			
+	         			$this.flexitimeApplImsi();
+  	         		}
+  	         	},
+  	         	flexitimeApplImsi : function(){ //임시저장
+  	         		var $this = this;
+  	  	         	
+  	         		//선택한 근무제
+  	         		var flexitime = $this.selectedFlexitime;
+  	         		
+  	         		if(flexitime.workTypeCd.startsWith('SELE')) {
+  	         			//임시저장
+  	         			var param = {
+  	         				flexibleStdMgrId : flexitime.flexibleStdMgrId,
+  	         				workTypeCd : flexitime.workTypeCd,
+  	         				empNo : "${empNo}",
+  	         				applId : '',
+		   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
+		   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
+		   		    		reason: $this.applInfo.reason
+		   		    	};
+  	         			
+  	         			console.log(param);
+	   		    		
+	   		    		Util.ajax({
+							url: "${rc.getContextPath()}/flexibleAppl",
+							type: "POST",
+							contentType: 'application/json',
+							data: JSON.stringify(param),
+							dataType: "json",
+							success: function(data) {
+								console.log(data)
+							},
+							error: function() {
+								$("#alertText").html("확인요청 시 오류가 발생했습니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+		  	  	         		$("#alertModal").modal("show"); 
+							}
+						}); 
+  	         			
+  	         		} else if(workTypeCd.startsWith('ELAS')) {
+  	         			
   	         		}
   	         	},
   	         	flexitimeAppl : function(){ //확인요청
+  	         		var $this = this;
+  	  	         	
+  	         		//선택한 근무제
+  	         		var flexitime = $this.selectedFlexitime;
+  	         		//신청서 정보
+  	         		var applInfo = $this.applInfo;
   	         		
+  	         		if(flexitime.workTypeCd.startsWith('SELE')) {
+  	         			var saveYn = true;
+  	         			if(applInfo.useSymd=='') {
+  	         				saveYn = false;
+  	         				$("#alertText").html("시작일을 입력해 주세요.");
+  	         			}else if(applInfo.useEymd=='') {
+  	         				saveYn = false;
+							$("#alertText").html("종료일을 입력해 주세요.");
+  	         			}else if(applInfo.workRange=='') {
+  	         				saveYn = false;
+							$("#alertText").html("근무기간을 입력해 주세요.");
+  	         			}else if(applInfo.reason=='') {
+  	         				saveYn = false;
+							$("#alertText").html("사유를 입력해 주세요.");
+  	         			}
+						
+						if(saveYn) {
+							
+						} else {
+							$("#alertModal").on('hidden.bs.modal',function(){});
+	  	  	         		$("#alertModal").modal("show"); 
+						}
+  	         		} else if(workTypeCd.startsWith('ELAS')) {
+  	         			
+  	         		}
   	         	}
   		    }
    	});
@@ -651,7 +848,7 @@
    	
 	$(document).on("click", "#startDaySelect", function() {
 		$('.popover').remove();
-		workTimeCalendarVue.useSymd = $("#startDay").val();
+		workTimeCalendarVue.applInfo.useSymd = $("#startDay").val();
 		//신청 화면 전환
 		workTimeCalendarVue.viewFlexitimeAppl();
    	});

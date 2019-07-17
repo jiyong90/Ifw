@@ -1,13 +1,12 @@
 package com.isu.ifw.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.vo.WtmFlexibleEmpVO;
 
@@ -18,19 +17,21 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	WtmFlexibleEmpMapper flexEmpMapper;
 	
 	@Override
-	public WtmFlexibleEmpVO getFlexibleEmp(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("empNo", empNo);
 		
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return flexEmpMapper.getFlexibleEmpList(paramMap);
+	}
+	
+	@Override
+	public WtmFlexibleEmpVO getFlexibleEmp(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("empNo", empNo);
 		
 		return flexEmpMapper.getFlexibleEmp(paramMap);
 	}
