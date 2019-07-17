@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/NotosansKR.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/layout.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/common.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/calendar.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/all.min.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

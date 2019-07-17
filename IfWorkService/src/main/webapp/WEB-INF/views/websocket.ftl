@@ -37,12 +37,10 @@
 	}
 	 
 	function connect(sendToUrl, callback) {
-		console.log("11111111111111111111");
 	    var socket = new SockJS('${rc.getContextPath()}/we');
 	    stompClient = Stomp.over(socket);
 	    stompClient.connect({}, function (frame) {
 	        setConnected(true);
-	        console.log('Connected: ' + frame);
 	        stompClient.subscribe(sendToUrl, function (paramMap) {
 	            console.log(":::::::::::::::::::::::::");
 	            console.log("paramMap " + paramMap);

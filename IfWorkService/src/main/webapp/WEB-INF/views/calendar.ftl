@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/timegrid/main.css"/>
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
+<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/calendar.css">
 
 <script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/main.min.js'></script>
 <script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/locales-all.min.js'></script>
@@ -182,23 +183,24 @@
 				//calendarOptions.dayRender = function(dayRenderInfo){
 				//	$this.dayRenderCallback(dayRenderInfo);
 				//};
-				calendarOptions.select = function(info){
-					$this.selectCallback(info);
-				};
+				//calendarOptions.select = function(info){
+				//	$this.selectCallback(info);
+				//};
 				//calendarOptions.selectAllow = function(info){
 				//	$this.selectAllowCallback(info);
 				//};
+				calendarOptions.dateClick = function(info){
+					$this.dateClickCallback(info);
+				};
 				calendarOptions.eventClick = function(info){
 					$this.eventClickCallback(info);
 				};
-				
-				
+				 
 				$this.cal = new FullCalendar.Calendar(calendarEl,calendarOptions);
 				$this.cal.render();
 				
 				$this.renderCallback();
 			});
-			
 			
         },
         methods: {
@@ -225,6 +227,9 @@
         	},
         	selectAllowCallback: function(info){
         		this.$emit('selectallow', info);
+        	},
+        	dateClickCallback: function(info){
+        		this.$emit('dateclick', info);
         	},
         	eventClickCallback: function(info){
         		this.$emit('eventclick', info);

@@ -326,10 +326,7 @@ public class IfwLoginController {
 			// 만일 위의 과정에서 로그인 id가 (의도한)조작에 의해 바뀔 수 있으면 바꾼다.
 			if (userData != null && userData.containsKey("loginId")) {
 				loginId = (String) userData.get("loginId");
-			}
-			
-			if(request.getParameter("companyCd") != null) {
-				userData.put("enterCd", request.getParameter("companyCd"));
+				userData.put("loginId", loginId);
 			}
 			
 			String userToken = oAuthService.createNewOAuthSession(tsId, userData, null);
@@ -342,8 +339,8 @@ public class IfwLoginController {
 			response.addCookie(cookie);
 
 			session.setAttribute("loginIp", stringUtil.getClientIP(request));
-			session.setAttribute("enterCd", request.getParameter("enterCd"));
-			session.setAttribute("loginId", userData.get("login_id"));
+			//session.setAttribute("enterCd", request.getParameter("enterCd"));
+			//session.setAttribute("loginId", loginId);
 			
 			String endPointUrl = (String) request.getParameter("o");
 			//2018.03.16
