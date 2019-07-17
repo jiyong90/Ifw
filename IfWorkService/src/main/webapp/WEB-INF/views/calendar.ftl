@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/timegrid/main.css"/>
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
+<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/calendar.css">
 
 <script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/main.min.js'></script>
 <script src='${rc.getContextPath()}/fullcalendar-4.2.0/packages/core/locales-all.min.js'></script>
