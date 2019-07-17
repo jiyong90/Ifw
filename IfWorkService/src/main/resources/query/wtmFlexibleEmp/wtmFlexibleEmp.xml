@@ -4,6 +4,35 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmFlexibleEmpMapper">
+	<select id="getFlexibleEmpList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT E.TENANT_ID AS tenantId
+			     , E.ENTER_CD AS enterCd
+			     , E.SABUN AS sabun
+			     , E.WORK_TYPE_CD AS workTypeCd
+			     , E.FLEXIBLE_NM AS flexibleNm
+			     , A.APPL_ID AS applId
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , F_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, E.SYMD) AS applStatusNm
+			     , FA.SYMD AS sYmd
+			     , FA.EYMD AS eYmd
+			     , REASON AS reason
+			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_APPL A
+			    ON E.TENANT_ID = A.TENANT_ID
+			   AND E.ENTER_CD = A.ENTER_CD
+			   AND E.SABUN = A.APPL_SABUN
+			   AND E.WORK_TYPE_CD = A.APPL_CD
+			  JOIN WTM_FLEXIBLE_APPL FA
+			    ON A.APPL_ID = FA.APPL_ID
+			 WHERE E.TENANT_ID =  #{tenantId}
+			   AND E.ENTER_CD = #{enterCd}
+			   AND E.SABUN = #{empNo}
+			   AND (F_TO_DATE(#{sYmd}, '%Y%m%d') <= F_TO_DATE(E.EYMD, '%Y%m%d') OR F_TO_DATE(E.SYMD, '%Y%m%d') < F_TO_DATE(#{eYmd}, '%Y%m%d') 
+    			OR F_TO_DATE(#{sYmd}, '%Y%m%d') <= F_TO_DATE(FA.EYMD, '%Y%m%d') OR F_TO_DATE(FA.SYMD, '%Y%m%d') < F_TO_DATE(#{eYmd}, '%Y%m%d') )
+        ]]>
+    </select>
+
 	<select id="getFlexibleEmp" parameterType="map" resultType="wtmFlexibleEmp">
         <![CDATA[
 			SELECT E.*
@@ -17,14 +46,16 @@
 	
     <select id="getPrevFlexible" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT SABUN AS sabun
-			     , MAX(E.SYMD) AS sYmd
-			     , MAX(E.EYMD) AS eYmd
-			  FROM WTM_FLEXIBLE_EMP E 
-			 WHERE E.TENANT_ID = #{tenantId}
-			   AND E.ENTER_CD = #{enterCd}
-			   AND E.SABUN = #{empNo}
-			GROUP BY E.SABUN
+			SELECT A.APPL_SABUN AS sabun
+			     , MAX(FA.SYMD) AS sYmd
+			     , MAX(FA.EYMD) AS eYmd
+			  FROM WTM_APPL A
+			  JOIN WTM_FLEXIBLE_APPL FA
+			    ON A.APPL_ID = FA.APPL_ID 
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.ENTER_CD = #{enterCd}
+			   AND A.APPL_SABUN = #{empNo}
+			GROUP BY A.APPL_SABUN
         ]]>
     </select>
 </mapper>

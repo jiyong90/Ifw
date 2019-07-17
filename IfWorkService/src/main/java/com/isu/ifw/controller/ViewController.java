@@ -123,9 +123,11 @@ public class ViewController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String loginId = sessionData.get("loginId").toString();
+		String empNo = sessionData.get("empNo").toString();
 		
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
+		mv.addObject("empNo", empNo);
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", viewPage);
 		

@@ -4,6 +4,19 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmApplMapper">
+	<select id="getWtmFlexibleAppl" parameterType="map" resultType="wtmFlexibleAppl">
+        <![CDATA[
+			SELECT FA.*
+			  FROM WTM_APPL A
+			  JOIN WTM_FLEXIBLE_APPL FA
+			    ON A.APPL_ID = FA.APPL_ID 
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.ENTER_CD = #{enterCd}
+			   AND A.APPL_SABUN = #{sabun}
+			   AND F_TO_DATE(#{sYmd},'%Y%m%d') BETWEEN F_TO_DATE(FA.SYMD,'%Y%m%d') AND F_TO_DATE(FA.EYMD,'%Y%m%d')
+        ]]>
+    </select>
+
     <select id="getWtmApplLine" parameterType="map" resultType="wtmApplLine">
         <![CDATA[
 			SELECT X.APPR_SEQ, X.SABUN
