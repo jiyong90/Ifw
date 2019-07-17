@@ -19,7 +19,21 @@
                                 <li class="list-group-item" v-for="(f, fIdx) in flexitimeList" @click="selectFlexitime(fIdx)">
                                     <span :class="['tag ' + f.workTypeCd]">{{f.workTypeNm}}</span>
                                     <div class="title">{{f.flexibleNm}}</div>
-                                    <div class="desc">근무구간: {{f.workShm}} ~ {{f.workEhm}}<span class="bar"></span>코어구간: {{f.coreShm}} ~ {{f.coreEhm}}</div>
+                                    <div class="desc">
+                                    	<template v-if="f.workShm&&f.workEhm">
+                                    		근무구간: {{f.workShm}} ~ {{f.workEhm}}
+                                    	</template>
+                                    	<template v-else>
+                                    		근무구간: 없음
+                                    	</template>
+                                    	<span class="bar"></span>
+                                    	<template v-if="f.coreShm&&f.coreEhm">
+                                    		코어구간: {{f.coreShm}} ~ {{f.coreEhm}}
+                                    	</template>
+                                    	<template v-else>
+                                    		코어구간: 없음
+                                    	</template>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -80,8 +94,8 @@
         <div class="row no-gutters">
             <div class="col-12 col-md-3 pr-md-3">
                 <div id="workRangeInfo" class="work-info-wrap mb-3">
-                    <div class="main-title">2019년 6월 10일 ~ 2019년 6월 16일</div>
-                    <div class="main-desc">일반근무제</div>
+                    <div class="main-title">{{moment(flexibleInfo.sYmd).format("YYYY년 M월 D일")}} ~ {{moment(flexibleInfo.eYmd).format("YYYY년 M월 D일")}}</div>
+                    <div class="main-desc">{{flexibleInfo.flexibleNm}}</div>
                     <ul class="sub-wrap">
                         <li>
                             <div class="sub-title">총 계획 근무시간(소정/연장/휴게)</div>
@@ -122,14 +136,14 @@
                             </li>
                         </ul>
                         <div class="sub-wrap">
-                            <div class="sub-big-title">근무시간 요약 (근무시간 분류별 합산)</div>
+                            <div class="sub-big-title">근무시간 요약 <span style="font-size:10px;">(근무시간 분류별 합산)</span></div>
                             <ul class="sub-list">
                                 <li>
-                                    <span class="sub-title">소정근로</span>
+                                    <span class="sub-title"><i class="fas fa-clock"></i>소정근로</span>
                                     <span class="sub-desc">8:00</span>
                                 </li>
                                 <li>
-                                    <span class="sub-title">연장근로</span>
+                                    <span class="sub-title"><i class="fas fa-moon"></i>연장근로</span>
                                     <span class="sub-desc">2:00</span>
                                     <ul class="sub-desc-list">
                                         <li>
@@ -143,7 +157,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <span class="sub-title">근태현황</span>
+                                    <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <ul class="sub-desc-list">
                                         <li>
                                             <span class="sub-title">오후반차</span>
@@ -156,7 +170,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <span class="sub-title">휴식/휴게 현황</span>
+                                    <span class="sub-title"><i class="fas fa-couch"></i>휴식/휴게 현황</span>
                                     <ul class="sub-desc-list">
                                         <li>
                                             <span class="sub-title">무급</span>
@@ -169,7 +183,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="applForm" class="white-box-wrap mb-3" style="display:none;">
+                <div id="applForm" class="white-box-wrap full-height mb-3" style="display:none;">
                     <div class="work-plan-wrap">
                         <div class="main-wrap">
                             <div class="main-title">해당일의 근무계획 구분</div>
@@ -221,9 +235,14 @@
             </div>
             <div class="col-12 col-md-9">
                 <div class="calendar-wrap">
+               		<div id="calendar-popover" class="popover-inner-wrap" style="display:none;">
+                		<div class="msg">시작일로 지정</div>
+               			<span id="startDaySelect" class="btn btn-default btn-flat">
+               				<input id="startDay" type="hidden" value="">확인
+               			</span>
+               		</div>
                     <div id='calendar-container'>
-                        <!-- <full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dayrender="dayRenderCallback"></full-calendar> -->
-                		<full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
+                		<full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @eventclick="eventClickCallback"></full-calendar>
                     </div>
                 </div>
             </div>
@@ -240,12 +259,21 @@
   		    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
   		    	useYn: 'N', //근무제 적용 여부
   		    	prevEdate: '', //이전 근무제 종료일
+  		    	flexibleInfo: {}, //선택한 기간의 근무제 정보
   		    	flexitimeList: [], //사용할 근무제 리스트
-  		    	selectedFlexitime: {}, //선택한 근무제
+  		    	selectedFlexitime: {}, //적용할 근무제
   		    	useSymd: '', //시작일
   		    	useEymd: '',
   		    	workRange: '', //근무기간
+  		    	workDaysOpt: [],
   		    	events: [
+  		    		{
+  		                title: '연차',
+  		              	description: '개인 휴가',
+  		                start: '2019-07-03',
+  		                end: '2019-07-03',
+  		                color: '#4d84fe'
+  		            },
   		    		{
   		                title: '출근',
   		                start: '2019-07-11T08:23:00',
@@ -287,8 +315,6 @@
   		    	]
   		    },
   		    mounted: function(){
-  		    	this.getTodayWorkInfo(this.today);
-  		    	this.getWorkRangeInfo(this.today);
   		    	this.getWorkDayInfo(this.today);
   		    },
   		    methods : {
@@ -298,9 +324,9 @@
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
+  		    		var calendar = this.$refs.fullCalendar.cal;
+
   		    		if(info.view.type == 'dayGridMonth') { //month change
-	   		    		var calendar = this.$refs.fullCalendar.cal;
-	   		    		
 	   		    		var param = {
 		   		    		ym : moment(calendar.getDate()).format('YYYYMM')
 		   		    	};
@@ -327,37 +353,110 @@
 							}
 						});
 	  		    	}
+  		    		
+  		    		$this.getWorkRangeInfo(calendar.getDate());
+  		    		
   		    	},
   		    	selectCallback : function(info){ //day select
+  		    	},
+  		    	dateClickCallback : function(info){
+  		    		
   		    		var $this = this;
-  		    	
+  	  		    	
   		    		//시작일 지정 팝업
   		    		if(this.useYn=='Y' && (this.useSymd==null || this.useSymd=='')) {
-  		    			//시작일이 적용 시작일과 종료일 사이에 포함되는지 validation 체크
+  		    			$('.popover').remove();
   		    			
-  		    			$("#alertText").html(info.startStr + " 시작일 지정");
+  		    			if($this.prevEdate==''||moment(info.dateStr).diff($this.prevEdate)>0){
+	  		    			$(info.dayEl).popover({
+	  	  		    			html: true,
+	  					    	placement: 'bottom',
+	  						    //animation:true,
+	  				            //delay: 100,
+	  				            content: function(){
+	  				            	$("#startDay").val(info.dateStr);
+	  				            	return $("#calendar-popover").html();
+	  				            },
+	  				            container:'#calendar'
+	  					    });
+	  		    			$(info.dayEl).popover('show');
+  		    			}
+  		    			
+  		    			/* $("#alertText").html(info.startStr + " 시작일 지정");
   	  	         		$("#alertModal").on('hidden.bs.modal',function(){
   	  	         			$("#alertModal").off('hidden.bs.modal');
-  	  	         			$this.useSymd = info.startStr;
   	  	         			
-  	  	         			//신청 화면 전환
-  		    				$this.viewFlexitimeAppl();
+  	  	         			$this.useSymd = info.startStr;
+  	  					
+  	  	    				//신청 화면 전환
+  	  	    				$this.viewFlexitimeAppl();
   	  	         		});
-  	  	         		$("#alertModal").modal("show"); 
+  	  	         		$("#alertModal").modal("show");  */
   		    		}
+  		    		
   		    	},
   		    	eventClickCallback : function(info){
-  		    		console.log('eventClick');
   		    	},
   		    	dayRenderCallback : function(dayRenderInfo){ //day render
   		    		var date = dayRenderInfo.date;
   	         		$('td').find(".fc-day-top[data-date='"+moment(date).format('YYYY-MM-DD')+"'] .fc-day-number").text(moment(date).format('D'));
   	         	},
-  	         	getTodayWorkInfo : function(ymd){ //현재 근무계획
-  	         		
+  	         	addEvent : function(Obj){
+  	         		var calendar = this.$refs.fullCalendar.cal;
+  	         		var event = calendar.getEventById(Obj.id);
+         			if(event==null) {
+         				//이벤트 새로 생성
+         				calendar.batchRendering(function() {
+  	  	         			calendar.addEvent(Obj);
+  	  	         		});
+         			} else {
+         				//이벤트 날짜 수정
+         				event.setStart(Obj.start);
+         				event.setEnd(Obj.end);
+         			}
   	         	},
 				getWorkRangeInfo : function(ymd){ //선택한 근무제 정보
-  	         		
+					var $this = this;
+  		    		var calendar = this.$refs.fullCalendar.cal;
+  		    		
+					var param = {
+	   		    		ymd : moment(ymd).format('YYYYMMDD')
+	   		    	};
+   		    		
+   		    		Util.ajax({
+						url: "${rc.getContextPath()}/flexibleEmp",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							//console.log(data);
+							if(data.status=='OK' && data.flexibleInfo!=null) {
+								$this.flexibleInfo = data.flexibleInfo;
+								
+								var sYmd = moment(data.flexibleInfo.sYmd).format('YYYY-MM-DD');
+								var eYmd = new Date(moment(data.flexibleInfo.eYmd).format('YYYY-MM-DD'));
+								eYmd.setDate(eYmd.getDate()+1);
+								eYmd = moment(eYmd).format('YYYY-MM-DD');
+								
+								var classNames = [];
+								classNames.push(data.flexibleInfo.workTypeCd);
+								
+								$this.addEvent({
+									id: 'flexitimeInfo',
+									//title: data.flexibleInfo.flexibleNm,
+									start: sYmd,
+		  		  		        	end: eYmd,
+		  		  		        	rendering: 'background',
+		  		  		        	classNames: classNames
+		  		  		        	//color: '#4d84fe'
+								});
+							}
+						},
+						error: function() {
+							
+						}
+					});
   	         	},
 				getWorkDayInfo : function(ymd){ //해당일의 근무 정보
 					
@@ -368,11 +467,10 @@
   		    		
   		    		//기존에 시행한 유연근무 기간의 경우 선택하지 못하게끔 함
   	         		calendar.setOption('selectAllow', function(i){
-  	  		    		if($this.prevEdate!=null && $this.prevEdate!='') {
+  	  		    		if($this.prevEdate!=null && $this.prevEdate!='')
   	  		    			return moment(i.startStr).diff($this.prevEdate)>0;
-  	  		    		} else {
+  	  		    		else
   	  		    			return true;
-  	  		    		}
   	         		});
   		    	},
   	         	getFlexitimeList : function(){ //사용할 근무제 리스트
@@ -432,8 +530,23 @@
 						}
 					});
   	         	},
+  	         	clearFlexitimeAppl : function(){
+  	         		var $this = this;
+  	         		var calendar = $this.$refs.fullCalendar.cal;
+  	         		
+  	         		var workRangeEvent = calendar.getEventById('workRange');
+  	         		if(workRangeEvent!=null)
+  	         			workRangeEvent.remove();
+  	         		
+  	         		$this.useSymd = '';
+         			$this.useEymd = '';
+         			
+  	         	},
   	         	applyFlexitime : function(){ //근무제 적용
   	         		var $this = this;
+  	         	
+  	         		$this.clearFlexitimeAppl();
+  		    		$this.workRange = '';
   	         	
   	         		$('#flexitimeModal').on('hidden.bs.modal',function(){
   	         			$('#flexitimeModal').off('hidden.bs.modal');
@@ -475,12 +588,9 @@
   	         	},
   	         	changeUseSymd : function(e){
   	         		var $this = this;
-  	         		var calendar = $this.$refs.fullCalendar.cal;
   	         		
   	         		if(moment($this.useSymd).diff($this.prevEdate)<=0) {
-  	         			$this.useSymd = '';
-  	         			$this.useEymd = '';
-  	         			calendar.getEventById('workRange').remove();
+  	         			$this.clearFlexitimeAppl();
   	         			return false;
   	         		}
   	         		$this.changeWorkRange();
@@ -488,7 +598,6 @@
   	         	changeWorkRange : function(){ //근무기간 변경에 따라 background 변경
   	         		var $this = this;
   	         		var calendar = $this.$refs.fullCalendar.cal;
-  	         		
   	         		if($this.workRange!=null && $this.workRange!='') {
 	  	         		var workDateRange = $this.workRange.split('_');
 	         		
@@ -496,30 +605,35 @@
 	         			if(workDateRange[1]=='week') {
 	         				eYmd.setDate(eYmd.getDate()+ (workDateRange[0]*7));
 	         			} else if(workDateRange[1]=='month') {
-	 	         			eYmd.setMonth(eYmd.getMonth()+workDateRange[0]);
-	 	         			eYmd.setDate(eYmd.getDate()-1);
+	 	         			eYmd.setMonth(eYmd.getMonth()+ (Number(workDateRange[0])));
 	         			}
+	         			
+	         			var classNames = [];
+						classNames.push($this.selectedFlexitime.workTypeCd);
+						
+						//근무 요일이 아닌 경우 제외하고 event 생성
+						var daysOfWeek = ['일','월','화','수','목','금','토'];
+						$.each($this.selectedFlexitime.workDaysOpt, function(k, v){
+							if(v==true) {
+								if($.inArray(v, $this.selectedFlexitime.workDaysOpt) === -1) {
+									$this.workDaysOpt.push(daysOfWeek.indexOf(k));
+								}
+							}
+						});
+						
+	         			$this.addEvent({
+  	         				id: 'workRange',
+  		  		    		start: $this.useSymd,
+  		  		        	end: moment(eYmd).format('YYYY-MM-DD'),
+  		  		        	rendering: 'background',
+  		  		        	daysOfWeek: $this.workDaysOpt,
+  		  		        	startRecur: $this.useSymd,
+  		  		        	endRecur: moment(eYmd).format('YYYY-MM-DD'),
+  		  		        	classNames: classNames
+  	  	  		      	});
+	         			
+	         			eYmd.setDate(eYmd.getDate()-1);
 	         			$this.useEymd = moment(eYmd).format('YYYY-MM-DD');
-	         			
-	         			var workRangeEvent = calendar.getEventById('workRange');
-	         			
-	         			if(workRangeEvent==null) {
-	         				//background 이벤트 새로 생성
-	         				calendar.batchRendering(function() {
-	  	  	         		  //calendar.changeView('dayGridMonth');
-	  	  	         			calendar.addEvent({
-	  	  	         				id: 'workRange',
-	  	  		  		    		start: $this.useSymd,
-	  	  		  		        	end: $this.useEymd,
-	  	  		  		        	rendering: 'background',
-	  	  		  		        	color: '#8fd4b1'
-	  	  	  		      		});
-	  	  	         		});
-	         			} else {
-	         				//background 이벤트 수정
-	         				workRangeEvent.setStart($this.useSymd);
-	         				workRangeEvent.setEnd($this.useEymd);
-	         			}
 	         			
 	         			calendar.gotoDate($this.useSymd);
   	         		}
@@ -533,6 +647,13 @@
    	$('#flexitimeModal').on('hidden.bs.modal',function(){
    		$(".list-group-item").removeClass("active");
    		workTimeCalendarVue.prevEdate = '';
+   	});
+   	
+	$(document).on("click", "#startDaySelect", function() {
+		$('.popover').remove();
+		workTimeCalendarVue.useSymd = $("#startDay").val();
+		//신청 화면 전환
+		workTimeCalendarVue.viewFlexitimeAppl();
    	});
    	
 </script>

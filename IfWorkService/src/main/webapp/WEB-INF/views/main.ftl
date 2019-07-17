@@ -332,6 +332,14 @@
                 $('.modal').modal('show');
                 $('.modal').find('#startDate').val(event.start);
             },
+            eventRender : function(info) {
+			    var tooltip = new Tooltip(info.el, {
+			      title: 'tooltip!!',
+			      placement: 'top',
+			      trigger: 'hover',
+			      container: 'body'
+			    });
+			},
             editable: true,
             eventLimit: true, // allow "more" link when too many events
             events: [{
@@ -339,7 +347,11 @@
                     start: '2019-06-03T13:00:00',
                     constraint: 'businessHours'
                 },
-
+                {
+                    title: 'Conference',
+                    description: '개인 휴가',
+                    start: '2019-06-04'
+                },
                 {
                     title: 'Conference',
                     start: '2019-06-18',

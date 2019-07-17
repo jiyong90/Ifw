@@ -4,6 +4,7 @@
 <script src="${rc.getContextPath()}/popper-1.15.0/popper.min.js"></script>
 <script src="${rc.getContextPath()}/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 <script src="${rc.getContextPath()}/moment/moment.js"></script>
+<script src="${rc.getContextPath()}/tooltip-1.3.2/tooltip.min.js"></script>
 <!-- <script src="${rc.getContextPath()}/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script> -->
 <!-- <script src="${rc.getContextPath()}/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script> --> 
 	
