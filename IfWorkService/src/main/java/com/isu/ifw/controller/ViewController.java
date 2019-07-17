@@ -118,8 +118,15 @@ public class ViewController {
 	@RequestMapping(value = "/console/{tsId}/views/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("template");
+		
 		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String loginId = sessionData.get("loginId").toString();
+		
 		mv.addObject("tsId", tsId);
+		mv.addObject("enterCd", enterCd);
+		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", viewPage);
 		
 		Calendar date = Calendar.getInstance();
