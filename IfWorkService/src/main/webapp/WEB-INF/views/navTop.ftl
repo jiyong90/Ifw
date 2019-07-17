@@ -1,4 +1,6 @@
-<nav class="navbar navbar-expand-lg navbar-light">
+<#include "/websocket.ftl">
+
+<nav class="navbar navbar-expand-lg navbar-light" id="inbox">
     <!-- collapse button -->
     <!-- <button type="button" id="sidebarCollapse" class="btn btn-info">
         <i class="fas fa-bars"></i>
@@ -23,7 +25,7 @@
                 <a class="" href="#"><i class="sp_ico calendar"></i></a>
             </li>
             <li class="nav-item">
-                <a class="" href="#"><i class="sp_ico alarm"><span class="new"></span></i></a>
+                <a class="" href="#"><i class="sp_ico alarm"><span :class="{'new':inboxCount > 0}"  v-cloak></span></i></a>
             </li>
             <li class="nav-item">
                 <a class="" href="${rc.getContextPath()}/logout/${tsId}"><i class="sp_ico power"></i></a>
@@ -34,3 +36,38 @@
         </ul>
     </div>
 </nav>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	var inboxCountVue = new Vue({
+		el : '#inbox',
+		data : {
+			inboxCount : '',
+		},
+		mounted : function() {
+			var $this = this;
+			Util.ajax({
+				url: "${rc.getContextPath()}/noti/inbox/count",
+				type: "GET",
+				contentType : 'application/json',
+				dataType : "json",
+				success: function(data) {
+					$this.inboxCount = data.count;
+					console.log($this.inboxCount);
+				}, error: function(data) { alert(data.message); }
+			})
+		},
+		methods : {
+			webSocketCallback : function(paramMap){
+				var $this = this;
+				if(paramMap.body){
+					var data = JSON.parse(paramMap.body);
+					$this.inboxCount = data.count;
+				}
+			}
+		}
+	});
+
+	connect("/api/${tsId}/${enterCd}/${loginId}/noti", inboxCountVue.webSocketCallback);
+});
+</script>

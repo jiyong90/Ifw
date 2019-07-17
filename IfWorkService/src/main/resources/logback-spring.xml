@@ -11,6 +11,20 @@
         </filter>
     </appender>
 
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/${LOG_FILE}</File>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+	    <encoder>
+	        <charset>UTF-8</charset>
+	        <pattern>[%d] [%highlight(%-5level)] %logger[%cyan(%method:%line)] - %msg %n</pattern>
+	    </encoder> 
+    </appender>
+   
+   
     <springProperty name="spring.datasource.driverClassName" source="spring.datasource.hikari.driverClassName"/>
 	<springProperty name="spring.datasource.jdbcUrl" source="spring.datasource.hikari.jdbcUrl"/>
 	<springProperty name="spring.datasource.username" source="spring.datasource.hikari.username"/>
@@ -50,6 +64,7 @@
 
 	<root level="DEBUG">
         <appender-ref ref="CONSOLE"/> 
+        <appender-ref ref="FILE"/> 
     </root>
 
 </configuration>

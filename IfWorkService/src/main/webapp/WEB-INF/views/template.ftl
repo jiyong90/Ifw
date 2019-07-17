@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+	<#include "/websocket.ftl">
 	<#include "/metadata.ftl">
 	<#include "/metaScript.ftl">
     <title>근태관리 시스템</title>
