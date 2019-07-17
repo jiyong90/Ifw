@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmApplMapper">
+    <select id="getWtmApplLine" parameterType="map" resultType="wtmApplLine">
+        <![CDATA[
+			SELECT X.APPR_SEQ, X.SABUN
+			  FROM (
+				SELECT 1 AS APPR_SEQ, E1.SABUN
+				  FROM WTM_EMP_HIS E
+				  JOIN WTM_EMP_HIS E1
+				    ON E.TENANT_ID = E1.TENANT_ID
+				   AND E.ENTER_CD = E1.ENTER_CD
+				   AND E1.LEADER_YN = 'Y'
+			  	 WHERE E.ENTER_CD = #{enterCd}
+				   AND E.TENANT_ID = #{tenantId}
+				   AND E.SABUN = #{sabun}
+				   AND E1.ORG_PATH = F_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 1)
+				 UNION
+				SELECT 2 AS APPR_SEQ, E1.SABUN
+				  FROM WTM_EMP_HIS E
+				  JOIN WTM_EMP_HIS E1
+				    ON E.TENANT_ID = E1.TENANT_ID
+				   AND E.ENTER_CD = E1.ENTER_CD
+				   AND E1.LEADER_YN = 'Y'
+				 WHERE E.ENTER_CD = #{enterCd}
+				   AND E.TENANT_ID = #{tenantId}
+				   AND E.SABUN = #{sabun}
+				   AND E1.ORG_PATH = F_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 2)
+				 UNION
+				SELECT 3 AS APPR_SEQ, E1.SABUN
+				  FROM WTM_EMP_HIS E
+				  JOIN WTM_EMP_HIS E1
+				    ON E.TENANT_ID = E1.TENANT_ID
+				   AND E.ENTER_CD = E1.ENTER_CD
+				   AND E1.LEADER_YN = 'Y'
+				 WHERE E.ENTER_CD = #{enterCd}
+				   AND E.TENANT_ID = #{tenantId}
+				   AND E.SABUN = #{sabun}
+				   AND E1.ORG_PATH = F_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 3) 
+				) X 
+				ORDER BY X.APPR_SEQ 
+        ]]>
+    </select>
+    
+    <select id="calcWorkDay" parameterType="map" resultType="map">
+        <![CDATA[
+			SELECT COUNT(*) AS WORK_CNT
+			  FROM WTM_DAY_MGR D
+			 WHERE 
+				NOT EXISTS
+				(SELECT * 
+				   FROM  WTM_HOLIDAY_MGR H
+				  WHERE H.TENANT_ID = #{tenantId}
+				    AND H.ENTER_CD = #{enterCd}
+					AND H.HOLIDAY_YMD = D.SUN_YMD)
+			  AND D.SUN_YMD BETWEEN #{sYmd} AND #{eYmd} 
+        ]]>
+    </select>
+</mapper>
