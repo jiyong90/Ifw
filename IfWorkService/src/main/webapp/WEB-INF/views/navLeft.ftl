@@ -46,7 +46,7 @@ $(document).ready(function () {
 	if("${pageName}" == "workTimeCalendar") {
 		$("#cal").attr('class', 'active');
 		$("#appl").removeAttr('class', 'active');
-	} else if("${pageName}" == "applList") {{
+	} else if("${pageName}" == "applList") {
 		$("#appl").attr('class', 'active');
 		$("#cal").removeAttr('class', 'active');
 	}
