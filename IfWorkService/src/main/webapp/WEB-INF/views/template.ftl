@@ -30,7 +30,7 @@
         <#include "/navLeft.ftl">
         <div id="content">
             <#include "/${pageName}.ftl">
-            <#include "/footer.ftl">
+            <!-- <#include "/footer.ftl"> -->
         </div>
     </div>
     <script type="text/javascript">

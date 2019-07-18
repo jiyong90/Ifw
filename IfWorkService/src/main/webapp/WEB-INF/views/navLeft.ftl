@@ -17,14 +17,14 @@
                 </li>
             </ul>
         </li> -->
-        <li class="active">
-            <a href="${rc.getContextPath()}/console/${tsId}/views/workTimeCalendar">
+        <li id="cal">
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workTimeCalendar';">
                 <i class="fas fa-calendar-alt"></i>
-                <span class="title">나의 정보</span>
+                <span class="title">나의 정보 </span>
             </a>
         </li>
-        <li class="">
-            <a href="#">
+        <li id="appl">
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/applList';">
                 <i class="fas fa-clipboard-check"></i>
                 <span class="title">결재</span>
             </a>
@@ -40,3 +40,15 @@
         </li>
     </ul> -->
 </nav>
+
+<script type="text/javascript">
+$(document).ready(function () {
+	if("${pageName}" == "workTimeCalendar") {
+		$("#cal").attr('class', 'active');
+		$("#appl").removeAttr('class', 'active');
+	} else {
+		$("#appl").attr('class', 'active');
+		$("#cal").removeAttr('class', 'active');
+	}
+});
+</script>
