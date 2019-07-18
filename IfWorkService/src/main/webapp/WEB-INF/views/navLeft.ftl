@@ -24,7 +24,7 @@
             </a>
         </li>
         <li id="appl">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/applList';">
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/approvalList';">
                 <i class="fas fa-clipboard-check"></i>
                 <span class="title">결재</span>
             </a>

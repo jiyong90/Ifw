@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-body">
                     <p>사용할 근무제를 선택하세요.</p>
-                    <div class="mt-2">
+                    <div class="mt-3">
 	                	<!-- <button class="btn btn-outline btn-flat btn-block text-left" type="button" data-toggle="collapse" data-target="#collapWork" aria-expanded="false" aria-controls="collapseExample">근무제</button> -->
                         <!-- <div class="collapse" id="collapWork"> -->
                        	<div>
@@ -297,7 +297,7 @@
                			</span>
                		</div>
                     <div id='calendar-container'>
-                		<full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @eventclick="eventClickCallback"></full-calendar>
+                		<full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
                     </div>
                 </div>
             </div>
@@ -374,6 +374,19 @@
   		                end: '2019-07-11T21:05:00',
   		                color: '#f75353'
   		            } */
+  		    	],
+  		    	eventSources: [
+  		    		{
+  		    	      events: [  
+  		    	        {
+  		    	          start     : '2019-07-19',
+  		    	          rendering: 'background'
+  		    	        }
+  		    	      ],
+  		    	      backgroundColor: 'green',
+  		    	      borderColor: 'red',
+  		    	      textColor: 'yellow'
+  		    	    }
   		    	]
   		    },
   		    mounted: function(){
@@ -459,6 +472,22 @@
   		    		}
   		    		
   		    	},
+  		    	eventRenderCallback : function(info){
+         			//근무제 범위의 첫번째와 마지막 요소에 class 를 추가
+  		    		/* if(info.event.id == 'workRange') {
+  		    			var duration = info.event.extendedProps;
+  		    			console.log('duration start : '+duration.start);
+  		    			console.log('duration end : '+duration.end);
+  		    			console.log('event.start : '+info.event.start);
+  		    			if(moment(duration.start).diff(moment(info.event.start).format('YYYY-MM-DD')) == 0) {
+  		    				console.log('first');
+  		    				$(info.el).addClass('first');
+  		    			} else if(moment(duration.end).diff(moment(info.event.start).format('YYYY-MM-DD')) == 0) {
+  		    				console.log('last');
+  		    				$(info.el).addClass('last');
+  		    			}
+  		    		} */
+  		    	},
   		    	eventClickCallback : function(info){
   		    	},
   		    	dayRenderCallback : function(dayRenderInfo){ //day render
@@ -470,6 +499,7 @@
   	         			var calendar = this.$refs.fullCalendar.cal;
   	         			
   	         			var event = calendar.getEventById(Obj.id);
+  	         			
 	         			/* if(event==null) {
 	         				//이벤트 새로 생성
 	         				calendar.batchRendering(function() {
@@ -477,10 +507,12 @@
 	  	  	         		});
 	         			} else {
 	         				//이벤트 날짜 수정
-	         				//event.setStart(Obj.start);
-	         				//event.setEnd(Obj.end);
-	         				//event.setProp("startRecur",Obj.startRecur);
-	         				//event.setProp("endRecur",Obj.endRecur);
+	         				calendar.batchRendering(function() {
+		         				event.setStart(Obj.start);
+		         				event.setEnd(Obj.end);
+		         				event.setProp("startRecur",Obj.startRecur);
+		         				event.setProp("endRecur",Obj.endRecur);
+	         				});
 	         			} */
 	         			
 	         			if(event!=null) {
@@ -761,7 +793,7 @@
 	         			
 	         			calendar.gotoDate($this.applInfo.useSymd);
 	         			
-	         			$this.flexitimeApplImsi();
+	         			//$this.flexitimeApplImsi();
   	         		}
   	         	},
   	         	flexitimeApplImsi : function(){ //임시저장
