@@ -92,7 +92,7 @@ ul, ol, li{
 /* login Page */
 .login {display: -ms-flexbox; display: flex; height:100%;-ms-flex-align: center;align-items: center;padding-top: 40px;padding-bottom: 40px;background-color: #f5f5f5;}
 .form-login {width: 100%;max-width: 330px;padding: 15px;margin: auto;}
-.form-login .logo{width:auto; height:72px;}
+.form-login .logo{width:auto; height:60px;}
 .form-login .checkbox {font-weight: 400}
 .form-login .checkbox label{float:left;}
 .form-login .checkbox .find-pw{float:right;}
@@ -116,52 +116,57 @@ ul, ol, li{
 .work-info-wrap{padding:14px;/* margin-bottom: 10px; */text-align: left;background-color:#1f3b78;box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
 .work-info-wrap .main-title,
-.work-info-wrap .main-desc{font-size: 12px;font-weight: bold;font-style: normal;line-height: 1.5;letter-spacing: -0.6px;color: #ffffff;
+.work-info-wrap .main-desc{font-size: 14px;font-weight: bold;font-style: normal;line-height: 1.5;letter-spacing: -0.6px;color: #ffffff;
 }
 
 .work-info-wrap .sub-wrap{margin-top: 8px;}
-.work-info-wrap .sub-wrap li{margin-top:4px;}
+.work-info-wrap .sub-wrap li{margin-top:8px;}
 .work-info-wrap .sub-wrap li:first-child {margin-top: 0px;}
 
-.work-info-wrap .sub-title{font-size: 10px;font-weight: normal;line-height: 1.5;letter-spacing: -0.5px;color: #c6d2f2;}
-.work-info-wrap .sub-desc {font-size: 10px;font-weight: bold;line-height: 1.5;letter-spacing: -0.5px;color: #ffffff;}
+.work-info-wrap .sub-title{font-size: 12px;font-weight: normal;line-height: 1.5;letter-spacing: -0.5px;color: #c6d2f2;}
+.work-info-wrap .sub-desc {font-size: 12px;font-weight: bold;line-height: 1.5;letter-spacing: -0.5px;color: #ffffff;}
 
-.white-box-wrap {height:calc(100vh - 440px); padding: 14px;/* margin-bottom: 10px; */background-color: #ffffff;
+.white-box-wrap {height:calc(100vh - 482px); padding: 14px;/* margin-bottom: 10px; */background-color: #ffffff;
   overflow-y: auto;
   -ms-overflow-y: auto;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);}
 .white-box-wrap.full-height{height:calc(100vh - 220px)}
-.white-box-wrap .big-title {font-size: 12px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
-.white-box-wrap .main-title {font-size: 10px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
-.white-box-wrap .main-desc {font-size: 12px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
-.white-box-wrap .sub-desc {margin-top: 3px;font-size: 10px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
+.white-box-wrap .big-title {font-size: 14px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
+.white-box-wrap .main-title {font-size: 12px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
+.white-box-wrap .main-desc {font-size: 14px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
+.white-box-wrap .sub-desc {margin-top: 3px;font-size: 12px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
 .white-box-wrap .time-list{margin-top: 6px;}
-.white-box-wrap .time-list li{margin-top: 0px;line-height: 1;}
-.white-box-wrap .time-block-list{padding-top:6px;}
+.white-box-wrap .time-list li{margin-top: 0px;line-height: 1.5;}
+.white-box-wrap .time-block-list{}
 .white-box-wrap .time-block-list li {margin-top: 4px;line-height: 1.5;}
 
 .white-box-wrap .time-list .title,
 .white-box-wrap .time-block-list .title{
   margin-right: 4px;
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: -0.6px;
   color: #6b6b80;
 }
 .white-box-wrap .time-list .desc,
 .white-box-wrap .time-block-list .desc {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   letter-spacing: -0.6px;
   color: #292944;
 }
 .white-box-wrap .sub-wrap {
-  padding-right:2px;
-  padding-left:2px;
+  margin-top:10px;
   margin-right:-2px;
   margin-left:-2px;
+
+  padding-right:2px;
+  padding-left:2px;
   border-top: 1px solid #e2e5ed;
 }
 
+.white-box-wrap .btn-wrap {
+  margin-top: 30px;
+}
 
 .white-box-wrap .btn-apply {
   font-size: 14px;
@@ -169,7 +174,7 @@ ul, ol, li{
 
 .work-plan-wrap .main-wrap{
   text-align: left;
-  padding-bottom: 8px;
+  /* padding-bottom: 8px; */
 }
 .work-plan-wrap .main-wrap>li{
   margin-top: 4px;
@@ -182,8 +187,8 @@ ul, ol, li{
 }
 
 .work-plan-wrap .sub-big-title {
-  margin-top: 13px;
-  font-size: 12px;
+  margin-top: 12px;
+  font-size: 14px;
   font-weight: bold;
   line-height: 1.5;
   letter-spacing: -0.6px;
@@ -191,10 +196,18 @@ ul, ol, li{
   color: #3e3e4c;
 }
 
+.work-plan-wrap .sub-list-wrap {
+  padding: 12px;
+}
 .work-plan-wrap .sub-list {
-  padding: 10px;
+  /* display: table; */
+  /* border-collapse: collapse; */
+  width: 100%;
+  padding: 12px;
 }
 .work-plan-wrap .sub-list>li {
+  /* display: table-row; */
+  /* width: 100%; */
   padding: 10px 0px;
   border-top: 1px solid #e2e5ed;
 }
@@ -204,27 +217,32 @@ ul, ol, li{
   border-top: 0px;
 }
 
+.work-plan-wrap .sub-list>li span{
+  display:inline-block;
+}
+
 .work-plan-wrap .sub-list .sub-title {
-  display: inline-block;
-  font-size: 11px;
+  width: 40%;
+  font-size: 14px;
   line-height: 1.55;
   letter-spacing: -0.55px;
   color: #6b6b80;
+  /* border: 1px solid red; */
 }
 
-.work-plan-wrap .sub-list>li .sub-title{
-  min-width: 40px;
-  margin-right:38px;
+.work-plan-wrap .sub-list>li>span.sub-title {
+  width: calc(40% + 24px);
 }
 
-.work-plan-wrap .sub-list .sub-title>i.fas{
+
+.work-plan-wrap .sub-list .sub-title i.fas{
   display:inline-block;
-  margin-right: 4px;
+  margin-right: 8px;
   color:#4d84fe;
 }
 
 .work-plan-wrap .sub-list .sub-desc {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: bold;
     line-height: 1.5;
     letter-spacing: -0.6px;
@@ -233,29 +251,31 @@ ul, ol, li{
 }
 
 .work-plan-wrap .sub-desc-list{
-  padding-left:20px;
+  padding-left: 30px;
 }
 
 .work-plan-wrap .sub-desc-list li::before{
   content : '·';
   display: inline-block;
+  /* border:1px solid blue; */
 }
 
-.work-plan-wrap .sub-desc-list>li .sub-title{
-  min-width: 44px;
-  margin-right: 16px;
+.work-plan-wrap .sub-desc-list li .sub-title{
+  margin-left: -4px;
 }
 
 .time-input-form{
-  padding: 6px 0 0;
+  /* padding: 6px 0 0; */
 }
 
 .time-input-form .form-group {
-  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 0px;
 }
 
 .time-input-form label{
-    font-size: 12px;
+    padding: 0 0 4px;
+    font-size: 14px;
     letter-spacing: -0.6px;
     text-align: left;
     color: #6b6b80;
@@ -265,7 +285,7 @@ ul, ol, li{
 .time-input-form select,
 .time-input-form textarea {
   padding:.375rem;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   letter-spacing: -0.6px;
 }
@@ -368,156 +388,6 @@ ul, ol, li{
     border-top: 3px solid #4d84fe;
     box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
-
-.calendar-wrap .fc-view-container{
-  padding:0px 10px;
-  box-sizing: border-box;
-}
-
-#calendar-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 10px;
-}
-
-#calendar-container .fc-header-toolbar {
-  /*
-    the calendar will be butting up against the edges,
-    but let's scoot in the header's buttons
-    */
-  padding-top: 1em;
-  padding-left: 1em;
-  padding-right: 1em;
-  margin-bottom:18px;
-}
-
-#calendar-container .fc-toolbar h2 {
-  font-size: 18px;
-}
-
-
-/* 이전,이후,오늘 */
-.fc-prev-button,
-.fc-next-button,
-.fc-today-button{
-  font-size: 12px;
-  color:#292944;
-  border-color:#cccccc;
-  background-color:#ffffff;
-}
-
-/* 이전,이후,오늘 */
-.fc-prev-button:hover,
-.fc-next-button:hover,
-.fc-today-button:hover {
-  color: #292944;
-  border-color: #E5E5E5;
-  background-color: #E5E5E5;
-}
-
-.fc-today-button.btn-primary.disabled,
-.fc-today-button.btn-primary:disabled{
-  color: #ffffff;
-  border-color: #6b6b80;
-  background-color: #6b6b80;
-}
-
-/* 월,주,일 */
-.fc-dayGridMonth-button,
-.fc-timeGridWeek-button,
-.fc-timeGridDay-button {
-  color:#a2a3a5;
-  border-color:#3e3e4c;
-  background-color:#3e3e4c;
-  font-size: 14px;
-}
-/* 월,주,일 active */
-.fc-dayGridMonth-button:not(:disabled):not(.disabled).active,
-.fc-timeGridWeek-button:not(:disabled):not(.disabled).active,
-.fc-timeGridDay-button:not(:disabled):not(.disabled).active {
-  color:#ffffff;
-  border-color:#6b6b80;
-  background-color:#6b6b80;
-}
-/* 월,주,일 hover  */
-.fc-dayGridMonth-button:hover,
-.fc-timeGridWeek-button:hover,
-.fc-timeGridDay-button:hover {
-  color: #ffffff;
-  border-color: #6b6b80;
-  background-color: #6b6b80;
-}
-
-.fc-day-header{
-  font-size: 12px;
-  color: #7b7c8d;
-}
-
-.fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{
-  font-size: 12px;
-  color: #333333;
-  text-decoration: none;
-}
-
-/* today mark */
-.fc-ltr .fc-dayGrid-view .fc-day-top.fc-today .fc-day-number{
-  border-radius : 50%;
-  background-color : #3e3e4c;
-  color: #ffffff;
-}
-
-/* 탄력근무 */
-.fc-bgevent.ELAS {
-  background-color: #ffc421;
-}
-
-/* 완전선택근무 */
-.fc-bgevent.SELE_F {
-  background-color: #4d84fe;
-}
-
-/* 부분선택근무 */
-.fc-bgevent.SELE_C {
-  background-color: #85d1f2;
-}
-
-/* 시차출퇴근 */
-.fc-bgevent.DIFF {
-  background-color: #1fc486;
-}
-
-/* 자율출퇴근 */
-.fc-bgevent.AUTO {
-  background-color: #6b6b80;
-}
-
-/* button */
-#calendar-container .btn-default{
-  font-size: 14px;
-  line-height: 1;
-}
-
-/* popover */
-#calendar-container .popover-inner-wrap{
-  padding:5px;
-  text-align: center;
-}
-#calendar-container .popover-inner-wrap .msg {
-  margin-bottom:10px;
-  font-size: 14px;
-  line-height: 1.07;
-  letter-spacing: -0.7px;
-  color: #292944;
-}
-#calendar-container .popover-inner-wrap .btn-default {
-  font-size: 14px;
-  line-height: 1;
-}
-
-
-
 
 /* 결재 페이지 */
 .page-title{
