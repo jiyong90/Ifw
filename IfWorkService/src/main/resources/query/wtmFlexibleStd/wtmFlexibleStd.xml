@@ -24,4 +24,23 @@
 			 ORDER BY S.USE_SYMD DESC
         ]]>
     </select>
+    <select id="checkRequestDate" parameterType="Long" resultType="map">
+        <![CDATA[
+			SELECT COUNT(*) AS CNT
+			  FROM WTM_APPL A
+			  JOIN WTM_FLEXIBLE_APPL F
+			   ON A.APPL_ID = F.APPL_ID
+			  JOIN (
+				SELECT A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F.SYMD, F.EYMD
+				  FROM WTM_APPL A
+				  JOIN WTM_FLEXIBLE_APPL F
+				    ON A.APPL_ID = F.APPL_ID
+				   AND A.APPL_ID = #{applId}
+			  ) X
+			   ON A.TENANT_ID = X.TENANT_ID AND A.ENTER_CD = X.ENTER_CD AND A.APPL_SABUN = X.APPL_SABUN
+			WHERE A.APPL_STATUS_CD NOT IN ('11','22','44','32') 
+			  AND (X.SYMD <= F.EYMD OR X.EYMD <= F.SYMD)
+        ]]>
+    </select>
+     
 </mapper>

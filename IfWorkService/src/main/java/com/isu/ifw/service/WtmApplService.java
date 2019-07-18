@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.vo.WtmFlexibleApplVO;
+import com.isu.option.vo.ReturnParam;
 
 /**
  * 
@@ -28,7 +29,7 @@ public interface WtmApplService {
 	
 	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
 	
-	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun);
+	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun) throws Exception;
 	public void apply(Long tenantId, String enterCd, Long applId, Map<String, Object> paramMap, String sabun);
 	public void reject(Long tenantId, String enterCd, Long applId, Map<String, Object> paramMap, String sabun);
 	
@@ -39,10 +40,12 @@ public interface WtmApplService {
 	 * @param applId - 
 	 * @param targetApplId -WTM_APPL이 부모 신청서다 하위에 근테 근무 등의 신청테이블이 붙는다.
 	 * @param workTypeCd - WTM_APPL_CODE의 신청서 코드이다
-	 * @param paramMap
+	 * @param paramMap - 신청서별 필요한 추가 파라메터들을 담는다.
 	 * @param sabun
 	 */
 	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun);
+	
+	public ReturnParam validate(Long applId);
 	
 	
 }

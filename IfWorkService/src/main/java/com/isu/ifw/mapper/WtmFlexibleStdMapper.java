@@ -10,6 +10,7 @@ public interface WtmFlexibleStdMapper {
 	 * 신청가능한 근무제 조회
 	 */
 	public List<WtmFlexibleStdVO> getWtmFlexibleStd(Map<String, Object> paramMap);
+	public Map<String, Object> checkRequestDate(Long applId);
 	
 
 }

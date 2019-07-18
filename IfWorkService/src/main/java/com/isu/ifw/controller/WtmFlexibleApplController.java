@@ -59,13 +59,14 @@ public class WtmFlexibleApplController {
 		return rp;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/imsi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam imsiFlexitime(@RequestBody Map<String, Object> paramMap
-													    , HttpServletRequest request) throws Exception {
+													    , HttpServletRequest request) {
 		
 		validateParamMap(paramMap, "flexibleStdMgrId","workTypeCd", "sYmd", "eYmd");
 		
 		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
@@ -77,7 +78,35 @@ public class WtmFlexibleApplController {
 			workTypeCd = paramMap.get("workTypeCd").toString();
 				
 		flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, empNo);
+		return rp;
+	}
+	
+	@RequestMapping(value="/request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam requestFlexitime(@RequestBody Map<String, Object> paramMap
+													    , HttpServletRequest request) {
+		
+		validateParamMap(paramMap, "applId", "flexibleStdMgrId","workTypeCd", "sYmd", "eYmd", "reason");
+		
+		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		
+		Long applId = null;
+		String workTypeCd = null;
+		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
+			workTypeCd = paramMap.get("workTypeCd").toString();
+				
+		try {
+			flexibleApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, empNo);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
 		return rp;
 	}
 	
