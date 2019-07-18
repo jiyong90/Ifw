@@ -22,13 +22,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="nav navbar-nav ml-auto nav-top gnb-nav-wrap">
             <li class="nav-item">
-                <a class="" href="#"><i class="sp_ico calendar"></i></a>
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
             </li>
             <li class="nav-item">
-                <a class="" href="#"><i class="sp_ico alarm"><span :class="{'new':inboxCount > 0}"  v-cloak></span></i></a>
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span></a>
             </li>
             <li class="nav-item">
-                <a class="" href="${rc.getContextPath()}/logout/${tsId}"><i class="sp_ico power"></i></a>
+                    <a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
