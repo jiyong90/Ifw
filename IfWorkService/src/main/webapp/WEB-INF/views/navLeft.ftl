@@ -49,7 +49,6 @@ $(document).ready(function () {
 	} else if("${pageName}" == "applList") {{
 		$("#appl").attr('class', 'active');
 		$("#cal").removeAttr('class', 'active');
-	} else {
 	}
 });
 </script>
