@@ -25,7 +25,7 @@
         </li>
         <li class="">
             <a href="#">
-                <i class="fas fa-calendar-alt"></i>
+                <i class="fas fa-clipboard-check"></i>
                 <span class="title">결재</span>
             </a>
         </li>
