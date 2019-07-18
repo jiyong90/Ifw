@@ -29,9 +29,7 @@
             <fileNamePattern>${LOG_PATH}/${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>365</maxHistory>
         </rollingPolicy>
-        
 	    <encoder>
-	        <charset>UTF-8</charset>
 	        <pattern>${FILE_LOG_PATTERN}</pattern>
 	    </encoder> 
     </appender>
@@ -65,12 +63,14 @@
 	</appender> -->
 	<logger name="ifwDBLog" level="DEBUG">
 		<appender-ref ref="ASYNC" />
-		<appender-ref ref="FILE" />
 	</logger>
 
+	<logger name="ifwFileLog" level="DEBUG">
+		<appender-ref ref="FILE" />
+	</logger>
+	
 	<root level="DEBUG">
         <appender-ref ref="CONSOLE"/> 
-        <appender-ref ref="FILE"/> 
     </root>
 
 </configuration>

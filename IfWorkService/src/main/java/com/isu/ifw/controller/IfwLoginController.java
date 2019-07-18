@@ -261,7 +261,7 @@ public class IfwLoginController {
 					
 					paramMap.put(paramKey, request.getParameter(paramKey));
 				}
-				MDC.put("paramMap", paramMap.toString());
+				MDC.put("paramMap", mapper.writeValueAsString(paramMap));
 				
 				System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
 				 

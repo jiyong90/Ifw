@@ -56,6 +56,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
+		
+		
 		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
 		<dependency>
 		    <groupId>org.mybatis</groupId>
@@ -107,7 +109,11 @@
 		    <artifactId>camel-core</artifactId>
 		    <version>2.23.1</version>
 		</dependency>
-
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
 		<dependency>
             <groupId>com.isu.commons</groupId>
             <artifactId>isu-commons-auth</artifactId>
