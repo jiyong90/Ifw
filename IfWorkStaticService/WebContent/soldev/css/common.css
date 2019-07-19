@@ -1,6 +1,13 @@
 @charset "utf-8";
 
 /* S : bootstrap custom */
+/*list style none*/
+ul, ol, li{
+  list-style: none;
+}
+/* E : bootstrap custom */
+
+
 /* button style */
 .btn-flat{
   border-radius:0;
@@ -55,16 +62,14 @@
 .btn-approval.sign{
   color: #4d84fe;
 }
+
 .btn-approval.sign:hover {
   color:#ffffff;
   background-color: #4d84fe;
 }
 
-/*list style none*/
-ul, ol, li{
-  list-style: none;
-}
-/* E : bootstrap custom */
+
+
 
 
 .point-color{color:#DC3545;}
@@ -134,11 +139,12 @@ ul, ol, li{
 .white-box-wrap .big-title {font-size: 14px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
 .white-box-wrap .main-title {font-size: 12px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
 .white-box-wrap .main-desc {font-size: 14px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
-.white-box-wrap .sub-desc {margin-top: 3px;font-size: 12px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
+.white-box-wrap .sub-desc {margin-top: 6px;font-size: 12px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
 .white-box-wrap .time-list{margin-top: 6px;}
 .white-box-wrap .time-list li{margin-top: 0px;line-height: 1.5;}
-.white-box-wrap .time-block-list{}
-.white-box-wrap .time-block-list li {margin-top: 4px;line-height: 1.5;}
+.white-box-wrap .time-block-list{margin-top:10px;}
+.white-box-wrap .time-block-list li {margin-top: 6px;line-height: 1.5;}
+.white-box-wrap .time-block-list li:first-child {margin-top: 0px;}
 
 .white-box-wrap .time-list .title,
 .white-box-wrap .time-block-list .title{
@@ -177,7 +183,7 @@ ul, ol, li{
   /* padding-bottom: 8px; */
 }
 .work-plan-wrap .main-wrap>li{
-  margin-top: 4px;
+  margin-top: 6px;
 }
 .work-plan-wrap .main-wrap>li:first-child {
   margin-top: 0px;
@@ -231,7 +237,7 @@ ul, ol, li{
 }
 
 .work-plan-wrap .sub-list>li>span.sub-title {
-  width: calc(40% + 24px);
+  width: calc(40% + 28px);
 }
 
 
@@ -261,7 +267,7 @@ ul, ol, li{
 }
 
 .work-plan-wrap .sub-desc-list li .sub-title{
-  margin-left: -4px;
+  /* margin-left: -4px; */
 }
 
 .time-input-form{
@@ -498,15 +504,13 @@ ul, ol, li{
 No media query for `xs` since this is the default in Bootstrap */
 
 /* Small devices (landscape phones, 576px and up) */
-@media (min-width: 576px) {
-}
+@media only screen and (max-width: 767px) {
+  .white-box-wrap{
+    height: auto;
+  }
 
 /* Medium devices (tablets, 768px and up) */
-@media (min-width: 768px) {
-}
-
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
+@media (min-width: 768px) and (max-width: 1023px) {
 }
 
 /* Extra large devices (large desktops, 1200px and up) */
