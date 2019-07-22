@@ -53,7 +53,7 @@
 				type: String,
 				required: false,
 				default : function(){
-					return 'ko';
+					return 'en';
 				}
 			},
 			header : {
@@ -147,6 +147,13 @@
 				default : function(){
 					return [];
 				}
+			},
+			eventsources : {
+				type : Array,
+				required: false,
+				default : function(){
+					return [];
+				}
 			}
 		}, 
 		computed: {
@@ -168,6 +175,7 @@
 			        editable: this.editable,
 			        eventLimit: this.eventLimit, 
 			        events: this.events
+			        //eventSources: this.eventsources
 				};
 			}
 		},
@@ -191,6 +199,9 @@
 				//};
 				calendarOptions.dateClick = function(info){
 					$this.dateClickCallback(info);
+				};
+				calendarOptions.eventRender = function(info){
+					$this.eventRenderCallback(info);
 				};
 				calendarOptions.eventClick = function(info){
 					$this.eventClickCallback(info);
@@ -230,6 +241,9 @@
         	},
         	dateClickCallback: function(info){
         		this.$emit('dateclick', info);
+        	},
+        	eventRenderCallback: function(info){
+        		this.$emit('eventrender', info);
         	},
         	eventClickCallback: function(info){
         		this.$emit('eventclick', info);

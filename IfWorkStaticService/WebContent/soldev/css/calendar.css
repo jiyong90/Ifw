@@ -106,30 +106,102 @@
   color: #ffffff;
 }
 
+
+/* 근무제 시작일, 종료일 표시 세모 */
+.fc-day{
+  position: relative;
+}
+.fc-day>.fc-triangle {
+  width:0;
+  height:0;
+  position: absolute;
+}
+.fc-day>.fc-triangle.start {
+  top: 0;
+  left: 0;
+  border-top: 20px solid #ffa200;
+  border-right: 20px solid transparent;
+
+}
+.fc-day>.fc-triangle.end {
+  bottom: 0;
+  right: 0;
+  border-bottom: 20px solid #ffa200;
+  border-left: 20px solid transparent;
+
+}
+
+
 /* 탄력근무 */
 .fc-bgevent.ELAS {
   background-color: #ffc421;
+}
+/* .fc-event-line.ELAS {
+  border-right: 1px solid #ffa200;
+} */
+.fc-day>.fc-triangle.start.ELAS {
+  border-top: 20px solid #ffa200;
+}
+.fc-day>.fc-triangle.end.ELAS {
+  border-bottom: 20px solid #ffa200;
 }
 
 /* 완전선택근무 */
 .fc-bgevent.SELE_F {
   background-color: #4d84fe;
 }
+/* .fc-event-line.SELE_F {
+  border-right: 1px solid #044ef1;
+} */
+.fc-day>.fc-triangle.start.SELE_F {
+  border-top: 20px solid #044ef1;
+}
+.fc-day>.fc-triangle.end.SELE_F {
+  border-bottom: 20px solid #044ef1;
+}
 
 /* 부분선택근무 */
 .fc-bgevent.SELE_C {
   background-color: #85d1f2;
+}
+/* .fc-event-line.SELE_C {
+  border-right: 1px solid #2ab1ec;
+} */
+.fc-day>.fc-triangle.start.SELE_C {
+  border-top: 20px solid #2ab1ec;
+}
+.fc-day>.fc-triangle.end.SELE_C {
+  border-bottom: 20px solid #2ab1ec;
 }
 
 /* 시차출퇴근 */
 .fc-bgevent.DIFF {
   background-color: #1fc486;
 }
+/* .fc-event-line.DIFF {
+  border-right: 1px solid #039f65;
+} */
+.fc-day>.fc-triangle.start.DIFF {
+  border-top: 20px solid #039f65;
+}
+.fc-day>.fc-triangle.end.DIFF {
+  border-bottom: 20px solid #039f65;
+}
 
 /* 자율출퇴근 */
 .fc-bgevent.AUTO {
   background-color: #6b6b80;
 }
+/* .fc-event-line.AUTO {
+  border-right: 1px solid #47435e;
+} */
+.fc-day>.fc-triangle.start.AUTO {
+  border-top: 20px solid #47435e;
+}
+.fc-day>.fc-triangle.end.AUTO {
+  border-bottom: 20px solid #47435e;
+}
+
 
 /* button */
 #calendar-container .btn-default{

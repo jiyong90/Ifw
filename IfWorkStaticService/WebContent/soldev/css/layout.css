@@ -25,6 +25,8 @@ html {
     GNB BAR STYLE
 ----------------------------------------------------- */
 .navbar {
+    position:relative;
+    z-index: 1000;
     height: 70px;
     padding: 0px;
     background: #fff;
@@ -131,6 +133,8 @@ html {
 }
 
 #sidebar.active {
+  position: relative;
+  z-index: 100;
   min-width: 100px;
   max-width: 100px;
   text-align: center;
