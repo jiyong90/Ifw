@@ -203,7 +203,28 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Override
 	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun)  throws Exception {
-		// TODO Auto-generated method stub
+		ReturnParam rp = new ReturnParam();
+		rp = checkRequestDate(applId);
+		if(rp.getStatus().equals("FAIL")) {
+			throw new Exception("신청중인 또는 이미 적용된 근무정보가 있습니다.");
+		}
+		//신청서 메인 상태값 업데이트
+		WtmAppl appl = wtmApplRepo.findById(applId).get();
+		appl.setApplStatusCd(APPL_STATUS_APPR_REJECT);
+		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
+		appl.setUpdateId(sabun);
+		
+		appl = wtmApplRepo.save(appl);
+		
+		//결재라인 상태값 업데이트
+		WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
+		line.setApprStatusCd(APPR_STATUS_REJECT);
+		line.setApprDate(WtmUtil.parseDateStr(new Date(), null));
+		//결재의견
+		if(paramMap != null && paramMap.containsKey("apprOpinion")) {
+			line.setApprOpinion(paramMap.get("apprOpinion").toString());
+		}
+		line = wtmApplLineRepo.save(line);
 		
 	}
 
