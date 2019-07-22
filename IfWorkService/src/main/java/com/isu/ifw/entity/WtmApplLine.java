@@ -31,10 +31,10 @@ public class WtmApplLine {
 	private String apprSabun;
 	@Column(name="APPR_DATE")
 	private String apprDate;
-	@Column(name="APPL_STATUS_CD")
-	private String applStatusCd;
-	@Column(name="APPL_TYPE_CD")
-	private String applTypeCd;
+	@Column(name="APPR_STATUS_CD")
+	private String apprStatusCd;
+	@Column(name="APPR_TYPE_CD")
+	private String apprTypeCd;
 	@Column(name="APPR_OPINION")
 	private String apprOpinion;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -73,17 +73,17 @@ public class WtmApplLine {
 	public void setApprDate(String apprDate) {
 		this.apprDate = apprDate;
 	}
-	public String getApplStatusCd() {
-		return applStatusCd;
+	public String getApprStatusCd() {
+		return apprStatusCd;
 	}
-	public void setApplStatusCd(String applStatusCd) {
-		this.applStatusCd = applStatusCd;
+	public void setApprStatusCd(String apprStatusCd) {
+		this.apprStatusCd = apprStatusCd;
 	}
-	public String getApplTypeCd() {
-		return applTypeCd;
+	public String getApprTypeCd() {
+		return apprTypeCd;
 	}
-	public void setApplTypeCd(String applTypeCd) {
-		this.applTypeCd = applTypeCd;
+	public void setApprTypeCd(String apprTypeCd) {
+		this.apprTypeCd = apprTypeCd;
 	}
 	public String getApprOpinion() {
 		return apprOpinion;

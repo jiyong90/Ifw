@@ -13,6 +13,9 @@ import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
 import com.isu.ifw.entity.WtmFlexibleAppl;
+import com.isu.ifw.entity.WtmFlexibleDayPlan;
+import com.isu.ifw.entity.WtmFlexibleEmp;
+import com.isu.ifw.entity.WtmPropertie;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
@@ -20,6 +23,9 @@ import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmFlexibleApplRepository;
+import com.isu.ifw.repository.WtmFlexibleDayPlanRepository;
+import com.isu.ifw.repository.WtmFlexibleEmpRepository;
+import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.ifw.vo.WtmFlexibleApplVO;
@@ -72,6 +78,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return flexApplMapper.getWtmFlexibleAppl(paramMap);
 	}
 	
+<<<<<<< HEAD
 	@Override
 	public Map<String, Object> getFlexibleApplImsi(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
@@ -82,6 +89,8 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return flexApplMapper.getWtmFlexibleApplImsi(paramMap);
 	}
 	
+=======
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 	
 	@Transactional
 	@Override
@@ -207,7 +216,32 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Override
 	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun)  throws Exception {
+<<<<<<< HEAD
 		// TODO Auto-generated method stub
+=======
+		ReturnParam rp = new ReturnParam();
+		rp = checkRequestDate(applId);
+		if(rp.getStatus().equals("FAIL")) {
+			throw new Exception("신청중인 또는 이미 적용된 근무정보가 있습니다.");
+		}
+		//신청서 메인 상태값 업데이트
+		WtmAppl appl = wtmApplRepo.findById(applId).get();
+		appl.setApplStatusCd(APPL_STATUS_APPR_REJECT);
+		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
+		appl.setUpdateId(sabun);
+		
+		appl = wtmApplRepo.save(appl);
+		
+		//결재라인 상태값 업데이트
+		WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
+		line.setApprStatusCd(APPR_STATUS_REJECT);
+		line.setApprDate(WtmUtil.parseDateStr(new Date(), null));
+		//결재의견
+		if(paramMap != null && paramMap.containsKey("apprOpinion")) {
+			line.setApprOpinion(paramMap.get("apprOpinion").toString());
+		}
+		line = wtmApplLineRepo.save(line);
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 		
 	}
 
@@ -376,6 +410,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		}
 		//결재라인 저장 끝
 	}
+<<<<<<< HEAD
 	@Override
 	public List<Map<String, Object>> getFlexibleApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
@@ -385,4 +420,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		return applMapper.getApprList(paramMap);
 	}
+=======
+	
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 }
