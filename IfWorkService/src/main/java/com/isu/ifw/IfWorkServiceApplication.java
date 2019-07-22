@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 @Configuration 
 @ComponentScan(basePackages = {"com.isu"} 
@@ -22,11 +23,11 @@ import org.springframework.web.filter.CorsFilter;
 //@EnableAutoConfiguration 
 @SpringBootApplication
 public class IfWorkServiceApplication {
-/*
+
 	@Autowired
 	@Qualifier("logFilter")
     private javax.servlet.Filter logFilter;
-*/	  
+	  
 	@Autowired
 	@Qualifier("authSessionFilter")
     private javax.servlet.Filter authSessionFilter;
@@ -39,7 +40,6 @@ public class IfWorkServiceApplication {
 	@Qualifier("httpStatusFilter")
     private javax.servlet.Filter httpStatusFilter;
 
-	
 	@Bean 
 	public FilterRegistrationBean getUserTokenFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(userTokenFilter);
@@ -59,7 +59,7 @@ public class IfWorkServiceApplication {
 		return registrationBean;
 	    
 	}
-	/*
+	
 	@Bean 
 	public FilterRegistrationBean getLogFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(logFilter);
@@ -67,7 +67,7 @@ public class IfWorkServiceApplication {
 		return registrationBean;
 	    
 	}
-	*/
+	
 	@Bean 
 	public FilterRegistrationBean getHttpStatusFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(httpStatusFilter);
