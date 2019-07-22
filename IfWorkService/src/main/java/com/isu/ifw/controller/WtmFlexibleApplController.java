@@ -34,32 +34,6 @@ public class WtmFlexibleApplController {
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
 	
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getFlexitime(@RequestBody Map<String, Object> paramMap
-													    , HttpServletRequest request) throws Exception {
-		
-		validateParamMap(paramMap, "sYmd");
-		
-		ReturnParam rp = new ReturnParam();
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd").toString();
-		String sabun = sessionData.get("empNo").toString();
-		
-		rp.setSuccess("");
-		
-		WtmFlexibleApplVO flexibleAppl = null;
-		try {		
-			flexibleAppl = flexibleApplService.getFlexibleAppl(tenantId, enterCd, sabun, paramMap);
-			rp.put("flexibleAppl", flexibleAppl);
-		} catch(Exception e) {
-			rp.setFail("조회 시 오류가 발생했습니다.");
-			return rp;
-		}
-		
-		return rp;
-	}
-	
 	@RequestMapping(value="/imsi", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getImsiFlexitime(HttpServletRequest request) throws Exception {
 		ReturnParam rp = new ReturnParam();
@@ -73,7 +47,7 @@ public class WtmFlexibleApplController {
 		Map<String, Object> flexibleAppl = null;
 		try {		
 			//flexibleAppl = flexibleApplService.getFlexibleAppl(tenantId, enterCd, empNo, paramMap);
-			flexibleAppl = flexibleApplService.getFlexibleApplImsi(tenantId, enterCd, sabun, new HashMap<String, Object>());
+			flexibleAppl = flexibleApplService.getAppl(tenantId, enterCd, null, sabun, new HashMap<String, Object>());
 			rp.put("flexibleAppl", flexibleAppl);
 		} catch(Exception e) {
 			e.printStackTrace();

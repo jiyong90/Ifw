@@ -162,7 +162,7 @@ public class ViewController {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {		
-			flexibleAppl = flexibleApplService.getFlexibleApplImsi(tenantId, enterCd, empNo, new HashMap<String, Object>());
+			flexibleAppl = flexibleApplService.getAppl(tenantId, enterCd, null, empNo, new HashMap<String, Object>());
 			
 			if(flexibleAppl!=null) {
 				mv.addObject("flexibleAppl", mapper.writeValueAsString(flexibleAppl));

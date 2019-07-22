@@ -38,7 +38,7 @@ public class WtmApplController {
 		
 		List<Map<String, Object>> apprList = null;
 		try {		
-			apprList = applService.getFlexibleApprList(tenantId, enterCd, empNo, new HashMap<String, Object>());
+			apprList = applService.getApprList(tenantId, enterCd, empNo, new HashMap<String, Object>());
 			
 			rp.put("apprList", apprList);
 		} catch(Exception e) {

@@ -34,7 +34,6 @@ import com.isu.option.vo.ReturnParam;
 @Service("wtmFlexibleApplService")
 public class WtmFlexibleApplServiceImpl implements WtmApplService {
 
-
 	@Autowired
 	WtmApplMapper applMapper;
 	
@@ -68,7 +67,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
 
-	@Override
 	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
@@ -79,13 +77,18 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public Map<String, Object> getFlexibleApplImsi(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
+	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		paramMap.put("tenantId", tenantId);
-		paramMap.put("enterCd", enterCd);
-		paramMap.put("sabun", sabun);
-		
-		return flexApplMapper.getWtmFlexibleApplImsi(paramMap);
+		if(applId == null) {
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			
+			return flexApplMapper.getWtmFlexibleApplImsi(paramMap);
+		}else {
+			return null;
+		}
 	}
 	
 	@Transactional
@@ -404,7 +407,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getFlexibleApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
