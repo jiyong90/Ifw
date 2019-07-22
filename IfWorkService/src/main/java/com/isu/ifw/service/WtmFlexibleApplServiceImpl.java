@@ -77,8 +77,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		return flexApplMapper.getWtmFlexibleAppl(paramMap);
 	}
-	
-<<<<<<< HEAD
+
 	@Override
 	public Map<String, Object> getFlexibleApplImsi(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
@@ -88,9 +87,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		return flexApplMapper.getWtmFlexibleApplImsi(paramMap);
 	}
-	
-=======
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 	
 	@Transactional
 	@Override
@@ -216,9 +212,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Override
 	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun)  throws Exception {
-<<<<<<< HEAD
-		// TODO Auto-generated method stub
-=======
 		ReturnParam rp = new ReturnParam();
 		rp = checkRequestDate(applId);
 		if(rp.getStatus().equals("FAIL")) {
@@ -241,7 +234,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			line.setApprOpinion(paramMap.get("apprOpinion").toString());
 		}
 		line = wtmApplLineRepo.save(line);
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 		
 	}
 
@@ -410,7 +402,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		}
 		//결재라인 저장 끝
 	}
-<<<<<<< HEAD
+
 	@Override
 	public List<Map<String, Object>> getFlexibleApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
@@ -420,7 +412,5 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		return applMapper.getApprList(paramMap);
 	}
-=======
-	
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
+
 }

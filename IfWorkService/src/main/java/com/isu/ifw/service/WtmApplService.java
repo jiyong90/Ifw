@@ -38,13 +38,9 @@ public interface WtmApplService {
 	final static String APPL_LINE_S = "2"; //발신결재
 	final static String APPL_LINE_R = "3"; //수신결재
 	
-<<<<<<< HEAD
 	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
 	
 	public Map<String, Object> getFlexibleApplImsi(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
-=======
-	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 	
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun) throws Exception;
 	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun) throws Exception;
@@ -65,7 +61,7 @@ public interface WtmApplService {
 	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap);
 	
 	public void sendPush();
-<<<<<<< HEAD
+
 	
 	/**
 	 * 승인/반려 신청서 리스트(결재함)
@@ -76,8 +72,5 @@ public interface WtmApplService {
 	 * @return
 	 */
 	public List<Map<String, Object>> getFlexibleApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
-=======
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
-	
 	
 }
