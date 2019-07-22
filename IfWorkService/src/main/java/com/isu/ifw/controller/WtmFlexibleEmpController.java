@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmFlexibleEmpService;
-import com.isu.ifw.vo.WtmFlexibleEmpVO;
+import com.isu.ifw.vo.WtmWorkTermTimeVO;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
@@ -65,8 +65,8 @@ public class WtmFlexibleEmpController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getFlexibleEmp(@RequestParam Map<String, Object> paramMap
+	@RequestMapping(value="/term", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getTermWorkTime(@RequestParam Map<String, Object> paramMap
 													    , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
@@ -76,11 +76,11 @@ public class WtmFlexibleEmpController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
-		WtmFlexibleEmpVO flexibleInfo = null;
+		WtmWorkTermTimeVO workTermTime = null;
 		
 		try {
-			flexibleInfo = flexibleEmpService.getFlexibleEmp(tenantId, enterCd, empNo, paramMap);
-			rp.put("flexibleInfo", flexibleInfo);
+			workTermTime = flexibleEmpService.getWorkTermTime(tenantId, enterCd, empNo, paramMap);
+			rp.put("workTermTime", workTermTime);
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("조회 시 오류가 발생했습니다.");

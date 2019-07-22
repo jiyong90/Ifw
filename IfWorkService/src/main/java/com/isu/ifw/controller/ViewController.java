@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,10 @@ import com.isu.auth.config.AuthConfigProvider;
 import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
+import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.vo.WtmFlexibleApplVO;
 import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
@@ -38,8 +44,15 @@ public class ViewController {
 	@Autowired
 	AuthConfigProvider authConfigProvider;
 	
+	@Autowired
+	@Qualifier("wtmFlexibleApplService")
+	WtmApplService flexibleApplService;
+	
 	@Resource
 	TenantDao tenantDao;
+	
+	@Resource
+	WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
 	
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
@@ -135,6 +148,34 @@ public class ViewController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
+		
+		if("workTimeCalendar".equals(viewPage)){
+			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, request);
+		} else {
+			return mv;
+		}
+		
+	}
+	
+	protected ModelAndView workTimeCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, HttpServletRequest request) {
+		Map<String, Object> flexibleAppl = null;
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {		
+			flexibleAppl = flexibleApplService.getFlexibleApplImsi(tenantId, enterCd, empNo, new HashMap<String, Object>());
+			
+			if(flexibleAppl!=null) {
+				mv.addObject("flexibleAppl", mapper.writeValueAsString(flexibleAppl));
+				
+				if(flexibleAppl.get("flexibleStdMgrId")!=null && !"".equals(flexibleAppl.get("flexibleStdMgrId"))) {
+					Long flexibleStdMgrId = Long.valueOf(flexibleAppl.get("flexibleStdMgrId").toString());
+					WtmFlexibleStdMgr flexibleStdMgr = flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
+					mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 		return mv;
 	}

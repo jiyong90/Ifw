@@ -3,7 +3,7 @@ package com.isu.ifw.mapper;
 import java.util.List;
 import java.util.Map;
 
-import com.isu.ifw.vo.WtmFlexibleEmpVO;
+import com.isu.ifw.vo.WtmWorkTermTimeVO;
 
 public interface WtmFlexibleEmpMapper {
 	
@@ -19,7 +19,7 @@ public interface WtmFlexibleEmpMapper {
 	 * @param paramMap
 	 * @return
 	 */
-	public WtmFlexibleEmpVO getFlexibleEmp(Map<String, Object> paramMap);
+	public WtmWorkTermTimeVO getWorkTermTime(Map<String, Object> paramMap);
 	
 	/**
 	 * 기존에 신청한 근무제 적용일 가져오기

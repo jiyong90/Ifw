@@ -15,11 +15,11 @@
 		</div>
 		<div class="col-6 col-md-2 col-lg-1 pr-1">
 			<button type="button"
-				class="btn btn-block btn-outline btn-approval cancel">반송</button>
+				class="btn btn-block btn-outline btn-approval cancel" @click="approval('30')">반송</button>
 		</div>
 		<div class="col-6 col-md-2 col-lg-1 pl-1">
 			<button type="button"
-				class="btn btn-block btn-outline btn-approval sign">승인</button>
+				class="btn btn-block btn-outline btn-approval sign" @click="approval('10')">승인</button>
 		</div>
 	</div>
 </div>
@@ -40,7 +40,7 @@
 	    		}; */
 	    		
 	    		Util.ajax({
-					url: "${rc.getContextPath()}/flexibleAppr",
+					url: "${rc.getContextPath()}/appl",
 					type: "GET",
 					contentType: 'application/json',
 					//data: param,
@@ -57,6 +57,9 @@
 						$this.approvalList = [];
 					}
 				});
+	    	},
+	    	approval: function(apprStatusCd){
+	    		
 	    	}
 	    }
    	});

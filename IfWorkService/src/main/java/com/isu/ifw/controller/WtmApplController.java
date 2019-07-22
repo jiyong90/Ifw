@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.isu.ifw.service.WtmFlexibleApprService;
+import com.isu.ifw.service.WtmApplService;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
-@RequestMapping(value="/flexibleAppr")
-public class WtmFlexibleApprController {
+@RequestMapping(value="/appl")
+public class WtmApplController {
 	
 	@Autowired
-	@Qualifier("wtmFlexibleApprService")
-	WtmFlexibleApprService flexibleApprService;
+	@Qualifier("wtmFlexibleApplService")
+	WtmApplService applService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getFlexibleApprList(/*@RequestBody Map<String, Object> paramMap,*/ HttpServletRequest request) throws Exception {
@@ -38,7 +38,7 @@ public class WtmFlexibleApprController {
 		
 		List<Map<String, Object>> apprList = null;
 		try {		
-			apprList = flexibleApprService.getFlexibleApprList(tenantId, enterCd, empNo, new HashMap<String, Object>());
+			apprList = applService.getFlexibleApprList(tenantId, enterCd, empNo, new HashMap<String, Object>());
 			
 			rp.put("apprList", apprList);
 		} catch(Exception e) {

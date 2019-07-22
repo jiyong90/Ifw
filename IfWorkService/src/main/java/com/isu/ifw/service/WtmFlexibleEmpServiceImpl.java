@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
-import com.isu.ifw.vo.WtmFlexibleEmpVO;
+import com.isu.ifw.vo.WtmWorkTermTimeVO;
 
 @Service("flexibleEmpService")
 public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
@@ -27,13 +27,13 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 	
 	@Override
-	public WtmFlexibleEmpVO getFlexibleEmp(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+	public WtmWorkTermTimeVO getWorkTermTime(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("empNo", empNo);
 		
-		return flexEmpMapper.getFlexibleEmp(paramMap);
+		return flexEmpMapper.getWorkTermTime(paramMap);
 	}
 	
 	@Override

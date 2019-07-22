@@ -1,5 +1,6 @@
 package com.isu.ifw.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.isu.ifw.entity.WtmAppl;
@@ -27,11 +28,23 @@ public interface WtmApplService {
 	//처리완료
 	final static String APPL_STATUS_APPR = "99";
 	
-	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
+
+	//결재처리 코드
+	final static String APPR_STATUS_REQUEST = "10";	//결재요청
+	final static String APPR_STATUS_APPLY = "20";	//결재완료
+	final static String APPR_STATUS_REJECT = "30";	//반려
+	
+	final static String APPL_LINE_I = "1"; //기안
+	final static String APPL_LINE_S = "2"; //발신결재
+	final static String APPL_LINE_R = "3"; //수신결재
+	
+	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
+	
+	public Map<String, Object> getFlexibleApplImsi(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
 	
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun) throws Exception;
-	public void apply(Long tenantId, String enterCd, Long applId, Map<String, Object> paramMap, String sabun);
-	public void reject(Long tenantId, String enterCd, Long applId, Map<String, Object> paramMap, String sabun);
+	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun) throws Exception;
+	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun) throws Exception;
 	
 	/**
 	 * 
@@ -45,7 +58,19 @@ public interface WtmApplService {
 	 */
 	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun);
 	
-	public ReturnParam validate(Long applId);
+	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap);
+	
+	public void sendPush();
+	
+	/**
+	 * 승인/반려 신청서 리스트(결재함)
+	 * @param tenantId
+	 * @param enterCd
+	 * @param empNo
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getFlexibleApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
 	
 	
 }

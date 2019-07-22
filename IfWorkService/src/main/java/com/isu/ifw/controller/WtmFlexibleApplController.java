@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,15 +44,39 @@ public class WtmFlexibleApplController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
+		String sabun = sessionData.get("empNo").toString();
 		
 		rp.setSuccess("");
 		
 		WtmFlexibleApplVO flexibleAppl = null;
 		try {		
-			flexibleAppl = flexibleApplService.getFlexibleAppl(tenantId, enterCd, empNo, paramMap);
+			flexibleAppl = flexibleApplService.getFlexibleAppl(tenantId, enterCd, sabun, paramMap);
 			rp.put("flexibleAppl", flexibleAppl);
 		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/imsi", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getImsiFlexitime(HttpServletRequest request) throws Exception {
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		
+		rp.setSuccess("");
+		
+		Map<String, Object> flexibleAppl = null;
+		try {		
+			//flexibleAppl = flexibleApplService.getFlexibleAppl(tenantId, enterCd, empNo, paramMap);
+			flexibleAppl = flexibleApplService.getFlexibleApplImsi(tenantId, enterCd, sabun, new HashMap<String, Object>());
+			rp.put("flexibleAppl", flexibleAppl);
+		} catch(Exception e) {
+			e.printStackTrace();
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
 		}

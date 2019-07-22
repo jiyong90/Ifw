@@ -41,9 +41,19 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	@Autowired
 	WtmApplRepository wtmApplRepo;
 	
-
 	@Autowired
 	WtmFlexibleApplRepository wtmFlexibleApplRepo;
+	
+	@Autowired
+	WtmFlexibleDayPlanRepository wtmFlexibleDayPlanRepo;
+	
+	/**
+	 * 속성값 조회
+	 */
+	@Autowired
+	WtmPropertieRepository wtmPropertieRepo;
+	
+	WtmFlexibleEmpRepository wtmFlexibleEmpRepo;
 	
 	@Autowired
 	WtmApplLineRepository wtmApplLineRepo;
@@ -53,18 +63,26 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 
 	@Override
-	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
-		paramMap.put("empNo", empNo);
+		paramMap.put("sabun", sabun);
 		
 		return flexApplMapper.getWtmFlexibleAppl(paramMap);
 	}
 	
-	protected WtmApplCode getApplInfo(Long tenantId,String enterCd,String applCd) {
-		return wtmApplCodeRepo.findByTenantIdAndEnterCdAndApplCd(tenantId, enterCd, applCd);
+	@Override
+	public Map<String, Object> getFlexibleApplImsi(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		return flexApplMapper.getWtmFlexibleApplImsi(paramMap);
 	}
+	
+	
 	@Transactional
 	@Override
 	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun) {
@@ -93,10 +111,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun) throws Exception {
 		WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
 		
-		ReturnParam rp = validate(applId);
-		if(rp.getStatus().equals("FAIL")) {
-			throw new Exception(rp.get("message").toString());
-		}
 		
 		Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
 		String reason = paramMap.get("reason").toString();
@@ -112,6 +126,14 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		saveWtmFlexibleAppl(tenantId, enterCd, applId, flexibleStdMgrId, sYmd, eYmd, reason, sabun);
 		
 		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun);
+		
+
+		ReturnParam rp = validate(tenantId, enterCd, applId, workTypeCd, null);
+
+		if(rp.getStatus().equals("FAIL")) {
+			throw new RuntimeException(rp.get("message").toString());
+		}
+		
 		 
 	}
 
@@ -135,6 +157,128 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return wtmApplRepo.save(appl);
 	}
 	
+	
+	
+	/**
+	 * paramMap - apprOpinion 결재 시 의견(optional)
+	 */
+	@Transactional
+	@Override
+	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun) throws Exception {
+		ReturnParam rp = new ReturnParam();
+		rp = checkRequestDate(applId);
+		if(rp.getStatus().equals("FAIL")) {
+			throw new Exception("신청중인 또는 이미 적용된 근무정보가 있습니다.");
+		}
+		//신청서 메인 상태값 업데이트
+		WtmAppl appl = wtmApplRepo.findById(applId).get();
+		appl.setApplStatusCd(APPL_STATUS_APPR);
+		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
+		appl.setUpdateId(sabun);
+		
+		appl = wtmApplRepo.save(appl);
+		
+		//결재라인 상태값 업데이트
+		WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
+		line.setApprStatusCd(APPR_STATUS_APPLY);
+		line.setApprDate(WtmUtil.parseDateStr(new Date(), null));
+		//결재의견
+		if(paramMap != null && paramMap.containsKey("apprOpinion")) {
+			line.setApprOpinion(paramMap.get("apprOpinion").toString());
+		}
+		line = wtmApplLineRepo.save(line);
+		
+		//대상자의 실제 근무 정보를 반영한다.
+		WtmFlexibleApplVO flexibleApplVO = getFlexibleAppl(tenantId, enterCd, sabun, paramMap);
+		WtmFlexibleEmp emp = new WtmFlexibleEmp();
+		emp.setEnterCd(enterCd);
+		emp.setTenantId(tenantId);
+		emp.setFlexibleStdMgrId(flexibleApplVO.getFlexibleStdMgrId());
+		emp.setSymd(flexibleApplVO.getsYmd());
+		emp.setEymd(flexibleApplVO.geteYmd());
+		emp.setUpdateId(sabun);
+		emp.setWorkTypeCd(appl.getApplCd());
+		
+		emp = wtmFlexibleEmpRepo.save(emp);
+		
+		
+	}
+	
+	
+	@Override
+	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun)  throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	@Override
+	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		//신청 시 날짜 중복되지 않도록 체크 한다.
+		rp = checkRequestDate(applId);
+		if(rp.getStatus().equals("FAIL")) {
+			return rp;
+		}
+		
+		Long flexibleApplId = Long.parseLong(paramMap.get("flexibleApplId").toString());
+		List<WtmFlexibleDayPlan> days = wtmFlexibleDayPlanRepo.findByFlexibleApplId(flexibleApplId);
+		//근무 상세에 대한 소정근로시간 체크 (탄근제)
+		//근무제로 판단하지 않고 신청 시 신청에 딸린 계획데이터가 있을경우 체크하즈아.
+		if(days != null && days.size() > 0) {
+			WtmPropertie propertie = null;
+			String defultWorktime = "8";
+			String max2weekWithin = "0";
+			String max2weekMorethen = "0";
+			String maxAdd = "0";
+			propertie = wtmPropertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_DEFAULT_WORKTIME");
+			if(propertie != null)
+				defultWorktime = propertie.getInfoValue();
+			
+			propertie = wtmPropertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_MAX_WORKTIME_2WEEK_WITHIN");
+			if(propertie != null)
+				max2weekWithin = propertie.getInfoValue();
+			
+			propertie = wtmPropertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_MAX_WORKTIME_2WEEK_MORETHEN");
+			if(propertie != null)
+				max2weekMorethen = propertie.getInfoValue();
+			
+			propertie = wtmPropertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_MAX_WORKTIME_ADD");
+			if(propertie != null)
+				maxAdd = propertie.getInfoValue();
+			
+			if(workTypeCd.startsWith("SELE")) {
+				//선근제
+				
+			}else if(workTypeCd.equals("ELAS")) {
+				//탄근제
+				
+			}else if(workTypeCd.equals("DIFF")) {
+				//시차
+				
+			}else {
+				rp.setFail("");
+			}
+			//소정근로시간 체크
+			//2주이내 48체크	
+			//2주이상 52시간 체크
+			
+		}
+		
+		return rp;
+	}
+
+	@Override
+	public void sendPush() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	protected WtmApplCode getApplInfo(Long tenantId,String enterCd,String applCd) {
+		return wtmApplCodeRepo.findByTenantIdAndEnterCdAndApplCd(tenantId, enterCd, applCd);
+	}
+
 	protected WtmFlexibleAppl saveWtmFlexibleAppl(Long tenantId, String enterCd, Long applId, Long flexibleStdMgrId, String sYmd, String eYmd, String reason, String sabun) {
 		 
 		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
@@ -149,7 +293,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		flexibleAppl.setEymd(eYmd);
 		flexibleAppl.setReason(reason);
 		flexibleAppl.setUpdateId(sabun);
-		//flexibleAppl.setSabun(userId);
+		//flexibleAppl.setSabun(sabun);
 		flexibleAppl.setWorkDay("0");
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
@@ -165,19 +309,25 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		return wtmFlexibleApplRepo.save(flexibleAppl);
 	}
-	@Override
-	public void apply(Long tenantId, String enterCd, Long applId, Map<String, Object> paramMap, String userId) {
-		// TODO Auto-generated method stub
-		
+	
+	protected ReturnParam checkRequestDate(Long applId) {
+		ReturnParam rp = new ReturnParam();
+		Map<String, Object> m = flexStdMapper.checkRequestDate(applId);
+		int cnt = Integer.parseInt(m.get("CNT").toString());
+		if(cnt > 0) {
+			rp.setFail("신청중인 또는 이미 적용된 근무정보가 있습니다.");
+			return rp;
+		}
+		return rp;
 	}
 	
-	protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String userId) {
+	protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun) {
 		
 		//결재라인 저장
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		List<WtmApplLine> applLines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
 		paramMap.put("enterCd", enterCd);
-		paramMap.put("sabun", userId);
+		paramMap.put("sabun", sabun);
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("d", WtmUtil.parseDateStr(new Date(), null));
 		//결재라인 조회 기본으로 3단계까지 가져와서 뽑아  쓰자
@@ -199,7 +349,8 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 						applLine.setApplId(applId);
 						applLine.setApprSeq(applLineVO.getApprSeq() + "");
 						applLine.setApprSabun(applLineVO.getSabun());
-						applLine.setUpdateId(userId);
+						applLine.setApprTypeCd(APPL_LINE_S);
+						applLine.setUpdateId(sabun);
 						wtmApplLineRepo.save(applLine);
 					}else {
 						//기존 결재라인이 더 많으면 지운다. 임시저장이니.. 바뀔수도 있을 것 같아서..
@@ -216,7 +367,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 						applLine.setApplId(applId);
 						applLine.setApprSeq(applLineVO.getApprSeq()+"");
 						applLine.setApprSabun(applLineVO.getSabun());
-						applLine.setUpdateId(userId);
+						applLine.setUpdateId(sabun);
 						wtmApplLineRepo.save(applLine);
 					}
 					lineCnt++;
@@ -226,23 +377,12 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		//결재라인 저장 끝
 	}
 	@Override
-	public void reject(Long tenantId, String enterCd, Long applId, Map<String, Object> paramMap, String userId) {
+	public List<Map<String, Object>> getFlexibleApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("empNo", empNo);
 		
+		return applMapper.getApprList(paramMap);
 	}
-
-	@Override
-	public ReturnParam validate(Long applId) {
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-		//신청 시 날짜 중복되지 않도록 체크 한다.
-		Map<String, Object> m = flexStdMapper.checkRequestDate(applId);
-		int cnt = Integer.parseInt(m.get("CNT").toString());
-		if(cnt > 0) {
-			rp.setFail("신청중인 또는 이미 적용된 근무정보가 있습니다.");
-		}
-		return rp;
-	}
- 
-	
 }

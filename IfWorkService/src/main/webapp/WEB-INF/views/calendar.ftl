@@ -191,9 +191,9 @@
 				//calendarOptions.dayRender = function(dayRenderInfo){
 				//	$this.dayRenderCallback(dayRenderInfo);
 				//};
-				//calendarOptions.select = function(info){
-				//	$this.selectCallback(info);
-				//};
+				calendarOptions.select = function(info){
+					$this.selectCallback(info);
+				};
 				//calendarOptions.selectAllow = function(info){
 				//	$this.selectAllowCallback(info);
 				//};

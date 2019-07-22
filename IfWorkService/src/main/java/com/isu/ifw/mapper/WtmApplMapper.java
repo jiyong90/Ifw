@@ -9,4 +9,6 @@ public interface WtmApplMapper {
 	public List<WtmApplLineVO> getWtmApplLine(Map<String, Object> paramMap);
 	
 	public Map<String, Object> calcWorkDay(Map<String, Object> paramMap);
+	
+	public List<Map<String, Object>> getApprList(Map<String, Object> paramMap);
 }
