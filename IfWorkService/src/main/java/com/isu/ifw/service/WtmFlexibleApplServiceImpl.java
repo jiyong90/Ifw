@@ -85,7 +85,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			paramMap.put("sabun", sabun);
 			
 			
-			return flexApplMapper.getWtmFlexibleApplImsi(paramMap);
+			return flexApplMapper.getLastAppl(paramMap);
 		}else {
 			return null;
 		}

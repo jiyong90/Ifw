@@ -416,7 +416,6 @@
   		    	]
   		    },
   		    mounted: function(){
-  		    	//this.getImsiAppl();
   		    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
   		    		var flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //임시저장된 신청서
   		    		
@@ -646,32 +645,6 @@
   	  		    		else
   	  		    			return true;
   	         		});
-  		    	},
-  		    	getImsiAppl : function(){ //임시저장된 신청서 조회
-  		    		var $this = this;
-  		    		Util.ajax({
-						url: "${rc.getContextPath()}/flexibleAppl/imsi",
-						type: "GET",
-						contentType: 'application/json',
-						//data: param,
-						dataType: "json",
-						success: function(data) {
-							$this.applInfo.applId = '';
-							console.log(data);
-							if(data.status=='OK' && data!=null && data.flexibleAppl!=null) {
-								$("#applyBtn").hide();
-								$("#workRangeInfo").hide();
-				  	         	$("#workDayInfo").hide();
-				  	         	
-								//신청화면 전환
-		  	         			$this.viewFlexitimeAppl(data.flexibleAppl);
-							}
-						},
-						error: function(e) {
-							console.log(e);
-							$this.applInfo.applId = '';
-						}
-					});
   		    	},
 				getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
 					var $this = this;

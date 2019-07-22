@@ -3,7 +3,6 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmApplService;
-import com.isu.ifw.vo.WtmFlexibleApplVO;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
@@ -33,30 +31,6 @@ public class WtmFlexibleApplController {
 	@Autowired
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
-	
-	@RequestMapping(value="/imsi", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getImsiFlexitime(HttpServletRequest request) throws Exception {
-		ReturnParam rp = new ReturnParam();
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd").toString();
-		String sabun = sessionData.get("empNo").toString();
-		
-		rp.setSuccess("");
-		
-		Map<String, Object> flexibleAppl = null;
-		try {		
-			//flexibleAppl = flexibleApplService.getFlexibleAppl(tenantId, enterCd, empNo, paramMap);
-			flexibleAppl = flexibleApplService.getAppl(tenantId, enterCd, null, sabun, new HashMap<String, Object>());
-			rp.put("flexibleAppl", flexibleAppl);
-		} catch(Exception e) {
-			e.printStackTrace();
-			rp.setFail("조회 시 오류가 발생했습니다.");
-			return rp;
-		}
-		
-		return rp;
-	}
 	
 	@RequestMapping(value="/imsi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam imsiFlexitime(@RequestBody Map<String, Object> paramMap

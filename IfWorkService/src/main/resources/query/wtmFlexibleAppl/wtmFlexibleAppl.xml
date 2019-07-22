@@ -17,7 +17,7 @@
         ]]>
     </select>
     
-    <select id="getWtmFlexibleApplImsi" parameterType="map" resultType="hashmap">
+    <select id="getLastAppl" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT FA.FLEXIBLE_APPL_ID AS flexibleApplId
 			     , FA.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId

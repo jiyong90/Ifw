@@ -8,6 +8,6 @@ public interface WtmFlexibleApplMapper {
 	
 	public WtmFlexibleApplVO getWtmFlexibleAppl(Map<String, Object> paramMap);
 	
-	public Map<String, Object> getWtmFlexibleApplImsi(Map<String, Object> paramMap);
+	public Map<String, Object> getLastAppl(Map<String, Object> paramMap);
 	
 }
