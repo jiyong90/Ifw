@@ -189,6 +189,10 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 					line = wtmApplLineRepo.save(line);
 					lastAppr = true;
 				}else {
+					if(lastAppr) {
+						line.setApprStatusCd(APPR_STATUS_APPLY);
+						line = wtmApplLineRepo.save(line);
+					}
 					lastAppr = false;
 				}
 			}
@@ -203,19 +207,22 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		appl = wtmApplRepo.save(appl);
 		
-		//대상자의 실제 근무 정보를 반영한다.
-		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
-		WtmFlexibleEmp emp = new WtmFlexibleEmp();
-		emp.setEnterCd(enterCd);
-		emp.setTenantId(tenantId);
-		emp.setFlexibleStdMgrId(flexibleAppl.getFlexibleStdMgrId());
-		emp.setSabun(appl.getApplSabun());
-		emp.setSymd(flexibleAppl.getSymd());
-		emp.setEymd(flexibleAppl.getEymd());
-		emp.setUpdateId(userId);
-		emp.setWorkTypeCd(appl.getApplCd());
-		
-		emp = wtmFlexibleEmpRepo.save(emp);
+		if(lastAppr) {
+			//대상자의 실제 근무 정보를 반영한다.
+			WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
+			WtmFlexibleEmp emp = new WtmFlexibleEmp();
+			
+			emp.setEnterCd(enterCd);
+			emp.setTenantId(tenantId);
+			emp.setFlexibleStdMgrId(flexibleAppl.getFlexibleStdMgrId());
+			emp.setSabun(appl.getApplSabun());
+			emp.setSymd(flexibleAppl.getSymd());
+			emp.setEymd(flexibleAppl.getEymd());
+			emp.setUpdateId(userId);
+			emp.setWorkTypeCd(appl.getApplCd());
+			
+			emp = wtmFlexibleEmpRepo.save(emp);
+		}
 		
 		
 	}
