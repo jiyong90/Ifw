@@ -79,8 +79,8 @@
 			     , F_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
 			     , FA.FLEXIBLE_APPL_ID AS flexibleApplId
 			     , FA.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
-			     , F_DATE_FORMAT(FA.SYMD,'%Y.%m.%d') AS sYmd
-			     , F_DATE_FORMAT(FA.EYMD,'%Y.%m.%d') AS eYmd
+			     , FA.SYMD AS sYmd
+			     , FA.EYMD AS eYmd
 			     , FA.WORK_DAY AS workDay
 			     , FA.REASON AS reason
 			  FROM WTM_APPL_LINE L
@@ -95,6 +95,7 @@
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
 			   AND APPR_SABUN = #{empNo}
+			   AND A.APPL_STATUS_CD IN ('21','31')
         ]]>
     </select>
 </mapper>

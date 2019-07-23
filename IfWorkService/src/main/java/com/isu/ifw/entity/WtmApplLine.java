@@ -26,7 +26,7 @@ public class WtmApplLine {
 	@Column(name="APPL_ID")
 	private Long applId;
 	@Column(name="APPR_SEQ")
-	private String apprSeq;
+	private int apprSeq;
 	@Column(name="APPR_SABUN")
 	private String apprSabun;
 	@Column(name="APPR_DATE")
@@ -42,7 +42,7 @@ public class WtmApplLine {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
-	private String updateId;
+	private Long updateId;
 	public Long getApplDetId() {
 		return applDetId;
 	}
@@ -55,10 +55,10 @@ public class WtmApplLine {
 	public void setApplId(Long applId) {
 		this.applId = applId;
 	}
-	public String getApprSeq() {
+	public int getApprSeq() {
 		return apprSeq;
 	}
-	public void setApprSeq(String apprSeq) {
+	public void setApprSeq(int apprSeq) {
 		this.apprSeq = apprSeq;
 	}
 	public String getApprSabun() {
@@ -97,10 +97,10 @@ public class WtmApplLine {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	public String getUpdateId() {
+	public Long getUpdateId() {
 		return updateId;
 	}
-	public void setUpdateId(String updateId) {
+	public void setUpdateId(Long updateId) {
 		this.updateId = updateId;
 	}
 	

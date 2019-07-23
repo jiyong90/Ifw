@@ -44,7 +44,7 @@ public class WtmFlexibleEmp {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
-	private String updateId;
+	private Long updateId;
 
 	public Long getFlexibleEmpId() {
 		return flexibleEmpId;
@@ -106,10 +106,10 @@ public class WtmFlexibleEmp {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	public String getUpdateId() {
+	public Long getUpdateId() {
 		return updateId;
 	}
-	public void setUpdateId(String updateId) {
+	public void setUpdateId(Long updateId) {
 		this.updateId = updateId;
 	}
 	

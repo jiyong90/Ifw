@@ -20,7 +20,7 @@ public interface WtmFlexibleStdService {
 	 * @param userId - 대상자의 신청가능한 근무제를 가져온다
 	 * @return 
 	 */
-	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, String userKey);
+	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, Long userId);
 	
 	public void saveFlexibleStd(Long tenantId, String enterCd, Map<String, Object> optionMap);
 	
