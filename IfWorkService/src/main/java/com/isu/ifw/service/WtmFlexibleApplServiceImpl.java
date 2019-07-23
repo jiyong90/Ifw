@@ -169,24 +169,39 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		if(rp.getStatus().equals("FAIL")) {
 			throw new Exception("신청중인 또는 이미 적용된 근무정보가 있습니다.");
 		}
+		
+		//결재라인 상태값 업데이트
+		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
+		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
+
+		//마지막 결재자인지 확인하자
+		boolean lastAppr = false;
+		if(lines != null && lines.size() > 0) {
+			for(WtmApplLine line : lines) {
+				if(line.getApprSeq() == apprSeq && line.getApprSabun().equals(sabun)) {
+					line.setApprStatusCd(APPR_STATUS_APPLY);
+					line.setApprDate(WtmUtil.parseDateStr(new Date(), null));
+					//결재의견
+					if(paramMap != null && paramMap.containsKey("apprOpinion")) {
+						line.setApprOpinion(paramMap.get("apprOpinion").toString());
+						line.setUpdateId(userId);
+					}
+					line = wtmApplLineRepo.save(line);
+					lastAppr = true;
+				}else {
+					lastAppr = false;
+				}
+			}
+		}
+		
+		
 		//신청서 메인 상태값 업데이트
 		WtmAppl appl = wtmApplRepo.findById(applId).get();
-		appl.setApplStatusCd(APPL_STATUS_APPR);
+		appl.setApplStatusCd((lastAppr)?APPL_STATUS_APPR:APPL_STATUS_APPLY_ING);
 		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
 		appl.setUpdateId(userId);
 		
 		appl = wtmApplRepo.save(appl);
-		
-		//결재라인 상태값 업데이트
-		WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
-		line.setApprStatusCd(APPR_STATUS_APPLY);
-		line.setApprDate(WtmUtil.parseDateStr(new Date(), null));
-		//결재의견
-		if(paramMap != null && paramMap.containsKey("apprOpinion")) {
-			line.setApprOpinion(paramMap.get("apprOpinion").toString());
-			line.setUpdateId(userId);
-		}
-		line = wtmApplLineRepo.save(line);
 		
 		//대상자의 실제 근무 정보를 반영한다.
 		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
