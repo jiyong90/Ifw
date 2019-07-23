@@ -56,7 +56,7 @@ public class CusAuthConfig implements AuthConfig {
 	public String getCertificateQuery() {
 		//return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id = :loginId and a.tenant_id = :tenantId";
 		return " select   a.login_id as loginId                                           "
-				+ "      , a.user_id as userKey                            "
+				+ "      , a.user_id as userId                            "
 				+ "      , F_AES_DECRYPT(a.login_id, info_data) as empNo "
 				+ "      , F_AES_DECRYPT(a.enter_cd, info_data) as enterCd "
 				+ "      , a.* "

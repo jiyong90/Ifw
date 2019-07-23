@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
@@ -28,7 +29,6 @@ import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
-import com.isu.ifw.vo.WtmFlexibleApplVO;
 import com.isu.option.vo.ReturnParam;
 
 @Service("wtmFlexibleApplService")
@@ -66,18 +66,8 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
-
-	public WtmFlexibleApplVO getFlexibleAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
-		paramMap.put("tenantId", tenantId);
-		paramMap.put("enterCd", enterCd);
-		paramMap.put("sabun", sabun);
-		
-		return flexApplMapper.getWtmFlexibleAppl(paramMap);
-	}
-
 	@Override
-	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun, Map<String, Object> paramMap) {
+	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun, Map<String, Object> paramMap, Long userId) {
 		// TODO Auto-generated method stub
 		if(applId == null) {
 			paramMap.put("tenantId", tenantId);
@@ -93,11 +83,11 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Transactional
 	@Override
-	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun) {
+	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) {
 		WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
 		Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
 		//신청서 최상위 테이블이다. 
-		WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_IMSI, sabun);
+		WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_IMSI, sabun, userId);
 		
 		applId = appl.getApplId();
 		
@@ -105,9 +95,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		String eYmd = paramMap.get("eYmd").toString();
 		
 		//근무제 신청서 테이블 조회
-		saveWtmFlexibleAppl(tenantId, enterCd, applId, flexibleStdMgrId, sYmd, eYmd, "", sabun);
+		saveWtmFlexibleAppl(tenantId, enterCd, applId, flexibleStdMgrId, sYmd, eYmd, "", sabun, userId);
 		
-		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun);
+		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
 		return appl;
 		
@@ -116,14 +106,14 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Transactional
 	@Override
-	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun) throws Exception {
+	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
 		WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
 		
 		
 		Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
 		String reason = paramMap.get("reason").toString();
 		//신청서 최상위 테이블이다. 
-		WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_APPLY_ING, sabun);
+		WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_APPLY_ING, sabun, userId);
 		
 		applId = appl.getApplId();
 		
@@ -131,12 +121,12 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		String eYmd = paramMap.get("eYmd").toString();
 		
 		//근무제 신청서 테이블 조회
-		saveWtmFlexibleAppl(tenantId, enterCd, applId, flexibleStdMgrId, sYmd, eYmd, reason, sabun);
+		saveWtmFlexibleAppl(tenantId, enterCd, applId, flexibleStdMgrId, sYmd, eYmd, reason, sabun, userId);
 		
-		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun);
+		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
 
-		ReturnParam rp = validate(tenantId, enterCd, applId, workTypeCd, null);
+		ReturnParam rp = validate(tenantId, enterCd, applId, workTypeCd, paramMap);
 
 		if(rp.getStatus().equals("FAIL")) {
 			throw new RuntimeException(rp.get("message").toString());
@@ -145,7 +135,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		 
 	}
 
-	protected WtmAppl saveWtmAppl(Long tenantId, String enterCd, Long applId, String workTypeCd, String applStatusCd, String sabun) {
+	protected WtmAppl saveWtmAppl(Long tenantId, String enterCd, Long applId, String workTypeCd, String applStatusCd, String sabun, Long userId) {
 		WtmAppl appl = null;
 		if(applId != null && !applId.equals("")) {
 			appl = wtmApplRepo.findById(applId).get();
@@ -159,7 +149,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		appl.setApplSabun(sabun);
 		appl.setApplCd(workTypeCd);
 		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
-		appl.setUpdateId(sabun); 
+		appl.setUpdateId(userId); 
 		//appl.
 		
 		return wtmApplRepo.save(appl);
@@ -172,7 +162,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	 */
 	@Transactional
 	@Override
-	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun) throws Exception {
+	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp = checkRequestDate(applId);
 		if(rp.getStatus().equals("FAIL")) {
@@ -182,7 +172,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		WtmAppl appl = wtmApplRepo.findById(applId).get();
 		appl.setApplStatusCd(APPL_STATUS_APPR);
 		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
-		appl.setUpdateId(sabun);
+		appl.setUpdateId(userId);
 		
 		appl = wtmApplRepo.save(appl);
 		
@@ -197,14 +187,15 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		line = wtmApplLineRepo.save(line);
 		
 		//대상자의 실제 근무 정보를 반영한다.
-		WtmFlexibleApplVO flexibleApplVO = getFlexibleAppl(tenantId, enterCd, sabun, paramMap);
+		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
 		WtmFlexibleEmp emp = new WtmFlexibleEmp();
 		emp.setEnterCd(enterCd);
 		emp.setTenantId(tenantId);
-		emp.setFlexibleStdMgrId(flexibleApplVO.getFlexibleStdMgrId());
-		emp.setSymd(flexibleApplVO.getsYmd());
-		emp.setEymd(flexibleApplVO.geteYmd());
-		emp.setUpdateId(sabun);
+		emp.setFlexibleStdMgrId(flexibleAppl.getFlexibleStdMgrId());
+		emp.setSabun(sabun);
+		emp.setSymd(flexibleAppl.getSymd());
+		emp.setEymd(flexibleAppl.getEymd());
+		emp.setUpdateId(userId);
 		emp.setWorkTypeCd(appl.getApplCd());
 		
 		emp = wtmFlexibleEmpRepo.save(emp);
@@ -214,7 +205,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	
 	@Override
-	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun)  throws Exception {
+	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId)  throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp = checkRequestDate(applId);
 		if(rp.getStatus().equals("FAIL")) {
@@ -224,7 +215,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		WtmAppl appl = wtmApplRepo.findById(applId).get();
 		appl.setApplStatusCd(APPL_STATUS_APPR_REJECT);
 		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
-		appl.setUpdateId(sabun);
+		appl.setUpdateId(userId);
 		
 		appl = wtmApplRepo.save(appl);
 		
@@ -308,7 +299,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return wtmApplCodeRepo.findByTenantIdAndEnterCdAndApplCd(tenantId, enterCd, applCd);
 	}
 
-	protected WtmFlexibleAppl saveWtmFlexibleAppl(Long tenantId, String enterCd, Long applId, Long flexibleStdMgrId, String sYmd, String eYmd, String reason, String sabun) {
+	protected WtmFlexibleAppl saveWtmFlexibleAppl(Long tenantId, String enterCd, Long applId, Long flexibleStdMgrId, String sYmd, String eYmd, String reason, String sabun, Long userId) {
 		 
 		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
 		if(flexibleAppl == null) {
@@ -321,7 +312,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		flexibleAppl.setSymd(sYmd);
 		flexibleAppl.setEymd(eYmd);
 		flexibleAppl.setReason(reason);
-		flexibleAppl.setUpdateId(sabun);
+		flexibleAppl.setUpdateId(userId);
 		//flexibleAppl.setSabun(sabun);
 		flexibleAppl.setWorkDay("0");
 		Map<String, Object> paramMap = new HashMap<>();
@@ -341,6 +332,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	protected ReturnParam checkRequestDate(Long applId) {
 		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
 		Map<String, Object> m = flexStdMapper.checkRequestDate(applId);
 		int cnt = Integer.parseInt(m.get("CNT").toString());
 		if(cnt > 0) {
@@ -350,7 +342,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return rp;
 	}
 	
-	protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun) {
+	protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun, Long userId) {
 		
 		//결재라인 저장
 		Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -376,10 +368,10 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 					WtmApplLineVO applLineVO = applLineVOs.get(whileLoop);
 					if(whileLoop < applCnt) {
 						applLine.setApplId(applId);
-						applLine.setApprSeq(applLineVO.getApprSeq() + "");
+						applLine.setApprSeq(applLineVO.getApprSeq());
 						applLine.setApprSabun(applLineVO.getSabun());
 						applLine.setApprTypeCd(APPL_LINE_S);
-						applLine.setUpdateId(sabun);
+						applLine.setUpdateId(userId);
 						wtmApplLineRepo.save(applLine);
 					}else {
 						//기존 결재라인이 더 많으면 지운다. 임시저장이니.. 바뀔수도 있을 것 같아서..
@@ -394,9 +386,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 					if(lineCnt < applCnt) {
 						WtmApplLine applLine = new WtmApplLine();
 						applLine.setApplId(applId);
-						applLine.setApprSeq(applLineVO.getApprSeq()+"");
+						applLine.setApprSeq(applLineVO.getApprSeq());
 						applLine.setApprSabun(applLineVO.getSabun());
-						applLine.setUpdateId(sabun);
+						applLine.setUpdateId(userId);
 						wtmApplLineRepo.save(applLine);
 					}
 					lineCnt++;
@@ -407,7 +399,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);

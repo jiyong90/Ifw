@@ -137,6 +137,7 @@ public class ViewController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String loginId = sessionData.get("loginId").toString();
 		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
@@ -150,19 +151,19 @@ public class ViewController {
 		mv.addObject("today", today);
 		
 		if("workTimeCalendar".equals(viewPage)){
-			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, request);
+			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		} else {
 			return mv;
 		}
 		
 	}
 	
-	protected ModelAndView workTimeCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, HttpServletRequest request) {
+	protected ModelAndView workTimeCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, Long userId, HttpServletRequest request) {
 		Map<String, Object> flexibleAppl = null;
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {		
-			flexibleAppl = flexibleApplService.getAppl(tenantId, enterCd, null, empNo, new HashMap<String, Object>());
+			flexibleAppl = flexibleApplService.getAppl(tenantId, enterCd, null, empNo, new HashMap<String, Object>(), userId);
 			
 			if(flexibleAppl!=null) {
 				mv.addObject("flexibleAppl", mapper.writeValueAsString(flexibleAppl));

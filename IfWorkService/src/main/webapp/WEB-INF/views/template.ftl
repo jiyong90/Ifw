@@ -7,7 +7,7 @@
     <title>근태관리 시스템</title>
 </head>
 <body>
-	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog">
+	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" style="z-index:9999;">
         <div class="modal-dialog " role="document">
             <div class="modal-content">
                 <!-- <div class="modal-header">

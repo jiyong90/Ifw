@@ -35,7 +35,7 @@ public class WtmCalendarController {
 													   		 , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String userKey = sessionData.get("userKey").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		String enterCd = null;
 		String bisinessPlaceCd = null;
 		if(sessionData.get("enterCd")!=null)
@@ -45,8 +45,8 @@ public class WtmCalendarController {
 		
 		Map<String, Object> resultMap = wtmCalendarService.getCalendar(tenantId, enterCd, bisinessPlaceCd, paramMap);
 		
-		ObjectMapper mapper = new ObjectMapper();
-		System.out.println("result : " + mapper.writeValueAsString(resultMap));
+		//ObjectMapper mapper = new ObjectMapper();
+		//System.out.println("result : " + mapper.writeValueAsString(resultMap));
 
 		return resultMap;
 	}
@@ -63,14 +63,14 @@ public class WtmCalendarController {
 													   				 , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String userKey = sessionData.get("userKey").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		paramMap.put("tenantId", tenantId);
 		
 		List<Map<String, Object>> resultMap = wtmCalendarService.getWorkTimeCalendar(paramMap);
 		
-		ObjectMapper mapper = new ObjectMapper();
-		System.out.println("result : " + mapper.writeValueAsString(resultMap));
+		//ObjectMapper mapper = new ObjectMapper();
+		//System.out.println("result : " + mapper.writeValueAsString(resultMap));
 
 		return resultMap;
 	}
