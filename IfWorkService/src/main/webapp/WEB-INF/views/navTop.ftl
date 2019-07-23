@@ -36,13 +36,17 @@
         </ul>
     </div>
 </nav>
+<div id=alertDiv v-if=showNoti>
 
+</div>
 <script type="text/javascript">
+
 $(document).ready(function(){
 	var inboxCountVue = new Vue({
 		el : '#inbox',
 		data : {
 			inboxCount : '',
+			title : ""
 		},
 		mounted : function() {
 			var $this = this;
@@ -62,12 +66,17 @@ $(document).ready(function(){
 				var $this = this;
 				if(paramMap.body){
 					var data = JSON.parse(paramMap.body);
-					$this.inboxCount = data.count;
+					console.log(paramMap);
+					console.log(data);
+					$this.inboxCount = 1;
+					$this.title = data.title;
+					console("알림도착 : " + $this.title);
 				}
 			}
 		}
 	});
 
-	connect("/api/${tsId}/${enterCd}/${empNo}/noti", inboxCountVue.webSocketCallback);
+	connect("/api/${tenantId}/${enterCd}/${empNo}/noti", inboxCountVue.webSocketCallback);
+	
 });
 </script>

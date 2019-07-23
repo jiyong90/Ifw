@@ -1,6 +1,6 @@
 package com.isu.ifw.vo;
 
-public class InboxVO {
+public class WtmInboxVO {
 
 	private Long id;
 	private Long tenantId;
