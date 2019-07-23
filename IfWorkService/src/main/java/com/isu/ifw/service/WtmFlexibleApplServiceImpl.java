@@ -133,6 +133,22 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			throw new RuntimeException(rp.get("message").toString());
 		}
 		
+		//결재라인 상태값 업데이트
+		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
+		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
+
+		 
+		if(lines != null && lines.size() > 0) {
+			for(WtmApplLine line : lines) {
+				//첫번째 결재자의 상태만 변경 후 스탑
+				line.setApprStatusCd(APPR_STATUS_APPLY);
+				line = wtmApplLineRepo.save(line);
+				break;
+				 
+			}
+		}
+		
+		
 		 
 	}
 
