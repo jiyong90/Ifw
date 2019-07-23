@@ -1,6 +1,7 @@
 package com.isu.ifw.util;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,6 +12,18 @@ public class WtmUtil {
 			format = "yyyyMMdd";
 		DateFormat formatter = new SimpleDateFormat(format);
 		return formatter.format(d);
+	}
+	
+	public static long dayCnt(String begin, String end) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+	    Date beginDate = formatter.parse(begin);
+	    Date endDate = formatter.parse(end);
+	 
+	    long diff = endDate.getTime() - beginDate.getTime();
+	    long diffDays = diff / (24 * 60 * 60 * 1000) + 1;
+
+
+	    return diffDays;
 	}
 
 }

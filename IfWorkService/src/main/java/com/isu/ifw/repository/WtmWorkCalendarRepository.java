@@ -7,5 +7,5 @@ import com.isu.ifw.entity.WtmWorkCalendar;
 
 @Repository
 public interface WtmWorkCalendarRepository extends JpaRepository<WtmWorkCalendar, Long> {
-	
+	public WtmWorkCalendar findByTenantIdAndEnterCdAndSabunAndYmd(Long tenantId, String enterCd, String sabun, String ymd);
 }

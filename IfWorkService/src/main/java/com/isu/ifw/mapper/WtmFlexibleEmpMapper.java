@@ -28,4 +28,6 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public Map<String, Object> getPrevFlexible(Map<String, Object> paramMap);
 	
+	public void createWorkCalendar(Long flexibleEmpId, Long userId);
+	
 }

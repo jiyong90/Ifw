@@ -41,4 +41,6 @@ public interface WtmFlexibleEmpService {
 	 */
 	public Map<String, Object> getPrevFlexible(Long tenantId, String enterCd, String userKey);
 	
+	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
+	
 }
