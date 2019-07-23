@@ -59,7 +59,7 @@ public class WtmWorkDayResult {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
-	private String updateId;
+	private Long updateId;
 	public Long getWorkDayResultId() {
 		return workDayResultId;
 	}
@@ -138,10 +138,10 @@ public class WtmWorkDayResult {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	public String getUpdateId() {
+	public Long getUpdateId() {
 		return updateId;
 	}
-	public void setUpdateId(String updateId) {
+	public void setUpdateId(Long updateId) {
 		this.updateId = updateId;
 	}
  

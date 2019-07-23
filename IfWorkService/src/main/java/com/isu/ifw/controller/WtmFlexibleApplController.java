@@ -44,13 +44,14 @@ public class WtmFlexibleApplController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		Long applId = null;
 		String workTypeCd = null;
 		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
 			workTypeCd = paramMap.get("workTypeCd").toString();
 				
-		flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, empNo);
+		flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
 		return rp;
 	}
 	
@@ -67,14 +68,15 @@ public class WtmFlexibleApplController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
-		Long applId = null;
+		Long applId = Long.valueOf(paramMap.get("applId").toString());
 		String workTypeCd = null;
 		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
 			workTypeCd = paramMap.get("workTypeCd").toString();
 				
 		try {
-			flexibleApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, empNo);
+			flexibleApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

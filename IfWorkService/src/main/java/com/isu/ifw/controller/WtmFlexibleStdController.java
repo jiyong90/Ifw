@@ -30,7 +30,7 @@ public class WtmFlexibleStdController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		ObjectMapper mapper = new ObjectMapper();
-		String userKey = sessionData.get("userKey").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		String enterCd = null;
 		String bisinessPlaceCd = null;
 		if(sessionData.get("enterCd")!=null)
@@ -116,7 +116,7 @@ public class WtmFlexibleStdController {
 		List<WtmFlexibleStdVO> wtmFlexibleStd = null;
 		
 		try {
-			wtmFlexibleStd = WtmFlexibleStdService.getFlexibleStd(tenantId, enterCd, userKey);
+			wtmFlexibleStd = WtmFlexibleStdService.getFlexibleStd(tenantId, enterCd, userId);
 			rp.put("wtmFlexibleStd", wtmFlexibleStd);
 		} catch(Exception e) {
 			e.printStackTrace();

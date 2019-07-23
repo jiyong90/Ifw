@@ -262,8 +262,7 @@
                                 </div>
                             </div>
                             <div class="btn-wrap mt-5">
-                                <!-- <button type="button" class="btn btn-apply btn-block btn-lg" @click="flexitimeAppl">확인요청</button> -->
-                                <button type="button" class="btn btn-apply btn-block btn-lg">확인요청</button>
+                                <button type="button" class="btn btn-apply btn-block btn-lg" @click="flexitimeAppl">확인요청</button>
                             </div>
                         </form>
                     </div>
@@ -343,6 +342,7 @@
   		    	flexitimeList: [], //사용할 근무제 리스트
   		    	selectedFlexitime: {}, //적용할 근무제
   		    	applInfo: { //신청 데이터
+  		    		flexibleApplId:'',
   		    		applId:'',
   		    		useSymd:'',
   		    		useEymd:'',
@@ -787,6 +787,7 @@
   	  	         			$("#flexibleDayPlan").show();
   	  	         		}
   	         			
+  	         			$this.applInfo.flexibleApplId = obj.flexibleApplId;
   	         			$this.applInfo.applId = obj.applId;
   	         			$this.applInfo.useSymd = moment(obj.sYmd).format('YYYY-MM-DD');
   	         			$this.applInfo.useEymd = moment(obj.eYmd).format('YYYY-MM-DD');
@@ -925,7 +926,7 @@
 							data: JSON.stringify(param),
 							dataType: "json",
 							success: function(data) {
-								console.log(data)
+								console.log(data);
 							},
 							error: function(e) {
 								console.log(e);
@@ -962,10 +963,11 @@
 						$("#alertText").html("사유를 입력해 주세요.");
 	         		}
 						
-	         		/* if(flexitime.workTypeCd.indexOf('SELE')==0) {
+	         		if(flexitime.workTypeCd.indexOf('SELE')==0) {
 						if(saveYn) {
 							var param = {
-								applId : $this.applId,
+								flexibleApplId : $this.applInfo.flexibleApplId,	
+								applId : $this.applInfo.applId,
 	  	         				flexibleStdMgrId : flexitime.flexibleStdMgrId,
 	  	         				workTypeCd : flexitime.workTypeCd,
 	  	         				//empNo : "${empNo}",
@@ -973,9 +975,7 @@
 			   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
 			   		    		reason: $this.applInfo.reason
 			   		    	};
-	  	         			
 	  	         			console.log(param);
-		   		    		
 		   		    		Util.ajax({
 								url: "${rc.getContextPath()}/flexibleAppl/request",
 								type: "POST",
@@ -983,7 +983,13 @@
 								data: JSON.stringify(param),
 								dataType: "json",
 								success: function(data) {
-									console.log(data)
+									if(data!=null && data.status=='OK') {
+										$("#alertText").html("확인요청 되었습니다.");
+									} else {
+										$("#alertText").html(data.message);
+									}
+									$("#alertModal").on('hidden.bs.modal',function(){});
+			  	  	         		$("#alertModal").modal("show"); 
 								},
 								error: function(e) {
 									console.log(e);
@@ -1000,7 +1006,7 @@
   	         			
   	         			$("#flexibleAppl").hide();
   	         			$("#flexibleDayPlan").show();
-  	         		}  */
+  	         		}
   	         	}
   		    }
    	});

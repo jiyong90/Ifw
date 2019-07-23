@@ -38,7 +38,7 @@ public class WtmPropertie {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="CHKID")
-	private String updateId;
+	private Long updateId;
  
 	public Long getWtmPropertieId() {
 		return wtmPropertieId;
@@ -88,11 +88,11 @@ public class WtmPropertie {
 		this.updateDate = updateDate;
 	}
 
-	public String getUpdateId() {
+	public Long getUpdateId() {
 		return updateId;
 	}
 
-	public void setUpdateId(String updateId) {
+	public void setUpdateId(Long updateId) {
 		this.updateId = updateId;
 	}
 

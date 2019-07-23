@@ -66,7 +66,7 @@ public class WtmFlexibleStdMgr {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
-	private String updateId;
+	private Long updateId;
 	
 	public Long getFlexibleStdMgrId() {
 		return flexibleStdMgrId;
@@ -236,11 +236,11 @@ public class WtmFlexibleStdMgr {
 		this.updateDate = updateDate;
 	}
 
-	public String getUpdateId() {
+	public Long getUpdateId() {
 		return updateId;
 	}
 
-	public void setUpdateId(String updateId) {
+	public void setUpdateId(Long updateId) {
 		this.updateId = updateId;
 	}
 
