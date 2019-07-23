@@ -38,7 +38,7 @@ public interface WtmApplService {
 	final static String APPL_LINE_S = "2"; //발신결재
 	final static String APPL_LINE_R = "3"; //수신결재
 	
-	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun, Map<String, Object> paramMap);
+	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun, Map<String, Object> paramMap, Long userId);
 	/**
 	 * 승인/반려 신청서 리스트(결재함)
 	 * @param tenantId
@@ -47,11 +47,11 @@ public interface WtmApplService {
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
+	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId);
 	
-	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun) throws Exception;
-	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun) throws Exception;
-	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun) throws Exception;
+	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
+	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
+	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
 	
 	/**
 	 * 
@@ -63,7 +63,7 @@ public interface WtmApplService {
 	 * @param paramMap - 신청서별 필요한 추가 파라메터들을 담는다.
 	 * @param sabun
 	 */
-	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun);
+	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId);
 	
 	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap);
 	
