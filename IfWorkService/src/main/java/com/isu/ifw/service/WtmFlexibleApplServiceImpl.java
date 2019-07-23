@@ -184,6 +184,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		//결재의견
 		if(paramMap != null && paramMap.containsKey("apprOpinion")) {
 			line.setApprOpinion(paramMap.get("apprOpinion").toString());
+			line.setUpdateId(userId);
 		}
 		line = wtmApplLineRepo.save(line);
 		
@@ -193,7 +194,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		emp.setEnterCd(enterCd);
 		emp.setTenantId(tenantId);
 		emp.setFlexibleStdMgrId(flexibleAppl.getFlexibleStdMgrId());
-		emp.setSabun(sabun);
+		emp.setSabun(appl.getApplSabun());
 		emp.setSymd(flexibleAppl.getSymd());
 		emp.setEymd(flexibleAppl.getEymd());
 		emp.setUpdateId(userId);
