@@ -58,6 +58,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	@Autowired
 	WtmPropertieRepository wtmPropertieRepo;
 	
+	@Autowired
 	WtmFlexibleEmpRepository wtmFlexibleEmpRepo;
 	
 	@Autowired
