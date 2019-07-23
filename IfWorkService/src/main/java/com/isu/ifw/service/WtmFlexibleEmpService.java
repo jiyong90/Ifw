@@ -41,6 +41,13 @@ public interface WtmFlexibleEmpService {
 	 */
 	public Map<String, Object> getPrevFlexible(Long tenantId, String enterCd, String userKey);
 	
+	/**
+	 * 
+	 * @param flexibleEmpId
+	 * @param dateMap	{ dayResult : { "20190101" : {"shm" : "0800" , "ehm" : "0200"} } } -- ehm이더작을 경우 다음날로 인식한다
+	 * @param userId
+	 * @throws Exception
+	 */
 	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
 	
 }

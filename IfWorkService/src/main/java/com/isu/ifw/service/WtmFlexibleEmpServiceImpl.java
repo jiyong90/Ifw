@@ -2,6 +2,8 @@ package com.isu.ifw.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,14 +86,21 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				}
 				try {
 					Map<String, String> dayResult = (Map<String, String>) dateMap.get(k);
-					String sdate = dayResult.get("sdate");
-					String edate = dayResult.get("edate");
-					if(sdate != null && sdate.length() == 12) {
-						result.setPlanSdate(sdf.parse(sdate));
+					String shm = dayResult.get("shm");
+					String ehm = dayResult.get("ehm");
+					Date s = sdf.parse(k+shm);
+					Date e = sdf.parse(k+ehm);
+					
+					if(s.compareTo(e) > 0) {
+						// 날짜 더하기
+				        Calendar cal = Calendar.getInstance();
+				        cal.setTime(e);
+				        cal.add(Calendar.DATE, 1);
+				        e = cal.getTime();
 					}
-					if(edate != null && edate.length() == 12) {
-						result.setPlanEdate(sdf.parse(edate));
-					}
+					result.setPlanSdate(s);
+					result.setPlanEdate(e);
+					 
 					result.setTimeTypeCd("BASE");
 					result.setUpdateId(userId);
 					workDayResultRepo.save(result);
