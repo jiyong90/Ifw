@@ -6,11 +6,11 @@
 <mapper namespace="com.isu.ifw.mapper.WtmCalendarMapper">
 	<select id="getCalendar" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT F_DATE_FORMAT(d.SUN_YMD,'%Y-%m-%d') as sunYmd
+			SELECT F_WTM_DATE_FORMAT(d.SUN_YMD,'%Y-%m-%d') as sunYmd
 			     , d.DAY_NM as dayNm
 			     , d.NOTE as note
-			     , F_DATE_FORMAT(d.MOON_YMD,'%Y-%m-%d') as moonYmd
-			     , F_DATE_FORMAT(h.HOLIDAY_YMD,'%Y-%m-%d') as holidayYmd
+			     , F_WTM_DATE_FORMAT(d.MOON_YMD,'%Y-%m-%d') as moonYmd
+			     , F_WTM_DATE_FORMAT(h.HOLIDAY_YMD,'%Y-%m-%d') as holidayYmd
 			     , h.HOLIDAY_NM as holidayNm
 			  FROM WTM_DAY_MGR d
 			  LEFT OUTER JOIN WTM_HOLIDAY_MGR h
@@ -20,7 +20,7 @@
 			 WHERE (h.TENANT_ID IS NULL OR h.TENANT_ID = #{tenantId})
 			   AND (#{enterCd, jdbcType=VARCHAR} IS NULL OR h.ENTER_CD IS NULL OR h.ENTER_CD = #{enterCd, jdbcType=VARCHAR})
 			   AND (#{bisinessPlaceCd, jdbcType=VARCHAR} IS NULL OR h.BISINESS_PLACE_CD IS NULL OR h.BISINESS_PLACE_CD = #{bisinessPlaceCd, jdbcType=VARCHAR})
-			   AND F_DATE_FORMAT(F_TO_DATE(SUN_YMD,'%Y%m%d'),'%Y%m') = #{ym}
+			   AND F_WTM_DATE_FORMAT(F_WTM_TO_DATE(SUN_YMD,'%Y%m%d'),'%Y%m') = #{ym}
 			ORDER BY d.SUN_YMD
         ]]>
     </select>

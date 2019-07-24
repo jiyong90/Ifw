@@ -17,7 +17,7 @@
 			  	 WHERE E.ENTER_CD = #{enterCd}
 				   AND E.TENANT_ID = #{tenantId}
 				   AND E.SABUN = #{sabun}
-				   AND E1.ORG_PATH = F_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 1)
+				   AND E1.ORG_PATH = F_WTM_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 1)
 				 UNION
 				SELECT 2 AS APPR_SEQ, E1.SABUN
 				  FROM WTM_EMP_HIS E
@@ -28,7 +28,7 @@
 				 WHERE E.ENTER_CD = #{enterCd}
 				   AND E.TENANT_ID = #{tenantId}
 				   AND E.SABUN = #{sabun}
-				   AND E1.ORG_PATH = F_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 2)
+				   AND E1.ORG_PATH = F_WTM_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 2)
 				 UNION
 				SELECT 3 AS APPR_SEQ, E1.SABUN
 				  FROM WTM_EMP_HIS E
@@ -39,7 +39,7 @@
 				 WHERE E.ENTER_CD = #{enterCd}
 				   AND E.TENANT_ID = #{tenantId}
 				   AND E.SABUN = #{sabun}
-				   AND E1.ORG_PATH = F_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 3) 
+				   AND E1.ORG_PATH = F_WTM_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 3) 
 				) X 
 				ORDER BY X.APPR_SEQ 
         ]]>
@@ -72,11 +72,11 @@
 			     , C.APPL_CD AS applCd
 			     , C.APPL_NM AS applNm
 			     , A.APPL_SABUN AS applSabun
-			     , F_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
 			     , A.APPL_YMD AS applYmd
 			     , A.APPL_IN_SABUN AS applInSabun
 			     , A.APPL_STATUS_CD AS applStatusCd
-			     , F_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
 			     , FA.FLEXIBLE_APPL_ID AS flexibleApplId
 			     , FA.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
 			     , FA.SYMD AS sYmd
