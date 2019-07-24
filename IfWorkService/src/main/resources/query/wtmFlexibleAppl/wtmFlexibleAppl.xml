@@ -15,19 +15,26 @@
 			     , FA.WORK_DAY AS workDay
 			     , FA.REASON AS reason
 			     , A.APPL_STATUS_CD AS applStatusCd
+			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
 			  FROM WTM_APPL A
 			  JOIN WTM_FLEXIBLE_APPL FA
 			    ON A.APPL_ID = FA.APPL_ID 
+			  LEFT OUTER JOIN WTM_FLEXIBLE_EMP E
+			    ON A.TENANT_ID = E.TENANT_ID
+			   AND A.ENTER_CD = E.ENTER_CD
+			   AND A.APPL_SABUN = E.SABUN
+			   AND FA.SYMD = E.SYMD
+			   AND FA.EYMD = E.EYMD
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD =  #{enterCd}
-			   AND (A.APPL_SABUN,SYMD) IN (SELECT A.APPL_SABUN, MAX(SYMD)
-										     FROM WTM_APPL A
-										     JOIN WTM_FLEXIBLE_APPL FA
-										       ON A.APPL_ID = FA.APPL_ID 
-										    WHERE A.TENANT_ID = #{tenantId}
-										      AND A.ENTER_CD =  #{enterCd}
-										      AND A.APPL_SABUN = #{sabun}
-										   GROUP BY A.APPL_SABUN )	   
-        ]]>
+			   AND (A.APPL_SABUN, FA.SYMD) IN (SELECT A.APPL_SABUN, MAX(SYMD)
+											     FROM WTM_APPL A
+											     JOIN WTM_FLEXIBLE_APPL FA
+											       ON A.APPL_ID = FA.APPL_ID 
+											    WHERE A.TENANT_ID = #{tenantId}
+											      AND A.ENTER_CD =  #{enterCd}
+											      AND A.APPL_SABUN = #{sabun}
+											   GROUP BY A.APPL_SABUN )	   
+	        ]]>
     </select>
 </mapper>

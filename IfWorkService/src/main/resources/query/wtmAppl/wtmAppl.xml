@@ -95,6 +95,7 @@
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
 			   AND APPR_SABUN = #{empNo}
+			   AND L.APPR_STATUS_CD = '10'
 			   AND A.APPL_STATUS_CD IN ('21','31')
         ]]>
     </select>

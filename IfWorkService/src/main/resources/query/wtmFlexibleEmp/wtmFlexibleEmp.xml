@@ -77,7 +77,7 @@
         ]]>
     </select>
     
-    <update id="createWorkCalendar">
+    <update id="createWorkCalendar" parameterType="map">
     	INSERT INTO WTM_WORK_CALENDAR(TENANT_ID, ENTER_CD, SABUN, YMD, WORK_TYPE_CD, FLEXIBLE_EMP_ID, TIME_CD_MGR_ID, WORK_CLOSE_YN, UPDATE_ID)
 			SELECT E.TENANT_ID, E.ENTER_CD, E.SABUN, D.SUN_YMD,  E.WORK_TYPE_CD, E.FLEXIBLE_EMP_ID, M.TIME_CD_MGR_ID, 'N', #{userId}
 			  FROM WTM_FLEXIBLE_EMP E

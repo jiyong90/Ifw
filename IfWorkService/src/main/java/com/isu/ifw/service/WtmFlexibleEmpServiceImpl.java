@@ -78,7 +78,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		if(dateMap != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
 			for(String k : dateMap.keySet()) {
-				WtmWorkDayResult result =  workDayResultRepo.findByTimeTypeCdAndYmdAndTenantIdAndEnterCdAndSabun("BASE", k, emp.getTenantId(), emp.getEnterCd(), emp.getSabun());
+				WtmWorkDayResult result =  workDayResultRepo.findByTimeTypeCdAndTenantIdAndEnterCdAndSabunAndYmd("BASE", emp.getTenantId(), emp.getEnterCd(), emp.getSabun(), k);
 				if(result == null) {
 					result = new WtmWorkDayResult();
 					//부모키 가져오기

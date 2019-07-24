@@ -174,8 +174,8 @@
 			        selectMirror: this.selectMirror,
 			        editable: this.editable,
 			        eventLimit: this.eventLimit, 
-			        events: this.events
-			        //eventSources: this.eventsources
+			        events: this.events,
+			        eventSources: this.eventsources
 				};
 			}
 		},

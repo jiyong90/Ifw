@@ -145,6 +145,14 @@ public class WtmWorkDayResult {
 		this.updateId = updateId;
 	}
  
-	
+	@PrePersist
+    protected void onCreate() {
+		this.updateDate = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+    	this.updateDate = new Date();
+    }
 	
 }
