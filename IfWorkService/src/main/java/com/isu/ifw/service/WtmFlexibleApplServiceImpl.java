@@ -141,7 +141,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		if(lines != null && lines.size() > 0) {
 			for(WtmApplLine line : lines) {
 				//첫번째 결재자의 상태만 변경 후 스탑
-				line.setApprStatusCd(APPR_STATUS_APPLY);
+				line.setApprStatusCd(APPR_STATUS_REQUEST);
 				line = wtmApplLineRepo.save(line);
 				break;
 				 

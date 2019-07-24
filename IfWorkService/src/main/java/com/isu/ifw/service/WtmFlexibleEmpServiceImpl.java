@@ -73,6 +73,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	@Override
 	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception{
 		WtmFlexibleEmp emp =  flexEmpRepo.findById(flexibleEmpId).get();
+		
 		flexEmpMapper.createWorkCalendar(flexibleEmpId, userId);
 		if(dateMap != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
