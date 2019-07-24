@@ -57,16 +57,16 @@ public class CusAuthConfig implements AuthConfig {
 		//return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id = :loginId and a.tenant_id = :tenantId";
 		return " select   a.login_id as loginId                                           "
 				+ "      , a.user_id as userId                            "
-				+ "      , F_AES_DECRYPT(a.login_id, info_data) as empNo "
-				+ "      , F_AES_DECRYPT(a.enter_cd, info_data) as enterCd "
+				+ "      , F_WTM_AES_DECRYPT(a.login_id, info_data) as empNo "
+				+ "      , F_WTM_AES_DECRYPT(a.enter_cd, info_data) as enterCd "
 				+ "      , a.* "
 				+ "   from comm_user a                                     "
 				+ "   join comm_management_infomation i                    "
 				+ "     on a.tenant_id = i.tenant_id                       "
 				+ "  where a.tenant_id = :tenantId                                 "
 				+ "    and info_key= 'SECURITY.AES.KEY'                     "
-				+ "    and a.enter_cd = F_AES_ENCRYPT(:enterCd, info_data)    "
-				+ " 	and a.login_id = F_AES_ENCRYPT(:loginId, info_data)   "
+				+ "    and a.enter_cd = F_WTM_AES_ENCRYPT(:enterCd, info_data)    "
+				+ " 	and a.login_id = F_WTM_AES_ENCRYPT(:loginId, info_data)   "
 			 ;
 	}
 
