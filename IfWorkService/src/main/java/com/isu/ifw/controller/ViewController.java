@@ -150,7 +150,7 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		if("workTimeCalendar".equals(viewPage)){
+		if("workCalendar".equals(viewPage) || "workDayPlan".equals(viewPage)){
 			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		} else {
 			return mv;

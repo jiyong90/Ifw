@@ -18,7 +18,7 @@
             </ul>
         </li> -->
         <li id="cal">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workTimeCalendar';">
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar';">
                 <i class="fas fa-calendar-alt"></i>
                 <span class="title">나의 정보 </span>
             </a>

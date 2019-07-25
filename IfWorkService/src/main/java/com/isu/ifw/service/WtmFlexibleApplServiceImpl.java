@@ -84,24 +84,34 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Transactional
 	@Override
-	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) {
-		WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
-		Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
-		//신청서 최상위 테이블이다. 
-		WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_IMSI, sabun, userId);
+	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
 		
-		applId = appl.getApplId();
+		try {
+			WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
+			Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
+			//신청서 최상위 테이블이다. 
+			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_IMSI, sabun, userId);
+			
+			applId = appl.getApplId();
+			
+			String sYmd = paramMap.get("sYmd").toString();
+			String eYmd = paramMap.get("eYmd").toString();
+			
+			//근무제 신청서 테이블 조회
+			WtmFlexibleAppl flexibleAppl = saveWtmFlexibleAppl(tenantId, enterCd, applId, flexibleStdMgrId, sYmd, eYmd, "", sabun, userId);
+			
+			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
-		String sYmd = paramMap.get("sYmd").toString();
-		String eYmd = paramMap.get("eYmd").toString();
+			rp.put("applId", appl.getApplId());
+			rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
 		
-		//근무제 신청서 테이블 조회
-		saveWtmFlexibleAppl(tenantId, enterCd, applId, flexibleStdMgrId, sYmd, eYmd, "", sabun, userId);
+		} catch(Exception e) {
+			throw new Exception("저장 시 오류가 발생했습니다.");
+		}
 		
-		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
-		
-		return appl;
-		
+		return rp;
 		
 	}
 	

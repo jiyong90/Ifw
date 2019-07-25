@@ -63,7 +63,7 @@ public interface WtmApplService {
 	 * @param paramMap - 신청서별 필요한 추가 파라메터들을 담는다.
 	 * @param sabun
 	 */
-	public WtmAppl imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId);
+	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
 	
 	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap);
 	
