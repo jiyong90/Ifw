@@ -63,7 +63,7 @@
 }
 
 /* 월,주,일 */
-.fc-dayGridMonth-button,
+.fc-bgeventGridMonth-button,
 .fc-timeGridWeek-button,
 .fc-timeGridDay-button {
   color:#a2a3a5;
@@ -72,7 +72,7 @@
   font-size: 14px;
 }
 /* 월,주,일 active */
-.fc-dayGridMonth-button:not(:disabled):not(.disabled).active,
+.fc-bgeventGridMonth-button:not(:disabled):not(.disabled).active,
 .fc-timeGridWeek-button:not(:disabled):not(.disabled).active,
 .fc-timeGridDay-button:not(:disabled):not(.disabled).active {
   color:#ffffff;
@@ -80,7 +80,7 @@
   background-color:#6b6b80;
 }
 /* 월,주,일 hover  */
-.fc-dayGridMonth-button:hover,
+.fc-bgeventGridMonth-button:hover,
 .fc-timeGridWeek-button:hover,
 .fc-timeGridDay-button:hover {
   color: #ffffff;
@@ -88,19 +88,19 @@
   background-color: #6b6b80;
 }
 
-.fc-day-header{
+.fc-bgevent-header{
   font-size: 12px;
   color: #7b7c8d;
 }
 
-.fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{
+.fc-ltr .fc-bgeventGrid-view .fc-bgevent-top .fc-bgevent-number{
   font-size: 12px;
   color: #333333;
   text-decoration: none;
 }
 
 /* today mark */
-.fc-ltr .fc-dayGrid-view .fc-day-top.fc-today .fc-day-number{
+.fc-ltr .fc-bgeventGrid-view .fc-bgevent-top.fc-today .fc-bgevent-number{
   border-radius : 50%;
   background-color : #3e3e4c;
   color: #ffffff;
@@ -108,21 +108,21 @@
 
 
 /* 근무제 시작일, 종료일 표시 세모 */
-.fc-day{
+.fc-bgevent{
   position: relative;
 }
-.fc-day>.fc-border {
+.fc-bgevent>.fc-border {
   position: absolute;
   top: 0;
   width:100%;
   height:2px;
 }
-.fc-day>.fc-border.start {
+.fc-bgevent>.fc-border.start {
   left: 10px;
   width: calc(100% - 10px);
 
 }
-.fc-day>.fc-border.end {
+.fc-bgevent>.fc-border.end {
   left: 0px;
   width: calc(100% - 10px);
 }
@@ -135,7 +135,7 @@
 /* .fc-event-line.ELAS {
   border-right: 1px solid #ffa200;
 } */
-.fc-day>.fc-border.ELAS {
+.fc-bgevent>.fc-border.ELAS {
   background-color: #ffa200;
 }
 
@@ -147,7 +147,7 @@
 /* .fc-event-line.SELE_F {
   border-right: 1px solid #044ef1;
 } */
-.fc-day>.fc-border.SELE_F {
+.fc-bgevent>.fc-border.SELE_F {
   background-color: #044ef1;
 }
 
@@ -159,7 +159,7 @@
 /* .fc-event-line.SELE_C {
   border-right: 1px solid #2ab1ec;
 } */
-.fc-day>.fc-border.SELE_C {
+.fc-bgevent>.fc-border.SELE_C {
   background-color: #2ab1ec;
 }
 
@@ -171,7 +171,7 @@
 /* .fc-event-line.DIFF {
   border-right: 1px solid #039f65;
 } */
-.fc-day>.fc-border.DIFF {
+.fc-bgevent>.fc-border.DIFF {
   background-color:#039f65;
 }
 
@@ -183,7 +183,7 @@
 /* .fc-event-line.AUTO {
   border-right: 1px solid #47435e;
 } */
-.fc-day>.fc-border.AUTO {
+.fc-bgevent>.fc-border.AUTO {
   background-color: #47435e;
 }
 
