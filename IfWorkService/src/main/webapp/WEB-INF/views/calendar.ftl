@@ -53,7 +53,7 @@
 				type: String,
 				required: false,
 				default : function(){
-					return 'en';
+					return 'ko';
 				}
 			},
 			header : {

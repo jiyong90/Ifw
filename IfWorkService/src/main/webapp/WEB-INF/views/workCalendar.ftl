@@ -455,13 +455,19 @@
   		    		
   		    		//기존에 신청한 근무제
   		    		if(info.event.id.indexOf('workRange.')==0) {
+  		    			var key = info.event.id.split(".");
+  		    			var workTypeCd = key[1];
+  		    			
+  		    			var borderDiv = '';
   		    			if(info.isStart) {
-  		    				
+  		    				borderDiv = '<div class="fc-border start '+workTypeCd+'"></div>';
   		    			} else if(info.isEnd) {
-  		    				
+  		    				borderDiv = '<div class="fc-border end '+workTypeCd+'"></div>';
   		    			} else {
-  		    				//$(info.el).css('border-top', '1px solid red');
+  		    				borderDiv = '<div class="fc-border '+workTypeCd+'"></div>';
   		    			}
+  		    			//$(info.el).css('border-top', '1px solid red');
+  		    			$(info.el).prepend(borderDiv);
   		    		}
   		    	},
   		    	eventClickCallback : function(info){
@@ -498,7 +504,6 @@
          				calendar.batchRendering(function() {
   	  	         			calendar.addEvent(Obj);
   	  	         		});
-	         			console.log(Obj);
   	         		}
   	         	},
   	         	addEventSource : function(Obj){
@@ -554,6 +559,43 @@
 			  		  		        	rendering: 'background',
 			  		  		        	classNames: classNames
 									});
+									/* 
+									//디자인 확인 위함
+									$this.addEvent({
+										id: 'workRange.ELAS.'+1,
+										start: '2019-07-01',
+			  		  		        	end: '2019-07-08',
+			  		  		        	rendering: 'background',
+			  		  		        	classNames: ['ELAS']
+									});
+									$this.addEvent({
+										id: 'workRange.SELE_F.'+2,
+										start: '2019-07-09',
+			  		  		        	end: '2019-07-23',
+			  		  		        	rendering: 'background',
+			  		  		        	classNames: ['SELE_F']
+									});
+									$this.addEvent({
+										id: 'workRange.SELE_C.'+3,
+										start: '2019-07-24',
+			  		  		        	end: '2019-07-27',
+			  		  		        	rendering: 'background',
+			  		  		        	classNames: ['SELE_C']
+									});
+									$this.addEvent({
+										id: 'workRange.DIFF.'+4,
+										start: '2019-07-28',
+			  		  		        	end: '2019-08-04',
+			  		  		        	rendering: 'background',
+			  		  		        	classNames: ['DIFF']
+									});
+									$this.addEvent({
+										id: 'workRange.AUTO.'+5,
+										start: '2019-08-05',
+			  		  		        	end: '2019-08-15',
+			  		  		        	rendering: 'background',
+			  		  		        	classNames: ['AUTO']
+									}); */
 								});
 							}
 						},
