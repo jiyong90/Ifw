@@ -106,11 +106,11 @@
 			    }
 			},
 			*/
-			navLinks : {
+			navlinks : {
 				type: Boolean,
 				required: false,
 				default : function(){
-					return true; // can click day/week names to navigate views
+					return false; // can click day/week names to navigate views
 				}
 			},
 			selectable : {
@@ -159,7 +159,7 @@
 		computed: {
 			calOptions : function(){
 				var $this = this;
-				return {
+				var option = {
 					plugins: this.plugins,
 			        themeSystem: this.themeSystem,
 			        height: this.height,
@@ -169,7 +169,7 @@
 			        defaultDate: this.defaultDate,
 			        //views: this.views,
 			        //validRange: this.validRange,
-			        navLinks: this.navLinks, 
+			        //navLinks: this.navLinks, 
 			        selectable: this.selectable,
 			        selectMirror: this.selectMirror,
 			        editable: this.editable,
@@ -177,6 +177,12 @@
 			        events: this.events,
 			        eventSources: this.eventsources
 				};
+				
+				if(this.navlinks) {
+					option.navLinks = this.navlinks;
+				}
+				
+				return option;
 			}
 		},
 		mounted: function() {
