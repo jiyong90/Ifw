@@ -1,5 +1,6 @@
 package com.isu.ifw.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmInbox;
 import com.isu.ifw.repository.WtmInboxRepository;
 import com.isu.ifw.vo.WtmInboxVO;
@@ -33,15 +35,15 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 	
 	@Async("threadPoolTaskExecutor")
 	@Override
-	public void setInbox(WtmInboxVO inbox) {
+	public void setInbox(Long tenantId, String enterCd, String sabun, String title) {
 		WtmInbox data = new WtmInbox();
-		data.setEnterCd(inbox.getEnterCd());
-		data.setSabun(inbox.getSabun());
-		data.setTenantId(inbox.getTenantId());
-		data.setTitle(inbox.getTitle());
+		data.setEnterCd(enterCd);
+		data.setSabun(sabun);
+		data.setTenantId(tenantId);
+		data.setTitle(title);
 		
 		try {
-			MDC.put("inbox", inbox.toString());
+			MDC.put("inbox", data.toString());
 			logger.info("setInbox", MDC.get("sessionId"), MDC.get("logId"), "S");
 			
 			data = inboxRepository.save(data);
@@ -51,17 +53,25 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 		} finally {
 			MDC.remove("inbox");
 			if (data != null && data.getId() != null) {
-				String url = "/api/"+inbox.getTenantId()+"/"+inbox.getEnterCd()+"/"+inbox.getSabun()+"/noti";
+				String url = "/api/"+tenantId+"/"+enterCd+"/"+sabun+"/noti";
 				System.out.println(url);
-				this.template.convertAndSend(url, inbox);
+				this.template.convertAndSend(url, data);
 			}
 		}
 	}
 	
 	@Override
 	public List<Map<String, Object>> getInboxList(Long tenantId, String enterCd, String sabun) {
-
-		return null;
+		List<Map<String, Object>> inboxList = new ArrayList();
+		
+		List<WtmInbox> list = inboxRepository.findByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
+		for(WtmInbox l : list) {
+			Map<String, Object> inbox = new HashMap();
+			inbox.put("title", l.getTitle());
+			inboxList.add(inbox);
+		}
+		return inboxList;
+	
 	}
 
 	@Override

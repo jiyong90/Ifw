@@ -24,8 +24,22 @@
             <li class="nav-item">
                     <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
             </li>
-            <li class="nav-item">
-                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span></a>
+            <li class="nav-item dropdown notifications-menu">
+                    <a data-toggle="dropdown" href="#">
+                    	<span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                    	<li class="header">You have {{inboxCount}} notifications</li>
+                    	<li>
+			                <!-- inner menu: contains the actual data -->
+			                <ul class="menu">
+			                  	  <li v-for="m in data">
+								    {{ m.title }}
+								  </li>
+			                  </li>
+		              	  	</ul>
+		              	  </li>
+                    </ul>
             </li>
             <li class="nav-item">
                     <a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
@@ -36,9 +50,6 @@
         </ul>
     </div>
 </nav>
-<div id=alertDiv v-if=showNoti>
-
-</div>
 <script type="text/javascript">
 
 $(document).ready(function(){
@@ -46,18 +57,19 @@ $(document).ready(function(){
 		el : '#inbox',
 		data : {
 			inboxCount : '',
-			title : ""
+			data : []
 		},
 		mounted : function() {
 			var $this = this;
 			Util.ajax({
-				url: "${rc.getContextPath()}/noti/inbox/count",
+				url: "${rc.getContextPath()}/noti/inbox/list",
 				type: "GET",
 				contentType : 'application/json',
 				dataType : "json",
 				success: function(data) {
-					$this.inboxCount = data.count;
-					console.log($this.inboxCount);
+					console.log(data);
+					$this.inboxCount = data.length;
+					$this.data = data;
 				}, error: function(data) { alert(data.message); }
 			})
 		},
@@ -70,7 +82,7 @@ $(document).ready(function(){
 					console.log(data);
 					$this.inboxCount = 1;
 					$this.title = data.title;
-					console("알림도착 : " + $this.title);
+					alert("알림도착 : " + $this.title);
 				}
 			}
 		}
