@@ -277,7 +277,7 @@
                			</span>
                		</div>
                     <div id='calendar-container'>
-                		<full-calendar ref="fullCalendar" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
+                		<full-calendar ref="fullCalendar" :navlinks="t" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
                     </div>
                 </div>
             </div>
@@ -291,6 +291,7 @@
   				FullCalendar : fullCalendarComponent
   		    },
   		    data : {
+  		    	t: true,
   		    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
   		    	useYn: 'N', //근무제 적용 여부
   		    	prevEdate: '', //이전 근무제 종료일

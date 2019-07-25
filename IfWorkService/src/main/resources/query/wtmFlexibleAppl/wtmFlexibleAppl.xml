@@ -17,6 +17,11 @@
 			     , A.APPL_CD AS applCd
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
+			     , E.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+			     , M.WORK_SHM AS workShm
+			     , M.WORK_EHM AS workEhm
+			     , M.CORE_SHM AS coreShm
+			     , M.CORE_EHM AS coreEhm
 			  FROM WTM_APPL A
 			  JOIN WTM_FLEXIBLE_APPL FA
 			    ON A.APPL_ID = FA.APPL_ID 
@@ -26,6 +31,8 @@
 			   AND A.APPL_SABUN = E.SABUN
 			   AND FA.SYMD = E.SYMD
 			   AND FA.EYMD = E.EYMD
+			  LEFT OUTER JOIN WTM_FLEXIBLE_STD_MGR M
+			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD =  #{enterCd}
 			   AND (A.APPL_SABUN, FA.SYMD) IN (SELECT A.APPL_SABUN, MAX(SYMD)
