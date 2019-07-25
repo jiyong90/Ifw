@@ -110,7 +110,7 @@
 /* 근무제 시작일, 종료일 표시 세모 */
 .fc-bgevent{
   position: relative;
-  opacity: 0.6 !important;
+  opacity: 0.5 !important;
 }
 .fc-bgevent>.fc-border {
   position: absolute;
