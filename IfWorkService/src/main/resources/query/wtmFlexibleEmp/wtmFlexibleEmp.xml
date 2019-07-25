@@ -95,7 +95,7 @@
 			     	   AND C.SABUN = E.SABUN
 				)
     </update>
-    <update id="updatePlanMinute">
+    <update id="updatePlanMinute" parameterType="Long">
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
 			SELECT D.WORK_CALENDAR_ID  
@@ -123,7 +123,7 @@
 			;
     </update>
     
-    <select id="checkBaseWorktime">
+    <select id="checkBaseWorktime" parameterType="Long" resultType="map">
     	SELECT ( CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * P.INFO_VALUE / 7) * 60  >=  SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END)) AS isValid
     		, CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * P.INFO_VALUE / 7) * 60 as totalWorktime
     	  FROM WTM_FLEXIBLE_EMP E
@@ -134,5 +134,21 @@
 		  JOIN WTM_PROPERTIE P
 		    ON P.TENANT_ID = C.TENANT_ID AND P.ENTER_CD = C.ENTER_CD AND P.INFO_KEY = 'OPTION_AVG_WORKTIME_1WEEK'
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+    </select>
+    
+    <select id="getWorktimePlan" parameterType="Long" resultType="map" >
+    	SELECT C.YMD
+    	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, '%H:%i') AS SHM
+		     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_EDATE IS NOT NULL AND R.APPR_EDATE != '' THEN R.APPR_EDATE ELSE R.PLAN_EDATE END, '%H:%i') AS EHM
+		     , CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END AS MINUTE
+		  FROM WTM_FLEXIBLE_EMP E
+		  JOIN WTM_WORK_CALENDAR C
+		    ON E.FLEXIBLE_EMP_ID = C.FLEXIBLE_EMP_ID
+		  JOIN  WTM_WORK_DAY_RESULT R
+		    ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
+		  JOIN WTM_PROPERTIE P
+		    ON P.TENANT_ID = C.TENANT_ID AND P.ENTER_CD = C.ENTER_CD AND P.INFO_KEY = 'OPTION_AVG_WORKTIME_1WEEK'
+		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+		 ORDER BY C.YMD
     </select>
 </mapper>

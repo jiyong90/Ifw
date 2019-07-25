@@ -2,6 +2,7 @@ package com.isu.ifw.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,7 +20,10 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
+import com.isu.ifw.vo.WtmDayPlanVO;
+import com.isu.ifw.vo.WtmDayWorkVO;
 import com.isu.ifw.vo.WtmWorkTermTimeVO;
+import com.sun.istack.FinalArrayList;
 
 @Service("flexibleEmpService")
 public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
@@ -123,6 +127,45 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		//select CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * 40 / 7) from WTM_FLEXIBLE_EMP E;
 		
 		
+	}
+
+	@Override
+	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) {
+		List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
+		
+		Map<String, Object> imsiMap = new HashMap<>();
+		
+		if(plans != null && plans.size() > 0) {
+			WtmDayWorkVO work = new WtmDayWorkVO();
+			for(Map<String, Object> plan : plans) {
+				String ymd = plan.get("YMD").toString();
+				
+				String shm = plan.get("SHM").toString();
+				String ehm = plan.get("EHM").toString();
+				String m = plan.get("MINUTE").toString();
+				Float H = Float.parseFloat(m)/60;
+				Float i = (H - H.intValue()) * 60;
+				List<WtmDayPlanVO> planVOs = new ArrayList<>();
+				if(imsiMap.containsKey(ymd)) {
+					planVOs = (List<WtmDayPlanVO>) imsiMap.get(ymd);
+				}
+				WtmDayPlanVO planVO = new WtmDayPlanVO();
+				planVO.setKey(ymd);
+				planVO.setLabel(shm + "~" + ehm + "("+H.intValue()+"시간"+((i.intValue()>0)?i.intValue()+"분":"")+")");
+				
+				planVOs.add(planVO);
+				
+				imsiMap.put(ymd, planVOs);
+			}
+		}
+		List<WtmDayWorkVO> works = new ArrayList<WtmDayWorkVO>();
+		for(String k : imsiMap.keySet()) {
+			WtmDayWorkVO workVO = new WtmDayWorkVO();
+			workVO.setDay(k);
+			workVO.setPlans((List<WtmDayPlanVO>)imsiMap.get(k));
+			works.add(workVO);
+		}
+		return works;
 	}
 	
 }

@@ -36,5 +36,6 @@ public interface WtmFlexibleEmpMapper {
 	
 	public Map<String, Object> checkBaseWorktime(@Param("flexibleEmpId") Long flexibleEmpId);
 	
+	public List<Map<String, Object>> getWorktimePlan(@Param("flexibleEmpId") Long flexibleEmpId);
 	
 }

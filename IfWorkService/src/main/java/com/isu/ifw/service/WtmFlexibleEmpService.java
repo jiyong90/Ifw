@@ -3,6 +3,7 @@ package com.isu.ifw.service;
 import java.util.List;
 import java.util.Map;
 
+import com.isu.ifw.vo.WtmDayWorkVO;
 import com.isu.ifw.vo.WtmWorkTermTimeVO;
 
 /**
@@ -49,5 +50,7 @@ public interface WtmFlexibleEmpService {
 	 * @throws Exception
 	 */
 	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
+	
+	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Map<String, Object> dateMap, Long userId);
 	
 }
