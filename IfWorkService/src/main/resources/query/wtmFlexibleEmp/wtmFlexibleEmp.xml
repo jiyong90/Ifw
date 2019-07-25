@@ -95,7 +95,7 @@
 			     	   AND C.SABUN = E.SABUN
 				)
     </update>
-    <update id="updatePlanMinute">
+    <update id="updatePlanMinute" parameterType="Long">
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
 			SELECT D.WORK_CALENDAR_ID  
