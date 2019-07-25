@@ -219,6 +219,7 @@ box-sizing: border-box;
   /* width: 100%; */
   padding: 10px 0px;
   border-top: 1px solid #e2e5ed;
+  font-size:0px;
 }
 
 .work-plan-wrap .sub-list>li:first-child{
@@ -240,7 +241,7 @@ box-sizing: border-box;
 }
 
 .work-plan-wrap .sub-list>li>span.sub-title {
-  width: calc(40% + 28px);
+  width: calc(40% + 25px);
 }
 
 
@@ -263,9 +264,10 @@ box-sizing: border-box;
   padding-left: 30px;
 }
 
-.work-plan-wrap .sub-desc-list li::before{
+.work-plan-wrap .sub-desc-list li:before{
   content : '·';
   display: inline-block;
+  font-size:14px;
   /* border:1px solid blue; */
 }
 
