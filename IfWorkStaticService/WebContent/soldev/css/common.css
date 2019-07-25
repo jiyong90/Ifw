@@ -118,7 +118,10 @@ ul, ol, li{
 
 
 /* main */
-.work-info-wrap{padding:14px;/* margin-bottom: 10px; */text-align: left;background-color:#1f3b78;box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
+.work-info-wrap{min-height:246px; padding:14px;/* margin-bottom: 10px; */text-align: left;background-color:#1f3b78;box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
+box-sizing: border-box;
+-moz-box-sizing: border-box;
+-webkit-box-sizing: border-box;
 }
 .work-info-wrap .main-title,
 .work-info-wrap .main-desc{font-size: 14px;font-weight: bold;font-style: normal;line-height: 1.5;letter-spacing: -0.6px;color: #ffffff;
