@@ -153,6 +153,12 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				planVO.setKey(ymd);
 				planVO.setLabel(shm + "~" + ehm + "("+H.intValue()+"시간"+((i.intValue()>0)?i.intValue()+"분":"")+")");
 				
+				Map<String, Object> valueMap = new HashMap<>();
+				valueMap.put("shm", shm);
+				valueMap.put("ehm", ehm);
+				valueMap.put("m", m);
+				
+				planVO.setValueMap(valueMap);
 				planVOs.add(planVO);
 				
 				imsiMap.put(ymd, planVOs);

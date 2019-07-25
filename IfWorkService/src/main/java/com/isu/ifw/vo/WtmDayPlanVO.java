@@ -1,9 +1,11 @@
 package com.isu.ifw.vo;
 
+import java.util.Map;
+
 public class WtmDayPlanVO {
 	private String key;
 	private String label;
-	private String value;
+	private Map<String, Object> valueMap;
 	public String getKey() {
 		return key;
 	}
@@ -16,10 +18,11 @@ public class WtmDayPlanVO {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	public String getValue() {
-		return value;
+	public Map<String, Object> getValueMap() {
+		return valueMap;
 	}
-	public void setValue(String value) {
-		this.value = value;
+	public void setValueMap(Map<String, Object> valueMap) {
+		this.valueMap = valueMap;
 	}
+	
 }
