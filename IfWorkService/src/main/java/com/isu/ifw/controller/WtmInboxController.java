@@ -56,27 +56,24 @@ public class WtmInboxController {
 	}
 	
 	@RequestMapping(value="/inbox/list", method=RequestMethod.GET)
-	public @ResponseBody ReturnParam getNotiList(HttpServletRequest request) {
-		ReturnParam rp = new ReturnParam();
-		
+	public @ResponseBody List<Map<String, Object>> getNotiList(HttpServletRequest request) {
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", request.getAttribute("logId"));
 		MDC.put("type", "C");
 		logger.info("noti controller start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 	
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
-		String enterCd = request.getAttribute("enterCd").toString();
-		String sabun = request.getAttribute("sabun").toString();
-
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		
 		List<Map<String, Object>> inboxList = new ArrayList();
 		try {
-			inboxList = inboxService.getInboxList(tenantId, enterCd, sabun);
+			return inboxList = inboxService.getInboxList(tenantId, enterCd, sabun);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		rp.put("data", inboxList);
-		return rp; 
+		return null;
 	}
 }
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.option.vo.ReturnParam;
 
@@ -48,10 +49,19 @@ public class WtmFlexibleApplController {
 		
 		Long applId = null;
 		String workTypeCd = null;
+		if(paramMap.get("applId")!=null && !"".equals(paramMap.get("applId")))
+			applId = Long.valueOf(paramMap.get("applId").toString());
 		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
 			workTypeCd = paramMap.get("workTypeCd").toString();
-				
-		flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
+			
+		try {
+			rp = flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		
 		return rp;
 	}
 	
