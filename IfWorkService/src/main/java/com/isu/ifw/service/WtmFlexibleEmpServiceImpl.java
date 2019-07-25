@@ -110,8 +110,17 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					e.printStackTrace();
 				}
 			}
+			//planMinute갱신
+			flexEmpMapper.updatePlanMinute(flexibleEmpId);
+			
+			Map<String, Object> result = flexEmpMapper.checkBaseWorktime(flexibleEmpId);
+			if(result.get("isValid").equals("0")) {
+				throw new RuntimeException(result.get("totalWorktime").toString() + "시간의 소정근로시간을 넘을 수 없습니다.");
+			}
 		}
 		
+		//저장된 데이터를 기반으로 유효성 검사 진행
+		//select CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * 40 / 7) from WTM_FLEXIBLE_EMP E;
 		
 		
 	}

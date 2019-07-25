@@ -93,4 +93,44 @@
 			     	   AND C.SABUN = E.SABUN
 				)
     </update>
+    <update id="updatePlanMinute">
+    	UPDATE WTM_WORK_DAY_RESULT X 
+    	  JOIN (
+			SELECT D.WORK_CALENDAR_ID  
+				 , F_WTM_CALC_MINUTE( date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i'), '','') -
+				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i') )) AS CM
+			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_WORK_CALENDAR C
+			    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
+			   AND E.SABUN = C.SABUN
+			  JOIN WTM_WORK_DAY_RESULT D 
+			    ON C.WORK_CALENDAR_ID = D.WORK_CALENDAR_ID
+			  JOIN WTM_TIME_CD_MGR T
+			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			  JOIN WTM_TIME_BREAK_MGR B
+			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+			   AND E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+			   AND D.TIME_TYPE_CD = 'BASE'
+			   AND (B.SHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i') 
+			     OR B.EHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i'))
+			 GROUP BY D.WORK_DAY_RESULT_ID
+			) XX
+			ON X.WORK_CALENDAR_ID = XX.WORK_CALENDAR_ID
+		   SET X.PLAN_MINUTE = XX.CM
+			;
+    </update>
+    
+    <select id="checkBaseWorktime">
+    	SELECT ( CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * P.INFO_VALUE / 7) * 60  >=  SUM(PLAN_MINUTE)) AS isValid
+    		, CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * P.INFO_VALUE / 7) * 60 as totalWorktime
+    	  FROM WTM_FLEXIBLE_EMP E
+		  JOIN WTM_WORK_CALENDAR C
+		    ON E.FLEXIBLE_EMP_ID = C.FLEXIBLE_EMP_ID
+		  JOIN  WTM_WORK_DAY_RESULT R
+		    ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
+		  JOIN WTM_PROPERTIE P
+		    ON P.TENANT_ID = C.TENANT_ID AND P.ENTER_CD = C.ENTER_CD AND P.INFO_KEY = 'OPTION_AVG_WORKTIME_1WEEK'
+		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+    </select>
 </mapper>
