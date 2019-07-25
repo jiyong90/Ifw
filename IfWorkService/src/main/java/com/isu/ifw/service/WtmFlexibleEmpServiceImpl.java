@@ -130,7 +130,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 
 	@Override
-	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) {
+	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId) {
 		List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
 		
 		Map<String, Object> imsiMap = new HashMap<>();

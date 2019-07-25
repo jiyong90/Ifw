@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmFlexibleEmpService;
+import com.isu.ifw.vo.WtmDayWorkVO;
 import com.isu.ifw.vo.WtmWorkTermTimeVO;
 import com.isu.option.vo.ReturnParam;
 
@@ -156,6 +157,8 @@ public class WtmFlexibleEmpController {
 			System.out.println("dayResult : " + mapper.writeValueAsString(dayResult));
 			System.out.println("userId : " + userId);
 			flexibleEmpService.save(flexibleEmpId, dayResult, userId);
+			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(flexibleEmpId, userId);
+			rp.put("dayWorks", dayWorks);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

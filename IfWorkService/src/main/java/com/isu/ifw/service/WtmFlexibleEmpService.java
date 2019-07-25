@@ -51,6 +51,6 @@ public interface WtmFlexibleEmpService {
 	 */
 	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
 	
-	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Map<String, Object> dateMap, Long userId);
+	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId);
 	
 }
