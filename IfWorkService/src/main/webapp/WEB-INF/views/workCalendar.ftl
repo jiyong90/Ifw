@@ -465,6 +465,8 @@
   		    			var workTypeCd = key[1];
   		    			
   		    			var borderDiv = '';
+  		    			
+  		    			//console.log($("#calendar").find(".fc-bgevent"));
   		    			if(info.isStart) {
   		    				borderDiv = '<div class="fc-border start '+workTypeCd+'"></div>';
   		    			} else if(info.isEnd) {
@@ -473,6 +475,7 @@
   		    				borderDiv = '<div class="fc-border '+workTypeCd+'"></div>';
   		    			}
   		    			//$(info.el).css('border-top', '1px solid red');
+  		    			$(info.el).empty();
   		    			$(info.el).prepend(borderDiv);
   		    		}
   		    	},
@@ -559,12 +562,13 @@
 									classNames.push(f.applCd);
 									
 									$this.addEvent({
-										id: 'workRange.'+f.applCd+'.'+f.applId,
+										id: 'workRange.'+f.applCd+'.'+sYmd,
 										start: sYmd,
 			  		  		        	end: eYmd,
-			  		  		        	rendering: 'background',
-			  		  		        	classNames: classNames
+			  		  		        	rendering: 'background'
+			  		  		        	//classNames: classNames
 									});
+									
 									/* 
 									//디자인 확인 위함
 									$this.addEvent({
@@ -833,24 +837,24 @@
 						});
 						
 						//임시저장된 건이 있으면 이벤트 삭제하고 재생성
-						console.log($this.applInfo);
-						if($this.applInfo.hasOwnProperty("applStatusCd") && $this.applInfo.applStatusCd=='11') {
-							var eventId = 'workRange.'+ $this.applInfo.applCd + '.' + $this.applInfo.applId;
+						/* if($this.applInfo.hasOwnProperty("applStatusCd") && $this.applInfo.applStatusCd=='11') {
+							var eventId = 'workRange.'+ $this.applInfo.applCd + '.' + $("#useSymd").val();
+							consol.elog(eventId);
 							var event = calendar.getEventById(eventId);
 							if(event!=null)
 								event.remove();
-						}
+						} */
 						
 	         			$this.addEvent({
-  	         				id: 'workRange',
-  		  		    		start: $this.applInfo.useSymd,
-  		  		        	end: moment(eYmd).format('YYYY-MM-DD'),
-  		  		        	rendering: 'background',
-  		  		        	daysOfWeek: workDaysOpt,
-  		  		        	startRecur: $this.applInfo.useSymd,
-  		  		        	endRecur: moment(eYmd).format('YYYY-MM-DD'),
-  		  		        	classNames: classNames
-  	  	  		      	});
+	         				id: 'workRange.'+$this.selectedFlexitime.workTypeCd+'.'+$this.applInfo.useSymd,
+		  		    		start: $this.applInfo.useSymd,
+		  		        	end: moment(eYmd).format('YYYY-MM-DD'),
+		  		        	rendering: 'background'
+		  		        	//daysOfWeek: workDaysOpt,
+		  		        	//startRecur: $this.applInfo.useSymd,
+		  		        	//endRecur: moment(eYmd).format('YYYY-MM-DD'),
+		  		        	//classNames: classNames
+	  	  		      	});
 	         			
 	         			eYmd.setDate(eYmd.getDate()-1);
 	         			$this.applInfo.useEymd = moment(eYmd).format('YYYY-MM-DD');
