@@ -360,10 +360,14 @@
   		    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
   		    		var flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //임시저장된 신청서
   		    		
-					//신청화면 전환
-					$("#applyBtn").bind('click', function(){
-						 $this.viewFlexitimeAppl(flexibleAppl);
-					});
+  		    		if(flexibleAppl.applStatusCd!='11') {
+  		    			$("#applyBtn").hide();
+  		    		} else {
+						//신청화면 전환
+						$("#applyBtn").bind('click', function(){
+							 $this.viewFlexitimeAppl(flexibleAppl);
+						});
+  		    		}
 	         		
 	         	<#else>
   		    		//사용할 근무제 리스트 조회
@@ -377,8 +381,12 @@
   		    },
   		    methods : {
   		    	renderCallback: function(){
-  		    		//기존에 시행한 유연근무 기간의 경우 선택하지 못하게끔 함
+  		    		//기존에 시행한 유연근무 기간의 경우 선택하지 못하게 함
   		    		this.selectAllow();
+  		    		
+  		    		//화면에 보이는 달력의 시작일, 종료일을 파라미터로 넘김
+  		    		var calendar = this.$refs.fullCalendar.cal;
+   		    		this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -411,8 +419,6 @@
 							}
 						});
 	   		    		
-	   		    		//화면에 보이는 달력의 시작일, 종료일을 파라미터로 넘김
-	   		    		$this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
 	  		    	}
   		    		
   		    	},
@@ -757,7 +763,7 @@
   	         			$this.applInfo = obj;
   	         			$this.applInfo.useSymd = moment(obj.sYmd).format('YYYY-MM-DD');
   	         			$this.applInfo.useEymd = moment(obj.eYmd).format('YYYY-MM-DD');
-  	         			console.log(obj);
+  	         			
   	         			<#if flexibleStdMgr?? && flexibleStdMgr!='' && flexibleStdMgr?exists >
 							var flexitime = JSON.parse("${flexibleStdMgr?js_string}");
 	         				
@@ -827,12 +833,10 @@
 						});
 						
 						//임시저장된 건이 있으면 이벤트 삭제하고 재생성
+						console.log($this.applInfo);
 						if($this.applInfo.hasOwnProperty("applStatusCd") && $this.applInfo.applStatusCd=='11') {
 							var eventId = 'workRange.'+ $this.applInfo.applCd + '.' + $this.applInfo.applId;
 							var event = calendar.getEventById(eventId);
-							console.log($this.applInfo);
-							console.log(eventId);
-							console.log(event);
 							if(event!=null)
 								event.remove();
 						}
