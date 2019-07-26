@@ -65,7 +65,8 @@
 /* 월,주,일 */
 .fc-bgeventGridMonth-button,
 .fc-timeGridWeek-button,
-.fc-timeGridDay-button {
+.fc-timeGridDay-button,
+.fc-dayGridMonth-button {
   color:#a2a3a5;
   border-color:#3e3e4c;
   background-color:#3e3e4c;
@@ -74,15 +75,17 @@
 /* 월,주,일 active */
 .fc-bgeventGridMonth-button:not(:disabled):not(.disabled).active,
 .fc-timeGridWeek-button:not(:disabled):not(.disabled).active,
-.fc-timeGridDay-button:not(:disabled):not(.disabled).active {
-  color:#ffffff;
-  border-color:#6b6b80;
-  background-color:#6b6b80;
+.fc-timeGridDay-button:not(:disabled):not(.disabled).active,
+.fc-dayGridMonth-button:not(:disabled):not(.disabled).active {
+  color:#ffffff !important;
+  border-color:#6b6b80 !important;
+  background-color:#6b6b80 !important;
 }
 /* 월,주,일 hover  */
 .fc-bgeventGridMonth-button:hover,
 .fc-timeGridWeek-button:hover,
-.fc-timeGridDay-button:hover {
+.fc-timeGridDay-button:hover,
+.fc-dayGridMonth-button:hover {
   color: #ffffff;
   border-color: #6b6b80;
   background-color: #6b6b80;
@@ -188,8 +191,24 @@
   background-color: #080809;
 }
 
-
-
+/* 일정 */
+.fc-content {background-color:#ffffff}
+.fc-content .dot:before{
+  content:'';
+  display:inline-block;
+  width:6px;
+  height:6px;
+  border-radius: 50%;
+  margin-top: -2px;
+  margin-right: 5px;
+  margin-left: 6.5px;
+}
+.fc-content .dot.time:before{
+  background-color:#00c4b6;
+}
+.fc-content .dot.work-type:before {
+  background-color: #7601dc;
+}
 /* button */
 #calendar-container .btn-default{
   font-size: 14px;
