@@ -155,13 +155,21 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			WtmDayWorkVO work = new WtmDayWorkVO();
 			for(Map<String, Object> plan : plans) {
 				String ymd = plan.get("ymd").toString();
-				String holidayYn = plan.get("holidayYn").toString();
-				
+				String holidayYn = "";
+				if(plan.containsKey("holidayYn") && plan.get("holidayYn") != null) {
+					holidayYn = plan.get("holidayYn").toString();
+				}
 				String shm = plan.get("shm").toString();
 				String ehm = plan.get("ehm").toString();
 				String m = plan.get("minute").toString();
-				String taaCd = plan.get("taaCd").toString();
-				String taaNm = plan.get("taaNm").toString();
+				String taaCd =  "";
+				if(plan.containsKey("taaCd") && plan.get("taaCd") != null) {
+					 taaCd = plan.get("taaCd").toString();
+				}
+				String taaNm =  "";
+				if(plan.containsKey("taaNm") && plan.get("taaNm") != null) {
+					 taaCd = plan.get("taaNm").toString();
+				}
 				Float H = Float.parseFloat(m)/60;
 				Float i = (H - H.intValue()) * 60;
 				List<WtmDayPlanVO> planVOs = new ArrayList<>();
