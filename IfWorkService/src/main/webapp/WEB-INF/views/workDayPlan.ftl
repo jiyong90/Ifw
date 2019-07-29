@@ -365,7 +365,7 @@
   	         	
   	         		//휴일, 반차가 아닌 근태(연차, 교육, 출장 등)
      				$this.empHolidays=[];
-  	         	
+  	         		
   	         		var events = [];
   	         		$this.dayWorks.map(function(dayWork){
   	         			//근무일
@@ -404,7 +404,7 @@
   	         				$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
   	         			}
 					});
-  	         		
+
   	         		$this.addEventSource(events);
   	         	},
   	         	changeDayWorks : function(sDate, eDate, dayResult){ //근무시간 변경
@@ -542,9 +542,6 @@
 			    		    coreEtime = moment(moment(date).format('YYYYMMDD')+' '+flexibleEmp.coreEhm).format('YYYY-MM-DD HH:mm');
 	    					eTime = moment(moment(date).format('YYYY-MM-DD')+' '+$("#endTime").val()).format('YYYY-MM-DD HH:mm');
 	    				}
-  		    		  	
-  		    		  	console.log(moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0);
-  		    		  	console.log(moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0);
   		    		    
   		    			//부분 선근제의 경우 코어시간 포함하도록 체크
   		    			if(flexibleEmp.applCd!='SELE_C' || (moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0
@@ -574,13 +571,26 @@
   		    			} else {
   		    				$("#alertText").html("코어시간이 포함되어야 합니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+	  	  	         			$("#alertModal").off('hidden.bs.modal');
 	  	  	         			$("#startTime").val('');
 	  	  	         			$("#endTime").val('');
 	  	  	         		
 	  	  	         			$this.dayWorks = $this.dayWorks.filter(function(k){
 	  	  	         				return (k.day != moment(sDate).format('YYYYMMDD'));
 	  	  	         			});
-	  	  	         			
+	  	  	         		
+		  	  	         		var d = new Date(sDate);
+		  		    			while(moment(d).diff(eDate, 'days')<=0) {
+		  		    				//delete $this.dayResult[moment(d).format('YYYYMMDD')];
+		  		    				
+		  		    				$this.dayResult[moment(d).format('YYYYMMDD')] = {
+		  		    					shm: '',
+		  		    					ehm: ''
+		  		    				};
+		  		    				//날짜 증가
+				  		    		d.setDate(d.getDate()+1);
+		  		    			}
+		  	  	         		
 	  	  	         			//이벤트 재생성
 	  	  	         			$this.changeDayWorks(sDate, eDate, null);
 	  	  	         			
@@ -618,7 +628,9 @@
 						error: function(e) {
 							console.log(e);
 							$("#alertText").html("근무시간 조회 시 오류가 발생했습니다.");
-	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+	  	  	         			$("#alertModal").off('hidden.bs.modal');
+	  	  	         		});
 	  	  	         		$("#alertModal").modal("show"); 
 						}
 					}); 
@@ -651,13 +663,17 @@
 							} else {
 								$("#alertText").html(data.message);
 							}
-							$("#alertModal").on('hidden.bs.modal',function(){});
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+							});
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
 							console.log(e);
 							$("#alertText").html("확인요청 시 오류가 발생했습니다.");
-	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+	  	  	         			$("#alertModal").off('hidden.bs.modal');
+	  	  	         		});
 	  	  	         		$("#alertModal").modal("show"); 
 						}
 					}); 
@@ -665,10 +681,7 @@
 	         	}
   		    }
    	});
-   	
-   	$("td").on("click", function(){
-   		alert('111');
-   	});
+
    	
 </script>
 
