@@ -192,7 +192,7 @@
 }
 
 /* 일정 */
-.fc-content {background-color:#ffffff}
+/* .fc-content {background-color:#ffffff} */
 .fc-content .dot:before{
   content:'';
   display:inline-block;

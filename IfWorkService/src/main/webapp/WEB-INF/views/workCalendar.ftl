@@ -466,7 +466,6 @@
   		    			
   		    			var borderDiv = '';
   		    			
-  		    			//console.log($("#calendar").find(".fc-bgevent"));
   		    			if(info.isStart) {
   		    				borderDiv = '<div class="fc-border start '+workTypeCd+'"></div>';
   		    			} else if(info.isEnd) {
@@ -474,7 +473,6 @@
   		    			} else {
   		    				borderDiv = '<div class="fc-border '+workTypeCd+'"></div>';
   		    			}
-  		    			//$(info.el).css('border-top', '1px solid red');
   		    			$(info.el).empty();
   		    			$(info.el).prepend(borderDiv);
   		    		}
@@ -810,6 +808,7 @@
   	         			$this.clearFlexitimeAppl();
   	         			return false;
   	         		}
+					
   	         		$this.changeWorkRange();
   	         	},
   	         	changeWorkRange : function(){ //근무기간 변경에 따라 background 변경
@@ -837,13 +836,12 @@
 						});
 						
 						//임시저장된 건이 있으면 이벤트 삭제하고 재생성
-						/* if($this.applInfo.hasOwnProperty("applStatusCd") && $this.applInfo.applStatusCd=='11') {
-							var eventId = 'workRange.'+ $this.applInfo.applCd + '.' + $("#useSymd").val();
-							consol.elog(eventId);
+						if($this.applInfo.hasOwnProperty("applStatusCd") && $this.applInfo.applStatusCd=='11') {
+							var eventId = 'workRange.'+ $this.applInfo.applCd + '.' + moment($this.applInfo.sYmd).format('YYYY-MM-DD');
 							var event = calendar.getEventById(eventId);
 							if(event!=null)
 								event.remove();
-						} */
+						}
 						
 	         			$this.addEvent({
 	         				id: 'workRange.'+$this.selectedFlexitime.workTypeCd+'.'+$this.applInfo.useSymd,
@@ -952,7 +950,9 @@
 									} else {
 										$("#alertText").html("확인요청 시 오류가 발생했습니다.");
 									}
-									$("#alertModal").on('hidden.bs.modal',function(){});
+									$("#alertModal").on('hidden.bs.modal',function(){
+										location.reload();
+									});
 			  	  	         		$("#alertModal").modal("show"); 
 								},
 								error: function(e) {
