@@ -168,7 +168,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				}
 				String taaNm =  "";
 				if(plan.containsKey("taaNm") && plan.get("taaNm") != null) {
-					 taaCd = plan.get("taaNm").toString();
+					taaNm = plan.get("taaNm").toString();
 				}
 				Float H = Float.parseFloat(m)/60;
 				Float i = (H - H.intValue()) * 60;
