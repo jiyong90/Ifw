@@ -70,7 +70,7 @@
 	                        <div class="form-row no-gutters">
 	                            <div class="form-group col-5">
 	                                <label for="startTime">출근시간</label>
-	                                <input type="time" class="form-control" id="startTime" placeholder="" @change="changeWorkTime">
+	                                <input type="time" class="form-control" id="startTime" placeholder="" @focusout="changeWorkTime">
 	                            </div>
 	                            <div class="form-group col-2 text-center">
 	                                <lable></lable>
@@ -78,7 +78,7 @@
 	                            </div>
 	                            <div class="form-group col-5">
 	                                <label for="endTime">퇴근시간</label>
-	                                <input type="time" class="form-control" id="endTime" placeholder="" @change="changeWorkTime">
+	                                <input type="time" class="form-control" id="endTime" placeholder="" @focusout="changeWorkTime">
 	                            </div>
 	                        </div>
 	                    </div>
@@ -105,7 +105,7 @@
                 <div class="calendar-wrap">
                     <div id='calendar-container'>
                 		<!-- <full-calendar ref="fullCalendar" :header="header" :events="events" :eventsources="eventSources" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" ></full-calendar> -->
-                		<full-calendar ref="fullCalendar" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" ></full-calendar>
+                		<full-calendar ref="fullCalendar" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,7 @@
   		    },
   		    data : {
   		    	header: {
-  		    		left: 'prev,next today',
+  		    		left: 'prev,next',
 			        center: 'title',
 			        right: ''
   		    	},
@@ -203,6 +203,7 @@
   		    	},
   		    	selectCallback : function(info){ //day select
 					var $this = this;
+  		    		console.log('selectCallback');
   		    	
 					var selSymd = info.startStr;
   		    		var selEymd = new Date(info.endStr);
@@ -247,6 +248,7 @@
   	         			$("#startTime").val("");
   		    			$("#endTime").val("");
   	         		}
+  		    		
   		    	},
   		    	eventRenderCallback : function(info){
   		    		
@@ -269,6 +271,15 @@
   		    			$(info.el).prepend(borderDiv);
   		    		}
   		    	},
+  		    	/* eventClickCallback : function(info) {
+  		    		
+					var selectInfo = {
+						startStr : moment(info.event.start).format('YYYY-MM-DD'),
+						endStr : moment(info.event.start).format('YYYY-MM-DD')
+					};
+					
+					this.selectCallback(selectInfo);
+  		    	}, */
   	         	addEvent : function(Obj){
   	         		if(Obj!=null) {
   	         			var calendar = this.$refs.fullCalendar.cal;
@@ -328,8 +339,11 @@
   	  		    				$("#endTime").prop("disabled", false);
 	  	  		    			return true;
 	  	  		    		} else {
-	  	  		    			$("#startTime").val("");
-	  	  		    			$("#endTime").val("");
+	  	  		    			if(!(moment(i.startStr).diff($this.today)<=0 && moment($this.today).diff(i.endStr)<=0)) {
+	  	  		    				$("#startTime").val("");
+	  	  		    				$("#endTime").val("");
+	  	  		    			}
+	  	  		    			
 	  	  		    			$("#startTime").prop("disabled", true);
 	  	  		    			$("#endTime").prop("disabled", true);
 	  	  		    			return false;
@@ -353,7 +367,7 @@
 							
 							var newEvent = {
 								id: day,
-	    						title: "<span class='dot time'>" + plan.label + "</span>",
+	    						title: "<div class='dot time'>" + plan.label + "</div>",
 	    						start: day,
 	    						end: day
 	    					};
@@ -495,8 +509,13 @@
   		    		  	if(moment(sTime).diff(eTime)>0){
 	    					var date = new Date(sDate);
 	    					date.setDate(date.getDate()+1);
+	    					coreStime = moment(moment(date).format('YYYYMMDD')+' '+flexibleEmp.coreShm).format('YYYY-MM-DD HH:mm');
+			    		    coreEtime = moment(moment(date).format('YYYYMMDD')+' '+flexibleEmp.coreEhm).format('YYYY-MM-DD HH:mm');
 	    					eTime = moment(moment(date).format('YYYY-MM-DD')+' '+$("#endTime").val()).format('YYYY-MM-DD HH:mm');
 	    				}
+  		    		  	
+  		    		  	console.log(moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0);
+  		    		  	console.log(moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0);
   		    		    
   		    			//부분 선근제의 경우 코어시간 포함하도록 체크
   		    			if(flexibleEmp.applCd!='SELE_C' || (moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0
@@ -528,6 +547,10 @@
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
 	  	  	         			$("#startTime").val('');
 	  	  	         			$("#endTime").val('');
+	  	  	         		
+	  	  	         			$this.dayWorks = $this.dayWorks.filter(function(k){
+	  	  	         				return (k.day != moment(sDate).format('YYYYMMDD'));
+	  	  	         			});
 	  	  	         			
 	  	  	         			//이벤트 재생성
 	  	  	         			$this.changeDayWorks(sDate, eDate, null);
@@ -609,6 +632,10 @@
 
 	         	}
   		    }
+   	});
+   	
+   	$("td").on("click", function(){
+   		alert('111');
    	});
    	
 </script>

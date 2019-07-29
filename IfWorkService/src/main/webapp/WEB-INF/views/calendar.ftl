@@ -61,7 +61,8 @@
 				required: false,
 				default : function(){
 					return {
-				       left: 'prev,next today',
+				       //left: 'prev,next today',
+				       left: 'prev,next',
 				       center: 'title',
 				       //right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
 				       right: 'dayGridMonth,timeGridWeek,timeGridDay'
