@@ -466,7 +466,6 @@
   		    			
   		    			var borderDiv = '';
   		    			
-  		    			//console.log($("#calendar").find(".fc-bgevent"));
   		    			if(info.isStart) {
   		    				borderDiv = '<div class="fc-border start '+workTypeCd+'"></div>';
   		    			} else if(info.isEnd) {
@@ -474,7 +473,6 @@
   		    			} else {
   		    				borderDiv = '<div class="fc-border '+workTypeCd+'"></div>';
   		    			}
-  		    			//$(info.el).css('border-top', '1px solid red');
   		    			$(info.el).empty();
   		    			$(info.el).prepend(borderDiv);
   		    		}
@@ -770,11 +768,11 @@
   	         			
   	         			<#if flexibleStdMgr?? && flexibleStdMgr!='' && flexibleStdMgr?exists >
 							var flexitime = JSON.parse("${flexibleStdMgr?js_string}");
-	         				
-							if(flexitime.usedTermOpt!=null && flexitime.usedTermOpt!='undefined' && flexitime.usedTermOpt!='')
-	         					flexitime.usedTermOpt = JSON.parse(flexitime.usedTermOpt);
-	         				if(flexitime.workDaysOpt!=null && flexitime.workDaysOpt!='undefined' && flexitime.workDaysOpt!='')
-	         					flexitime.workDaysOpt = JSON.parse(flexitime.workDaysOpt);
+	         				//console.log(flexitime);
+							//if(flexitime.usedTermOpt!=null && flexitime.usedTermOpt!='undefined' && flexitime.usedTermOpt!='')
+	         				//	flexitime.usedTermOpt = JSON.parse(flexitime.usedTermOpt);
+	         				//if(flexitime.workDaysOpt!=null && flexitime.workDaysOpt!='undefined' && flexitime.workDaysOpt!='')
+	         					//flexitime.workDaysOpt = JSON.parse(flexitime.workDaysOpt);
 	         				if(flexitime.applTermOpt!=null && flexitime.applTermOpt!='undefined' && flexitime.applTermOpt!='')
 	         					flexitime.applTermOpt = JSON.parse(flexitime.applTermOpt);
 	         			
