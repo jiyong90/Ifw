@@ -249,6 +249,9 @@
   	         		}
   		    	},
   		    	eventRenderCallback : function(info){
+  		    		
+  		    		$(info.el).find('.fc-title').html(info.event.title);
+  		    		
   		    		//결재 완료된 근무제 기간 표시
   		    		if(info.event.id.indexOf('workRange.')==0) {
   		    			var key = info.event.id.split(".");
@@ -262,7 +265,7 @@
   		    			} else {
   		    				borderDiv = '<div class="fc-border '+workTypeCd+'"></div>';
   		    			}
-  		    			$(info.el).css('background-color','#FFFFFF');
+  		    			//$(info.el).css('background-color','#FFFFFF');
   		    			$(info.el).prepend(borderDiv);
   		    		}
   		    	},
@@ -350,7 +353,7 @@
 							
 							var newEvent = {
 								id: day,
-	    						title: plan.label,
+	    						title: "<span class='dot time'>" + plan.label + "</span>",
 	    						start: day,
 	    						end: day
 	    					};
