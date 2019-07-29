@@ -154,37 +154,53 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		if(plans != null && plans.size() > 0) {
 			WtmDayWorkVO work = new WtmDayWorkVO();
 			for(Map<String, Object> plan : plans) {
-				String ymd = plan.get("YMD").toString();
+				String ymd = plan.get("ymd").toString();
+				String holidayYn = plan.get("holidayYn").toString();
 				
-				String shm = plan.get("SHM").toString();
-				String ehm = plan.get("EHM").toString();
-				String m = plan.get("MINUTE").toString();
+				String shm = plan.get("shm").toString();
+				String ehm = plan.get("ehm").toString();
+				String m = plan.get("minute").toString();
+				String taaCd = plan.get("taaCd").toString();
+				String taaNm = plan.get("taaNm").toString();
 				Float H = Float.parseFloat(m)/60;
 				Float i = (H - H.intValue()) * 60;
 				List<WtmDayPlanVO> planVOs = new ArrayList<>();
+				Map<String, Object> dtMap = new HashMap<>();
 				if(imsiMap.containsKey(ymd)) {
-					planVOs = (List<WtmDayPlanVO>) imsiMap.get(ymd);
+					dtMap = (Map<String, Object>) imsiMap.get(ymd);
+					planVOs = (List<WtmDayPlanVO>) dtMap.get("plan");
+
 				}
 				WtmDayPlanVO planVO = new WtmDayPlanVO();
 				planVO.setKey(ymd);
-				planVO.setLabel(shm + "~" + ehm + "("+H.intValue()+"시간"+((i.intValue()>0)?i.intValue()+"분":"")+")");
+				if(taaNm != null && !taaNm.equals("")) {
+					planVO.setLabel(taaNm);
+				}else {
+					planVO.setLabel(shm + "~" + ehm + "("+H.intValue()+"시간"+((i.intValue()>0)?i.intValue()+"분":"")+")");
+				}
 				
 				Map<String, Object> valueMap = new HashMap<>();
 				valueMap.put("shm", shm);
 				valueMap.put("ehm", ehm);
 				valueMap.put("m", m);
-				
+				valueMap.put("taaNm", taaNm);
+				valueMap.put("taaCd", taaCd);
 				planVO.setValueMap(valueMap);
 				planVOs.add(planVO);
+
+				dtMap.put("holidayYn", holidayYn);
+				dtMap.put("plan", planVOs);
 				
-				imsiMap.put(ymd, planVOs);
+				imsiMap.put(ymd, dtMap);
 			}
 		}
 		List<WtmDayWorkVO> works = new ArrayList<WtmDayWorkVO>();
 		for(String k : imsiMap.keySet()) {
 			WtmDayWorkVO workVO = new WtmDayWorkVO();
 			workVO.setDay(k);
-			workVO.setPlans((List<WtmDayPlanVO>)imsiMap.get(k));
+			Map<String, Object> dtMap = (Map<String, Object>) imsiMap.get(k);
+			workVO.setHolidayYn(dtMap.get("holidayYn").toString());
+			workVO.setPlans((List<WtmDayPlanVO>)dtMap.get("plan"));
 			works.add(workVO);
 		}
 		return works;
