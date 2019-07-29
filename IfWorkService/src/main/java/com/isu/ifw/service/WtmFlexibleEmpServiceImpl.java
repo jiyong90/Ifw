@@ -159,9 +159,22 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				if(plan.containsKey("holidayYn") && plan.get("holidayYn") != null) {
 					holidayYn = plan.get("holidayYn").toString();
 				}
-				String shm = plan.get("shm").toString();
-				String ehm = plan.get("ehm").toString();
-				String m = plan.get("minute").toString();
+				String shm = "";
+				if(plan.containsKey("shm") && plan.get("shm") != null) {
+					shm = plan.get("shm").toString();
+				}
+				String ehm = "";
+				if(plan.containsKey("ehm") && plan.get("ehm") != null) {
+					ehm = plan.get("ehm").toString();
+				}
+				String m = "";
+				Float H = 0f;
+				Float i = 0f;
+				if(plan.containsKey("minute") && plan.get("minute") != null) {
+					m = plan.get("minute").toString();
+					H = Float.parseFloat(m)/60;
+					i = (H - H.intValue()) * 60;
+				}
 				String taaCd =  "";
 				if(plan.containsKey("taaCd") && plan.get("taaCd") != null) {
 					 taaCd = plan.get("taaCd").toString();
@@ -170,8 +183,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				if(plan.containsKey("taaNm") && plan.get("taaNm") != null) {
 					taaNm = plan.get("taaNm").toString();
 				}
-				Float H = Float.parseFloat(m)/60;
-				Float i = (H - H.intValue()) * 60;
+				
 				List<WtmDayPlanVO> planVOs = new ArrayList<>();
 				Map<String, Object> dtMap = new HashMap<>();
 				if(imsiMap.containsKey(ymd)) {
@@ -183,7 +195,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				planVO.setKey(ymd);
 				if(taaNm != null && !taaNm.equals("")) {
 					planVO.setLabel(taaNm);
-				}else {
+				}else{
 					planVO.setLabel(shm + "~" + ehm + "("+H.intValue()+"시간"+((i.intValue()>0)?i.intValue()+"분":"")+")");
 				}
 				

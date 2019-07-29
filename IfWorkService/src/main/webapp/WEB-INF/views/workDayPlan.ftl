@@ -129,6 +129,7 @@
   		    	selectedFlexitime: {}, //적용한 근무제
   		    	flexibleEmp: {},
   		    	selectedWorkday: {},
+  		    	empHolidays: [],
   		    	dayResult: {}, //저장할 근무계획
   		    	dayWorks: [], //저장된 상세 근무계획
   		    	//events: [],
@@ -162,7 +163,7 @@
   		    methods : {
   		    	renderCallback: function(){
   		    		//유연근무제 신청 기간 이외의 날짜는 선택하지 못하게 함
-  		    		this.selectAllow();
+  		    		//this.selectAllow();
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -203,7 +204,6 @@
   		    	},
   		    	selectCallback : function(info){ //day select
 					var $this = this;
-  		    		console.log('selectCallback');
   		    	
 					var selSymd = info.startStr;
   		    		var selEymd = new Date(info.endStr);
@@ -221,17 +221,19 @@
   		    		//선택한 날짜가 기간인 경우 clear
   	         		if(dayNum==1) {
   		    			if($this.dayWorks.length>0) {
+  		    				//작성한 근무 계획 조회
 		  	         		$this.dayWorks.map(function(dayWork){
 		  	         			if(info.startStr==moment(dayWork.day).format('YYYY-MM-DD')) {
-	  		    					var valueMap = dayWork.plans[0].valueMap;
+	  	         					var valueMap = dayWork.plans[0].valueMap;
 	  		    					
 	  		    					if(valueMap!=null && valueMap.hasOwnProperty("shm"))
 	  		    						$("#startTime").val(valueMap.shm);
 	  		    					if(valueMap!=null && valueMap.hasOwnProperty("ehm"))
 	  		    						$("#endTime").val(valueMap.ehm);
-		  	         			}
+		  	         			} 
 							});
   		    			} else {
+  		    				//작성중인 근무 계획(저장할 데이터)
   		    				var day = moment(info.startStr).format('YYYYMMDD');
   		    				var valueMap = $this.dayResult[moment(day).format('YYYYMMDD')];
   		    				
@@ -329,12 +331,13 @@
 	  		    		//유연근무제 신청 기간 선택
          				calendar.gotoDate(sYmd);
          				calendar.select(sYmd);
-	  		    		
-	  		    		//유연근무 신청 기간이 아닌 날짜의 경우 선택하지 못하게 함.
+         				
+	  		    		//유연근무 신청 기간이 아닌 날짜와 휴일, 반차는 선택하지 못하게 함.
 	  	         		calendar.setOption('selectAllow', function(i){
 	  	  		    		if( moment(sYmd).diff(i.startStr)<=0 && moment(i.startStr).diff(eYmd)<=0
 									&& moment(sYmd).diff(i.endStr)<=0 && moment(i.endStr).diff(eYmd)<=0
-		    						&& moment($this.today).diff(i.startStr)<0 && moment($this.today).diff(i.endStr)<0 ) {
+		    						&& moment($this.today).diff(i.startStr)<0 && moment($this.today).diff(i.endStr)<0
+		    						&& $this.empHolidays.indexOf(i.startStr)==-1 ) {
 	  	  		    			$("#startTime").prop("disabled", false);
   	  		    				$("#endTime").prop("disabled", false);
 	  	  		    			return true;
@@ -360,20 +363,46 @@
   	         	addDayWorks : function(){ //근무시간 생성
   	         		var $this = this;
   	         	
+  	         		//휴일, 반차가 아닌 근태(연차, 교육, 출장 등)
+     				$this.empHolidays=[];
+  	         	
   	         		var events = [];
   	         		$this.dayWorks.map(function(dayWork){
-						dayWork.plans.map(function(plan){
-							var day = moment(plan.key).format('YYYY-MM-DD');
-							
-							var newEvent = {
-								id: day,
-	    						title: "<div class='dot time'>" + plan.label + "</div>",
-	    						start: day,
-	    						end: day
-	    					};
-  		    				 
-  		    				events.push(newEvent);
-						});
+  	         			//근무일
+  	         			if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+							dayWork.plans.map(function(plan){
+								var day = moment(plan.key).format('YYYY-MM-DD');
+								
+	  		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
+	  		    					//개인 근태
+		  		    				var taaEvent = {
+										id: day,
+			    						title: "<div class='dot work-type'>" + plan.label + "</div>",
+			    						start: day,
+			    						end: day
+			    					};
+		  		    				events.push(taaEvent);
+		  		    				
+		  		    				//반차가 아닌 근태(연차, 교육, 출장 등)
+		  		    				if(plan.valueMap.taaCd!='11' && plan.valueMap.taaCd!='12') {
+		  		    					$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
+		  		    				}
+		  		    				
+	  		    				} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
+	  		    					//계획시간
+									var timeEvent = {
+										id: day,
+			    						title: "<div class='dot time'>" + plan.label + "</div>",
+			    						start: day,
+			    						end: day
+			    					};
+		  		    				events.push(timeEvent);
+	  		    				}
+	  		    			
+							});
+  	         			} else {
+  	         				$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
+  	         			}
 					});
   	         		
   	         		$this.addEventSource(events);
@@ -581,6 +610,9 @@
 								
 								//일근무결과 달력에 표기
 								$this.addDayWorks();
+								
+								//유연근무제 신청 기간 이외의 날짜는 선택하지 못하게 함
+			  		    		$this.selectAllow();
 							} 
 						},
 						error: function(e) {
