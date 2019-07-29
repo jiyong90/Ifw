@@ -1,6 +1,10 @@
 package com.isu.ifw.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +18,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
 @Table(name="WTM_FLEXIBLE_STD_MGR")
@@ -53,8 +59,10 @@ public class WtmFlexibleStdMgr {
 	private String exhaustionYn;
 	@Column(name="HOL_EXCEPT_YN")
 	private String holExceptYn;
+	
 	@Column(name="WORK_DAYS_OPT")
 	private String workDaysOpt;
+	
 	@Column(name="USED_TERM_OPT")
 	private String usedTermOpt;
 	@Column(name="APPL_TERM_OPT")
@@ -196,16 +204,43 @@ public class WtmFlexibleStdMgr {
 		this.holExceptYn = holExceptYn;
 	}
 
-	public String getWorkDaysOpt() {
-		return workDaysOpt;
+	public Map<String, Boolean> getWorkDaysOpt() {
+		Map<String, Boolean> resultMap = new HashMap<>();
+		if(this.workDaysOpt != null && !this.workDaysOpt.equals("")) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				resultMap = mapper.readValue(this.workDaysOpt, new HashMap<String, Boolean>().getClass());
+			} catch (Exception e) {
+				e.printStackTrace();
+				resultMap = null;
+			}
+		}else {
+			resultMap = null;
+		}
+		
+		return resultMap;
 	}
 
 	public void setWorkDaysOpt(String workDaysOpt) {
 		this.workDaysOpt = workDaysOpt;
 	}
 
-	public String getUsedTermOpt() {
-		return usedTermOpt;
+	public List<Map<String, Object>> getUsedTermOpt() {
+		List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
+		if(this.usedTermOpt != null && !this.usedTermOpt.equals("")) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				result = mapper.readValue(this.usedTermOpt, new ArrayList<Map<String, Boolean>>().getClass());
+			} catch (Exception e) {
+				e.printStackTrace();
+				result = null;
+			}
+		}else {
+			result = null;
+		}
+		
+		return result;
+		
 	}
 
 	public void setUsedTermOpt(String usedTermOpt) {

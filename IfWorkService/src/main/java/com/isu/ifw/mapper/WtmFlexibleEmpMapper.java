@@ -32,6 +32,8 @@ public interface WtmFlexibleEmpMapper {
 	
 	public void createWorkCalendar(@Param("flexibleEmpId")Long flexibleEmpId, @Param("userId")Long userId);
 	
+	public void updateHolidayYnOFWorkCalendar(Map<String, Object> paramMap);
+	
 	public void updatePlanMinute(@Param("flexibleEmpId") Long flexibleEmpId);
 	
 	public Map<String, Object> checkBaseWorktime(@Param("flexibleEmpId") Long flexibleEmpId);

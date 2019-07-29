@@ -463,14 +463,14 @@
          			
          			<#if flexibleStdMgr?? && flexibleStdMgr!='' && flexibleStdMgr?exists >
          				var flexitime = JSON.parse("${flexibleStdMgr?js_string}");
-         				
+         				/*
          				if(flexitime.usedTermOpt!=null && flexitime.usedTermOpt!='undefined' && flexitime.usedTermOpt!='')
          					flexitime.usedTermOpt = JSON.parse(flexitime.usedTermOpt);
          				if(flexitime.workDaysOpt!=null && flexitime.workDaysOpt!='undefined' && flexitime.workDaysOpt!='')
          					flexitime.workDaysOpt = JSON.parse(flexitime.workDaysOpt);
          				if(flexitime.applTermOpt!=null && flexitime.applTermOpt!='undefined' && flexitime.applTermOpt!='')
          					flexitime.applTermOpt = JSON.parse(flexitime.applTermOpt);
-         			
+         				*/
          				$this.selectedFlexitime = flexitime;	
          			</#if>
          			

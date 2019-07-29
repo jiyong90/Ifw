@@ -773,8 +773,8 @@
 	         				//	flexitime.usedTermOpt = JSON.parse(flexitime.usedTermOpt);
 	         				//if(flexitime.workDaysOpt!=null && flexitime.workDaysOpt!='undefined' && flexitime.workDaysOpt!='')
 	         					//flexitime.workDaysOpt = JSON.parse(flexitime.workDaysOpt);
-	         				if(flexitime.applTermOpt!=null && flexitime.applTermOpt!='undefined' && flexitime.applTermOpt!='')
-	         					flexitime.applTermOpt = JSON.parse(flexitime.applTermOpt);
+	         				//if(flexitime.applTermOpt!=null && flexitime.applTermOpt!='undefined' && flexitime.applTermOpt!='')
+	         				//	flexitime.applTermOpt = JSON.parse(flexitime.applTermOpt);
 	         			
 	         				$this.selectedFlexitime = flexitime;	
   	         			</#if>

@@ -13,11 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleEmp;
+import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
+import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.vo.WtmDayPlanVO;
@@ -33,6 +36,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Autowired
 	WtmFlexibleEmpRepository flexEmpRepo;
+	
+	@Autowired
+	WtmFlexibleStdMgrRepository flexStdMgrRepo;
 	
 	@Autowired
 	WtmWorkCalendarRepository workCalendarRepo;
@@ -77,7 +83,6 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	@Override
 	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception{
 		WtmFlexibleEmp emp =  flexEmpRepo.findById(flexibleEmpId).get();
-		
 		flexEmpMapper.createWorkCalendar(flexibleEmpId, userId);
 		if(dateMap != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
@@ -114,6 +119,17 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					e.printStackTrace();
 				}
 			}
+
+			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(emp.getFlexibleStdMgrId()).get();
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.putAll(stdMgr.getWorkDaysOpt());
+			paramMap.put("flexibleEmpId", flexibleEmpId);
+			paramMap.put("userId", userId);
+			
+			ObjectMapper mapper  = new ObjectMapper();
+			System.out.println(mapper.writeValueAsString(paramMap));
+			//holidayYn 갱신
+			flexEmpMapper.updateHolidayYnOFWorkCalendar(paramMap);
 			//planMinute갱신
 			flexEmpMapper.updatePlanMinute(flexibleEmpId);
 			

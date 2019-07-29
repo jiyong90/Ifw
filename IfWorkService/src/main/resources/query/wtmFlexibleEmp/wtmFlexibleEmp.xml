@@ -81,7 +81,7 @@
     
     <update id="createWorkCalendar" parameterType="map">
     	INSERT INTO WTM_WORK_CALENDAR(TENANT_ID, ENTER_CD, SABUN, YMD, WORK_TYPE_CD, FLEXIBLE_EMP_ID, TIME_CD_MGR_ID, WORK_CLOSE_YN, UPDATE_ID)
-			SELECT E.TENANT_ID, E.ENTER_CD, E.SABUN, D.SUN_YMD,  E.WORK_TYPE_CD, E.FLEXIBLE_EMP_ID, M.TIME_CD_MGR_ID, 'N', #{userId}
+			SELECT E.TENANT_ID, E.ENTER_CD, E.SABUN, D.SUN_YMD,  E.WORK_TYPE_CD, E.FLEXIBLE_EMP_ID, M.TIME_CD_MGR_ID, 'N',  #{userId}
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
 			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
@@ -94,6 +94,12 @@
 			    	 WHERE C.YMD = D.SUN_YMD
 			     	   AND C.SABUN = E.SABUN
 				)
+    </update>
+    <update id="updateHolidayYnOFWorkCalendar" parameterType="map">
+    	UPDATE WTM_WORK_CALENDAR C 
+    	   SET C.HOLIDAY_YN = F_WTM_HOLIDAY_YN(C.YMD, #{1}, #{2}, #{3}, #{4}, #{5}, #{6}, #{7})
+    	     , C.UPDATE_ID = #{userId}
+		 WHERE C.FLEXIBLE_EMP_ID = #{flexibleEmpId} 
     </update>
     <update id="updatePlanMinute" parameterType="Long">
     	UPDATE WTM_WORK_DAY_RESULT X 

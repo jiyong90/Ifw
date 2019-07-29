@@ -54,6 +54,10 @@ public class WtmWorkCalendar {
 	
 	@Column(name="WORK_CLOSE_YN")
 	private String workCloseYn;
+	
+	@Column(name="HOLIDAY_YN")
+	private String holidayYn;
+	
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -175,6 +179,14 @@ public class WtmWorkCalendar {
 
 	public void setWorkCloseYn(String workCloseYn) {
 		this.workCloseYn = workCloseYn;
+	}
+
+	public String getHolidayYn() {
+		return holidayYn;
+	}
+
+	public void setHolidayYn(String holidayYn) {
+		this.holidayYn = holidayYn;
 	}
 
 	public String getNote() {
