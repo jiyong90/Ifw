@@ -11,16 +11,8 @@
         <img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
         </a>
     </h1>
-    <div class="pr-3 d-lg-none">
-        <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <i class="fas fa-align-justify"></i>
-        </button>
-    </div>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="nav navbar-nav ml-auto nav-top gnb-nav-wrap">
+    <div class="ml-auto" id="navbarSupportedContent">
+        <ul class="nav gnb-nav-wrap">
             <li class="nav-item">
                     <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
             </li>
