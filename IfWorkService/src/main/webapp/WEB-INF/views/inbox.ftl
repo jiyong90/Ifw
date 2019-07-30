@@ -20,7 +20,6 @@
 		},
 		mounted : function() {
 			this.getInboxList();
-			console.log(this.flexibleEmp);
 		},
 		methods : {
 			getInboxList: function(){
@@ -33,7 +32,6 @@
 					success: function(response) {
 						if(response!=null && response.status=='OK') {
 							$this.inboxList = response.indboxList;
-							//$this.flexibleEmp = response.flexibleEmp;
 						}
 					}, 
 					error: function(e) { 
@@ -41,7 +39,7 @@
 					}
 				});
 			}
-			/* webSocketCallback : function(paramMap){
+			webSocketCallback : function(paramMap){
 				var $this = this;
 				if(paramMap.body){
 					var data = JSON.parse(paramMap.body);
@@ -51,10 +49,10 @@
 					$this.title = data.title;
 					alert("알림도착 : " + $this.title);
 				}
-			} */
+			}
 		}
 	});
 	
-	//connect("/api/${tenantId}/${enterCd}/${empNo}/noti", inboxVue.webSocketCallback);
+	connect("/api/${tenantId}/${enterCd}/${empNo}/noti", inboxVue.webSocketCallback);
 </script>
 
