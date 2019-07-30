@@ -1,6 +1,5 @@
 <#include "/websocket.ftl">
-
-<nav class="navbar navbar-expand-lg navbar-light" id="inbox">
+<nav class="navbar navbar-expand-lg navbar-light">
     <!-- collapse button -->
     <!-- <button type="button" id="sidebarCollapse" class="btn btn-info">
         <i class="fas fa-bars"></i>
@@ -12,29 +11,18 @@
         </a>
     </h1>
     <div class="ml-auto" id="navbarSupportedContent">
-        <ul class="nav gnb-nav-wrap">
+        <ul class="nav gnb-nav-wrap" >
             <li class="nav-item">
-                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
+                <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
             </li>
             <li class="nav-item dropdown notifications-menu">
-                    <a data-toggle="dropdown" href="#">
-                    	<span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                    	<li class="header">You have {{inboxCount}} notifications</li>
-                    	<li>
-			                <!-- inner menu: contains the actual data -->
-			                <ul class="menu">
-			                  	  <li v-for="m in data">
-								    {{ m.title }}
-								  </li>
-			                  </li>
-		              	  	</ul>
-		              	  </li>
-                    </ul>
+	            <a href="#" data-toggle="dropdown" id="navTop">
+	            	<span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span>
+	            </a>
+	            <#include "/inbox.ftl">
             </li>
             <li class="nav-item">
-                    <a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
+            	<a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
@@ -45,8 +33,8 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-	var inboxCountVue = new Vue({
-		el : '#inbox',
+	var navTopVue = new Vue({
+		el : '#navTop',
 		data : {
 			inboxCount : '',
 			data : []
@@ -54,14 +42,23 @@ $(document).ready(function(){
 		mounted : function() {
 			var $this = this;
 			Util.ajax({
-				url: "${rc.getContextPath()}/noti/inbox/list",
+				url: "${rc.getContextPath()}/noti/inbox/count",
 				type: "GET",
 				contentType : 'application/json',
 				dataType : "json",
 				success: function(data) {
-					console.log(data);
-					$this.inboxCount = data.length;
-					$this.data = data;
+					//console.log(data);
+					
+					if(data!=null && data.status=='OK') {
+						$this.inboxCount = data.inboxCount;
+						//$this.data = data;
+						
+						if(data.flexibleEmp!=null) {
+							$this.inboxCount++;
+							inboxVue.flexibleEmp = data.flexibleEmp;
+						}
+					}
+					
 				}, error: function(data) { alert(data.message); }
 			})
 		},
@@ -80,7 +77,7 @@ $(document).ready(function(){
 		}
 	});
 
-	connect("/api/${tenantId}/${enterCd}/${empNo}/noti", inboxCountVue.webSocketCallback);
+	connect("/api/${tenantId}/${enterCd}/${empNo}/navTop", navTopVue.webSocketCallback);
 	
 });
 </script>

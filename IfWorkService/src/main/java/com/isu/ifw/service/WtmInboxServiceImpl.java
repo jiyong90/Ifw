@@ -1,9 +1,7 @@
 package com.isu.ifw.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -16,10 +14,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmInbox;
 import com.isu.ifw.repository.WtmInboxRepository;
-import com.isu.ifw.vo.WtmInboxVO;
+import com.isu.ifw.util.WtmUtil;
+import com.isu.option.vo.ReturnParam;
 
 @Transactional
 @Service
@@ -61,22 +60,45 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 	}
 	
 	@Override
-	public List<Map<String, Object>> getInboxList(Long tenantId, String enterCd, String sabun) {
-		List<Map<String, Object>> inboxList = new ArrayList();
+	public ReturnParam getInboxList(Long tenantId, String enterCd, String sabun) {
 		
-		List<WtmInbox> list = inboxRepository.findByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
-		for(WtmInbox l : list) {
-			Map<String, Object> inbox = new HashMap();
-			inbox.put("title", l.getTitle());
-			inboxList.add(inbox);
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		List<WtmInbox> inboxList = null;
+		try {
+			inboxList = inboxRepository.findByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
+		}catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
 		}
-		return inboxList;
+
+		//알림 리스트
+		rp.put("inboxList", inboxList);
+		
+		return rp;
 	
 	}
 
 	@Override
-	public int getInboxCount(Long tenantId, String enterCd, String sabun) {
-		return inboxRepository.countByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
+	public ReturnParam getInboxCount(Long tenantId, String enterCd, String sabun) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		int inboxCount = 0;
+		try {
+			inboxCount = inboxRepository.countByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
+		}catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		//알림 카운트
+		rp.put("inboxCount", inboxCount);
+		
+		return rp;
 	}
 
 }
