@@ -19,20 +19,22 @@ public interface WtmFlexibleEmpService {
 	 * @param enterCd
 	 * @param sabun
 	 * @param ymd - 출근기준일
+	 * @param entryTypeCd
 	 * @param sdate
 	 * @param userId
 	 */
-	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, Date sdate, Long userId);
+	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date sdate, Long userId);
 	/**
 	 * 최종퇴근타각 정보
 	 * @param tenantId
 	 * @param enterCd
 	 * @param sabun
 	 * @param ymd - 퇴근기준일
+	 * @param entryTypeCd
 	 * @param sdate
 	 * @param userId
 	 */
-	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, Date edate, Long userId);
+	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date edate, Long userId);
 	/**
 	 * 근무 마감
 	 * @param tenantId

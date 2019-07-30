@@ -60,9 +60,6 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	@Override
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception {
-		//연장근무 신청 시 소정근로 선 소진 여부를 체크한다.
-		//선소진시
-		//코어타임을 제외한 잔여 소정근로시간을 알려준다
 
 	}
 
@@ -225,7 +222,10 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	@Override
 	public ReturnParam preCheck(Long tenantId, String enterCd, Long applId, String workTypeCd,
 			Map<String, Object> paramMap) {
-		// TODO Auto-generated method stub
+
+		//연장근무 신청 시 소정근로 선 소진 여부를 체크한다.
+		//선소진시
+		//코어타임을 제외한 잔여 소정근로시간을 알려준다
 		return null;
 	}
 
