@@ -128,6 +128,9 @@ html {
 .navbar .gnb-nav-wrap .dropdown .dropdown-menu .msg-desc{
   padding: 7px 15px; 
 }
+.navbar .gnb-nav-wrap .dropdown .dropdown-menu .msg-desc .btn-wrap{
+  padding: 5px 0px 0px;
+}
 .navbar .gnb-nav-wrap .dropdown .dropdown-menu .msg-list li{
   padding: 7px 15px;
   border-left: 0px;
