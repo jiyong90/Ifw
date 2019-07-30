@@ -38,7 +38,7 @@
 						console.log(e);
 					}
 				});
-			}
+			},
 			webSocketCallback : function(paramMap){
 				var $this = this;
 				if(paramMap.body){
