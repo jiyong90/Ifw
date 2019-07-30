@@ -11,18 +11,16 @@
         </a>
     </h1>
     <div class="ml-auto" id="navbarSupportedContent">
-        <ul class="nav gnb-nav-wrap" >
+        <ul class="nav gnb-nav-wrap">
             <li class="nav-item">
-                <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
             </li>
-            <li class="nav-item dropdown notifications-menu">
-	            <a href="#" data-toggle="dropdown" id="navTop">
-	            	<span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span>
-	            </a>
-	            <#include "/inbox.ftl">
+            <li class="nav-item dropdown">
+                <a data-toggle="dropdown" aria-expanded="false" href="#" id="navTop"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span></a>
+   	        <#include "/inbox.ftl">
             </li>
             <li class="nav-item">
-            	<a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
+                    <a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>

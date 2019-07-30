@@ -115,6 +115,25 @@ html {
   background-position: -56px 0;
 } */
 
+
+.navbar .gnb-nav-wrap .dropdown .dropdown-menu{
+  left: auto;
+  right: -1px;
+  width: 200px;
+  padding: 0px;
+  margin-top: -1px;
+  border-radius: 0px;
+  border-color:#eee;
+}
+.navbar .gnb-nav-wrap .dropdown .dropdown-menu .msg-desc{
+  padding: 7px 15px; 
+}
+.navbar .gnb-nav-wrap .dropdown .dropdown-menu .msg-list li{
+  padding: 7px 15px;
+  border-left: 0px;
+  border-top:1px solid #f4f4f4;
+  color: #777;
+}
 /* ---------------------------------------------------
     SIDEBAR STYLE (LEFT)
 ----------------------------------------------------- */
@@ -428,3 +447,4 @@ a.article:hover {
   border-color:#32c9b6;
   background-color:#32c9b6;
 }
+
