@@ -96,21 +96,26 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				}
 				try {
 					Map<String, String> dayResult = (Map<String, String>) dateMap.get(k);
-					String shm = dayResult.get("shm");
-					String ehm = dayResult.get("ehm");
-					Date s = sdf.parse(k+shm);
-					Date e = sdf.parse(k+ehm);
-					
-					if(s.compareTo(e) > 0) {
-						// 날짜 더하기
-				        Calendar cal = Calendar.getInstance();
-				        cal.setTime(e);
-				        cal.add(Calendar.DATE, 1);
-				        e = cal.getTime();
+					if(dayResult.get("shm") != null && !dayResult.get("shm").equals("")) {
+						String shm = dayResult.get("shm");
+						String ehm = dayResult.get("ehm");
+						Date s = sdf.parse(k+shm);
+						Date e = sdf.parse(k+ehm);
+						
+						if(s.compareTo(e) > 0) {
+							// 날짜 더하기
+					        Calendar cal = Calendar.getInstance();
+					        cal.setTime(e);
+					        cal.add(Calendar.DATE, 1);
+					        e = cal.getTime();
+						}
+						result.setPlanSdate(s);
+						result.setPlanEdate(e);
+					}else {
+						result.setPlanSdate(null);
+						result.setPlanEdate(null);
+						result.setPlanMinute(0);
 					}
-					result.setPlanSdate(s);
-					result.setPlanEdate(e);
-					 
 					result.setTimeTypeCd("BASE");
 					result.setUpdateId(userId);
 					workDayResultRepo.save(result);
@@ -224,6 +229,30 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			works.add(workVO);
 		}
 		return works;
+	}
+
+	@Override
+	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, Date sdate, Long userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, Date edate, Long userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void workClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cancelWorkClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

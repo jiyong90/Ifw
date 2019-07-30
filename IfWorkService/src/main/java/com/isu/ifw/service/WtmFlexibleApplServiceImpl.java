@@ -458,4 +458,11 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return applMapper.getApprList(paramMap);
 	}
 
+	@Override
+	public ReturnParam preCheck(Long tenantId, String enterCd, Long applId, String workTypeCd,
+			Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

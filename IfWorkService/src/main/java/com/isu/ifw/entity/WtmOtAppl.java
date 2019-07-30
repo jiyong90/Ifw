@@ -35,10 +35,10 @@ public class WtmOtAppl {
 	
 	@Column(name="OT_SDATE", columnDefinition="DATETIME") 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private String otSdate;
+	private Date otSdate;
 	@Column(name="OT_EDATE", columnDefinition="DATETIME") 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private String otEdate;
+	private Date otEdate;
 	@Column(name="OT_MINUTE")
 	private String otMinute;
 	
@@ -88,16 +88,16 @@ public class WtmOtAppl {
 	public void setHolidayYn(String holidayYn) {
 		this.holidayYn = holidayYn;
 	}
-	public String getOtSdate() {
+	public Date getOtSdate() {
 		return otSdate;
 	}
-	public void setOtSdate(String otSdate) {
+	public void setOtSdate(Date otSdate) {
 		this.otSdate = otSdate;
 	}
-	public String getOtEdate() {
+	public Date getOtEdate() {
 		return otEdate;
 	}
-	public void setOtEdate(String otEdate) {
+	public void setOtEdate(Date otEdate) {
 		this.otEdate = otEdate;
 	}
 	public String getOtMinute() {

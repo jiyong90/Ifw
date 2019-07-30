@@ -65,6 +65,16 @@ public interface WtmApplService {
 	 */
 	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
 	
+	/**
+	 * 사전점검
+	 * @param tenantId
+	 * @param enterCd
+	 * @param applId
+	 * @param workTypeCd
+	 * @param paramMap
+	 * @return
+	 */
+	public ReturnParam preCheck(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap);
 	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap);
 	
 	public void sendPush();

@@ -1,5 +1,6 @@
 package com.isu.ifw.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,44 @@ import com.isu.ifw.vo.WtmWorkTermTimeVO;
  *
  */
 public interface WtmFlexibleEmpService {
-	
+	/**
+	 * 최종 출근 타각 정보
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param ymd - 출근기준일
+	 * @param sdate
+	 * @param userId
+	 */
+	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, Date sdate, Long userId);
+	/**
+	 * 최종퇴근타각 정보
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param ymd - 퇴근기준일
+	 * @param sdate
+	 * @param userId
+	 */
+	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, Date edate, Long userId);
+	/**
+	 * 근무 마감
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param ymd
+	 * @param userId
+	 */
+	public void workClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId);
+	/**
+	 * 근무 마감 취소
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param ymd
+	 * @param userId
+	 */
+	public void cancelWorkClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId);
 	/**
 	 * 해당 월의 근무제 정보 조회
 	 * @param tenantId

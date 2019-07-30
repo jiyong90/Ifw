@@ -14,6 +14,19 @@ public class WtmUtil {
 		return formatter.format(d);
 	}
 	
+	public static Date toDate(String dateStr, String format) {
+		if(format == null || format.equals("")) {
+			format = "yyyyMMdd";
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+	    try {
+			return formatter.parse(dateStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		} 
+	}
+	
 	public static long dayCnt(String begin, String end) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 	    Date beginDate = formatter.parse(begin);
