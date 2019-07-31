@@ -158,6 +158,37 @@ public class ViewController {
 		
 	}
 	
+	//관리자페이지는 주소 분리
+	@RequestMapping(value = "/console/{tsId}/views/mgr/{viewPage}", method = RequestMethod.GET)
+	public ModelAndView mgrviews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
+		ModelAndView mv = new ModelAndView("template");
+		
+		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String loginId = sessionData.get("loginId").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		mv.addObject("tsId", tsId);
+		mv.addObject("enterCd", enterCd);
+		mv.addObject("empNo", empNo);
+		mv.addObject("loginId", loginId);
+		mv.addObject("pageName", "mgr/"+viewPage);
+		
+		Calendar date = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date.getTime());
+		mv.addObject("today", today);
+		
+		if("workCalendar".equals(viewPage) || "workDayPlan".equals(viewPage)){
+			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
+		} else {
+			return mv;
+		}
+		
+	}
+	
 	protected ModelAndView workTimeCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, Long userId, HttpServletRequest request) {
 		Map<String, Object> flexibleAppl = null;
 		ObjectMapper mapper = new ObjectMapper();

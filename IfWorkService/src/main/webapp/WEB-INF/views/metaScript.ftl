@@ -1,4 +1,5 @@
 <!-- Optional JavaScript -->
+
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="${rc.getContextPath()}/jQuery-3.4.1/jquery-3.4.1.min.js"></script>
 <script src="${rc.getContextPath()}/popper-1.15.0/popper.min.js"></script>
@@ -13,6 +14,14 @@
 <script src="${rc.getContextPath()}/vue-2.5.13/vue-cookies.js"></script>
 <script src="${rc.getContextPath()}/vue-2.5.13/vue-upload-component/vue-upload-component.js"></script>
   
+<!-- IBSheet -->
+<script src="${rc.getContextPath()}/IBLeaders/Sheet/js/ibleaders.js" type="text/javascript"></script>
+<script src="${rc.getContextPath()}/IBLeaders/Sheet/js/ibsheetinfo.js" type="text/javascript"></script>
+<script src="${rc.getContextPath()}/IBLeaders/Sheet/js/ibsheet.js" type="text/javascript"></script>
+<script src="${rc.getContextPath()}/IBLeaders/Sheet/js/ibsheetcalendar.js" type="text/javascript"></script>
+<script src="${rc.getContextPath()}/IBLeaders/common.js" type="text/javascript"></script>
+<script src="${rc.getContextPath()}/IBLeaders/commonIBSheet.js" type="text/javascript"></script> 
+
 <script type="text/javascript">
  	var Util = {
 		ajax : function(option){ 
