@@ -61,7 +61,7 @@ public interface WtmFlexibleEmpService {
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
+	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId);
 
 	/**
 	 * 선택한 기간의 근무제 정보 조회

@@ -69,7 +69,7 @@
 					};
 				}
 			},
-			defaultView : {
+			defaultview : {
 				type: String,
 				required: false,
 				default : function(){
@@ -178,6 +178,10 @@
 			        events: this.events,
 			        eventSources: this.eventsources
 				};
+				
+				if(this.defaultview!='') {
+					option.defaultView = this.defaultview;
+				}
 				
 				if(this.navlinks) {
 					option.navLinks = this.navlinks;

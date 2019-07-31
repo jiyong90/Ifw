@@ -53,6 +53,7 @@ $(document).ready(function(){
 						
 						if(data.flexibleEmp!=null) {
 							$this.inboxCount++;
+							inboxVue.inboxCount = $this.inboxCount;
 							inboxVue.flexibleEmp = data.flexibleEmp;
 						}
 					}

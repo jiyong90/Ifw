@@ -18,6 +18,7 @@
 			     , FA.SYMD AS sYmd
 			     , FA.EYMD AS eYmd
 			     , REASON AS reason
+			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
 			  FROM WTM_APPL A
 			  JOIN WTM_FLEXIBLE_APPL FA
 			    ON A.APPL_ID = FA.APPL_ID

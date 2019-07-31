@@ -47,13 +47,21 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	WtmWorkDayResultRepository workDayResultRepo;
 	
 	@Override
-	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("empNo", empNo);
 		
-		return flexEmpMapper.getFlexibleEmpList(paramMap);
+		List<Map<String, Object>> flexibleList = flexEmpMapper.getFlexibleEmpList(paramMap);
+		if(flexibleList!=null && flexibleList.size()>0) {
+			for(Map<String, Object> flex : flexibleList) {
+				if(flex.containsKey("flexibleEmpId") && flex.get("flexibleEmpId")!=null && !"".equals(flex.get("flexibleEmpId")))
+					flex.put("flexibleEmp", getDayWorks(Long.valueOf(flex.get("flexibleEmpId").toString()), userId));
+			}
+		}
+		
+		return flexibleList;
 	}
 	
 	@Override

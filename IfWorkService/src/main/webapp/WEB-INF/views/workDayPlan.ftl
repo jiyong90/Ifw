@@ -133,7 +133,6 @@
   		    	dayResult: {}, //저장할 근무계획
   		    	dayWorks: [], //저장된 상세 근무계획
   		    	//events: [],
-  		    	eventSource: {},
   		    	eventSources: [
   		    		/* {
   		    	      events: [  
@@ -297,24 +296,29 @@
   	  	         		});
   	         		}
   	         	},
-  	         	addEventSource : function(events){
+  	         	addEventSource : function(id, events){
   	         		var $this = this;
   	         		
   	         		if(events.length>0) {
   	         			var calendar = this.$refs.fullCalendar.cal;
   	         			
-	  	         		var eventSource = calendar.getEventSourceById('dayWorks');
+	  	         		var eventSource = calendar.getEventSourceById(id);
 	  	         		if(eventSource!=null) {
 	  	         			eventSource.remove();
 	  	         		} 
 	  	         		
 	  	         		//이벤트 새로 생성
-	  	         		$this.eventSource['id'] = 'dayWorks';
-	  	         		$this.eventSource['events'] = events;
- 	         			$this.eventSource['editable'] = false;
+	  	         		var eMap = {
+	  	         			id : id,
+	  	         			events : events,
+	  	         			editable : false
+	  	         		}
+	  	         		//$this.eventSource['id'] = id;
+	  	         		//$this.eventSource['events'] = events;
+ 	         			//$this.eventSource['editable'] = false;
  	         			
          				calendar.batchRendering(function() {
-         					calendar.addEventSource($this.eventSource);
+         					calendar.addEventSource(eMap);
          				});
   	         		}
   	         	}, 
@@ -405,7 +409,7 @@
   	         			}
 					});
 
-  	         		$this.addEventSource(events);
+  	         		$this.addEventSource('dayWorks',events);
   	         	},
   	         	changeDayWorks : function(sDate, eDate, dayResult){ //근무시간 변경
   	         		var $this = this;
@@ -444,7 +448,7 @@
         			else
         				result = prevEvent;
         			
-        			$this.addEventSource(result);
+        			$this.addEventSource('dayWorks',result);
   	         	},
 				getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
 					var $this = this;
@@ -531,21 +535,38 @@
   		    		    var eDate = selday.end;
   		    		    
   		    		    //YYYY-MM-DD HH:mm
-  		    		 	var coreStime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleEmp.coreShm).format('YYYY-MM-DD HH:mm');
-		    		    var coreEtime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleEmp.coreEhm).format('YYYY-MM-DD HH:mm');
+  		    		    //근무시간(근무일 기준)
+  		    		    var workStime = '';
+		    		    if(flexibleEmp.hasOwnProperty('workShm') && flexibleEmp.workShm!='')
+		    		    	workStime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleEmp.workShm).format('YYYY-MM-DD HH:mm');
+		    		  	var workEtime = '';
+		    		  	if(flexibleEmp.hasOwnProperty('workEhm') && flexibleEmp.workEhm!='')
+		    		  		workEtime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleEmp.workEhm).format('YYYY-MM-DD HH:mm');
+		    		  	
+  		    		    //코어시간(근무일 기준)
+  		    		    var coreStime = '';
+  		    		    if(flexibleEmp.hasOwnProperty('coreShm') && flexibleEmp.coreShm!='')
+  		    		    	coreStime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleEmp.coreShm).format('YYYY-MM-DD HH:mm');
+  		    		  	var coreEtime = '';
+  		    		  	if(flexibleEmp.hasOwnProperty('coreShm') && flexibleEmp.coreShm!='')
+  		    		  		coreEtime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleEmp.coreEhm).format('YYYY-MM-DD HH:mm');
+  		    		 	
+  		    		  	//계획시간
 		    		    var sTime = moment(sDate+' '+$("#startTime").val()).format('YYYY-MM-DD HH:mm');
   		    		    var eTime = moment(sDate+' '+$("#endTime").val()).format('YYYY-MM-DD HH:mm');
+  		    		    
+  		    		    //종료시간이 다음날일 때
   		    		  	if(moment(sTime).diff(eTime)>0){
 	    					var date = new Date(sDate);
 	    					date.setDate(date.getDate()+1);
-	    					coreStime = moment(moment(date).format('YYYYMMDD')+' '+flexibleEmp.coreShm).format('YYYY-MM-DD HH:mm');
-			    		    coreEtime = moment(moment(date).format('YYYYMMDD')+' '+flexibleEmp.coreEhm).format('YYYY-MM-DD HH:mm');
+	    					
 	    					eTime = moment(moment(date).format('YYYY-MM-DD')+' '+$("#endTime").val()).format('YYYY-MM-DD HH:mm');
 	    				}
   		    		    
-  		    			//부분 선근제의 경우 코어시간 포함하도록 체크
-  		    			if(flexibleEmp.applCd!='SELE_C' || (moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0
-  		    					&& moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0)) {
+  		    		    
+	    		    	//근무일 기준 근무시간과 코어시간 포함하도록 체크
+  		    			if(	(workStime==''&&workEtime=='' || moment(sTime).diff(workStime)<=0 && moment(workStime).diff(eTime)<=0 && moment(sTime).diff(workEtime)<=0 && moment(workEtime).diff(eTime)<=0)
+  		    					&& (coreStime==''&&coreEtime || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0)) {
   		    		    
 	  		    			var d = new Date(sDate);
 	  		    			while(moment(d).diff(eDate, 'days')<=0) {
@@ -569,7 +590,8 @@
 	  		    			$this.changeDayWorks(sDate, eDate, $this.dayResult);
 	  		    			
   		    			} else {
-  		    				$("#alertText").html("코어시간이 포함되어야 합니다.");
+  		    				
+  		    				$("#alertText").html("근무시간/코어시간이 포함되어야 합니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
 	  	  	         			$("#alertModal").off('hidden.bs.modal');
 	  	  	         			$("#startTime").val('');
@@ -597,6 +619,7 @@
 	  	  	         		});
 	  	  	         		$("#alertModal").modal("show"); 
   		    			}
+  		    		    
   		    		} 
   		    		
   	         	},

@@ -154,6 +154,9 @@
                                 <div class="main-title">해당일 근태</div>
                                 <div class="main-desc">연차, 반차</div>
                             </li>
+                            <li>
+                                <button type="button" class="btn btn-apply btn-block btn-lg" @click="location.href='${rc.getContextPath()}/console/${tsId}/views/workTimePlan';">연장근로신청</button>
+                            </li>
                         </ul>
                         <div class="sub-wrap">
                             <div class="sub-big-title">근무시간 요약 <span style="font-size:10px;">(근무시간 분류별 합산)</span></div>
@@ -297,7 +300,7 @@
   		    	prevEdate: '', //이전 근무제 종료일
   		    	workTermTime: {}, //선택한 기간의 근무제 정보
   		    	monthFlexitimeList: [], //해당 월의 근무제 리스트
-  		    	flexitimeList: [], //사용할 근무제 리스트
+  		    	flexitimeList: [], //사용할 유연근무제 리스트
   		    	selectedFlexitime: {}, //적용할 근무제
   		    	applInfo: { //신청 데이터
   		    		flexibleApplId:'',
@@ -444,8 +447,9 @@
 	  					    });
 	  		    			$(info.dayEl).popover('show');
   		    			}
+  		    		} else {
+  		    			console.log(info.dateStr);
   		    		}
-  		    		
   		    	},
   		    	eventRenderCallback : function(info){
   		    		/* if(info.event.id.indexOf('workRange.')==0 && info.isStart) {
@@ -458,6 +462,8 @@
   		    			//$('td').find(".fc-day[data-date='"+moment(yesterday).format('YYYY-MM-DD')+"']").css('border-right', '1px solid red');
   		    			$('td').find(".fc-day[data-date='"+moment(info.event.start).format('YYYY-MM-DD')+"']").prepend('<div class="fc-triangle start '+workTypeCd+'"></div>');
   		    		}  */
+  		    		
+  		    		$(info.el).find('.fc-title').html(info.event.title);
   		    		
   		    		//기존에 신청한 근무제
   		    		if(info.event.id.indexOf('workRange.')==0) {
@@ -513,21 +519,30 @@
   	  	         		});
   	         		}
   	         	},
-  	         	addEventSource : function(Obj){
-  	         		if(Obj!=null) {
-	  	         		var calendar = this.$refs.fullCalendar.cal;
-	  	         		
-	  	         		var eventSource = calendar.getEventSourceById(Obj.id);
-	  	         		
+  	         	addEventSource : function(id, events){
+  	         		var $this = this;
+  	         		console.log(id);
+  	         		
+  	         		if(events.length>0) {
+  	         			var calendar = this.$refs.fullCalendar.cal;
+  	         			
+	  	         		var eventSource = calendar.getEventSourceById(id);
 	  	         		if(eventSource!=null) {
 	  	         			eventSource.remove();
-	  	         		}
+	  	         		} 
+	  	         		
 	  	         		//이벤트 새로 생성
+	  	         		var eMap = {
+	  	         			id : id,
+	  	         			events : events,
+	  	         			editable : false
+	  	         		}
+ 	         			
          				calendar.batchRendering(function() {
-         					calendar.addEventSource(Obj);
+         					calendar.addEventSource(eMap);
          				});
   	         		}
-  	         	},
+  	         	}, 
   	         	getFlexibleEmpList : function(sYmd, eYmd){ //해당월의 근무제 정보
   	         		var $this = this;
   		    		var calendar = this.$refs.fullCalendar.cal;
@@ -549,7 +564,6 @@
 							//console.log(data);
 							if(data.status=='OK' && data.flexibleList!=null) {
 								$this.monthFlexitimeList = data.flexibleList;
-								
 								$this.monthFlexitimeList.map(function(f){
 									var sYmd = moment(f.sYmd).format('YYYY-MM-DD');
 									var eYmd = new Date(moment(f.eYmd).format('YYYY-MM-DD'));
@@ -567,43 +581,10 @@
 			  		  		        	//classNames: classNames
 									});
 									
-									/* 
-									//디자인 확인 위함
-									$this.addEvent({
-										id: 'workRange.ELAS.'+1,
-										start: '2019-07-01',
-			  		  		        	end: '2019-07-08',
-			  		  		        	rendering: 'background',
-			  		  		        	classNames: ['ELAS']
-									});
-									$this.addEvent({
-										id: 'workRange.SELE_F.'+2,
-										start: '2019-07-09',
-			  		  		        	end: '2019-07-23',
-			  		  		        	rendering: 'background',
-			  		  		        	classNames: ['SELE_F']
-									});
-									$this.addEvent({
-										id: 'workRange.SELE_C.'+3,
-										start: '2019-07-24',
-			  		  		        	end: '2019-07-27',
-			  		  		        	rendering: 'background',
-			  		  		        	classNames: ['SELE_C']
-									});
-									$this.addEvent({
-										id: 'workRange.DIFF.'+4,
-										start: '2019-07-28',
-			  		  		        	end: '2019-08-04',
-			  		  		        	rendering: 'background',
-			  		  		        	classNames: ['DIFF']
-									});
-									$this.addEvent({
-										id: 'workRange.AUTO.'+5,
-										start: '2019-08-05',
-			  		  		        	end: '2019-08-15',
-			  		  		        	rendering: 'background',
-			  		  		        	classNames: ['AUTO']
-									}); */
+									//근무계획
+									if(f.hasOwnProperty('flexibleEmp')) {
+										$this.addDayWorks('dayWorks.'+f.applCd+'.'+sYmd, f.flexibleEmp);
+									}
 								});
 							}
 						},
@@ -611,6 +592,43 @@
 							$this.monthFlexitimeList = [];
 						}
 					});
+  	         	},
+  	         	addDayWorks : function(id, dayWorks){ //근무시간 생성
+  	         		var $this = this;
+  	         	
+  	         		var events = [];
+  	         		dayWorks.map(function(dayWork){
+  	         			//근무일
+  	         			if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+							dayWork.plans.map(function(plan){
+								var day = moment(plan.key).format('YYYY-MM-DD');
+								
+	  		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
+	  		    					//개인 근태
+		  		    				var taaEvent = {
+										id: day,
+			    						title: "<div class='dot work-type'>" + plan.label + "</div>",
+			    						start: day,
+			    						end: day
+			    					};
+		  		    				events.push(taaEvent);
+		  		    				
+	  		    				} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
+	  		    					//계획시간
+									var timeEvent = {
+										id: day,
+			    						title: "<div class='dot time'>" + plan.label + "</div>",
+			    						start: day,
+			    						end: day
+			    					};
+		  		    				events.push(timeEvent);
+	  		    				}
+	  		    			
+							});
+  	         			} 
+					});
+
+  	         		$this.addEventSource(id, events);
   	         	},
 				selectAllow : function(){
   		    		var $this = this;
