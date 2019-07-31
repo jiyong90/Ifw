@@ -232,14 +232,27 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 
 	@Override
-	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, Date sdate, Long userId) {
-		// TODO Auto-generated method stub
-		
+	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date sdate, Long userId) {
+		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
+		calendar.setEntryStypeCd(entryTypeCd);
+		calendar.setEntrySdate(sdate); 
+		calendar.setUpdateId(userId);
+		workCalendarRepo.save(calendar);
 	}
 
 	@Override
-	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, Date edate, Long userId) {
-		// TODO Auto-generated method stub
+	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date edate, Long userId) {
+		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
+		calendar.setEntryEtypeCd(entryTypeCd);
+		calendar.setEntryEdate(edate); 
+		calendar.setUpdateId(userId);
+		workCalendarRepo.save(calendar);
+	}
+	
+	/**
+	 * 타각시간 기준으로 인정시간 계산
+	 */
+	protected void calcApprDayInfo() {
 		
 	}
 

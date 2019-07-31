@@ -105,8 +105,8 @@
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
 			SELECT D.WORK_CALENDAR_ID  
-				 , F_WTM_CALC_MINUTE( date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i'), '','') -
-				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i') )) AS CM
+				 , F_WTM_CALC_MINUTE( date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i'), '','', '') -
+				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i'), '' )) AS CM
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_WORK_CALENDAR C
 			    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
