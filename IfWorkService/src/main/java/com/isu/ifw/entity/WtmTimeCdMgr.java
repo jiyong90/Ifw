@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -227,9 +228,13 @@ public class WtmTimeCdMgr {
 		this.chkid = chkid;
 	}
 
-
 	@PrePersist
-    protected void onUpdate() {
+    protected void onCreate() {
 		this.chkdate = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+    	this.chkdate = new Date();
     }
 }

@@ -11,4 +11,6 @@ import java.util.Map;
 public interface WtmBaseWorkMgrService {
 	
 	public List<Map<String, Object>> getBaseWorkList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+
+	public int setBaseWorkList(Long tenantId, String enterCd, Long userId, Map<String, Object> paramMap);
 }

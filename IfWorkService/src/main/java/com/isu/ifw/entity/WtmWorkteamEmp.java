@@ -16,31 +16,25 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="WTM_TAA_CODE")
-public class WtmTaaCode {
+@Table(name="WTM_WORKTEAM_EMP")
+public class WtmWorkteamEmp {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="TAA_CODE_ID")
-	private Long taaCodeId;
+	@Column(name="WORKTEAM_EMP_ID")
+	private Long workteamEmpId;
 	@Column(name="TENANT_ID")
 	private Long tenantId;
 	@Column(name="ENTER_CD")
 	private String enterCd;
-	@Column(name="TAA_CD")
-	private String taaCd;
-	@Column(name="TAA_NM")
-	private String taaNm;
-	@Column(name="TAA_TYPE_CD")
-	private String taaTypeCd;
-	@Column(name="HOL_INCL_YN")
-	private String holInclYn;
-	@Column(name="REQUEST_TYPE_CD")
-	private String requestTypeCd;
-	@Column(name="WORK_YN")
-	private String workYn;
-	@Column(name="WORK_APPR_HOUR")
-	private Integer workApprHour;
+	@Column(name="WORKTEAM_CD")
+	private String workteamCd;
+	@Column(name="SABUN")
+	private String sabun;
+	@Column(name="SYMD")
+	private String symd;
+	@Column(name="EYMD")
+	private String eymd;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -49,15 +43,14 @@ public class WtmTaaCode {
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
 	private Long updateId;
-
 	
-	public Long getTaaCodeId() {
-		return taaCodeId;
+    public Long getWorkteamEmpId() {
+		return workteamEmpId;
 	}
 
 
-	public void setTaaCodeId(Long taaCodeId) {
-		this.taaCodeId = taaCodeId;
+	public void setWorkteamEmpId(Long workteamEmpId) {
+		this.workteamEmpId = workteamEmpId;
 	}
 
 
@@ -81,53 +74,46 @@ public class WtmTaaCode {
 	}
 
 
-	public String getTaaCd() {
-		return taaCd;
+	public String getWorkteamCd() {
+		return workteamCd;
 	}
 
 
-	public void setTaaCd(String taaCd) {
-		this.taaCd = taaCd;
-	}
-
-	public String getTaaTypeCd() {
-		return taaTypeCd;
+	public void setWorkteamCd(String workteamCd) {
+		this.workteamCd = workteamCd;
 	}
 
 
-	public void setTaaTypeCd(String taaTypeCd) {
-		this.taaTypeCd = taaTypeCd;
-	}
-
-	public String getTaaNm() {
-		return taaNm;
+	public String getSabun() {
+		return sabun;
 	}
 
 
-	public void setTaaNm(String taaNm) {
-		this.taaNm = taaNm;
+	public void setSabun(String sabun) {
+		this.sabun = sabun;
 	}
 
 
-	public String getHolInclYn() {
-		return holInclYn;
+	public String getSymd() {
+		return symd;
 	}
 
 
-	public void setHolInclYn(String holInclYn) {
-		this.holInclYn = holInclYn;
+	public void setSymd(String symd) {
+		this.symd = symd;
 	}
 
 
-	public String getRequestTypeCd() {
-		return requestTypeCd;
+	public String getEymd() {
+		return eymd;
 	}
 
 
-	public void setRequestTypeCd(String requestTypeCd) {
-		this.requestTypeCd = requestTypeCd;
+	public void setEymd(String eymd) {
+		this.eymd = eymd;
 	}
-	
+
+
 	public String getNote() {
 		return note;
 	}
@@ -135,25 +121,6 @@ public class WtmTaaCode {
 
 	public void setNote(String note) {
 		this.note = note;
-	}
-
-	public String getWorkYn() {
-		return workYn;
-	}
-
-
-	public void setWorkYn(String workYn) {
-		this.workYn = workYn;
-	}
-
-
-	public Integer getWorkApprHour() {
-		return workApprHour;
-	}
-
-
-	public void setWorkApprHour(Integer workApprHour) {
-		this.workApprHour = workApprHour;
 	}
 
 
@@ -176,14 +143,14 @@ public class WtmTaaCode {
 		this.updateId = updateId;
 	}
 
-
 	@PrePersist
     protected void onCreate() {
 		this.updateDate = new Date();
     }
 
-	@PreUpdate
+    @PreUpdate
     protected void onUpdate() {
-		this.updateDate = new Date();
+    	this.updateDate = new Date();
     }
+
 }

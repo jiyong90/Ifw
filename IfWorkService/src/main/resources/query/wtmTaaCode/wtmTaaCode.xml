@@ -17,20 +17,20 @@
 					WORK_YN, 
 					WORK_APPR_HOUR, 
 					NOTE, 
-					UPDATE_DATE,
 					UPDATE_ID)
 				VALUES
-				(TRIM( #{enterCd} ),
-				TRIM( #{taaCd} ),
-				TRIM( #{taaNm} ),
-				TRIM( #{taaTypeCd} ),
-				TRIM( #{holInclYn} ),
-				TRIM( #{requestTypeCd} ),
-				TRIM( #{workYn} ),
-				TRIM( #{workApprHour} ),
-				TRIM( #{note} ),
-				NOW(),
-				TRIM( #{sabun} ))
+					(#{tenantId},
+					 #{enterCd} ,
+					 #{taaCd} ,
+					 #{taaNm} ,
+					 #{taaTypeCd} ,
+					 #{holInclYn} ,
+					 #{requestTypeCd} ,
+					 #{workYn} ),
+					 #{workApprHour} ,
+					 #{note} ,
+					 #{userId}
+				)
 			ON DUPLICATE KEY UPDATE 
 				TAA_NM = VALUES(TAA_NM),
 				TAA_TYPE_CD = VALUES(TAA_TYPE_CD),

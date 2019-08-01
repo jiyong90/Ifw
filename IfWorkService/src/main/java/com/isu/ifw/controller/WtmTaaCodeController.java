@@ -46,6 +46,12 @@ public class WtmTaaCodeController {
 		String empNo = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
+		MDC.put("sessionId", request.getSession().getId());
+		MDC.put("logId", UUID.randomUUID().toString());
+		MDC.put("type", "C");
+		logger.debug("getTaaCodeList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+
+		
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> taaCodeList = null;
@@ -77,18 +83,20 @@ public class WtmTaaCodeController {
 		MDC.put("logId", UUID.randomUUID().toString());
 		MDC.put("type", "C");
 		MDC.put("param", paramMap.toString());
-		logger.debug("setTaaCodeList Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-
+		logger.debug("setTaaCodeList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 		
 		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
 		convertMap.put("enterCd", enterCd);
 		convertMap.put("tenantId", tenantId);
-		convertMap.put("sabun", empNo);
+		convertMap.put("userId", userId);
+
+		MDC.put("convertMap", convertMap);
+
 		
 		rp.setSuccess("");
 		int cnt = 0;
 		try {		
-			cnt = taaCodeService.setTaaCodeList(tenantId, enterCd, convertMap);
+			cnt = taaCodeService.setTaaCodeList(tenantId, enterCd, userId, convertMap);
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;

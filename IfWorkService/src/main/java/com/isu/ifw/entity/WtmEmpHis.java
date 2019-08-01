@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -299,9 +300,13 @@ public class WtmEmpHis {
 	@Column(name="UPDATE_ID")
 	private String updateId;
 
-
 	@PrePersist
-    protected void onUpdate() {
+    protected void onCreate() {
 		this.updateDate = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+    	this.updateDate = new Date();
     }
 }

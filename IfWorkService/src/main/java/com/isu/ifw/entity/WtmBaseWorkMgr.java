@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,7 +29,7 @@ public class WtmBaseWorkMgr {
 	@Column(name="BUSINESS_PLACE_CD")
 	private String businessPlaceCd;
 	@Column(name="TIME_CD_MGR_ID")
-	private String timeCdMgrId;
+	private Long timeCdMgrId;
 	@Column(name="SYMD")
 	private String symd;
 	@Column(name="EYMD")
@@ -40,7 +41,7 @@ public class WtmBaseWorkMgr {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
-	private String updateId;
+	private Long updateId;
 
 
 	public Long getBaseWorkMgrId() {
@@ -83,12 +84,12 @@ public class WtmBaseWorkMgr {
 	}
 
 
-	public String getTimeCdMgrId() {
+	public Long getTimeCdMgrId() {
 		return timeCdMgrId;
 	}
 
 
-	public void setTimeCdMgrId(String timeCdMgrId) {
+	public void setTimeCdMgrId(Long timeCdMgrId) {
 		this.timeCdMgrId = timeCdMgrId;
 	}
 
@@ -133,18 +134,22 @@ public class WtmBaseWorkMgr {
 	}
 
 
-	public String getUpdateId() {
+	public Long getUpdateId() {
 		return updateId;
 	}
 
 
-	public void setUpdateId(String updateId) {
+	public void setUpdateId(Long updateId) {
 		this.updateId = updateId;
 	}
 
-
 	@PrePersist
-    protected void onUpdate() {
+    protected void onCreate() {
 		this.updateDate = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+    	this.updateDate = new Date();
     }
 }

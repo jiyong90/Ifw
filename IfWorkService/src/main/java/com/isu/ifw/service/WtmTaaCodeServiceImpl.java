@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,40 +31,88 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 	@Override
 	public List<Map<String, Object>> getTaaCodeList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
 		List<Map<String, Object>> codeList = new ArrayList();	
-		List<WtmTaaCode> list = taaCodeRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sData").toString());
-		
-		for(WtmTaaCode l : list) {
-			Map<String, Object> code = new HashMap();
-			code.put("taaCd", l.getTaaCd());
-			code.put("taaNm", l.getTaaNm());
-			code.put("holInclYn", l.getHolInclYn().equals("Y")?"1":"0");
-			code.put("workYn", l.getWorkYn().equals("Y")?"1":"0");
-			code.put("workApprHour", l.getWorkApprHour());
-			code.put("note", l.getTaaNm());
-			code.put("taaTypeCd", l.getTaaTypeCd());
-			codeList.add(code);
+		try {
+			List<WtmTaaCode> list = taaCodeRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sData").toString());
+			
+			for(WtmTaaCode l : list) {
+				Map<String, Object> code = new HashMap();
+				code.put("tenantId", l.getTenantId());
+				code.put("taaCodeId", l.getTaaCodeId());
+				code.put("enterCd", l.getEnterCd());
+				code.put("taaCd", l.getTaaCd());
+				code.put("taaNm", l.getTaaNm());
+				code.put("holInclYn", l.getHolInclYn().equals("Y")?"1":"0");
+				code.put("workYn", l.getWorkYn().equals("Y")?"1":"0");
+				code.put("workApprHour", l.getWorkApprHour());
+				code.put("note", l.getNote());
+				code.put("taaTypeCd", l.getTaaTypeCd());
+				codeList.add(code);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			logger.warn(e.toString(), e);
+		} finally {
+			logger.debug("getTaaCodeList Service End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			MDC.clear();
 		}
+		
 		return codeList;
 	}
 	
-	@Transactional
 	@Override
-	public int setTaaCodeList(Long tenantId, String enterCd, Map<String, Object> convertMap) {
-		logger.debug("setTaaCodeList start");		
+	public int setTaaCodeList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
 		int cnt = 0;
-//		List<Map<String, Object>> list = (List<Map<String, Object>>) convertMap.get("mergeRows");
-//		
-//		if(list != null && list.size() > 0) {
-//			for(int i = 0; i < list.size(); i++) {
-//				Map<String,Object> mp = (Map<String,Object>)list.get(i);
-//				mp.put("enterCd", convertMap.get("enterCd").toString());
-//				mp.put("tenantId", convertMap.get("tenantId").toString());
-//				mp.put("sabun", convertMap.get("sabun").toString());
-//			}
-//		}
-//		cnt = taaCodeMapper.saveWtmTaaCode(convertMap);
+		try {
+			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
+				List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("mergeRows");
+				List<WtmTaaCode> codes = new ArrayList();
+				if(iList != null && iList.size() > 0) {
+					for(Map<String, Object> l : iList) {
+						WtmTaaCode code = new WtmTaaCode();
+						code.setEnterCd(enterCd);
+						code.setTaaCodeId(l.get("taaCodeId").toString().equals("") ? null : Long.parseLong(l.get("taaCodeId").toString()));
+						code.setHolInclYn(l.get("holInclYn").toString().toString().equals("1")?"Y":"N");
+						code.setRequestTypeCd(l.get("requestTypeCd").toString());
+						code.setTaaCd(l.get("taaCd").toString());
+						code.setTaaNm(l.get("taaNm").toString());
+						code.setTaaTypeCd(l.get("taaTypeCd").toString());
+						code.setTenantId(tenantId);
+						code.setUpdateId(userId);
+						code.setNote(l.get("note").toString());
+						code.setWorkApprHour(l.get("workApprHour").toString().equals("") ? null : Integer.parseInt(l.get("workApprHour").toString()));
+						code.setWorkYn(l.get("workYn").toString().equals("1")?"Y":"N");
+						codes.add(code);
+					}
+					codes = taaCodeRepository.saveAll(codes);
+					cnt += codes.size();
+				}
+				
+				MDC.put("insert cnt", "" + cnt);
+			}
 		
-		System.out.println("====================================" + cnt);
+			if(convertMap.containsKey("deleteRows") && ((List)convertMap.get("deleteRows")).size() > 0) {
+				List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("deleteRows");
+				List<WtmTaaCode> codes = new ArrayList();
+				if(iList != null && iList.size() > 0) {
+					for(Map<String, Object> l : iList) {
+						WtmTaaCode code = new WtmTaaCode();
+						code.setTaaCodeId(Long.parseLong(l.get("taaCodeId").toString()));
+						codes.add(code);
+					}
+					taaCodeRepository.deleteAll(codes);
+				}
+				
+				MDC.put("delete cnt", "" + iList.size());
+				cnt += iList.size();
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			logger.warn(e.toString(), e);
+		} finally {
+			logger.debug("setTaaCodeList Service End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			MDC.clear();
+		}
 		return cnt;
 	}
 }
