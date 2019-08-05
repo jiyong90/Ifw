@@ -47,13 +47,26 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	WtmWorkDayResultRepository workDayResultRepo;
 	
 	@Override
-	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("empNo", empNo);
 		
-		return flexEmpMapper.getFlexibleEmpList(paramMap);
+		List<Map<String, Object>> flexibleList = flexEmpMapper.getFlexibleEmpList(paramMap);
+		if(flexibleList!=null && flexibleList.size()>0) {
+			for(Map<String, Object> flex : flexibleList) {
+				if(flex.containsKey("flexibleEmpId") && flex.get("flexibleEmpId")!=null && !"".equals(flex.get("flexibleEmpId")))
+					flex.put("flexibleEmp", getDayWorks(Long.valueOf(flex.get("flexibleEmpId").toString()), userId));
+			}
+		}
+		
+		return flexibleList;
+	}
+	
+	@Override
+	public List<WtmWorkDayResult> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
+		return workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 	}
 	
 	@Override
@@ -242,18 +255,31 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 
 	@Override
 	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date edate, Long userId) {
+		
 		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 		calendar.setEntryEtypeCd(entryTypeCd);
 		calendar.setEntryEdate(edate); 
 		calendar.setUpdateId(userId);
 		workCalendarRepo.save(calendar);
+		//트랜젝션을 묶지 않는다.
+		//타각은 타각대로 저장이 저장적으로 이루어져야 한다.
+		
 	}
 	
 	/**
 	 * 타각시간 기준으로 인정시간 계산
 	 */
-	protected void calcApprDayInfo() {
-		
+	@Transactional
+	protected void calcApprDayInfo(Long tenantId, String enterCd, String ymd, String sabun, String timeTypeCd) {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("timeTypeCd", timeTypeCd);
+		//소정근로시간의 경우 출퇴근 타각기록으로만 판단
+		flexEmpMapper.updateApprDatetimeByYmdAndSabun(paramMap);
+		flexEmpMapper.updateApprMinuteByYmdAndSabun(paramMap);
+		//연장근로의 경우 히스토리 타각기록을 통해 계산이 필요함
 	}
 
 	@Override
