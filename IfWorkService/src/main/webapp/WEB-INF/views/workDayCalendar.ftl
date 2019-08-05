@@ -1,120 +1,12 @@
-<#include "/calendar.ftl">
-<div id="workDayPlan" v-cloak>
-    <div id="sub-nav" class="container-fluid">
-        <form action="">
-            <div class="row no-gutters work-time-wrap">
-                <div class="col-12 col-sm-2 col-xl-1">
-                    <div class="title">현재 근무계획</div>
-                    <div class="desc">기본근무제</div>
-                </div>
-                <div class="col-12 col-sm-2 col-xl-1">
-                    <div class="title">잔여소정근로</div>
-                    <div class="desc">8시간 42분</div>
-                </div>
-                <div class="col-12 col-sm-2 col-xl-1">
-                    <div class="title">잔여연장근로</div>
-                    <div class="desc">4시간</div>
-                </div>
-                <div class="col">
-                </div>
-                <div class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
-                </div>
-            </div>
-            <div class="form-inline work-check-wrap">
-                <span class="title">캘린더 표시</span>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck1">
-                    <label class="custom-control-label" for="customCheck1">회사캘린더</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck2">
-                    <label class="custom-control-label" for="customCheck2">근무계획</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck3">
-                    <label class="custom-control-label" for="customCheck3">근무실적</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck4">
-                    <label class="custom-control-label" for="customCheck4">요약정보로 보기</label>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="container-fluid">
-        <div class="row no-gutters">
-            <div class="col-12 col-md-3 pr-md-3">
-                <div id="flexibleDayPlan" class="white-box-wrap full-height mb-3">
-	                <div class="work-plan-wrap">
-	                    <div class="big-title" v-if="flexibleEmp">
-	                    	{{moment(flexibleEmp.sYmd).format("YYYY년 M월 D일")}} ~ {{moment(flexibleEmp.eYmd).format("YYYY년 M월 D일")}}({{moment(flexibleEmp.eYmd).diff(flexibleEmp.sYmd, 'days')+1}}일)
-	                    </div>
-	                    <div class="inner-wrap">
-	                        <div class="main-title">근무시간표</div>
-	                        <div class="main-desc">기본근무시간표</div>
-	                    </div>
-	                    <div class="inner-wrap" v-if="flexibleEmp.workShm && flexibleEmp.workEhm">
-	                        <div class="main-title">근무시간</div>
-	                        <div class="main-desc">{{moment(flexibleEmp.sYmd+' '+flexibleEmp.workShm).format('HH:mm')}} ~ {{moment(flexibleEmp.sYmd+' '+flexibleEmp.workEhm).format('HH:mm')}}</div>
-	                    </div>
-	                    <div class="inner-wrap" v-if="flexibleEmp.coreShm && flexibleEmp.coreEhm">
-	                        <div class="main-title">코어시간</div>
-	                        <div class="main-desc">{{moment(flexibleEmp.sYmd+' '+flexibleEmp.coreShm).format('HH:mm')}} ~ {{moment(flexibleEmp.sYmd+' '+flexibleEmp.coreEhm).format('HH:mm')}}</div>
-	                    </div>
-	                    <div class="time-input-form">
-	                    	<div class="form-row no-gutters" v-if="Object.keys(selectedWorkday).length>0">
-	                    		<div class="form-group">
-	                                <label for="">{{selectedWorkday.start}} ~ {{selectedWorkday.end}}</label>
-	                            </div>
-	                    	</div>
-	                        <div class="form-row no-gutters">
-	                            <div class="form-group col-5">
-	                                <label for="startTime">출근시간</label>
-	                                <input type="time" class="form-control" id="startTime" placeholder="" @focusout="changeWorkTime">
-	                            </div>
-	                            <div class="form-group col-2 text-center">
-	                                <lable></lable>
-	                                <span>~</span>
-	                            </div>
-	                            <div class="form-group col-5">
-	                                <label for="endTime">퇴근시간</label>
-	                                <input type="time" class="form-control" id="endTime" placeholder="" @focusout="changeWorkTime">
-	                            </div>
-	                        </div>
-	                    </div>
-	                </div>
-	                <div class="sub-wrap">
-	                    <ul class="time-block-list">
-	                        <li>
-	                            <div class="title">총 소정 근로 시간</div>
-	                            <div class="desc">120시간</div>
-	                        </li>
-	                        <li>
-	                            <div class="title">계획 시간</div>
-	                            <div class="desc">42시간</div>
-	                        </li>
-	                    </ul>
-	                </div>
-	                <div class="sub-desc">*연차는 표준근무시간 8시간 인정</div>
-	                <div class="btn-wrap mt-5">
-	                    <button type="button" class="btn btn-apply btn-block btn-lg" @click="saveWorkDayResult">저장</button>
-	                </div>
-	            </div>
-            </div>
-            <div class="col-12 col-md-9">
-                <div class="calendar-wrap">
-                    <div id='calendar-container'>
-                		<!-- <full-calendar ref="fullCalendar" :header="header" :events="events" :eventsources="eventSources" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" ></full-calendar> -->
-                		<full-calendar ref="fullCalendar" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div id="dayCalendar" class="calendar-wrap" v-cloak>
+    <div id='calendar-container'>
+		<!-- <full-calendar ref="fullCalendar" :header="header" :events="events" :eventsources="eventSources" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" ></full-calendar> -->
+		<full-calendar ref="fullCalendar" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">
-   	var workDayPlanVue = new Vue({
-   		el: "#workDayPlan",
+   	var dayCalendarVue = new Vue({
+   		el: "#dayCalendar",
   			components : {
   				FullCalendar : fullCalendarComponent
   		    },
@@ -125,44 +17,29 @@
 			        right: ''
   		    	},
   		    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
-  		    	workTermTime: {}, //선택한 기간의 근무제 정보
-  		    	selectedFlexitime: {}, //적용한 근무제
-  		    	flexibleEmp: {},
   		    	selectedWorkday: {},
   		    	empHolidays: [],
   		    	dayResult: {}, //저장할 근무계획
   		    	dayWorks: [], //저장된 상세 근무계획
-  		    	//events: [],
-  		    	eventSources: [
-  		    		/* {
-  		    	      events: [  
-  		    	        {
-  		    	          start     : '2019-07-19',
-  		    	          rendering: 'background'
-  		    	        }
-  		    	      ],
-  		    	      backgroundColor: 'green',
-  		    	      borderColor: 'red',
-  		    	      textColor: 'yellow'
-  		    	    } */
-  		    	]
+  		    	eventSource: {}
+  		    },
+  		    watch: {
+  		    	selectedWorkday : function(val, oldVal){
+  		    		$("#selectedRange").text(val.start + "~" + val.end);
+  		    	}
   		    },
   		    mounted: function(){
-  		    	//신청서 조회
-				<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
-  		    		this.flexibleEmp = JSON.parse("${flexibleAppl?js_string}");
-  		    		
-  		    		//근무시간 조회
-  		    		this.getWorkDayResult();
-  		    	</#if>
-  		    	
-  		    	//this.getWorkRangeInfo(this.today);
-  		    	this.getWorkDayInfo(this.today);
+  		    	//근무 계획 작성 화면 전환
+         		$("#workRangeInfo").hide();
+         		$("#workDayInfo").hide();
+         		$("#flexibleDayPlan").show();
   		    },
   		    methods : {
   		    	renderCallback: function(){
   		    		//유연근무제 신청 기간 이외의 날짜는 선택하지 못하게 함
   		    		//this.selectAllow();
+  		    		var calendar = this.$refs.fullCalendar.cal;
+  		    		calendarLeftVue.calendar = calendar;
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -313,6 +190,7 @@
 	  	         			events : events,
 	  	         			editable : false
 	  	         		}
+	  	         		$this.eventSource = eMap;
 	  	         		//$this.eventSource['id'] = id;
 	  	         		//$this.eventSource['events'] = events;
  	         			//$this.eventSource['editable'] = false;
@@ -326,9 +204,9 @@
   		    		var $this = this;
   		    		var calendar = $this.$refs.fullCalendar.cal;
   		    		
-  		    		if($this.flexibleEmp.hasOwnProperty('sYmd') && $this.flexibleEmp.hasOwnProperty('eYmd')) {
-	  		    		var sYmd = moment($this.flexibleEmp.sYmd).format('YYYY-MM-DD');
-	  		    		var eYmd = new Date(moment($this.flexibleEmp.eYmd).format('YYYY-MM-DD'));
+  		    		if(calendarLeftVue.flexibleAppl.hasOwnProperty('sYmd') && calendarLeftVue.flexibleAppl.hasOwnProperty('eYmd')) {
+	  		    		var sYmd = moment(calendarLeftVue.flexibleAppl.sYmd).format('YYYY-MM-DD');
+	  		    		var eYmd = new Date(moment(calendarLeftVue.flexibleAppl.eYmd).format('YYYY-MM-DD'));
 	  		    		eYmd.setDate(eYmd.getDate()+1);
 	  		    		eYmd = moment(eYmd).format('YYYY-MM-DD');
 	  		    		
@@ -413,7 +291,11 @@
   	         	},
   	         	changeDayWorks : function(sDate, eDate, dayResult){ //근무시간 변경
   	         		var $this = this;
-  	         		var events = $this.eventSource.events; //등록되어 있는 근무시간
+  	         		var calendar = $this.$refs.fullCalendar.cal;
+  	         		
+  	         		var events = [];
+  	         		if($this.eventSource.hasOwnProperty("events"))
+  	         			events = $this.eventSource.events; //등록되어 있는 근무시간
   	         		
   	         		var prevEvent = []; //출.퇴근 시간이 수정된 날짜를 제외한 이벤트
         			if(events!=null && events.length>0) {
@@ -484,12 +366,12 @@
   	         		var $this = this;
   	         		var calendar = $this.$refs.fullCalendar.cal;
   	         		
-         			var eDate = new Date(moment($this.flexibleEmp.eYmd).format('YYYY-MM-DD'));
+         			var eDate = new Date(moment(calendarLeftVue.flexibleAppl.eYmd).format('YYYY-MM-DD'));
          			eDate.setDate(eDate.getDate()+1);
 					//결재완료된 유연근무제 표기
          			$this.addEvent({
-						id: 'workRange.'+$this.flexibleEmp.applCd+"."+$this.flexibleEmp.applId,
-						start: moment($this.flexibleEmp.sYmd).format('YYYY-MM-DD'),
+						id: 'workRange.'+calendarLeftVue.flexibleAppl.applCd+"."+calendarLeftVue.flexibleAppl.applId,
+						start: moment(calendarLeftVue.flexibleAppl.sYmd).format('YYYY-MM-DD'),
 	  		        	end: moment(eDate).format('YYYY-MM-DD'),
 	  		        	rendering: 'background'
 					});
@@ -510,10 +392,10 @@
          			
          			var calStart = calendar.view.activeStart;
          			var calEnd = calendar.view.activeEnd;
-         			if(moment(calStart).diff($this.flexibleEmp.sYmd)<=0 && moment($this.flexibleEmp.sYmd).diff(calEnd)<=0) {
+         			if(moment(calStart).diff(calendarLeftVue.flexibleAppl.sYmd)<=0 && moment(calendarLeftVue.flexibleAppl.sYmd).diff(calEnd)<=0) {
          				$("#startTime").prop("disabled", false);
 	  		    		$("#endTime").prop("disabled", false);
-         				calendar.select(moment($this.flexibleEmp.sYmd).format('YYYY-MM-DD'));
+         				calendar.select(moment(calendarLeftVue.flexibleAppl.sYmd).format('YYYY-MM-DD'));
          			} else {
          				$this.selectedWorkday = {};
          				$("#startTime").val("");
@@ -524,7 +406,7 @@
   	         	changeWorkTime : function(){ //상세 근무계획 등록
 					var $this = this;
   	         		var selday = $this.selectedWorkday;
-  	         		var flexibleEmp = $this.flexibleEmp;
+  	         		var flexibleEmp = calendarLeftVue.flexibleAppl;
 					var workDaysOpt = $this.selectedFlexitime.workDaysOpt; //근무요일
 		    		//var applTermOpt = $this.selectedFlexitime.applTermOpt; //신청기간
 		    		
@@ -563,9 +445,8 @@
 	    					eTime = moment(moment(date).format('YYYY-MM-DD')+' '+$("#endTime").val()).format('YYYY-MM-DD HH:mm');
 	    				}
   		    		    
-  		    		    
 	    		    	//근무일 기준 근무시간과 코어시간 포함하도록 체크
-  		    			if(	(workStime==''&&workEtime=='' || moment(sTime).diff(workStime)<=0 && moment(workStime).diff(eTime)<=0 && moment(sTime).diff(workEtime)<=0 && moment(workEtime).diff(eTime)<=0)
+  		    			if(	(workStime==''&&workEtime=='' || moment(workStime).diff(sTime)<=0 && moment(eTime).diff(workEtime)<=0 )
   		    					&& (coreStime==''&&coreEtime || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0)) {
   		    		    
 	  		    			var d = new Date(sDate);
@@ -627,7 +508,7 @@
 	         		var $this = this;
 	  	         	
          			var param = {
-         				flexibleEmpId : $this.flexibleEmp.flexibleEmpId
+         				flexibleEmpId : calendarLeftVue.flexibleAppl.flexibleEmpId
 	   		    	};
  	         			
    		    		Util.ajax({
@@ -637,7 +518,6 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
-							//console.log(data);
 							if(data!=null) {
 								$this.dayWorks = data;
 								
@@ -663,7 +543,7 @@
 	         		var $this = this;
 	  	         	
          			var param = {
-         				flexibleEmpId : $this.flexibleEmp.flexibleEmpId,
+         				flexibleEmpId : calendarLeftVue.flexibleAppl.flexibleEmpId,
          				dayResult : $this.dayResult
 	   		    	};
  	         			

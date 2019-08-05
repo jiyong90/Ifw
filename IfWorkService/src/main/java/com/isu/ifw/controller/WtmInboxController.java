@@ -50,7 +50,7 @@ public class WtmInboxController {
 		if(rp!=null && "OK".equals(rp.getStatus())) {
 		
 			try {
-				WtmFlexibleEmp flexibleEmp = flexibleEmpRepo.findByTenantIdAndEnterCdAndSabunAndBetweenDate(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), null));
+				WtmFlexibleEmp flexibleEmp = flexibleEmpRepo.findByTenantIdAndEnterCdAndSabunAndDate(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), null));
 				
 				//유연근무대상자
 				rp.put("flexibleEmp", flexibleEmp);
