@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.isu.ifw.entity.WtmAppl;
+import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.option.vo.ReturnParam;
 
@@ -32,6 +34,43 @@ public class WtmFlexibleApplController {
 	@Autowired
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
+	
+	@Autowired
+	WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
+	
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam flexibleStd(HttpServletRequest request) {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		Map<String, Object> flexibleAppl = null;
+		try {		
+			flexibleAppl = flexibleApplService.getAppl(tenantId, enterCd, null, empNo, new HashMap<String, Object>(), userId);
+			
+			if(flexibleAppl!=null) {
+				rp.put("flexibleAppl", flexibleAppl);
+				
+				if(flexibleAppl.get("flexibleStdMgrId")!=null && !"".equals(flexibleAppl.get("flexibleStdMgrId"))) {
+					Long flexibleStdMgrId = Long.valueOf(flexibleAppl.get("flexibleStdMgrId").toString());
+					WtmFlexibleStdMgr flexibleStdMgr = flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
+					rp.put("flexibleStdMgr", flexibleStdMgr);
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 	
 	@RequestMapping(value="/imsi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam imsiFlexitime(@RequestBody Map<String, Object> paramMap

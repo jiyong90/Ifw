@@ -48,14 +48,15 @@ public class WtmFlexibleEmpController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> flexibleList = null;
 		
 		try {
-			flexibleList = flexibleEmpService.getFlexibleEmpList(tenantId, enterCd, empNo, paramMap);
+			flexibleList = flexibleEmpService.getFlexibleEmpList(tenantId, enterCd, empNo, paramMap, userId);
 			rp.put("flexibleList", flexibleList);
 		} catch(Exception e) {
 			e.printStackTrace();

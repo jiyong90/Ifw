@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,11 @@ import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
-import com.isu.ifw.vo.WtmFlexibleApplVO;
+import com.isu.ifw.service.WtmFlexibleEmpService;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
@@ -47,6 +50,10 @@ public class ViewController {
 	@Autowired
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
+	
+	@Autowired
+	@Qualifier("flexibleEmpService")
+	WtmFlexibleEmpService flexibleEmpService;
 	
 	@Resource
 	TenantDao tenantDao;
@@ -150,6 +157,41 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
+		if("workCalendar".equals(viewPage)){
+			if(request.getParameter("type")!=null) {
+				String calendarType = request.getParameter("type").toString();
+				mv.addObject("calendar", "work"+ calendarType +"Calendar");
+			}
+			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
+		} else {
+			return mv;
+		}
+		
+	}
+	
+	//관리자페이지는 주소 분리
+	@RequestMapping(value = "/console/{tsId}/views/mgr/{viewPage}", method = RequestMethod.GET)
+	public ModelAndView mgrviews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
+		ModelAndView mv = new ModelAndView("template");
+		
+		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String loginId = sessionData.get("loginId").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		mv.addObject("tsId", tsId);
+		mv.addObject("enterCd", enterCd);
+		mv.addObject("empNo", empNo);
+		mv.addObject("loginId", loginId);
+		mv.addObject("pageName", "mgr/"+viewPage);
+		
+		Calendar date = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date.getTime());
+		mv.addObject("today", today);
+		
 		if("workCalendar".equals(viewPage) || "workDayPlan".equals(viewPage)){
 			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		} else {
@@ -181,4 +223,31 @@ public class ViewController {
 		return mv;
 	}
 	
+	protected ModelAndView workTimePlanPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, Long userId, HttpServletRequest request) {
+		List<WtmWorkDayResult> workDayResult = null;
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {	
+			String ymd = WtmUtil.parseDateStr(new Date(), null);
+			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
+				ymd = request.getParameter("date");
+			}
+			
+			workDayResult = flexibleEmpService.getWorkDayResult(tenantId, enterCd, empNo, ymd, userId);
+			
+			if(workDayResult!=null && workDayResult.size()>0) {
+				
+				for(WtmWorkDayResult dayResult : workDayResult) {
+					System.out.println("date : " + dayResult.getPlanSdate());
+					System.out.println("date : " + dayResult.getPlanEdate());
+				}
+				
+				mv.addObject("workDayResult", workDayResult);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return mv;
+	}
 }

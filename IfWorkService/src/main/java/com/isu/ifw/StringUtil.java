@@ -1063,5 +1063,18 @@ public class StringUtil {
         }
  
     }
-	
+    
+	/**
+     * singlequot 변환(ibsheet사용)
+     * 
+     * @param 체크할 text
+     * @param 
+     * @return 
+     */
+	public synchronized static String replaceSingleQuot(String str) {
+		if(null == str) return "";
+		if(str.length() < 1 ) return str;
+		str = str.replaceAll("\'", "''");
+		return str;
+	}
 }
