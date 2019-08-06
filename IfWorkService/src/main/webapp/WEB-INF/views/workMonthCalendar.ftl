@@ -55,8 +55,9 @@
 							if(data.companyCalendar!=null) {
 								data.companyCalendar.map(function(cal){
 									if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
+										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span[name=companyHoliday]").remove();
 										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
-										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend(cal.holidayNm);
+										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday'>"+cal.holidayNm+"</span>");
 									}
 								});
 							}

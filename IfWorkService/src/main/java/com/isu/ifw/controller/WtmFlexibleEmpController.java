@@ -131,6 +131,20 @@ public class WtmFlexibleEmpController {
 		return rp;
 	}
 	
+	@RequestMapping(value = "/dayResults",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getDayResults(@RequestParam Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		
+		validateParamMap(paramMap, "ymd");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+
+		return flexibleEmpService.getWorkDayResult(tenantId, enterCd, empNo, paramMap.get("ymd").toString(), userId);
+	}
 	
 	@RequestMapping(value = "/dayWorks",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<WtmDayWorkVO> getDayWorks(@RequestParam Map<String, Object> paramMap
