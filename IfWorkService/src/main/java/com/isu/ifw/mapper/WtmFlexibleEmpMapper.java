@@ -35,9 +35,33 @@ public interface WtmFlexibleEmpMapper {
 	public void updateHolidayYnOFWorkCalendar(Map<String, Object> paramMap);
 	
 	public void updatePlanMinute(@Param("flexibleEmpId") Long flexibleEmpId);
+	/**
+	 * 인정시간 갱신
+	 * @param paramMap
+	 */
+	public void updateApprDatetimeByYmdAndSabun(Map<String, Object> paramMap);
+	/**
+	 * 인정시간의 분 계산 - 휴게시간 제외
+	 * @param paramMap
+	 */
+	public void updateApprMinuteByYmdAndSabun(Map<String, Object> paramMap);
 	
 	public Map<String, Object> checkBaseWorktime(@Param("flexibleEmpId") Long flexibleEmpId);
 	
 	public List<Map<String, Object>> getWorktimePlan(@Param("flexibleEmpId") Long flexibleEmpId);
 	
+	/**
+	 * 근무제 기간에서 특정일 포함 이전 근무시간 합(분) - 인정 분 이 없을 경우 계획 분으로   
+	 * @param paramMap - tenantId, enterCd, sabun, ymd
+	 * @return { totalApprMinute : 22 }
+	 */
+	public Map<String, Object> getTotalApprMinute(Map<String, Object> paramMap);
+	
+	/**
+	 * 근무제 기간에서 특정일 이후부터 근무제 적용 종료기간 까지의 코어시간의 합을 가지고 온다.
+	 * 사용처 : 연장근무 신청 시 소정근로 선 소진사용여부에 따라 사용할 수 있다. 
+	 * @param paramMap - tenantId, enterCd, sabun,  ymd
+	 * @return { coreHm : 22 }
+	 */
+	public Map<String, Object> getTotalCoretime(Map<String, Object> paramMap);
 }

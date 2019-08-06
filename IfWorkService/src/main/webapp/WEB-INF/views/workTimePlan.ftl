@@ -100,10 +100,6 @@
                                     <span class="desc"></span>
                                 </li>
                                 <li>
-                                    <span class="title">근무시간표</span>
-                                    <span class="desc"></span>
-                                </li>
-                                <li>
                                     <span class="title">출/퇴근 시각</span>
                                     <span class="desc"></span>
                                 </li>
@@ -127,7 +123,6 @@
             <div class="col-12 col-md-9">
                 <div class="calendar-wrap">
                     <div id='calendar-container'>
-                		<!-- <full-calendar ref="fullCalendar" :header="header" :events="events" :eventsources="eventSources" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" ></full-calendar> -->
                 		<full-calendar ref="fullCalendar" :header="header" :defaultview="view" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
                     </div>
                 </div>
@@ -149,13 +144,15 @@
   		    	},
   		    	view: 'timeGridDay',
   		    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
-  		    	workTermTime: {} //선택한 기간의 근무제 정보
+  		    	workTermTime: {}, //선택한 기간의 근무제 정보
+  		    	workDayResult: []
   		    },
   		    mounted: function(){
   		    	
   		    },
   		    methods : {
   		    	renderCallback: function(){
+  		    		
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -216,6 +213,13 @@
   	  	         			calendar.addEvent(Obj);
   	  	         		});
   	         		}
+  	         	},
+  	         	addWorkDayResult: function(){
+  	         		<#if workDayResult?? >
+	  		    		<#list workDayResult as dayResult>
+							var
+			  		  	</#list>
+			    	</#if>
   	         	}
   		    }
    	});

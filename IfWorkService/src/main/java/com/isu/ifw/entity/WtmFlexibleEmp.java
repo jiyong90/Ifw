@@ -37,6 +37,10 @@ public class WtmFlexibleEmp {
 	private String eymd;
 	@Column(name="WORK_TYPE_CD")
 	private String workTypeCd;
+	
+	@Column(name="WORK_MINUTE")
+	private int workMinute;
+	
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -93,6 +97,13 @@ public class WtmFlexibleEmp {
 	}
 	public void setWorkTypeCd(String workTypeCd) {
 		this.workTypeCd = workTypeCd;
+	}
+	
+	public int getWorkMinute() {
+		return workMinute;
+	}
+	public void setWorkMinute(int workMinute) {
+		this.workMinute = workMinute;
 	}
 	public String getNote() {
 		return note;

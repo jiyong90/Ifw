@@ -102,6 +102,8 @@
     	     , C.UPDATE_ID = #{userId}
 		 WHERE C.FLEXIBLE_EMP_ID = #{flexibleEmpId} 
     </update>
+    
+     
     <update id="updatePlanMinute" parameterType="Long">
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
@@ -127,6 +129,52 @@
 			) XX
 			ON X.WORK_CALENDAR_ID = XX.WORK_CALENDAR_ID
 		   SET X.PLAN_MINUTE = XX.CM
+			;
+    </update>
+    <update id="updateApprDatetimeByYmdAndSabun" parameterType="map">
+    	UPDATE WTM_FLEXIBLE_STD_MGR M
+		  JOIN WTM_FLEXIBLE_EMP E
+		    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+		  JOIN WTM_WORK_CALENDAR C
+		    ON E.FLEXIBLE_EMP_ID = C.FLEXIBLE_EMP_ID
+		  JOIN WTM_WORK_DAY_RESULT R
+		    ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
+		   SET R.APPR_SDATE = F_WTM_CALC_APPR_DATE(C.ENTRY_SDATE, R.PLAN_SDATE, M.UNIT_MINUTE, 'S')
+			 , R.APPR_EDATE = F_WTM_CALC_APPR_DATE(C.ENTRY_EDATE, R.PLAN_EDATE, M.UNIT_MINUTE, 'E')
+		 WHERE C.TENANT_ID = #{tenantId}
+		   AND C.ENTER_CD = #{enterCd}
+		   AND C.YMD = #{ymd}
+		   AND C.SABUN = #{sabun}
+		   AND R.TIME_TYPE_CD = #{timeTypeCd}
+    </update>
+    <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
+    	UPDATE WTM_WORK_DAY_RESULT X 
+    	  JOIN (
+			SELECT D.WORK_CALENDAR_ID  
+				 , F_WTM_CALC_MINUTE( date_format(D.APPR_SDATE, '%H%i') ,  date_format(D.APPR_EDATE, '%H%i'), '','', '') -
+				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.APPR_SDATE, '%H%i') ,  date_format(D.APPR_EDATE, '%H%i'), '' )) AS CM
+			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_WORK_CALENDAR C
+			    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
+			   AND E.SABUN = C.SABUN
+			  JOIN WTM_WORK_DAY_RESULT D 
+			    ON C.WORK_CALENDAR_ID = D.WORK_CALENDAR_ID
+			  JOIN WTM_TIME_CD_MGR T
+			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			  JOIN WTM_TIME_BREAK_MGR B
+			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+			   AND E.TENANT_ID = #{tenantId}
+			   AND E.ENTER_CD = #{enterCd}
+			   AND E.SABUN = #{sabun}
+			   AND C.YMD = #{ymd}
+			   AND D.TIME_TYPE_CD = #{timeTypeCd}
+			   AND (B.SHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i') 
+			     OR B.EHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i'))
+			 GROUP BY D.WORK_DAY_RESULT_ID
+			) XX
+			ON X.WORK_CALENDAR_ID = XX.WORK_CALENDAR_ID
+		   SET X.APPR_MINUTE = XX.CM
 			;
     </update>
     
@@ -159,4 +207,51 @@
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 		 ORDER BY C.YMD
     </select>
+    <!--
+    	근무제 기간에서 특정일 포함 이전 근무시간 합(분) - 인정 분 이 없을 경우 계획 분으로   
+     -->
+    <select id="getTotalApprMinute" parameterType="map" resultType="map">
+    	 SELECT SUM( CASE WHEN  R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END) AS totalApprMinute
+		   FROM WTM_FLEXIBLE_STD_MGR M
+		   JOIN WTM_FLEXIBLE_EMP E
+		     ON M.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
+		   JOIN WTM_WORK_CALENDAR C
+			 ON E.FLEXIBLE_EMP_ID = C.FLEXIBLE_EMP_ID
+		   JOIN  WTM_WORK_DAY_RESULT R
+		     ON R.WORK_CALENDAR_ID = C.WORK_CALENDAR_ID
+		  WHERE C.YMD <= #{ymd} 
+		    AND #{ymd}  BETWEEN E.SYMD AND E.EYMD
+		    AND E.SABUN = #{sabun}
+		    AND E.TENANT_ID = #{tenantId}
+		    AND E.ENTER_CD = #{enterCd} 
+		  GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN
+    </select>
+    <!--
+   		근무제 기간에서 특정일 이후부터 근무제 적용 종료기간 까지의 코어시간의 합을 가지고 온다. 
+   		사용처 : 연장근무 신청 시 소정근로 선 소진사용여부에 따라 사용할 수 있다. 
+     -->
+	<select id="getTotalCoretime" parameterType="map" resultType="map">
+		SELECT SUM(X.CORE_HM) AS coreHm FROM (
+ 			SELECT  C.YMD, M.CORE_SHM,  M.CORE_EHM, F_WTM_CALC_MINUTE(M.CORE_SHM,  M.CORE_EHM, '','', '') -
+  					SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, M.CORE_SHM,  M.CORE_EHM, '' )) AS CORE_HM
+ 			  FROM WTM_FLEXIBLE_STD_MGR M
+ 			  JOIN WTM_FLEXIBLE_EMP E
+ 			    ON M.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
+  			  JOIN WTM_WORK_CALENDAR C
+			    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
+   			   AND E.SABUN = C.SABUN 
+  			  JOIN WTM_TIME_CD_MGR T
+			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+  			  JOIN WTM_TIME_BREAK_MGR B
+				ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+			 WHERE C.YMD > #{ymd} 
+ 		  	   AND #{ymd}  BETWEEN E.SYMD AND E.EYMD
+ 			   AND E.SABUN = #{sabun}
+ 			   AND E.TENANT_ID = #{tenantId}
+ 			   AND E.ENTER_CD = #{enterCd}
+   			   AND (B.SHM BETWEEN M.CORE_SHM  AND M.CORE_EHM 
+	 				OR B.EHM BETWEEN M.CORE_SHM  AND M.CORE_EHM)
+ 			 GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN, C.YMD
+ 		) X
+  </select>
 </mapper>

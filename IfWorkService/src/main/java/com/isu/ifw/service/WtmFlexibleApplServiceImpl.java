@@ -16,6 +16,7 @@ import com.isu.ifw.entity.WtmApplLine;
 import com.isu.ifw.entity.WtmFlexibleAppl;
 import com.isu.ifw.entity.WtmFlexibleDayPlan;
 import com.isu.ifw.entity.WtmFlexibleEmp;
+import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmPropertie;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
@@ -26,6 +27,7 @@ import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.repository.WtmFlexibleDayPlanRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
+import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
@@ -48,6 +50,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmFlexibleApplRepository wtmFlexibleApplRepo;
+	
+	@Autowired
+	WtmFlexibleStdMgrRepository flexStdMgrRepo;
 	
 	@Autowired
 	WtmFlexibleDayPlanRepository wtmFlexibleDayPlanRepo;
@@ -248,6 +253,13 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			emp.setWorkTypeCd(appl.getApplCd());
 			
 			emp = wtmFlexibleEmpRepo.save(emp);
+			
+			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
+			paramMap.putAll(stdMgr.getWorkDaysOpt());
+			paramMap.put("flexibleEmpId", emp.getFlexibleStdMgrId());
+			paramMap.put("userId", userId);
+			//근무제 기간의 총 소정근로 시간을 업데이트 한다.
+			flexApplMapper.updateWorkMinuteOfWtmFlexibleEmp(paramMap);
 		}
 		
 		
@@ -459,7 +471,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public ReturnParam preCheck(Long tenantId, String enterCd, Long applId, String workTypeCd,
+	public ReturnParam preCheck(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		return null;
