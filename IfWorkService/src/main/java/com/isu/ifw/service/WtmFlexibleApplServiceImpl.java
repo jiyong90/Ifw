@@ -471,7 +471,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public ReturnParam preCheck(Long tenantId, String enterCd, Long applId, String workTypeCd,
+	public ReturnParam preCheck(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		return null;

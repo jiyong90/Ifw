@@ -11,12 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
-import com.isu.ifw.entity.WtmFlexibleAppl;
+import com.isu.ifw.entity.WtmFlexibleEmp;
+import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.mapper.WtmApplMapper;
+import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
+import com.isu.ifw.repository.WtmFlexibleEmpRepository;
+import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.util.WtmUtil;
@@ -42,6 +46,14 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	WtmApplCodeRepository wtmApplCodeRepo;
 	@Autowired
 	WtmOtApplRepository wtmOtApplRepo;
+	@Autowired
+	WtmFlexibleEmpRepository wtmFlexibleEmpRepo;
+	@Autowired
+	WtmFlexibleStdMgrRepository wtmFlexibleStdMgrRepo;
+	
+	@Autowired
+	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
+
 	
 	@Override
 	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun,
@@ -220,13 +232,42 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public ReturnParam preCheck(Long tenantId, String enterCd, Long applId, String workTypeCd,
+	public ReturnParam preCheck(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
+		ReturnParam rp = new ReturnParam();
+		String ymd = paramMap.get("ymd").toString();
+		
+		WtmFlexibleEmp emp = wtmFlexibleEmpRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, sabun, ymd);
 
 		//연장근무 신청 시 소정근로 선 소진 여부를 체크한다.
-		//선소진시
-		//코어타임을 제외한 잔여 소정근로시간을 알려준다
-		return null;
+		WtmFlexibleStdMgr flexibleStdMgr = wtmFlexibleStdMgrRepo.findById(emp.getFlexibleStdMgrId()).get();
+		//선 소진 여부
+		String exhaustionYn = flexibleStdMgr.getExhaustionYn();
+		if(exhaustionYn.equals("Y")) {
+			//선소진시
+			//코어타임을 제외한 잔여 소정근로시간을 알려준다
+			//근무제 기간 내의 총 소정근로 시간
+			int workMinute = emp.getWorkMinute();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			
+			Map<String, Object> resultMap = wtmFlexibleEmpMapper.getTotalApprMinute(paramMap); //totalApprMinute
+			resultMap.putAll(wtmFlexibleEmpMapper.getTotalCoretime(paramMap)); //coreHm
+			int apprMinute = Integer.parseInt(resultMap.get("totalApprMinute").toString());
+			int coreMinute = Integer.parseInt(resultMap.get("coreHm").toString());
+			//근무제 기간 내 총 소정근로 시간 > 연장근무신청일 포함 이전일의 인정소정근로시간(인정소정근로시간이 없을 경우 계획소정근로 시간) + 연장근무신청일 이후의 코어타임 시간			
+			if(workMinute > apprMinute + coreMinute) {
+				int baseWorkMinute = workMinute - apprMinute - coreMinute;
+				rp.setFail("필수 근무시간을 제외한 " + baseWorkMinute + "분의 소정근로시간을 선 소진 후 연장근무를 신청할 수 있습니다.");
+				return rp;
+			}
+		}else {
+			rp.setSuccess("");
+		}
+		
+		return rp;
 	}
 
 	
