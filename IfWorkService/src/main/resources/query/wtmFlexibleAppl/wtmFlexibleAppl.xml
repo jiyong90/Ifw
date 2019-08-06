@@ -45,4 +45,18 @@
 											   GROUP BY A.APPL_SABUN )	   
 	        ]]>
     </select>
+    <update id="updateWorkMinuteOfWtmFlexibleEmp" parameterType="map">
+    	<![CDATA[
+	    	UPDATE WTM_FLEXIBLE_EMP E
+			   SET E.WORK_MINUTE = (
+				SELECT SUM(CASE F_WTM_HOLIDAY_YN(D.SUN_YMD, #{1}, #{2}, #{3}, #{4}, #{5}, #{6}, #{7}) WHEN 'Y' THEN 0 WHEN 'N' THEN 1 END * CAST(P.INFO_VALUE AS SIGNED) * 60)
+				  FROM WTM_DAY_MGR D
+				  JOIN WTM_PROPERTIE P
+				    ON 1=1
+				   AND P.INFO_KEY = 'OPTION_DEFAULT_WORKTIME'
+				 WHERE D.SUN_YMD BETWEEN E.SYMD AND E.EYMD
+				)
+			 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+		 ]]>
+    </update>
 </mapper>

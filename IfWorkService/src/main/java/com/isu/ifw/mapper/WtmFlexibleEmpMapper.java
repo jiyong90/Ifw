@@ -35,6 +35,16 @@ public interface WtmFlexibleEmpMapper {
 	public void updateHolidayYnOFWorkCalendar(Map<String, Object> paramMap);
 	
 	public void updatePlanMinute(@Param("flexibleEmpId") Long flexibleEmpId);
+	/**
+	 * 인정시간 갱신
+	 * @param paramMap
+	 */
+	public void updateApprDatetimeByYmdAndSabun(Map<String, Object> paramMap);
+	/**
+	 * 인정시간의 분 계산 - 휴게시간 제외
+	 * @param paramMap
+	 */
+	public void updateApprMinuteByYmdAndSabun(Map<String, Object> paramMap);
 	
 	public Map<String, Object> checkBaseWorktime(@Param("flexibleEmpId") Long flexibleEmpId);
 	
