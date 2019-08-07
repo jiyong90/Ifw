@@ -235,11 +235,12 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	public ReturnParam preCheck(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
 		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
 		String ymd = paramMap.get("ymd").toString();
 		
 		WtmFlexibleEmp emp = wtmFlexibleEmpRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, sabun, ymd);
 
-		//연장근무 신청 시 소정근로 선 소진 여부를 체크한다.
+		//1. 연장근무 신청 시 소정근로 선 소진 여부를 체크한다.
 		WtmFlexibleStdMgr flexibleStdMgr = wtmFlexibleStdMgrRepo.findById(emp.getFlexibleStdMgrId()).get();
 		//선 소진 여부
 		String exhaustionYn = flexibleStdMgr.getExhaustionYn();
@@ -263,9 +264,10 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				rp.setFail("필수 근무시간을 제외한 " + baseWorkMinute + "분의 소정근로시간을 선 소진 후 연장근무를 신청할 수 있습니다.");
 				return rp;
 			}
-		}else {
-			rp.setSuccess("");
 		}
+		
+		//2.연장근무 가능시간 초과 체크
+		
 		
 		return rp;
 	}

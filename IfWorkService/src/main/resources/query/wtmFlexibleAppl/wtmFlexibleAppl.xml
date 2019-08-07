@@ -47,16 +47,48 @@
     </select>
     <update id="updateWorkMinuteOfWtmFlexibleEmp" parameterType="map">
     	<![CDATA[
-	    	UPDATE WTM_FLEXIBLE_EMP E
-			   SET E.WORK_MINUTE = (
-				SELECT SUM(CASE F_WTM_HOLIDAY_YN(D.SUN_YMD, #{1}, #{2}, #{3}, #{4}, #{5}, #{6}, #{7}) WHEN 'Y' THEN 0 WHEN 'N' THEN 1 END * CAST(P.INFO_VALUE AS SIGNED) * 60)
-				  FROM WTM_DAY_MGR D
-				  JOIN WTM_PROPERTIE P
-				    ON 1=1
-				   AND P.INFO_KEY = 'OPTION_DEFAULT_WORKTIME'
-				 WHERE D.SUN_YMD BETWEEN E.SYMD AND E.EYMD
-				)
-			 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+	    	UPDATE WTM_FLEXIBLE_EMP XX
+			   SET XX.WORK_MINUTE = (
+			   		SELECT FLOOR(X.C) + ( ( X.C -  FLOOR(X.C)) * 60 ) FROM (
+						SELECT SUM(CASE F_WTM_HOLIDAY_YN(D.SUN_YMD, #{1}, #{2}, #{3}, #{4}, #{5}, #{6}, #{7}) WHEN 'Y' THEN 0 WHEN 'N' THEN 1 END * CAST(P.INFO_VALUE AS SIGNED) / 7 * 60) AS C
+						  FROM WTM_FLEXIBLE_EMP E
+				    	  JOIN WTM_FLEXIBLE_STD_MGR M
+				    	    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+						  JOIN WTM_DAY_MGR D
+						    ON D.SUN_YMD BETWEEN E.SYMD AND E.EYMD
+						  JOIN WTM_PROPERTIE P
+						    ON E.TENANT_ID = P.TENANT_ID
+						   AND E.ENTER_CD = P.ENTER_CD
+						   AND P.INFO_KEY = 'OPTION_AVG_WORKTIME_1WEEK'
+						 WHERE E.TENANT_ID = #{tenantId}
+						   AND E.ENTER_CD = #{enterCd}
+						   AND E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+						   AND ((M.HOL_EXCEPT_YN = 'Y' AND D.SUN_YMD NOT IN (SELECT H.HOLIDAY_YMD FROM WTM_HOLIDAY_MGR H WHERE H.TENANT_ID = P.TENANT_ID AND H.ENTER_CD = P.ENTER_CD))
+						        OR
+						        (M.HOL_EXCEPT_YN IS NULL OR M.HOL_EXCEPT_YN != 'Y'))
+					) X
+				),
+				XX.OT_MINUTE = (
+			   		SELECT FLOOR(X.C) + ( ( X.C -  FLOOR(X.C)) * 60 ) FROM (
+						SELECT SUM(CASE F_WTM_HOLIDAY_YN(D.SUN_YMD, #{1}, #{2}, #{3}, #{4}, #{5}, #{6}, #{7}) WHEN 'Y' THEN 0 WHEN 'N' THEN 1 END * CAST(P.INFO_VALUE AS SIGNED) / 7 * 60) AS C
+						  FROM WTM_FLEXIBLE_EMP E
+				    	  JOIN WTM_FLEXIBLE_STD_MGR M
+				    	    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+						  JOIN WTM_DAY_MGR D
+						    ON D.SUN_YMD BETWEEN E.SYMD AND E.EYMD
+						  JOIN WTM_PROPERTIE P
+						    ON E.TENANT_ID = P.TENANT_ID
+						   AND E.ENTER_CD = P.ENTER_CD
+						   AND P.INFO_KEY = 'OPTION_MAX_WORKTIME_ADD'
+						 WHERE E.TENANT_ID = #{tenantId}
+						   AND E.ENTER_CD = #{enterCd}
+						   AND E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+						   AND ((M.HOL_EXCEPT_YN = 'Y' AND D.SUN_YMD NOT IN (SELECT H.HOLIDAY_YMD FROM WTM_HOLIDAY_MGR H WHERE H.TENANT_ID = P.TENANT_ID AND H.ENTER_CD = P.ENTER_CD))
+						        OR
+						        (M.HOL_EXCEPT_YN IS NULL OR M.HOL_EXCEPT_YN != 'Y'))
+					) X
+				) 
+			 WHERE XX.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 		 ]]>
     </update>
 </mapper>
