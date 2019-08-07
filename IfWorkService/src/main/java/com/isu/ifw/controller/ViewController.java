@@ -163,6 +163,7 @@ public class ViewController {
 				mv.addObject("workday", workday); 
 			}
 			
+			System.out.println("calendarType : " + request.getParameter("calendarType"));
 			if(request.getParameter("calendarType")!=null) {
 				String calendarType = request.getParameter("calendarType").toString();
 				mv.addObject("calendar", "work"+ calendarType +"Calendar");
