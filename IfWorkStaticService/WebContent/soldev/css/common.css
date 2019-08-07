@@ -514,9 +514,10 @@ box-sizing: border-box;
 /* .modal-app-wrap .form-control{height:calc(1.5em + .75rem - 2px);} */
 .modal-app-wrap .inner-wrap{margin-top:14px;}
 .modal-app-wrap .inner-wrap:first-child{margin-top:0px;}
+.modal-app-wrap .radio-toggle-wrap{display:none;}
 .modal-app-wrap .big-title{font-size: 14px;font-weight: bold;line-height: 1.43;letter-spacing: -0.7px;color: #292944;}
-.modal-app-wrap .title,
-.modal-app-wrap label{font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;color: #6b6b80;}
+.modal-app-wrap .title{font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;color: #6b6b80;}
+.modal-app-wrap label{margin-bottom:6px; font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;color: #6b6b80;}
 .modal-app-wrap .custom-radio label{font-size: 14px;line-height: 1.5;letter-spacing: 0px;color: #292944;}
 .modal-app-wrap .desc{font-size: 14px;line-height: 1.43;color: #292944;}
 .modal-app-wrap .sub-desc {margin-bottom:8px; font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;color: #6b6b80;}
@@ -524,8 +525,8 @@ box-sizing: border-box;
 .modal-app-wrap hr.bar{margin-top:20px; margin-bottom:-10px;}
 .modal-app-wrap .time-wrap{margin-right: 16px; font-size:0px;}
 .modal-app-wrap .date-wrap{font-size:0px;}
-.modal-app-wrap .date-wrap span{font-size:14px;}
-.modal-app-wrap .date-wrap .sub-time{font-weight: bold;}
+.modal-app-wrap .date-wrap span{font-size:14px; letter-spacing: 0px;}
+.modal-app-wrap .date-wrap .sub-time{font-weight: bold; letter-spacing: -1px;}
 .modal-app-wrap .date-wrap .start-time::before,
 .modal-app-wrap .date-wrap .end-time::before,
 .modal-app-wrap .date-wrap .sub-time::before{
@@ -539,9 +540,12 @@ box-sizing: border-box;
 }
 .modal-app-wrap .info-box{padding:8px 9px;background-color:#f3f3f3;}
 .modal-app-wrap .info-box .title {font-size: 12px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
-.modal-app-wrap .info-box .desc {position:relative; margin-top:4px; font-size: 12px;line-height: 1.5;letter-spacing: -0.36px;color: #292944;}
-.modal-app-wrap .info-box .desc .guide {position: absolute; top:0; right:42px; }
+.modal-app-wrap .info-box .desc {position:relative; margin-top:4px; font-size: 12px;line-height: 1.5;letter-spacing: 0px;color: #292944;}
+.modal-app-wrap .info-box .desc .guide {position: absolute; top:0; right:42px; letter-spacing: 0px;}
 
+.modal-app-wrap .btn-wrap{margin-top:10px;}
+.modal-app-wrap .btn-wrap .btn-plus{padding:7px 25px; border-radius:17px; background-color:#1f3b78; color:#ffffff;font-size: 14px;letter-spacing: -0.7px;}
+.modal-app-wrap .btn-wrap .btn-plus i.fas{color: #ffffff;}
 
 .modal-app-wrap i.fas{
     display: inline-block;
@@ -566,6 +570,13 @@ No media query for `xs` since this is the default in Bootstrap */
   .white-box-wrap{
     height: auto;
   }
+  .modal-app-wrap .info-box .desc .guide {
+    position: static;
+    top: 0;
+    right: 0;
+    display:block;
+  }
+}
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 1023px) {
