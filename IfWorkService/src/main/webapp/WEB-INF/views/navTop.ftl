@@ -51,10 +51,10 @@ $(document).ready(function(){
 						$this.inboxCount = data.inboxCount;
 						//$this.data = data;
 						
-						if(data.planYn) {
+						if(data.workPlan) {
 							$this.inboxCount++;
 							inboxVue.inboxCount = $this.inboxCount;
-							inboxVue.planYn = data.planYn;
+							inboxVue.workPlan = data.workPlan;
 						}
 					}
 					

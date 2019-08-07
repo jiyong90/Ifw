@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.isu.ifw.entity.WtmAppl;
@@ -27,6 +28,7 @@ import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
 
+@Service("wtmOtApplService")
 public class WtmOtApplServiceImpl implements WtmApplService {
 
 	@Autowired
@@ -56,8 +58,14 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 
 	
 	@Override
-	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun,
-			Map<String, Object> paramMap, Long userId) {
+	public Map<String, Object> getAppl(Long applId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap,
+			Long userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

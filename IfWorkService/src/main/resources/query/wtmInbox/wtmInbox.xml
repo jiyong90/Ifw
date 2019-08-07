@@ -9,7 +9,8 @@
      -->
 	<select id="getToDoPlanDays" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT F_WTM_DATE_DIFF(E.EYMD, E.SYMD) - COUNT(*) AS toDoPlanDays
+			SELECT E.SYMD as sYmd
+			     , F_WTM_DATE_DIFF(E.EYMD, E.SYMD) - COUNT(*) AS toDoPlanDays
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_WORK_CALENDAR C
 			    ON E.TENANT_ID = C.TENANT_ID

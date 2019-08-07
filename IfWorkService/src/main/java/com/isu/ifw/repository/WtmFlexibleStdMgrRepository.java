@@ -8,4 +8,5 @@ import com.isu.ifw.entity.WtmFlexibleStdMgr;
 @Repository
 public interface WtmFlexibleStdMgrRepository extends JpaRepository<WtmFlexibleStdMgr, Long> {
 
+	public WtmFlexibleStdMgr findByTenantIdAndEnterCdAndWorkTypeCd(Long tenantId, String enterCd, String workTypeCd);
 }

@@ -3,7 +3,6 @@ package com.isu.ifw.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +27,9 @@ import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
-import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
-import com.isu.ifw.util.WtmUtil;
 import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
@@ -215,17 +212,24 @@ public class ViewController {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {		
-			flexibleAppl = flexibleApplService.getAppl(tenantId, enterCd, null, empNo, new HashMap<String, Object>(), userId);
+			WtmFlexibleStdMgr flexibleStdMgr = null;
+			//근무제 마지막 신청정보
+			flexibleAppl = flexibleApplService.getLastAppl(tenantId, enterCd, empNo, new HashMap<String, Object>(), userId);
 			
 			if(flexibleAppl!=null) {
 				mv.addObject("flexibleAppl", mapper.writeValueAsString(flexibleAppl));
 				
 				if(flexibleAppl.get("flexibleStdMgrId")!=null && !"".equals(flexibleAppl.get("flexibleStdMgrId"))) {
 					Long flexibleStdMgrId = Long.valueOf(flexibleAppl.get("flexibleStdMgrId").toString());
-					WtmFlexibleStdMgr flexibleStdMgr = flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
-					mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
+					flexibleStdMgr = flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
 				}
+			} else {
+				//기본근무
+				flexibleStdMgr = flexibleStdMgrRepo.findByTenantIdAndEnterCdAndWorkTypeCd(tenantId, enterCd, "BASE");
 			}
+			
+			mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

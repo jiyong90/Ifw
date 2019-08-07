@@ -91,7 +91,7 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
-		boolean planYn = false;
+		Map<String, Object> toDoPlanDays = null;
 		int inboxCount = 0;
 		try {
 			//유연근무제 근무 계획 작성 여부
@@ -100,13 +100,7 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("sabun", sabun);
 			paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
-			Map<String, Object> toDoPlanDays = inboxMapper.getToDoPlanDays(paramMap);
-			if(toDoPlanDays!=null && toDoPlanDays.get("toDoPlanDays")!=null && !"".equals(toDoPlanDays.get("toDoPlanDays"))) {
-				int days = Integer.valueOf(toDoPlanDays.get("toDoPlanDays").toString());
-				if(days>0) {
-					planYn = true;
-				}
-			} 
+			toDoPlanDays = inboxMapper.getToDoPlanDays(paramMap);
 			
 			//알림 카운트
 			inboxCount = inboxRepository.countByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
@@ -116,8 +110,8 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 			return rp;
 		}
 		
-		//근무 계획 작성 알림 카운트
-		rp.put("planYn", planYn);
+		//근무 계획 작성 알림
+		rp.put("workPlan", toDoPlanDays);
 		
 		//알림 카운트
 		rp.put("inboxCount", inboxCount);

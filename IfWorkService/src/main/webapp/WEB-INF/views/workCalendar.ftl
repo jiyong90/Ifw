@@ -211,13 +211,13 @@
                     <div class="work-plan-wrap">
                         <div class="main-wrap">
                             <div class="main-title">해당일의 근무계획 구분</div>
-                            <div class="main-desc">{{flexitime.flexibleNm}}</div>
+                            <div class="main-desc">{{calendarTopVue.flexibleStd.flexibleNm}}</div>
                             <ul class="time-list">
                                 <li>
                                     <span class="title">근무가능시간</span>
                                     <span class="desc">
-                                    	<template v-if="flexitime.workShm && flexitime.workEhm">
-                                    	{{moment(flexitime.useSymd+' '+flexitime.workShm).format('HH:mm')}} ~ {{moment(flexitime.useSymd+' '+flexitime.workEhm).format('HH:mm')}}
+                                    	<template v-if="calendarTopVue.flexibleStd.workShm && calendarTopVue.flexibleStd.workEhm">
+                                    	{{moment(calendarTopVue.flexibleStd.useSymd+' '+calendarTopVue.flexibleStd.workShm).format('HH:mm')}} ~ {{moment(calendarTopVue.flexibleStd.useSymd+' '+calendarTopVue.flexibleStd.workEhm).format('HH:mm')}}
                                     	</template>
                                     	<template v-else>
                                     	없음
@@ -227,8 +227,8 @@
                                 <li>
                                     <span class="title">필수근무시간</span>
                                     <span class="desc">
-                                    	<template v-if="flexitime.coreShm && flexitime.coreEhm">
-                                    	{{moment(flexitime.useSymd+' '+flexitime.coreShm).format('HH:mm')}} ~ {{moment(flexitime.useSymd+' '+flexitime.coreEhm).format('HH:mm')}}
+                                    	<template v-if="calendarTopVue.flexibleStd.coreShm && calendarTopVue.flexibleStd.coreEhm">
+                                    	{{moment(calendarTopVue.flexibleStd.useSymd+' '+calendarTopVue.flexibleStd.coreShm).format('HH:mm')}} ~ {{moment(calendarTopVue.flexibleStd.useSymd+' '+calendarTopVue.flexibleStd.coreEhm).format('HH:mm')}}
                                     	</template>
                                     	<template v-else>
                                     	없음
@@ -256,7 +256,7 @@
                                 <div class="form-group col-12">
                                     <label for="workTime">근무기간</label>
                                     <select id="workTime" class="form-control" v-model="applInfo.workRange" @change="changeWorkRange">
-                                        <option v-for="term in flexitime.usedTermOpt" :value="term.value">{{term.lable}}</option>
+                                        <option v-for="term in calendarTopVue.flexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-12">
@@ -326,6 +326,39 @@
 	                    <button type="button" class="btn btn-apply btn-block btn-lg" @click="saveWorkDayResult">저장</button>
 	                </div>
 	            </div>
+	            <div id="flexibleDayInfo" class="white-box-wrap mb-3" style="display:none;">
+	                <div class="work-plan-wrap">
+	                	<div class="main-wrap">
+                            <div class="main-desc">이수 선근제 기본</div>
+                            <ul class="time-list">
+                                <li>
+                                    <span class="title">근태</span>
+                                    <span class="desc"></span>
+                                </li>
+                                <li>
+                                    <span class="title">계획 근무 시간</span>
+                                    <span class="desc"></span>
+                                </li>
+                                <li>
+                                    <span class="title">출/퇴근 시각</span>
+                                    <span class="desc"></span>
+                                </li>
+                                <li>
+                                    <span class="title">근무 인정시간</span>
+                                    <span class="desc"></span>
+                                </li>
+                                <li>
+                                    <span class="title">소정 근무시간</span>
+                                    <span class="desc"></span>
+                                </li>
+                                <li>
+                                    <span class="title">연장 근무시간</span>
+                                    <span class="desc"></span>
+                                </li>
+                            </ul>
+	                    </div>
+	                </div>
+	            </div>
             </div>
             <div class="col-12 col-md-9">
             	<#if calendar?? && calendar!='' && calendar?exists >
@@ -340,10 +373,16 @@
    		el: "#calendar_top",
 	    data : {
 	    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
-	    	flexitimeList: [] //사용할 유연근무제 리스트
+	    	flexitimeList: [], //사용할 유연근무제 리스트
+	    	flexibleStd: {} //적용한 근무제
   		},
 	    mounted: function(){
 	    	var $this = this;
+	    	
+	    	<#if flexibleStdMgr?? && flexibleStdMgr!='' && flexibleStdMgr?exists >
+				$this.flexibleStd = JSON.parse("${flexibleStdMgr?js_string}");
+			</#if>
+	    	
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
 	    		var flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //임시저장된 신청서
 	    		
@@ -371,7 +410,7 @@
 	         	var $this = this;
 		    		
 		    	Util.ajax({
-					url: "${rc.getContextPath()}/flexibleStd",
+					url: "${rc.getContextPath()}/flexibleStd/list",
 					type: "GET",
 					contentType: 'application/json',
 					//data: param,
@@ -399,7 +438,7 @@
          		$(".list-group-item").eq(idx).addClass("active");
          		
          		//선택한 근무제 적용
-         		calendarLeftVue.flexitime = $this.flexitimeList[idx];
+         		$this.flexibleStd = $this.flexitimeList[idx];
          		$("#applyFlexBtn").show();
          	},
          	applyFlexitime : function(){ //근무제 적용
@@ -431,6 +470,9 @@
   	         		$("#alertModal").modal("show"); 
          		});
          		$('#flexitimeModal .close').click();
+         	},
+         	getFlexibleAppl : function(flexibleAppl){
+         		calendarLeftVue.flexibleAppl = flexibleAppl;
          	}
 	    }
    	});
@@ -439,7 +481,6 @@
    		el: "#calendar_left",
 	    data : {
 	    	calendar: {},
-	    	flexitime: {}, //적용한 근무제
 	    	workTermTime: {}, //선택한 기간의 근무제 정보
 	    	useYn: 'N', //근무제 적용 여부
 	    	applInfo: { //신청 데이터
@@ -454,9 +495,13 @@
 	    	selectedDate: '${today}'
   		},
 	    mounted: function(){
-	    	if('${calendar}' == 'workDayCalendar') {
-	    		this.getFlexitimeAppl();
-	    	}
+	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
+    			this.flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //결재된 신청서
+    			
+    			if('${calendar}' == 'workDayCalendar') {
+    				dayCalendarVue.getWorkDayResult(this.flexibleAppl.flexibleEmpId);
+    	    	}
+    		</#if>
 	    },
 	    methods : {
 	    	getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
@@ -488,28 +533,32 @@
 	        getWorkDayInfo : function(ymd){ //해당일의 근무 정보
 				
 			},
-         	getFlexitimeAppl : function(){ //신청서 조회
+         	getFlexitimeAppl : function(applId){ //신청서 조회
          		var $this = this;
+         	
+         		var param = {
+         			applId: applId
+         		};
          		
          		Util.ajax({
 					url: "${rc.getContextPath()}/flexibleAppl",
 					type: "GET",
 					contentType: 'application/json',
 					dataType: "json",
+					data: param,
 					success: function(data) {
-						if(data!=null && data.status=='OK') {
-							$this.flexibleAppl = data.flexibleAppl;
-							$this.flexitime = data.flexibleStdMgr;
+						$this.flexibleAppl = {};
+						if(data!=null) {
+							$this.flexibleAppl = data;
 							
 							if('${calendar}' == 'workDayCalendar') {
-								dayCalendarVue.getWorkDayResult();
+								dayCalendarVue.getWorkDayResult($this.flexibleAppl.flexibleEmpId);
 					    	}
 						}
 						
 					},
 					error: function(e) {
 						$this.flexibleAppl = {};
-						$this.flexitime = {};
 					}
 				});
          	},
@@ -525,25 +574,12 @@
          			$this.applInfo.useEymd = moment(obj.eYmd).format('YYYY-MM-DD');
          			$this.flexibleAppl = obj;
          			
-         			<#if flexibleStdMgr?? && flexibleStdMgr!='' && flexibleStdMgr?exists >
-						var flexitime = JSON.parse("${flexibleStdMgr?js_string}");
-	     				//console.log(flexitime);
-						//if(flexitime.usedTermOpt!=null && flexitime.usedTermOpt!='undefined' && flexitime.usedTermOpt!='')
-	     				//	flexitime.usedTermOpt = JSON.parse(flexitime.usedTermOpt);
-	     				//if(flexitime.workDaysOpt!=null && flexitime.workDaysOpt!='undefined' && flexitime.workDaysOpt!='')
-	     					//flexitime.workDaysOpt = JSON.parse(flexitime.workDaysOpt);
-	     				//if(flexitime.applTermOpt!=null && flexitime.applTermOpt!='undefined' && flexitime.applTermOpt!='')
-	     				//	flexitime.applTermOpt = JSON.parse(flexitime.applTermOpt);
-	     			
-	     				$this.flexitime = flexitime;	
-         			</#if>
-         			
          			if(obj.applStatusCd!='11') { //결재요청
          				$("#apprBtn").hide();
          				$("#flexibleAppl").find("input,select,textarea").prop("disabled", true);
          			}
          			
-         			monthCalendarVue.gotoDate($this.applInfo.useSymd);
+         			$this.calendar.gotoDate($this.applInfo.useSymd);
          		} 
          		$("#flexibleAppl").show();
          	},
@@ -551,8 +587,8 @@
          		var $this = this;
          	
          		//적용기간은 첫번째 항목으로 기본 세팅
-         		if($this.flexitime.hasOwnProperty("usedTermOpt") && $this.flexitime.usedTermOpt!=null) {
-         			var workDateRangeItem = $this.flexitime.usedTermOpt[0]; 
+         		if(calendarTopVue.flexibleStd.hasOwnProperty("usedTermOpt") && calendarTopVue.flexibleStd.usedTermOpt!=null) {
+         			var workDateRangeItem = calendarTopVue.flexibleStd.usedTermOpt[0]; 
          			
          			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null)
          				$this.applInfo.workRange = workDateRangeItem.value;
@@ -590,12 +626,12 @@
          		var $this = this;
   	         	
          		//선택한 근무제
-         		var flexitime = $this.flexitime;
+         		var flexibleStd = calendarTopVue.flexibleStd;
          		
-         		if(flexitime.workTypeCd.indexOf('SELE')==0) {
+         		if(flexibleStd.workTypeCd.indexOf('SELE')==0) {
         			var param = {
-        				flexibleStdMgrId : flexitime.flexibleStdMgrId,
-        				workTypeCd : flexitime.workTypeCd,
+        				flexibleStdMgrId : flexibleStd.flexibleStdMgrId,
+        				workTypeCd : flexibleStd.workTypeCd,
         				//empNo : "${empNo}",
         				applId : $this.applInfo.applId,
 	   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
@@ -610,9 +646,11 @@
 						dataType: "json",
 						success: function(data) {
 							if(data!=null && data.status=='OK') {
-								$this.getFlexitimeAppl();
 								$this.applInfo.applId = data.applId;
 								$this.applInfo.flexibleApplId = data.flexibleApplId;
+								
+								//신청서 조회
+								$this.getFlexitimeAppl(data.applId);
 							}
 						},
 						error: function(e) {
@@ -622,7 +660,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						}
 					}); 
-         		} else if(flexitime.workTypeCd.indexOf('ELAS')==0){
+         		} else if(flexibleStd.workTypeCd.indexOf('ELAS')==0){
          			
          		}
 
@@ -631,7 +669,8 @@
 	         	var $this = this;
 	  	         	
 	         	//선택한 근무제
-	         	var flexitime = $this.flexitime;
+	         	var flexibleStd = calendarTopVue.flexibleStd;
+	         	
 	         	//임시저장된 신청서
 	         	var flexibleAppl = $this.flexibleAppl;
 	         	//신청서 정보
@@ -652,13 +691,13 @@
 					$("#alertText").html("사유를 입력해 주세요.");
          		}
 					
-         		if(flexitime.workTypeCd.indexOf('SELE')==0) {
+         		if(flexibleStd.workTypeCd.indexOf('SELE')==0) {
 					if(saveYn) {
 						var param = {
 							flexibleApplId : flexibleAppl.flexibleApplId,	
 							applId : flexibleAppl.applId,
   	         				flexibleStdMgrId : flexibleAppl.flexibleStdMgrId,
-  	         				workTypeCd : flexitime.workTypeCd,
+  	         				workTypeCd : flexibleStd.workTypeCd,
   	         				//empNo : "${empNo}",
 		   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
 		   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
@@ -693,7 +732,7 @@
 						$("#alertModal").on('hidden.bs.modal',function(){});
   	  	         		$("#alertModal").modal("show"); 
 					}
-	         	} else if(flexitime.workTypeCd.indexOf('ELAS')==0){
+	         	} else if(flexibleStd.workTypeCd.indexOf('ELAS')==0){
 	         		$("#flexibleAppl").hide();
 	         	}
 	        },
