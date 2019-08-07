@@ -139,6 +139,9 @@ public class ViewController {
 	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("template");
 		
+		System.out.println("viewPage : " + viewPage);
+		System.out.println("calendarType : " + request.getParameter("calendarType"));
+		
 		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
@@ -163,7 +166,6 @@ public class ViewController {
 				mv.addObject("workday", workday); 
 			}
 			
-			System.out.println("calendarType : " + request.getParameter("calendarType"));
 			if(request.getParameter("calendarType")!=null) {
 				String calendarType = request.getParameter("calendarType").toString();
 				mv.addObject("calendar", "work"+ calendarType +"Calendar");
