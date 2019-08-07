@@ -256,8 +256,10 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			
 			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
 			paramMap.putAll(stdMgr.getWorkDaysOpt());
-			paramMap.put("flexibleEmpId", emp.getFlexibleStdMgrId());
+			paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
 			paramMap.put("userId", userId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("tenantId", tenantId);
 			//근무제 기간의 총 소정근로 시간을 업데이트 한다.
 			flexApplMapper.updateWorkMinuteOfWtmFlexibleEmp(paramMap);
 		}

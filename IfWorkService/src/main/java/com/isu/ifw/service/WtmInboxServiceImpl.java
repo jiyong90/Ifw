@@ -88,6 +88,10 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 		
 		int inboxCount = 0;
 		try {
+			//유연근무제 계획 작성 여부
+			
+			
+			//알림 카운트
 			inboxCount = inboxRepository.countByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
 		}catch(Exception e) {
 			e.printStackTrace();

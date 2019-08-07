@@ -45,22 +45,7 @@ public class WtmInboxController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
 		
-		rp = inboxService.getInboxCount(tenantId, enterCd, sabun);
-		
-		if(rp!=null && "OK".equals(rp.getStatus())) {
-		
-			try {
-				WtmFlexibleEmp flexibleEmp = flexibleEmpRepo.findByTenantIdAndEnterCdAndSabunAndDate(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), null));
-				
-				//유연근무대상자
-				rp.put("flexibleEmp", flexibleEmp);
-			}catch(Exception e) {
-				e.printStackTrace();
-				rp.setFail("조회 시 오류가 발생했습니다.");
-			}
-		}
-		
-		return rp; 
+		return inboxService.getInboxCount(tenantId, enterCd, sabun); 
 	}
 	
 	@RequestMapping(value="/inbox/list", method=RequestMethod.GET)
