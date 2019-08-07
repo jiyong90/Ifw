@@ -74,13 +74,18 @@
 }
 /* 월,주,일 active */
 .fc-bgeventGridMonth-button:not(:disabled):not(.disabled).active,
+.fc-bgeventGridMonth-button:not(:disabled):not(.disabled):active,
 .fc-timeGridWeek-button:not(:disabled):not(.disabled).active,
+.fc-timeGridWeek-button:not(:disabled):not(.disabled):active,
 .fc-timeGridDay-button:not(:disabled):not(.disabled).active,
-.fc-dayGridMonth-button:not(:disabled):not(.disabled).active {
+.fc-timeGridDay-button:not(:disabled):not(.disabled):active,
+.fc-dayGridMonth-button:not(:disabled):not(.disabled).active,
+.fc-dayGridMonth-button:not(:disabled):not(.disabled):active {
   color:#ffffff !important;
   border-color:#6b6b80 !important;
   background-color:#6b6b80 !important;
 }
+
 /* 월,주,일 hover  */
 .fc-bgeventGridMonth-button:hover,
 .fc-timeGridWeek-button:hover,
@@ -110,7 +115,7 @@
 }
 
 
-/* 근무제 시작일, 종료일 표시 세모 */
+/* 근무제 시작일, 종료일 표시 보더 */
 .fc-bgevent{
   position: relative;
   opacity: 0.5 !important;
@@ -189,6 +194,43 @@
 } */
 .fc-bgevent>.fc-border.AUTO {
   background-color: #080809;
+}
+
+/* 타임 그리드  */
+/* 1) ENTRY  */
+.fc-time-grid-event.fc-event.entry,
+.fc-time-grid-event.fc-event.ENTRY {
+  background-color: #0b1baa;
+}
+
+/* 2) BREAK */
+.fc-time-grid-event.fc-event.break,
+.fc-time-grid-event.fc-event.BREAK {
+  background-color: #ff448a;
+}
+
+/* 3) TAA */
+.fc-time-grid-event.fc-event.taa,
+.fc-time-grid-event.fc-event.TAA {
+  background-color: rgba(255, 136, 0, 0.3);
+}
+
+/* 4) BASE */
+.fc-time-grid-event.fc-event.base,
+.fc-time-grid-event.fc-event.TAA {
+  background-color: rgba(144, 233, 27, 0.3);
+}
+
+/* 5) OT */
+.fc-time-grid-event.fc-event.ot,
+.fc-time-grid-event.fc-event.OT {
+  background-color: rgba(255, 0, 0, 0.3);
+}
+
+/* 6) NIGHT */
+.fc-time-grid-event.fc-event.night,
+.fc-time-grid-event.fc-event.NIGHT {
+  background-color: rgba(87, 46, 255, 0.3);
 }
 
 /* 일정 */
