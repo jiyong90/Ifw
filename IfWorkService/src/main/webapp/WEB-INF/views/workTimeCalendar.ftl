@@ -1,6 +1,6 @@
 <div id="timeCalendar" class="calendar-wrap" v-cloak>
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :header="header" :defaultview="view" :defaultdate="workday" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">
@@ -10,6 +10,7 @@
   				FullCalendar : fullCalendarComponent
   		    },
   		    data : {
+  		    	t: true,
   		    	header: {
   		    		left: 'prev,next',
 			        center: 'title',
@@ -83,6 +84,7 @@
   	         	},
   	         	getWorkDayResult: function(ymd, data){
   	         		var $this = this;
+  	         		var classNames = [];
   	         		
   	         		if(data!=null) {
   	         			//출퇴근 타각 표시
@@ -95,38 +97,66 @@
   	         				var eEdate = new Date(entry.entryEdate);
   	         				eEdate.setMinutes(eEdate.getMinutes()+3);
   	         				
+  	         				classNames = [];
+							classNames.push('ENTRY');
+  	         				
   	         				var sEntry = {
  	         					id: 'entrySdate',
+ 	         					title: '출근 ' + entry.entrySdate,
 								start: entry.entrySdate,
 	  		  		        	end: moment(sEdate).format('YYYY-MM-DDTHH:mm:ss'),
 	  		  		        	editable: false,
-	  		  		        	color: '#0b1baa'
+	  		  		        	classNames: classNames
   	         				};
   	         				$this.addEvent(sEntry);
   	         				
   	         				var eEntry = {
  	         					id: 'entryEdate',
+ 	         					title: '퇴근 ' + entry.entryEdate,
 								start: entry.entryEdate,
 	  		  		        	end: moment(eEdate).format('YYYY-MM-DDTHH:mm:ss'),
 	  		  		        	editable: false,
-	  		  		        	color: '#ff448a'
+	  		  		        	classNames: classNames
   	         				};
   	         				$this.addEvent(eEntry); 
   	         			}
   	         			
+  	         			//근태 및 근무시간
   	         			if(data.hasOwnProperty('workResult')) {
   	         				console.log(data.workResult);
   	         				data.workResult.map(function(w){
-  	         					var result = {
-  	   	         					id: w.timeTypeCd,
-  	   	         					title: w.timeTypeNm,
-  	  								start: w.sDate,
-  	  	  		  		        	end: w.eDate
-  	    	         			};
-  	         					
-  	    	         			$this.addEvent(result); 
+	  	         				if(w.taaCd!='') {
+	  	         					//근태
+	  	         					classNames = [];
+									classNames.push('TAA');
+	  	         					
+	  	         					var result = {
+  	  	   	         					id: 'TAA'+w.taaCd,
+  	  	   	         					title: w.taaNm,
+  	  	  								start: w.sDate,
+  	  	  	  		  		        	end: w.eDate,
+  	  	  	  		  		        	editable: false,
+  	  	  		  		        		classNames: classNames
+  	  	    	         			};
+	  	  	         					
+	  	  	    	         		$this.addEvent(result); 
+	  	         				} else {
+	  	         					//근무
+	  	         					classNames = [];
+									classNames.push(w.timeTypeCd);
+	  	         					
+  	  	         					var result = {
+  	  	   	         					id: 'TIME'+w.timeTypeCd,
+  	  	   	         					title: '근태',
+  	  	  								start: w.sDate,
+  	  	  	  		  		        	end: w.eDate,
+  	  	  	  		  		        	editable: false,
+  	  	  		  		        		classNames: classNames
+  	  	    	         			};
+  	  	         					
+  	  	    	         			$this.addEvent(result); 
+	  	         				}
   	         				});
-  	         				
   	         			}
   	         		}
   	         	}
