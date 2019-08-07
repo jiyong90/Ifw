@@ -328,7 +328,9 @@
 	            </div>
             </div>
             <div class="col-12 col-md-9">
-                <#include "/${calendar}.ftl">
+            	<#if calendar?? && calendar!='' && calendar?exists >
+               		<#include "/${calendar}.ftl">
+                </#if>
             </div>
         </div>
     </div>
