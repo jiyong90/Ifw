@@ -157,7 +157,7 @@
                                 <div class="main-desc">연차, 반차</div>
                             </li>
                             <li>
-                                <button type="button" class="btn btn-apply btn-block btn-lg" @click="viewWorkTimePlan">연장근로신청</button>
+                                <button type="button" class="btn btn-apply btn-block btn-lg" @click="viewWorkTimeCalendar">연장근로신청</button>
                             </li>
                         </ul>
                         <div class="sub-wrap">
@@ -698,9 +698,9 @@
          	saveWorkDayResult: function(){
          		dayCalendarVue.saveWorkDayResult();
          	},
-         	viewWorkTimePlan: function(){
+         	viewWorkTimeCalendar: function(){
          		if(this.selectedDate!='') {
-         			location.href='${rc.getContextPath()}/console/${tsId}/views/workTimePlan?date='+moment(this.selectedDate).format('YYYYMMDD');
+         			location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment(this.selectedDate).format('YYYYMMDD');
          		} else {
          			$("#alertText").html("달력에서 일자를 선택해 주세요.");
   	         		$("#alertModal").on('hidden.bs.modal',function(){

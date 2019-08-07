@@ -18,7 +18,7 @@
             </ul>
         </li> -->
         <li id="cal">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?type=Month';">
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';">
                 <i class="fas fa-calendar-alt"></i>
                 <span class="title">나의 정보 </span>
             </a>
@@ -27,6 +27,31 @@
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/approvalList';">
                 <i class="fas fa-clipboard-check"></i>
                 <span class="title">결재</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaCodeMgr';">
+                <span class="title">근태코드관리</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empHisMgr';">
+                <span class="title">사원정보</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ifEmpMsg';">
+                <span class="title">사원이력</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/baseWorkMgr';">
+                <span class="title">기본근무시간관리</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamEmp';">
+                <span class="title">근무조대상자관리</span>
             </a>
         </li>
     </ul>

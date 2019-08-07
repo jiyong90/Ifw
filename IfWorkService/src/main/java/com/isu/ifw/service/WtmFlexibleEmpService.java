@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.vo.WtmDayWorkVO;
 import com.isu.ifw.vo.WtmWorkTermTimeVO;
+import com.isu.option.vo.ReturnParam;
 
 /**
  * 
@@ -73,7 +73,7 @@ public interface WtmFlexibleEmpService {
 	 * @param userId
 	 * @return
 	 */
-	public List<WtmWorkDayResult> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, Long userId);
+	public Map<String, Object> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, Long userId);
 	
 	/**
 	 * 선택한 기간의 근무제 정보 조회

@@ -3,7 +3,7 @@
 	    <div class="msg-desc" v-if="Object.keys(flexibleEmp).length>0 && flexibleEmp.hasOwnProperty('workTypeCd') && flexibleEmp.workTypeCd.indexOf('SELE')!=-1">
 	    	<p>근무계획을 작성해 주세요.</p>
 	    	<div class="btn-wrap">
-		    	<button class="btn btn-default btn-flat btn-sm" @click="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?type=Day';">작성하기</button>
+		    	<button class="btn btn-default btn-flat btn-sm" @click="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day';">작성하기</button>
 	    	</div>
 	    </div>
 	    <ul class="msg-list">

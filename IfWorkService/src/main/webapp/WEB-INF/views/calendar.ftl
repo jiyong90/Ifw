@@ -76,7 +76,7 @@
 					return 'dayGridMonth';
 				}
 			},
-			defaultDate : {
+			defaultdate : {
 				type: String,
 				required: false,
 				default : function(){
@@ -181,6 +181,10 @@
 				
 				if(this.defaultview!='') {
 					option.defaultView = this.defaultview;
+				}
+				
+				if(this.defaultdate!='') {
+					option.defaultDate = this.defaultdate;
 				}
 				
 				if(this.navlinks) {
