@@ -135,7 +135,7 @@ public class ViewController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/console/{tsId}/views/{viewPage}", method = RequestMethod.GET)
+	@RequestMapping(value = "/console2/{tsId}/views/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("template");
 		
