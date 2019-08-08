@@ -38,7 +38,9 @@ public interface WtmApplService {
 	final static String APPL_LINE_S = "2"; //발신결재
 	final static String APPL_LINE_R = "3"; //수신결재
 	
-	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun, Map<String, Object> paramMap, Long userId);
+	public Map<String, Object> getAppl(Long applId);
+	
+	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
 	/**
 	 * 승인/반려 신청서 리스트(결재함)
 	 * @param tenantId

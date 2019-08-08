@@ -45,6 +45,40 @@
 											   GROUP BY A.APPL_SABUN )	   
 	        ]]>
     </select>
+    
+    <select id="findByApplId" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+			SELECT FA.FLEXIBLE_APPL_ID AS flexibleApplId
+			     , FA.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+			     , FA.APPL_ID AS applId
+			     , FA.YM AS ym
+			     , FA.SYMD AS sYmd
+			     , FA.EYMD AS eYmd
+			     , FA.WORK_DAY AS workDay
+			     , FA.REASON AS reason
+			     , A.APPL_CD AS applCd
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
+			     , E.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+			     , M.WORK_SHM AS workShm
+			     , M.WORK_EHM AS workEhm
+			     , M.CORE_SHM AS coreShm
+			     , M.CORE_EHM AS coreEhm
+			  FROM WTM_APPL A
+			  JOIN WTM_FLEXIBLE_APPL FA
+			    ON A.APPL_ID = FA.APPL_ID 
+			  LEFT OUTER JOIN WTM_FLEXIBLE_EMP E
+			    ON A.TENANT_ID = E.TENANT_ID
+			   AND A.ENTER_CD = E.ENTER_CD
+			   AND A.APPL_SABUN = E.SABUN
+			   AND FA.SYMD = E.SYMD
+			   AND FA.EYMD = E.EYMD
+			  LEFT OUTER JOIN WTM_FLEXIBLE_STD_MGR M
+			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			 WHERE A.APPL_ID = #{applId}   
+	        ]]>
+    </select>
+    
     <update id="updateWorkMinuteOfWtmFlexibleEmp" parameterType="map">
     	<![CDATA[
 	    	UPDATE WTM_FLEXIBLE_EMP XX

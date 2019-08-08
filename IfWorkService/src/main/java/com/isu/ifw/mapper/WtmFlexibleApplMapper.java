@@ -13,6 +13,9 @@ public interface WtmFlexibleApplMapper {
 	 * @return
 	 */
 	public Map<String, Object> getLastAppl(Map<String, Object> paramMap);
+	
+	public Map<String, Object> findByApplId(Long applId);
+	
 	/**
 	 * 나의 근무기간의 총 소정근로시간을 계산한다.
 	 * @param flexibleEmpId

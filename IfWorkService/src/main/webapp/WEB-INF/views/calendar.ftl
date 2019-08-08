@@ -155,6 +155,13 @@
 				default : function(){
 					return [];
 				}
+			},
+			nowindicator: {
+				type: Boolean,
+				required: false,
+				default : function(){
+					return false;
+				}
 			}
 		}, 
 		computed: {
@@ -166,8 +173,8 @@
 			        height: this.height,
 			        locale: this.locale,
 			        header: this.header,
-			        defaultView: this.defaultView,
-			        defaultDate: this.defaultDate,
+			        defaultView: this.defaultview,
+			        defaultDate: this.defaultdate,
 			        //views: this.views,
 			        //validRange: this.validRange,
 			        //navLinks: this.navLinks, 
@@ -189,6 +196,10 @@
 				
 				if(this.navlinks) {
 					option.navLinks = this.navlinks;
+				}
+				
+				if(this.nowindicator) {
+					option.nowIndicator = this.nowindicator;
 				}
 				
 				return option;

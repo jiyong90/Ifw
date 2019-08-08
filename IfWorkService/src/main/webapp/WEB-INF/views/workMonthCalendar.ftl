@@ -353,11 +353,11 @@
 	       			}
 	       			
 	       			var classNames = [];
-					classNames.push(calendarLeftVue.flexitime.workTypeCd);
+					classNames.push(calendarTopVue.flexibleStd.workTypeCd);
 					
 					//근무 요일이 아닌 경우 제외하고 event 생성
 					var workDaysOpt = [];
-					$.each(calendarLeftVue.flexitime.workDaysOpt, function(k, v){
+					$.each(calendarTopVue.flexibleStd.workDaysOpt, function(k, v){
 						if(v==true) {
 							workDaysOpt.push(k-1);
 						}
@@ -372,7 +372,7 @@
 					}
 					
 	       			$this.addEvent({
-	       				id: 'workRange.'+calendarLeftVue.flexitime.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
+	       				id: 'workRange.'+calendarTopVue.flexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
 	 		    		start: calendarLeftVue.applInfo.useSymd,
 	 		        	end: moment(eYmd).format('YYYY-MM-DD'),
 	 		        	rendering: 'background'

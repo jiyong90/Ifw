@@ -18,49 +18,48 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
-@RequestMapping(value="/flexibleAppl")
-public class WtmFlexibleApplController {
-	
-	final static String APPL_FLEXIBLE_SELE = "FLEXIBLE_SELE";	//선택근무제신청
-	final static String APPL_FLEXIBLE_ELAS = "FLEXIBLE_ELAS";	//탄력근무제신청
-	final static String APPL_FLEXIBLE_DIFF = "FLEXIBLE_DIFF"; 	//시차근무제신청
+@RequestMapping(value="/otAppl")
+public class WtmOtApplController {
 	
 	@Autowired
-	@Qualifier("wtmFlexibleApplService")
-	WtmApplService flexibleApplService;
+	@Qualifier("wtmOtApplService")
+	WtmApplService otApplService;
 	
-	@Autowired
-	WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
-	
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> flexibleAppl(@RequestParam Long applId
-		    									, HttpServletRequest request) {
+	@RequestMapping(value="/preCheck", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam preCheckOtAppl(@RequestParam Map<String, Object> paramMap
+												, HttpServletRequest request) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
+		String sabun = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
-		return flexibleApplService.getAppl(applId);
+		String workTypeCd = null;
+		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
+			workTypeCd = paramMap.get("workTypeCd").toString();
+		
+		return otApplService.preCheck(tenantId, enterCd, sabun, workTypeCd, paramMap);
 	}
 	
 	@RequestMapping(value="/imsi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam imsiFlexitime(@RequestBody Map<String, Object> paramMap
+	public @ResponseBody ReturnParam imsiOtAppl(@RequestBody Map<String, Object> paramMap
 													    , HttpServletRequest request) {
 		
-		validateParamMap(paramMap, "flexibleStdMgrId","workTypeCd", "sYmd", "eYmd");
+		validateParamMap(paramMap, "workTypeCd", "flexibleStdMgrId", "sYmd", "eYmd");
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
+		String sabun = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		Long applId = null;
@@ -71,7 +70,7 @@ public class WtmFlexibleApplController {
 			workTypeCd = paramMap.get("workTypeCd").toString();
 			
 		try {
-			rp = flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
+			rp = otApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,10 +81,10 @@ public class WtmFlexibleApplController {
 	}
 	
 	@RequestMapping(value="/request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam requestFlexitime(@RequestBody Map<String, Object> paramMap
+	public @ResponseBody ReturnParam requestOtAppl(@RequestBody Map<String, Object> paramMap
 													    , HttpServletRequest request) {
 		
-		validateParamMap(paramMap, "applId", "flexibleStdMgrId","workTypeCd", "sYmd", "eYmd", "reason");
+		validateParamMap(paramMap, "applId","workTypeCd", "flexibleStdMgrId", "sYmd", "eYmd", "reason");
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -93,7 +92,7 @@ public class WtmFlexibleApplController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
+		String sabun = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		Long applId = Long.valueOf(paramMap.get("applId").toString());
@@ -102,7 +101,7 @@ public class WtmFlexibleApplController {
 			workTypeCd = paramMap.get("workTypeCd").toString();
 				
 		try {
-			flexibleApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

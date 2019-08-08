@@ -51,11 +51,11 @@ $(document).ready(function(){
 						$this.inboxCount = data.inboxCount;
 						//$this.data = data;
 						
-						/* if(data.flexibleEmp!=null) {
+						if(data.workPlan) {
 							$this.inboxCount++;
 							inboxVue.inboxCount = $this.inboxCount;
-							inboxVue.flexibleEmp = data.flexibleEmp;
-						} */
+							inboxVue.workPlan = data.workPlan;
+						}
 					}
 					
 				}, error: function(data) { alert(data.message); }

@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmFlexibleStdService;
 import com.isu.ifw.vo.WtmFlexibleStdVO;
 import com.isu.option.vo.ReturnParam;
@@ -24,9 +26,12 @@ public class WtmFlexibleStdController {
 	
 	@Autowired
 	private WtmFlexibleStdService WtmFlexibleStdService;
+	
+	@Autowired
+	private WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
 
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam flexibleStd(HttpServletRequest request) {
+	@RequestMapping(value="/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam flexibleStdList(HttpServletRequest request) {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		ObjectMapper mapper = new ObjectMapper();
@@ -125,6 +130,17 @@ public class WtmFlexibleStdController {
 		}
 		
 		return rp;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WtmFlexibleStdMgr flexibleStd(@RequestParam Long flexibleStdMgrId
+			                                   , HttpServletRequest request) {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		ObjectMapper mapper = new ObjectMapper();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		return flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
 	}
 	/*@PostMapping(value = "/flexibleStd") 
 	public ReturnParam flexibleStd(@RequestBody WtmFlexibleStdVO flexibleStdVO

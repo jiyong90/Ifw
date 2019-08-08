@@ -73,18 +73,17 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
 	@Override
-	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun, Map<String, Object> paramMap, Long userId) {
-		// TODO Auto-generated method stub
-		if(applId == null) {
-			paramMap.put("tenantId", tenantId);
-			paramMap.put("enterCd", enterCd);
-			paramMap.put("sabun", sabun);
-			
-			
-			return flexApplMapper.getLastAppl(paramMap);
-		}else {
-			return null;
-		}
+	public Map<String, Object> getAppl(Long applId) {
+		return flexApplMapper.findByApplId(applId);
+	}
+	
+	@Override
+	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		return flexApplMapper.getLastAppl(paramMap);
 	}
 	
 	@Transactional
