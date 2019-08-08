@@ -301,6 +301,7 @@ box-sizing: border-box;
   letter-spacing: -0.6px;
 }
 
+.time-input-form input,
 .time-input-form select,
 .time-input-form textarea {
   border-radius: 0;
@@ -518,7 +519,7 @@ box-sizing: border-box;
 .modal-app-wrap .big-title{font-size: 14px;font-weight: bold;line-height: 1.43;letter-spacing: -0.7px;color: #292944;}
 .modal-app-wrap .title{font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;color: #6b6b80;}
 .modal-app-wrap label{margin-bottom:6px; font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;color: #6b6b80;}
-.modal-app-wrap .form-control{height:inherit;}
+.modal-app-wrap .form-control{height:inherit; border-radius: 0px;}
 
 .modal-app-wrap select:required:invalid{
   color:#cfcfcf;
