@@ -65,8 +65,42 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 	
 	@Override
-	public List<WtmWorkDayResult> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
-		return workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
+	public Map<String, Object> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		//출퇴근 타각 정보
+		WtmWorkCalendar workCalendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
+		/*Map<String, Object> entry = new HashMap<String, Object>();
+		if(workCalendar!=null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+			if(workCalendar.getEntrySdate()!=null && !"".equals(workCalendar.getEntrySdate()))
+				entry.put("entrySdate", sdf.format(workCalendar.getEntrySdate()));
+			if(workCalendar.getEntryStypeCd()!=null && !"".equals(workCalendar.getEntryStypeCd()))
+				entry.put("entryStypeCd", workCalendar.getEntryStypeCd());
+			if(workCalendar.getEntryEdate()!=null && !"".equals(workCalendar.getEntryEdate()))
+				entry.put("entryEdate", sdf.format(workCalendar.getEntryEdate()));
+			if(workCalendar.getEntryStypeCd()!=null && !"".equals(workCalendar.getEntryStypeCd()))
+				entry.put("entryStypeCd", workCalendar.getEntryStypeCd());
+			if(workCalendar.getEntryEtypeCd()!=null && !"".equals(workCalendar.getEntryEtypeCd()))
+				entry.put("entryEtypeCd", workCalendar.getEntryEtypeCd());
+			
+		}
+		result.put("entry", entry);*/
+		result.put("entry", workCalendar);
+		
+		//근태, 근무 정보
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("ymd", ymd);
+		
+		List<Map<String, Object>> workResult = flexEmpMapper.getWorkDayResult(paramMap);
+		result.put("workResult", workResult);
+		
+		return result;
 	}
 	
 	@Override

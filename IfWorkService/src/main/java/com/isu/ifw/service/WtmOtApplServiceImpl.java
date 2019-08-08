@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.isu.ifw.entity.WtmAppl;
@@ -27,6 +28,7 @@ import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
 
+@Service("wtmOtApplService")
 public class WtmOtApplServiceImpl implements WtmApplService {
 
 	@Autowired
@@ -56,8 +58,14 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 
 	
 	@Override
-	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun,
-			Map<String, Object> paramMap, Long userId) {
+	public Map<String, Object> getAppl(Long applId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap,
+			Long userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -235,11 +243,12 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	public ReturnParam preCheck(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
 		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
 		String ymd = paramMap.get("ymd").toString();
 		
 		WtmFlexibleEmp emp = wtmFlexibleEmpRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, sabun, ymd);
 
-		//연장근무 신청 시 소정근로 선 소진 여부를 체크한다.
+		//1. 연장근무 신청 시 소정근로 선 소진 여부를 체크한다.
 		WtmFlexibleStdMgr flexibleStdMgr = wtmFlexibleStdMgrRepo.findById(emp.getFlexibleStdMgrId()).get();
 		//선 소진 여부
 		String exhaustionYn = flexibleStdMgr.getExhaustionYn();
@@ -263,9 +272,10 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				rp.setFail("필수 근무시간을 제외한 " + baseWorkMinute + "분의 소정근로시간을 선 소진 후 연장근무를 신청할 수 있습니다.");
 				return rp;
 			}
-		}else {
-			rp.setSuccess("");
 		}
+		
+		//2.연장근무 가능시간 초과 체크
+		
 		
 		return rp;
 	}

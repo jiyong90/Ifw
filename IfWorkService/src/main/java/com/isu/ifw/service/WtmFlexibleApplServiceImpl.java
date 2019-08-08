@@ -73,18 +73,17 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
 	@Override
-	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun, Map<String, Object> paramMap, Long userId) {
-		// TODO Auto-generated method stub
-		if(applId == null) {
-			paramMap.put("tenantId", tenantId);
-			paramMap.put("enterCd", enterCd);
-			paramMap.put("sabun", sabun);
-			
-			
-			return flexApplMapper.getLastAppl(paramMap);
-		}else {
-			return null;
-		}
+	public Map<String, Object> getAppl(Long applId) {
+		return flexApplMapper.findByApplId(applId);
+	}
+	
+	@Override
+	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		return flexApplMapper.getLastAppl(paramMap);
 	}
 	
 	@Transactional
@@ -256,8 +255,10 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			
 			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
 			paramMap.putAll(stdMgr.getWorkDaysOpt());
-			paramMap.put("flexibleEmpId", emp.getFlexibleStdMgrId());
+			paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
 			paramMap.put("userId", userId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("tenantId", tenantId);
 			//근무제 기간의 총 소정근로 시간을 업데이트 한다.
 			flexApplMapper.updateWorkMinuteOfWtmFlexibleEmp(paramMap);
 		}

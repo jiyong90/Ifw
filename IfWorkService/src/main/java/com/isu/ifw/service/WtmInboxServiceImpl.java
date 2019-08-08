@@ -1,7 +1,9 @@
 package com.isu.ifw.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -14,8 +16,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmInbox;
+import com.isu.ifw.mapper.WtmInboxMapper;
 import com.isu.ifw.repository.WtmInboxRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.option.vo.ReturnParam;
@@ -31,6 +33,9 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 	
 	@Resource
 	WtmInboxRepository inboxRepository;
+	
+	@Resource
+	WtmInboxMapper inboxMapper;
 	
 	@Async("threadPoolTaskExecutor")
 	@Override
@@ -86,14 +91,27 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
+		Map<String, Object> toDoPlanDays = null;
 		int inboxCount = 0;
 		try {
+			//유연근무제 근무 계획 작성 여부
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
+			toDoPlanDays = inboxMapper.getToDoPlanDays(paramMap);
+			
+			//알림 카운트
 			inboxCount = inboxRepository.countByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
 		}catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
 		}
+		
+		//근무 계획 작성 알림
+		rp.put("workPlan", toDoPlanDays);
 		
 		//알림 카운트
 		rp.put("inboxCount", inboxCount);

@@ -3,7 +3,6 @@ package com.isu.ifw.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +27,9 @@ import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
-import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
-import com.isu.ifw.util.WtmUtil;
 import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
@@ -158,11 +155,17 @@ public class ViewController {
 		mv.addObject("today", today);
 		
 		if("workCalendar".equals(viewPage)){
-			if(request.getParameter("type")!=null) {
-				String calendarType = request.getParameter("type").toString();
+			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
+				String workday = request.getParameter("date");
+				mv.addObject("workday", workday); 
+			}
+			
+			if(request.getParameter("calendarType")!=null) {
+				String calendarType = request.getParameter("calendarType").toString();
 				mv.addObject("calendar", "work"+ calendarType +"Calendar");
 			}
-			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
+			
+			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		} else {
 			return mv;
 		}
@@ -192,30 +195,41 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		if("workCalendar".equals(viewPage) || "workDayPlan".equals(viewPage)){
-			return workTimeCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
+		if("workCalendar".equals(viewPage)){
+			if(request.getParameter("calendarType")!=null) {
+				String calendarType = request.getParameter("calendarType").toString();
+				mv.addObject("calendar", "work"+ calendarType +"Calendar");
+			}
+			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		} else {
 			return mv;
 		}
 		
 	}
 	
-	protected ModelAndView workTimeCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, Long userId, HttpServletRequest request) {
+	protected ModelAndView workCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, Long userId, HttpServletRequest request) {
 		Map<String, Object> flexibleAppl = null;
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {		
-			flexibleAppl = flexibleApplService.getAppl(tenantId, enterCd, null, empNo, new HashMap<String, Object>(), userId);
+			WtmFlexibleStdMgr flexibleStdMgr = null;
+			//근무제 마지막 신청정보
+			flexibleAppl = flexibleApplService.getLastAppl(tenantId, enterCd, empNo, new HashMap<String, Object>(), userId);
 			
 			if(flexibleAppl!=null) {
 				mv.addObject("flexibleAppl", mapper.writeValueAsString(flexibleAppl));
 				
 				if(flexibleAppl.get("flexibleStdMgrId")!=null && !"".equals(flexibleAppl.get("flexibleStdMgrId"))) {
 					Long flexibleStdMgrId = Long.valueOf(flexibleAppl.get("flexibleStdMgrId").toString());
-					WtmFlexibleStdMgr flexibleStdMgr = flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
-					mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
+					flexibleStdMgr = flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
 				}
+			} else {
+				//기본근무
+				flexibleStdMgr = flexibleStdMgrRepo.findByTenantIdAndEnterCdAndWorkTypeCd(tenantId, enterCd, "BASE");
 			}
+			
+			mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -223,31 +237,4 @@ public class ViewController {
 		return mv;
 	}
 	
-	protected ModelAndView workTimePlanPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, Long userId, HttpServletRequest request) {
-		List<WtmWorkDayResult> workDayResult = null;
-		ObjectMapper mapper = new ObjectMapper();
-		
-		try {	
-			String ymd = WtmUtil.parseDateStr(new Date(), null);
-			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
-				ymd = request.getParameter("date");
-			}
-			
-			workDayResult = flexibleEmpService.getWorkDayResult(tenantId, enterCd, empNo, ymd, userId);
-			
-			if(workDayResult!=null && workDayResult.size()>0) {
-				
-				for(WtmWorkDayResult dayResult : workDayResult) {
-					System.out.println("date : " + dayResult.getPlanSdate());
-					System.out.println("date : " + dayResult.getPlanEdate());
-				}
-				
-				mv.addObject("workDayResult", workDayResult);
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return mv;
-	}
 }

@@ -76,7 +76,7 @@
 					return 'dayGridMonth';
 				}
 			},
-			defaultDate : {
+			defaultdate : {
 				type: String,
 				required: false,
 				default : function(){
@@ -155,6 +155,13 @@
 				default : function(){
 					return [];
 				}
+			},
+			nowindicator: {
+				type: Boolean,
+				required: false,
+				default : function(){
+					return false;
+				}
 			}
 		}, 
 		computed: {
@@ -166,8 +173,8 @@
 			        height: this.height,
 			        locale: this.locale,
 			        header: this.header,
-			        defaultView: this.defaultView,
-			        defaultDate: this.defaultDate,
+			        defaultView: this.defaultview,
+			        defaultDate: this.defaultdate,
 			        //views: this.views,
 			        //validRange: this.validRange,
 			        //navLinks: this.navLinks, 
@@ -183,8 +190,16 @@
 					option.defaultView = this.defaultview;
 				}
 				
+				if(this.defaultdate!='') {
+					option.defaultDate = this.defaultdate;
+				}
+				
 				if(this.navlinks) {
 					option.navLinks = this.navlinks;
+				}
+				
+				if(this.nowindicator) {
+					option.nowIndicator = this.nowindicator;
 				}
 				
 				return option;
