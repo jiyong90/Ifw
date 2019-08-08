@@ -310,4 +310,10 @@
 			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD
 			 ) X
   	</select>
+  	
+  	<select id="calcMinuteExceptBreaktime" parameterType="map">
+  		SELECT F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) AS calcMinute 
+  		  FROM WTM_TIME_BREAK_MGR B
+		 WHERE B.TIME_CD_MGR_ID = #{timeCdMgrId}
+  	</select>
 </mapper>

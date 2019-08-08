@@ -157,9 +157,15 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd,
+	public ReturnParam validate(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
+		// 중복 신청은 화면에서 제어 하겠지?
+		String ymd = paramMap.get("ymd").toString();
+		String shm = paramMap.get("shm").toString();
+		String ehm = paramMap.get("ehm").toString();
+		Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
+		
 		return null;
 	}
 

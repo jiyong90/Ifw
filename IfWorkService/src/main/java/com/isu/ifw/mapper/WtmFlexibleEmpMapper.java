@@ -78,4 +78,12 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public Map<String, Object> getSumOtMinute(Map<String, Object> paramMap);
 	
+	/**
+	 * 휴게시간을 제외한 시간 계산
+	 * @param paramMap { timeCdMgrId : 휴게시간아이디,shm : '2200', ehm : '0200'}
+	 * @return { calcMinute : 22 } 
+	 */
+	public Map<String, Object> calcMinuteExceptBreaktime(Map<String, Object> paramMap);
+	
+	
 }
