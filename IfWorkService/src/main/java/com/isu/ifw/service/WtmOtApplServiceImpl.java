@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.isu.ifw.entity.WtmAppl;
@@ -27,6 +28,7 @@ import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
 
+@Service("wtmOtApplService")
 public class WtmOtApplServiceImpl implements WtmApplService {
 
 	@Autowired
@@ -56,8 +58,14 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 
 	
 	@Override
-	public Map<String, Object> getAppl(Long tenantId, String enterCd, Long applId, String sabun,
-			Map<String, Object> paramMap, Long userId) {
+	public Map<String, Object> getAppl(Long applId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap,
+			Long userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -71,8 +79,32 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 
 	@Override
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
-			String sabun, Long userId) throws Exception {
-
+			String sabun, Long userId) throws Exception { 
+		
+		try {
+			WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
+			Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
+			//신청서 최상위 테이블이다. 
+			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_APPLY_ING, sabun, userId);
+			
+			applId = appl.getApplId();
+			
+			String sYmd = paramMap.get("sYmd").toString();
+			String eYmd = paramMap.get("eYmd").toString();
+			String reasonCd = paramMap.get("reasonCd").toString();
+			String reason = paramMap.get("reason").toString();
+			
+			//근무제 신청서 테이블 조회
+			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, sYmd, eYmd, reasonCd, reason, sabun, userId);
+			
+			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
+		
+			//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
+		
+		} catch(Exception e) {
+			throw new Exception("저장 시 오류가 발생했습니다.");
+		}
+		 
 	}
 
 	@Override
@@ -106,9 +138,11 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			
 			String sYmd = paramMap.get("sYmd").toString();
 			String eYmd = paramMap.get("eYmd").toString();
+			String reasonCd = paramMap.get("reasonCd").toString();
+			String reason = paramMap.get("reason").toString();
 			
 			//근무제 신청서 테이블 조회
-			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, sYmd, eYmd, "", "", sabun, userId);
+			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, sYmd, eYmd, reasonCd, reason, sabun, userId);
 			
 			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
@@ -244,6 +278,12 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		WtmFlexibleStdMgr flexibleStdMgr = wtmFlexibleStdMgrRepo.findById(emp.getFlexibleStdMgrId()).get();
 		//선 소진 여부
 		String exhaustionYn = flexibleStdMgr.getExhaustionYn();
+		
+
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
 		if(exhaustionYn.equals("Y")) {
 			//선소진시
 			//코어타임을 제외한 잔여 소정근로시간을 알려준다
@@ -267,6 +307,20 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		}
 		
 		//2.연장근무 가능시간 초과 체크
+		Integer otMinute = emp.getOtMinute();
+		if(otMinute == null) {
+			otMinute = 0;
+		}
+		
+		//우선 오티 시간이 없으면 체크하지 말자
+		if(otMinute > 0) {
+			Map<String, Object> rMap = wtmFlexibleEmpMapper.getSumOtMinute(paramMap);
+			Integer sumOtMinute = Integer.parseInt(rMap.get("otMinute").toString());
+			if(otMinute <= sumOtMinute) {
+				rp.setFail("금주 사용가능한 연장근무 시간이 없습니다. 담당자에게 문의하세요.");
+				return rp;
+			}
+		}
 		
 		
 		return rp;
