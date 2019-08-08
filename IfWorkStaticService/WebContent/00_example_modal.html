@@ -85,9 +85,9 @@
                                 <div class="form-row no-gutters">
                                     <div class="form-group col-12">
                                         <label for="workTime">사유구분</label>
-                                        <select id="workTime" class="form-control" >
-                                            <option value="">사유를 선택해주세요.</option>
-                                            <option selected="">일반작업</option>
+                                        <select id="workTime" class="form-control" required>
+                                            <option value="" disabled selected hidden>사유를 선택해주세요.</option>
+                                            <option value="">일반작업</option>
                                             <option>...</option>
                                         </select>
                                     </div>
@@ -158,9 +158,9 @@
                                 <div class="form-row no-gutters">
                                     <div class="form-group col-12">
                                         <label for="workTime">사유구분</label>
-                                        <select id="workTime" class="form-control">
-                                            <option value="">사유를 선택해주세요.</option>
-                                            <option selected="">일반작업</option>
+                                        <select id="workTime" class="form-control" required>
+                                            <option value="" disabled selected hidden>사유를 선택해주세요.</option>
+                                            <option value="">일반작업</option>
                                             <option>...</option>
                                         </select>
                                     </div>
@@ -312,9 +312,9 @@
                                 <div class="form-row no-gutters">
                                     <div class="form-group col-12">
                                         <label for="workTime">사유구분</label>
-                                        <select id="workTime" class="form-control">
-                                            <option value="">사유를 선택해주세요.</option>
-                                            <option selected="">일반작업</option>
+                                        <select id="workTime" class="form-control" required>
+                                            <option value="" disabled selected hidden>사유를 선택해주세요.</option>
+                                            <option value="">일반작업</option>
                                             <option>...</option>
                                         </select>
                                     </div>
@@ -602,7 +602,7 @@
 
             // radio toggle
             $('input[type="radio"]').click(function () {
-                console.log("왜 닫힘?"+ $(this).val());
+                console.log("radio value is "+ $(this).val());
                 if ($(this).val() == "holiday") {
                     $(".radio-toggle-wrap").show(500);
                 }
@@ -639,13 +639,9 @@
 
             //reset modal input
             $('.modal').on('hidden.bs.modal', function (e) {
-                $(this)
-                    .find("input,textarea,select")
-                    .val('')
-                    .end()
-                    .find("input[type=checkbox], input[type=radio]")
-                    .prop("checked", "")
-                    .end();
+                console.log("Modal hidden");
+                $(".radio-toggle-wrap").hide();
+                $('#replace-wrapper').html('');
             });
         });
     </script>
