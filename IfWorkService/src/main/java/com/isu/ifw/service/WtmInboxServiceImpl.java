@@ -39,11 +39,12 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 	
 	@Async("threadPoolTaskExecutor")
 	@Override
-	public void setInbox(Long tenantId, String enterCd, String sabun, String title) {
+	public void setInbox(Long tenantId, String enterCd, String sabun, String type, String title) {
 		WtmInbox data = new WtmInbox();
 		data.setEnterCd(enterCd);
 		data.setSabun(sabun);
 		data.setTenantId(tenantId);
+		data.setType(type);
 		data.setTitle(title);
 		
 		try {

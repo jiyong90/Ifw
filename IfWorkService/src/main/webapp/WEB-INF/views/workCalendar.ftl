@@ -95,49 +95,37 @@
     <div class="container-fluid">
         <div class="row no-gutters">
             <div id="calendar_left" class="col-12 col-md-3 pr-md-3" v-cloak>
-                <div id="workRangeInfo" class="work-info-wrap mb-3">
-                    <div class="main-title" v-if="Object.keys(workTermTime).length>0 && workTermTime.flexubleSdate!='' && workTermTime.flexubleEdate!=''">
-                    	{{moment(workTermTime.flexubleSdate).format("YYYY년 M월 D일")}} ~ {{moment(workTermTime.flexubleEdate).format("YYYY년 M월 D일")}}
+                <div id="workRangeInfo" class="work-info-wrap mb-3" style="display:none;">
+                    <div class="main-title" v-if="Object.keys(rangeInfo).length>0 && rangeInfo.sYmd && rangeInfo.eYmd">
+                    	{{moment(rangeInfo.sYmd).format("YYYY년 M월 D일")}} ~ {{moment(rangeInfo.eYmd).format("YYYY년 M월 D일")}}
                     </div>
-                    <div class="main-desc" v-if="Object.keys(workTermTime).length>0 && workTermTime.flexibleNm!=''">
-                    	{{workTermTime.flexibleNm}}
+                    <div class="main-desc" v-if="Object.keys(rangeInfo).length>0 && rangeInfo.flexibleNm">
+                    	{{rangeInfo.flexibleNm}}
                     </div>
                     <ul class="sub-wrap">
                         <li>
                             <div class="sub-title">총 계획 근무시간(소정/연장/휴게)</div>
-                            <div class="sub-desc" v-if="Object.keys(workTermTime).length>0">
-                            	<template v-if="workTermTime.planWorkMinute!=''">
-                            	{{workTermTime.planWorkMinute}}
-                            	</template>
-                            	<template v-else-if="workTermTime.planOtMinute!=''">
-                            	 / {{workTermTime.planOtMinute}}
-                            	</template>
-                            	 / 0:30
+                            <div class="sub-desc" v-if="Object.keys(rangeInfo).length>0">
+                            	{{minuteToHHMM(rangeInfo.planBaseMinute)}} / {{minuteToHHMM(rangeInfo.planOtMinute)}} / 0:30
                             </div>
                         </li>
                         <li>
                             <div class="sub-title">총 실적 근무시간(소정/연장/휴게)</div>
-                            <div class="sub-desc" v-if="Object.keys(workTermTime).length>0">
-                            	<template v-if="workTermTime.apprWorkMinute!=''">
-                            	{{workTermTime.apprWorkMinute}}
-                            	</template>
-                            	<template v-else-if="workTermTime.apprOtMinute!=''">
-                            	 / {{workTermTime.apprOtMinute}}
-                            	</template>
-                            	 / 0:30
+                            <div class="sub-desc" v-if="Object.keys(rangeInfo).length>0">
+                            	{{minuteToHHMM(rangeInfo.apprBaseMinute)}} / {{minuteToHHMM(rangeInfo.apprOtMinute)}} / 0:30
                             </div>
                         </li>
                         <li>
                             <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
-                            <div class="sub-desc" v-if="Object.keys(workTermTime).length>0 && workTermTime.avlMinute!=''">{{workTermTime.avlMinute}}시간</div>
+                            <div class="sub-desc" v-if="Object.keys(rangeInfo).length>0">48시간</div>
                         </li>
                         <li>
                             <div class="sub-title">근무시간표</div>
-                            <div class="sub-desc">표준 근무 시간표</div>
+                            <div class="sub-desc" v-if="Object.keys(rangeInfo).length>0 && rangeInfo.timeNm">{{rangeInfo.timeNm}}</div>
                         </li>
                     </ul>
                 </div>
-                <div id="workDayInfo" class="white-box-wrap mb-3">
+                <div id="workDayInfo" class="white-box-wrap mb-3" style="display:none;">
                     <div class="work-plan-wrap">
                         <ul class="main-wrap">
                             <li>
@@ -239,11 +227,11 @@
                         </div>
                     </div>
                     <div class="sub-wrap" v-show="applInfo.useSymd">
-                        <form action="">
+                        <form action="" class="needs-validation" novalidate>
                             <div class="form-row no-gutters time-input-form">
                                 <div class="form-group col-5">
                                     <label for="useSymd">시작일자</label>
-                                    <input type="text" class="form-control" id="useSymd" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="YYYY-MM-DD" v-model="applInfo.useSymd" @change="changeUseSymd">
+                                    <input type="text" class="form-control" id="useSymd" v-model="applInfo.useSymd" :value="applInfo.useSymd" @change="changeUseSymd" required>
                                 </div>
                                 <div class="form-group col-2 text-center">
                                     <lable></lable>
@@ -251,21 +239,21 @@
                                 </div>
                                 <div class="form-group col-5">
                                     <label for="useEymd">종료일자</label>
-                                    <input type="text" class="form-control" id="useEymd" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="YYYY-MM-DD" v-model="applInfo.useEymd" disabled>
+                                    <input type="text" class="form-control" id="useEymd" v-model="applInfo.useEymd" :value="applInfo.useEymd" disabled required>
                                 </div>
                                 <div class="form-group col-12">
                                     <label for="workTime">근무기간</label>
-                                    <select id="workTime" class="form-control" v-model="applInfo.workRange" @change="changeWorkRange">
+                                    <select id="workTime" class="form-control" v-model="applInfo.workRange" :value="applInfo.workRange" @change="changeWorkRange" required>
                                         <option v-for="term in calendarTopVue.flexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-12">
                                     <label for="reson">사유</label>
-                                    <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason"></textarea>
+                                    <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason" required></textarea>
                                 </div>
                             </div>
                             <div class="btn-wrap mt-5">
-                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" @click="flexitimeAppl">확인요청</button>
+                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" @click="validateFlexitimeAppl">확인요청</button>
                             </div>
                         </form>
                     </div>
@@ -288,25 +276,27 @@
 	                        <div class="main-desc">{{moment(flexibleAppl.sYmd+' '+flexibleAppl.coreShm).format('HH:mm')}} ~ {{moment(flexibleAppl.sYmd+' '+flexibleAppl.coreEhm).format('HH:mm')}}</div>
 	                    </div>
 	                    <div class="time-input-form">
-	                    	<div class="form-row no-gutters">
-	                    		<div class="form-group">
-	                                <label id="selectedRange" for=""></label>
-	                            </div>
-	                    	</div>
-	                        <div class="form-row no-gutters">
-	                            <div class="form-group col-5">
-	                                <label for="startTime">출근시간</label>
-	                                <input type="time" class="form-control" id="startTime" placeholder="" @focusout="changeWorkTime">
-	                            </div>
-	                            <div class="form-group col-2 text-center">
-	                                <lable></lable>
-	                                <span>~</span>
-	                            </div>
-	                            <div class="form-group col-5">
-	                                <label for="endTime">퇴근시간</label>
-	                                <input type="time" class="form-control" id="endTime" placeholder="" @focusout="changeWorkTime">
-	                            </div>
-	                        </div>
+	                    	<form class="needs-validation" novalidate>
+		                    	<div class="form-row no-gutters">
+		                    		<div class="form-group">
+		                                <label id="selectedRange" for=""></label>
+		                            </div>
+		                    	</div>
+		                        <div class="form-row no-gutters">
+		                            <div class="form-group col-5">
+		                                <label for="startTime">출근시간</label>
+		                                <input type="time" class="form-control" id="startTime" value="" @focusout="changeWorkTime" required>
+		                            </div>
+		                            <div class="form-group col-2 text-center">
+		                                <lable></lable>
+		                                <span>~</span>
+		                            </div>
+		                            <div class="form-group col-5">
+		                                <label for="endTime">퇴근시간</label>
+		                                <input type="time" class="form-control" id="endTime" value="" @focusout="changeWorkTime" required>
+		                            </div>
+		                        </div>
+	                        </form>
 	                    </div>
 	                </div>
 	                <div class="sub-wrap">
@@ -323,37 +313,66 @@
 	                </div>
 	                <div class="sub-desc">*연차는 표준근무시간 8시간 인정</div>
 	                <div class="btn-wrap mt-5">
-	                    <button type="button" class="btn btn-apply btn-block btn-lg" @click="saveWorkDayResult">저장</button>
+	                    <button type="button" id="timeSaveBtn" class="btn btn-apply btn-block btn-lg" @click="validateWorkDayResult">저장</button>
 	                </div>
 	            </div>
 	            <div id="flexibleDayInfo" class="white-box-wrap mb-3" style="display:none;">
 	                <div class="work-plan-wrap">
 	                	<div class="main-wrap">
-                            <div class="main-desc">이수 선근제 기본</div>
                             <ul class="time-list">
                                 <li>
-                                    <span class="title">근태</span>
-                                    <span class="desc"></span>
+                                    <div class="title">근태</div>
+                                    <div class="desc" v-if="workTimeInfo.taaNames">{{workTimeInfo.taaNames}}</div>
                                 </li>
                                 <li>
-                                    <span class="title">계획 근무 시간</span>
-                                    <span class="desc"></span>
+                                    <div class="title">계획 근무 시간</div>
+                                    <div class="desc" v-if="workTimeInfo.planSdate&&workTimeInfo.planEdate">
+                                    	{{moment(workTimeInfo.planSdate).format('HH:mm')}}~{{moment(workTimeInfo.planSdate).format('HH:mm')}}({{minuteToHHMM(workTimeInfo.planMinute)}})
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="title">출/퇴근 시각</span>
-                                    <span class="desc"></span>
+                                    <div class="title">출/퇴근 시각</div>
+                                    <div class="desc" v-if="workTimeInfo.entrySdate||workTimeInfo.entryEdate">
+                                    	<template v-if="workTimeInfo.entrySdate">
+                                    		{{moment(workTimeInfo.entrySdate).format('HH:mm')}}
+                                    	</template>
+                                    	<template v-else>
+                                    		미타각
+                                    	</template>
+                                    	~
+                                    	<template v-if="workTimeInfo.entryEdate">
+                                    		{{moment(workTimeInfo.entryEdate).format('HH:mm')}}
+                                    	</template>
+                                    	<template v-else>
+                                    		미타각
+                                    	</template>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="title">근무 인정시간</span>
-                                    <span class="desc"></span>
+                                    <div class="title">근무 인정시간</div>
+                                    <div class="desc" v-if="workTimeInfo.apprSdate||workTimeInfo.apprEdate">
+                                    	<template v-if="workTimeInfo.apprSdate">
+                                    		{{moment(workTimeInfo.apprSdate).format('HH:mm')}}
+                                    	</template>
+                                    	<template v-else>
+                                    		미타각
+                                    	</template>
+                                    	~
+                                    	<template v-if="workTimeInfo.apprEdate">
+                                    		{{moment(workTimeInfo.apprEdate).format('HH:mm')}}
+                                    	</template>
+                                    	<template v-else>
+                                    		미타각
+                                    	</template>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="title">소정 근무시간</span>
-                                    <span class="desc"></span>
+                                    <div class="title">소정 근무시간</div>
+                                    <div class="desc" v-if="workTimeInfo.apprBaseMinute">{{minuteToHHMM(workTimeInfo.apprBaseMinute, 'detail')}}</div>
                                 </li>
                                 <li>
-                                    <span class="title">연장 근무시간</span>
-                                    <span class="desc"></span>
+                                    <div class="title">연장 근무시간</div>
+                                    <div class="desc" v-if="workTimeInfo.apprOtMinute">{{minuteToHHMM(workTimeInfo.apprOtMinute, 'detail')}}</div>
                                 </li>
                             </ul>
 	                    </div>
@@ -369,6 +388,7 @@
     </div>
 </div>
 <script type="text/javascript">
+
    	var calendarTopVue = new Vue({
    		el: "#calendar_top",
 	    data : {
@@ -402,8 +422,6 @@
 				});
 	    	</#if>
 	    	
-	    	//calendarLeftVue.getWorkRangeInfo(this.today);
-	    	//calendarLeftVue.getWorkDayInfo(this.today);
 	    },
 	    methods : {
 	    	getFlexitimeList : function(){ //사용할 근무제 리스트
@@ -481,7 +499,8 @@
    		el: "#calendar_left",
 	    data : {
 	    	calendar: {},
-	    	workTermTime: {}, //선택한 기간의 근무제 정보
+	    	rangeInfo: {}, //선택한 기간의 근무제 정보
+	    	workTimeInfo: {}, //선택한 날의 근무시간 정보
 	    	useYn: 'N', //근무제 적용 여부
 	    	applInfo: { //신청 데이터
 	    		flexibleApplId:'',
@@ -495,6 +514,9 @@
 	    	selectedDate: '${today}'
   		},
 	    mounted: function(){
+	    	this.getFlexibleRangeInfo(this.today);
+	    	//calendarLeftVue.getWorkDayInfo(this.today);
+	    	
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
     			this.flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //결재된 신청서
     			
@@ -504,7 +526,27 @@
     		</#if>
 	    },
 	    methods : {
-	    	getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
+	    	minuteToHHMM : function (min, type) {
+	    		if(type==null || type=='')
+		   	    	type='short';
+	    		
+		   	    var min = Number(min);
+		   	    var hours   = Math.floor(min / 60);
+		   	    var minutes = Math.floor((min - (hours * 60)) / 60);
+	
+		   	 	if(type=='detail') {
+		   	 		var h = hours==0?'':hours+'시간 ';
+		   	 		var m = minutes==0?'':minutes+'분';
+		   	    	return h+''+m;
+		   	 	}
+		   	    	
+		   	    if (hours   < 10) {hours   = "0"+hours;}
+		   	    if (minutes < 10) {minutes = "0"+minutes;}
+		   	    
+		   	    if(type=='short')
+		   	   		return hours+':'+minutes;
+		   	},
+	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
 				var $this = this;
 		    		
 				var param = {
@@ -512,21 +554,19 @@
    		    	};
 		    		
 		    	Util.ajax({
-					url: "${rc.getContextPath()}/flexibleEmp/term",
+					url: "${rc.getContextPath()}/flexibleEmp/range",
 					type: "GET",
 					contentType: 'application/json',
 					data: param,
 					dataType: "json",
 					success: function(data) {
-						console.log(data);
-						$this.workTermTime = {};
-						/* if(data.status=='OK' && data.workTermTime!=null) {
-							$this.workTermTime = data.workTermTime;
-							
-						} */
+						$this.rangeInfo = {};
+						if(data!=null) {
+							$this.rangeInfo = data;
+						}
 					},
 					error: function(e) {
-						$this.workTermTime = {};
+						$this.rangeInfo = {};
 					}
 				});
 	        },
@@ -665,6 +705,23 @@
          		}
 
          	},
+         	validateFlexitimeAppl : function(){
+         		var applYn = true;
+         		var forms = document.getElementById('flexibleAppl').getElementsByClassName('needs-validation');
+         		var validation = Array.prototype.filter.call(forms, function(form) {
+         			if (form.checkValidity() === false) {
+         				applYn = false;
+         				event.preventDefault();
+         		        event.stopPropagation();
+         			}
+         			form.classList.add('was-validated');
+         		});
+         		
+         		if(applYn) {
+         			this.flexitimeAppl();
+         		}
+         		
+         	},
          	flexitimeAppl : function(){ //확인요청
 	         	var $this = this;
 	  	         	
@@ -675,7 +732,8 @@
 	         	var flexibleAppl = $this.flexibleAppl;
 	         	//신청서 정보
 	         	var applInfo = $this.applInfo;
-	         		
+	         	
+	         	/* 
      			var saveYn = true;
      			if(applInfo.useSymd=='') {
      				saveYn = false;
@@ -689,53 +747,66 @@
          		}else if(applInfo.reason=='') {
          			saveYn = false;
 					$("#alertText").html("사유를 입력해 주세요.");
-         		}
+         		}*/
 					
          		if(flexibleStd.workTypeCd.indexOf('SELE')==0) {
-					if(saveYn) {
-						var param = {
-							flexibleApplId : flexibleAppl.flexibleApplId,	
-							applId : flexibleAppl.applId,
-  	         				flexibleStdMgrId : flexibleAppl.flexibleStdMgrId,
-  	         				workTypeCd : flexibleStd.workTypeCd,
-  	         				//empNo : "${empNo}",
-		   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
-		   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
-		   		    		reason: applInfo.reason
-		   		    	};
-  	         			
-	   		    		Util.ajax({
-							url: "${rc.getContextPath()}/flexibleAppl/request",
-							type: "POST",
-							contentType: 'application/json',
-							data: JSON.stringify(param),
-							dataType: "json",
-							success: function(data) {
-								if(data!=null && data.status=='OK') {
-									$("#alertText").html("확인요청 되었습니다.");
-								} else {
-									$("#alertText").html("확인요청 시 오류가 발생했습니다.");
-								}
-								$("#alertModal").on('hidden.bs.modal',function(){
-									location.reload();
-								});
-		  	  	         		$("#alertModal").modal("show"); 
-							},
-							error: function(e) {
-								console.log(e);
+					var param = {
+						flexibleApplId : flexibleAppl.flexibleApplId,	
+						applId : flexibleAppl.applId,
+ 	         				flexibleStdMgrId : flexibleAppl.flexibleStdMgrId,
+ 	         				workTypeCd : flexibleStd.workTypeCd,
+ 	         				//empNo : "${empNo}",
+	   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
+	   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
+	   		    		reason: applInfo.reason
+	   		    	};
+ 	         			
+   		    		Util.ajax({
+						url: "${rc.getContextPath()}/flexibleAppl/request",
+						type: "POST",
+						contentType: 'application/json',
+						data: JSON.stringify(param),
+						dataType: "json",
+						success: function(data) {
+							if(data!=null && data.status=='OK') {
+								$("#alertText").html("확인요청 되었습니다.");
+							} else {
 								$("#alertText").html("확인요청 시 오류가 발생했습니다.");
-		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
-		  	  	         		$("#alertModal").modal("show"); 
 							}
-						});
-					} else {
-						$("#alertModal").on('hidden.bs.modal',function(){});
-  	  	         		$("#alertModal").modal("show"); 
-					}
+							$("#alertModal").on('hidden.bs.modal',function(){
+								location.reload();
+							});
+	  	  	         		$("#alertModal").modal("show"); 
+						},
+						error: function(e) {
+							console.log(e);
+							$("#alertText").html("확인요청 시 오류가 발생했습니다.");
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+	  	  	         		$("#alertModal").modal("show"); 
+						}
+					});
+					
 	         	} else if(flexibleStd.workTypeCd.indexOf('ELAS')==0){
 	         		$("#flexibleAppl").hide();
 	         	}
 	        },
+	        validateWorkDayResult : function(){
+         		var applYn = true;
+         		var forms = document.getElementById('flexibleDayPlan').getElementsByClassName('needs-validation');
+         		var validation = Array.prototype.filter.call(forms, function(form) {
+         			if (form.checkValidity() === false) {
+         				applYn = false;
+         				event.preventDefault();
+         		        event.stopPropagation();
+         			}
+         			form.classList.add('was-validated');
+         		});
+         		
+         		if(applYn) {
+         			this.saveWorkDayResult();
+         		}
+         		
+         	},
          	saveWorkDayResult: function(){
          		dayCalendarVue.saveWorkDayResult();
          	},
@@ -757,6 +828,14 @@
    		$(".list-group-item").removeClass("active");
    		monthCalendarVue.prevEdate = '';
    	});
+   	
+   	$('[data-dismiss=modal]').on('click', function (e) {
+		var $t = $(this),
+	        target = $t[0].href || $t.data("target") || $t.parents('.modal') || [];
+
+	  	$(target).find("input,select,textarea").val('').end();
+	  	
+	});
    	
 </script>
 

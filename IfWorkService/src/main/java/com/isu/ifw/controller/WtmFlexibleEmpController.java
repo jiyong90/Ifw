@@ -74,29 +74,33 @@ public class WtmFlexibleEmpController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value="/term", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getTermWorkTime(@RequestParam Map<String, Object> paramMap
+	@RequestMapping(value="/range", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getFlexibleRangeInfo(@RequestParam Map<String, Object> paramMap
 													    , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
+		String sabun = sessionData.get("empNo").toString();
 
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-		
-		WtmWorkTermTimeVO workTermTime = null;
-		
-		try {
-			workTermTime = flexibleEmpService.getWorkTermTime(tenantId, enterCd, empNo, paramMap);
-			rp.put("workTermTime", workTermTime);
-		} catch(Exception e) {
-			e.printStackTrace();
-			rp.setFail("조회 시 오류가 발생했습니다.");
-			return rp;
-		}
-		
-		return rp;
+		return flexibleEmpService.getFlexibleRangeInfo(tenantId, enterCd, sabun, paramMap);
+	}
+	
+	/**
+	 * 선택한 날의 근무시간 정보 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/worktime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getFlexibleDayInfo(@RequestParam Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+
+		return flexibleEmpService.getFlexibleWorkTimeInfo(tenantId, enterCd, sabun, paramMap);
 	}
 
 	/**

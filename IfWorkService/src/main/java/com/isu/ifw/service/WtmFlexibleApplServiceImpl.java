@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
@@ -295,7 +294,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 
 	
-	@Override
 	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap) {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -473,6 +471,13 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 
 	@Override
 	public ReturnParam preCheck(Long tenantId, String enterCd, String sabun, String workTypeCd,
+			Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ReturnParam validate(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		return null;

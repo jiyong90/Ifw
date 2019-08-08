@@ -76,14 +76,24 @@ public interface WtmFlexibleEmpService {
 	public Map<String, Object> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, Long userId);
 	
 	/**
-	 * 선택한 기간의 근무제 정보 조회
+	 * 근무제 기간에 대한 정보
 	 * @param tenantId
 	 * @param enterCd
-	 * @param empNo
+	 * @param sabun
 	 * @param paramMap
 	 * @return
 	 */
-	public WtmWorkTermTimeVO getWorkTermTime(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap);
+	public Map<String, Object> getFlexibleRangeInfo(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
+	
+	/**
+	 * 선택한 날의 근무시간에 대한 정보
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getFlexibleWorkTimeInfo(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
 	
 	/**
 	 * 기존에 신청한 근무제 적용일 가져오기

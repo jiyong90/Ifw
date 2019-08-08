@@ -85,5 +85,18 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public Map<String, Object> calcMinuteExceptBreaktime(Map<String, Object> paramMap);
 	
+	/**
+	 * 근무제 기간에 대한 정보
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getFlexibleRangeInfo(Map<String, Object> paramMap);
+	
+	/**
+	 * 선택한 날의 근무시간에 대한 정보
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getFlexibleWorkTimeInfo(Map<String, Object> paramMap);
 	
 }

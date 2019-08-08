@@ -5,27 +5,27 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmInboxMapper">
 	<!--
-   		근무 계획 잔여 일 수(0보다 크면 근무 계획 작성 알림)
+   		근무 계획 잔여 일 수(0이 아니면 근무 계획 작성 알림)
      -->
 	<select id="getToDoPlanDays" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT E.SYMD as sYmd
-			     , F_WTM_DATE_DIFF(E.EYMD, E.SYMD) - COUNT(*) AS toDoPlanDays
+			SELECT E.FLEXIBLE_EMP_ID AS flexibleEmpId
+			     , E.SYMD AS sYmd
+			     , CASE WHEN SUM(CASE WHEN C.HOLIDAY_YN = 'N' THEN 1 ELSE 0 END) = 0 THEN -1
+				        ELSE SUM(CASE WHEN C.HOLIDAY_YN = 'N' THEN 1 ELSE 0 END) - SUM(CASE WHEN C.HOLIDAY_YN = 'N' AND R.WORK_CALENDAR_ID IS NOT NULL AND R.TIME_TYPE_CD = 'BASE' THEN 1 ELSE 0 END) END AS toDoPlanDays
 			  FROM WTM_FLEXIBLE_EMP E
-			  JOIN WTM_WORK_CALENDAR C
+			  LEFT OUTER JOIN WTM_WORK_CALENDAR C
 			    ON E.TENANT_ID = C.TENANT_ID
 			   AND E.ENTER_CD = C.ENTER_CD
 			   AND E.SABUN = C.SABUN
 			   AND C.YMD BETWEEN E.SYMD AND E.EYMD
-			  JOIN WTM_WORK_DAY_RESULT R
-			    ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
+			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+				 ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
 			   AND (#{ymd} BETWEEN E.SYMD AND E.EYMD OR F_WTM_TO_DATE(#{ymd},'%Y%m%d') < F_WTM_TO_DATE(E.EYMD,'%Y%m%d'))
-				AND R.TIME_TYPE_CD = 'BASE'
-				AND C.HOLIDAY_YN = 'N'
-			 GROUP BY E.FLEXIBLE_EMP_ID
+			 GROUP BY E.FLEXIBLE_EMP_ID 
         ]]>
     </select>
 </mapper>
