@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 
 /* S : bootstrap custom */
 /*list style none*/
@@ -522,6 +522,10 @@ box-sizing: border-box;
 
 .modal-app-wrap select:required:invalid{
   color:#cfcfcf;
+}
+
+.modal-app-wrap select.form-control{
+  padding: 6px 8px;
 }
 
 .modal-app-wrap select.form-control option{
