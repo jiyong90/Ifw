@@ -242,6 +242,7 @@
 		     ON R.WORK_CALENDAR_ID = C.WORK_CALENDAR_ID
 		  WHERE C.YMD <= #{ymd} 
 		    AND #{ymd}  BETWEEN E.SYMD AND E.EYMD
+		    AND R.TIME_TYPE_CD = 'BASE'
 		    AND E.SABUN = #{sabun}
 		    AND E.TENANT_ID = #{tenantId}
 		    AND E.ENTER_CD = #{enterCd} 
@@ -277,5 +278,36 @@
  			 GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN, C.YMD
  		) X
  		]]>	
+  	</select>
+  	<select id="getSumOtMinute" parameterType="map" resultType="map">
+  		SELECT SUM(X.otMinute) AS otMinute FROM (
+			SELECT IFNULL(SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' AND R.APPR_MINUTE > 0 THEN IFNULL(R.APPR_MINUTE, 0)
+							ELSE IFNULL(R.PLAN_MINUTE, 0) END 
+			                ), 0) AS otMinute
+			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_WORK_CALENDAR C
+			    ON E.FLEXIBLE_EMP_ID = C.FLEXIBLE_EMP_ID
+			  JOIN WTM_WORK_DAY_RESULT R
+			    ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
+			 WHERE #{ymd} BETWEEN E.SYMD AND E.EYMD
+			   AND R.TIME_TYPE_CD = 'OT'
+			   AND E.SABUN = #{sabun}
+			   AND E.TENANT_ID = #{tenantId}
+			   AND E.ENTER_CD = #{enterCd}
+			 UNION ALL
+			SELECT IFNULL(SUM(IFNULL(O.OT_MINUTE, 0)),0)  AS otMinute
+			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_APPL A
+			    ON E.TENANT_ID = A.TENANT_ID
+			   AND E.ENTER_CD = A.ENTER_CD
+			   AND E.SABUN = A.APPL_IN_SABUN
+			  JOIN WTM_OT_APPL O
+			    ON A.APPL_ID = O.APPL_ID
+			 WHERE A.APPL_STATUS_CD IN ('21','31')
+			   AND E.TENANT_ID = #{tenantId}
+			   AND E.ENTER_CD = #{enterCd}
+			   AND E.SABUN = #{sabun}
+			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD
+			 ) X
   	</select>
 </mapper>

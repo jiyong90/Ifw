@@ -71,4 +71,11 @@ public interface WtmFlexibleEmpMapper {
 	 * @return { coreHm : 22 }
 	 */
 	public Map<String, Object> getTotalCoretime(Map<String, Object> paramMap);
+	/**
+	 * 근무제 기간에서 연장근무 시간을 가지고 오자
+	 * @param paramMap
+	 * @return { otMinute : 22 }
+	 */
+	public Map<String, Object> getSumOtMinute(Map<String, Object> paramMap);
+	
 }

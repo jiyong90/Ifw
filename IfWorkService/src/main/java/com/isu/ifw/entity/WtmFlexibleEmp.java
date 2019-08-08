@@ -40,6 +40,8 @@ public class WtmFlexibleEmp {
 	
 	@Column(name="WORK_MINUTE")
 	private int workMinute;
+	@Column(name="OT_MINUTE")
+	private int otMinute;
 	
 	@Column(name="NOTE")
 	private String note;
@@ -104,6 +106,13 @@ public class WtmFlexibleEmp {
 	}
 	public void setWorkMinute(int workMinute) {
 		this.workMinute = workMinute;
+	}
+	
+	public int getOtMinute() {
+		return otMinute;
+	}
+	public void setOtMinute(int otMinute) {
+		this.otMinute = otMinute;
 	}
 	public String getNote() {
 		return note;
