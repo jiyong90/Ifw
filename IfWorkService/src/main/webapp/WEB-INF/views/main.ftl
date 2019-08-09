@@ -106,7 +106,7 @@
 		        </div>
 		    </div>
 		</form>
-		<div id="summary-wrap" >
+		<div id="summary-wrap" style="display:none;">
 		    <ul class="summary-list">
 		        <li><span class="label-title">현재 근무계획</span><span class="desc">기본근무제</span></li>
 		        <li><span class="label-title">잔여소정근로</span><span class="desc">8시간 42분</span></li>
@@ -565,6 +565,7 @@
 </script>
 <script type="text/javascript">
     $(function(){
+    	$('#sub-nav #summary-wrap').hide();
         $( "#sub-nav .btn-collapse" ).on('click',function() {
             $('#sub-nav #full-wrap').toggle();
             $('#sub-nav #summary-wrap').toggle();
