@@ -251,50 +251,68 @@
                     </div>
                 </div>
                 <div class="white-box-wrap full-height mb-3">
-                    <form class="needs-validation" novalidate>
-                        <div class="work-plan-wrap">
-                            <div class="big-title">2019년 6월 3일 ~ 2019년 6월 7일 (5일)</div>
-                            <div class="inner-wrap">
-                                <div class="main-title">근무시간표</div>
-                                <div class="main-desc">기본근무시간표</div>
-                            </div>
-                            <div class="time-input-form">
-                                <div class="form-row no-gutters">
-                                    <div class="form-group col-6 pr-1">
-                                        <label for="startDay" data-target-input="nearest">출근시간</label>
-                                        <input type="text"
-                                            class="form-control datetimepicker-input form-control-sm mr-2"
-                                            id="startTime" data-toggle="datetimepicker" data-target="#startTime"
-                                            autocomplete="off" required>
-                                    </div>
-                                    <div class="form-group col-6 pl-1">
-                                        <label for="endDay" data-target-input="nearest">퇴근시간</label>
-                                        <input type="text"
-                                            class="form-control datetimepicker-input form-control-sm mr-2" id="endTime"
-                                            data-toggle="datetimepicker" data-target="#endTime" autocomplete="off"
-                                            required>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="sub-wrap">
-                            <ul class="time-block-list">
-                                <li>
-                                    <div class="title">총 소정 근로 시간</div>
-                                    <div class="desc">120시간</div>
-                                </li>
-                                <li>
-                                    <div class="title">계획 시간</div>
-                                    <div class="desc">42시간</div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="sub-desc">*연차는 표준근무시간 8시간 인정</div>
-                        <div class="btn-wrap">
-                            <button type="submit" class="btn btn-apply btn-block btn-lg">확정</button>
-                        </div>
-                    </form>
-                </div>
+	                <form class="needs-validation" novalidate>
+	                    <div class="work-plan-wrap">
+	                        <div class="big-title">2019년 6월 3일 ~ 2019년 6월 7일 (5일)</div>
+	                        <div class="inner-wrap">
+	                            <ul class="main-wrap">
+	                                <li>
+	                                    <div class="main-title">근무시간표</div>
+	                                    <div class="main-desc">기본근무시간표</div>
+	                                </li>
+	                                <li>
+	                                    <div class="main-title">근무시간</div>
+	                                    <div class="main-desc">06:00 ~ 18:00</div>
+	                                </li>
+	                                <li>
+	                                    <div class="main-title">코어시간</div>
+	                                    <div class="main-desc">10:00 ~ 14:00</div>
+	                                </li>
+	                            </ul>
+	                        </div>
+	                        <div class="inner-wrap">
+	                            그래프는 JS 라이브러리 혹은 작업을 좀 더 확인해야할 거 같음 
+	                            <ul class="legend-wrap">
+	                                <li class="work-time">근무시간</li>
+	                                <li class="core-time">코어시간</li>
+	                            </ul>
+	                        </div>
+	                        <hr class="bar">
+	                        <ul class="main-wrap">
+	                            <li>
+	                                <div class="main-title">신청일자</div>
+	                                <div class="main-desc">2019-07-30 ~2019-08-14 </div>
+	                            </li>
+	                        </ul>
+	                        <div class="time-input-form form-row no-gutters">
+	                            <div class="form-group col-6 pr-1">
+	                                <label for="startDay" data-target-input="nearest">출근시간</label>
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime" data-toggle="datetimepicker" data-target="#startTime" autocomplete="off" required>
+	                            </div>
+	                            <div class="form-group col-6 pl-1">
+	                                <label for="endDay" data-target-input="nearest">퇴근시간</label>
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime" data-toggle="datetimepicker" data-target="#endTime" autocomplete="off" required>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="sub-wrap">
+	                        <ul class="time-block-list">
+	                            <li>
+	                                <div class="title">총 소정 근로 시간</div>
+	                                <div class="desc">120시간</div>
+	                            </li>
+	                            <li>
+	                                <div class="title">계획 시간</div>
+	                                <div class="desc">42시간</div>
+	                            </li>
+	                        </ul>
+	                    </div>
+	                    <div class="sub-desc">*연차는 표준근무시간 8시간 인정</div>
+	                    <div class="btn-wrap">
+	                        <button type="submit" class="btn btn-apply btn-block btn-lg">저장</button>
+	                    </div>
+	                </form>
+	            </div>
             </div>
             <div class="col-12 col-md-9">
                 <div class="calendar-wrap">
