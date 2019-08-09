@@ -142,11 +142,12 @@ box-sizing: border-box;
 .work-info-wrap .btn-wrap{margin-top:13px;}
 
 /*  */
-.white-box-wrap {height:calc(100vh - 534px); padding: 14px;/* margin-bottom: 10px; */background-color: #ffffff;
+.white-box-wrap {height:calc(100vh - 542px); padding: 14px;/* margin-bottom: 10px; */background-color: #ffffff;
   overflow-y: auto;
   -ms-overflow-y: auto;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);}
-.white-box-wrap.full-height{height:calc(100vh - 220px)}
+.white-box-wrap.full-height{height:calc(100vh - 220px);}
+.white-box-wrap.collapse-height{height:calc(100vh - 453px)}
 .white-box-wrap .big-title {font-size: 14px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
 .white-box-wrap .main-title {font-size: 12px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
 .white-box-wrap .main-desc {font-size: 14px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
@@ -446,7 +447,7 @@ box-sizing: border-box;
   /* calendar */
 .calendar-wrap {
     position: relative;
-    height: calc(100vh - 220px);
+    height: calc(100vh - 228px);
     background-color:#ffffff;
     border-top: 3px solid #4d84fe;
     box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);

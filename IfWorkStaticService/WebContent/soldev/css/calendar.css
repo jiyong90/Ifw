@@ -2,12 +2,14 @@
   /* calendar */
 .calendar-wrap {
     position: relative;
-    height: calc(100vh - 220px);
+    height: calc(100vh - 228px);
     background-color:#ffffff;
     border-top: 3px solid #4d84fe;
     box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
-
+.calendar-wrap.collapse-height {
+  height: calc(100vh - 139px);
+}
 .calendar-wrap .fc-view-container{
   padding:0px 10px;
   box-sizing: border-box;
@@ -217,7 +219,7 @@
 
 /* 4) BASE */
 .fc-time-grid-event.fc-event.base,
-.fc-time-grid-event.fc-event.BASE {
+.fc-time-grid-event.fc-event.TAA {
   background-color: rgba(144, 233, 27, 0.3);
 }
 

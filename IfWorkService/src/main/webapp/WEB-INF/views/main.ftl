@@ -563,3 +563,15 @@
         }, false);
     });
 </script>
+<script type="text/javascript">
+    $(function(){
+        $( "#sub-nav .btn-collapse" ).on('click',function() {
+            $('#sub-nav #full-wrap').toggle();
+            $('#sub-nav #summary-wrap').toggle();
+            
+            $('.calendar-wrap').toggleClass('collapse-height');
+            $('.white-box-wrap').toggleClass('collapse-height');
+            
+        });
+    });
+</script>
