@@ -17,6 +17,7 @@ import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
+import com.isu.ifw.mapper.WtmOtApplMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
@@ -55,6 +56,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
+	
+	@Autowired
+	WtmOtApplMapper wtmOtApplMapper;
 
 	
 	@Override
@@ -100,6 +104,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			
 			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
+			wtmOtApplMapper.calcOtMinute(paramMap);
 			//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
 		
 		} catch(Exception e) {
@@ -168,12 +173,12 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		String otSdate = paramMap.get("otSdate").toString();
 		String otEdate = paramMap.get("otEdate").toString();
 		
-		
 		Date sd = WtmUtil.toDate(otSdate, "yyyyMMddHHmm");
 		Date ed = WtmUtil.toDate(otEdate, "yyyyMMddHHmm");
 		
 		Date chkD = WtmUtil.addDate(sd, 1);
-		
+
+		//연장근무 신청 기간이 1일 이상이어서도 안된다! 미쳐가지고..
 		int compare = chkD.compareTo(ed);
 		//시작일보다 하루 더한 날과 비교하여 크면 안됨
 		if(compare < 0) {
@@ -181,17 +186,26 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			return rp;
 		}
 		
-		//연장근무 신청 기간 내에 소정근로 외 다른 근무계획이 있는지 체크 한다.
-		//연장근무 신청 기간이 1일 이상이어서도 안된다! 미쳐가지고..
-		
-		Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
-		
+
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 		paramMap.put("tenantId", tenantId);
 		
+		//연장근무 신청 기간 내에 소정근로 외 다른 근무계획이 있는지 체크 한다.
+		paramMap.put("otSdate", sd);
+		paramMap.put("otEdate", ed);
+		Map<String, Object> resultMap = wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
+		//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
+		
+		int workCnt = Integer.parseInt(resultMap.get("workCnt").toString());
+		if(workCnt > 0) {
+			rp.setFail("이미 근무정보(신청중인 근무 포함)가 존재합니다.");
+			return rp;
+		}
+		
 		//현재 신청할 연장근무 시간 계산
-		Map<String, Object> resultMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap);
+		resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap));
+		
 		Integer calcMinute = Integer.parseInt(resultMap.get("calcMinute").toString());
 		resultMap.putAll(wtmFlexibleEmpMapper.getSumOtMinute(paramMap));
 		Integer sumOtMinute = Integer.parseInt(resultMap.get("otMinute").toString());

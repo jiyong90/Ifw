@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmOtApplMapper">
+	 <update id="calcOtMinute" parameterType="map">
+	 	UPDATE WTM_OT_APPL O
+		   SET OT_MINUTE = (
+			SELECT F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(O.OT_SDATE, '%H%i') ,F_WTM_DATE_FORMAT(O.OT_EDATE, '%H%i'),  '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,F_WTM_DATE_FORMAT(O.OT_SDATE, '%H%i') ,F_WTM_DATE_FORMAT(O.OT_EDATE, '%H%i'),  '')) 
+			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_WORK_CALENDAR C
+			    ON E.FLEXIBLE_EMP_ID = C.FLEXIBLE_EMP_ID
+			  JOIN WTM_TIME_CD_MGR T
+			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			  JOIN WTM_TIME_BREAK_MGR B
+			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+			   AND E.TENANT_ID = #{tenantId}
+			   AND E.ENTER_CD = #{enterCd}
+			   AND E.SABUN = #{sabun}
+			   AND C.YMD = #{ymd}
+		)
+		 WHERE O.APPL_ID = #{applId}
+	 </update>
+</mapper>
