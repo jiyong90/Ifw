@@ -225,7 +225,7 @@ public class ViewController {
 				}
 			} else {
 				//기본근무
-				flexibleStdMgr = flexibleStdMgrRepo.findByTenantIdAndEnterCdAndWorkTypeCd(tenantId, enterCd, "BASE");
+				flexibleStdMgr = flexibleStdMgrRepo.findByTenantIdAndEnterCdAndWorkTypeCd(tenantId, enterCd, WtmApplService.TIME_TYPE_BASE);
 			}
 			
 			mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
