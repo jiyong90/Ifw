@@ -72,7 +72,12 @@ public class WtmOtApplController {
 			workTypeCd = paramMap.get("workTypeCd").toString();
 				
 		try {
-			otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+			rp = otApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
+			
+			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
+				otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
