@@ -90,33 +90,43 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception { 
 		
-		try {
-			WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
-			Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
-			//신청서 최상위 테이블이다. 
-			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_APPLY_ING, sabun, userId);
-			
-			applId = appl.getApplId();
-
-			String ymd = paramMap.get("ymd")+"";
-			String otSdate = paramMap.get("otSdate")+"";
-			String otEdate = paramMap.get("otEdate")+"";
-			String reasonCd = paramMap.get("reasonCd").toString();
-			String reason = paramMap.get("reason").toString();
-
-			WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
-			
-			//근무제 신청서 테이블 조회
-			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), reasonCd, reason, sabun, userId);
-			
-			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
+		WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
+		Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
+		//신청서 최상위 테이블이다. 
+		WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_APPLY_ING, sabun, userId);
 		
-			paramMap.put("applId", applId);
-			wtmOtApplMapper.calcOtMinute(paramMap);
-			//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
+		applId = appl.getApplId();
+
+		String ymd = paramMap.get("ymd")+"";
+		String otSdate = paramMap.get("otSdate")+"";
+		String otEdate = paramMap.get("otEdate")+"";
+		String reasonCd = paramMap.get("reasonCd").toString();
+		String reason = paramMap.get("reason").toString();
+
+		WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 		
-		} catch(Exception e) {
-			throw new RuntimeException(e.getMessage());
+		//근무제 신청서 테이블 조회
+		WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), reasonCd, reason, sabun, userId);
+		
+		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
+	
+		paramMap.put("applId", applId);
+		wtmOtApplMapper.calcOtMinute(paramMap);
+		//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
+		
+		//결재라인 상태값 업데이트
+		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
+		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
+
+		 
+		if(lines != null && lines.size() > 0) {
+			for(WtmApplLine line : lines) {
+				//첫번째 결재자의 상태만 변경 후 스탑
+				line.setApprStatusCd(APPR_STATUS_REQUEST);
+				line = wtmApplLineRepo.save(line);
+				break;
+				 
+			}
 		}
 		 
 	}
