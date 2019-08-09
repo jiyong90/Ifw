@@ -120,6 +120,9 @@
                             <div class="sub-desc">표준 근무 시간표</div>
                         </li>
                     </ul>
+                    <div class="btn-wrap">
+                        <button type="submit" class="btn btn-apply btn-block btn-lg">확인요청</button>
+                    </div>
                 </div>
                 <div class="white-box-wrap mb-3" id="white-box-wrap">
                     <div class="work-plan-wrap">
