@@ -216,8 +216,8 @@
                             <div class="form-row no-gutters">
                                 <div class="form-group col-6 pr-1">
                                     <label for="startDay">시작일자</label>
-                                    <div id="startDay" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input"
+                                    <div data-target-input="nearest">
+                                        <input type="text" id="startDay" class="form-control datetimepicker-input"
                                             data-toggle="datetimepicker" data-target="#startDay" placeholder="연도/월/일"
                                             autocomplete="off" required>
                                     </div>
@@ -225,8 +225,8 @@
                                 <div class="form-group col-6 pl-1">
                                     <label for="endDay">종료일자</label>
                                     <!-- <input type="text" class="form-control datetimepicker-input" id="endDay" data-toggle="datetimepicker" data-target="#endDay" required> -->
-                                    <div id="endDay" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input"
+                                    <div data-target-input="nearest">
+                                        <input type="text" id="endDay" class="form-control datetimepicker-input"
                                             data-toggle="datetimepicker" data-target="#endDay" placeholder="연도/월/일"
                                             autocomplete="off" required>
                                     </div>
