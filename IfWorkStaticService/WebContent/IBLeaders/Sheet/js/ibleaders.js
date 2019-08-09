@@ -23,7 +23,8 @@ ibleaders = {
      * licenseType이 "value" 일 경우 라이선스 값을 기입한다.
      * licenseType이 "file" 일 경우 라이선스 파일 명을 기입한다.
      */
-    license: "W2FtSztPKCdwbDY6YTJxbn8QYkI6RjV0JyZmbDd7O2U8Kxo6WChHZTIoa3h+MWYgf2gpSCNKMkEkPWV+Lm5yMmVzL3ZKOw8hXWg3MmU0Zw==",	  
+    /*license: "W2FtSztPKCdwbDY6YTJxbn8QYkI6RjV0JyZmbDd7O2U8Kxo6WChHZTIoa3h+MWYgf2gpSCNKMkEkPWV+Lm5yMmVzL3ZKOw8hXWg3MmU0Zw==",*/
+    license: "W2FtSztPKCRybzYyYjJxbn8ZbVwySCl3JTp4ZzZnLH4oMF9gCyhXL39rLTRlLWUiY3YiST9dKVU/eD8tNGIxOiYra3NFOUMm",
 	/*
      * iborg license value
      *
