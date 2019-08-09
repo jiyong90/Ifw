@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="fullcalendar-4.2.0/packages/list/main.css" />
     <link rel="stylesheet" href="soldev/css/calendar.css">
     <!-- E : calendar -->
+    <link rel="stylesheet" href="tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -50,33 +51,32 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <form class="needs-validation" novalidate>
                             <div class="modal-app-wrap">
                                 <div class="inner-wrap">
-                                    <div class="desc  clearfix" >
-                                        <div class="float-sm-left float-md-left float-lg-left">
+                                    <div class="desc row">
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="title">연장근로시간</div>
                                             <span class="time-wrap">
                                                 <i class="fas fa-clock"></i>
                                                 <span class="time">1시간</span>
                                             </span>
                                         </div>
-                                        <div class="form-group mt-sm-1 mt-md-3 mt-lg-3 xl-mt-3 float-sm-right float-md-right float-lg-right clearfix">
-                                            <div class="form-row float-md-none float-lg-left">
-                                                <div class="col-7">
-                                                    <input type="date" class="form-control form-control-sm mr-2" id="inlineFormInputName2" placeholder="">
+                                        <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+                                            <div class="form-row">
+                                                <div class="d-sm-none d-lg-block ml-md-auto"></div>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate" data-toggle="datetimepicker" data-target="#startDate" placeholder="연도/월/일" autocomplete="off" required>
                                                 </div>
-                                                <div class="col-5">
-                                                    <input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2" placeholder="">
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime" data-toggle="datetimepicker" data-target="#startTime" autocomplete="off" required>
                                                 </div>
-                                            </div>
-                                            <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-1 pr-2 mt-1">~</span>
-                                            <div class="form-row float-md-none float-lg-right">
-                                                <div class="col-7">
-                                                    <input type="date" class="form-control form-control-sm mr-2" id="inlineFormInputName2" placeholder="">
+                                                <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1">~</span>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate" data-toggle="datetimepicker" data-target="#endDate" placeholder="연도/월/일" autocomplete="off" required>
                                                 </div>
-                                                <div class="col-5">
-                                                    <input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2" placeholder="">
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime" data-toggle="datetimepicker" data-target="#endTime" autocomplete="off" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -94,13 +94,13 @@
                                     <div class="form-group col-12">
                                         <label for="reson">설명</label>
                                         <textarea class="form-control" id="reson" rows="3"
-                                            placeholder="팀장 확인 시에 필요합니다."></textarea>
+                                            placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                     </div>
                                 </div>
                             </div>
                             <div class="btn-wrap text-center">
                                 <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
-                                <button type="button" class="btn btn-default rounded-0">확인요청</button>
+                                <button type="submit" class="btn btn-default rounded-0">확인요청</button>
                             </div>
                         </form>
                     </div>
@@ -119,37 +119,32 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <form class="needs-validation" novalidate>
                             <div class="modal-app-wrap">
                                 <div class="inner-wrap">
-                                    <div class="desc  clearfix">
-                                        <div class="float-sm-left float-md-left float-lg-left">
+                                    <div class="desc row">
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="title">연장근로시간</div>
                                             <span class="time-wrap">
                                                 <i class="fas fa-clock"></i>
                                                 <span class="time">1시간</span>
                                             </span>
                                         </div>
-                                        <div class="form-group mt-sm-1 mt-md-3 mt-lg-3 xl-mt-3 float-sm-right float-md-right float-lg-right clearfix">
-                                            <div class="form-row float-md-none float-lg-left">
-                                                <div class="col-7">
-                                                    <input type="date" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                        placeholder="">
+                                        <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+                                            <div class="form-row">
+                                                <div class="d-sm-none d-lg-block ml-md-auto"></div>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate" data-toggle="datetimepicker" data-target="#startDate" placeholder="연도/월/일" autocomplete="off" required>
                                                 </div>
-                                                <div class="col-5">
-                                                    <input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                        placeholder="">
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime2" data-toggle="datetimepicker" data-target="#startTime2" autocomplete="off" required>
                                                 </div>
-                                            </div>
-                                            <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-1 pr-2 mt-1">~</span>
-                                            <div class="form-row float-md-none float-lg-right">
-                                                <div class="col-7">
-                                                    <input type="date" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                        placeholder="">
+                                                <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1">~</span>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate" data-toggle="datetimepicker" data-target="#endDate" placeholder="연도/월/일" autocomplete="off" required>
                                                 </div>
-                                                <div class="col-5">
-                                                    <input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                        placeholder="">
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime2" data-toggle="datetimepicker" data-target="#endTime2" autocomplete="off" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -166,8 +161,7 @@
                                     </div>
                                     <div class="form-group col-12">
                                         <label for="reson">설명</label>
-                                        <textarea class="form-control" id="reson" rows="3"
-                                            placeholder="팀장 확인 시에 필요합니다."></textarea>
+                                        <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                     </div>
                                 </div>
                                 <div class="inner-wrap">
@@ -196,20 +190,17 @@
                                         <div class="desc">
                                             <div class="form-group clearfix">
                                                 <div class="form-row ">
-                                                    <div class="col-md-12 col-lg">
-                                                        <input type="date" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                            placeholder="">
+                                                    <div class="col-md-12 col-lg" data-target-input="nearest">
+                                                        <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="replaceDate" data-toggle="datetimepicker" data-target="#replaceDate" placeholder="연도/월/일" autocomplete="off" required>
                                                     </div>
                                                     <div class="col-md-12 col-lg mt-xs-1 mt-sm-1 mt-lg-0 float-right ">
                                                         <div class="form-row">
-                                                            <div class="col float-left">
-                                                                <input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                                    placeholder="">
+                                                            <div class="col float-left" data-target-input="nearest">
+                                                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime1" data-toggle="datetimepicker" data-target="#startTime1" autocomplete="off" required>
                                                             </div>
                                                             <span class="d-inline-block text-center pl-1 pr-2 mt-1">~</span>
-                                                            <div class="col float-right">
-                                                                <input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                                    placeholder="">
+                                                            <div class="col float-right" data-target-input="nearest">
+                                                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime1" data-toggle="datetimepicker" data-target="#endTime1" autocomplete="off" required>
                                                             </div>
                                                         </div>
                                     
@@ -222,20 +213,17 @@
                                         <!-- <div class="desc mt-2">
                                             <div class="form-group clearfix">
                                                 <div class="form-row ">
-                                                    <div class="col-md-12 col-lg">
-                                                        <input type="date" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                            placeholder="">
+                                                    <div class="col-md-12 col-lg" data-target-input="nearest">
+                                                        <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="replaceDate" data-toggle="datetimepicker" data-target="#replaceDate" placeholder="연도/월/일" autocomplete="off" required>
                                                     </div>
                                                     <div class="col-md-12 col-lg mt-xs-1 mt-sm-1 mt-lg-0 float-right ">
                                                         <div class="form-row">
-                                                            <div class="col float-left">
-                                                                <input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                                    placeholder="">
+                                                            <div class="col float-left" data-target-input="nearest">
+                                                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime1" data-toggle="datetimepicker" data-target="#startTime1" autocomplete="off" required>
                                                             </div>
                                                             <span class="d-inline-block text-center pl-1 pr-2 mt-1">~</span>
-                                                            <div class="col float-right">
-                                                                <input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                                    placeholder="">
+                                                            <div class="col float-right" data-target-input="nearest">
+                                                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime1" data-toggle="datetimepicker" data-target="#endTime1" autocomplete="off" required>
                                                             </div>
                                                         </div>
                                     
@@ -246,14 +234,13 @@
                                         </div> -->
                                     </div>
                                     <div class="btn-wrap text-center">
-                                        <!-- <button type="button" class="btn btn-inline btn-plus"><span class="pr-1">&#43;</span>대체일시 추가</button> -->
                                         <button type="button" class="btn btn-inline btn-plus"><i class="fas fa-plus"></i>대체일시 추가</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="btn-wrap text-center">
                                 <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
-                                <button type="button" class="btn btn-default rounded-0">확인요청</button>
+                                <button type="submit" class="btn btn-default rounded-0">확인요청</button>
                             </div>
                         </form>
                     </div>
@@ -271,9 +258,38 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <form class="needs-validation" novalidate>
                             <div class="modal-app-wrap">
                                 <div class="inner-wrap">
+                                    <div class="desc row">
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="title">연장근로시간</div>
+                                            <span class="time-wrap">
+                                                <i class="fas fa-clock"></i>
+                                                <span class="time">1시간</span>
+                                            </span>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+                                            <div class="form-row">
+                                                <div class="d-sm-none d-lg-block ml-md-auto"></div>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate" data-toggle="datetimepicker" data-target="#startDate" placeholder="연도/월/일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime3" data-toggle="datetimepicker" data-target="#startTime3" autocomplete="off" required>
+                                                </div>
+                                                <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1">~</span>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate" data-toggle="datetimepicker" data-target="#endDate" placeholder="연도/월/일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime3" data-toggle="datetimepicker" data-target="#endTime3" autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="inner-wrap">
                                     <div class="desc  clearfix">
                                         <div class="float-sm-left float-md-left float-lg-left">
                                             <div class="title">휴일근로시간</div>
@@ -308,7 +324,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="form-row no-gutters">
                                     <div class="form-group col-12">
                                         <label for="workTime">사유구분</label>
@@ -351,9 +367,8 @@
                                         <div class="desc">
                                             <div class="form-group clearfix">
                                                 <div class="form-row ">
-                                                    <div class="col-md-6 col-lg">
-                                                        <input type="date" class="form-control form-control-sm mr-2" id="inlineFormInputName2"
-                                                            placeholder="">
+                                                    <div class="col-md-6 col-lg" data-target-input="nearest">
+                                                        <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="replaceDay" data-toggle="datetimepicker" data-target="#replaceDay" placeholder="연도/월/일" autocomplete="off" required>
                                                     </div>
                                                     <div class="col-md-6 col-lg mt-xs-1 mt-sm-0 mt-md-1 mt-lg-0 float-right">
                                                         <div class="custom-control custom-radio custom-control-inline mt-sm-1 mt-md-0 mt-lg-1">
@@ -376,7 +391,7 @@
                             </div>
                             <div class="btn-wrap text-center">
                                 <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
-                                <button type="button" class="btn btn-default rounded-0">확인요청</button>
+                                 <button type="submit" class="btn btn-default rounded-0">확인요청</button>
                             </div>
                         </form>
                     </div>
@@ -591,14 +606,61 @@
     <script src="popper-1.15.0/popper.min.js"></script>
     <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
     <script src="moment/moment.js"></script>
-    <script src="bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script>
+    <script src="moment/ko.js"></script>
+    <script src="tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.js"></script>
+    <!-- <script src="bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script> -->
+    <!-- <script src="bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script> -->
     <script type="text/javascript">
         $(function () {
-            $('#inputWorkDate').datetimepicker({
+            $('#startDate').datetimepicker({
+                format: 'YYYY/MM/DD',
                 language: 'ko'
             });
-
+            $('#startTime').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+            $('#endDate').datetimepicker({
+                format: 'YYYY/MM/DD',
+                language: 'ko'
+            });
+            $('#endTime').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+            $('#replaceDate').datetimepicker({
+                format: 'YYYY/MM/DD',
+                language: 'ko'
+            });
+            $('#replaceDay').datetimepicker({
+                format: 'YYYY/MM/DD',
+                language: 'ko'
+            });
+            $('#startTime1').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+             $('#endTime1').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+            $('#startTime2').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+             $('#endTime2').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+            $('#startTime3').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+             $('#endTime3').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+            
 
             // radio toggle
             $('input[type="radio"]').click(function () {
@@ -619,22 +681,16 @@
 
             //add input
             $('.btn-plus').click(function(){
-                $('#replace-wrapper').append('<div class="desc mt-2">'+
-                                        '<div class="form-group clearfix">'+
-                                            '<div class="form-row ">'+
-                                                '<div class="col-md-12 col-lg">'+
-                                                    '<input type="date" class="form-control form-control-sm mr-2" id="inlineFormInputName2" placeholder="">'+
-                                                '</div>'+
-                                                '<div class="col-md-12 col-lg mt-xs-1 mt-sm-1 mt-lg-0 float-right ">'+
-                                                    '<div class="form-row">'+
-                                                        '<div class="col float-left">'+
-                                                            '<input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2" placeholder="">'+
-                                                        '</div>'+
-                                                        '<span class="d-inline-block text-center pl-1 pr-2 mt-1">~</span>'+
-                                                        '<div class="col float-right">'+
-                                                            '<input type="time" class="form-control form-control-sm mr-2" id="inlineFormInputName2" placeholder="">'+
-                                                        '</div></div></div></div></div>'+
-                                        '<div class="guide">*해당일 근무시간은 09:00~18:00 입니다.</div></div>');
+                $('#replace-wrapper').append('<div class="desc mt-2"><div class="form-group clearfix"><div class="form-row ">'+
+                                                    '<div class="col-md-12 col-lg" data-target-input="nearest">'+
+                                                        '<input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="replaceDate" data-toggle="datetimepicker" data-target="#replaceDate" placeholder="연도/월/일" autocomplete="off" required>'+
+                                                    '</div><div class="col-md-12 col-lg mt-xs-1 mt-sm-1 mt-lg-0 float-right "><div class="form-row">'+
+                                                    '<div class="col float-left" data-target-input="nearest">'+
+                                                    '<input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime1" data-toggle="datetimepicker" data-target="#startTime1" autocomplete="off" required>'+
+                                                    '</div><span class="d-inline-block text-center pl-1 pr-2 mt-1">~</span><div class="col float-right" data-target-input="nearest">'+
+                                                    '<input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime1" data-toggle="datetimepicker" data-target="#endTime1" autocomplete="off" required>'+
+                                                    '</div></div></div></div></div>'+
+                                                    '<div class="guide">*해당일 근무시간은 09:00~18:00 입니다.</div></div>');
             });
 
             //reset modal input
@@ -644,6 +700,22 @@
                 $('#replace-wrapper').html('');
             });
         });
+
+        //validation check
+        window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
     </script>
 </body>
 

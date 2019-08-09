@@ -6,7 +6,7 @@
 		</span>
 	</div>
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :navlinks="t" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :header="header" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
 </div>
 
@@ -18,13 +18,20 @@
 	    },
 	    data : {
 	    	t: true,
+	    	header: {
+	    		left: 'prev,next',
+	        	center: 'title',
+	        	right: ''
+	    	},
 	    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
 	    	prevEdate: '', //이전 근무제 종료일
 	    	monthFlexitimeList: [], //해당 월의 근무제 리스트
 	    	events: []
 	    },
 	    mounted: function(){
-	    	
+	    	//근무 계획 작성 화면 전환
+	    	$("#workRangeInfo").show();
+     		$("#workDayInfo").show();
 	    },
 	    methods : {
 	    	renderCallback: function(){
@@ -92,6 +99,9 @@
 	    		} else {
 	    			calendarLeftVue.selectedDate = info.dateStr;
 	    		}
+	    	},
+	    	selectCallback : function(info){
+	    		calendarLeftVue.getFlexibleRangeInfo(moment(info.start).format('YYYYMMDD'));
 	    	},
 	    	eventRenderCallback : function(info){
 	    		/* if(info.event.id.indexOf('workRange.')==0 && info.isStart) {
