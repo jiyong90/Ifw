@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.option.vo.ReturnParam;
 
@@ -52,7 +53,7 @@ public class WtmOtApplController {
 	public @ResponseBody ReturnParam requestOtAppl(@RequestBody Map<String, Object> paramMap
 													    , HttpServletRequest request) {
 		
-		validateParamMap(paramMap, "workTypeCd", "flexibleStdMgrId", "sYmd", "eYmd", "reason", "reasonCd");
+		validateParamMap(paramMap, "workTypeCd", "flexibleStdMgrId", "otSdate", "otEdate", "reasonCd", "reason");
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -72,6 +73,7 @@ public class WtmOtApplController {
 			workTypeCd = paramMap.get("workTypeCd").toString();
 				
 		try {
+			ObjectMapper mapper = new ObjectMapper();
 			rp = otApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
 			
 			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {

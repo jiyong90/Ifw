@@ -389,7 +389,7 @@
 			 ) X
   	</select>
   	
-  	<select id="calcMinuteExceptBreaktime" parameterType="map">
+  	<select id="calcMinuteExceptBreaktime" parameterType="map" resultType="map">
   		SELECT F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) AS calcMinute 
   		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_WORK_CALENDAR C
@@ -405,7 +405,7 @@
 		   AND C.YMD = #{ymd}
   	</select>
   	
-  	<select id="checkDuplicateWorktime" parameterType="map">
+  	<select id="checkDuplicateWorktime" parameterType="map" resultType="map">
   		SELECT COUNT(*) AS workCnt FROM (
 			SELECT 1 
 			  FROM WTM_FLEXIBLE_EMP E
@@ -416,7 +416,7 @@
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
-			   AND (F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) BETWEEN #{otSdate} AND #{otEdate} OR F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE)  BETWEEN #{otSdate} AND #{otEdate} )
+			   AND (F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) BETWEEN #{sdate} AND #{edate} OR F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE)  BETWEEN #{sdate} AND #{edate} )
 			 UNION ALL
 			SELECT 2 
 			  FROM WTM_APPL A
@@ -426,7 +426,7 @@
 			   AND A.ENTER_CD = #{enterCd}
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND (O.OT_SDATE BETWEEN #{otSdate} AND #{otEdate} OR O.OT_EDATE BETWEEN #{otSdate} AND #{otEdate})
+			   AND (O.OT_SDATE BETWEEN #{sdate} AND #{edate} OR O.OT_EDATE BETWEEN #{sdate} AND #{edate})
 			) X
   	</select>
 </mapper>

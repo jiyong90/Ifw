@@ -15,6 +15,7 @@ import com.isu.ifw.entity.WtmApplLine;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtAppl;
+import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmOtApplMapper;
@@ -25,6 +26,7 @@ import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
+import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
@@ -51,6 +53,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	WtmOtApplRepository wtmOtApplRepo;
 	@Autowired
 	WtmFlexibleEmpRepository wtmFlexibleEmpRepo;
+	@Autowired
+	WtmWorkCalendarRepository wtmWorkCalendarRepository;
 	@Autowired
 	WtmFlexibleStdMgrRepository wtmFlexibleStdMgrRepo;
 	
@@ -93,22 +97,26 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_APPLY_ING, sabun, userId);
 			
 			applId = appl.getApplId();
-			
-			String otSdate = paramMap.get("otSdate").toString();
-			String otEdate = paramMap.get("otEdate").toString();
+
+			String ymd = paramMap.get("ymd")+"";
+			String otSdate = paramMap.get("otSdate")+"";
+			String otEdate = paramMap.get("otEdate")+"";
 			String reasonCd = paramMap.get("reasonCd").toString();
 			String reason = paramMap.get("reason").toString();
+
+			WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 			
 			//근무제 신청서 테이블 조회
-			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, reasonCd, reason, sabun, userId);
+			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), reasonCd, reason, sabun, userId);
 			
 			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
+			paramMap.put("applId", applId);
 			wtmOtApplMapper.calcOtMinute(paramMap);
 			//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
 		
 		} catch(Exception e) {
-			throw new Exception("저장 시 오류가 발생했습니다.");
+			throw new RuntimeException(e.getMessage());
 		}
 		 
 	}
@@ -142,13 +150,16 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			
 			applId = appl.getApplId();
 			
+			String ymd = paramMap.get("ymd").toString();
 			String otSdate = paramMap.get("otSdate").toString();
 			String otEdate = paramMap.get("otEdate").toString();
 			String reasonCd = paramMap.get("reasonCd").toString();
 			String reason = paramMap.get("reason").toString();
 			
+			WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
+			
 			//근무제 신청서 테이블 조회
-			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, reasonCd, reason, sabun, userId);
+			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), reasonCd, reason, sabun, userId);
 			
 			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
@@ -192,8 +203,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		paramMap.put("tenantId", tenantId);
 		
 		//연장근무 신청 기간 내에 소정근로 외 다른 근무계획이 있는지 체크 한다.
-		paramMap.put("otSdate", sd);
-		paramMap.put("otEdate", ed);
+		paramMap.put("sdate", sd);
+		paramMap.put("edate", ed);
 		Map<String, Object> resultMap = wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
 		//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
 		
@@ -310,7 +321,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		//결재라인 저장 끝
 	}
 	
-	protected WtmOtAppl saveWtmOtAppl(Long tenantId, String enterCd, Long applId, Long oldOtApplId, String otSdate, String otEdate,String reasonCd, String reason, String sabun, Long userId) {
+	protected WtmOtAppl saveWtmOtAppl(Long tenantId, String enterCd, Long applId, Long oldOtApplId, String otSdate, String otEdate, String holidayYn, String reasonCd, String reason, String sabun, Long userId) {
 		 
 		WtmOtAppl otAppl = wtmOtApplRepo.findByApplId(applId);
 		if(otAppl == null) {
@@ -321,6 +332,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		otAppl.setYmd(WtmUtil.parseDateStr(sDate, null));
 		otAppl.setOtSdate(sDate);
 		otAppl.setOtEdate(WtmUtil.toDate(otEdate, "yyyyMMddHHmm"));
+		otAppl.setHolidayYn(holidayYn);
 		otAppl.setReasonCd(reasonCd);
 		otAppl.setReason(reason);
 		otAppl.setUpdateId(userId);

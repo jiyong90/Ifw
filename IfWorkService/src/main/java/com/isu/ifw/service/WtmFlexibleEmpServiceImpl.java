@@ -89,6 +89,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			
 		}
 		result.put("entry", entry);*/
+		result.put("holidayYn", workCalendar.getHolidayYn());
 		result.put("entry", workCalendar);
 		
 		//근태, 근무 정보
@@ -98,8 +99,23 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("sabun", sabun);
 		paramMap.put("ymd", ymd);
 		
-		List<Map<String, Object>> workResult = flexEmpMapper.getWorkDayResult(paramMap);
-		result.put("workResult", workResult);
+		List<Map<String, Object>> workDayResult = flexEmpMapper.getWorkDayResult(paramMap);
+		Map<String, Object> dayResults = new HashMap<String, Object>();
+		if(result!=null && result.size()>0) {
+			for(Map<String, Object> r : workDayResult) {
+				List<Map<String, Object>> dayResult = null;
+				String date = r.get("ymd").toString();
+				if(dayResults.containsKey(date)) {
+					dayResult = (List<Map<String, Object>>)dayResults.get(date);
+				} else {
+					dayResult = new ArrayList<Map<String, Object>>();
+				}
+				
+				dayResult.add(r);
+				dayResults.put(ymd, dayResult);
+			}
+		}
+		result.put("dayResults", dayResults);
 		
 		return result;
 	}

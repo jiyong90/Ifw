@@ -86,7 +86,10 @@ public class WtmOtAppl {
 		return holidayYn;
 	}
 	public void setHolidayYn(String holidayYn) {
-		this.holidayYn = holidayYn;
+		if(holidayYn == null || holidayYn.equals(""))
+			this.holidayYn = "N";
+		else
+			this.holidayYn = holidayYn;
 	}
 	public Date getOtSdate() {
 		return otSdate;
