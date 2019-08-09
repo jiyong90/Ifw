@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -37,6 +38,14 @@ public class WtmUtil {
 		} 
 	}
 	
+	public static Date addDate(Date d, int addDay) {
+		Calendar cal = Calendar.getInstance();
+	    cal.setTime(d);
+	    cal.add(Calendar.DATE, addDay);
+	    return cal.getTime();
+	}
+
+ 
 	public static long dayCnt(String begin, String end) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 	    Date beginDate = formatter.parse(begin);

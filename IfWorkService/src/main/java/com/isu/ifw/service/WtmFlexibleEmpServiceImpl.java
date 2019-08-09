@@ -134,7 +134,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		if(dateMap != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
 			for(String k : dateMap.keySet()) {
-				WtmWorkDayResult result =  workDayResultRepo.findByTimeTypeCdAndTenantIdAndEnterCdAndSabunAndYmd("BASE", emp.getTenantId(), emp.getEnterCd(), emp.getSabun(), k);
+				WtmWorkDayResult result =  workDayResultRepo.findByTimeTypeCdAndTenantIdAndEnterCdAndSabunAndYmd(WtmApplService.TIME_TYPE_BASE, emp.getTenantId(), emp.getEnterCd(), emp.getSabun(), k);
 				if(result == null) {
 					result = new WtmWorkDayResult();
 					//부모키 가져오기
@@ -163,7 +163,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 						result.setPlanEdate(null);
 						result.setPlanMinute(0);
 					}
-					result.setTimeTypeCd("BASE");
+					result.setTimeTypeCd(WtmApplService.TIME_TYPE_BASE);
 					result.setUpdateId(userId);
 					workDayResultRepo.save(result);
 				} catch (ParseException e) {

@@ -140,8 +140,8 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
-
-		ReturnParam rp = validate(tenantId, enterCd, applId, workTypeCd, paramMap);
+		paramMap.put("applId", applId);
+		ReturnParam rp = validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
 
 		if(rp.getStatus().equals("FAIL")) {
 			throw new RuntimeException(rp.get("message").toString());
@@ -296,9 +296,10 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 
 	
 	@Override
-	public ReturnParam validate(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap) {
+	public ReturnParam validate(Long tenantId, String enterCd, String sabun, String workTypeCd, Map<String, Object> paramMap) {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
+		Long applId = Long.parseLong(paramMap.get("applId").toString());
 		//신청 시 날짜 중복되지 않도록 체크 한다.
 		rp = checkRequestDate(applId);
 		if(rp.getStatus().equals("FAIL")) {

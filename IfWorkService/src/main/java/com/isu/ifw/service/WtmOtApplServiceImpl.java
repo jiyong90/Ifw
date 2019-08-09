@@ -77,6 +77,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		return null;
 	}
 
+	@Transactional
 	@Override
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception { 
@@ -89,13 +90,13 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			
 			applId = appl.getApplId();
 			
-			String sYmd = paramMap.get("sYmd").toString();
-			String eYmd = paramMap.get("eYmd").toString();
+			String otSdate = paramMap.get("otSdate").toString();
+			String otEdate = paramMap.get("otEdate").toString();
 			String reasonCd = paramMap.get("reasonCd").toString();
 			String reason = paramMap.get("reason").toString();
 			
 			//근무제 신청서 테이블 조회
-			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, sYmd, eYmd, reasonCd, reason, sabun, userId);
+			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, reasonCd, reason, sabun, userId);
 			
 			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
@@ -136,13 +137,13 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			
 			applId = appl.getApplId();
 			
-			String sYmd = paramMap.get("sYmd").toString();
-			String eYmd = paramMap.get("eYmd").toString();
+			String otSdate = paramMap.get("otSdate").toString();
+			String otEdate = paramMap.get("otEdate").toString();
 			String reasonCd = paramMap.get("reasonCd").toString();
 			String reason = paramMap.get("reason").toString();
 			
 			//근무제 신청서 테이블 조회
-			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, sYmd, eYmd, reasonCd, reason, sabun, userId);
+			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, reasonCd, reason, sabun, userId);
 			
 			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
@@ -159,14 +160,56 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	@Override
 	public ReturnParam validate(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
 		// TODO Auto-generated method stub
 		// 중복 신청은 화면에서 제어 하겠지?
 		String ymd = paramMap.get("ymd").toString();
-		String shm = paramMap.get("shm").toString();
-		String ehm = paramMap.get("ehm").toString();
+		String otSdate = paramMap.get("otSdate").toString();
+		String otEdate = paramMap.get("otEdate").toString();
+		
+		
+		Date sd = WtmUtil.toDate(otSdate, "yyyyMMddHHmm");
+		Date ed = WtmUtil.toDate(otEdate, "yyyyMMddHHmm");
+		
+		Date chkD = WtmUtil.addDate(sd, 1);
+		
+		int compare = chkD.compareTo(ed);
+		//시작일보다 하루 더한 날과 비교하여 크면 안됨
+		if(compare < 0) {
+			rp.setFail("연장근무 신청을 하루 이상 신청할 수 없습니다.");
+			return rp;
+		}
+		
+		//연장근무 신청 기간 내에 소정근로 외 다른 근무계획이 있는지 체크 한다.
+		//연장근무 신청 기간이 1일 이상이어서도 안된다! 미쳐가지고..
+		
 		Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
 		
-		return null;
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("tenantId", tenantId);
+		
+		//현재 신청할 연장근무 시간 계산
+		Map<String, Object> resultMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap);
+		Integer calcMinute = Integer.parseInt(resultMap.get("calcMinute").toString());
+		resultMap.putAll(wtmFlexibleEmpMapper.getSumOtMinute(paramMap));
+		Integer sumOtMinute = Integer.parseInt(resultMap.get("otMinute").toString());
+		
+		//연장근무 가능 시간을 가지고 오자
+		WtmFlexibleEmp emp = wtmFlexibleEmpRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, sabun, ymd);
+		
+		Integer otMinute = emp.getOtMinute();
+		//otMinute 연장근무 가능 시간이 0이면 체크 하지말자 우선!!
+		if(otMinute != null && otMinute > 0) {
+			int t = (((sumOtMinute!=null)?sumOtMinute:0) + ((calcMinute!=null)?calcMinute:0));
+			//연장 가능 시간보다 이미 신청중이거나 연장근무시간과 신청 시간의 합이 크면 안되유.
+			if(otMinute < t ) {
+				rp.setFail("연장근무 가능시간은 " + otMinute + " 시간 입니다. 신청 가능 시간은 " + (otMinute-((sumOtMinute!=null)?sumOtMinute:0)) + " 시간 입니다. 추가 신청이 필요한 경우 담당자에게 문의하세요" );
+			}
+		}
+		
+		return rp;
 	}
 
 	@Override

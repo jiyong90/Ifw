@@ -38,6 +38,13 @@ public interface WtmApplService {
 	final static String APPL_LINE_S = "2"; //발신결재
 	final static String APPL_LINE_R = "3"; //수신결재
 	
+	
+
+	//소정근무시간
+	final static String TIME_TYPE_BASE = "BASE";
+	//연장근무
+	final static String TIME_TYPE_OT = "OT";
+	
 	public Map<String, Object> getAppl(Long applId);
 	
 	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
