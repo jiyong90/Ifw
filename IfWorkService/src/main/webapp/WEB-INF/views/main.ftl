@@ -51,51 +51,72 @@
         </div>
     </div>
     <!-- modal end -->
-    <div id="sub-nav" class="container-fluid">
-        <form action="">
-            <div class="row no-gutters work-time-wrap">
-                <div class="col-12 col-sm-2 col-xl-1">
-                    <div class="title">현재 근무계획</div>
-                    <div class="desc">기본근무제</div>
-                </div>
-                <div class="col-12 col-sm-2 col-xl-1">
-                    <div class="title">잔여소정근로</div>
-                    <div class="desc">8시간 42분</div>
-                </div>
-                <div class="col-12 col-sm-2 col-xl-1">
-                    <div class="title">잔여연장근로</div>
-                    <div class="desc">4시간</div>
-                </div>
-                <div class="col">
-                </div>
-                <div class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
-                    <div class="btn-wrap text-right">
-                        <button type="button" class="btn btn-apply" data-toggle="modal"
-                            data-target="#workSystemModal">근무제 적용하기</button>
-                    </div>
-                </div>
-            </div>
-            <div class="form-inline work-check-wrap">
-                <span class="title">캘린더 표시</span>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck1">
-                    <label class="custom-control-label" for="customCheck1">회사캘린더</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck2">
-                    <label class="custom-control-label" for="customCheck2">근무계획</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck3">
-                    <label class="custom-control-label" for="customCheck3">근무실적</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customCheck4">
-                    <label class="custom-control-label" for="customCheck4">요약정보로 보기</label>
-                </div>
-            </div>
-        </form>
-    </div>
+	<div id="sub-nav" class="container-fluid">
+		<form action="" id="full-wrap">
+		    <div class="row no-gutters work-time-wrap">
+		        <div class="col-12 col-sm-2 col-xl-1">
+		            <div class="title">현재 근무계획</div>
+		            <div class="desc">기본근무제</div>
+		        </div>
+		        <div class="col-12 col-sm-2 col-xl-1">
+		            <div class="title">잔여소정근로</div>
+		            <div class="desc">8시간 42분</div>
+		        </div>
+		        <div class="col-12 col-sm-2 col-xl-1">
+		            <div class="title">잔여연장근로</div>
+		            <div class="desc">4시간</div>
+		        </div>
+		        <div class="col">
+		        </div>
+		        <div class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+		            <div class="btn-wrap text-right">
+		                <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#workSystemModal">근무제 적용하기</button>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="sub-info-wrap clearfix">
+		        <div class="form-inline work-check-wrap ">
+		            <span class="title">캘린더 표시</span>
+		            <div class="custom-control custom-checkbox">
+		                <input type="checkbox" class="custom-control-input" id="customCheck1">
+		                <label class="custom-control-label" for="customCheck1">회사캘린더</label>
+		            </div>
+		            <div class="custom-control custom-checkbox">
+		                <input type="checkbox" class="custom-control-input" id="customCheck2">
+		                <label class="custom-control-label" for="customCheck2">근무계획</label>
+		            </div>
+		            <div class="custom-control custom-checkbox">
+		                <input type="checkbox" class="custom-control-input" id="customCheck3">
+		                <label class="custom-control-label" for="customCheck3">근무실적</label>
+		            </div>
+		            <div class="custom-control custom-checkbox">
+		                <input type="checkbox" class="custom-control-input" id="customCheck4">
+		                <label class="custom-control-label" for="customCheck4">요약정보로 보기</label>
+		            </div>
+		        </div>
+		        <div class="legend-wrap">
+		            <span class="title">근무제 표시</span>
+		            <ul class="legend-list-wrap">
+		                <li class="ELAS">탄력근무</li>
+		                <li class="SELE_F">완전선택근무</li>
+		                <li class="SELE_C">부분선택근무</li>
+		                <li class="DIFF">시차출퇴근</li>
+		                <li class="AUTO">자율출퇴근</li>
+		            </ul>
+		        </div>
+		    </div>
+		</form>
+		<div id="summary-wrap" >
+		    <ul class="summary-list">
+		        <li><span class="label-title">현재 근무계획</span><span class="desc">기본근무제</span></li>
+		        <li><span class="label-title">잔여소정근로</span><span class="desc">8시간 42분</span></li>
+		        <li><span class="label-title">잔여연장근로</span><span class="desc">4시간</span></li>
+		    </ul>
+		</div>
+		<div class="btn-collapse-wrap">
+		    <button class="btn-collapse btn-inline"></button>
+		</div>
+	</div>
     <div class="container-fluid">
         <div class="row no-gutters">
             <div class="col-12 col-md-3 pr-md-3">

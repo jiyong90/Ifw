@@ -381,14 +381,29 @@ a.article:hover {
 
 /* sub-nav */
 #sub-nav{
+  position:relative;
   width:100%;
   padding: 16px 20px 14px 24px;
-  margin-bottom: 14px;
+  margin-bottom: 22px;
   background-color:#ffffff;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+}
+#sub-nav .btn-collapse-wrap {
+  position: absolute;
+  left: 0;
+  bottom:-28px;
+  width: 100%;
+  text-align: center;
+}
+#sub-nav .btn-collapse-wrap .btn-collapse {
+  width:69px;
+  height: 25px;
+  border: 0px;
+  padding: 0px;
+  background:url('../img/cal_btn.png') no-repeat center;
 }
 #sub-nav .work-time-wrap{
   padding-bottom:16px;
@@ -412,13 +427,13 @@ a.article:hover {
   color: #292944;
 }
 
-#sub-nav .work-check-wrap .title{
+#sub-nav .sub-info-wrap .title {
   font-size: 12px;
   line-height: 1.5;
   color: #6b6b80;
   vertical-align: middle;
 }
-#sub-nav .work-check-wrap .title::after {
+#sub-nav .sub-info-wrap .title::after {
   content:'';
   display:inline-block;
   height: 16px;
@@ -426,6 +441,11 @@ a.article:hover {
   border-right: 1px solid #6B6B80;
   margin-bottom: -4px;
 }
+
+#sub-nav .work-check-wrap {
+  float:left;
+}
+
 #sub-nav .work-check-wrap .custom-control {
   padding-left: 2.5rem;
 }
@@ -451,3 +471,132 @@ a.article:hover {
   background-color:#32c9b6;
 }
 
+#sub-nav .legend-wrap{
+  float:left;
+  position: relative;
+  padding-left:10px;
+  margin-left: 10px;
+  margin-top:-4px;
+  display:inline-block;
+  vertical-align: middle;
+}
+#sub-nav .legend-wrap::before{
+  content: '';
+  position: absolute;
+  left:0px;
+  top: -6px;
+  display: inline-block;
+  width:1px;
+  height: 48px;
+  background-color: #e9e9e9;
+}
+
+
+#sub-nav .legend-list-wrap{
+  display:inline-block;
+  vertical-align: middle;
+}
+#sub-nav .legend-list-wrap::after {
+  content: '';
+  display: table;
+  width: 100%;
+  clear: both;
+}
+#sub-nav .legend-list-wrap li {
+  float: left;
+  display: inline-block;
+  margin-left: 22px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #292944;
+}
+
+#sub-nav .legend-list-wrap li:first-child {
+  margin-left: 10px;
+}
+
+#sub-nav .legend-list-wrap li::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 0px;
+  margin-right: 4px;
+  margin-bottom:2px;
+  margin-left: 0px;
+  opacity: 0.5;
+}
+
+
+/* 탄력근무 */
+#sub-nav .legend-list-wrap li.ELAS::before {
+  background-color: #ff6f00;
+  /* background-color: rgba(255, 111, 0,0.5); */
+
+}
+/* 완전선택근무 */
+#sub-nav .legend-list-wrap li.SELE_F::before {
+  background-color: #0321b8;
+  /* background-color: rgba(3, 33, 184,0.5); */
+}
+/* 부분선택근무 */
+#sub-nav .legend-list-wrap li.SELE_C::before {
+  background-color: #0862bb;
+  /* background-color: rgba(8, 98, 187,0.5); */
+}
+/* 시차출퇴근 */
+#sub-nav .legend-list-wrap li.DIFF::before {
+  background-color: #035d18;
+  /* background-color: rgba(3, 93, 24,0.5); */
+}
+/* 자율출퇴근 */
+#sub-nav .legend-list-wrap li.AUTO::before {
+  background-color: #080809;
+  /* background-color: rgba(8, 8, 9,0.5); */
+}
+
+
+#sub-nav #summary-wrap{margin:-9px 0px; font-size: 12px; line-height:1.5;}
+#sub-nav .summary-list::after{content:''; display: table; width:100%; clear: both;}
+#sub-nav .summary-list li{float:left; margin-left:30px;}
+#sub-nav .summary-list li:first-child{margin-left:0px;}
+
+#sub-nav .summary-list .label-title{margin-right:6px; color: #6b6b80;}
+#sub-nav .summary-list .desc{font-weight: bold;color: #292944;}
+
+
+/* 반응형 */
+/* Extra small devices (portrait phones, less than 576px) 
+No media query for `xs` since this is the default in Bootstrap */
+
+/* Small devices (landscape phones, 576px and up) */
+@media only screen and (max-width: 767px){
+  #sub-nav .legend-wrap::before {
+    display: none;
+  }
+  #sub-nav .legend-wrap{
+    padding-left: 0px;
+    margin-left: 0px;
+  }
+}
+/* Medium devices (tablets, 768px and up) */
+@media (min-width:768px) and (max-width: 959px){
+  #sub-nav .legend-wrap::before {
+    display: none;
+  }
+  #sub-nav .legend-wrap{
+    padding-left: 0px;
+    margin-left: 0px;
+  }
+}
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width:960px) and (max-width: 1240px){
+  #sub-nav .legend-wrap::before {
+    display: none;
+  }
+  #sub-nav .legend-wrap{
+    padding-left: 0px;
+    margin-left: 0px;
+  }
+}
