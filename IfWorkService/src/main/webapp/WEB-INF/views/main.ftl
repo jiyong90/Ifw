@@ -4,9 +4,10 @@
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css" />
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css" />
 <div id="workSystemCalendar">
-    <div class="modal fade" id="workSystemModal" tabindex="-1" role="dialog">
+    <!-- modal start -->
+    <div class="modal fade show" id="workSystemModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
+            <div class="modal-content rounded-0">
                 <div class="modal-header">
                     <h5 class="modal-title">근무제 적용하기</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -14,36 +15,42 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>사용할 근무제를 선택하세요.</p>
-                    <div class="mt-3">
-                        <button class="btn btn-outline btn-flat btn-block text-left" type="button"
-                            data-toggle="collapse" data-target="#collapWork" aria-expanded="false"
-                            aria-controls="collapseExample">근무제</button>
-                        <div class="" id="collapWork">
-                            <ul class="list-group select-work-list">
-                                <li class="list-group-item active">
-                                    <span class="tag ELAS">부분</span>
-                                    <div class="title">이수 선근제 기본</div>
-                                    <div class="desc">근무구간: 08:00 ~ 22:00<span class="bar"></span>코어구간: 10:00 ~ 15:00
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <span class="tag SELE_F">부분</span>
-                                    <div class="title">이수연구직</div>
-                                    <div class="desc">근무구간: 08:00 ~ 22:00<span class="bar"></span>코어구간: 10:00 ~ 15:00
-                                    </div>
-                                </li>
-                            </ul>
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap">
+                            <p>사용할 근무제를 선택하세요.</p>
+                            <div class="mt-3">
+                                <!-- <button class="btn btn-outline btn-flat btn-block text-left" type="button" data-toggle="collapse"
+                                data-target="#collapWork" aria-expanded="false" aria-controls="collapseExample">근무제</button> -->
+                                <div class="" id="collapWork">
+                                    <ul class="list-group select-work-list">
+                                        <li class="list-group-item active">
+                                            <span class="tag ELAS">부분</span>
+                                            <div class="title">이수 선근제 기본</div>
+                                            <div class="desc">근무구간: 08:00 ~ 22:00<span class="bar"></span>코어구간:
+                                                10:00 ~ 15:00</div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span class="tag SELE_F">부분</span>
+                                            <div class="title">이수연구직</div>
+                                            <div class="desc">근무구간: 08:00 ~ 22:00<span class="bar"></span>코어구간:
+                                                10:00 ~ 15:00</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-default" disabled>적용하기</button>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-secondary rounded-0"
+                                data-dismiss="modal">취소</button>
+                            <button type="submit" class="btn btn-default rounded-0">적용하기</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+    <!-- modal end -->
     <div id="sub-nav" class="container-fluid">
         <form action="">
             <div class="row no-gutters work-time-wrap">
