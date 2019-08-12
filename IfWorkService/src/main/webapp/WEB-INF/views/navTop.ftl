@@ -15,9 +15,12 @@
             <li class="nav-item">
                     <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
             </li>
+            <li class="nav-item">
+                    <a href="#" id="alertLink"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span></a>
+                </li>
             <li class="nav-item dropdown">
                 <a data-toggle="dropdown" aria-expanded="false" href="#" id="navTop"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span></a>
-   	        <#include "/inbox.ftl">
+   	        	<#include "/inbox.ftl">
             </li>
             <li class="nav-item">
                     <a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>

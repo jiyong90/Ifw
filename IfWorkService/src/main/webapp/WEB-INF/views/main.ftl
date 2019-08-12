@@ -601,6 +601,7 @@
             $('#full-info').toggle();
             $('#simple-info').toggle();
         });
+        
     });
 </script>
 <script type="text/javascript">
