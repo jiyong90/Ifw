@@ -166,6 +166,13 @@
 				default : function(){
 					return false;
 				}
+			},
+			handleWindowResize: {
+				type: Boolean,
+				required: false,
+				default : function(){
+					return true;
+				}
 			}
 		}, 
 		computed: {
@@ -187,7 +194,9 @@
 			        editable: this.editable,
 			        eventLimit: this.eventLimit, 
 			        events: this.events,
-			        eventSources: this.eventsources
+			        eventSources: this.eventsources,
+			        contentHeight: this.contentHeight,
+			        handleWindowResize: this.handleWindowResize
 				};
 				
 				if(this.defaultview!='') {
@@ -215,6 +224,9 @@
 				var calendarEl = document.getElementById('calendar');
 				var calendarOptions = $this.calOptions;
 				
+				calendarOptions.navLinkDayClick = function(info){
+					$this.navLinkDayClickCallback(info);
+				};
 				calendarOptions.datesRender = function(info){
 					$this.datesRenderCallback(info);
 				};
@@ -247,6 +259,9 @@
         methods: {
         	renderCallback: function(){
         		this.$emit('update');
+        	},
+        	navLinkDayClickCallback: function(info){
+        		this.$emit('navlinkdayclick', info);
         	},
         	datesRenderCallback: function(info){
         		this.$emit('datesrender', info);

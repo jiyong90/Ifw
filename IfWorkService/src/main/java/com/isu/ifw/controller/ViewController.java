@@ -26,7 +26,9 @@ import com.isu.auth.config.AuthConfigProvider;
 import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
+import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.repository.WtmCodeRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
@@ -57,6 +59,9 @@ public class ViewController {
 	
 	@Resource
 	WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
+	
+	@Resource
+	WtmCodeRepository codeRepo;
 	
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
@@ -154,6 +159,7 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
+		ObjectMapper mapper = new ObjectMapper();
 		if("workCalendar".equals(viewPage)){
 			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
 				String workday = request.getParameter("date");
@@ -163,6 +169,12 @@ public class ViewController {
 			if(request.getParameter("calendarType")!=null) {
 				String calendarType = request.getParameter("calendarType").toString();
 				mv.addObject("calendar", "work"+ calendarType +"Calendar");
+				
+				if("Time".equals(calendarType)) {
+					//연장근무 또는 휴일근무 신청 시 사유
+					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+					mv.addObject("reasons", mapper.writeValueAsString(reasons));
+				}
 			}
 			
 			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
@@ -195,15 +207,7 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		if("workCalendar".equals(viewPage)){
-			if(request.getParameter("calendarType")!=null) {
-				String calendarType = request.getParameter("calendarType").toString();
-				mv.addObject("calendar", "work"+ calendarType +"Calendar");
-			}
-			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
-		} else {
-			return mv;
-		}
+		return mv;
 		
 	}
 	
@@ -227,7 +231,6 @@ public class ViewController {
 				//기본근무
 				flexibleStdMgr = flexibleStdMgrRepo.findByTenantIdAndEnterCdAndWorkTypeCd(tenantId, enterCd, WtmApplService.TIME_TYPE_BASE);
 			}
-			
 			mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
 			
 		} catch(Exception e) {

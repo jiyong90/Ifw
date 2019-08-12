@@ -25,14 +25,14 @@
                                         <div class="form-row">
                                             <div class="d-sm-none d-lg-block ml-md-auto"></div>
                                             <div class="col col-md-3 col-lg-3" data-target-input="nearest">
-                                                <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="sDate" data-toggle="datetimepicker" data-target="#sDate" placeholder="연도/월/일" autocomplete="off" required>
+                                                <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="sDate" data-toggle="datetimepicker" data-target="#sDate" placeholder="연도-월-일" autocomplete="off" required>
                                             </div>
                                             <div class="col col-md col-lg" data-target-input="nearest">
                                                 <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="sTime" data-toggle="datetimepicker" data-target="#sTime" autocomplete="off" required>
                                             </div>
                                             <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1">~</span>
                                             <div class="col col-md-3 col-lg-3" data-target-input="nearest">
-                                                <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="eDate" data-toggle="datetimepicker" data-target="#eDate" placeholder="연도/월/일" autocomplete="off" required>
+                                                <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="eDate" data-toggle="datetimepicker" data-target="#eDate" placeholder="연도-월-일" autocomplete="off" required>
                                             </div>
                                             <div class="col col-md col-lg" data-target-input="nearest">
                                                 <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="eTime" data-toggle="datetimepicker" data-target="#eTime" autocomplete="off" required>
@@ -46,13 +46,63 @@
                                     <label for="reasonCd">사유구분</label>
                                     <select id="reasonCd" class="form-control" required>
                                         <option value="" disabled selected hidden>사유를 선택해주세요.</option>
-                                        <option value="1">일반작업</option>
+                                        <option :value="reason.codeCd" v-for="reason in reasons">{{reason.codeNm}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-12">
                                     <label for="reason">설명</label>
                                     <textarea class="form-control" id="reason" rows="3"
                                         placeholder="팀장 확인 시에 필요합니다." required></textarea>
+                                </div>
+                            </div>
+                            <div class="inner-wrap" v-show="holidayYn=='Y'">
+                                <div class="title mb-2">휴일대체방법</div>
+                                <div class="desc">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="subYnY" name="subYn" class="custom-control-input" value="Y" @change="changeSubYn($event.target.value)" required>
+                                        <label class="custom-control-label" for="subYnY">휴일대체</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="subYnN" name="subYn" class="custom-control-input" value="N" @change="changeSubYn($event.target.value)" required>
+                                        <label class="custom-control-label" for="subYnN">위로금/시급지급</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-toggle-wrap" style="display:none;">
+                                <hr>
+                                <div class="big-title">8시간의 대체 휴일을 지정하세요.</div>
+                                <div class="info-box clearfix mt-2">
+                                    <div class="title">이전에 신청한 휴일</div>
+                                    <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간 09:00~12:00</span></div>
+                                    <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간 09:00~12:00</span></div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title">대체일시</div>
+                                    <div class="desc" v-for="(s, idx) in subYmds">
+                                        <div class="form-group clearfix">
+                                            <div class="form-row">
+                                                <div class="col-11 col-sm-11 col-md-11 col-lg-6" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subYmd'+idx" v-model="s.subYmd" data-toggle="datetimepicker" :data-target="'#subYmd'+idx" placeholder="연도-월-일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col-11 col-sm-11 col-md-11 col-lg-5 mt-xs-1 mt-sm-1 mt-lg-0 float-right ">
+                                                    <div class="form-row">
+                                                        <div class="col float-left" data-target-input="nearest">
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsSdate'+idx" v-model="s.subsSdate" data-toggle="datetimepicker" :data-target="'#subsSdate'+idx" autocomplete="off" required>
+                                                        </div>
+                                                        <span class="d-inline-block text-center pl-1 pr-2 mt-1">~</span>
+                                                        <div class="col float-right" data-target-input="nearest">
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsEdate'+idx" v-model="s.subsEdate" data-toggle="datetimepicker" :data-target="'#subsEdate'+idx" autocomplete="off" required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-md-text-right text-center"><a href="#" class="align-middle" @click="delSubYmd(idx)">삭제</a></div>
+                                            </div>
+                                        </div>
+                                        <div class="guide">*해당일 근무시간은 09:00~18:00 입니다.</div>
+                                    </div>
+                                </div>
+                                <div class="btn-wrap text-center">
+                                    <button type="button" class="btn btn-inline btn-plus" @click="addSubYmd"><i class="fas fa-plus"></i>대체일시 추가</button>
                                 </div>
                             </div>
                         </div>
@@ -76,13 +126,28 @@
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
-       
-        $('#sTime, #eTime').datetimepicker({
+		
+        $('#sTime').datetimepicker({
             //format: 'LT',
             format: 'HH:mm',
             use24hours: true,
-            language: 'ko'
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'bottom'
+            }
         });
+        
+        $('#eTime').datetimepicker({
+            //format: 'LT',
+            format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'right',
+                vertical: 'bottom'
+            }
+        }); 
 	});
 
    	var timeCalendarVue = new Vue({
@@ -98,8 +163,11 @@
 			        right: ''
   		    	},
   		    	view: 'timeGridDay',
-  		    	workday: '',
-  		    	dayResults: {}
+  		    	workday: '', //근무일
+  		    	reasons: [], //연장/휴일 근로 사유
+  		    	holidayYn: '', //휴일여부
+  		    	dayResults: {}, //상세 근무 시간
+  		    	subYmds: [] //대체휴일
   		    },
   		    mounted: function(){
   		    	<#if workday?? && workday!='' && workday?exists >
@@ -107,6 +175,10 @@
   		    	<#else>
   		    		this.workday = '${today}';
   		    	</#if>
+  		    	
+  		    	<#if reasons?? && reasons!='' && reasons?exists >
+		    		this.reasons = JSON.parse('${reasons?js_string}');
+		    	</#if>
   		    	
   		    	this.getFlexibleDayInfo(this.workday);
   		    	
@@ -116,7 +188,9 @@
   		    },
   		    methods : {
   		    	renderCallback: function(){
-  		    		
+  		    		//화면에 보이는 달력의 시작일, 종료일을 파라미터로 넘김
+  		    		var calendar = this.$refs.fullCalendar.cal;
+  		    		calendarLeftVue.calendar = calendar;
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -193,16 +267,40 @@
 						dataType: "json",
 						success: function(data) {
 							if(data!=null) {
+								$this.holidayYn = '';
+								if(data.hasOwnProperty('holidayYn'))
+									$this.holidayYn = data.holidayYn;
+								
+								$this.dayResults = {};
 								if(data.hasOwnProperty('dayResults'))
 									$this.dayResults = data.dayResults;
-								console.log($this.dayResults);
+								
 								$this.viewDayResults(ymd, data);
 							}
 						},
 						error: function(e) {
 							console.log(e);
+							$this.holidayYn = '';
+							$this.dayResults = {};
 						}
 					});
+  	         	},
+  	         	viewOvertimeAppl: function(date){
+  	         		var $this = this;
+  	         		//1시간 값 세팅
+					var sYmd = new Date(date);
+					var eYmd = new Date(date);
+					eYmd.setHours(eYmd.getHours()+1);
+					$("#sDate").val(moment(sYmd).format('YYYY-MM-DD'));
+					$("#eDate").val(moment(eYmd).format('YYYY-MM-DD'));
+					$("#sTime").val(moment(sYmd).format('HH:mm'));
+					$("#eTime").val(moment(eYmd).format('HH:mm'));
+					
+					//사용할 근무제 팝업 띄우기
+					//if($this.holidayYn=='Y')
+						
+					//else
+						$("#overtimeApplModal").modal("show"); 
   	         	},
   	         	viewDayResults: function(ymd, data){
   	         		var $this = this;
@@ -300,17 +398,7 @@
 						dataType: "json",
 						success: function(data) {
 							if(data!=null && data.status=='OK') {
-								//1시간 값 세팅
-								var sYmd = new Date(info.date);
-								var eYmd = new Date(info.date);
-								eYmd.setHours(eYmd.getHours()+1);
-								$("#sDate").val(moment(sYmd).format('YYYY-MM-DD'));
-								$("#eDate").val(moment(eYmd).format('YYYY-MM-DD'));
-								$("#sTime").val(moment(sYmd).format('HH:mm'));
-								$("#eTime").val(moment(eYmd).format('HH:mm'));
-								
-								//사용할 근무제 팝업 띄우기
-								$("#overtimeApplModal").modal("show"); 
+								$this.viewOvertimeAppl(info.date);
 							} else {
 								$("#alertText").html(data.message);
 			  	         		$("#alertModal").on('hidden.bs.modal',function(){
@@ -413,15 +501,78 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						}
 					});
+  	         	},
+  	         	changeSubYn: function(val){
+  	         		var $this = this;
+  	         		
+  	         		if($this.subYmds.length==0)
+	         			$this.addSubYmd();
+  	         		
+  	         		if (val == "Y") { //휴일대체
+  	                    $(".radio-toggle-wrap").show(500);
+  	                }
+  	                else if(val == "N") { //수당지급
+  	                    $(".radio-toggle-wrap").hide(500);
+  	                }
+  	                else {
+  	                    $(".radio-toggle-wrap").hide(500);
+  	                }
+  	         	},
+  	         	addSubYmd: function(){
+  	         		var newSubYmd = {
+  	         			subYmd: '',
+  	         			subsSdate: '',
+  	         			subsEdate: ''
+  	         		};
+  	         		
+  	         		this.subYmds.push(newSubYmd);
+  	         	},
+  	         	delSubYmd: function(idx){
+  	         		this.subYmds.splice(idx, 1);
+  	         		console.log(this.subYmds);
   	         	}
   		    }
    	});
+   	
+  	//동적으로 추가하는 요소에 datetimepicker를 그리기 위함
+   	$('body').on('focus',"input[id^='subYmd']", function(){
+		$(this).datetimepicker({
+			format: 'YYYY-MM-DD',
+		    language: 'ko'
+		});
+   	});
+   	
+   	$('body').on('focus',"input[id^='subsSdate']", function(){
+		$(this).datetimepicker({
+			format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'top'
+            }
+		});
+   	});
+   	
+   	$('body').on('focus',"input[id^='subsEdate']", function(){
+		$(this).datetimepicker({
+			format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'right',
+                vertical: 'top'
+            }
+		});
+   	});
 
-	$('[data-dismiss=modal]').on('click', function (e) {
+	$('#timeCalendar [data-dismiss=modal]').on('click', function (e) {
 		var $t = $(this),
 	        target = $t[0].href || $t.data("target") || $t.parents('.modal') || [];
 
-	  	$(target).find("input,select,textarea").val('').end();
+		$(target).find("input,select,textarea").not('input[name="subYn"]').val('').end();
+	  	$(target).find("input[name='subYn']:checked").prop("checked", "").end();
+	  	$(".radio-toggle-wrap").hide();
 	  	$(target).find(".needs-validation").removeClass('was-validated');
 	  	
 	});
