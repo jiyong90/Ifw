@@ -124,8 +124,16 @@ ul, ol, li{
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
-.work-info-wrap .main-title,
-.work-info-wrap .main-desc{font-size: 14px;font-weight: bold;font-style: normal;line-height: 1.5;letter-spacing: -0.6px;color: #ffffff;
+.work-info-wrap .main-title{font-size: 14px;font-weight: bold;font-style: normal;line-height: 1.5;letter-spacing: -0.6px;color: #ffffff;
+}
+.work-info-wrap .main-desc {
+  min-height:21px;
+  font-size: 14px;
+  font-weight: bold;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  color: #ffffff;
 }
 
 .work-info-wrap .sub-wrap{margin-top: 8px;}
@@ -170,8 +178,14 @@ box-sizing: border-box;
   letter-spacing: -0.6px;
   color: #6b6b80;
 }
-.white-box-wrap .time-list .desc,
+.white-box-wrap .time-list .desc {
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: -0.6px;
+  color: #292944;
+}
 .white-box-wrap .time-block-list .desc {
+  min-height: 21px;
   font-size: 14px;
   font-weight: bold;
   letter-spacing: -0.6px;
