@@ -394,16 +394,19 @@ a.article:hover {
 #sub-nav .btn-collapse-wrap {
   position: absolute;
   left: 0;
-  bottom:-28px;
+  bottom:-20px;
   width: 100%;
   text-align: center;
 }
 #sub-nav .btn-collapse-wrap .btn-collapse {
-  width:69px;
-  height: 25px;
+  width:60px;
+  height: 15px;
   border: 0px;
   padding: 0px;
-  background:url('../img/cal_btn.png') no-repeat center;
+  background-image:url('../img/cal_btn.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 69px auto;
 }
 #sub-nav .work-time-wrap{
   padding-bottom:16px;
@@ -476,7 +479,7 @@ a.article:hover {
   position: relative;
   padding-left:10px;
   margin-left: 10px;
-  margin-top:-4px;
+  margin-top:-2px;
   display:inline-block;
   vertical-align: middle;
 }
@@ -484,7 +487,7 @@ a.article:hover {
   content: '';
   position: absolute;
   left:0px;
-  top: -6px;
+  top: -8px;
   display: inline-block;
   width:1px;
   height: 48px;
@@ -591,7 +594,7 @@ No media query for `xs` since this is the default in Bootstrap */
   }
 }
 /* Extra large devices (large desktops, 1200px and up) */
-@media (min-width:960px) and (max-width: 1240px){
+@media (min-width:960px) and (max-width: 1085px){
   #sub-nav .legend-wrap::before {
     display: none;
   }

@@ -145,76 +145,109 @@
                         <button type="submit" class="btn btn-apply btn-block btn-lg">확인요청</button>
                     </div>
                 </div>
-                <div class="white-box-wrap mb-3" id="white-box-wrap">
-                    <div class="work-plan-wrap">
-                        <ul class="main-wrap">
-                            <li>
-                                <div class="main-title">해당일의 근무계획 구분</div>
-                                <div class="main-desc">근무일</div>
-                            </li>
-                            <li>
-                                <div class="main-title">계획 근무시간</div>
-                                <div class="main-desc">09:00 ~ 21:00 (10:00)</div>
-                            </li>
-                            <li>
-                                <div class="main-title">실적 근무시간</div>
-                                <div class="main-desc">09:00 ~ 21:00 (10:00)</div>
-                            </li>
-                            <li>
-                                <div class="main-title">해당일 근태</div>
-                                <div class="main-desc">연차, 반차</div>
-                            </li>
-                        </ul>
-                        <div class="sub-wrap">
-                            <div class="sub-big-title">근무시간 요약 <span style="font-size:10px;">(근무시간 분류별 합산)</span></div>
-                            <ul class="sub-list">
-                                <li>
-                                    <span class="sub-title"><i class="fas fa-clock"></i>소정근로</span>
-                                    <span class="sub-desc">8:00</span>
-                                </li>
-                                <li>
-                                    <span class="sub-title"><i class="fas fa-moon"></i>연장근로</span>
-                                    <span class="sub-desc">2:00</span>
-                                    <ul class="sub-desc-list">
-                                        <li>
-                                            <span class="sub-title">일반연장</span>
-                                            <span class="sub-desc">1:00</span>
-                                        </li>
-                                        <li>
-                                            <span class="sub-title">야간근무</span>
-                                            <span class="sub-desc">1:00</span>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
-                                    <span class="sub-desc"></span>
-                                    <ul class="sub-desc-list">
-                                        <li>
-                                            <span class="sub-title">오후반차</span>
-                                            <span class="sub-desc">4:00</span>
-                                        </li>
-                                        <li>
-                                            <span class="sub-title">외출</span>
-                                            <span class="sub-desc">2:00</span>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="sub-title"><i class="fas fa-couch"></i>휴식/휴게 현황</span>
-                                    <span class="sub-desc"></span>
-                                    <ul class="sub-desc-list">
-                                        <li>
-                                            <span class="sub-title">무급</span>
-                                            <span class="sub-desc">00:30</span>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-
-                        </div>
-                    </div>
-                </div>
+                <div class="white-box-wrap mb-3">
+	                <a href="#" class="btn-info-wrap">
+	                    <span style="display:none;" id="btn-full-info"><span>&#43;&nbsp;</span>자세히 보기</span>
+	                    <span style="display:block;" id="btn-simple-info"><span>&#8722;&nbsp;</span>간략하게 보기</span>
+	                </a>
+	                <div id="full-info" class="work-plan-wrap">
+	                    <ul class="main-wrap">
+	                        <li>
+	                            <div class="main-title">해당일의 근무계획 구분</div>
+	                            <div class="main-desc">근무일</div>
+	                        </li>
+	                        <li>
+	                            <div class="main-title">계획 근무시간</div>
+	                            <div class="main-desc">09:00 ~ 21:00 (10:00)</div>
+	                        </li>
+	                        <li>
+	                            <div class="main-title">실적 근무시간</div>
+	                            <div class="main-desc">09:00 ~ 21:00 (10:00)</div>
+	                        </li>
+	                        <li>
+	                            <div class="main-title">해당일 근태</div>
+	                            <div class="main-desc">연차, 반차</div>
+	                        </li>
+	                    </ul>
+	                    <div class="sub-wrap">
+	                        <div class="sub-big-title">근무시간 요약 <span style="font-size:10px;">(근무시간 분류별 합산)</span></div>
+	                        <ul class="sub-list">
+	                            <li>
+	                                <span class="sub-title"><i class="fas fa-clock"></i>소정근로</span>
+	                                <span class="sub-desc">8:00</span>
+	                            </li>
+	                            <li>
+	                                <span class="sub-title"><i class="fas fa-moon"></i>연장근로</span>
+	                                <span class="sub-desc">2:00</span>
+	                                <ul class="sub-desc-list">
+	                                    <li>
+	                                        <span class="sub-title">일반연장</span>
+	                                        <span class="sub-desc">1:00</span>
+	                                    </li>
+	                                    <li>
+	                                        <span class="sub-title">야간근무</span>
+	                                        <span class="sub-desc">1:00</span>
+	                                    </li>
+	                                </ul>
+	                            </li>
+	                            <li>
+	                                <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
+	                                <span class="sub-desc"></span>
+	                                <ul class="sub-desc-list">
+	                                    <li>
+	                                        <span class="sub-title">오후반차</span>
+	                                        <span class="sub-desc">4:00</span>
+	                                    </li>
+	                                    <li>
+	                                        <span class="sub-title">외출</span>
+	                                        <span class="sub-desc">2:00</span>
+	                                    </li>
+	                                </ul>
+	                            </li>
+	                            <li>
+	                                <span class="sub-title"><i class="fas fa-couch"></i>휴식/휴게 현황</span>
+	                                <span class="sub-desc"></span>
+	                                <ul class="sub-desc-list">
+	                                    <li>
+	                                        <span class="sub-title">무급</span>
+	                                        <span class="sub-desc">00:30</span>
+	                                    </li>
+	                                </ul>
+	                            </li>
+	                        </ul>
+	                    </div>
+	                </div>
+	                <div id="simple-info" class="work-plan-wrap" style="display:none;">
+	                    <ul class="main-wrap">
+	                        <li>
+	                            <div class="main-title">실적 근무 시간</div>
+	                            <div class="main-desc">09:00 ~21:00(10:00)</div>
+	                        </li>
+	                        <li>
+	                            <div class="main-title">해당일 근태</div>
+	                            <div class="main-desc">연차,반차</div>
+	                        </li>
+	                    </ul>
+	                    <div class="sub-wrap">
+	                        <div class="sub-big-title">근무시간 요약 <span style="font-size:10px;">(근무시간 분류별
+	                                합산)</span></div>
+	
+	                        <ul class="sub-list reset">
+	                            <li>
+	                                <span class="sub-title"><i class="fas fa-clock"></i>소정근로 합산</span>
+	                                <span class="sub-desc">8:00</span>
+	                            </li>
+	                            <li>
+	                                <span class="sub-title"><i class="fas fa-moon"></i>연장근로 합산</span>
+	                                <span class="sub-desc">2:00</span>
+	                            </li>
+	                        </ul>
+	                    </div>
+	                    <div class="btn-wrap">
+	                        <button type="submit" class="btn btn-apply btn-block btn-lg">연장근로신청</button>
+	                    </div>
+	                </div>
+	            </div>
                 <div class="white-box-wrap full-height mb-3">
                     <div class="work-plan-wrap">
                         <div class="main-wrap">
@@ -561,6 +594,13 @@
                 }, false);
             });
         }, false);
+        
+        $( ".btn-info-wrap" ).on('click',function() {
+            $('#btn-full-info').toggle();
+            $('#btn-simple-info').toggle();
+            $('#full-info').toggle();
+            $('#simple-info').toggle();
+        });
     });
 </script>
 <script type="text/javascript">

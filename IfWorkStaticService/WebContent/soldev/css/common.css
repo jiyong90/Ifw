@@ -247,6 +247,18 @@ box-sizing: border-box;
   font-size: 14px;
 }
 
+.white-box-wrap .btn-info-wrap {
+  display:block;
+  margin-bottom:3px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  text-align: right;
+}
+.white-box-wrap .btn-info-wrap a{color: #4d84fe;}
+.white-box-wrap .btn-info-wrap span{display:inline-block; color:#4d84fe; text-decoration: underline;}
+
 .work-plan-wrap .main-wrap{
   text-align: left;
   /* padding-bottom: 8px; */
@@ -280,12 +292,25 @@ box-sizing: border-box;
   width: 100%;
   padding: 12px;
 }
+.work-plan-wrap .sub-list.reset {
+  /* display: table; */
+  /* border-collapse: collapse; */
+  width: 100%;
+  padding: 0px;
+}
 .work-plan-wrap .sub-list>li {
   /* display: table-row; */
   /* width: 100%; */
   padding: 10px 0px;
   border-top: 1px solid #e2e5ed;
   font-size:0px;
+}
+.work-plan-wrap .sub-list.reset>li {
+  /* display: table-row; */
+  /* width: 100%; */
+  padding: 0px;
+  border-top: 0px;
+  font-size: 0px;
 }
 
 .work-plan-wrap .sub-list>li:first-child{
@@ -675,6 +700,11 @@ No media query for `xs` since this is the default in Bootstrap */
   .white-box-wrap{
     height: auto;
   }
+
+  .white-box-wrap.collapse-height{
+    height: auto;
+  }
+  
   .modal-app-wrap .info-box .desc .guide {
     position: static;
     top: 0;
