@@ -156,6 +156,7 @@ box-sizing: border-box;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);}
 .white-box-wrap.full-height{height:calc(100vh - 220px);}
 .white-box-wrap.collapse-height{height:calc(100vh - 453px)}
+.white-box-wrap.full-height.collapse-height{height:calc(100vh - 139px)}
 .white-box-wrap .big-title {font-size: 14px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
 .white-box-wrap .main-title {font-size: 12px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
 .white-box-wrap .main-desc {font-size: 14px;font-weight: bold;line-height: 1.5;letter-spacing: -0.6px;color: #292944;}
