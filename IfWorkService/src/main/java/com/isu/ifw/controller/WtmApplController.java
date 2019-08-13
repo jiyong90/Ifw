@@ -30,6 +30,10 @@ public class WtmApplController {
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
 	
+	@Autowired
+	@Qualifier("wtmOtApplService")
+	WtmApplService wtmOtApplService;
+	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(/*@RequestBody Map<String, Object> paramMap,*/ HttpServletRequest request) throws Exception {
 		
@@ -71,10 +75,18 @@ public class WtmApplController {
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		Long applId = Long.valueOf(paramMap.get("applId").toString());
+		String applCd = paramMap.get("applCd").toString();
 		int apprSeq = Integer.valueOf(paramMap.get("apprSeq").toString());
 				
 		try {
-			flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+			if(applCd!=null && !"".equals(applCd)) {
+				if("OT".equals(applCd)) {
+					wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				} else {
+					flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				}
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -99,10 +111,18 @@ public class WtmApplController {
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		Long applId = Long.valueOf(paramMap.get("applId").toString());
+		String applCd = paramMap.get("applCd").toString();
 		int apprSeq = Integer.valueOf(paramMap.get("apprSeq").toString());
 				
 		try {
-			flexibleApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+			if(applCd!=null && !"".equals(applCd)) {
+				if("OT".equals(applCd)) {
+					wtmOtApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				} else {
+					flexibleApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				}
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

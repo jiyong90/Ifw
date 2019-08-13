@@ -105,10 +105,8 @@
 	        , C.ENTER_CD as enterCd
 	        , C.SABUN as sabun
 	        , C.YMD as ymd
-	        , C.WORK_TYPE_CD as workTypeCd
 	        , C.FLEXIBLE_EMP_ID as flexibleEmpId
 	        , C.TIME_CD_MGR_ID as timeCdMgrId
-	        , C.WORKTEAM_CD as workteamCd
 	        , C.ENTRY_SDATE as entrySdate
 	        , C.ENTRY_STYPE_CD as entryStypeCd
 	        , C.ENTRY_EDATE as entryEdate

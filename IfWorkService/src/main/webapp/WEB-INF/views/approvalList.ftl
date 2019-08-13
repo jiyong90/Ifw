@@ -30,7 +30,9 @@
 				<div class="inner-wrap">
 					<div class="title">{{appr.applNm}}</div>
 					<div class="desc">
-						<span class="sub-title">사용기한</span> <span>{{moment(appr.sYmd).format('YYYY.MM.DD')}}~{{moment(appr.eYmd).format('YYYY.MM.DD')}}</span>
+						<span class="sub-title">사용기한</span> 
+						<span>{{moment(appr.sYmd).format('YYYY.MM.DD')}}~{{moment(appr.eYmd).format('YYYY.MM.DD')}}</span>
+						<span class="sub-desc" v-if="appr.reasonNm">{{appr.reasonNm}}</span>
 					</div>
 				</div>
 			</div>
@@ -98,6 +100,7 @@
 	    				
 		    			var param = {
 	    	    			applId: appr.applId,
+	    	    			applCd: appr.applCd,
 	    	    			apprSeq: appr.apprSeq,
 	    	    			apprOpinion: $this.apprOpinion 
 	    	    		};

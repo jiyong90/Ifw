@@ -16,6 +16,7 @@ html {
 }
 /*layout*/
 .wrapper {
+  position:relative;
   display: flex;
   width: 100%;
   align-items: stretch;
@@ -136,6 +137,126 @@ html {
   border-left: 0px;
   border-top:1px solid #f4f4f4;
   color: #777;
+}
+
+
+#alertSidebar {
+  display:block;
+  width: 320px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: calc(100vh - 70px);
+  z-index: 999;
+  background: #ffffff;
+  color: #272740;
+  transition: all 0.3s;
+  overflow-y: auto;
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.16);
+}
+
+/* #alertSidebar.active {
+  transition: all 0.3s;
+} */
+
+#alertSidebar .alert-list-wrap li{
+  position: relative;
+  padding: 18px 42px 22px 40px;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+#alertSidebar .alert-list-wrap li .status{
+  position: absolute;
+  top:24px;
+  left:20px;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 0px;
+  margin-right: 4px;
+  margin-bottom:0px;
+  margin-left: 0px;
+  opacity: 0.5;
+}
+
+/* 탄력근무 */
+#alertSidebar .alert-list-wrap li .status.ELAS {
+  background-color: #ff6f00;
+  /* background-color: rgba(255, 111, 0,0.5); */
+
+}
+
+/* 완전선택근무 */
+#alertSidebar .alert-list-wrap li .status.SELE_F {
+  background-color: #0321b8;
+  /* background-color: rgba(3, 33, 184,0.5); */
+}
+
+/* 부분선택근무 */
+#alertSidebar .alert-list-wrap li .status.SELE_C {
+  background-color: #0862bb;
+  /* background-color: rgba(8, 98, 187,0.5); */
+}
+
+/* 시차출퇴근 */
+#alertSidebar .alert-list-wrap li .status.DIFF {
+  background-color: #035d18;
+  /* background-color: rgba(3, 93, 24,0.5); */
+}
+
+/* 자율출퇴근 */
+#alertSidebar .alert-list-wrap li .status.AUTO {
+  background-color: #080809;
+  /* background-color: rgba(8, 8, 9,0.5); */
+}
+
+#alertSidebar .alert-list-wrap li .btn-wrap {
+  margin-top: 8px;
+}
+
+#alertSidebar .alert-list-wrap li .desc {
+  font-size: 14px;
+  line-height: 1.43;
+  letter-spacing: -0.7px;
+  color: #272740;
+}
+#alertSidebar .alert-list-wrap li .date {
+  margin-top:2px;
+  font-size: 12px;
+  line-height: 1.33;
+  letter-spacing: -0.6px;
+  color: #6b6b80;
+}
+
+#alertSidebar .alert-list-wrap li .btn-close{
+  position: absolute;
+  top:6px;
+  right:12px;
+  display:inline-block;
+  width: 24px;
+  height: 24px;
+  padding:0px;
+  border:0px;
+  background-color:transparent;
+  color:#3e3e4c;
+}
+
+
+.overlay {
+  display: none;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 998;
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+}
+
+.overlay.active {
+  display: block;
+  opacity: 1;
 }
 /* ---------------------------------------------------
     SIDEBAR STYLE (LEFT)
@@ -394,16 +515,17 @@ a.article:hover {
 #sub-nav .btn-collapse-wrap {
   position: absolute;
   left: 0;
-  bottom:-20px;
+  bottom:-22px;
   width: 100%;
   text-align: center;
 }
 #sub-nav .btn-collapse-wrap .btn-collapse {
-  width:60px;
-  height: 15px;
+  width:61px;
+  height: 17px;
   border: 0px;
   padding: 0px;
   background-image:url('../img/cal_btn.png');
+  background-color: transparent;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 69px auto;

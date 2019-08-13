@@ -6,7 +6,7 @@
 		</span>
 	</div>
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :header="header" :events="events" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :header="header" :navlinks="t" :events="events" @update="renderCallback" @navlinkdayclick="navLinkDayClickCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
 </div>
 
@@ -42,6 +42,9 @@
 	    		var calendar = this.$refs.fullCalendar.cal;
 	    		calendarLeftVue.calendar = calendar;
 		    	this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
+	    	},
+	    	navLinkDayClickCallback: function(info){
+         		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment(info).format('YYYYMMDD');
 	    	},
 	    	datesRenderCallback: function(info){
 	    		var $this = this;

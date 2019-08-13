@@ -39,8 +39,6 @@ public class WtmFlexibleStdMgr {
 	private String flexibleNm;
 	@Column(name="USE_SYMD")
 	private String useSymd;
-	@Column(name="TIME_CD_MGR_ID")
-	private Long timeCdMgrId;
 	@Column(name="USE_EYMD")
 	private String useEymd;
 	@Column(name="WORK_SHM")
@@ -122,14 +120,6 @@ public class WtmFlexibleStdMgr {
 
 	public void setUseSymd(String useSymd) {
 		this.useSymd = useSymd;
-	}
-
-	public Long getTimeCdMgrId() {
-		return timeCdMgrId;
-	}
-
-	public void setTimeCdMgrId(Long timeCdMgrId) {
-		this.timeCdMgrId = timeCdMgrId;
 	}
 
 	public String getUseEymd() {
