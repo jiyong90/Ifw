@@ -54,6 +54,11 @@
                 <span class="title">근무조대상자관리</span>
             </a>
         </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">
+                <span class="title">근무조대상자관리</span>
+            </a>
+        </li>
     </ul>
 
     <!-- <ul class="list-unstyled CTAs">
