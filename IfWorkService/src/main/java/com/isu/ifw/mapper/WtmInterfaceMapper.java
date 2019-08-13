@@ -3,7 +3,6 @@ package com.isu.ifw.mapper;
 import java.util.List;
 import java.util.Map;
 
-import com.isu.ifw.vo.WtmCodeVO;
 import com.isu.ifw.vo.WtmFlexibleStdVO;
 
 public interface WtmInterfaceMapper {
