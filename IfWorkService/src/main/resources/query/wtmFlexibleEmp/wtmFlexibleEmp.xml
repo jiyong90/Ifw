@@ -9,30 +9,38 @@
 			SELECT E.TENANT_ID AS tenantId
 			     , E.ENTER_CD AS enterCd
 			     , E.SABUN AS sabun
+			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
+			     , E.SYMD AS sYmd
+			     , E.EYMD AS eYmd
 			     , E.WORK_TYPE_CD AS workTypeCd
 			     , E.FLEXIBLE_NM AS flexibleNm
-			     , A.APPL_ID AS applId
-			     , A.APPL_CD AS applCd
-			     , A.APPL_STATUS_CD AS applStatusCd
-			     , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, E.SYMD) AS applStatusNm
-			     , FA.SYMD AS sYmd
-			     , FA.EYMD AS eYmd
-			     , REASON AS reason
-			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
-			  FROM WTM_APPL A
-			  JOIN WTM_FLEXIBLE_APPL FA
-			    ON A.APPL_ID = FA.APPL_ID
-			  LEFT OUTER JOIN WTM_FLEXIBLE_EMP E
-			    ON E.TENANT_ID = A.TENANT_ID
-			   AND E.ENTER_CD = A.ENTER_CD
-			   AND E.SABUN = A.APPL_SABUN
-			   AND E.WORK_TYPE_CD = A.APPL_CD
-			   AND E.SYMD = FA.SYMD
-			   AND E.EYMD = FA.EYMD
-			 WHERE A.TENANT_ID =  #{tenantId}
-			   AND A.ENTER_CD = #{enterCd}
-			   AND A.APPL_SABUN = #{empNo}
-			   AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(FA.EYMD, '%Y%m%d') OR F_WTM_TO_DATE(FA.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
+			     , F.APPL_ID AS applId
+			     , F.APPL_CD AS applCd
+			     , F.APPL_STATUS_CD AS applStatusCd
+			     , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'APPL_STATUS_CD', F.APPL_STATUS_CD, E.SYMD) AS applStatusNm
+			  FROM WTM_FLEXIBLE_EMP E
+			  LEFT OUTER JOIN ( SELECT A.TENANT_ID
+			                         , A.ENTER_CD
+			                         , A.APPL_SABUN
+			                         , A.APPL_ID
+									       , A.APPL_CD
+									       , A.APPL_STATUS_CD 
+									       , FA.SYMD
+									       , FA.EYMD
+			                      FROM WTM_APPL A
+										 JOIN WTM_FLEXIBLE_APPL FA
+										   ON A.APPL_ID = FA.APPL_ID
+										WHERE A.TENANT_ID = #{tenantId}
+										  AND A.ENTER_CD = #{enterCd}
+										  AND A.APPL_SABUN = #{sabun} ) F
+			    ON E.TENANT_ID = F.TENANT_ID
+			   AND E.ENTER_CD = F.ENTER_CD
+			   AND E.SABUN = F.APPL_SABUN
+			   AND E.WORK_TYPE_CD = F.APPL_CD
+			   AND E.SYMD = F.SYMD
+			   AND E.EYMD = F.EYMD
+			 WHERE E.SABUN = #{sabun}
+			   AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(E.EYMD, '%Y%m%d') OR F_WTM_TO_DATE(E.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
         ]]>
     </select>
 

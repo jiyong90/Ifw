@@ -47,7 +47,7 @@ public class WtmFlexibleEmpController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
+		String sabun = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		ReturnParam rp = new ReturnParam();
@@ -56,7 +56,7 @@ public class WtmFlexibleEmpController {
 		List<Map<String, Object>> flexibleList = null;
 		
 		try {
-			flexibleList = flexibleEmpService.getFlexibleEmpList(tenantId, enterCd, empNo, paramMap, userId);
+			flexibleList = flexibleEmpService.getFlexibleEmpList(tenantId, enterCd, sabun, paramMap, userId);
 			rp.put("flexibleList", flexibleList);
 		} catch(Exception e) {
 			e.printStackTrace();
