@@ -11,13 +11,11 @@
             </div>
         </li>
 	</ul>
-	<ul class="alert-list-wrap" v-else>
-		<li>
-            <span class="status"></span>
-            <div class="desc">알림이 없습니다.</div>
-            <button class="btn-close">&#215;</button>
-        </li>
-	</ul>
+	<!-- 
+	<div class="alert-list-wrap" v-else>
+	    <span class="status"></span>
+	    <div class="desc">알림이 없습니다.</div>
+	</div> -->
 </aside>
 
 <script type="text/javascript">
