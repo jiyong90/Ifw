@@ -114,5 +114,6 @@ public interface WtmFlexibleEmpService {
 	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
 	
 	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId);
+	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId); 
 	
 }

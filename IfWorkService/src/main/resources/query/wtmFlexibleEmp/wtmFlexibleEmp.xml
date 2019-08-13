@@ -446,7 +446,7 @@
 					   AND M.ENTER_CD = F.ENTER_CD
 					   AND E.SABUN = F.SABUN
 					   AND SM.BASE_WORK_YN = 'N'
-					   AND ( M.SYMD F.SYMD AND F.EYMD
+					   AND ( M.SYMD BETWEEN F.SYMD AND F.EYMD
 						OR M.EYMD BETWEEN F.SYMD AND F.EYMD )
 				)
 			   AND M.WORKTEAM_MGR_ID = #{workteamMgrId}
@@ -455,7 +455,7 @@
 			 
   	</update>
   	
-  	<update id="updateWorkteamOfWtmFlexibleEmp" parameterType="map">
+  	<update id="updateWorkteamOfWtmFlexibleEmp" parameterType="map" >
   		UPDATE WTM_WORKTEAM_MGR M
 		  JOIN WTM_WORKTEAM_EMP E
 		    ON M.WORKTEAM_MGR_ID = E.WORKTEAM_MGR_ID
@@ -471,5 +471,9 @@
 		   SET F.SYMD = M.SYMD
 		     , F.EYMD = M.EYMD
 		 WHERE  M.WORKTEAM_MGR_ID = #{workteamMgrId}
+  	</update>
+  	
+  	<update id="createWtmWorkteamOfWtmWorkDayResult" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_WORKTEAM_CREATE( #{workteamMgrId}, #{pId} ) }
   	</update>
 </mapper>

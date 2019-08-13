@@ -16,37 +16,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmCodeService;
+import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/api")
 public class WtmApiController {
-	
-	@Autowired
-	@Qualifier("codeService")
-	WtmCodeService codeService;
 
-	@RequestMapping(value="/dailyWork", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ReturnParam createDailyWork(HttpServletRequest request, @RequestBody Map<String, Object> paramMap ) throws Exception {
-		
+	@Autowired
+	@Qualifier(value="flexibleEmpService")
+	private WtmFlexibleEmpService flexibleEmpService;
+
+	@RequestMapping(value="/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam test(HttpServletRequest request ) throws Exception {
 		ReturnParam rp = new ReturnParam();
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
-		
 		rp.setSuccess("");
-		
-		List<Map<String, Object>> codeList = null;
-		try {		
-			codeList = codeService.getCodeList(tenantId, enterCd, paramMap.get("grpCodeCd").toString());
-			
-			rp.put("codeList", codeList);
-		} catch(Exception e) {
-			rp.setFail("조회 시 오류가 발생했습니다.");
-			return rp;
-		}
+		flexibleEmpService.createWorkteamEmpData(new Long("1"), "ISU", new Long("5"), new Long("112313"));	
 		
 		return rp;
 	}

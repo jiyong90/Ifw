@@ -122,5 +122,7 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public void updateWorkteamOfWtmFlexibleEmp(Map<String, Object> paramMap);
 	
+	public void createWtmWorkteamOfWtmWorkDayResult(Map<String, Object> paramMap);
+	
 	
 }

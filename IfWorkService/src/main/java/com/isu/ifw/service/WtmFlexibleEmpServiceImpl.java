@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
@@ -359,7 +360,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	@Autowired
 	WtmWorkteamEmpRepository wtmWorkteamEmpRepo;
 	
+	
 	@Transactional
+	@Override
 	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId) {
 		//ID 채번 때문에 프로시저로 못했다..
 		/*
@@ -381,6 +384,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("workteamMgrId", workteamMgrId);
 		paramMap.put("updateId", userId);
+		paramMap.put("pId", userId);
+		paramMap.put("result", "");
 		
 		//1. FLEXIBLE_EMP에 없는 사람 부터 넣자
 		/*
@@ -395,10 +400,12 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		//기간의 중복은 입력 자체에서 막아야한다!!!!!!!!!!!!!!!
 		flexEmpMapper.updateWorkteamOfWtmFlexibleEmp(paramMap);
 		
-
+		flexEmpMapper.createWtmWorkteamOfWtmWorkDayResult(paramMap);
+		 
 		// 근무조 대상자 가져왓!
-		List<WtmWorkteamEmp> workteamEmpList = wtmWorkteamEmpRepo.findByWorkteamMgrId(workteamMgrId);
+		//List<WtmWorkteamEmp> workteamEmpList = wtmWorkteamEmpRepo.findByWorkteamMgrId(workteamMgrId);
 		// 패턴 가져왓!
+		// 이 모든걸 프로시져로..
 		
 		// loop를 돌며 대상자 별로 calendar와 dayResult를 추가 갱신 하자
 		
