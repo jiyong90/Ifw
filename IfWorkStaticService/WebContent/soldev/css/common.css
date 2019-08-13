@@ -211,6 +211,40 @@ box-sizing: border-box;
   margin-bottom: 10px;
 }
 
+.white-box-wrap .inner-wrap.graph-wrap {
+  margin-top:10px;
+}
+
+.white-box-wrap .time-graph {
+  position: relative;
+  width:100%;
+  height: 10px;
+  border-radius: 12px;
+  background-color: #ccd0d9;
+}
+
+.white-box-wrap .time-graph .core-time{
+  /* calc 계산을 해야한다. 
+  
+  */
+  position: absolute;
+  top: 0;
+  /* 코어시작시간 - 업무시작시간 이걸 또 비율로
+  ex. (10 - 6)/전체업무시간 * 100
+  */
+  left:calc((10 - 6)/12 * 100%);
+  /* 코어시간의 비율
+  코어시간/전체업무시간 * 100 */
+  width: calc((14 - 10)/12 * 100%);
+  height: 10px;
+  border-radius: 12px;
+  background-color: #7b5df6;
+
+}
+.white-box-wrap .legend-wrap{
+  margin-top:3px;
+}
+
 .white-box-wrap .legend-wrap::after{
   content:'';
   display:table;
@@ -261,7 +295,7 @@ box-sizing: border-box;
   text-align: right;
 }
 .white-box-wrap .btn-info-wrap a{color: #4d84fe;}
-.white-box-wrap .btn-info-wrap span{display:inline-block; color:#4d84fe; text-decoration: underline;}
+.white-box-wrap .btn-info-wrap span{display:inline-block; color:#4d84fe; text-decoration: underline; letter-spacing: 0;}
 
 .work-plan-wrap .main-wrap{
   text-align: left;

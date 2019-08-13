@@ -575,6 +575,7 @@ a.article:hover {
 
 #sub-nav .work-check-wrap {
   float:left;
+  margin-top:1px;
   vertical-align: middle;
 }
 
