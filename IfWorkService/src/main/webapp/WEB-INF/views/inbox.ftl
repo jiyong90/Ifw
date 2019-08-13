@@ -1,25 +1,35 @@
-<div id="inbox" class="dropdown-menu" v-cloak>
-	<div v-if="inboxCount>0">
-	    <div class="msg-desc" v-if="workPlan.toDoPlanDays && Number(workPlan.toDoPlanDays)!=0 ">
-	    	<p>근무계획을 작성해 주세요.</p>
-	    	<div class="btn-wrap">
-		    	<button class="btn btn-default btn-flat btn-sm" @click="goToWorkTimeCalendar">작성하기</button>
-	    	</div>
-	    </div>
-	    <ul class="msg-list">
-	        <li v-for="i in inboxList">{{ i.title }}</li>
-	    </ul>
-    </div>
-    <div v-else>
-    	<div class="msg-desc">
-    		<p>알림이 없습니다.</p>
-    	</div>
-    </div>
-</div>
+<aside id="alertSidebar" class="control-sidebar" style="display:none;" v-clock>
+	<ul class="alert-list-wrap" v-if="inboxCount>0">
+		<li v-if="workPlan.toDoPlanDays && Number(workPlan.toDoPlanDays)!=0">
+            <span class="status SELE_F"></span>
+            <div class="desc">
+            	선근제 신청이 완료되었습니다.<br>
+                            출,퇴근시간을 지정해주세요.
+            </div>
+            <div class="btn-wrap">
+                <button type="button" class="btn btn-sm btn-inline btn-outline-secondary" @click="goToWorkTimeCalendar">작성하기</button>
+            </div>
+            <button class="btn-close">&#215;</button>
+        </li>
+	</ul>
+	<ul class="alert-list-wrap" v-else>
+		<li>
+            <span class="status"></span>
+            <div class="desc">알림이 없습니다.</div>
+            <button class="btn-close">&#215;</button>
+        </li>
+	</ul>
+</aside>
 
 <script type="text/javascript">
+	$(function(){
+		$('#alertLink').on('click', function () {
+		    $('#alertSidebar').toggle('active');
+		});
+	});
+
 	var inboxVue = new Vue({
-		el : '#inbox',
+		el : '#alertSidebar',
 		data : {
 			inboxCount: 0,
 			inboxList : [],

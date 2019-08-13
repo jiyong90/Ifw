@@ -10,20 +10,16 @@
         <img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
         </a>
     </h1>
-    <div class="ml-auto" id="navbarSupportedContent">
+    <div id="navTop" class="ml-auto">
         <ul class="nav gnb-nav-wrap">
             <li class="nav-item">
-                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
+                <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
             </li>
             <li class="nav-item">
-                    <a href="#" id="alertLink"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span></a>
-                </li>
-            <li class="nav-item dropdown">
-                <a data-toggle="dropdown" aria-expanded="false" href="#" id="navTop"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"  v-cloak></span></span></a>
-   	        	<#include "/inbox.ftl">
+            	<a href="#" id="alertLink"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"></span></span></a>
             </li>
             <li class="nav-item">
-                    <a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
+                <a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
