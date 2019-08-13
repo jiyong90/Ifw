@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmTimeCdMgrMapper">
+    <update id="saveWtmTimeCdMgr" parameterType="map">
+        <![CDATA[ 
+			INSERT INTO WTM_TIME_CD_MGR 
+					(TENANT_ID, 
+					ENTER_CD, 
+					TIME_CD, 
+					TIME_NM, 
+					SYMD,
+					EYMD,
+					WORK_SHM,
+					WORK_EHM,  
+					HOL_YN, 
+					LATE_CHK_YN,
+					LEAVE_CHK_YN,
+					ABSENCE_CHK_YN, 
+					NOTE, 
+					UPDATE_ID)
+				VALUES
+					(#{tenantId},
+					 #{enterCd} ,
+					 #{timeCd} ,
+					 #{timeNm} ,
+					 #{symd} ,
+					 #{eymd} ,
+					 #{workShm} ,
+					 #{workEhm} ,
+					 #{holYn} ,
+					 #{lateChkYn} ,
+					 #{leaveChkYn} ,
+					 #{absenceChkYn} ,
+					 #{note} ,
+					 #{userId}
+				)
+			ON DUPLICATE KEY UPDATE 
+				TIME_NM = VALUES(TIME_NM),
+				EYMD = VALUES(EYMD),
+				WORK_SHM = VALUES(WORK_SHM),
+				WORK_EHM = VALUES(WORK_EHM),
+				HOL_YN = VALUES(HOL_YN),
+				LATE_CHK_YN = VALUES(LATE_CHK_YN),
+				LEAVE_CHK_YN = VALUES(LEAVE_CHK_YN),
+				ABSENCE_CHK_YN = VALUES(ABSENCE_CHK_YN),
+				NOTE = VALUES(NOTE),
+				UPDATE_DATE = NOW(),
+				UPDATE_ID = VALUES(UPDATE_ID)
+        ]]>
+    </update>
+</mapper>
