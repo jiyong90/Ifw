@@ -31,10 +31,11 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 	@Override
 	public List<Map<String, Object>> getEmpHisList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
 		List<Map<String, Object>> empList = new ArrayList();	
-		List<WtmEmpHis> list = empHisRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString(), paramMap.get("sData").toString());
+		List<WtmEmpHis> list = empHisRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.containsKey("sYmd")?paramMap.get("sYmd").toString():"", paramMap.get("searchKeyword").toString());
 		
 		for(WtmEmpHis l : list) {
 			Map<String, Object> emp = new HashMap();
+			emp.put("empHisId", l.getEmpHisId());
 			emp.put("sabun", l.getSabun());
 			emp.put("empNm", l.getEmpNm());
 			emp.put("empEngNm", l.getEmpEngNm());
@@ -57,9 +58,33 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 	}
 
 	@Override
+	public Map<String, Object> getEmpHis(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+		WtmEmpHis l = empHisRepository.findByEmpHisId(Long.parseLong(paramMap.get("empHisId").toString()));
+		
+		Map<String, Object> emp = new HashMap();
+		emp.put("sabun", l.getSabun());
+		emp.put("empNm", l.getEmpNm());
+		emp.put("empEngNm", l.getEmpEngNm());
+		emp.put("symd", l.getSymd());
+		emp.put("eymd", l.getEymd());
+		emp.put("statusCd", l.getStatusCd());
+		emp.put("orgCd", l.getOrgCd());
+		emp.put("businessPlaceCd", l.getBusinessPlaceCd());
+		emp.put("dutyCd", l.getDutyCd());
+		emp.put("posCd", l.getPosCd());
+		emp.put("classCd", l.getClassCd());
+		emp.put("jobGroupCd", l.getJobGroupCd());
+		emp.put("jobCd", l.getJobCd());
+		emp.put("payTypeCd", l.getPayTypeCd());
+		emp.put("leaderYn", l.getLeaderYn().equals("Y")?"1":"0");
+		emp.put("note", l.getNote());
+		return emp;
+	}
+	
+	@Override
 	public List<Map<String, Object>> getEmpIfMsgList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
 		List<Map<String, Object>> empList = new ArrayList();	
-		List<WtmIfEmpMsg> list = empMsgRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString(), paramMap.get("sData").toString());
+		List<WtmIfEmpMsg> list = empMsgRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString(), paramMap.get("searchKeyword").toString());
 		
 		for(WtmIfEmpMsg l : list) {
 			Map<String, Object> emp = new HashMap();

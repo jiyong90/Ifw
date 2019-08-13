@@ -59,6 +59,31 @@ public class WtmEmpMgrController {
 		return rp;
 	}
 	
+	@RequestMapping(value="", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getEmpHis(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		rp.setSuccess("");
+		
+		Map<String, Object> emp = null;
+		try {		
+			emp = empMgrService.getEmpHis(tenantId, enterCd, paramMap);
+			
+			rp.put("DATA", emp);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
 	@RequestMapping(value="/ifmsg", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getEmpIfMsgList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		

@@ -32,7 +32,7 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 	public List<Map<String, Object>> getTaaCodeList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
 		List<Map<String, Object>> codeList = new ArrayList();	
 		try {
-			List<WtmTaaCode> list = taaCodeRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sData").toString());
+			List<WtmTaaCode> list = taaCodeRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("searchKeyword").toString());
 			
 			for(WtmTaaCode l : list) {
 				Map<String, Object> code = new HashMap();

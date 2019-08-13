@@ -957,32 +957,32 @@ function sheetResize() {
 // }
 
 // datepicker 기본설정
-//$.datepicker.setDefaults({
-//	showOn: "both",
-//	buttonImage: "/common/images/common/calendar.gif",
-//	buttonImageOnly: true,
-//	buttonText: "달력",
-//	dateFormat: "yy-mm-dd",	// 날짜 포맷
-//	nextText: "다음",		// < 버튼 Alt
-//	prevText: "이전",		// > 버튼 Alt
-//	yearSuffix: "",		// 연도 뒤에 나오는 글짜
-//	firstDay: 0,			// 요일 순서
-//	showWeek: false,			// 주를 표시
-//	weekHeader: "주",		// 주 타이틀 텍스트
-//	showMonthAfterYear:true,	// 연도 뒤에 달 표시
-//	dayNames: [ "일", "월", "화", "수", "목", "금", "토" ] ,	// 요일
-//	dayNamesMin: [ "일", "월", "화", "수", "목", "금", "토" ] ,	// 요일
-//	monthNames: [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ],	// 월
-//	monthNamesShort: [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ],	// 월
-//	changeMonth: true,	// 달 변경 가능여부
-//	changeYear: true,	// 년도 변경 가능여부
-//	showButtonPanel: true,
-//	currentText: "오늘",
-//	closeText: "닫기",
-//	beforeShowDay: getDatePickerHoliday,	// 표시되지 않을 날짜
-//	beforeShow : onDatePickerDateChange,
-//	onChangeMonthYear:onDatePickerDateChange	// 날짜 변경시
-//});
+$.datepicker.setDefaults({
+	showOn: "both",
+	buttonImage: "/common/images/common/calendar.gif",
+	buttonImageOnly: true,
+	buttonText: "달력",
+	dateFormat: "yy-mm-dd",	// 날짜 포맷
+	nextText: "다음",		// < 버튼 Alt
+	prevText: "이전",		// > 버튼 Alt
+	yearSuffix: "",		// 연도 뒤에 나오는 글짜
+	firstDay: 0,			// 요일 순서
+	showWeek: false,			// 주를 표시
+	weekHeader: "주",		// 주 타이틀 텍스트
+	showMonthAfterYear:true,	// 연도 뒤에 달 표시
+	dayNames: [ "일", "월", "화", "수", "목", "금", "토" ] ,	// 요일
+	dayNamesMin: [ "일", "월", "화", "수", "목", "금", "토" ] ,	// 요일
+	monthNames: [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ],	// 월
+	monthNamesShort: [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ],	// 월
+	changeMonth: true,	// 달 변경 가능여부
+	changeYear: true,	// 년도 변경 가능여부
+	showButtonPanel: true,
+	currentText: "오늘",
+	closeText: "닫기",
+	beforeShowDay: getDatePickerHoliday,	// 표시되지 않을 날짜
+	beforeShow : onDatePickerDateChange,
+	onChangeMonthYear:onDatePickerDateChange	// 날짜 변경시
+});
 
 // datepicker 휴일 처리 함수
 var getDatePickerHolidays = {};
@@ -1180,7 +1180,7 @@ var intervalDestory;
 // autocomplete 생성
 function autoCompleteInit(opt,sheet,Row,Col) {
 	if( Col != opt ) return;
-
+	
 	if( $("#autoCompleteDiv").length == 0 ) {
 		$('<div></div>',{
 			id:"autoCompleteDiv"
@@ -2311,4 +2311,277 @@ function disablePage(isLastPopup) {
 		win.focus();
 //		window.top.opener.focus();
 	}
+}
+
+/**
+ * IBsheet의 Employee auto_complete
+ *
+ * setSheetAutocompleteEmp 함수로 초기화.
+ * 선택된 사원 data는 getReturnValue 함수에서 처리 (pGubun = sheetAutocompleteEmp)
+ *
+ * @param sheet (string) : 자동완성을 사용할 sheet명
+ * @param colSaveName (string) : 자동완성을 사용할 컬럼 saveName
+ * @param renderItem (function) : 자동완성시 출력될 박스 포맷. Undefined일 경우 employeeRenderItem function 사용.
+ * @returns
+ *
+ * by sjkim
+ */
+
+function setSheetAutocompleteEmp(sheet, colSaveName, renderItem , callBackFunc ) {
+
+	var col = eval(sheet).SaveNameCol(colSaveName);
+
+    var scriptTxt = "";
+    scriptTxt += "<script>";
+    scriptTxt += "function " + sheet + "_OnBeforeEdit(Row, Col) {";
+    scriptTxt += "	try{";
+    scriptTxt += "		autoCompleteInit(" + col + "," + sheet + ",Row,Col,"+ renderItem +"," + callBackFunc + ");";
+    scriptTxt += "	}catch(e){";
+    scriptTxt += "	 	alert(e.message);";
+    scriptTxt += "	}";
+    scriptTxt += "}";
+    scriptTxt += "";
+    scriptTxt += "function " + sheet + "_OnAfterEdit(Row, Col) {";
+    scriptTxt += "	try{";
+    scriptTxt += "		autoCompleteDestroy(" + sheet + ");";
+    scriptTxt += "	}catch(e){";
+    scriptTxt += "		alert(e.message);";
+    scriptTxt += "	}";
+    scriptTxt += "}";
+    scriptTxt += "";
+    scriptTxt += "function " + sheet + "_OnKeyUp(Row, Col, KeyCode, Shift) {";
+    scriptTxt += "	try{";
+    scriptTxt += "		autoCompletePress(" + col + ",Row,Col,KeyCode);";
+    scriptTxt += "	}catch(e){";
+    scriptTxt += "		alert(e.message);";
+    scriptTxt += "	}";
+    scriptTxt += "}";
+    scriptTxt += "</script>";
+
+    $(document).ready(function() {
+        eval(sheet).SetEditArrowBehavior(2);
+        $("<form></form>", {
+            id: "empForm1",
+            name: "empForm1"
+        }).html('<input type="hidden" name="searchStatusCd" value="AA" /> <input type="hidden" id="searchEmpType" name="searchEmpType" value="I"/>').appendTo('body')
+        .append(scriptTxt);
+    });
+}
+
+var intervalDestory;
+// autocomplete 생성
+function autoCompleteInit(opt, sheet, Row, Col, renderItem , callBackFunc) {
+    if (Col != opt) return;
+
+    //자동완성 List form
+    var autocompRenderItem
+    var callBackFunctionItem;
+    if(renderItem != undefined && renderItem != null ) {
+    	autocompRenderItem = new Function ( "return "+ renderItem )();
+    } else {
+    	autocompRenderItem = employeeRenderItem1;
+    }
+
+    if ( callBackFunc != undefined ){
+
+    	callBackFunctionItem = callBackFunc
+    } else {
+    	callBackFunctionItem = "getReturnValue";
+    }
+
+    if ($("#autoCompleteDiv").length == 0) {
+        $('<div></div>', {
+            id: "autoCompleteDiv"
+        }).html("<input id='searchKeyword1' name='searchKeyword' type='text' />").appendTo('#empForm1');
+
+        var inputId = "searchKeyword1";
+        $("#searchKeyword1").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "/ifw/emp/list",
+                    dateType: "json",
+                    type: "post",
+                    data: $("#empForm1").serialize(),
+                    success: function(data) {
+                        response($.map(data.DATA, function(item) {
+                            return {
+                                label: item.sabun + ",  " + item.enterCd,
+                                searchNm: $("#searchKeyword1").val(),
+                                //enterNm: item.enterNm, // 회사명
+                                empHisId: item.empHisId,
+                                enterCd: item.enterCd, // 회사코드
+                                name: item.empNm, // 사원명
+                                sabun: item.sabun, // 사번
+                                //empYmd: item.empYmd, // 입사일
+                                orgCd: item.orgCd, // 조직코드
+                                //orgNm: item.orgNm, // 조직명
+                                //jikchakCd: item.jikchakCd, // 직책코드
+                                //jikchakNm: item.jikchakNm, // 직책명
+                                //jikgubCd: item.jikgubCd, // 직급코드
+                                //jikgubNm: item.jikgubNm, // 직급명
+                                //jikweeCd: item.jikweeCd, // PAYBAND
+                                //jikweeNm: item.jikweeNm, // PAYBAND
+                                //resNo: item.resNo, // 주민번호
+                                //resNoStr: item.resNoStr, // 주민번호 앞자리
+                                statusCd: item.statusCd, // 재직/퇴직
+                                //statusNm: item.statusNm, // 재직/퇴직
+                                value: item.empNm,
+                                callBackFunc : callBackFunctionItem
+                            };
+                        }));
+                    }
+                });
+            },
+    		autoFocus: true,
+            minLength: 1,
+            focus: function() {
+                return false;
+            },
+            open: function() {
+                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+            },
+            close: function() {
+                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+            }
+        }).data("uiAutocomplete")._renderItem = autocompRenderItem;
+    };
+
+    //autocomplete 선택되었을 때 Event Handler
+    $("#autoCompleteDiv").off("autocompleteselect");
+    $("#autoCompleteDiv").on("autocompleteselect", function(event, ui) {
+    	var row = Row;
+        sheet.SetCellText(Row, Col, ui.item.value);
+
+        $("#autoCompleteInput").val("");
+        autoCompleteDestroy(sheet);
+
+        //상세 데이터 가져오기
+        var params = "empHisId="+ ui.item.empHisId
+        var data = ajaxCall("/ifw/emp",params,false);
+
+        //직원을 선택시 Data Return
+
+        var returnFunc1 = new Function ( "return "+ ui.item.callBackFunc )()
+
+        if(typeof returnFunc1 != "undefined") {
+        	gPRow = row;
+        	pGubun = "sheetAutocompleteEmp";
+        	returnFunc1( data.DATA );
+        }
+
+    });
+
+    $(".GMVScroll>div").scroll(function() {
+        destroyAutoComplete(sheet);
+    });
+    $(".GMHScrollMid>div").scroll(function() {
+        destroyAutoComplete(sheet);
+    });
+
+    var pleft = sheet.ColLeft(sheet.GetSelectCol());
+    var ptop = sheet.RowTop(sheet.GetSelectRow()) + sheet.GetRowHeight(sheet.GetSelectRow());
+    //건수정보 표시줄의 높이 만큼.
+    if (sheet.GetCountPosition() == 1 || sheet.GetCountPosition() == 2) ptop += 13;
+
+    var point = fGetXY(document.getElementById("DIV_" + sheet.id));
+
+    var left = point.x + pleft;
+    var top = point.y + ptop - 17;
+
+    var cWidth = 520;
+    var cHeight = 104;
+    var dWidth = $(window).width();
+    var dHeight = $(window).height();
+
+    if (dWidth < left + cWidth) left = dWidth - cWidth;
+    if (dHeight < top + cHeight) top = top - cHeight - 28;
+    if (top < 0) top = 0;
+
+    $("#autoCompleteDiv").css("left", left + "px");
+    $("#autoCompleteDiv").css("top", top + "px");
+    clearTimeout(intervalDestory);
+    sheet.$beforeEditEnterBehavior = sheet.GetEditEnterBehavior();
+    sheet.SetEditEnterBehavior("none");
+}
+
+//autocomplete 키보드 이벤트
+function autoCompletePress(opt, Row, Col, code) {
+    if (Col != opt) return;
+
+    //IBsheet에서 입력된 값을 가져와 자동완성에 넘김
+    var e = jQuery.Event("keydown");
+    e.keyCode = code;
+    $("#searchKeyword1").trigger(e);
+    
+    //IBsheet input tag의 속성 - id:_editInput0 class:GMEditInput
+    if( $("#_editInput0").length != 0 ) {
+    	$("#searchKeyword1").val($("#_editInput0").val());
+    } else {
+    	//id:_editInput0 가 없는 경우도 있다. 그럴 경우 class:GMEditInput 로 검색
+    	$("#searchKeyword1").val($(".GMEditInput").val());
+    }
+}
+
+// autocomplete 제거
+function autoCompleteDestroy(sheet) {
+	clearTimeout(intervalDestory);
+    intervalDestory = setTimeout(function() {
+        destroyAutoComplete(sheet);
+    }, 200);
+}
+
+//autocomplete 제거
+function destroyAutoComplete(sheet) {
+    $(".GMVScroll>div").unbind("scroll");
+    $(".GMHScrollMid>div").unbind("scroll");
+
+    $("#autoCompleteInput").autocomplete("destroy");
+    $("#autoCompleteDiv").remove();
+
+    //sheet.SetEditEnterBehavior("tab");
+    sheet.SetEditEnterBehavior(sheet.$beforeEditEnterBehavior);
+}
+
+//autocomplete 리스트 포맷
+function employeeRenderItem1(ul, item) {
+    return $("<li />")
+        .data("item.autocomplete", item)
+        .append("<a class='autocomplete' style='width:240px;'>" +
+            "<span style='width:40px;'>" + String(item.name).split(item.searchNm).join('<b>' + item.searchNm + '</b>') + "</span>" +
+            "<span style='width:90px;'>" + item.sabun + "</span>" +
+            //"<span style='width:80px;'>" + item.orgNm + "</span>" +
+            "</a>").appendTo(ul);
+}
+
+
+function getMultiSelect(val) {
+    if (val == null || val == "") return "";
+    return "'" + String(val).split(",").join("','") + "'";
+}
+
+function paramMapToJson(args) {
+	var json = "";
+	var i = 0;
+
+	for(key in args) {
+		if(key != "contains"){
+			if(typeof args[key] == "object") {
+				alert("arguments 값이 object 입니다.");
+				return;
+			}
+
+			if(typeof args[key] != 'undefined' && args[key] != null) {
+				args[key] = args[key].toString().replace(/\"/gi,'\\"');
+				args[key] = args[key].toString().replace(/'/gi,"\'");
+				args[key] = args[key].toString().replace(/\r\n/gi,"\n");
+				args[key] = args[key].toString().replace(/\n/gi,"\\n");
+				args[key] = args[key].toString().replace(/\t/gi,"    ");
+			}
+
+			json = json + ((i==0) ? "\"" : ",\"") +[key]+"\":\""+args[key]+"\"";
+		}
+		i++;
+	}
+
+	return json;
 }

@@ -12,7 +12,7 @@
 					</td>
 					<td>
 						<span>사번/성명 </span>
-						<input type="text" id="sData" name="sData" />
+						<input type="text" id="searchKeyword" name="searchKeyword" />
 					</td>
 					<td>
 						<a href="javascript:doAction1('Search');" class="button">조회</a>
@@ -55,8 +55,8 @@
 			{Header:"삭제|삭제",		Type:"DelCheck",	Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
 			{Header:"상태|상태",		Type:"Status",		Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"id|id",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workteamEmpId",	KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"사번|사번",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sabun",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"성명|성명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"empNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"사번|사번",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sabun",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"성명|성명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"empNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"부서명|부서명",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"orgCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"직급|직급",		Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"classCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			//{Header:"사원구분|사원구분",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"empType",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
@@ -71,17 +71,20 @@
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
 		//근무조
-		var workteamCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "WORKTEAM_CD"), "선택");
-		sheet1.SetColProperty("workteamCd", {ComboText:workteamCdList[0], ComboCode:workteamCdList[1]} );
+		var workteamCdList = convCode(codeList("${rc.getContextPath()}/code/list", "WORKTEAM_CD"), "");
+		sheet1.SetColProperty("workteamCd", {ComboText:"|"+workteamCdList[0], ComboCode:"|"+workteamCdList[1]} );
 
 		//부서명
-		var orgCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "ORG_CD"), "선택");
-		sheet1.SetColProperty("orgCd", {ComboText:orgCdList[0], ComboCode:orgCdList[1]} );
+		var orgCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "ORG_CD"), "");
+		sheet1.SetColProperty("orgCd", {ComboText:"|"+orgCdList[0], ComboCode:"|"+orgCdList[1]} );
 
 		//직급
-		var classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "CLASS_CD"), "선택");
-		sheet1.SetColProperty("classCd", {ComboText:classCdList[0], ComboCode:classCdList[1]} );
+		var classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "CLASS_CD"), "");
+		sheet1.SetColProperty("classCd", {ComboText:"|"+classCdList[0], ComboCode:"|"+classCdList[1]} );
 		
+		//이름
+        setSheetAutocompleteEmp( "sheet1", "empNm" );
+        
 		sheetInit();
 		doAction1("Search");
 	});
@@ -125,5 +128,14 @@
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);
 		}
+	}
+	
+	function getReturnValue(returnValue) {
+		//var rv = $.parseJSON('{' + returnValue+ '}');
+		console.log(returnValue);
+   		sheet1.SetCellValue(gPRow, "sabun",returnValue.sabun);
+		sheet1.SetCellValue(gPRow, "empNm",returnValue.empNm);
+        sheet1.SetCellValue(gPRow, "orgCd",returnValue.orgCd);
+        sheet1.SetCellValue(gPRow, "classCd",returnValue.classCd);
 	}
 </script>

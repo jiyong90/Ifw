@@ -18,7 +18,7 @@
                                         <div class="title">연장근로시간</div>
                                         <span class="time-wrap">
                                             <i class="fas fa-clock"></i>
-                                            <span class="time">1시간</span>
+                                            <span id="overtime" class="time"></span>
                                         </span>
                                     </div>
                                     <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
@@ -82,16 +82,16 @@
                                         <div class="form-group clearfix">
                                             <div class="form-row">
                                                 <div class="col-11 col-sm-11 col-md-11 col-lg-6" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subYmd'+idx" v-model="s.subYmd" data-toggle="datetimepicker" :data-target="'#subYmd'+idx" placeholder="연도-월-일" autocomplete="off" required>
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subYmd_'+idx" v-model="s.subYmd" data-toggle="datetimepicker" :data-target="'#subYmd_'+idx" placeholder="연도-월-일" autocomplete="off" required>
                                                 </div>
                                                 <div class="col-11 col-sm-11 col-md-11 col-lg-5 mt-xs-1 mt-sm-1 mt-lg-0 float-right ">
                                                     <div class="form-row">
                                                         <div class="col float-left" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsSdate'+idx" v-model="s.subsSdate" data-toggle="datetimepicker" :data-target="'#subsSdate'+idx" autocomplete="off" required>
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsSdate_'+idx" v-model="s.subsSdate" data-toggle="datetimepicker" :data-target="'#subsSdate_'+idx" autocomplete="off" required>
                                                         </div>
                                                         <span class="d-inline-block text-center pl-1 pr-2 mt-1">~</span>
                                                         <div class="col float-right" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsEdate'+idx" v-model="s.subsEdate" data-toggle="datetimepicker" :data-target="'#subsEdate'+idx" autocomplete="off" required>
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsEdate_'+idx" v-model="s.subsEdate" data-toggle="datetimepicker" :data-target="'#subsEdate_'+idx" autocomplete="off" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -296,11 +296,9 @@
 					$("#sTime").val(moment(sYmd).format('HH:mm'));
 					$("#eTime").val(moment(eYmd).format('HH:mm'));
 					
-					//사용할 근무제 팝업 띄우기
-					//if($this.holidayYn=='Y')
-						
-					//else
-						$("#overtimeApplModal").modal("show"); 
+					$("#overtime").text("1시간");
+					
+					$("#overtimeApplModal").modal("show"); 
   	         	},
   	         	viewDayResults: function(ymd, data){
   	         		var $this = this;
@@ -343,9 +341,10 @@
   	         			
   	         			//근태 및 근무시간
   	         			if(data.hasOwnProperty('dayResults')) {
+  	         				console.log(data.dayResults);
   	         				$.each(data.dayResults, function(k, v){
   	         					v.map(function(vMap){
-  	         						if(vMap.taaCd!='') {
+  	         						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='') {
   		  	         					//근태
   		  	         					classNames = [];
   										classNames.push('TAA');
@@ -364,7 +363,7 @@
   		  	         					//근무
   		  	         					classNames = [];
   										classNames.push(vMap.timeTypeCd);
-  		  	         					
+  										
   	  	  	         					var result = {
   	  	  	   	         					id: 'TIME.'+vMap.timeTypeCd,
   	  	  	   	         					title: vMap.timeTypeNm,
@@ -518,6 +517,13 @@
   	                    $(".radio-toggle-wrap").hide(500);
   	                }
   	         	},
+  	         	updateValue: function(id, val){
+  	         		var $this = this;
+  	         		var key = id.split('_');
+  	         		if(key!=null && key!='undefined' && key.length>0) {
+  	         			$this.subYmds[key[1]][key[0]] = val; 
+  	         		}
+  	         	},
   	         	addSubYmd: function(){
   	         		var newSubYmd = {
   	         			subYmd: '',
@@ -528,20 +534,26 @@
   	         		this.subYmds.push(newSubYmd);
   	         	},
   	         	delSubYmd: function(idx){
-  	         		this.subYmds.splice(idx, 1);
-  	         		console.log(this.subYmds);
+  	         		this.subYmds.splice(idx,1);
   	         	}
   		    }
    	});
    	
   	//동적으로 추가하는 요소에 datetimepicker를 그리기 위함
-   	$('body').on('focus',"input[id^='subYmd']", function(){
-		$(this).datetimepicker({
-			format: 'YYYY-MM-DD',
-		    language: 'ko'
-		});
+  	$('body').on('focus',"input[id^='subYmd']", function(){
+   		var $this = this;
+ 		$(this).datetimepicker({
+ 			format: 'YYYY-MM-DD',
+ 		    language: 'ko'
+ 		});
+ 		
+ 		$(this).on("change.datetimepicker", function(e){
+ 			if(e.date!=null && e.date!='undefined' && e.date!='') {
+ 				timeCalendarVue.updateValue($($this).attr('id'), moment(e.date).format('YYYY-MM-DD'));
+ 			}
+ 		});
    	});
-   	
+  	
    	$('body').on('focus',"input[id^='subsSdate']", function(){
 		$(this).datetimepicker({
 			format: 'HH:mm',
@@ -552,6 +564,12 @@
                 vertical: 'top'
             }
 		});
+		
+		$(this).on("change.datetimepicker", function(e){
+ 			if(e.date!=null && e.date!='undefined' && e.date!='') {
+ 				timeCalendarVue.updateValue($($this).attr('id'), moment(e.date).format('HH:mm'));
+ 			}
+ 		});
    	});
    	
    	$('body').on('focus',"input[id^='subsEdate']", function(){
@@ -564,8 +582,37 @@
                 vertical: 'top'
             }
 		});
-   	});
+		
+		$(this).on("change.datetimepicker", function(e){
+ 			if(e.date!=null && e.date!='undefined' && e.date!='') {
+ 				timeCalendarVue.updateValue($($this).attr('id'), moment(e.date).format('HH:mm'));
+ 			}
+ 		});
+   	})
 
+   	//날짜,시간 변경 시 연장근로시간 계산
+   	$('#sDate, #eDate, #sTime, #eTime').on("change.datetimepicker", function(e){
+   		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
+   			var otSdate = moment($("#sDate").val()+' '+$("#sTime").val()).format('YYYY-MM-DD HH:mm');
+         	var otEdate = moment($("#eDate").val()+' '+$("#eTime").val()).format('YYYY-MM-DD HH:mm');
+         	
+         	if(moment(otEdate).diff(otSdate)<0) {
+         		$("#alertText").html("종료일이 시작일보다 작습니다.");
+         		$("#alertModal").on('hidden.bs.modal',function(){
+         			$("#alertModal").off('hidden.bs.modal');
+         			$("#sDate").val('');
+         			$("#eDate").val('');
+         			$("#sTime").val('');
+         			$("#eTime").val('');
+         		});
+         		$("#alertModal").modal("show"); 
+         	} else {
+         		var minutes = moment(otEdate).diff(otSdate, 'minutes');
+             	$("#overtime").text(calendarLeftVue.minuteToHHMM(minutes, 'detail'));
+         	}
+   		}
+    }); 
+   	
 	$('#timeCalendar [data-dismiss=modal]').on('click', function (e) {
 		var $t = $(this),
 	        target = $t[0].href || $t.data("target") || $t.parents('.modal') || [];

@@ -31,14 +31,10 @@ public class WtmWorkCalendar {
 	private String sabun;
 	@Column(name="YMD")
 	private String ymd;
-	@Column(name="WORK_TYPE_CD")
-	private String workTypeCd;
 	@Column(name="FLEXIBLE_EMP_ID")
 	private Long flexibleEmpId;
 	@Column(name="TIME_CD_MGR_ID")
 	private Long timeCdMgrId;
-	@Column(name="WORKTEAM_CD")
-	private String workteamCd;
 	
 	@Column(name="ENTRY_SDATE", columnDefinition="DATETIME") 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -109,14 +105,6 @@ public class WtmWorkCalendar {
 		this.ymd = ymd;
 	}
 
-	public String getWorkTypeCd() {
-		return workTypeCd;
-	}
-
-	public void setWorkTypeCd(String workTypeCd) {
-		this.workTypeCd = workTypeCd;
-	}
-
 	public Long getFlexibleEmpId() {
 		return flexibleEmpId;
 	}
@@ -131,14 +119,6 @@ public class WtmWorkCalendar {
 
 	public void setTimeCdMgrId(Long timeCdMgrId) {
 		this.timeCdMgrId = timeCdMgrId;
-	}
-
-	public String getWorkteamCd() {
-		return workteamCd;
-	}
-
-	public void setWorkteamCd(String workteamCd) {
-		this.workteamCd = workteamCd;
 	}
 
 	public Date getEntrySdate() {
