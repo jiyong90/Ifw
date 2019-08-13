@@ -16,21 +16,21 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="WTM_WORKTEAM_EMP")
-public class WtmWorkteamEmp {
+@Table(name="WTM_WORKTEAM_MGR")
+public class WtmWorkteamMgr {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="WORKTEAM_EMP_ID")
-	private Long workteamEmpId;
+	@Column(name="WORKTEAM_MGR_ID")
+	private Long workteamMgrId;
 	@Column(name="TENANT_ID")
 	private Long tenantId;
 	@Column(name="ENTER_CD")
 	private String enterCd;
-	@Column(name="WORKTEAM_MGR_ID")
-	private String workteamMgrId;
-	@Column(name="SABUN")
-	private String sabun;
+	@Column(name="WORKTEAM_NM")
+	private String workteamNm;
+	@Column(name="FLEXIBLE_STD_MGR_ID")
+	private Long flexibleStdMgrId;
 	@Column(name="SYMD")
 	private String symd;
 	@Column(name="EYMD")
@@ -44,13 +44,35 @@ public class WtmWorkteamEmp {
 	@Column(name="UPDATE_ID")
 	private Long updateId;
 	
-    public Long getWorkteamEmpId() {
-		return workteamEmpId;
+
+	
+	public Long getWorkteamMgrId() {
+		return workteamMgrId;
 	}
 
 
-	public void setWorkteamEmpId(Long workteamEmpId) {
-		this.workteamEmpId = workteamEmpId;
+	public void setWorkteamMgrId(Long workteamMgrId) {
+		this.workteamMgrId = workteamMgrId;
+	}
+
+
+	public String getWorkteamNm() {
+		return workteamNm;
+	}
+
+
+	public void setWorkteamNm(String workteamNm) {
+		this.workteamNm = workteamNm;
+	}
+
+
+	public Long getFlexibleStdMgrId() {
+		return flexibleStdMgrId;
+	}
+
+
+	public void setFlexibleStdMgrId(Long flexibleStdMgrId) {
+		this.flexibleStdMgrId = flexibleStdMgrId;
 	}
 
 
@@ -71,26 +93,6 @@ public class WtmWorkteamEmp {
 
 	public void setEnterCd(String enterCd) {
 		this.enterCd = enterCd;
-	}
-
-
-	public String getWorkteamMgrId() {
-		return workteamMgrId;
-	}
-
-
-	public void setWorkteamMgrId(String workteamMgrId) {
-		this.workteamMgrId = workteamMgrId;
-	}
-
-
-	public String getSabun() {
-		return sabun;
-	}
-
-
-	public void setSabun(String sabun) {
-		this.sabun = sabun;
 	}
 
 

@@ -13,21 +13,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
+import com.isu.ifw.entity.WtmWorkteamEmp;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
+import com.isu.ifw.repository.WtmWorkteamEmpRepository;
+import com.isu.ifw.repository.WtmWorkteamMgrRepository;
 import com.isu.ifw.vo.WtmDayPlanVO;
 import com.isu.ifw.vo.WtmDayWorkVO;
-import com.isu.ifw.vo.WtmWorkTermTimeVO;
-import com.sun.istack.FinalArrayList;
 
 @Service("flexibleEmpService")
 public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
@@ -351,6 +351,68 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	public void cancelWorkClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Autowired
+	WtmWorkteamMgrRepository wtmWorkteamMgrRepo;
+	
+	@Autowired
+	WtmWorkteamEmpRepository wtmWorkteamEmpRepo;
+	
+	@Transactional
+	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId) {
+		//ID 채번 때문에 프로시저로 못했다..
+		/*
+		 * 중복된 근무 체크
+		 * 기본근무제는 제외한 나머지는 다 중복되면 안된다. 근무조 및 유연근무제 기간과 중복되면 중복되는 데이터를 선 조정후 가능하다.
+		 * 
+		 */
+		
+		/*
+		 * 근무조의 시작일 종료일이 바꼈을 경우
+		 * WTM_WORK_FLEXIBLE_EMP 테이블의 근무일의 시작/종료일이 다를 경우 데이터를 다시 만들어야한다.
+		 * 예를 들어 근무조의 종료일이 줄었을 경우 그 갭을 기본근무정보로 업데이트 하자
+		 * 근무정보 업데이트는 반드시 지우면 안된다 실적데이터가 같이 있기때문에 BASE PLAN 정보를 갱신한다
+		 * WTM_WORK_FLEXIBLE_EMP 의 시작 종료일을 겹치지 않게 재생성 한다.
+			 
+		*/
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("workteamMgrId", workteamMgrId);
+		paramMap.put("updateId", userId);
+		
+		//1. FLEXIBLE_EMP에 없는 사람 부터 넣자
+		/*
+		 * 근무조에 등록된 대상자를 WTM_FLEXIBLE_EMP 테이블에 생성한다.
+		 * 단 근무조 기간에 중복된 데이터가 있는 대상자는 제외하고 등록한다.
+		 * 근무조, 유연근무제 모두 중복된 데이터로 한다. 근무조는 근무조 관리에서 시작종료를 관리하기 때문에 선 수정 작업 
+		 * 기본근무제는 체크하지 않고 중복데이터 삽입 - 이후에 FLEXIBLE_EMP의 시작종료일 정리하는 업데이트문이 필요하다
+		 */
+		flexEmpMapper.createWorkteamOfWtmFlexibleEmp(paramMap);
+		
+		//case 단순히 근무조의 종료일만 증가했을 경우 1번의 케이스에서 빠졌을 것이다. 업데이트 해줘야한다. 기준아이디가 같으면 업데이트 하자
+		//기간의 중복은 입력 자체에서 막아야한다!!!!!!!!!!!!!!!
+		flexEmpMapper.updateWorkteamOfWtmFlexibleEmp(paramMap);
+		
+
+		// 근무조 대상자 가져왓!
+		List<WtmWorkteamEmp> workteamEmpList = wtmWorkteamEmpRepo.findByWorkteamMgrId(workteamMgrId);
+		// 패턴 가져왓!
+		
+		// loop를 돌며 대상자 별로 calendar와 dayResult를 추가 갱신 하자
+		
+		//1-1. FLEXIBLE_EMP 중복된 근무 기간에서 FLEXIBLE_STD_MGR 에서 BASE_WORK_YN 이 N일 경우 데이터를 삽입하고 시작일 종료일 정리는 일괄적으로 한다.
+		
+		//2. FLEXIBLE_EMP에 있는데 근무조 기간 내에 정보가 중복되는 사람을 업데이트
+		
+		//WtmWorkteamMgr workteamMgr = wtmWorkteamMgrRepo.findById(workteamMgrId).get();
+		
+		
+		
+		//END FLEXIBLE_EMP의 시작일 종료일 정리
+		 
+	
 	}
 	
 }

@@ -106,5 +106,21 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public Map<String, Object> checkDuplicateWorktime(Map<String, Object> paramMap);
 	
+	/**
+	 * 근무조에 등록된 대상자를 WTM_FLEXIBLE_EMP 테이블에 생성한다.
+	 * 단 근무조 기간에 중복된 데이터가 있는 대상자는 제외하고 등록한다.
+	 * 근무조, 유연근무제 모두 중복된 데이터로 한다. 근무조는 근무조 관리에서 시작종료를 관리하기 때문에 선 수정 작업 
+	 * 기본근무제는 체크하지 않고 중복데이터 삽입 - 이후에 FLEXIBLE_EMP의 시작종료일 정리하는 업데이트문이 필요하다
+	 * @param paramMap
+	 */
+	public void createWorkteamOfWtmFlexibleEmp(Map<String, Object> paramMap);
+	
+	/**
+	 * 중복된 데이터들 중에 같은 근무제의 중복은 기간 업데이트를 하자. 
+	 * 예를 들어 근무조의 종료일만 변경했을 경우 - 종료일 변경 시 사전에 중복되는 지 여부를판단해야한다
+	 * @param paramMap
+	 */
+	public void updateWorkteamOfWtmFlexibleEmp(Map<String, Object> paramMap);
+	
 	
 }

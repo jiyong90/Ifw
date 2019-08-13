@@ -105,10 +105,8 @@
 	        , C.ENTER_CD as enterCd
 	        , C.SABUN as sabun
 	        , C.YMD as ymd
-	        , C.WORK_TYPE_CD as workTypeCd
 	        , C.FLEXIBLE_EMP_ID as flexibleEmpId
 	        , C.TIME_CD_MGR_ID as timeCdMgrId
-	        , C.WORKTEAM_CD as workteamCd
 	        , C.ENTRY_SDATE as entrySdate
 	        , C.ENTRY_STYPE_CD as entryStypeCd
 	        , C.ENTRY_EDATE as entryEdate
@@ -429,4 +427,49 @@
 			   AND (O.OT_SDATE BETWEEN #{sdate} AND #{edate} OR O.OT_EDATE BETWEEN #{sdate} AND #{edate})
 			) X
   	</select>
+  	
+  	<update id="createWorkteamOfWtmFlexibleEmp" parameterType="map">
+		INSERT INTO WTM_FLEXIBLE_EMP(TENANT_ID, ENTER_CD, FLEXIBLE_STD_MGR_ID, SABUN, SYMD, EYMD, WORK_TYPE_CD, UPDATE_ID)
+			SELECT M.TENANT_ID, M.ENTER_CD, M.FLEXIBLE_STD_MGR_ID, E.SABUN, M.SYMD, M.EYMD, S.WORK_TYPE_CD, #{updateId}
+			  FROM WTM_WORKTEAM_MGR M
+			  JOIN WTM_WORKTEAM_EMP E
+			    ON M.WORKTEAM_MGR_ID = E.WORKTEAM_MGR_ID
+			  JOIN WTM_FLEXIBLE_STD_MGR S
+			    ON M.FLEXIBLE_STD_MGR_ID = S.FLEXIBLE_STD_MGR_ID
+			 WHERE NOT EXISTS
+				(
+					SELECT * 
+					  FROM WTM_FLEXIBLE_EMP F
+					  JOIN WTM_FLEXIBLE_STD_MGR SM
+					    ON F.FLEXIBLE_STD_MGR_ID = SM.FLEXIBLE_STD_MGR_ID
+					 WHERE M.TENANT_ID = F.TENANT_ID
+					   AND M.ENTER_CD = F.ENTER_CD
+					   AND E.SABUN = F.SABUN
+					   AND SM.BASE_WORK_YN = 'N'
+					   AND ( M.SYMD F.SYMD AND F.EYMD
+						OR M.EYMD BETWEEN F.SYMD AND F.EYMD )
+				)
+			   AND M.WORKTEAM_MGR_ID = #{workteamMgrId}
+			   AND M.TENANT_ID = #{tenantId}
+			   AND M.ENTER_CD = #{enterCd} 
+			 
+  	</update>
+  	
+  	<update id="updateWorkteamOfWtmFlexibleEmp" parameterType="map">
+  		UPDATE WTM_WORKTEAM_MGR M
+		  JOIN WTM_WORKTEAM_EMP E
+		    ON M.WORKTEAM_MGR_ID = E.WORKTEAM_MGR_ID
+		  JOIN WTM_FLEXIBLE_STD_MGR S
+		    ON M.FLEXIBLE_STD_MGR_ID = S.FLEXIBLE_STD_MGR_ID
+		  JOIN  WTM_FLEXIBLE_EMP F
+		    ON M.TENANT_ID = F.TENANT_ID
+		   AND M.ENTER_CD = F.ENTER_CD
+		   AND E.SABUN = F.SABUN
+		   AND M.FLEXIBLE_STD_MGR_ID = F.FLEXIBLE_STD_MGR_ID -- 중복된 사람에서 같은 근무제도의 변경일 경우 갱신하자
+		   AND ( M.SYMD BETWEEN F.SYMD AND F.EYMD
+				OR M.EYMD BETWEEN F.SYMD AND F.EYMD )
+		   SET F.SYMD = M.SYMD
+		     , F.EYMD = M.EYMD
+		 WHERE  M.WORKTEAM_MGR_ID = #{workteamMgrId}
+  	</update>
 </mapper>
