@@ -691,7 +691,7 @@
 	    		
 		   	    var min = Number(min);
 		   	    var hours   = Math.floor(min / 60);
-		   	    var minutes = Math.floor((min - (hours * 60)) / 60);
+		   	    var minutes = Math.floor(min - (hours * 60));
 	
 		   	 	if(type=='detail') {
 		   	 		var h = hours==0?'':hours+'시간 ';
@@ -985,9 +985,11 @@
    	});
    	
    	$('#useSymd').on("change.datetimepicker", function(e){
-   		if(e.oldDate!=null && e.oldDate!='undefined' && e.date!=e.oldDate) {
-   			calendarLeftVue.applInfo.useSymd = moment(e.date).format('YYYY-MM-DD');
-   	    	calendarLeftVue.changeUseSymd();
+   		if(e.date!=null && e.date!='undefined' && e.date!='') {
+	   		if(e.oldDate!=null && e.oldDate!='undefined' && e.date!=e.oldDate) {
+	   			calendarLeftVue.applInfo.useSymd = moment(e.date).format('YYYY-MM-DD');
+	   	    	calendarLeftVue.changeUseSymd();
+	   		}
    		}
     }); 
    	
