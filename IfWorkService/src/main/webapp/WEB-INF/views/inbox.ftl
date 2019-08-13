@@ -9,7 +9,6 @@
             <div class="btn-wrap">
                 <button type="button" class="btn btn-sm btn-inline btn-outline-secondary" @click="goToWorkTimeCalendar">작성하기</button>
             </div>
-            <button class="btn-close">&#215;</button>
         </li>
 	</ul>
 	<ul class="alert-list-wrap" v-else>
