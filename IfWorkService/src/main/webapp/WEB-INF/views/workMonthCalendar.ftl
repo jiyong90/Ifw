@@ -215,7 +215,7 @@
 					data: param,
 					dataType: "json",
 					success: function(data) {
-						console.log(data);
+						//console.log(data);
 						if(data.status=='OK' && data.flexibleList!=null) {
 							$this.monthFlexitimeList = data.flexibleList;
 							$this.monthFlexitimeList.map(function(f){

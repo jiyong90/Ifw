@@ -55,7 +55,7 @@
                                         placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="holidayYn=='Y'">
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
                                 <div class="title mb-2">휴일대체방법</div>
                                 <div class="desc">
                                     <div class="custom-control custom-radio custom-control-inline">
@@ -165,8 +165,7 @@
   		    	view: 'timeGridDay',
   		    	workday: '', //근무일
   		    	reasons: [], //연장/휴일 근로 사유
-  		    	holidayYn: '', //휴일여부
-  		    	dayResults: {}, //상세 근무 시간
+  		    	result: {},
   		    	subYmds: [] //대체휴일
   		    },
   		    mounted: function(){
@@ -267,22 +266,16 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
+							console.log(data);
 							if(data!=null) {
-								$this.holidayYn = '';
-								if(data.hasOwnProperty('holidayYn'))
-									$this.holidayYn = data.holidayYn;
+								$this.result = data;
 								
-								$this.dayResults = {};
-								if(data.hasOwnProperty('dayResults'))
-									$this.dayResults = data.dayResults;
-								
-								$this.viewDayResults(ymd, data);
+								$this.viewDayResults(ymd);
 							}
 						},
 						error: function(e) {
 							console.log(e);
-							$this.holidayYn = '';
-							$this.dayResults = {};
+							$this.result = {};
 						}
 					});
   	         	},
@@ -301,14 +294,14 @@
 					
 					$("#overtimeApplModal").modal("show"); 
   	         	},
-  	         	viewDayResults: function(ymd, data){
+  	         	viewDayResults: function(ymd){
   	         		var $this = this;
   	         		var classNames = [];
   	         		
-  	         		if(data!=null) {
+  	         		if($this.result!=null && Object.keys($this.result).length>0) {
   	         			//출퇴근 타각 표시
-  	         			if(data.hasOwnProperty('entry')) {
-  	         				var entry = data.entry;
+  	         			if($this.result.hasOwnProperty('entry')) {
+  	         				var entry = $this.result.entry;
   	         				
   	         				var sEdate = new Date(entry.entrySdate);
   	         				sEdate.setMinutes(sEdate.getMinutes()+3);
@@ -341,43 +334,42 @@
   	         			}
   	         			
   	         			//근태 및 근무시간
-  	         			if(data.hasOwnProperty('dayResults')) {
-  	         				console.log(data.dayResults);
-  	         				$.each(data.dayResults, function(k, v){
-  	         					v.map(function(vMap){
-  	         						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='') {
-  		  	         					//근태
-  		  	         					classNames = [];
-  										classNames.push('TAA');
-  		  	         					
-  		  	         					var result = {
-  	  	  	   	         					id: 'TAA.'+vMap.taaCd,
-  	  	  	   	         					title: vMap.taaNm,
-  	  	  	  								start: vMap.sDate,
-  	  	  	  	  		  		        	end: vMap.eDate,
-  	  	  	  	  		  		        	editable: false,
-  	  	  	  		  		        		classNames: classNames
-  	  	  	    	         			};
-  		  	  	         					
-  		  	  	    	         		$this.addEvent(result); 
-  		  	         				} else {
-  		  	         					//근무
-  		  	         					classNames = [];
-  										classNames.push(vMap.timeTypeCd);
-  										
-  	  	  	         					var result = {
-  	  	  	   	         					id: 'TIME.'+vMap.timeTypeCd,
-  	  	  	   	         					title: vMap.timeTypeNm,
-  	  	  	  								start: vMap.sDate,
-  	  	  	  	  		  		        	end: vMap.eDate,
-  	  	  	  	  		  		        	editable: false,
-  	  	  	  		  		        		classNames: classNames
-  	  	  	    	         			};
-  	  	  	         					
-  	  	  	    	         			$this.addEvent(result); 
-  		  	         				}
-  	         					});
-  	         				});
+  	         			if($this.result.hasOwnProperty('dayResults') && $this.result.dayResults!=null && $this.result.dayResults!='') {
+  	         				var dayResults = JSON.parse($this.result.dayResults);
+  	         				console.log(dayResults);
+         					dayResults.map(function(vMap){
+         						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='') {
+	  	         					//근태
+	  	         					classNames = [];
+									classNames.push('TAA');
+	  	         					
+	  	         					var result = {
+  	  	   	         					id: 'TAA.'+vMap.taaCd,
+  	  	   	         					title: vMap.taaNm,
+  	  	  								start: vMap.sDate,
+  	  	  	  		  		        	end: vMap.eDate,
+  	  	  	  		  		        	editable: false,
+  	  	  		  		        		classNames: classNames
+  	  	    	         			};
+	  	  	         					
+	  	  	    	         		$this.addEvent(result); 
+	  	         				} else {
+	  	         					//근무
+	  	         					classNames = [];
+									classNames.push(vMap.timeTypeCd);
+									
+  	  	         					var result = {
+  	  	   	         					id: 'TIME.'+vMap.timeTypeCd+'.'+vMap.sDate,
+  	  	   	         					title: vMap.timeTypeNm,
+  	  	  								start: vMap.sDate,
+  	  	  	  		  		        	end: vMap.eDate,
+  	  	  	  		  		        	editable: false,
+  	  	  		  		        		classNames: classNames
+  	  	    	         			};
+  	  	         					
+  	  	    	         			$this.addEvent(result); 
+	  	         				}
+         					});
   	         			}
   	         		}
   	         	},
@@ -430,20 +422,18 @@
   	  	         		var otEdate = moment($("#eDate").val()+' '+$("#eTime").val()).format('YYYY-MM-DD HH:mm');
   	         			
   	  	         		var isBase = false;
-  	  	         		var baseWork = {};
-  	  	         		var dayResults = $this.dayResults[moment($this.workday).format('YYYYMMDD')];
-  	  	         		dayResults.map(function(dayResult){
-  	  	         			if(dayResult.timeTypeCd == 'BASE'){
-  	  	         				baseWork = dayResult;
-  	  	         			}
-  	  	         		});
-  	         			
-  	  	         		if(baseWork!=null && Object.keys(baseWork).length>0) {
-	  	         			var baseSdate = moment(baseWork.sDate).format('YYYY-MM-DD HH:mm');
-	  	         			var baseEdate = moment(baseWork.eDate).format('YYYY-MM-DD HH:mm');
-	  	         			if(moment(baseSdate).diff(otSdate)<=0 && moment(otSdate).diff(baseEdate)<=0 
-	  	         					|| moment(baseSdate).diff(otEdate)<=0 && moment(otEdate).diff(baseEdate)<=0 )
-	  	         				isBase = true;
+  	  	         		
+  	  	         		if($this.result.hasOwnProperty('dayResults') && $this.result.dayResults!=null && $this.result.dayResults!='') {
+	         				var dayResults = JSON.parse($this.result.dayResults);
+     						dayResults.map(function(dayResult){
+	  	  	         			if(dayResult.timeTypeCd == 'BASE'){
+		  	  	         			var baseSdate = moment(baseWork.sDate).format('YYYY-MM-DD HH:mm');
+			  	         			var baseEdate = moment(baseWork.eDate).format('YYYY-MM-DD HH:mm');
+			  	         			if(moment(baseSdate).diff(otSdate)<=0 && moment(otSdate).diff(baseEdate)<=0 
+			  	         					|| moment(baseSdate).diff(otEdate)<=0 && moment(otEdate).diff(baseEdate)<=0 )
+			  	         				isBase = true;
+	  	  	         			}
+	  	  	         		});
   	  	         		}
   	         			
   	  	         		if(!isBase) {

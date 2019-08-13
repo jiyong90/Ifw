@@ -101,7 +101,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("ymd", ymd);
 		
 		List<Map<String, Object>> workDayResult = flexEmpMapper.getWorkDayResult(paramMap);
-		Map<String, Object> dayResults = new HashMap<String, Object>();
+		ObjectMapper mapper = new ObjectMapper();
+		/*Map<String, Object> dayResults = new HashMap<String, Object>();
 		if(result!=null && result.size()>0) {
 			for(Map<String, Object> r : workDayResult) {
 				List<Map<String, Object>> dayResult = null;
@@ -115,8 +116,13 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				dayResult.add(r);
 				dayResults.put(ymd, dayResult);
 			}
+		}*/
+		try {
+			result.put("dayResults", mapper.writeValueAsString(workDayResult));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		result.put("dayResults", dayResults);
 		
 		return result;
 	}
