@@ -4,6 +4,8 @@
 <script src="${rc.getContextPath()}/jQuery-3.4.1/jquery-3.4.1.min.js"></script>
 <script src="${rc.getContextPath()}/jQuery-3.4.1/jquery.datepicker.js"></script>
 <script src="${rc.getContextPath()}/jQuery-3.4.1/jquery.mask.js"></script>
+<script src="${rc.getContextPath()}/jQuery-3.4.1/jquery-ui.min.js"></script>
+<script src="${rc.getContextPath()}/jQuery-3.4.1/jquery-migrate-3.0.0.min.js"></script>
 <script src="${rc.getContextPath()}/popper-1.15.0/popper.min.js"></script>
 <script src="${rc.getContextPath()}/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 <script src="${rc.getContextPath()}/moment/moment.js"></script>

@@ -8,7 +8,7 @@
 				<tr>
 					<td>
 						<span>근태코드/근태명 </span>
-						<input type="text" id="sData" name="sData" class="text" />
+						<input type="text" id="searchKeyword" name="searchKeyword" class="text" />
 					</td>
 					<td>
 						<a href="javascript:doAction1('Search');" class="button">조회</a>

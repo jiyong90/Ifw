@@ -12,7 +12,7 @@
 					</td>
 					<td>
 						<span>사번/성명</span>
-						<input id="sData"  name="sData"  type="text" class="text" />
+						<input id="searchKeyword"  name="searchKeyword"  type="text" class="text" />
 					</td>
 					<td>
 						<a href="javascript:doAction1('Search');" class="button">조회</a>

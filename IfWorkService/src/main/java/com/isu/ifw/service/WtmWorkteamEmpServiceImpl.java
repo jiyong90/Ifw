@@ -32,7 +32,7 @@ public class WtmWorkteamEmpServiceImpl implements WtmWorkteamEmpService{
 	public List<Map<String, Object>> getWorkteamList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
 		List<Map<String, Object>> timeList = new ArrayList();	
 		try {
-			List<Map<String, Object>> list = workteamRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString(), paramMap.get("sData").toString());
+			List<Map<String, Object>> list = workteamRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString(), paramMap.get("searchKeyword").toString());
 			
 			for(Map<String, Object> l : list) {
 				Map<String, Object> time = new HashMap();
