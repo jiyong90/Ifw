@@ -705,7 +705,7 @@
 		   	    if(type=='short')
 		   	   		return hours+':'+minutes;
 		   	},
-	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
+	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보(남색 박스)
 				var $this = this;
 		    		
 				var param = {

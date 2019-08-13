@@ -212,7 +212,8 @@
   		    	eventClickCallback : function(info){
   		    	},
   		    	dateClickCallback : function(info){
-  		    		this.preCheck(info);
+  		    		if(!info.allDay)
+  		    			this.preCheck(info);
   		    	},
   	         	addEvent : function(Obj){
   	         		if(Obj!=null) {

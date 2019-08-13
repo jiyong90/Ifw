@@ -44,7 +44,7 @@ $(document).ready(function(){
 				contentType : 'application/json',
 				dataType : "json",
 				success: function(data) {
-					console.log(data);
+					//console.log(data);
 					
 					if(data!=null && data.status=='OK') {
 						$this.inboxCount = data.inboxCount;
