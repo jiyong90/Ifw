@@ -564,7 +564,7 @@
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
 	    		var flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //임시저장된 신청서
 	    		
-	    		if(flexibleAppl.applStatusCd=='11') {
+	    		if(flexibleAppl.applStatusCd!='99') {
 					//신청화면 전환
 					$("#applyBtn").bind('click', function(){
 						 calendarLeftVue.viewFlexitimeAppl(flexibleAppl);
@@ -669,7 +669,7 @@
 	    		workRange:'',
 	    		reason:''
 	    	},
-	    	flexibleAppl: {}, //임시저장된 신청서
+	    	flexibleAppl: {},
 	    	selectedDate: '${today}'
   		},
 	    mounted: function(){
@@ -677,10 +677,10 @@
 	    	//calendarLeftVue.getWorkDayInfo(this.today);
 	    	
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
-    			this.flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //결재된 신청서
+    			this.flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); 
     			
     			if('${calendar}' == 'workDayCalendar') {
-    				dayCalendarVue.getWorkDayResult(this.flexibleAppl.flexibleEmpId);
+    				dayCalendarVue.getWorkDayResult();
     	    	}
     		</#if>
 	    },
@@ -753,7 +753,7 @@
 							$this.flexibleAppl = data;
 							
 							if('${calendar}' == 'workDayCalendar') {
-								dayCalendarVue.getWorkDayResult($this.flexibleAppl.flexibleEmpId);
+								dayCalendarVue.getWorkDayResult();
 					    	}
 						}
 						
@@ -914,9 +914,9 @@
 					var param = {
 						flexibleApplId : flexibleAppl.flexibleApplId,	
 						applId : flexibleAppl.applId,
- 	         				flexibleStdMgrId : flexibleAppl.flexibleStdMgrId,
- 	         				workTypeCd : flexibleStd.workTypeCd,
- 	         				//empNo : "${empNo}",
+ 	         			flexibleStdMgrId : flexibleAppl.flexibleStdMgrId,
+ 	         			workTypeCd : flexibleStd.workTypeCd,
+ 	         			//empNo : "${empNo}",
 	   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
 	   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
 	   		    		reason: applInfo.reason

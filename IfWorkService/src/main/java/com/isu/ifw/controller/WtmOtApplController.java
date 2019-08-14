@@ -30,6 +30,21 @@ public class WtmOtApplController {
 	@Qualifier("wtmOtApplService")
 	WtmApplService otApplService;
 	
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getOtAppl(@RequestParam Long applId
+												, HttpServletRequest request) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		return otApplService.getAppl(applId);
+	}
+	
 	@RequestMapping(value="/preCheck", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam preCheckOtAppl(@RequestParam Map<String, Object> paramMap
 												, HttpServletRequest request) {

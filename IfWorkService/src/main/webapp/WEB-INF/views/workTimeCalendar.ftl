@@ -1,6 +1,6 @@
 <div id="timeCalendar" class="calendar-wrap" v-cloak>
-	<!-- modal start -->
-    <div class="modal fade show" id="overtimeApplModal" tabindex="-1" role="dialog">
+	<!-- 연장근무신청 modal start -->
+    <div class="modal fade show" id="overtimeAppl" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
@@ -105,6 +105,40 @@
                                     <button type="button" class="btn btn-inline btn-plus" @click="addSubYmd"><i class="fas fa-plus"></i>대체일시 추가</button>
                                 </div>
                             </div>
+                            <div class="radio-toggle-wrap" style="display:none;">
+                                <hr>
+                                <div class="big-title">8시간의 대체 휴일을 지정하세요.</div>
+                                <div class="info-box clearfix mt-2">
+                                    <div class="title">이전에 신청한 휴일</div>
+                                    <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간 09:00~12:00</span></div>
+                                    <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간 09:00~12:00</span></div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title">대체일자</div>
+                                    <div class="desc">
+                                        <div class="form-group clearfix">
+                                            <div class="form-row ">
+                                                <div class="col-md-6 col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" data-toggle="datetimepicker"  placeholder="연도-월-일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col-md-6 col-lg mt-xs-1 mt-sm-0 mt-md-1 mt-lg-0 float-right">
+                                                    <div class="custom-control custom-radio custom-control-inline mt-sm-1 mt-md-0 mt-lg-1">
+                                                        <input type="radio" id="halfAM" name="halfType"
+                                                            class="custom-control-input">
+                                                        <label class="custom-control-label" for="amWork">오전반차</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline mt-sm-1 mt-md-0 mt-lg-1">
+                                                        <input type="radio" id="halfPM" name="halfType"
+                                                            class="custom-control-input">
+                                                        <label class="custom-control-label" for="halfPM">오후반차</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="guide">*해당일 근무시간은 09:00~18:00 입니다.</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="btn-wrap text-center">
                             <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
@@ -115,7 +149,83 @@
             </div>
         </div>
     </div>    
-    <!-- modal end -->
+    <!-- 연장근무신청 modal end -->
+    <!-- 연장근무신청 상세보기 modal start -->
+    <div class="modal fade show" id="overtimeApplDetail" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">연장근로신청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap">
+                                <div class="title">연장근로시간</div>
+                                <div class="desc">
+                                    <span class="time-wrap">
+                                        <i class="fas fa-clock"></i>
+                                        <span class="time">
+                                        	<template v-if="overtimeAppl.otMinute">
+                                        		{{calendarLeftVue.minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="overtimeAppl.otSdate">
+                                        	{{moment(overtimeAppl.otSdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="start-time">
+                                        	<template v-if="overtimeAppl.otSdate">
+                                        	{{moment(overtimeAppl.otSdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="overtimeAppl.otEdate">
+                                        	{{moment(overtimeAppl.otEdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="end-time">
+                                        	<template v-if="overtimeAppl.otEdate">
+                                        	{{moment(overtimeAppl.otEdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">사유구분</div>
+                                <div class="desc">
+                                	<template v-if="overtimeAppl.reasonNm">
+                                	{{overtimeAppl.reasonNm}}
+                                	</template>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">설명</div>
+                                <div class="desc">
+                                	<template v-if="overtimeAppl.reason">
+                                	{{overtimeAppl.reason}}
+                                	</template>
+                                </div>
+                            </div>
+                            <hr class="bar">
+                        </div>
+                        <div class="btn-wrap text-center" v-if="overtimeAppl.applStatusCd=='99'">
+                            <button type="button" class="btn btn-default rounded-0">연장근로신청 취소하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 연장근무신청 상세보기 modal end -->
     <div id='calendar-container'>
 		<full-calendar ref="fullCalendar" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
@@ -163,10 +273,11 @@
 			        right: ''
   		    	},
   		    	view: 'timeGridDay',
+  		    	result: {}, //일근무시간
   		    	workday: '', //근무일
   		    	reasons: [], //연장/휴일 근로 사유
-  		    	result: {},
-  		    	subYmds: [] //대체휴일
+  		    	subYmds: [], //대체휴일
+  		    	overtimeAppl: {}
   		    },
   		    mounted: function(){
   		    	<#if workday?? && workday!='' && workday?exists >
@@ -209,6 +320,10 @@
   		    		
   		    	},
   		    	eventClickCallback : function(info){
+  		    		//상세보기
+  		    		if(info.event.extendedProps.timeTypeCd=='OT') {
+  		    			this.viewOvertimeApplDetail(info.event.extendedProps.applId);
+  		    		}
   		    	},
   		    	dateClickCallback : function(info){
   		    		if(!info.allDay)
@@ -266,7 +381,7 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
-							console.log(data);
+							//console.log(data);
 							if(data!=null) {
 								$this.result = data;
 								
@@ -292,7 +407,34 @@
 					
 					$("#overtime").text("1시간");
 					
-					$("#overtimeApplModal").modal("show"); 
+					$("#overtimeAppl").modal("show"); 
+  	         	},
+  	         	viewOvertimeApplDetail: function(applId){
+  	         		var $this = this;
+  	         		
+  	         		var param = {
+  	         			applId: applId	
+  	         		};
+  	         		
+  	         		Util.ajax({
+						url: "${rc.getContextPath()}/otAppl",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							console.log(data);
+							if(data!=null) {
+								$this.overtimeAppl = data;
+								$("#overtimeApplDetail").modal("show"); 
+							}
+						},
+						error: function(e) {
+							console.log(e);
+							$this.overtimeAppl = {};
+						}
+					});
+					
   	         	},
   	         	viewDayResults: function(ymd){
   	         		var $this = this;
@@ -336,7 +478,7 @@
   	         			//근태 및 근무시간
   	         			if($this.result.hasOwnProperty('dayResults') && $this.result.dayResults!=null && $this.result.dayResults!='') {
   	         				var dayResults = JSON.parse($this.result.dayResults);
-  	         				console.log(dayResults);
+  	         				//console.log(dayResults);
          					dayResults.map(function(vMap){
          						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='') {
 	  	         					//근태
@@ -358,13 +500,21 @@
 	  	         					classNames = [];
 									classNames.push(vMap.timeTypeCd);
 									
+									var title = vMap.timeTypeNm;
+									if(vMap.applStatusCd!=null && vMap.applStatusCd!='')
+										title += ' (' + vMap.applStatusNm + ')';
+										
   	  	         					var result = {
-  	  	   	         					id: 'TIME.'+vMap.timeTypeCd+'.'+vMap.sDate,
-  	  	   	         					title: vMap.timeTypeNm,
+  	  	   	         					id: 'TIME.'+vMap.timeTypeCd+'.'+moment(vMap.sDate).format('HH:mm:ss'),
+  	  	   	         					title: title,
   	  	  								start: vMap.sDate,
   	  	  	  		  		        	end: vMap.eDate,
   	  	  	  		  		        	editable: false,
-  	  	  		  		        		classNames: classNames
+  	  	  		  		        		classNames: classNames,
+			  	  	  		  		    extendedProps: {
+			  	  	  		  		    	applId: vMap.applId,
+			  	  	  		  		    	timeTypeCd: vMap.timeTypeCd
+			  	  	  		  		  	}
   	  	    	         			};
   	  	         					
   	  	    	         			$this.addEvent(result); 
@@ -406,7 +556,7 @@
   	         	validateOtAppl : function(){
   	         		var $this = this;
   	         		var applYn = true;
-  	         		var forms = document.getElementById('overtimeApplModal').getElementsByClassName('needs-validation');
+  	         		var forms = document.getElementById('overtimeAppl').getElementsByClassName('needs-validation');
   	         		var validation = Array.prototype.filter.call(forms, function(form) {
   	         			if (form.checkValidity() === false) {
   	         				applYn = false;
@@ -454,7 +604,7 @@
   	         		var $this = this;
   	         		var param = {
         				flexibleStdMgrId : calendarTopVue.flexibleStd.flexibleStdMgrId,
-        				workTypeCd : calendarTopVue.flexibleStd.workTypeCd,
+        				workTypeCd : 'OT',
         				ymd: moment($this.workday).format('YYYYMMDD'),
         				otSdate : moment(otSdate).format('YYYYMMDDHHmm'),
         				otEdate : moment(otEdate).format('YYYYMMDDHHmm'),

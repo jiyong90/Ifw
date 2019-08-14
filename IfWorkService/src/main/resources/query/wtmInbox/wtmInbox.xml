@@ -9,23 +9,35 @@
      -->
 	<select id="getToDoPlanDays" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT E.FLEXIBLE_EMP_ID AS flexibleEmpId
-			     , E.SYMD AS sYmd
-			     , CASE WHEN SUM(CASE WHEN C.HOLIDAY_YN = 'N' THEN 1 ELSE 0 END) = 0 THEN -1
-				        ELSE SUM(CASE WHEN C.HOLIDAY_YN = 'N' THEN 1 ELSE 0 END) - SUM(CASE WHEN C.HOLIDAY_YN = 'N' AND R.WORK_CALENDAR_ID IS NOT NULL AND R.TIME_TYPE_CD = 'BASE' THEN 1 ELSE 0 END) END AS toDoPlanDays
-			  FROM WTM_FLEXIBLE_EMP E
-			  LEFT OUTER JOIN WTM_WORK_CALENDAR C
-			    ON E.TENANT_ID = C.TENANT_ID
-			   AND E.ENTER_CD = C.ENTER_CD
-			   AND E.SABUN = C.SABUN
-			   AND C.YMD BETWEEN E.SYMD AND E.EYMD
-			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
-				 ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
-			 WHERE E.TENANT_ID = #{tenantId}
-			   AND E.ENTER_CD = #{enterCd}
-			   AND E.SABUN = #{sabun}
-			   AND (#{ymd} BETWEEN E.SYMD AND E.EYMD OR F_WTM_TO_DATE(#{ymd},'%Y%m%d') < F_WTM_TO_DATE(E.EYMD,'%Y%m%d'))
-			 GROUP BY E.FLEXIBLE_EMP_ID 
+			SELECT A.FLEXIBLE_EMP_ID AS flexibleEmpId
+			     , A.SYMD AS sYmd
+			     , B.toDoPlanDays
+			  FROM WTM_FLEXIBLE_EMP A
+			  JOIN ( SELECT E.TENANT_ID
+						     , E.ENTER_CD
+						     , E.SABUN
+						     , MIN(E.SYMD) AS SYMD
+						     , CASE WHEN SUM(CASE WHEN C.HOLIDAY_YN = 'N' THEN 1 ELSE 0 END) = 0 THEN -1
+							        ELSE SUM(CASE WHEN C.HOLIDAY_YN = 'N' THEN 1 ELSE 0 END) - SUM(CASE WHEN C.HOLIDAY_YN = 'N' AND R.WORK_CALENDAR_ID IS NOT NULL AND R.TIME_TYPE_CD = 'BASE' THEN 1 ELSE 0 END) END AS toDoPlanDays
+						  FROM WTM_FLEXIBLE_EMP E
+						  LEFT OUTER JOIN WTM_WORK_CALENDAR C
+						    ON E.TENANT_ID = C.TENANT_ID
+						   AND E.ENTER_CD = C.ENTER_CD
+						   AND E.SABUN = C.SABUN
+						   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+						  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+							 ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
+						 WHERE E.TENANT_ID = #{tenantId}
+						   AND E.ENTER_CD = #{enterCd}
+						   AND E.SABUN = #{sabun}
+						   AND E.WORK_TYPE_CD IN ('SELE_F', 'SELE_C')
+						   AND (#{ymd} BETWEEN E.SYMD AND E.EYMD OR F_WTM_TO_DATE(#{ymd},'%Y%m%d') < F_WTM_TO_DATE(E.EYMD,'%Y%m%d'))
+						 GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN
+						 HAVING toDoPlanDays <> 0   ) B
+			    ON A.TENANT_ID = B.TENANT_ID
+			   AND A.ENTER_CD = B.ENTER_CD
+			   AND A.SABUN = B.SABUN
+			   AND A.SYMD = B.SYMD
         ]]>
     </select>
 </mapper>

@@ -10,5 +10,12 @@ public interface WtmOtApplMapper {
 	 * @return
 	 */
 	public void calcOtMinute(Map<String, Object> paramMap);
+	
+	/**
+	 * 연장근무 신청서 조회
+	 * @param applId
+	 * @return
+	 */
+	public Map<String, Object> otApplfindByApplId(Long applId);
 	 	
 }

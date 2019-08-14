@@ -23,4 +23,29 @@
 		)
 		 WHERE O.APPL_ID = #{applId}
 	 </update>
+	 
+	 <select id="otApplfindByApplId" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+			SELECT O.OT_APPL_ID AS otApplId
+			     , O.APPL_ID AS applId
+			     , O.YMD AS ymd
+			     , O.HOLIDAY_YN AS holidayYn
+			     , O.OT_SDATE AS otSdate
+			     , O.OT_EDATE AS otEdate
+			     , O.OT_MINUTE AS otMinute
+			     , O.RET_OT_MINUTE AS retOtMinute
+			     , O.REASON_CD AS reasonCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS reasonNm
+			     , O.REASON AS reason
+			     , O.SUB_YN AS subYn
+			     , O.OLD_OT_APPL_ID AS oldOtApplId
+			     , O.CANCEL_YN AS cancelYn
+			     , A.APPL_STATUS_CD AS applStatusCd
+			  FROM WTM_APPL A
+			  JOIN WTM_OT_APPL O
+			    ON A.APPL_ID = O.APPL_ID
+			 WHERE O.APPL_ID = #{applId}   
+			 ORDER BY O.OT_SDATE
+	        ]]>
+    </select>
 </mapper>

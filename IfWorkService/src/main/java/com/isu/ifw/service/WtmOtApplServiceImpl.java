@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtAppl;
+import com.isu.ifw.entity.WtmOtSubsAppl;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
@@ -25,6 +27,7 @@ import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtApplRepository;
+import com.isu.ifw.repository.WtmOtSubsApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.util.WtmUtil;
@@ -52,6 +55,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	@Autowired
 	WtmOtApplRepository wtmOtApplRepo;
 	@Autowired
+	WtmOtSubsApplRepository wtmOtSubsApplRepo;
+	@Autowired
 	WtmFlexibleEmpRepository wtmFlexibleEmpRepo;
 	@Autowired
 	WtmWorkCalendarRepository wtmWorkCalendarRepository;
@@ -67,8 +72,24 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			Map<String, Object> otAppl = wtmOtApplMapper.otApplfindByApplId(applId);
+			ObjectMapper mapper = new ObjectMapper();
+			if(otAppl!=null) {
+				//대체휴일
+				if(otAppl.get("subYn")!=null && "Y".equals(otAppl.get("subYn"))) {
+					List<WtmOtSubsAppl> otSubsAppls = wtmOtSubsApplRepo.findByOtApplId(Long.valueOf(otAppl.get("otApplId").toString()));
+					if(otSubsAppls!=null && otSubsAppls.size()>0)
+						otAppl.put("otSubsAppls", mapper.writeValueAsString(otSubsAppls));
+				}
+			}
+			
+			return otAppl;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	@Override
