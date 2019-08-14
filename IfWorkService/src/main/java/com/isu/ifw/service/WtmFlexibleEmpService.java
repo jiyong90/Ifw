@@ -65,6 +65,17 @@ public interface WtmFlexibleEmpService {
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
 
 	/**
+	 * 계획을 작성 해야 하는 유연근무제 리스트 조회
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param paramMap
+	 * @param userId
+	 * @return
+	 */
+	public List<Map<String, Object>> getFlexibleEmpListForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+	
+	/**
 	 * 해당 일의 근무 시간 조회
 	 * @param tenantId
 	 * @param enterCd
@@ -116,4 +127,21 @@ public interface WtmFlexibleEmpService {
 	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId);
 	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId); 
 	
+	/**
+	 * calendar id로 일근무표 조회(관리자용)
+	 * @param tenantId
+	 * @param enterCd
+	 * @param workCalendarId
+	 * @return
+	 */
+	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, Long workCalendarId);
+	
+	/**
+	 * 일별상세 리스트 저장(관리자용)
+	 * @param flexibleEmpId
+	 * @param dateMap	
+	 * @param userId
+	 * @throws Exception
+	 */
+	public void saveEmpDayResults(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) throws Exception;
 }
