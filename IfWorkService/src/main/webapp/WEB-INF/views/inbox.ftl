@@ -1,9 +1,5 @@
 <aside id="alertSidebar" class="control-sidebar" style="display:none;" v-clock>
 	<ul class="alert-list-wrap" v-if="inboxCount>0">
-		<li>
-           <span class="ico-wrap"><i class="far fa-bell-slash"></i></span>
-           <div class="desc">알림을 모두 확인했습니다.</div>
-        </li>
 		<li v-if="workPlan.toDoPlanDays && Number(workPlan.toDoPlanDays)!=0">
             <span class="status SELE_F"></span>
             <div class="desc">
@@ -15,11 +11,12 @@
             </div>
         </li>
 	</ul>
-	<!-- 
-	<div class="alert-list-wrap" v-else>
-	    <span class="status"></span>
-	    <div class="desc">알림이 없습니다.</div>
-	</div> -->
+	<ul class="alert-list-wrap" v-else>
+		<li>
+           <span class="ico-wrap"><i class="far fa-bell-slash"></i></span>
+           <div class="desc">알림을 모두 확인했습니다.</div>
+        </li>
+	</ul>
 </aside>
 
 <script type="text/javascript">

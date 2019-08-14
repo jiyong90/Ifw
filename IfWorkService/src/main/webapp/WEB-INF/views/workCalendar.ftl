@@ -3,7 +3,7 @@
 	<div id="calendar_top" v-cloak>
 	    <div class="modal fade" id="flexitimeModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 	        <div class="modal-dialog modal-lg" role="document">
-	            <div class="modal-content">
+	            <div class="modal-content rounded-0">
 	                <div class="modal-header">
 	                    <h5 class="modal-title">근무제 적용하기</h5>
 	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -11,38 +11,40 @@
 	                    </button>
 	                </div>
 	                <div class="modal-body">
-	                    <p>사용할 근무제를 선택하세요.</p>
-	                    <div class="mt-3">
-		                	<!-- <button class="btn btn-outline btn-flat btn-block text-left" type="button" data-toggle="collapse" data-target="#collapWork" aria-expanded="false" aria-controls="collapseExample">근무제</button> -->
-	                        <!-- <div class="collapse" id="collapWork"> -->
-	                       	<div>
-	                            <ul class="list-group select-work-list">
-	                                <li class="list-group-item" v-for="(f, fIdx) in flexitimeList" @click="selectFlexitime(fIdx)">
-	                                    <span :class="['tag ' + f.workTypeCd]">{{f.workTypeNm}}</span>
-	                                    <div class="title">{{f.flexibleNm}}</div>
-	                                    <div class="desc">
-	                                    	<template v-if="f.workShm && f.workEhm"> 
-	                                    		근무구간: {{moment(f.useSymd+' '+f.workShm).format('HH:mm')}} ~ {{moment(f.useSymd+' '+f.workEhm).format('HH:mm')}}
-	                                    	</template>
-	                                    	<template v-else>
-	                                    		근무구간: 없음
-	                                    	</template>
-	                                    	<span class="bar"></span>
-	                                    	<template v-if="f.coreShm && f.coreEhm">
-	                                    		코어구간: {{moment(f.useSymd+' '+f.coreShm).format('HH:mm')}} ~ {{moment(f.useSymd+' '+f.coreEhm).format('HH:mm')}}
-	                                    	</template>
-	                                    	<template v-else>
-	                                    		코어구간: 없음
-	                                    	</template>
-	                                    </div>
-	                                </li>
-	                            </ul>
-	                        </div>
+	                	<div class="modal-app-wrap">
+		                    <p>사용할 근무제를 선택하세요.</p>
+		                    <div class="mt-3">
+			                	<!-- <button class="btn btn-outline btn-flat btn-block text-left" type="button" data-toggle="collapse" data-target="#collapWork" aria-expanded="false" aria-controls="collapseExample">근무제</button> -->
+		                        <!-- <div class="collapse" id="collapWork"> -->
+		                       	<div>
+		                            <ul class="list-group select-work-list">
+		                                <li class="list-group-item" v-for="(f, fIdx) in flexitimeList" @click="selectFlexitime(fIdx)">
+		                                    <span :class="['tag ' + f.workTypeCd]">{{f.workTypeNm}}</span>
+		                                    <div class="title">{{f.flexibleNm}}</div>
+		                                    <div class="desc">
+		                                    	<template v-if="f.workShm && f.workEhm"> 
+		                                    		근무구간: {{moment(f.useSymd+' '+f.workShm).format('HH:mm')}} ~ {{moment(f.useSymd+' '+f.workEhm).format('HH:mm')}}
+		                                    	</template>
+		                                    	<template v-else>
+		                                    		근무구간: 없음
+		                                    	</template>
+		                                    	<span class="bar"></span>
+		                                    	<template v-if="f.coreShm && f.coreEhm">
+		                                    		코어구간: {{moment(f.useSymd+' '+f.coreShm).format('HH:mm')}} ~ {{moment(f.useSymd+' '+f.coreEhm).format('HH:mm')}}
+		                                    	</template>
+		                                    	<template v-else>
+		                                    		코어구간: 없음
+		                                    	</template>
+		                                    </div>
+		                                </li>
+		                            </ul>
+		                        </div>
+			                </div>
 		                </div>
-	                </div>
-	                <div class="modal-footer">
-	                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-	                    <button type="button" id="applyFlexBtn" class="btn btn-default" style="display:none;" @click="applyFlexitime">적용하기</button>
+		                <div class="btn-wrap text-center">
+		                    <button type="button" class="btn btn-secondary  rounded-0" data-dismiss="modal">취소</button>
+		                    <button type="button" id="applyFlexBtn" class="btn btn-default rounded-0" style="display:none;" @click="applyFlexitime">적용하기</button>
+		                </div>
 	                </div>
 	            </div>
 	        </div>
@@ -984,6 +986,7 @@
    	$('#flexitimeModal').on('hidden.bs.modal',function(){
    		$(".list-group-item").removeClass("active");
    		monthCalendarVue.prevEdate = '';
+   		$("#applyFlexBtn").hide();
    	});
    	
    	$('#useSymd').on("change.datetimepicker", function(e){
