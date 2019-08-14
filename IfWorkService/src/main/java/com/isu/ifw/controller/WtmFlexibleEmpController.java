@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmFlexibleEmpService;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmDayWorkVO;
 import com.isu.ifw.vo.WtmWorkTermTimeVO;
 import com.isu.option.vo.ReturnParam;
@@ -232,4 +233,71 @@ public class WtmFlexibleEmpController {
 		
 	}
 	
+	/**
+	 * calendarId로 일근무표 조회(관리자용)
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/caldays", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getDayList(@RequestParam Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> flexibleList = null;
+		
+		try {
+			flexibleList = flexibleEmpService.getEmpDayResults(tenantId, enterCd, Long.valueOf(paramMap.get("workCalendarId").toString()));
+			rp.put("DATA", flexibleList);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	/**
+	 * 일근무표  다건 수정(관리자용)
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/save/caldays", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam saveDayList(@RequestParam Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("저장 시 오류가 발생했습니다.");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
+		convertMap.put("enterCd", enterCd);
+		convertMap.put("tenantId", tenantId);
+		convertMap.put("userId", userId);
+
+		rp.setSuccess("");
+		
+		try {
+			flexibleEmpService.saveEmpDayResults(tenantId, enterCd, userId, convertMap);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return rp;
+	}
 }

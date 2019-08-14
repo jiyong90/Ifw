@@ -32,7 +32,7 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 	public List<Map<String, Object>> getTaaCodeList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
 		List<Map<String, Object>> codeList = new ArrayList();	
 		try {
-			List<WtmTaaCode> list = taaCodeRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("searchKeyword").toString());
+			List<WtmTaaCode> list = taaCodeRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.containsKey("searchKeyword")?paramMap.get("searchKeyword").toString():"");
 			
 			for(WtmTaaCode l : list) {
 				Map<String, Object> code = new HashMap();
@@ -41,6 +41,8 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 				code.put("enterCd", l.getEnterCd());
 				code.put("taaCd", l.getTaaCd());
 				code.put("taaNm", l.getTaaNm());
+				code.put("code", l.getTaaCd());
+				code.put("codeNm", l.getTaaNm());
 				code.put("holInclYn", l.getHolInclYn().equals("Y")?"1":"0");
 				code.put("workYn", l.getWorkYn().equals("Y")?"1":"0");
 				code.put("workApprHour", l.getWorkApprHour());

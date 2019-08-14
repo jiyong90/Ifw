@@ -487,4 +487,24 @@
   	<update id="createWtmWorkteamOfWtmWorkDayResult" statementType="CALLABLE"  parameterType="map"  >
   		{ call P_WTM_WORKTEAM_CREATE( #{workteamMgrId}, #{pId} ) }
   	</update>
+  	
+  	<select id="getWorkDayResultByCalendarId" parameterType="map" resultType="hashmap" >
+	    	SELECT C.WORK_DAY_RESULT_ID as workDayResultId
+	    			, C.APPL_ID as applId
+	    			, C.TIME_TYPE_CD as timeTypeCd
+	    			, C.TAA_CD as taaCd
+	    			, DATE_FORMAT(C.PLAN_SDATE, '%Y%m%d%H%i%s') as planSdate
+	    			, DATE_FORMAT(C.PLAN_EDATE, '%Y%m%d%H%i%s') as planEdate
+	    			, C.PLAN_MINUTE as planMinute
+	    			, DATE_FORMAT(C.APPR_SDATE, '%Y%m%d%H%i%s') as apprSdate
+	    			, DATE_FORMAT(C.APPR_EDATE, '%Y%m%d%H%i%s') as apprEdate
+	    			, C.APPR_MINUTE as apprMinute
+	    			, C.WORK_YN as workYn
+	    			, C.WORK_CALENDAR_ID as workCalendarId
+	    			, D.FLEXIBLE_EMP_ID as flexibleEmpId
+			  FROM WTM_WORK_DAY_RESULT C
+			  JOIN WTM_WORK_CALENDAR D
+		    	ON D.WORK_CALENDAR_ID = C.WORK_CALENDAR_ID
+			 WHERE C.WORK_CALENDAR_ID = #{workCalendarId}
+    </select>
 </mapper>

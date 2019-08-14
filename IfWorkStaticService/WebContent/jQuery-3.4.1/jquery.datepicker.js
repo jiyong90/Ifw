@@ -1,12 +1,12 @@
 ; (function($) {
     if (!dateFormat || typeof (dateFormat) != "function") {
     	var head = document.getElementsByTagName('head')[0];
-    	$("<script></script>",{type:'text/javascript',src:"/common/js/jquery/jquery.mask.js"}).appendTo(head);
+    	$("<script></script>",{type:'text/javascript',src:"/ifw/jQuery-3.4.1/jquery.mask.js"}).appendTo(head);
 
     	/*
     	var script = document.createElement('script');
     	   script.type = 'text/javascript';
-    	   script.src = "/common/js/jquery/jquery.mask.js";
+    	   script.src = "/jQuery-3.4.1/jquery.mask.js";
     	   head.appendChild(script);
     	*/
         var dateFormat = function(format) {

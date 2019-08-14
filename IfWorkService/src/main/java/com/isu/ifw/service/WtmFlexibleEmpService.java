@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.vo.WtmDayWorkVO;
 import com.isu.ifw.vo.WtmWorkTermTimeVO;
 import com.isu.option.vo.ReturnParam;
@@ -116,4 +117,21 @@ public interface WtmFlexibleEmpService {
 	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId);
 	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId); 
 	
+	/**
+	 * calendar id로 일근무표 조회(관리자용)
+	 * @param tenantId
+	 * @param enterCd
+	 * @param workCalendarId
+	 * @return
+	 */
+	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, Long workCalendarId);
+	
+	/**
+	 * 일별상세 리스트 저장(관리자용)
+	 * @param flexibleEmpId
+	 * @param dateMap	
+	 * @param userId
+	 * @throws Exception
+	 */
+	public void saveEmpDayResults(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) throws Exception;
 }

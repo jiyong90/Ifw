@@ -124,5 +124,10 @@ public interface WtmFlexibleEmpMapper {
 	
 	public void createWtmWorkteamOfWtmWorkDayResult(Map<String, Object> paramMap);
 	
-	
+	/**
+	 * calendar Id로 일근무 데이터 전체 조회(관리자용)
+	 * @param paramMap
+	 * @return 
+	 */
+	public List<Map<String, Object>> getWorkDayResultByCalendarId(Map<String, Object> paramMap);
 }

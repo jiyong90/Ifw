@@ -34,7 +34,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	@Override
 	public List<Map<String, Object>> getTimeCdMgtList(Long tenantId, String enterCd,  Map<String, Object> paramMap) {
 		List<Map<String, Object>> timeList = new ArrayList();	
-				List<WtmTimeCdMgr> list = timeCdMgrRepository.findByTenantIdAndEnterCd(tenantId, enterCd,paramMap.get("sYmd").toString());
+				List<WtmTimeCdMgr> list = timeCdMgrRepository.findByTenantIdAndEnterCd(tenantId, enterCd,paramMap.containsKey("sYmd")?paramMap.get("sYmd").toString():"");
 		
 		for(WtmTimeCdMgr l : list) {
 			Map<String, Object> time = new HashMap();

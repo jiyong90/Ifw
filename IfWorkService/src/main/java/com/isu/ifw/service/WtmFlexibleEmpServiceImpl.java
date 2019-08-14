@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.entity.WtmTaaCode;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.entity.WtmWorkteamEmp;
@@ -424,8 +426,65 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		
 		//END FLEXIBLE_EMP의 시작일 종료일 정리
-		 
+	}
+
 	
+	/**
+	 * calendar id로 일근무표 조회(관리자용)
+	 * @param tenantId
+	 * @param enterCd
+	 * @param workCalendarId
+	 * @return
+	 */
+	@Override
+	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, Long workCalendarId) {
+		List<Map<String, Object>> workDayResult = null;
+		try {
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("workCalendarId", workCalendarId);
+			
+			workDayResult = flexEmpMapper.getWorkDayResultByCalendarId(paramMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return workDayResult;
+
 	}
 	
+	/**
+	 * 일근무 다건 저장(관리자용)
+	 * @param tenantId
+	 * @param enterCd
+	 * @param workCalendarId
+	 * @return
+	 */
+	@Override
+	public void saveEmpDayResults(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) throws Exception {
+		try {
+			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
+				List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("mergeRows");
+				List<Map<String, Object>> day = new ArrayList();
+				if(iList != null && iList.size() > 0) {
+					for(Map<String, Object> l : iList) {
+						if(l.get("timeTypeCd").equals("BASE")) {
+							Map<String, Object> temp = new HashMap();
+							Map<String, Object> param = new HashMap();
+							param.put("dayResult", temp);
+							temp.put("shm", l.get("planSdate"));
+							temp.put("ehm", l.get("planEdate"));
+								
+							this.save(Long.valueOf(l.get("flexibleEmpId").toString()), param, userId);
+						}
+					}
+				}
+			}
+		
+			if(convertMap.containsKey("deleteRows") && ((List)convertMap.get("deleteRows")).size() > 0) {
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		}
+	}	
 }
