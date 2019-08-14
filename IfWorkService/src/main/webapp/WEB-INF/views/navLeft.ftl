@@ -55,8 +55,13 @@
             </a>
         </li>
         <li>
+<<<<<<< HEAD
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">
                 <span class="title">개인별근무시간관리</span>
+=======
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">
+                <span class="title">근무유형관리</span>
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
             </a>
         </li>
     </ul>
