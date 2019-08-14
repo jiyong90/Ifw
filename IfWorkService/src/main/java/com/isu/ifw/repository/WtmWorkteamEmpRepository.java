@@ -23,4 +23,6 @@ public interface WtmWorkteamEmpRepository extends JpaRepository<WtmWorkteamEmp, 
 			+ "		AND IF(:sYmd='',date_format(now(),'%Y%m%d'),:sYmd) BETWEEN E.SYMD AND E.EYMD "
 			+ "		AND (E.SABUN like %:sData% OR E.WORKTEAM_CD like %:sData% OR C.EMP_NM like %:sData%)", nativeQuery = true)
 	public List<Map<String, Object>> findByTenantIdAndEnterCd(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd, @Param(value="sYmd")String sYmd, @Param(value="sData")String sData);
+	
+	public List<WtmWorkteamEmp> findByWorkteamMgrId(Long workteamMgrId);
 }

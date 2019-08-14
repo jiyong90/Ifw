@@ -161,8 +161,15 @@ html {
 
 #alertSidebar .alert-list-wrap li{
   position: relative;
-  padding: 18px 42px 22px 40px;
+  padding: 20px 42px 22px 40px;
   border-bottom: 1px solid #e9e9e9;
+}
+
+#alertSidebar .alert-list-wrap li .ico-wrap {
+  position: absolute;
+  top:18px;
+  left:14px;
+  display: inline-block;
 }
 
 #alertSidebar .alert-list-wrap li .status{
@@ -173,13 +180,12 @@ html {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  margin-top: 0px;
+  margin-top: 2px;
   margin-right: 4px;
   margin-bottom:0px;
   margin-left: 0px;
   opacity: 0.5;
 }
-
 /* 탄력근무 */
 #alertSidebar .alert-list-wrap li .status.ELAS {
   background-color: #ff6f00;
@@ -569,10 +575,13 @@ a.article:hover {
 
 #sub-nav .work-check-wrap {
   float:left;
+  margin-top:1px;
+  vertical-align: middle;
 }
 
 #sub-nav .work-check-wrap .custom-control {
   padding-left: 2.5rem;
+  vertical-align: middle;
 }
 #sub-nav .work-check-wrap .custom-checkbox .custom-control-label{
   margin-top: 1px;
@@ -600,7 +609,7 @@ a.article:hover {
   float:left;
   position: relative;
   padding-left:10px;
-  margin-left: 10px;
+  margin-left: 12px;
   margin-top:-2px;
   display:inline-block;
   vertical-align: middle;

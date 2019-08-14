@@ -41,4 +41,30 @@
 			 where tenant_id = #{tenantId}
         ]]>
     </select>
+    
+    <select id="getEmpWorkCalendar" parameterType="map" resultType="hashmap">
+        <![CDATA[
+	        SELECT A.WORK_CALENDAR_ID as workCalendarId, 
+				A.TENANT_ID as tenantId, 
+				A.ENTER_CD as enterCd, 
+				A.SABUN as sabun, 
+				F_WTM_GET_EMP_CODE_NM(#{tenantId}, #{enterCd}, A.SABUN, 'ORG_CD', date_format(now(),'%Y%m%d')) AS orgNm,
+				F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, A.SABUN, date_format(now(),'%Y%m%d')) AS empNm,
+				A.YMD as ymd, 
+				A.FLEXIBLE_EMP_ID as flexibleEmpId, 
+				B.FLEXIBLE_STD_MGR_ID as flexibleStdMgrId,
+				A.TIME_CD_MGR_ID as timeCdMgrId,
+				A.ENTRY_SDATE as entrySdate,
+				A.ENTRY_STYPE_CD as entryStypeCd,
+				A.ENTRY_EDATE as entryEdate,
+				A.ENTRY_ETYPE_CD as enteryEtypeCd,
+				A.WORK_CLOSE_YN as workCloseYn,
+				A.HOLIDAY_YN as holidayYn,
+				A.NOTE as note
+				FROM WTM_WORK_CALENDAR A
+			JOIN WTM_FLEXIBLE_EMP B ON B.FLEXIBLE_EMP_ID=A.FLEXIBLE_EMP_ID
+			WHERE YMD BETWEEN #{sYmd} AND #{eYmd}
+			ORDER BY YMD DESC
+        ]]>
+    </select>
 </mapper>

@@ -67,7 +67,7 @@
 									if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
 										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span[name=companyHoliday]").remove();
 										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
-										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday'>"+cal.holidayNm+"</span>");
+										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday' class='fc-holiday'>"+cal.holidayNm+"</span>");
 									}
 								});
 							}
@@ -261,7 +261,7 @@
  		    					//개인 근태
   		    					var taaEvent = {
 									id: day,
-		    						title: "<div class='dot work-type'>" + plan.label + "</div>",
+		    						title: "<div class='dot work-type'><span>" + plan.label + "</span></div>",
 		    						start: day,
 		    						end: day
 		    					};
@@ -271,7 +271,7 @@
  		    					//계획시간
 								var timeEvent = {
 									id: day,
-		    						title: "<div class='dot time'>" + plan.label + "</div>",
+		    						title: "<div class='dot time'><span>" + plan.label + "</span></div>",
 		    						start: day,
 		    						end: day
 		    					};

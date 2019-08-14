@@ -27,8 +27,8 @@
     </div>
 	<#include "/navTop.ftl">
     <div class="wrapper">
-        <#include "/alertSidebar.ftl">
         <#include "/navLeft.ftl">
+        <#include "/inbox.ftl">
         <div id="content">
             <#include "/${pageName}.ftl">
             <!-- <#include "/footer.ftl"> -->

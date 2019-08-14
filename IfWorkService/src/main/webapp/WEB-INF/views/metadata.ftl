@@ -18,7 +18,8 @@
     <!-- for dateTimepicker -->
     <link rel="stylesheet" href="${rc.getContextPath()}/tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.css">
     
-    <link rel="stylesheet" href="${rc.getContextPath()}/IBLeaders/layout.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/customHR/css/style.css">
+    <!-- <link rel="stylesheet" href="${rc.getContextPath()}/IBLeaders/layout.css"> -->
     <link rel="stylesheet" href="${rc.getContextPath()}/jQuery-3.4.1/jquery-ui.css">
     
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

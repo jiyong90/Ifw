@@ -705,7 +705,7 @@
 		   	    if(type=='short')
 		   	   		return hours+':'+minutes;
 		   	},
-	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
+	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보(남색 박스)
 				var $this = this;
 		    		
 				var param = {
@@ -722,6 +722,8 @@
 						$this.rangeInfo = {};
 						if(data!=null) {
 							$this.rangeInfo = data;
+							
+							//work_type_cd가 기본근무 이거나 근무조 일 때는 근무계획작성 버튼 숨기기
 						}
 					},
 					error: function(e) {

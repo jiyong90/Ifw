@@ -62,7 +62,7 @@ public interface WtmFlexibleEmpService {
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId);
+	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
 
 	/**
 	 * 해당 일의 근무 시간 조회
@@ -114,5 +114,6 @@ public interface WtmFlexibleEmpService {
 	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
 	
 	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId);
+	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId); 
 	
 }

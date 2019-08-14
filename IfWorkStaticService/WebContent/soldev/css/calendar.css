@@ -116,6 +116,12 @@
   color: #ffffff;
 }
 
+/* 날짜 크기 */
+.fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{font-size: 13px;}
+.fc-ltr .fc-dayGrid-view .fc-day-top .fc-holiday{font-size: 13px;}
+.fc-day-grid-event .fc-content .fc-title span{font-size: 12px; letter-spacing: -0.5px;}
+
+.fc-row .fc-content-skeleton{z-index : 2;}
 
 /* 근무제 시작일, 종료일 표시 보더 */
 .fc-bgevent{
@@ -244,8 +250,9 @@
   height:6px;
   border-radius: 50%;
   margin-top: -2px;
-  margin-right: 5px;
-  margin-left: 6.5px;
+  margin-bottom: 1px;
+  margin-right: 3px;
+  margin-left: 3px;
 }
 .fc-content .dot.time:before{
   background-color:#00c4b6;

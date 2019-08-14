@@ -324,13 +324,15 @@
 	                                </li>
 	                            </ul>
 	                        </div>
-	                        <div class="inner-wrap">
-	                            그래프는 JS 라이브러리 혹은 작업을 좀 더 확인해야할 거 같음 
-	                            <ul class="legend-wrap">
-	                                <li class="work-time">근무시간</li>
-	                                <li class="core-time">코어시간</li>
-	                            </ul>
-	                        </div>
+	                        <div class="inner-wrap graph-wrap">
+                                <div class="time-graph">
+                                    <span class="core-time"></span>
+                                </div>
+                                <ul class="legend-wrap">
+                                    <li class="work-time">근무시간</li>
+                                    <li class="core-time">코어시간</li>
+                                </ul>
+                            </div>
 	                        <hr class="bar">
 	                        <ul class="main-wrap">
 	                            <li>

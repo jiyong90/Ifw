@@ -65,4 +65,13 @@ public class WtmCalendarService {
 		return wtmCalendarMapper.getWorkTimeCalendar(paramMap);
 	}
 	
+	/**
+	 * 근태 달력 조회
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getEmpWorkCalendar(Map<String, Object> paramMap) throws Exception {
+		return wtmCalendarMapper.getEmpWorkCalendar(paramMap);
+	}
 }

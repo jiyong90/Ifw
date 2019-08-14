@@ -12,5 +12,6 @@ public interface WtmFlexibleStdMapper {
 	public List<WtmFlexibleStdVO> getWtmFlexibleStd(Map<String, Object> paramMap);
 	public Map<String, Object> checkRequestDate(Long applId);
 	
-
+	//근무제 전체 조회
+	public List<Map<String, Object>> getWtmFlexibleStdList(Map<String, Object> paramMap);
 }

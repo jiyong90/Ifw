@@ -236,6 +236,9 @@
 				calendarOptions.select = function(info){
 					$this.selectCallback(info);
 				};
+				//calendarOptions.selectOverlap = function(info){
+				//	$this.selectOverlapCallback(info);
+				//};
 				//calendarOptions.selectAllow = function(info){
 				//	$this.selectAllowCallback(info);
 				//};
@@ -281,6 +284,9 @@
         	selectCallback: function(info){
         		this.$emit('select', info);
         	},
+        	/* selectOverlapCallback: function(info){
+        		this.$emit('selectoverlap', info);
+        	}, */
         	selectAllowCallback: function(info){
         		this.$emit('selectallow', info);
         	},
