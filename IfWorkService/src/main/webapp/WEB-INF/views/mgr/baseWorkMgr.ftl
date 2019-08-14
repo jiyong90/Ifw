@@ -1,41 +1,40 @@
 <div id="empListMgr">
- 	<div class="container-fluid">
- 	<div class="ibsheet-wrapper">
- 		<form id="sheetForm" name="sheetForm">
-			<div class="sheet_search outer">
-				<div>
-				<table>
+ 	<div class="container-fluid pt-3 pb-3 bg-white">
+	 	<div class="ibsheet-wrapper">
+	 		<form id="sheetForm" name="sheetForm">
+				<div class="sheet_search outer">
+					<div>
+						<table>
+							<tr>
+								<td>
+									<span>기준일 </span>
+									<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}"/>
+								</td>
+								<td>
+									<a href="javascript:doAction1('Search');" class="button">조회</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</form>
+			<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
 				<tr>
 					<td>
-						<span>기준일 </span>
-						<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}"/>
-					</td>
-					<td>
-						<a href="javascript:doAction1('Search');" class="button">조회</a>
+						<div class="inner">
+							<div class="sheet_title_wrap clearfix">
+								<div class="float-left title">기본근무시간관리</div>
+								<ul class="float-right btn-wrap">
+									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
+									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
+								</ul>
+							</div>
+						</div>
+						<script type="text/javascript">createIBSheet("sheet1", "100%", "100%","kr"); </script>
 					</td>
 				</tr>
-				</table>
-				</div>
-			</div>
-		</form>
-		<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
-			<tr>
-				<td>
-					<div class="inner">
-						<div class="sheet_title">
-							<ul>
-								<li class="btn">
-									<a href="javascript:doAction1('Insert')" class="basic authA">입력</a>
-									<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-					<script type="text/javascript">createIBSheet("sheet1", "100%", "100%","kr"); </script>
-				</td>
-			</tr>
-		</table>
-	</div>
+			</table>
+		</div>
 	</div>
 </div>
 
@@ -54,7 +53,7 @@
 			{Header:"사업장",		Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"businessPlaceCd",	KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"시작일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"symd",			KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"종료일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"eymd",			KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"근무시간표",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무제",		Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 		]; 
 		
@@ -67,9 +66,11 @@
 		var businessPlaceCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "BUSINESS_PLACE_CD"), "선택");
 		sheet1.SetColProperty("businessPlaceCd", {ComboText:businessPlaceCdList[0], ComboCode:businessPlaceCdList[1]} );
 
-		//근무시간표
-		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timecd/list", "",false).DATA, "");
-		sheet1.SetColProperty("timeCdMgrId", {ComboText:timeCdMgrIdList[0], ComboCode:timeCdMgrIdList[1]} );
+		//근무제도
+		var flexibleList = stfConvCode(ajaxCall("${rc.getContextPath()}/flexibleStd/all", "",false).DATA, "");
+		sheet1.SetColProperty("flexibleStdMgrId", {ComboText:flexibleList[0], ComboCode:flexibleList[1]} );
+
+		
 		sheetInit();
 		doAction1("Search");
 	});

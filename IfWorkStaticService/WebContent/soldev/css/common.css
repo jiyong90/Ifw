@@ -211,6 +211,40 @@ box-sizing: border-box;
   margin-bottom: 10px;
 }
 
+.white-box-wrap .inner-wrap.graph-wrap {
+  margin-top:10px;
+}
+
+.white-box-wrap .time-graph {
+  position: relative;
+  width:100%;
+  height: 10px;
+  border-radius: 12px;
+  background-color: #ccd0d9;
+}
+
+.white-box-wrap .time-graph .core-time{
+  /* calc 계산을 해야한다. 
+  
+  */
+  position: absolute;
+  top: 0;
+  /* 코어시작시간 - 업무시작시간 이걸 또 비율로
+  ex. (10 - 6)/전체업무시간 * 100
+  */
+  left:calc((10 - 6)/12 * 100%);
+  /* 코어시간의 비율
+  코어시간/전체업무시간 * 100 */
+  width: calc((14 - 10)/12 * 100%);
+  height: 10px;
+  border-radius: 12px;
+  background-color: #7b5df6;
+
+}
+.white-box-wrap .legend-wrap{
+  margin-top:3px;
+}
+
 .white-box-wrap .legend-wrap::after{
   content:'';
   display:table;
@@ -261,7 +295,7 @@ box-sizing: border-box;
   text-align: right;
 }
 .white-box-wrap .btn-info-wrap a{color: #4d84fe;}
-.white-box-wrap .btn-info-wrap span{display:inline-block; color:#4d84fe; text-decoration: underline;}
+.white-box-wrap .btn-info-wrap span{display:inline-block; color:#4d84fe; text-decoration: underline; letter-spacing: 0;}
 
 .work-plan-wrap .main-wrap{
   text-align: left;
@@ -521,42 +555,44 @@ box-sizing: border-box;
   line-height: 36px;
   text-align: center;
   color: #ffffff;
+  opacity: 0.5;
 }
-.notice-mark.type01{
-  background-color:#4d84fe;
+
+/* 탄력근무 */
+.notice-mark.ELAS{
+  background-color: #ff6f00;
+  /* background-color: rgba(255, 111, 0,0.5); */
+
 }
-.notice-mark.type02 {
-  background-color: #47435e;
+
+/* 완전선택근무 */
+.notice-mark.SELE_F{
+  background-color: #0321b8;
+  /* background-color: rgba(3, 33, 184,0.5); */
 }
-.notice-mark.type03 {
-  background-color: #f75353;
+
+/* 부분선택근무 */
+.notice-mark.SELE_C{
+  background-color: #0862bb;
+  /* background-color: rgba(8, 98, 187,0.5); */
 }
-.notice-mark.type04 {
-  background-color: #85d1f2;
+
+/* 시차출퇴근 */
+.notice-mark.DIFF{
+  background-color: #035d18;
+  /* background-color: rgba(3, 93, 24,0.5); */
 }
-.notice-mark.type05 {
-  background-color: #e6af62;
+
+/* 자율출퇴근 */
+.notice-mark.AUTO{
+  background-color: #080809;
+  /* background-color: rgba(8, 8, 9,0.5); */
 }
-.notice-mark.type06 {
+
+/* 추가근무 */
+.notice-mark.OT {
   background-color: #7b5df6;
-}
-.notice-mark.type07 {
-  background-color: #1fc486;
-}
-.notice-mark.type08 {
-  background-color: #ffc421;
-}
-.notice-mark.type09 {
-  background-color: #0b1baa;
-}
-.notice-mark.type10 {
-  background-color: #f26628;
-}
-.notice-mark.type11 {
-  background-color: #00c213;
-}
-.notice-mark.type12 {
-  background-color: #d82bb0;
+  /* background-color: rgba(8, 8, 9,0.5); */
 }
 
 .notice-card .inner-wrap{

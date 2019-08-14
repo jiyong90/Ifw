@@ -41,8 +41,6 @@ public class WtmTimeCdMgr {
 	private String workEhm;
 	@Column(name="HOL_YN")
 	private String holYn;
-	@Column(name="HOL_TIME_CD")
-	private String holTimeCd;
 	@Column(name="LATE_CHK_YN")
 	private String lateChkYn;
 	@Column(name="LEAVE_CHK_YN")
@@ -52,11 +50,11 @@ public class WtmTimeCdMgr {
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="CHKDATE", columnDefinition="DATETIME") 
+	@Column(name="UPDATE_DATE", columnDefinition="DATETIME") 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date chkdate;
-	@Column(name="CHKID")
-	private String chkid;
+	private Date updateDate;
+	@Column(name="UPDATE_ID")
+	private Long updateId;
 
 	
 	public Long getTimeCdMgrId() {
@@ -159,16 +157,6 @@ public class WtmTimeCdMgr {
 	}
 
 
-	public String getHolTimeCd() {
-		return holTimeCd;
-	}
-
-
-	public void setHolTimeCd(String holTimeCd) {
-		this.holTimeCd = holTimeCd;
-	}
-
-
 	public String getLateChkYn() {
 		return lateChkYn;
 	}
@@ -209,32 +197,33 @@ public class WtmTimeCdMgr {
 	}
 
 
-	public Date getChkdate() {
-		return chkdate;
+	public Date getUpdateDate() {
+		return updateDate;
 	}
 
 
-	public void setChkdate(Date chkdate) {
-		this.chkdate = chkdate;
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
 	}
 
 
-	public String getChkid() {
-		return chkid;
+	public Long getUpdateId() {
+		return updateId;
 	}
 
 
-	public void setChkid(String chkid) {
-		this.chkid = chkid;
+	public void setUpdateId(Long updateId) {
+		this.updateId = updateId;
 	}
+
 
 	@PrePersist
     protected void onCreate() {
-		this.chkdate = new Date();
+		this.updateDate = new Date();
     }
 
-    @PreUpdate
+	@PreUpdate
     protected void onUpdate() {
-    	this.chkdate = new Date();
+		this.updateDate = new Date();
     }
 }

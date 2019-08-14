@@ -448,7 +448,12 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		
 		//END FLEXIBLE_EMP의 시작일 종료일 정리
+<<<<<<< HEAD
 	}	 
+=======
+	}
+
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 	
 	/**
 	 * calendar id로 일근무표 조회(관리자용)

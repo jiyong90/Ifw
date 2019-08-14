@@ -24,6 +24,15 @@ public interface WtmFlexibleStdService {
 	
 	public void saveFlexibleStd(Long tenantId, String enterCd, Map<String, Object> optionMap);
 	
+
+	/**
+	 * 전체 근무제 목록 조회
+	 * @param tenantId - 테넌트 아이디
+	 * @param enterCd - 회사코드
+	 * @return 
+	 */
+	public List<Map<String, Object>> getFlexibleStd(Long tenantId, String enterCd);
+
 	//public void saveFlexibleStdOption();
 	//public void saveFlexibleStdBreaktime();
 	

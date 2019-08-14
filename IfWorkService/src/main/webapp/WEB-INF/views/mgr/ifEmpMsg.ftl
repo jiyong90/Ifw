@@ -1,47 +1,44 @@
 <div id="empListMgr">
- 	<div class="container-fluid">
- 	<div class="ibsheet-wrapper">
-		<form id="sheetForm" name="sheetForm">
-			<div class="sheet_search outer">
-				<div>
-				<table>
+ 	<div class="container-fluid pt-3 pb-3 bg-white">
+	 	<div class="ibsheet-wrapper">
+			<form id="sheetForm" name="sheetForm">
+				<div class="sheet_search outer">
+					<div>
+					<table>
+						<tr>
+							<td>
+								<span>기준일 </span>
+								<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM")?string("yyyyMM")}"/>
+							</td>
+							<td>
+								<span>사번</span>
+								<input id="searchKeyword"  name="searchKeyword"  type="text" class="text" />
+							</td>
+							<td>
+								<a href="javascript:doAction1('Search');" class="button">조회</a>
+							</td>
+						</tr>
+					</table>
+					</div>
+				</div>
+			</form>
+			<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
 				<tr>
 					<td>
-						<span>기준일 </span>
-						<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM")?string("yyyyMM")}"/>
-					</td>
-					<td>
-						<span>사번</span>
-						<input id="searchKeyword"  name="searchKeyword"  type="text" class="text" />
-					</td>
-					<td>
-						<a href="javascript:doAction1('Search');" class="button">조회</a>
+						<div class="inner">
+							<div class="sheet_title_wrap clearfix">
+								<div class="float-left title">사원이력</div>
+								<ul class="float-right btn-wrap">
+									<!-- <li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li> -->
+									<!-- <li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li> -->
+								</ul>
+							</div>
+						</div>
+						<script type="text/javascript">createIBSheet("sheet1", "100%", "100%","kr"); </script>
 					</td>
 				</tr>
-				</table>
-				</div>
-			</div>
-		</form>
-		<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
-			<tr>
-				<td>
-					<div class="inner">
-						<div class="sheet_title">
-							<ul>
-								<li class="btn">
-								<!-- 	
-									<a href="javascript:doAction1('Insert')" class="basic authA">입력</a>
-									<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
-								-->
-								</li>
-							</ul>
-						</div>
-					</div>
-					<script type="text/javascript">createIBSheet("sheet1", "100%", "100%","kr"); </script>
-				</td>
-			</tr>
-		</table>
-	</div>
+			</table>
+		</div>
 	</div>
 </div>
 

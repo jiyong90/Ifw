@@ -28,8 +28,8 @@ public class WtmBaseWorkMgr {
 	private String enterCd;
 	@Column(name="BUSINESS_PLACE_CD")
 	private String businessPlaceCd;
-	@Column(name="TIME_CD_MGR_ID")
-	private Long timeCdMgrId;
+	@Column(name="FLEXIBLE_STD_MGR_ID")
+	private Long flexibleStdMgrId;
 	@Column(name="SYMD")
 	private String symd;
 	@Column(name="EYMD")
@@ -84,13 +84,13 @@ public class WtmBaseWorkMgr {
 	}
 
 
-	public Long getTimeCdMgrId() {
-		return timeCdMgrId;
+	public Long getFlexibleStdMgrId() {
+		return flexibleStdMgrId;
 	}
 
 
-	public void setTimeCdMgrId(Long timeCdMgrId) {
-		this.timeCdMgrId = timeCdMgrId;
+	public void setFlexibleStdMgrId(Long flexibleStdMgrId) {
+		this.flexibleStdMgrId = flexibleStdMgrId;
 	}
 
 

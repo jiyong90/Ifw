@@ -566,7 +566,7 @@
         ]]>
     </select>
     
-    <select id="getWorkDayResultByCalendarId" parameterType="map" resultType="hashmap" >
+  	<select id="getWorkDayResultByCalendarId" parameterType="map" resultType="hashmap" >
 	    	SELECT C.WORK_DAY_RESULT_ID as workDayResultId
 	    			, C.APPL_ID as applId
 	    			, C.TIME_TYPE_CD as timeTypeCd

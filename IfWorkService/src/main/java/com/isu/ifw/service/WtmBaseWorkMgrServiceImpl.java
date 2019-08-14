@@ -37,7 +37,7 @@ public class WtmBaseWorkMgrServiceImpl implements WtmBaseWorkMgrService{
 			Map<String, Object> time = new HashMap();
 			time.put("baseWorkMgrId", l.getBaseWorkMgrId());
 			time.put("businessPlaceCd", l.getBusinessPlaceCd());
-			time.put("timeCdMgrId", l.getTimeCdMgrId());
+			time.put("flexibleStdMgrId", l.getFlexibleStdMgrId());
 			time.put("symd", l.getSymd());
 			time.put("eymd", l.getEymd());
 			time.put("note", l.getNote());
@@ -64,7 +64,7 @@ public class WtmBaseWorkMgrServiceImpl implements WtmBaseWorkMgrService{
 						work.setEymd(l.get("eymd").toString());
 						work.setNote(l.get("note").toString());
 						work.setSymd(l.get("symd").toString());
-						work.setTimeCdMgrId(Long.parseLong(l.get("timeCdMgrId").toString()));
+						work.setFlexibleStdMgrId(Long.parseLong(l.get("flexibleStdMgrId").toString()));
 						works.add(work);
 					}
 					works = baseWorkRepository.saveAll(works);
