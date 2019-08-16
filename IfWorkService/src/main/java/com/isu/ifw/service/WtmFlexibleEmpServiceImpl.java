@@ -252,6 +252,22 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		
 	}
+	
+	@Override
+	public List<WtmDayWorkVO> getDayWorks(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+		List<WtmDayWorkVO> dayWorks = new ArrayList<WtmDayWorkVO>();
+		List<Map<String, Object>> flexibleEmpList = flexEmpMapper.getFlexibleEmpListForPlan(paramMap);
+		if(flexibleEmpList!=null && flexibleEmpList.size()>0) {
+			for(Map<String, Object> flexibleEmp : flexibleEmpList) {
+				if(flexibleEmp.get("flexibleEmpId")!=null && !"".equals(flexibleEmp.get("flexibleEmpId"))) {
+					List<WtmDayWorkVO> dayWork = getDayWorks(Long.valueOf(flexibleEmp.get("flexibleEmpId").toString()), userId);
+					dayWorks.addAll(dayWork);
+				}
+			}
+		}
+	
+		return dayWorks;
+	}
 
 	@Override
 	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId) {

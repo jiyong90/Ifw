@@ -361,6 +361,17 @@
 	                                </li>
 	                            </ul>
 		                    </div>
+		                    <!--  
+		                    <div class="inner-wrap graph-wrap">
+                                <div class="time-graph">
+                                    <span class="core-time" :style="{left:coreTimeLeft; width:coreTimeWidth;}"></span>
+                                </div>
+                                <ul class="legend-wrap">
+                                    <li class="work-time">근무시간</li>
+                                    <li class="core-time">코어시간</li>
+                                </ul>
+                            </div>
+                            -->
 		                    <hr class="bar">
 		                    <ul class="main-wrap">
 	                            <li>
@@ -659,6 +670,8 @@
    	var calendarLeftVue = new Vue({
    		el: "#calendar_left",
 	    data : {
+	    	//coreTimeLeft: '', //calc((10 - 6)/12 * 100%)
+	    	//coreTimeWidth: '', //calc((14 - 10)/12 * 100%)	
 	    	calendar: {},
 	    	rangeInfo: {}, //선택한 기간의 근무제 정보
 	    	workTimeInfo: {}, //선택한 날의 근무시간 정보
@@ -674,6 +687,17 @@
 	    	flexibleAppl: {},
 	    	selectedDate: '${today}'
   		},
+  		/* watch: {
+  			flexibleAppl : function(val, oldVal) {
+  				//근무시간, 코어시간 그래프 표기
+  				var workSh = moment(val.sYmd+' '+val.workShm).format('HH');
+  				var coreSh = moment(val.sYmd+' '+val.coreShm).format('HH');
+  				var coreEh = moment(val.sYmd+' '+val.coreEhm).format('HH');
+  				
+  				coreTimeLeft = (coreSh - workSh)/12 * 100;
+  				coreTimeWidth = (coreEh - coreSh)/12 * 100;
+  			}
+  		}, */
 	    mounted: function(){
 	    	this.getFlexibleRangeInfo(this.today);
 	    	//calendarLeftVue.getWorkDayInfo(this.today);

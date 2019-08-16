@@ -184,13 +184,10 @@ public class WtmFlexibleEmpController {
 			dayResult = (Map<String, Object>)paramMap.get("dayResult");
 				
 		try {
-			
-			System.out.println("flexibleEmpId : " + flexibleEmpId);
 			ObjectMapper mapper = new ObjectMapper();
-			System.out.println("dayResult : " + mapper.writeValueAsString(dayResult));
-			System.out.println("userId : " + userId);
 			flexibleEmpService.save(flexibleEmpId, dayResult, userId);
-			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(flexibleEmpId, userId);
+			
+			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(tenantId, enterCd, empNo, paramMap, userId);
 			rp.put("dayWorks", dayWorks);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

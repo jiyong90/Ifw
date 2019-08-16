@@ -130,7 +130,6 @@ public interface WtmFlexibleEmpMapper {
 	public void createWtmWorkteamOfWtmWorkDayResult(Map<String, Object> paramMap);
 	
 	/**
-<<<<<<< HEAD
 	 * 계획을 작성 해야 하는 유연근무제 리스트
 	 * @param paramMap
 	 * @return
@@ -138,8 +137,6 @@ public interface WtmFlexibleEmpMapper {
 	public List<Map<String, Object>> getFlexibleEmpListForPlan(Map<String, Object> paramMap);
 	
 	/**
-=======
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 	 * calendar Id로 일근무 데이터 전체 조회(관리자용)
 	 * @param paramMap
 	 * @return 
