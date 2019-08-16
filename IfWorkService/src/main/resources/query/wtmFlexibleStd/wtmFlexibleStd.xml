@@ -17,6 +17,7 @@
 			 WHERE S.TENANT_ID = #{tenantId}
 			   AND S.ENTER_CD = #{enterCd}
 			   AND #{d} BETWEEN S.USE_SYMD AND S.USE_EYMD
+			   AND S.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM')
 			 ORDER BY S.USE_SYMD DESC
         ]]>
     </select>
@@ -61,6 +62,18 @@
 			  FROM WTM_FLEXIBLE_STD_MGR 
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd}
+			 ORDER BY FLEXIBLE_STD_MGR_ID
+        ]]>
+    </select>
+    
+    <select id="getWtmFlexibleStdWorkTypeList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT FLEXIBLE_STD_MGR_ID as code
+			     , FLEXIBLE_NM as codeNm
+			  FROM WTM_FLEXIBLE_STD_MGR 
+			 WHERE TENANT_ID = #{tenantId}
+			   AND ENTER_CD = #{enterCd}
+			   AND WORK_TYPE_CD = #{workTypeCd}
 			 ORDER BY FLEXIBLE_STD_MGR_ID
         ]]>
     </select>
