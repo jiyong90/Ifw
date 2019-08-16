@@ -662,32 +662,50 @@ a.article:hover {
   opacity: 0.5;
 }
 
-
 /* 탄력근무 */
 #sub-nav .legend-list-wrap li.ELAS::before {
-  background-color: #ff6f00;
+  /* background-color: #ff6f00; */
   /* background-color: rgba(255, 111, 0,0.5); */
-
+  width: 10px;
+  height: 2px;
+  background-color: #ffb77f;
+  vertical-align: middle;
 }
 /* 완전선택근무 */
 #sub-nav .legend-list-wrap li.SELE_F::before {
-  background-color: #0321b8;
+  /* background-color: #0321b8; */
   /* background-color: rgba(3, 33, 184,0.5); */
+  width: 10px;
+  height: 2px;
+  background-color: #8190db;
+  vertical-align: middle;
 }
 /* 부분선택근무 */
 #sub-nav .legend-list-wrap li.SELE_C::before {
-  background-color: #0862bb;
+  /* background-color: #0862bb; */
   /* background-color: rgba(8, 98, 187,0.5); */
+  width: 10px;
+  height: 2px;
+  background-color: #83b0dd;
+  vertical-align: middle;
 }
 /* 시차출퇴근 */
 #sub-nav .legend-list-wrap li.DIFF::before {
-  background-color: #035d18;
+  /* background-color: #035d18; */
   /* background-color: rgba(3, 93, 24,0.5); */
+  width: 10px;
+  height: 2px;
+  background-color: #81ae8b;
+  vertical-align: middle;
 }
 /* 자율출퇴근 */
 #sub-nav .legend-list-wrap li.AUTO::before {
-  background-color: #080809;
+  /* background-color: #080809; */
   /* background-color: rgba(8, 8, 9,0.5); */
+  width: 10px;
+  height: 2px;
+  background-color: #838384;
+  vertical-align: middle;
 }
 
 
