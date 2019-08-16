@@ -119,7 +119,7 @@
 /* 날짜 크기 */
 .fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{font-size: 13px;}
 .fc-ltr .fc-dayGrid-view .fc-day-top .fc-holiday{font-size: 13px;}
-.fc-day-grid-event .fc-content .fc-title span{font-size: 12px; letter-spacing: -0.5px;}
+.fc-day-grid-event .fc-content .fc-title span{font-size: 10px; letter-spacing: -0.5px;}
 
 /*.fc-row .fc-content-skeleton{z-index : 2;}*/
 
@@ -256,6 +256,9 @@
 }
 .fc-content .dot.time:before{
   background-color:#00c4b6;
+}
+.fc-content .dot.time{
+  color:#6b6b80;
 }
 .fc-content .dot.work-type:before {
   background-color: #7601dc;

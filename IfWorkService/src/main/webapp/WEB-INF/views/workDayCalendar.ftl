@@ -21,7 +21,7 @@
   		    	selectedWorkday: {},
   		    	empHolidays: [],
   		    	dayResult: {}, //저장할 근무계획
-  		    	dayWorks: [], //저장된 상세 근무계획
+  		    	dayWorks: {}, //저장된 상세 근무계획
   		    	eventSource: {}
   		    },
   		    watch: {
@@ -42,11 +42,10 @@
   		    		var $this = this;
   		    		var calendar = this.$refs.fullCalendar.cal;
 
-  		    		if(info.view.type == 'dayGridMonth') { //month change
-	   		    		var param = {
+  		    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
+  		    			var param = {
 		   		    		ym : moment(calendar.getDate()).format('YYYYMM')
 		   		    	};
-	   		    		
 	   		    		Util.ajax({
 							url: "${rc.getContextPath()}/calendar",
 							type: "GET",
@@ -58,13 +57,32 @@
 								if(data.companyCalendar!=null) {
 									data.companyCalendar.map(function(cal){
 										if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
-											$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span[name=companyHoliday]").remove();
+											//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
 											$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
-											$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday' class='fc-holiday'>"+cal.holidayNm+"</span>");
+											$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span class='fc-holiday'>"+cal.holidayNm+"</span>");
 										}
 									});
 								}
 								
+								//일근무결과 달력에 표기
+								if(Object.keys($this.dayWorks).length>0) {
+			  	         			$.each($this.dayWorks, function(k, v){
+					  	         		v.map(function(dayWork){
+					  	         			//근무일
+					  	         			if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+												dayWork.plans.map(function(plan){
+													var day = moment(plan.key).format('YYYY-MM-DD');
+													
+						  		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
+						  		    					$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
+							  		    				$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").css({"color":"#FF0000"});
+						  		    				}
+												});
+					  	         			}
+					  	         		});
+			  	         			});
+								}
+					  	         	
 							},
 							error: function() {
 								
@@ -106,22 +124,29 @@
   		    		//선택한 날짜가 기간인 경우 clear
   	         		if(dayNum==1) {
   		    			if(Object.keys($this.dayResult).length>0 && $this.dayResult.hasOwnProperty(moment(info.startStr).format('YYYYMMDD'))) {
+  		    				console.log('잉?');
   		    				//작성중인 근무 계획(저장할 데이터)
   		    				var day = moment(info.startStr).format('YYYYMMDD');
   		    				var valueMap = $this.dayResult[day];
-
-  		    				if(valueMap!=null && valueMap.hasOwnProperty("shm")) {
+  		    				
+  		    				if(valueMap!=null && valueMap.hasOwnProperty("shm") && valueMap.shm!='') {
   		    					var shm = moment(day+' '+valueMap.shm).format('HH:mm');
 		    					$("#startTime").val(shm);
+  		    				} else {
+  		    					$("#startTime").val("");
   		    				}
-  		    				if(valueMap!=null && valueMap.hasOwnProperty("ehm")) { 
+  		    				if(valueMap!=null && valueMap.hasOwnProperty("ehm") && valueMap.ehm!='') { 
   		    					var ehm = moment(day+' '+valueMap.ehm).format('HH:mm');
 		    					$("#endTime").val(ehm);
-  		    				}		
-  		    			} else if($this.dayWorks.length>0) {
+  		    				} else {
+  		    					$("#endTime").val("");
+  		    				}
+  		    			} else if(Object.keys($this.dayWorks).length>0 && $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd].length>0) {
   		    				//작성한 근무 계획 조회
-		  	         		$this.dayWorks.map(function(dayWork){
+  		    				var dayWorks = $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd];
+		  	         		dayWorks.map(function(dayWork){
 		  	         			if(info.startStr==moment(dayWork.day).format('YYYY-MM-DD')) {
+		  	         				existYn = true;
 	  	         					var valueMap = dayWork.plans[0].valueMap;
 	  	         					
 	  		    					if(valueMap!=null && valueMap.hasOwnProperty("shm"))
@@ -130,7 +155,7 @@
 	  		    						$("#endTime").val(valueMap.ehm);
 		  	         			} 
 							});
-  		    			}
+  		    			} 
   	         		} else {
   	         			$("#startTime").val("");
   		    			$("#endTime").val("");
@@ -254,9 +279,10 @@
 	  	  	    			}; 
   	         				*/
   	         				
-  	         				if($this.dayWorks.length>0) {
+  	         				if(Object.keys($this.dayWorks).length>0 && $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd].length>0) {
   	  		    				//작성한 근무 계획 조회
-  			  	         		$this.dayWorks.map(function(dayWork){
+  	  		    				var dayWorks = $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd];
+  			  	         		dayWorks.map(function(dayWork){
   			  	         			if(i.startStr==moment(dayWork.day).format('YYYY-MM-DD')) {
   		  	         					var valueMap = dayWork.plans[0].valueMap;
   		  	         					
@@ -275,48 +301,53 @@
   		    	},
   	         	addDayWorks : function(){ //근무시간 생성
   	         		var $this = this;
-  	         	
+  	         		
   	         		//휴일, 반차가 아닌 근태(연차, 교육, 출장 등)
      				$this.empHolidays=[];
   	         		
   	         		var events = [];
-  	         		$this.dayWorks.map(function(dayWork){
-  	         			//근무일
-  	         			if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
-							dayWork.plans.map(function(plan){
-								var day = moment(plan.key).format('YYYY-MM-DD');
-								
-	  		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
-	  		    					//개인 근태
-		  		    				var taaEvent = {
-										id: day,
-			    						title: "<div class='dot work-type'><span>" + plan.label + "</span></div>",
-			    						start: day,
-			    						end: day
-			    					};
-		  		    				events.push(taaEvent);
-		  		    				
-		  		    				//반차가 아닌 근태(연차, 교육, 출장 등)
-		  		    				if(plan.valueMap.taaCd!='11' && plan.valueMap.taaCd!='12') {
-		  		    					$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
-		  		    				}
-		  		    				
-	  		    				} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
-	  		    					//계획시간
-									var timeEvent = {
-										id: day,
-			    						title: "<div class='dot time'><span>" + plan.label + "</span></div>",
-			    						start: day,
-			    						end: day
-			    					};
-		  		    				events.push(timeEvent);
-	  		    				}
-	  		    			
+  	         		
+  	         		if(Object.keys($this.dayWorks).length>0) {
+  	         			$.each($this.dayWorks, function(k, v){
+		  	         		v.map(function(dayWork){
+		  	         			//근무일
+		  	         			if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+									dayWork.plans.map(function(plan){
+										var day = moment(plan.key).format('YYYY-MM-DD');
+										
+			  		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
+			  		    					//개인 근태
+				  		    				/* var taaEvent = {
+												id: day,
+					    						title: "<div class='dot work-type'><span>" + plan.label + "</span></div>",
+					    						start: day,
+					    						end: day
+					    					};
+				  		    				events.push(taaEvent); */
+				  		    				
+				  		    				//반차가 아닌 근태(연차, 교육, 출장 등)
+				  		    				if(plan.valueMap.taaCd!='11' && plan.valueMap.taaCd!='12') {
+				  		    					$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
+				  		    				}
+				  		    				
+			  		    				} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
+			  		    					//계획 or 실적시간
+											var timeEvent = {
+												id: day,
+					    						title: "<div class='dot time'><span>" + plan.label + "</span></div>",
+					    						start: day,
+					    						end: day
+					    					};
+				  		    				events.push(timeEvent);
+			  		    				}
+			  		    			
+									});
+		  	         			} else {
+		  	         				$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
+		  	         			}
 							});
-  	         			} else {
-  	         				$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
-  	         			}
-					});
+  	         			});
+  	         		}
 
   	         		$this.addEventSource('dayWorks',events);
   	         	},
@@ -397,7 +428,13 @@
   	         		var $this = this;
   	         		var calendar = $this.$refs.fullCalendar.cal;
   	         		
-  	         		var i = 0;
+  	         		var workday = '';
+  	         		<#if workday?? && workday!='' && workday?exists >
+  	         			workday = moment('${workday}').format('YYYY-MM-DD');
+  	         		<#else>
+  	  		    		workday = '${today}';
+  	  		    	</#if>
+  	         		
   	         		$this.data.map(function(d){
   	         			var eDate = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
   	         			eDate.setDate(eDate.getDate()+1);
@@ -415,7 +452,7 @@
   	         			
   	         			$this.addEvent(newEvent);
   	         			
-  	         			if(i==0){
+  	         			if(moment(d.sYmd).diff(workday)<=0 && moment(workday).diff(d.eYmd)<=0){
 	  	         			var calStart = calendar.view.activeStart;
 	  	         			var calEnd = calendar.view.activeEnd;
 	  	         			if(moment(calStart).diff(d.sYmd)<=0 && moment(d.sYmd).diff(calEnd)<=0) {
@@ -428,21 +465,15 @@
 	  	    	  		    		$("#endTime").prop("disabled", false);
 	  	    	  		    		$("#timeSaveBtn").show();
 	  	         				}
-	  	         				
-	  	         				calendar.select(moment(d.sYmd).format('YYYY-MM-DD'));
 	  	         			} else {
 	  	         				$("#startTime").val("");
 	  	         				$("#endTime").val("");
 	  	         				$("#timeSaveBtn").hide();
 	  	         				$("#startTime").prop("disabled", true);
 	  		  		    		$("#endTime").prop("disabled", true);
-	  	         				
-	  	         				calendar.select(moment(calStart).format('YYYY-MM-DD'));
 	  	         			}
+	  	         			calendar.select(workday);
   	         			}
-  	         			
-  	         			i++;
-  	         			
   	         		});
          			
   	         	},
@@ -521,9 +552,14 @@
 	  	  	         			$("#startTime").val('');
 	  	  	         			$("#endTime").val('');
 	  	  	         		
-	  	  	         			$this.dayWorks = $this.dayWorks.filter(function(k){
-	  	  	         				return (k.day != moment(sDate).format('YYYYMMDD'));
-	  	  	         			});
+	  	  	         			if(Object.keys($this.dayWorks).length>0 && $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd].length>0) {
+		  	  	         			var dayWorks = $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd];
+		  	  	         			dayWorks = dayWorks.filter(function(k){
+		  	  	         				return (k.day != moment(sDate).format('YYYYMMDD'));
+		  	  	         			});
+		  	  	         			
+		  	  	         			$this.dayWorks[calendarLeftVue.flexibleAppl.sYmd] = dayWorks;
+	  	  	         			}
 	  	  	         		
 		  	  	         		var d = new Date(sDate);
 		  		    			while(moment(d).diff(eDate, 'days')<=0) {
@@ -565,10 +601,10 @@
 								
 								$this.data = data;
 								
-								var dayWorks = [];
+								var dayWorks = {};
 								data.map(function(d){
 									if(d.hasOwnProperty("dayWorks"))
-										dayWorks = dayWorks.concat(d.dayWorks);
+										dayWorks[d.sYmd] = d.dayWorks;
 								});
 								$this.dayWorks = dayWorks;
 								
@@ -613,7 +649,7 @@
 								$("#alertText").html("저장되었습니다.");
 								//$this.dayResult = {};
 								if(data.dayWorks!=null && data.dayWorks.length>0) {
-									$this.dayWorks = data.dayWorks;
+									$this.dayWorks[calendarLeftVue.flexibleAppl.sYmd] = data.dayWorks;
 									$this.addDayWorks();
 								}
 								

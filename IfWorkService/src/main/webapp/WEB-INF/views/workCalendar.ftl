@@ -73,6 +73,17 @@
 	                </div>
 	            </div>
 	            <div class="sub-info-wrap clearfix">
+	           		<div class="form-inline work-check-wrap">
+	           			<span class="title">근무제 표시</span>
+			            <ul class="legend-list-wrap">
+			                <li class="ELAS">탄력근무</li>
+			                <li class="SELE_F">완전선택근무</li>
+			                <li class="SELE_C">부분선택근무</li>
+			                <li class="DIFF">시차출퇴근</li>
+			                <li class="AUTO">자율출퇴근</li>
+			            </ul>
+	           		</div>
+	            	<!--  
 		            <div class="form-inline work-check-wrap">
 		                <span class="title">캘린더 표시</span>
 		                <div class="custom-control custom-checkbox">
@@ -102,6 +113,7 @@
 			                <li class="AUTO">자율출퇴근</li>
 			            </ul>
 			        </div>
+			        -->
 	           	</div>
 	        </form>
 	        <div id="summary-wrap" style="display:none;">
@@ -155,14 +167,6 @@
                             	</template>
                             </div>
                         </li>
-                        <li>
-                            <div class="sub-title">근무시간표</div>
-                            <div class="sub-desc">
-                            	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.timeNm">
-                            	{{rangeInfo.timeNm}}
-                            	</template>
-                            </div>
-                        </li>
                     </ul>
                     <div class="btn-wrap">
                         <button type="submit" class="btn btn-apply btn-block btn-lg" @click="viewWorkDayCalendar">근무계획작성</button>
@@ -191,6 +195,10 @@
                                 <div class="main-title">해당일 근태</div>
                                 <div class="main-desc">연차, 반차</div>
                             </li>
+                            <li>
+	                            <div class="main-title">근무시간표</div>
+	                            <div class="main-desc">본사평일</div>
+	                        </li>
                         </ul>
                         <div class="sub-wrap">
                             <div class="sub-big-title">근무시간 요약 <span style="font-size:10px;">(근무시간 분류별 합산)</span></div>
@@ -577,7 +585,7 @@
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
 	    		var flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //임시저장된 신청서
 	    		
-	    		if(flexibleAppl.applStatusCd!='99') {
+	    		if(flexibleAppl.applStatusCd!=null && flexibleAppl.applStatusCd!='' && flexibleAppl.applStatusCd!='99') {
 					//신청화면 전환
 					$("#applyBtn").bind('click', function(){
 						 calendarLeftVue.viewFlexitimeAppl(flexibleAppl);
@@ -835,7 +843,6 @@
 	        },
 	        changeUseSymd : function(){
          		var $this = this;
-         		console.log('changeUseSymd!!');
          		if(moment($this.applInfo.useSymd).diff(monthCalendarVue.prevEdate)<=0) {
          			$this.clearFlexitimeAppl();
          			return false;
@@ -998,7 +1005,7 @@
          		dayCalendarVue.saveWorkDayResult();
          	},
          	viewWorkDayCalendar: function(){
-         		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day';
+         		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.selectedDate).format('YYYYMMDD');
          	},
          	viewOvertimeAppl: function(){
          		var $this = this;

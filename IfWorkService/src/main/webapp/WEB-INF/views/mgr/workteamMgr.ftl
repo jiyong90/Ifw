@@ -23,7 +23,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">기본근무시간관리</div>
+								<div class="float-left title">근무조관리</div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
@@ -49,8 +49,8 @@
 			{Header:"No",		Type:"Seq",			Hidden:Number("0"),	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"삭제",		Type:"DelCheck",	Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
 			{Header:"상태",		Type:"Status",		Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
-			{Header:"id",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"baseWorkMgrId",	KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"사업장",		Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"businessPlaceCd",	KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"id",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workteamMgrId",	KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"근무조명",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workteamNm",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"시작일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"symd",			KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"종료일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"eymd",			KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"근무제",		Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
@@ -62,12 +62,8 @@
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
 
-		//사업장
-		var businessPlaceCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "BUSINESS_PLACE_CD"), "선택");
-		sheet1.SetColProperty("businessPlaceCd", {ComboText:businessPlaceCdList[0], ComboCode:businessPlaceCdList[1]} );
-
 		//근무제도
-		var flexibleList = stfConvCode(ajaxCall("${rc.getContextPath()}/flexibleStd/worktype", "workTypeCd=BASE",false).DATA, "");
+		var flexibleList = stfConvCode(ajaxCall("${rc.getContextPath()}/flexibleStd/worktype", "workTypeCd=WORKTEAM",false).DATA, "");
 		sheet1.SetColProperty("flexibleStdMgrId", {ComboText:flexibleList[0], ComboCode:flexibleList[1]} );
 
 		
@@ -78,12 +74,12 @@
    	function doAction1(sAction) {
 		switch (sAction) {
 		case "Search":
-			sheet1.DoSearch( "${rc.getContextPath()}/basework/list" , $("#sheetForm").serialize());
+			sheet1.DoSearch( "${rc.getContextPath()}/workteamMgr/list" , $("#sheetForm").serialize());
 			break;
 		case "Save":
-			if(!dupChk(sheet1,"businessPlaceCd|symd", false, true)){break;}
+			if(!dupChk(sheet1,"workteamNm|symd", false, true)){break;}
 			IBS_SaveName(document.sheetForm,sheet1);
-			sheet1.DoSave("${rc.getContextPath()}/basework/save", $("#sheetForm").serialize()); break;
+			sheet1.DoSave("${rc.getContextPath()}/workteamMgr/save", $("#sheetForm").serialize()); break;
 
 			break;
 		case "Insert":
