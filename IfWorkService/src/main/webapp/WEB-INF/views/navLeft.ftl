@@ -50,6 +50,11 @@
             </a>
         </li>
         <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamMgr';">
+                <span class="title">근무조관리</span>
+            </a>
+        </li>
+        <li>
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamEmp';">
                 <span class="title">근무조대상자관리</span>
             </a>

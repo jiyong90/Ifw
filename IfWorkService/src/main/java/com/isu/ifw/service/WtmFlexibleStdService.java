@@ -32,6 +32,15 @@ public interface WtmFlexibleStdService {
 	 * @return 
 	 */
 	public List<Map<String, Object>> getFlexibleStd(Long tenantId, String enterCd);
+	
+	/**
+	 * 근무유형별 근무제 목록 조회
+	 * @param tenantId - 테넌트 아이디
+	 * @param enterCd - 회사코드
+	 * @param workTypeCd - 근무유형
+	 * @return 
+	 */
+	public List<Map<String, Object>> getFlexibleStdWorkType(Long tenantId, String enterCd, String workTypeCd);
 
 	//public void saveFlexibleStdOption();
 	//public void saveFlexibleStdBreaktime();

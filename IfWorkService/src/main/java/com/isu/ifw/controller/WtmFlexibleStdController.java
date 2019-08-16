@@ -183,4 +183,31 @@ public class WtmFlexibleStdController {
 		
 		return rp;
 	}
+	
+	@RequestMapping(value="/worktype", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam stdWorkTypeList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap) {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		ObjectMapper mapper = new ObjectMapper();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String enterCd = sessionData.get("enterCd").toString();
+		String workTypeCd = paramMap.get("workTypeCd").toString();
+		String bisinessPlaceCd = null;
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> wtmFlexibleStd = null;
+		
+		try {
+			wtmFlexibleStd = WtmFlexibleStdService.getFlexibleStdWorkType(tenantId, enterCd, workTypeCd);
+			rp.put("DATA", wtmFlexibleStd);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 }
