@@ -37,7 +37,12 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public Map<String, Object> getPrevFlexible(Map<String, Object> paramMap);
 	
-	public void createWorkCalendar(@Param("flexibleEmpId")Long flexibleEmpId, @Param("userId")Long userId);
+	/**
+	 * 부분선근제의 캘린더 생성
+	 * @param flexibleEmpId
+	 * @param userId
+	 */
+	public void createWorkCalendarOfSeleC(@Param("flexibleEmpId")Long flexibleEmpId, @Param("userId")Long userId);
 	
 	public void updateHolidayYnOFWorkCalendar(Map<String, Object> paramMap);
 	
