@@ -155,7 +155,7 @@
 	        , C.ENTER_CD as enterCd
 	        , C.SABUN as sabun
 	        , C.YMD as ymd
-	        , C.FLEXIBLE_EMP_ID as flexibleEmpId
+	        , E.FLEXIBLE_EMP_ID as flexibleEmpId
 	        , C.TIME_CD_MGR_ID as timeCdMgrId
 	        , C.ENTRY_SDATE as entrySdate
 	        , C.ENTRY_STYPE_CD as entryStypeCd
@@ -178,6 +178,8 @@
 		  FROM WTM_WORK_CALENDAR C
 		  JOIN WTM_WORK_DAY_RESULT R
 		    ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
+		  JOIN WTM_FLEXIBLE_EMP E
+		    ON C.TENANT_ID = E.TENANT_ID AND C.ENTER_CD = E.ENTER_CD AND C.SABUN = E.SABUN AND C.YMD BETWEEN E.SYMD AND E.EYMD
 		 WHERE C.YMD = #{ymd}
 		   AND C.SABUN = #{sabun}
 		   AND C.TENANT_ID = #{tenantId}
@@ -608,10 +610,12 @@
 	    			, C.APPR_MINUTE as apprMinute
 	    			, C.WORK_YN as workYn
 	    			, C.WORK_CALENDAR_ID as workCalendarId
-	    			, D.FLEXIBLE_EMP_ID as flexibleEmpId
+	    			, E.FLEXIBLE_EMP_ID as flexibleEmpId
 			  FROM WTM_WORK_DAY_RESULT C
 			  JOIN WTM_WORK_CALENDAR D
 		    	ON D.WORK_CALENDAR_ID = C.WORK_CALENDAR_ID
+		    	JOIN WTM_FLEXIBLE_EMP E
+		    	ON D.TENANT_ID = E.TENANT_ID AND D.ENTER_CD = E.ENTER_CD AND D.SABUN = E.SABUN AND D.YMD BETWEEN E.SYMD AND E.EYMD
 			 WHERE C.WORK_CALENDAR_ID = #{workCalendarId}
     </select>
 </mapper>
