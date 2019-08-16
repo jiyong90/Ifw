@@ -375,7 +375,7 @@
         					
         					if(moment(sDate).diff(day)<=0 && moment(day).diff(eDate)<=0) {
         						var e = {
-       	    						title: moment(k+' '+v.shm).format('HH:mm')+'~'+moment(k+' '+v.ehm).format('HH:mm'),
+       	    						title: "<div class='dot time'><span>" + moment(k+' '+v.shm).format('HH:mm')+'~'+moment(k+' '+v.ehm).format('HH:mm')+ "</span></div>",
        	    						start: day,
        	    						end: day
        	    					};
@@ -658,6 +658,7 @@
 							}
 							$("#alertModal").on('hidden.bs.modal',function(){
 								$("#alertModal").off('hidden.bs.modal');
+								$("#flexibleDayPlan").find("form").removeClass('was-validated');
 							});
 	  	  	         		$("#alertModal").modal("show"); 
 						},
