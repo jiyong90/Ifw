@@ -28,7 +28,7 @@ public class WtmWorkteamEmp {
 	@Column(name="ENTER_CD")
 	private String enterCd;
 	@Column(name="WORKTEAM_MGR_ID")
-	private String workteamMgrId;
+	private Long workteamMgrId;
 	@Column(name="SABUN")
 	private String sabun;
 	@Column(name="SYMD")
@@ -74,12 +74,12 @@ public class WtmWorkteamEmp {
 	}
 
 
-	public String getWorkteamMgrId() {
+	public Long getWorkteamMgrId() {
 		return workteamMgrId;
 	}
 
 
-	public void setWorkteamMgrId(String workteamMgrId) {
+	public void setWorkteamMgrId(Long workteamMgrId) {
 		this.workteamMgrId = workteamMgrId;
 	}
 

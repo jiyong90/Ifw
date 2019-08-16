@@ -28,6 +28,8 @@ public class WtmTimeCdMgrController {
 	@Autowired
 	WtmTimeCdMgrService timeCdMgrService;
 	
+	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
+	
 	@RequestMapping(value="/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getTimeCdList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		
@@ -41,7 +43,7 @@ public class WtmTimeCdMgrController {
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
 		MDC.put("type", "C");
-		//logger.debug("getTaaCodeList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+		logger.debug("getTimeCdList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 		
 		rp.setSuccess("");
 		
@@ -74,7 +76,7 @@ public class WtmTimeCdMgrController {
 		MDC.put("logId", UUID.randomUUID().toString());
 		MDC.put("type", "C");
 		MDC.put("param", paramMap.toString());
-		//logger.debug("setTaaCodeList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+		logger.debug("setTimeCodeMgrList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 		
 		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
 		convertMap.put("enterCd", enterCd);
@@ -112,7 +114,7 @@ public class WtmTimeCdMgrController {
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
 		MDC.put("type", "C");
-		//logger.debug("getTaaCodeList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+		logger.debug("breakList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 		
 		rp.setSuccess("");
 		
@@ -145,7 +147,7 @@ public class WtmTimeCdMgrController {
 		MDC.put("logId", UUID.randomUUID().toString());
 		MDC.put("type", "C");
 		MDC.put("param", paramMap.toString());
-		//logger.debug("setTaaCodeList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+		logger.debug("setTimeBreakMgtList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 		
 		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
 		convertMap.put("enterCd", enterCd);

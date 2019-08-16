@@ -10,9 +10,11 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.isu.ifw.entity.WtmWorkteamMgr;
+import com.isu.ifw.mapper.WtmWorkteamMgrMapper;
 import com.isu.ifw.repository.WtmWorkteamMgrRepository;
 
 @Service("workteamMgrService")
@@ -22,6 +24,10 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 	
 	@Resource
 	WtmWorkteamMgrRepository workteamMgrRepository;
+	
+	@Autowired
+	WtmWorkteamMgrMapper workteamMgrMapper;
+	
 	
 	@Override
 	public List<Map<String, Object>> getWorkteamMgrList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
@@ -55,7 +61,7 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 						workteam.setTenantId(tenantId);
 						workteam.setUpdateId(userId);
 						workteam.setWorkteamMgrId(l.get("workteamMgrId").toString().equals("") ? null : Long.parseLong(l.get("workteamMgrId").toString()));
-						workteam.setEymd(l.get("workteamNm").toString());
+						workteam.setWorkteamNm(l.get("workteamNm").toString());
 						workteam.setEymd(l.get("eymd").toString());
 						workteam.setNote(l.get("note").toString());
 						workteam.setSymd(l.get("symd").toString());
@@ -93,5 +99,15 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 			MDC.clear();
 		}
 		return cnt;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getWorkteamCdList(Long tenantId, String enterCd) {
+		// TODO Auto-generated method stub
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		
+		return workteamMgrMapper.getWorkteamCdList(paramMap);
 	}
 }
