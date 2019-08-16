@@ -46,4 +46,17 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 		return flexStdMapper.getWtmFlexibleStdList(paramMap);
 	}
 	
+	@Override
+	public List<Map<String, Object>> getFlexibleStdWorkType(Long tenantId, String enterCd, String workTypeCd) {
+		// TODO Auto-generated method stub
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("workTypeCd", workTypeCd);
+		
+		return flexStdMapper.getWtmFlexibleStdWorkTypeList(paramMap);
+	}
+	
+	
+	
 }

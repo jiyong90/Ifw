@@ -14,4 +14,7 @@ public interface WtmFlexibleStdMapper {
 	
 	//근무제 전체 조회
 	public List<Map<String, Object>> getWtmFlexibleStdList(Map<String, Object> paramMap);
+	
+	//근무제 work_type_cd별 조회
+	public List<Map<String, Object>> getWtmFlexibleStdWorkTypeList(Map<String, Object> paramMap);
 }
