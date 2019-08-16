@@ -43,8 +43,6 @@
   		    		var calendar = this.$refs.fullCalendar.cal;
 
   		    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
-  	  		    		console.log(calendar.getOption('selectAllow'));
-
   		    			var param = {
 		   		    		ym : moment(calendar.getDate()).format('YYYYMM')
 		   		    	};
