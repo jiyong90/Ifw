@@ -49,7 +49,7 @@
 	    	datesRenderCallback: function(info){
 	    		var $this = this;
 	    		var calendar = this.$refs.fullCalendar.cal;
-	    		if(info.view.type == 'dayGridMonth') { //month change
+	    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
  		    		var param = {
   		    			ym : moment(calendar.getDate()).format('YYYYMM')
   		    		};
@@ -65,7 +65,7 @@
 							if(data.companyCalendar!=null) {
 								data.companyCalendar.map(function(cal){
 									if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
-										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span[name=companyHoliday]").remove();
+										//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
 										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
 										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday' class='fc-holiday'>"+cal.holidayNm+"</span>");
 									}
@@ -104,7 +104,9 @@
 	    		}
 	    	},
 	    	selectCallback : function(info){
-	    		calendarLeftVue.getFlexibleRangeInfo(moment(info.start).format('YYYYMMDD'));
+	    		var date = moment(info.start).format('YYYYMMDD');
+	    		calendarLeftVue.selectedDate = date
+	    		calendarLeftVue.getFlexibleRangeInfo(date);
 	    	},
 	    	eventRenderCallback : function(info){
 	    		/* if(info.event.id.indexOf('workRange.')==0 && info.isStart) {

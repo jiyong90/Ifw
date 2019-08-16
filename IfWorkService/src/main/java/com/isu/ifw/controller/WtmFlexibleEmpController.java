@@ -186,8 +186,7 @@ public class WtmFlexibleEmpController {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			flexibleEmpService.save(flexibleEmpId, dayResult, userId);
-			
-			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(tenantId, enterCd, empNo, paramMap, userId);
+			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(flexibleEmpId, userId);
 			rp.put("dayWorks", dayWorks);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
