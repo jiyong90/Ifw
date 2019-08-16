@@ -31,8 +31,6 @@ public class WtmWorkCalendar {
 	private String sabun;
 	@Column(name="YMD")
 	private String ymd;
-	@Column(name="FLEXIBLE_EMP_ID")
-	private Long flexibleEmpId;
 	@Column(name="TIME_CD_MGR_ID")
 	private Long timeCdMgrId;
 	
@@ -103,14 +101,6 @@ public class WtmWorkCalendar {
 
 	public void setYmd(String ymd) {
 		this.ymd = ymd;
-	}
-
-	public Long getFlexibleEmpId() {
-		return flexibleEmpId;
-	}
-
-	public void setFlexibleEmpId(Long flexibleEmpId) {
-		this.flexibleEmpId = flexibleEmpId;
 	}
 
 	public Long getTimeCdMgrId() {
