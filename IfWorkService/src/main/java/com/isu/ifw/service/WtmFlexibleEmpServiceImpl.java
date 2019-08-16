@@ -237,7 +237,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			ObjectMapper mapper  = new ObjectMapper();
 			System.out.println(mapper.writeValueAsString(paramMap));
 			//holidayYn 갱신
-			flexEmpMapper.updateHolidayYnOFWorkCalendar(paramMap);
+			//flexEmpMapper.updateHolidayYnOFWorkCalendar(paramMap);
 			//planMinute갱신
 			flexEmpMapper.updatePlanMinute(flexibleEmpId);
 			
