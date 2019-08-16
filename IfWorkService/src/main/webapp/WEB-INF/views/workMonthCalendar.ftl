@@ -108,6 +108,7 @@
 	    		var date = moment(info.start).format('YYYYMMDD');
 	    		calendarLeftVue.selectedDate = date
 	    		calendarLeftVue.getFlexibleRangeInfo(date);
+	    		calendarLeftVue.getFlexibleDayInfo(date);
 	    	},
 	    	eventRenderCallback : function(info){
 	    		/* if(info.event.id.indexOf('workRange.')==0 && info.isStart) {

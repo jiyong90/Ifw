@@ -144,20 +144,12 @@
                     </div>
                     <ul class="sub-wrap">
                         <li>
-                            <div class="sub-title">총 계획 근무시간(소정/연장/휴게)</div>
-                            <div class="sub-desc">
-                            	<template v-if="Object.keys(rangeInfo).length>0">
-                            	{{minuteToHHMM(rangeInfo.planBaseMinute)}} / {{minuteToHHMM(rangeInfo.planOtMinute)}} / 0:30
-                            	</template>
-                            </div>
+                            <div class="sub-title">총 계획 근무시간</div>
+                            <div class="sub-desc"></div>
                         </li>
                         <li>
-                            <div class="sub-title">총 실적 근무시간(소정/연장/휴게)</div>
-                            <div class="sub-desc">
-                            	<template v-if="Object.keys(rangeInfo).length>0">
-                            	{{minuteToHHMM(rangeInfo.apprBaseMinute)}} / {{minuteToHHMM(rangeInfo.apprOtMinute)}} / 0:30
-                            	</template>
-                            </div>
+                            <div class="sub-title">잔여 근무시간</div>
+                            <div class="sub-desc"></div>
                         </li>
                         <li>
                             <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
@@ -169,7 +161,7 @@
                         </li>
                     </ul>
                     <div class="btn-wrap">
-                        <button type="submit" class="btn btn-apply btn-block btn-lg" @click="viewWorkDayCalendar">근무계획작성</button>
+                        <button type="submit" id="workPlanBtn" class="btn btn-apply btn-block btn-lg" @click="viewWorkDayCalendar" style="display:none;">근무계획작성</button>
                     </div>
                 </div>
                 <div id="workDayInfo" class="white-box-wrap mb-3" style="display:none;">
@@ -181,23 +173,46 @@
                         <ul class="main-wrap">
                             <li>
                                 <div class="main-title">해당일의 근무계획 구분</div>
-                                <div class="main-desc">근무일</div>
+                                <div class="main-desc">
+                                	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.holidayYn">
+                                	{{workDayInfo.holidayYn=='Y'?'휴무일':'근무일'}}
+                                	</template>
+                                </div>
                             </li>
                             <li>
                                 <div class="main-title">계획 근무시간</div>
-                                <div class="main-desc">09:00 ~ 21:00 (10:00)</div>
+                                <div class="main-desc">
+                                	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.planSdate && workDayInfo.planEdate">
+                                	{{moment(workDayInfo.planSdate).format('HH:mm')}} ~ {{moment(workDayInfo.planEdate).format('HH:mm')}}({{minuteToHHMM(workDayInfo.planMinute)}})
+                                	</template>
+                                </div>
                             </li>
                             <li>
                                 <div class="main-title">실적 근무시간</div>
-                                <div class="main-desc">09:00 ~ 21:00 (10:00)</div>
+                                <div class="main-desc">
+                                	<template v-if="Object.keys(workDayInfo).length>0 && (workDayInfo.apprSdate || workDayInfo.apprEdate)">
+	                                	<template v-if="workDayInfo.apprEdate && workDayInfo.apprEdate!='' && workDayInfo.apprEdate!=null && workDayInfo.apprEdate!=undefined">
+	                                	{{moment(workDayInfo.apprSdate).format('HH:mm')}} ~ {{moment(workDayInfo.apprEdate).format('HH:mm')}}({{minuteToHHMM(workDayInfo.apprMinute)}})
+	                                	</template>
+	                                	<template v-else>
+	                                	{{moment(workDayInfo.apprSdate).format('HH:mm')}} ~ 
+	                                	</template>
+                                	</template>
+                                </div>
                             </li>
-                            <li>
+                            <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taaNames">
                                 <div class="main-title">해당일 근태</div>
-                                <div class="main-desc">연차, 반차</div>
+                                <div class="main-desc">
+                                	{{workDayInfo.taaNames}}
+                                </div>
                             </li>
                             <li>
 	                            <div class="main-title">근무시간표</div>
-	                            <div class="main-desc">본사평일</div>
+	                            <div class="main-desc">
+	                            	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.timeNm">
+	                            	{{workDayInfo.timeNm}}
+	                            	</template>
+	                            </div>
 	                        </li>
                         </ul>
                         <div class="sub-wrap">
@@ -250,13 +265,30 @@
                     </div>
                     <div id="lbottom-simple-wrap" class="work-plan-wrap" style="display:none;">
 	                    <ul class="main-wrap">
-	                        <li>
+	                    	<li v-if="Object.keys(workDayInfo).length>0 && (workDayInfo.apprSdate || workDayInfo.apprEdate)">
 	                            <div class="main-title">실적 근무 시간</div>
-	                            <div class="main-desc">09:00 ~21:00(10:00)</div>
+	                            <div class="main-desc">
+	                            	<template v-if="workDayInfo.apprEdate && workDayInfo.apprEdate!='' && workDayInfo.apprEdate!=null && workDayInfo.apprEdate!=undefined">
+	                                {{moment(workDayInfo.apprSdate).format('HH:mm')}} ~ {{moment(workDayInfo.apprEdate).format('HH:mm')}}({{minuteToHHMM(workDayInfo.apprMinute)}})
+                                	</template>
+                                	<template v-else>
+                                	{{moment(workDayInfo.apprSdate).format('HH:mm')}} ~ 
+                                	</template>
+	                            </div>
 	                        </li>
-	                        <li>
+	                        <li v-else>
+	                            <div class="main-title">계획 근무 시간</div>
+	                            <div class="main-desc">
+	                            	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.planSdate && workDayInfo.planEdate">
+	                                {{moment(workDayInfo.planSdate).format('HH:mm')}} ~ {{moment(workDayInfo.planEdate).format('HH:mm')}}({{minuteToHHMM(workDayInfo.planMinute)}})
+                                	</template>
+	                            </div>
+	                        </li>
+	                        <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taaNames">
 	                            <div class="main-title">해당일 근태</div>
-	                            <div class="main-desc">연차,반차</div>
+	                            <div class="main-desc">
+                                	{{workDayInfo.taaNames}}
+	                            </div>
 	                        </li>
 	                    </ul>
 	                    <div class="sub-wrap">
@@ -369,17 +401,15 @@
 	                                </li>
 	                            </ul>
 		                    </div>
-		                    <!--  
 		                    <div class="inner-wrap graph-wrap">
                                 <div class="time-graph">
-                                    <span class="core-time" :style="{left:coreTimeLeft; width:coreTimeWidth;}"></span>
+                                    <span class="core-time"></span>
                                 </div>
                                 <ul class="legend-wrap">
                                     <li class="work-time">근무시간</li>
                                     <li class="core-time">코어시간</li>
                                 </ul>
                             </div>
-                            -->
 		                    <hr class="bar">
 		                    <ul class="main-wrap">
 	                            <li>
@@ -678,10 +708,9 @@
    	var calendarLeftVue = new Vue({
    		el: "#calendar_left",
 	    data : {
-	    	//coreTimeLeft: '', //calc((10 - 6)/12 * 100%)
-	    	//coreTimeWidth: '', //calc((14 - 10)/12 * 100%)	
 	    	calendar: {},
 	    	rangeInfo: {}, //선택한 기간의 근무제 정보
+	    	workDayInfo: {}, //선택한 날의 근무 정보
 	    	workTimeInfo: {}, //선택한 날의 근무시간 정보
 	    	useYn: 'N', //근무제 적용 여부
 	    	applInfo: { //신청 데이터
@@ -695,19 +724,22 @@
 	    	flexibleAppl: {},
 	    	selectedDate: '${today}'
   		},
-  		/* watch: {
+  		watch: {
+  			rangeInfo : function(val, oldVal) {
+  			},
   			flexibleAppl : function(val, oldVal) {
   				//근무시간, 코어시간 그래프 표기
   				var workSh = moment(val.sYmd+' '+val.workShm).format('HH');
   				var coreSh = moment(val.sYmd+' '+val.coreShm).format('HH');
   				var coreEh = moment(val.sYmd+' '+val.coreEhm).format('HH');
   				
-  				coreTimeLeft = (coreSh - workSh)/12 * 100;
-  				coreTimeWidth = (coreEh - coreSh)/12 * 100;
+  				$(".graph-wrap .core-time").css({ 'left': 'calc(('+coreSh+' - '+workSh+')/12*100%)' });
+  				$(".graph-wrap .core-time").css({ 'width': 'calc(('+coreEh+' - '+coreSh+')/12*100%)' });
   			}
-  		}, */
+  		},
 	    mounted: function(){
 	    	this.getFlexibleRangeInfo(this.today);
+	    	this.getFlexibleDayInfo(this.today);
 	    	//calendarLeftVue.getWorkDayInfo(this.today);
 	    	
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
@@ -720,24 +752,28 @@
 	    },
 	    methods : {
 	    	minuteToHHMM : function (min, type) {
-	    		if(type==null || type=='')
-		   	    	type='short';
-	    		
-		   	    var min = Number(min);
-		   	    var hours   = Math.floor(min / 60);
-		   	    var minutes = Math.floor(min - (hours * 60));
-	
-		   	 	if(type=='detail') {
-		   	 		var h = hours==0?'':hours+'시간 ';
-		   	 		var m = minutes==0?'':minutes+'분';
-		   	    	return h+''+m;
-		   	 	}
-		   	    	
-		   	    if (hours   < 10) {hours   = "0"+hours;}
-		   	    if (minutes < 10) {minutes = "0"+minutes;}
-		   	    
-		   	    if(type=='short')
-		   	   		return hours+':'+minutes;
+	    		if(min!=null && min!=undefined && min!='') {
+		    		if(type==null || type=='')
+			   	    	type='short';
+		    		
+			   	    var min = Number(min);
+			   	    var hours   = Math.floor(min / 60);
+			   	    var minutes = Math.floor(min - (hours * 60));
+		
+			   	 	if(type=='detail') {
+			   	 		var h = hours==0?'':hours+'시간 ';
+			   	 		var m = minutes==0?'':minutes+'분';
+			   	    	return h+''+m;
+			   	 	}
+			   	    	
+			   	    if (hours   < 10) {hours   = "0"+hours;}
+			   	    if (minutes < 10) {minutes = "0"+minutes;}
+			   	    
+			   	    if(type=='short')
+			   	   		return hours+':'+minutes;
+	    		} else {
+	    			return '';
+	    		}
 		   	},
 	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보(남색 박스)
 				var $this = this;
@@ -756,8 +792,6 @@
 						$this.rangeInfo = {};
 						if(data!=null) {
 							$this.rangeInfo = data;
-							
-							//work_type_cd가 기본근무 이거나 근무조 일 때는 근무계획작성 버튼 숨기기
 						}
 					},
 					error: function(e) {
@@ -765,8 +799,29 @@
 					}
 				});
 	        },
-	        getWorkDayInfo : function(ymd){ //해당일의 근무 정보
-				
+	        getFlexibleDayInfo : function(ymd){ //오늘 또는 선택한 날의 근무일 정보(흰색 박스)
+	        	var $this = this;
+	    		
+				var param = {
+   		    		ymd : moment(ymd).format('YYYYMMDD')
+   		    	};
+		    		
+		    	Util.ajax({
+					url: "${rc.getContextPath()}/flexibleEmp/day",
+					type: "GET",
+					contentType: 'application/json',
+					data: param,
+					dataType: "json",
+					success: function(data) {
+						$this.workDayInfo = {};
+						if(data!=null) {
+							$this.workDayInfo = data;
+						}
+					},
+					error: function(e) {
+						$this.workDayInfo = {};
+					}
+				});
 			},
          	getFlexitimeAppl : function(applId){ //신청서 조회
          		var $this = this;

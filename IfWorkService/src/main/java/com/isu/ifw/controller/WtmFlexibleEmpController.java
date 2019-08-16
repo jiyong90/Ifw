@@ -86,6 +86,24 @@ public class WtmFlexibleEmpController {
 	}
 	
 	/**
+	 * 선택한 날의 근무일 정보 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/day", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getFlexibleDayInfo(@RequestParam Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+
+		return flexibleEmpService.getFlexibleDayInfo(tenantId, enterCd, sabun, paramMap);
+	}
+	
+	/**
 	 * 선택한 날의 근무시간 정보 조회
 	 * @param paramMap
 	 * @param request
@@ -93,7 +111,7 @@ public class WtmFlexibleEmpController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value="/worktime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getFlexibleDayInfo(@RequestParam Map<String, Object> paramMap
+	public @ResponseBody Map<String, Object> getFlexibleWorkTimeInfo(@RequestParam Map<String, Object> paramMap
 													    , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");

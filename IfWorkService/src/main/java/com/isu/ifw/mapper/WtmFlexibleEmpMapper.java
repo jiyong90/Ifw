@@ -98,6 +98,13 @@ public interface WtmFlexibleEmpMapper {
 	public Map<String, Object> getFlexibleRangeInfo(Map<String, Object> paramMap);
 	
 	/**
+	 * 근무일에 대한 정보
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getFlexibleDayInfo(Map<String, Object> paramMap);
+	
+	/**
 	 * 선택한 날의 근무시간에 대한 정보
 	 * @param paramMap
 	 * @return
