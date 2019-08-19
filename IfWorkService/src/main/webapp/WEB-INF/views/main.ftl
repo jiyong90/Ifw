@@ -124,23 +124,37 @@
                     <div class="main-title">2019년 6월 10일 ~ 2019년 6월 16일</div>
                     <div class="main-desc">일반근무제</div>
                     <ul class="sub-wrap">
-                        <li>
-                            <div class="sub-title">총 계획 근무시간(소정/연장/휴게)</div>
-                            <div class="sub-desc">60:40 / 12:00 / 0:30</div>
-                        </li>
-                        <li>
-                            <div class="sub-title">총 실적 근무시간(소정/연장/휴게)</div>
-                            <div class="sub-desc">60:40 / 12:00 / 0:30</div>
-                        </li>
-                        <li>
-                            <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
-                            <div class="sub-desc">48시간</div>
-                        </li>
-                        <li>
-                            <div class="sub-title">근무시간표</div>
-                            <div class="sub-desc">표준 근무 시간표</div>
-                        </li>
-                    </ul>
+                         <li>
+                             <div class="sub-title">총 계획 근무시간</div>
+                             <div class="time-graph">
+                                 <span class="work-time"></span>
+                                 <span class="over-time"></span>
+                             </div>
+                             <ul class="legend-wrap">
+                                 <li class="work-time">소정 <strong>40:00</strong></li>
+                                 <li class="over-time">연장 <strong>12:00</strong></li>
+                             </ul>
+                         </li>
+                         <li>
+                             <div class="sub-title">잔여 근무시간</div>
+                             <div class="time-graph">
+                                 <span class="work-time"></span>
+                                 <span class="over-time"></span>
+                             </div>
+                             <ul class="legend-wrap">
+                                 <li class="work-time">소정 <strong>40:00</strong></li>
+                                 <li class="over-time">연장 <strong>12:00</strong></li>
+                             </ul>
+                         </li>
+                         <li>
+                             <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
+                             <div class="sub-desc">48시간</div>
+                         </li>
+                         <li>
+                             <div class="sub-title">근무시간표</div>
+                             <div class="sub-desc">표준 근무 시간표</div>
+                         </li>
+                     </ul>
                     <div class="btn-wrap">
                         <button type="submit" class="btn btn-apply btn-block btn-lg">확인요청</button>
                     </div>
