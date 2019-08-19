@@ -802,7 +802,7 @@
 				var $this = this;
 		    	
 	    		//근무계획작성 버튼 숨기기
-				$("#workPlanBtn").hide();
+				//$("#workPlanBtn").hide();
 	    	
 				var param = {
    		    		ymd : moment(ymd).format('YYYYMMDD')
@@ -830,6 +830,7 @@
 						}
 					},
 					error: function(e) {
+						$("#workPlanBtn").hide();
 						$this.rangeInfo = {};
 					}
 				});
