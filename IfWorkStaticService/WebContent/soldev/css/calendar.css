@@ -119,9 +119,11 @@
 /* 날짜 크기 */
 .fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{font-size: 13px;}
 .fc-ltr .fc-dayGrid-view .fc-day-top .fc-holiday{font-size: 13px;}
-.fc-day-grid-event .fc-content .fc-title span{font-size: 10px; letter-spacing: -0.5px; cursor:pointer;}
+.fc-day-grid-event .fc-content .fc-title span{font-size: 10px; letter-spacing: -0.5px;}
 
 /* .fc-row .fc-content-skeleton{z-index : 2;} */
+/* 클릭 이벤트 해제 */
+.fc-day-grid-event{pointer-events: none;}
 
 /* 근무제 시작일, 종료일 표시 보더 */
 .fc-bgevent{
