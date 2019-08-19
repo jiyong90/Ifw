@@ -752,12 +752,17 @@
   			},
   			flexibleAppl : function(val, oldVal) {
   				//근무시간, 코어시간 그래프 표기
-  				var workSh = moment(val.sYmd+' '+val.workShm).format('HH');
-  				var coreSh = moment(val.sYmd+' '+val.coreShm).format('HH');
-  				var coreEh = moment(val.sYmd+' '+val.coreEhm).format('HH');
-  				
-  				$(".graph-wrap .core-time").css({ 'left': 'calc(('+coreSh+' - '+workSh+')/12*100%)' });
-  				$(".graph-wrap .core-time").css({ 'width': 'calc(('+coreEh+' - '+coreSh+')/12*100%)' });
+  				if(val.sYmd!=null && val.sYmd!=undefined && val.sYmd!=''
+  						&& val.workShm!=null && val.workShm!=undefined && val.workShm!=''
+  						&& val.coreEhm!=null && val.coreEhm!=undefined && val.coreEhm!='') {
+	  				
+	  				var workSh = moment(val.sYmd+' '+val.workShm).format('HH');
+	  				var coreSh = moment(val.sYmd+' '+val.coreShm).format('HH');
+	  				var coreEh = moment(val.sYmd+' '+val.coreEhm).format('HH');
+	  				
+	  				$(".graph-wrap .core-time").css({ 'left': 'calc(('+coreSh+' - '+workSh+')/12*100%)' });
+	  				$(".graph-wrap .core-time").css({ 'width': 'calc(('+coreEh+' - '+coreSh+')/12*100%)' });
+  				}
   			}
   		},
 	    mounted: function(){
