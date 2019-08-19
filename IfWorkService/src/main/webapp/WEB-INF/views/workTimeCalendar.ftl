@@ -1,6 +1,6 @@
 <div id="timeCalendar" class="calendar-wrap" v-cloak>
 	<!-- 연장근무신청 modal start -->
-    <div class="modal fade show" id="overtimeAppl" tabindex="-1" role="dialog">
+    <div class="modal fade show" id="overtimeAppl" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
@@ -410,6 +410,12 @@
 					
 					$("#overtime").text("1시간");
 					
+					//휴일
+					if(Object.keys($this.result).length>0 && $this.result.hasOwnProperty('holidayYn')
+							&& $this.result.holidayYn!=null && $this.result.holidayYn=='Y') {
+						console.log('휴일');
+					}
+					
 					$("#overtimeAppl").modal("show"); 
   	         	},
   	         	viewOvertimeApplDetail: function(applId){
@@ -426,7 +432,6 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
-							console.log(data);
 							if(data!=null) {
 								$this.overtimeAppl = data;
 								$("#overtimeApplDetail").modal("show"); 
