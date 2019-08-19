@@ -145,11 +145,25 @@
                     <ul class="sub-wrap">
                         <li>
                             <div class="sub-title">총 계획 근무시간</div>
-                            <div class="sub-desc"></div>
+                            <div class="time-graph plan">
+                                 <span class="work-time"></span>
+                                 <span class="over-time"></span>
+                             </div>
+                             <ul class="legend-wrap">
+                                 <li class="work-time">소정 <strong>40:00</strong></li>
+                                 <li class="over-time">연장 <strong>12:00</strong></li>
+                             </ul>
                         </li>
                         <li>
                             <div class="sub-title">잔여 근무시간</div>
-                            <div class="sub-desc"></div>
+                            <div class="time-graph rest">
+                                 <span class="work-time"></span>
+                                 <span class="over-time"></span>
+                             </div>
+                             <ul class="legend-wrap">
+                                 <li class="work-time">소정 <strong>10:00</strong></li>
+                                 <li class="over-time">연장 <strong>11:00</strong></li>
+                             </ul>
                         </li>
                         <li>
                             <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
@@ -727,6 +741,14 @@
   		},
   		watch: {
   			rangeInfo : function(val, oldVal) {
+  				//총 계획 근무시간,잔여 근무시간 그래프 표기
+  				$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc(40/52 * 100%)' });
+  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc((40 - 1)/52 * 100%)' });
+  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc((12 + 1)/52 * 100%)' });
+  				
+  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc((40 - 30)/52 * 100%)' });
+  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc((40 - 30 - 1)/52 * 100%)' });
+  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc((40 - 30 - 1 + 1)/52 * 100%)' });
   			},
   			flexibleAppl : function(val, oldVal) {
   				//근무시간, 코어시간 그래프 표기
