@@ -219,8 +219,9 @@ box-sizing: border-box;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  margin-top: -2px;
+  margin-top: 0px;
   margin-right: 4px;
+  margin-bottom: 2px;
   margin-left: 0px;
 }
 .work-info-wrap .legend-wrap li.work-time::before{background-color:#29dbff;}
@@ -229,7 +230,7 @@ box-sizing: border-box;
 .work-info-wrap .btn-wrap{margin-top:13px;}
 
 /*  */
-.white-box-wrap {height:calc(100vh - 542px); padding: 14px;/* margin-bottom: 10px; */background-color: #ffffff;
+.white-box-wrap {height:calc(100vh - 574px); padding: 14px;/* margin-bottom: 10px; */background-color: #ffffff;
   overflow-y: auto;
   -ms-overflow-y: auto;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);}
