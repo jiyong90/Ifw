@@ -71,10 +71,13 @@
                             <div class="radio-toggle-wrap" style="display:none;">
                                 <hr>
                                 <div class="big-title">8시간의 대체 휴일을 지정하세요.</div>
-                                <div class="info-box clearfix mt-2">
+                                <div class="info-box clearfix mt-2" v-if="prevOtSubs.length>0">
                                     <div class="title">이전에 신청한 휴일</div>
-                                    <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간 09:00~12:00</span></div>
-                                    <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간 09:00~12:00</span></div>
+                                    <div class="desc">{{moment(prevOtSubs.subsSdate).format('YYYY-MM-DD')}}({{prevOtSubs.subsDay}}) {{moment(prevOtSubs.subsSdate).format('HH:mm')}}~{{moment(prevOtSubs.subsEdate).format('HH:mm')}}({{prevOtSubs.subsMinute}}시간)
+                                    	<span class="guide d-sm-block">
+                                    		해당일 근무시간 {{moment(moment(prevOtSubs.subsSdate).format('YYYYMMDD')+' '+prevOtSubs.workShm).format('HH:mm')}}~{{moment(moment(prevOtSubs.subsSdate).format('YYYYMMDD')+' '+prevOtSubs.workEhm).format('HH:mm')}}
+                                    	</span>
+                                    </div>
                                 </div>
                                 <div class="inner-wrap">
                                     <div class="title">대체일시</div>
@@ -98,7 +101,7 @@
                                                 <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-md-text-right text-center"><a href="#" class="align-middle" @click="delSubYmd(idx)">삭제</a></div>
                                             </div>
                                         </div>
-                                        <div class="guide">*해당일 근무시간은 09:00~18:00 입니다.</div>
+                                        <div class="guide"></div>
                                     </div>
                                 </div>
                                 <div class="btn-wrap text-center">
@@ -280,7 +283,8 @@
   		    	workday: '', //근무일
   		    	reasons: [], //연장/휴일 근로 사유
   		    	subYmds: [], //대체휴일
-  		    	overtimeAppl: {}
+  		    	overtimeAppl: {},
+  		    	prevOtSubs: [] //이전에 신청한 휴일
   		    },
   		    mounted: function(){
   		    	<#if workday?? && workday!='' && workday?exists >
@@ -397,6 +401,56 @@
 						}
 					});
   	         	},
+  	         	getOtSubs: function(ymd){
+  	         		var $this = this;
+  	         		var param = {
+	   		    		ymd : ymd
+	   		    	};
+   		    		
+   		    		Util.ajax({
+						url: "${rc.getContextPath()}/otAppl/subs/prev",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							if(data!=null) {
+								$this.prevOtSubs = data;
+							}
+						},
+						error: function(e) {
+							console.log(e);
+							$this.prevOtSubs = [];
+						}
+					});
+  	         	},
+  	         	getWorkHour: function(id, ymd){
+  	         		var $this = this;
+  	         		var param = {
+	   		    		ymd : ymd
+	   		    	};
+   		    		
+   		    		Util.ajax({
+						url: "${rc.getContextPath()}/flexibleEmp/workhour",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							if(data!=null && data.workShm && data.workEhm) {
+								var workShm = moment(data.ymd+' '+data.workShm).format('HH:mm');
+								var workEhm = moment(data.ymd+' '+data.workEhm).format('HH:mm');
+								$("#"+id).closest(".desc").children(".guide").text("*해당일 근무시간은 " + workShm+ "~" + workEhm + " 입니다.");
+							} else {
+								$("#"+id).closest(".desc").children(".guide").text("");
+							}
+						},
+						error: function(e) {
+							console.log(e);
+							$("#"+id).closest(".desc").children(".guide").text("");
+						}
+					});
+  	         	},
   	         	viewOvertimeAppl: function(date){
   	         		var $this = this;
   	         		//1시간 값 세팅
@@ -410,10 +464,10 @@
 					
 					$("#overtime").text("1시간");
 					
-					//휴일
+					//휴일근로신청의 경우 이전에 신청한 휴일 가져옴
 					if(Object.keys($this.result).length>0 && $this.result.hasOwnProperty('holidayYn')
 							&& $this.result.holidayYn!=null && $this.result.holidayYn=='Y') {
-						console.log('휴일');
+						$this.getOtSubs(moment(sYmd).format('YYYYMMDD'));
 					}
 					
 					$("#overtimeAppl").modal("show"); 
@@ -660,6 +714,7 @@
   	                    $(".radio-toggle-wrap").show(500);
   	                }
   	                else if(val == "N") { //수당지급
+  	                	$this.subYmds = {};
   	                    $(".radio-toggle-wrap").hide(500);
   	                }
   	                else {
@@ -699,11 +754,13 @@
  		$(this).on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
  				timeCalendarVue.updateValue($($this).attr('id'), moment(e.date).format('YYYY-MM-DD'));
+ 				timeCalendarVue.getWorkHour($($this).attr('id'), moment(e.date).format('YYYYMMDD'));
  			}
  		});
    	});
   	
    	$('body').on('focus',"input[id^='subsSdate']", function(){
+   		var $this = this;
 		$(this).datetimepicker({
 			format: 'HH:mm',
             use24hours: true,
@@ -722,6 +779,7 @@
    	});
    	
    	$('body').on('focus',"input[id^='subsEdate']", function(){
+   		var $this = this;
 		$(this).datetimepicker({
 			format: 'HH:mm',
             use24hours: true,

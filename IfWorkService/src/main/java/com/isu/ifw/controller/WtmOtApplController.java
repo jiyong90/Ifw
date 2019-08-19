@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +44,21 @@ public class WtmOtApplController {
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		return otApplService.getAppl(applId);
+	}
+	
+	@RequestMapping(value="/subs/prev", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Map<String, Object>> getPrevOtSubsAppl(@RequestParam Map<String, Object> paramMap
+												, HttpServletRequest request) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		return otApplService.getPrevApplList(tenantId, enterCd, sabun, paramMap, userId);
 	}
 	
 	@RequestMapping(value="/preCheck", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

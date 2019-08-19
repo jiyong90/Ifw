@@ -93,6 +93,15 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	}
 	
 	@Override
+	public List<Map<String, Object>> getPrevApplList(Long tenantId, String enterCd, String sabun,
+			Map<String, Object> paramMap, Long userId) {
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("tenantId", tenantId);
+		return wtmOtApplMapper.getPrevOtSubsApplList(paramMap);
+	}
+	
+	@Override
 	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap,
 			Long userId) {
 		// TODO Auto-generated method stub

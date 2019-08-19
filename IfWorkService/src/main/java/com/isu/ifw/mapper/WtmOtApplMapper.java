@@ -1,5 +1,6 @@
 package com.isu.ifw.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 public interface WtmOtApplMapper {
@@ -18,4 +19,10 @@ public interface WtmOtApplMapper {
 	 */
 	public Map<String, Object> otApplfindByApplId(Long applId);
 	 	
+	/**
+	 * 이전에 신청한 휴일신청서 조회
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getPrevOtSubsApplList(Map<String, Object> paramMap);
 }

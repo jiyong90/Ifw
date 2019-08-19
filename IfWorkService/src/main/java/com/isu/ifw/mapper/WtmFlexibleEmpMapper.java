@@ -149,4 +149,11 @@ public interface WtmFlexibleEmpMapper {
 	 * @return 
 	 */
 	public List<Map<String, Object>> getWorkDayResultByCalendarId(Map<String, Object> paramMap);
+	
+	/**
+	 * 근무 시간 조회
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getWorkHour(Map<String, Object> paramMap);
 }

@@ -155,4 +155,15 @@ public interface WtmFlexibleEmpService {
 	 * @throws Exception
 	 */
 	public void saveEmpDayResults(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) throws Exception;
+	
+	/**
+	 * 근무시간 조회
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param paramMap
+	 * @param userId
+	 * @return
+	 */
+	public Map<String, Object> getWorkHour(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
 }

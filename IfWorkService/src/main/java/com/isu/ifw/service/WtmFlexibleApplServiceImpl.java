@@ -477,6 +477,13 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<Map<String, Object>> getPrevApplList(Long tenantId, String enterCd, String sabun,
+			Map<String, Object> paramMap, Long userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
  
 
 }

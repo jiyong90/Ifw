@@ -637,4 +637,19 @@
 		    	ON D.TENANT_ID = E.TENANT_ID AND D.ENTER_CD = E.ENTER_CD AND D.SABUN = E.SABUN AND D.YMD BETWEEN E.SYMD AND E.EYMD
 			 WHERE C.WORK_CALENDAR_ID = #{workCalendarId}
     </select>
+    
+    <select id="getWorkHour" parameterType="map" resultType="hashmap" >
+	    SELECT C.YMD AS ymd
+		     , T.WORK_SHM AS workShm
+		     , T.WORK_EHM AS workEhm
+		  FROM WTM_WORK_DAY_RESULT R
+		  JOIN WTM_WORK_CALENDAR C
+		    ON R.WORK_CALENDAR_ID = C.WORK_CALENDAR_ID
+		  JOIN WTM_TIME_CD_MGR T
+		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+		 WHERE C.TENANT_ID = #{tenantId}
+		   AND C.ENTER_CD = #{enterCd}
+		   AND C.SABUN = #{sabun}
+		   AND C.YMD = #{ymd}
+    </select>
 </mapper>

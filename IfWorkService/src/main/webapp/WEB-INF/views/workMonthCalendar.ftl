@@ -72,6 +72,8 @@
 									}
 								});
 							}
+							
+							calendar.select(moment(calendar.getDate()).format('YYYY-MM-DD'));
 						},
 						error: function() {
 							
