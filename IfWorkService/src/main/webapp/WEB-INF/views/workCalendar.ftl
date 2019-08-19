@@ -235,7 +235,7 @@
                                 <li>
                                 	<span class="sub-title"><i class="fas fa-clock"></i>소정근로</span>
                                     <span class="sub-desc">
-                                    	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.workHour && workDayInfo.workHour!='00:00'">
+                                    	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.workHour">
 		                            	{{workDayInfo.workHour}}
 		                            	</template>
                                     </span>
@@ -243,7 +243,7 @@
                                 <li>
                                 	<span class="sub-title"><i class="fas fa-moon"></i>연장근로</span>
                                     <span class="sub-desc">
-                                    	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.otHour!='00:00' && workDayInfo.nightHour!='00:00'">
+                                    	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.otHour">
 		                            	{{workDayInfo.otHour}}
 		                            	</template>
                                     </span>
@@ -251,16 +251,16 @@
                                         <li>
                                             <span class="sub-title">일반연장</span>
                                             <span class="sub-desc">
-                                            	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.otHour && workDayInfo.otHour!='00:00'">
-				                            	{{workDayInfo.otHour}}
+                                            	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.otBasicHour">
+				                            	{{workDayInfo.otBasicHour}}
 				                            	</template>
                                             </span>
                                         </li>
                                         <li>
                                             <span class="sub-title">야간근무</span>
                                             <span class="sub-desc">
-                                            	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.nightHour && workDayInfo.nightHour!='00:00'">
-				                            	{{workDayInfo.nightHour}}
+                                            	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.otNightHour">
+				                            	{{workDayInfo.otNightHour}}
 				                            	</template>
                                             </span>
                                         </li>
@@ -655,7 +655,7 @@
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
 	    		var flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //임시저장된 신청서
 	    		
-	    		/* if(flexibleAppl.applStatusCd!=null && flexibleAppl.applStatusCd!='' && flexibleAppl.applStatusCd!='99') {
+	    		if(flexibleAppl.applStatusCd!=null && flexibleAppl.applStatusCd!='' && flexibleAppl.applStatusCd!='99') {
 					//신청화면 전환
 					$("#applyBtn").bind('click', function(){
 						 calendarLeftVue.viewFlexitimeAppl(flexibleAppl);
@@ -664,13 +664,8 @@
 	    			$("#applyBtn").bind('click', function(){
 	    				$this.getFlexitimeList();
 					});
-	    		} */
+	    		}
        		
-	    		//신청화면 전환
-				$("#applyBtn").bind('click', function(){
-					$this.getFlexitimeList();
-				});
-	    		
        		<#else>
 	    		//사용할 근무제 리스트 조회
 				$("#applyBtn").bind('click', function(){
