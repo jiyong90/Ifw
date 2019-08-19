@@ -236,7 +236,10 @@
   		    		//유연근무제 신청 기간 선택
        				//calendar.gotoDate(sYmd);
        				//calendar.select(sYmd);
-        				
+       				
+       				//선소진여부
+       				//Y인 경우엔 평일 휴일 상관없이 출퇴근시간 입력 가능
+       				//N인 경우엔 정해진 휴일엔 입력 못하게끔
   		    		//유연근무 신청 기간이 아닌 날짜와 휴일, 반차는 선택하지 못하게 함.
   	         		calendar.setOption('selectAllow', function(i){
   	         			
@@ -247,11 +250,20 @@
   		  		    		var eYmd = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
   		  		    		eYmd.setDate(eYmd.getDate()+1);
   		  		    		eYmd = moment(eYmd).format('YYYY-MM-DD');
+  		  		    		
+  		  		    		var workDaysOpt = {};
+  		  		    		var selYmd = new Date(i.start);
+  		  		    		
+  		  		    		//휴일
+  		  	         		if(d.hasOwnProperty("workDaysOpt") && d.workDaysOpt!=null && d.workDaysOpt!=undefined && d.workDaysOpt!=''){
+  		  	         			workDaysOpt = JSON.parse(d.workDaysOpt);
+  		  	         		}
   	         			
 	  	  		    		if( moment(sYmd).diff(i.startStr)<=0 && moment(i.startStr).diff(eYmd)<=0
 									&& moment(sYmd).diff(i.endStr)<=0 && moment(i.endStr).diff(eYmd)<=0
 		    						&& moment($this.today).diff(i.startStr)<0 && moment($this.today).diff(i.endStr)<0
-		    						&& $this.empHolidays.indexOf(i.startStr)==-1 ) {
+		    						&& $this.empHolidays.indexOf(i.startStr)==-1
+		    						&& (Object.keys(workDaysOpt).length==0 || Object.keys(workDaysOpt).length>0 && workDaysOpt[selYmd.getDay()+1])) {
 	  	  		    			editYn = true;
 	  	  		    		} else {
 	  	  		    			if(moment(i.startStr).diff(sYmd)<0 || moment(i.startStr).diff(eYmd)>=0) {
@@ -636,7 +648,7 @@
          				flexibleEmpId : calendarLeftVue.flexibleAppl.flexibleEmpId,
          				dayResult : $this.dayResult
 	   		    	};
- 	         			
+         			
    		    		Util.ajax({
 						url: "${rc.getContextPath()}/flexibleEmp/save",
 						type: "POST",
@@ -670,7 +682,7 @@
 	  	  	         		});
 	  	  	         		$("#alertModal").modal("show"); 
 						}
-					}); 
+					});
 
 	         	}
   		    }

@@ -38,10 +38,10 @@
 				//근무계획작성 버튼 컨트롤
 				if(val.toDoPlanDays && Number(val.toDoPlanDays)!=0) {
 					if($("#workPlanBtn").length || $("#workPlanBtn").length==1)
-						$("#workPlanBtn").show();
+						workPlanYn = true;
 				} else {
 					if(!$("#workPlanBtn").length || $("#workPlanBtn").length==0)
-						$("#workPlanBtn").hide();
+						workPlanYn = false;
 				}
 					
 			}

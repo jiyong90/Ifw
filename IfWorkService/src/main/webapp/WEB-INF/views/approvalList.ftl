@@ -26,7 +26,7 @@
 		<p class="page-title">결재 알림</p>
 		<div class="row no-gutters notice-card" v-for="appr in apprList">
 			<div class="col-12 col-md-6 col-lg-9">
-				<div class="rounded-circle notice-mark type01">{{appr.applNm.substr(0,1)}}</div>
+				<div :class="['rounded-circle notice-mark '] + appr.applCd">{{appr.applNm.substr(0,1)}}</div>
 				<div class="inner-wrap">
 					<div class="title">{{appr.applNm}}</div>
 					<div class="desc">

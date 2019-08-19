@@ -105,6 +105,8 @@
                                     <button type="button" class="btn btn-inline btn-plus" @click="addSubYmd"><i class="fas fa-plus"></i>대체일시 추가</button>
                                 </div>
                             </div>
+                            <!-- 회사별 옵션에 따라 대체 휴일 지정하는 방법 다르게 -->
+                            <!-- 
                             <div class="radio-toggle-wrap" style="display:none;">
                                 <hr>
                                 <div class="big-title">8시간의 대체 휴일을 지정하세요.</div>
@@ -139,6 +141,7 @@
                                     </div>
                                 </div>
                             </div>
+                            -->
                         </div>
                         <div class="btn-wrap text-center">
                             <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>

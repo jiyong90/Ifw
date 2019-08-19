@@ -722,7 +722,8 @@
 	    		reason:''
 	    	},
 	    	flexibleAppl: {},
-	    	selectedDate: '${today}'
+	    	selectedDate: '${today}',
+	    	workPlanYn: false
   		},
   		watch: {
   			rangeInfo : function(val, oldVal) {
@@ -777,11 +778,14 @@
 		   	},
 	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보(남색 박스)
 				var $this = this;
-		    		
+		    	
+	    		//근무계획작성 버튼 숨기기
+				$("#workPlanBtn").hide();
+	    	
 				var param = {
    		    		ymd : moment(ymd).format('YYYYMMDD')
    		    	};
-		    		
+				
 		    	Util.ajax({
 					url: "${rc.getContextPath()}/flexibleEmp/range",
 					type: "GET",
@@ -790,8 +794,17 @@
 					dataType: "json",
 					success: function(data) {
 						$this.rangeInfo = {};
+						
 						if(data!=null) {
 							$this.rangeInfo = data;
+							
+							//근무계획작성
+							if(data.hasOwnProperty('workTypeCd') && data.workTypeCd!=null && data.workTypeCd!=undefined && data.workTypeCd!=''
+									&& data.workTypeCd!='BASE' && data.workTypeCd!='WORKTEAM') {
+								$("#workPlanBtn").show();
+							} else {
+								$("#workPlanBtn").hide();
+							}
 						}
 					},
 					error: function(e) {
