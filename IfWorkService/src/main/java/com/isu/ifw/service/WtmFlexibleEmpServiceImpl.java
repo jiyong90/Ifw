@@ -204,7 +204,10 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					result = new WtmWorkDayResult();
 					//부모키 가져오기
 					WtmWorkCalendar c = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd( emp.getTenantId(), emp.getEnterCd(), emp.getSabun(), k);
-					result.setWorkCalendarId(c.getWorkCalendarId());
+					result.setTenantId(c.getTenantId());
+					result.setEnterCd(c.getEnterCd());
+					result.setYmd(c.getYmd());
+					result.setSabun(c.getSabun());
 				}
 				try {
 					Map<String, String> dayResult = (Map<String, String>) dateMap.get(k);

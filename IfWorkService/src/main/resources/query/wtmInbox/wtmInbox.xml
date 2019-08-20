@@ -26,7 +26,10 @@
 						   AND E.SABUN = C.SABUN
 						   AND C.YMD BETWEEN E.SYMD AND E.EYMD
 						  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
-							 ON C.WORK_CALENDAR_ID = R.WORK_CALENDAR_ID
+						    ON C.TENANT_ID = R.TENANT_ID
+						   AND C.ENTER_CD = R.ENTER_CD
+						   AND C.YMD = R.YMD
+						   AND C.SABUN = R.SABUN
 						 WHERE E.TENANT_ID = #{tenantId}
 						   AND E.ENTER_CD = #{enterCd}
 						   AND E.SABUN = #{sabun}

@@ -22,9 +22,16 @@ public class WtmWorkDayResult {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="WORK_DAY_RESULT_ID")
-	private Long workDayResultId;
-	@Column(name="WORK_CALENDAR_ID")
-	private Long workCalendarId;
+	private Long workDayResultId; 
+	@Column(name="TENANT_ID")
+	private Long tenantId;
+	@Column(name="ENTER_CD")
+	private String enterCd;
+	@Column(name="SABUN")
+	private String sabun;
+	@Column(name="YMD")
+	private String ymd;
+	
 	@Column(name="APPL_ID")
 	private Long applId;
 	@Column(name="TIME_TYPE_CD")
@@ -65,12 +72,31 @@ public class WtmWorkDayResult {
 	}
 	public void setWorkDayResultId(Long workDayResultId) {
 		this.workDayResultId = workDayResultId;
+	} 
+	
+	public Long getTenantId() {
+		return tenantId;
 	}
-	public Long getWorkCalendarId() {
-		return workCalendarId;
+	public void setTenantId(Long tenantId) {
+		this.tenantId = tenantId;
 	}
-	public void setWorkCalendarId(Long workCalendarId) {
-		this.workCalendarId = workCalendarId;
+	public String getEnterCd() {
+		return enterCd;
+	}
+	public void setEnterCd(String enterCd) {
+		this.enterCd = enterCd;
+	}
+	public String getSabun() {
+		return sabun;
+	}
+	public void setSabun(String sabun) {
+		this.sabun = sabun;
+	}
+	public String getYmd() {
+		return ymd;
+	}
+	public void setYmd(String ymd) {
+		this.ymd = ymd;
 	}
 	public Long getApplId() {
 		return applId;
