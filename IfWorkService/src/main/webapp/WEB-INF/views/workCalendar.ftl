@@ -266,17 +266,13 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li>
+                                <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taaNames">
                                     <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <span class="sub-desc"></span>
                                     <ul class="sub-desc-list">
-                                        <li>
-                                            <span class="sub-title">오후반차</span>
-                                            <span class="sub-desc">4:00</span>
-                                        </li>
-                                        <li>
-                                            <span class="sub-title">외출</span>
-                                            <span class="sub-desc">2:00</span>
+                                        <li v-for="(taa, idx) in workDayInfo.taaNames.split(',')">
+                                            <span class="sub-title">{{taa}}</span>
+                                            <span class="sub-desc">{{workDayInfo.taaHour.split(',')[idx]}}</span>
                                         </li>
                                     </ul>
                                 </li>
