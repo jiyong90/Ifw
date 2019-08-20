@@ -631,7 +631,7 @@ box-sizing: border-box;
   margin-top: 10px;
   background-color:#ffffff;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.08);
-
+  cursor: pointer;  
 }
 .notice-card .notice-mark{
   float:left;

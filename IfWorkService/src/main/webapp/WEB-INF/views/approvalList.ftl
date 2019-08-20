@@ -1,4 +1,139 @@
 <div id="approval" v-cloak>
+	<!-- 유연근무제신청 상세보기 modal start -->
+    <div class="modal fade show" id="flexibleAppl_SELE" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">유연근무제신청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                    	<div class="modal-app-wrap">
+                            <div class="inner-wrap">
+                                <div class="title">유연근무제 신청일자</div>
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="appl.sYmd">
+                                        	{{moment(appl.sYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="appl.eYmd">
+                                        	{{moment(appl.eYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">근무기간</div>
+                                <div class="desc">
+                                	<template v-if="appl.workDay">
+                                	{{appl.workDay}}
+                                	</template>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">사유</div>
+                                <div class="desc">
+                                	<template v-if="appl.reason">
+                                	{{appl.reason}}
+                                	</template>
+                                </div>
+                            </div>
+                        </div>
+                        <!--  
+                        <div class="btn-wrap text-center">
+                        </div>
+                        -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 유연근무제신청 상세보기 modal end -->
+	<!-- 연장근무신청 상세보기 modal start -->
+    <div class="modal fade show" id="otAppl" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">연장근로신청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap">
+                                <div class="title">연장근로시간</div>
+                                <div class="desc">
+                                    <span class="time-wrap">
+                                        <i class="fas fa-clock"></i>
+                                        <span class="time">
+                                        	<template v-if="appl.otMinute">
+                                        		{{minuteToHHMM(appl.otMinute, 'detail')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="appl.otSdate">
+                                        	{{moment(appl.otSdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="start-time">
+                                        	<template v-if="appl.otSdate">
+                                        	{{moment(appl.otSdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="appl.otEdate">
+                                        	{{moment(appl.otEdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="end-time">
+                                        	<template v-if="appl.otEdate">
+                                        	{{moment(appl.otEdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">사유구분</div>
+                                <div class="desc">
+                                	<template v-if="appl.reasonNm">
+                                	{{appl.reasonNm}}
+                                	</template>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">설명</div>
+                                <div class="desc">
+                                	<template v-if="appl.reason">
+                                	{{appl.reason}}
+                                	</template>
+                                </div>
+                            </div>
+                            <!--<hr class="bar">-->
+                        </div>
+                        <!--  
+                        <div class="btn-wrap text-center">
+                        </div>
+                        -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 연장근무신청 상세보기 modal end -->
 	<!-- 결재의견 modal start -->
 	<div class="modal fade" id="apprOpinionModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
@@ -25,7 +160,7 @@
 	<div class="container-fluid">
 		<p class="page-title">결재 알림</p>
 		<div class="row no-gutters notice-card" v-for="appr in apprList">
-			<div class="col-12 col-md-6 col-lg-9">
+			<div class="col-12 col-md-6 col-lg-9" @click="viewAppl(appr)">
 				<div :class="['rounded-circle notice-mark '] + appr.applCd">{{appr.applNm.substr(0,1)}}</div>
 				<div class="inner-wrap">
 					<div class="title">{{appr.applNm}}</div>
@@ -55,12 +190,37 @@
    		el: "#approval",
    		data : {
    			apprList: [],
-   			apprOpinion: ''
+   			apprOpinion: '',
+   			appl: {}
    		},
 	    mounted: function(){
 	    	this.getApprovalList();
 	    },
 	    methods : {
+	    	minuteToHHMM : function (min, type) {
+	    		if(min!=null && min!=undefined && min!='') {
+		    		if(type==null || type=='')
+			   	    	type='short';
+		    		
+			   	    var min = Number(min);
+			   	    var hours   = Math.floor(min / 60);
+			   	    var minutes = Math.floor(min - (hours * 60));
+		
+			   	 	if(type=='detail') {
+			   	 		var h = hours==0?'':hours+'시간 ';
+			   	 		var m = minutes==0?'':minutes+'분';
+			   	    	return h+''+m;
+			   	 	}
+			   	    	
+			   	    if (hours   < 10) {hours   = "0"+hours;}
+			   	    if (minutes < 10) {minutes = "0"+minutes;}
+			   	    
+			   	    if(type=='short')
+			   	   		return hours+':'+minutes;
+	    		} else {
+	    			return '';
+	    		}
+		   	},
 	    	getApprovalList: function(){
 	    		var $this = this;
 	    		
@@ -79,6 +239,68 @@
 					},
 					error: function(e) {
 						$this.apprList = [];
+					}
+				});
+	    	},
+	    	viewAppl: function(appr){
+	    		if(appr.applCd=='OT') {
+	    			//연장근무신청서
+	    			this.getOTAppl(appr.applId);
+	    		} else if(appr.applCd=='SELE_F' || appr.applCd=='SELE_C') {
+	    			//선근제 신청서
+	    			this.getFlexibleSeleAppl(appr.applId);
+	    		}
+	    	},
+	    	getOTAppl: function(applId){
+         		var $this = this;
+         		
+         		var param = {
+         			applId: applId	
+         		};
+         		
+         		Util.ajax({
+					url: "${rc.getContextPath()}/otAppl",
+					type: "GET",
+					contentType: 'application/json',
+					data: param,
+					dataType: "json",
+					success: function(data) {
+						$this.appl = {};
+						if(data!=null) {
+							$this.appl = data;
+							$("#otAppl").modal("show"); 
+						}
+					},
+					error: function(e) {
+						console.log(e);
+						$this.appl = {};
+					}
+				});
+					
+	    	},
+	    	getFlexibleSeleAppl: function(applId){
+	    		var $this = this;
+	         	
+         		var param = {
+         			applId: applId
+         		};
+         		
+         		Util.ajax({
+					url: "${rc.getContextPath()}/flexibleAppl",
+					type: "GET",
+					contentType: 'application/json',
+					dataType: "json",
+					data: param,
+					success: function(data) {
+						$this.appl = {};
+						if(data!=null) {
+							$this.appl = data;
+							$("#flexibleAppl_SELE").modal("show");
+						}
+						
+					},
+					error: function(e) {
+						$this.flexibleAppl = {};
 					}
 				});
 	    	},

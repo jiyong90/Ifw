@@ -4,7 +4,8 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                    <h5 class="modal-title">연장근로신청</h5>
+                    <h5 class="modal-title" v-if="result.holidayYn!='Y'">연장근로신청</h5>
+                    <h5 class="modal-title" v-else>휴일근로신청</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -15,7 +16,8 @@
                             <div class="inner-wrap">
                                 <div class="desc row">
                                     <div class="col-sm-12 col-md-12 col-lg-2">
-                                        <div class="title">연장근로시간</div>
+                                        <div class="title" v-if="result.holidayYn!='Y'">연장근로시간</div>
+                                        <div class="title" v-else>휴일근로시간</div>
                                         <span class="time-wrap">
                                             <i class="fas fa-clock"></i>
                                             <span id="overtime" class="time"></span>
