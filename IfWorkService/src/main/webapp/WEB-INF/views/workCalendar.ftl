@@ -1087,7 +1087,7 @@
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("확인요청 되었습니다.");
 							} else {
-								$("#alertText").html("확인요청 시 오류가 발생했습니다.");
+								$("#alertText").html(data.message);
 							}
 							$("#alertModal").on('hidden.bs.modal',function(){
 								location.reload();

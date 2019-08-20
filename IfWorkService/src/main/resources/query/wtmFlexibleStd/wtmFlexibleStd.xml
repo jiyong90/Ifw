@@ -42,6 +42,8 @@
 			UNION
 		   SELECT COUNT(*)
 		     FROM WTM_FLEXIBLE_EMP A
+		     JOIN WTM_FLEXIBLE_STD_MGR M
+		       ON A.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
 			 JOIN (
 				SELECT A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F.SYMD, F.EYMD
 				  FROM WTM_APPL A
@@ -51,6 +53,7 @@
 			  	) X
 			   ON A.TENANT_ID = X.TENANT_ID AND A.ENTER_CD = X.ENTER_CD AND A.SABUN = X.APPL_SABUN
             WHERE  (X.SYMD <= A.EYMD OR X.EYMD <= A.SYMD)
+              AND M.BASE_WORK_YN = 'N' 
             ) XX
         ]]>
     </select>
