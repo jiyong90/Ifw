@@ -266,10 +266,10 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li>
+                                <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taaNames">
                                     <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <span class="sub-desc"></span>
-                                    <ul class="sub-desc-list" v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taaNames">
+                                    <ul class="sub-desc-list">
                                         <li v-for="(taa, idx) in workDayInfo.taaNames.split(',')">
                                             <span class="sub-title">{{taa}}</span>
                                             <span class="sub-desc">{{workDayInfo.taaHour.split(',')[idx]}}</span>
