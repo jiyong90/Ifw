@@ -269,14 +269,10 @@
                                 <li>
                                     <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <span class="sub-desc"></span>
-                                    <ul class="sub-desc-list">
-                                        <li>
-                                            <span class="sub-title">오후반차</span>
-                                            <span class="sub-desc">4:00</span>
-                                        </li>
-                                        <li>
-                                            <span class="sub-title">외출</span>
-                                            <span class="sub-desc">2:00</span>
+                                    <ul class="sub-desc-list" v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taaNames">
+                                        <li v-for="(taa, idx) in workDayInfo.taaNames.split(',')">
+                                            <span class="sub-title">{{taa}}</span>
+                                            <span class="sub-desc">{{workDayInfo.taaHour.split(',')[idx]}}</span>
                                         </li>
                                     </ul>
                                 </li>
@@ -1087,7 +1083,7 @@
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("확인요청 되었습니다.");
 							} else {
-								$("#alertText").html("확인요청 시 오류가 발생했습니다.");
+								$("#alertText").html(data.message);
 							}
 							$("#alertModal").on('hidden.bs.modal',function(){
 								location.reload();
