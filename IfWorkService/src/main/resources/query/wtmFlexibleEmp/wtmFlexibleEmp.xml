@@ -656,28 +656,12 @@
 	    			, DATE_FORMAT(C.APPR_EDATE, '%Y%m%d%H%i%s') as apprEdate
 	    			, C.APPR_MINUTE as apprMinute
 	    			, C.WORK_YN as workYn
-<<<<<<< HEAD
-=======
-	    			, D.WORK_CALENDAR_ID as workCalendarId
-	    			, E.FLEXIBLE_EMP_ID as flexibleEmpId
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 			  FROM WTM_WORK_DAY_RESULT C
-<<<<<<< HEAD
 		    WHERE C.YMD = #{ymd} 
 		       AND C.TENANT_ID = #{tenantId} 
 			   AND C.ENTER_CD = #{enterCd} 
 			   AND C.SABUN = #{sabun} 
 		]]>
-=======
-			  JOIN WTM_WORK_CALENDAR D
-			    ON C.TENANT_ID = D.TENANT_ID
-			   AND C.ENTER_CD = D.ENTER_CD
-			   AND C.YMD = D.YMD
-			   AND C.SABUN = D.SABUN
-		    	JOIN WTM_FLEXIBLE_EMP E
-		    	ON D.TENANT_ID = E.TENANT_ID AND D.ENTER_CD = E.ENTER_CD AND D.SABUN = E.SABUN AND D.YMD BETWEEN E.SYMD AND E.EYMD
-			 WHERE D.WORK_CALENDAR_ID = #{workCalendarId}
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
     </select>
     
     <select id="getWorkHour" parameterType="map" resultType="hashmap" >
