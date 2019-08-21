@@ -1,7 +1,7 @@
 <div id="dayCalendar" class="calendar-wrap" v-cloak>
     <div id='calendar-container'>
 		<!-- <full-calendar ref="fullCalendar" :header="header" :events="events" :eventsources="eventSources" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" ></full-calendar> -->
-		<full-calendar ref="fullCalendar" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @dayrender="dayRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">
@@ -64,7 +64,7 @@
 									});
 								}
 								
-								//일근무결과 달력에 표기
+								//근태 정보 달력에 표기
 								if(Object.keys($this.dayWorks).length>0) {
 			  	         			$.each($this.dayWorks, function(k, v){
 					  	         		v.map(function(dayWork){
@@ -86,7 +86,7 @@
 					  	         			}
 					  	         		});
 			  	         			});
-								}
+								} 
 					  	         	
 							},
 							error: function() {
@@ -96,6 +96,10 @@
 	   		    		
 	  		    	}
   		    		
+  		    	},
+  		    	dayRenderCallback : function(info){ //day render
+  		    		var date = info.date;
+  	         		$('td').find(".fc-day-top[data-date='"+moment(date).format('YYYY-MM-DD')+"'] .fc-day-number").text(moment(date).format('D'));
   		    	},
   		    	selectCallback : function(info){ //day select
 					var $this = this;

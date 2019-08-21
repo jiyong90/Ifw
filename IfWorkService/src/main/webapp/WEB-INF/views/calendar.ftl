@@ -230,9 +230,9 @@
 				calendarOptions.datesRender = function(info){
 					$this.datesRenderCallback(info);
 				};
-				//calendarOptions.dayRender = function(dayRenderInfo){
-				//	$this.dayRenderCallback(dayRenderInfo);
-				//};
+				calendarOptions.dayRender = function(dayRenderInfo){
+					$this.dayRenderCallback(dayRenderInfo);
+				};
 				calendarOptions.select = function(info){
 					$this.selectCallback(info);
 				};
@@ -269,18 +269,17 @@
         	datesRenderCallback: function(info){
         		this.$emit('datesrender', info);
         	},
-        	/* ,
         	dayRenderCallback: function(dayRenderInfo){
         		
-        		var formattedDate = this.cal.formatDate(dayRenderInfo.date, {
+        		/* var formattedDate = this.cal.formatDate(dayRenderInfo.date, {
 	    			year: 'numeric',
 	    			month: '2-digit',
 	    			day: 'numeric'
 	    		});
-        		dayRenderInfo.date = formattedDate;
+        		dayRenderInfo.date = formattedDate; */
         		
         		this.$emit('dayrender', dayRenderInfo);
-        	} */
+        	},
         	selectCallback: function(info){
         		this.$emit('select', info);
         	},

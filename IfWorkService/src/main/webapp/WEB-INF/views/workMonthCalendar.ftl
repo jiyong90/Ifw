@@ -6,7 +6,7 @@
 		</span>
 	</div>
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :header="header" :navlinks="t" :events="events" @update="renderCallback" @navlinkdayclick="navLinkDayClickCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :header="header" :navlinks="t" :events="events" @update="renderCallback" @navlinkdayclick="navLinkDayClickCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @dayrender="dayRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
 </div>
 
@@ -146,8 +146,8 @@
 	    	},
 	    	eventClickCallback : function(info){
 	    	},
-	    	dayRenderCallback : function(dayRenderInfo){ //day render
-	    		var date = dayRenderInfo.date;
+	    	dayRenderCallback : function(info){ //day render
+	    		var date = info.date;
          		$('td').find(".fc-day-top[data-date='"+moment(date).format('YYYY-MM-DD')+"'] .fc-day-number").text(moment(date).format('D'));
          	},
          	addEvent : function(Obj){
