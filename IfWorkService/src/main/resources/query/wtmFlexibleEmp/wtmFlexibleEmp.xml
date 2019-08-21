@@ -177,42 +177,29 @@
     
     <!--해당 일의 근무시간 정보 -->
   	<select id="getFlexibleWorkTimeInfo" parameterType="map" resultType="map">
-	   SELECT C.TENANT_ID as tenantId
-	        , C.ENTER_CD as enterCd
-	        , C.SABUN as sabun
-	        , C.YMD as ymd
-	        , E.FLEXIBLE_EMP_ID as flexibleEmpId
-	        , C.TIME_CD_MGR_ID as timeCdMgrId
-	        , C.ENTRY_SDATE as entrySdate
-	        , C.ENTRY_STYPE_CD as entryStypeCd
-	        , C.ENTRY_EDATE as entryEdate
-	        , C.ENTRY_ETYPE_CD as entryEtypeCd
-	        , C.WORK_CLOSE_YN as workCloseYn
-	        , C.HOLIDAY_YN as holidayYn
-	        , R.WORK_DAY_RESULT_ID as workDayResultId
-	        , R.APPL_ID as applId
-	        , R.TIME_TYPE_CD AS timeTypeCd
-	        , R.TAA_CD AS taaCd
-	        , GROUP_CONCAT(F_WTM_GET_TAA_CODE_NM(C.TENANT_ID, C.ENTER_CD, R.TAA_CD, C.YMD) SEPARATOR ',')  AS taaNames
-	        , R.PLAN_SDATE AS planSdate
-	        , R.PLAN_EDATE AS planEdate
-	        , R.PLAN_MINUTE AS planMinute
-	        , R.APPR_SDATE AS apprSdate
-	        , R.APPR_EDATE AS apprEdate
-	        , CASE WHEN R.TIME_TYPE_CD='BASE' THEN R.APPR_MINUTE ELSE 0 END AS apprBaseMinute
-	        , CASE WHEN R.TIME_TYPE_CD='OT' THEN R.APPR_MINUTE ELSE 0 END AS apprOtMinute
+	   SELECT F_WTM_GET_TAA_NAMES(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 2)  AS taaNames
+		     , MIN(C.ENTRY_SDATE) as entrySdate
+		     , MAX(C.ENTRY_EDATE) as entryEdate
+		     , MIN(R.PLAN_SDATE) AS planSdate
+		     , MAX(R.PLAN_EDATE) AS planEdate
+		     , SUM(R.PLAN_MINUTE) AS planMinute
+		     , MIN(R.APPR_SDATE) AS apprSdate
+		     , MAX(R.APPR_EDATE) AS apprEdate
+		     , SUM(R.APPR_MINUTE) AS apprMinute
+		     , SUM(CASE WHEN R.TIME_TYPE_CD='BASE' THEN F_WTM_NVL(R.APPR_MINUTE,R.PLAN_MINUTE) ELSE 0 END) AS apprBaseMinute
+		     , SUM(CASE WHEN R.TIME_TYPE_CD='OT' THEN F_WTM_NVL(R.APPR_MINUTE,R.PLAN_MINUTE) ELSE 0 END) AS apprOtMinute
 		  FROM WTM_WORK_CALENDAR C
 		  JOIN WTM_WORK_DAY_RESULT R
 		    ON C.TENANT_ID = R.TENANT_ID
 		   AND C.ENTER_CD = R.ENTER_CD
 		   AND C.YMD = R.YMD
 		   AND C.SABUN = R.SABUN
-		  JOIN WTM_FLEXIBLE_EMP E
-		    ON C.TENANT_ID = E.TENANT_ID AND C.ENTER_CD = E.ENTER_CD AND C.SABUN = E.SABUN AND C.YMD BETWEEN E.SYMD AND E.EYMD
-		 WHERE C.YMD = #{ymd}
-		   AND C.SABUN = #{sabun}
-		   AND C.TENANT_ID = #{tenantId}
-		   AND C.ENTER_CD = #{enterCd}
+		 WHERE R.YMD = #{ymd}
+		   AND R.SABUN = #{sabun}
+		   AND R.ENTER_CD = #{enterCd}
+		   AND R.TENANT_ID = #{tenantId}
+		   AND R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS')
+		GROUP BY R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD
   	</select>
 
 	<select id="getFlexibleEmp" parameterType="map" resultType="wtmFlexibleEmp">
