@@ -145,7 +145,7 @@ public interface WtmFlexibleEmpService {
 	 * @param workCalendarId
 	 * @return
 	 */
-	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, Long workCalendarId);
+	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, String sabun, String ymd);
 	
 	/**
 	 * 일별상세 리스트 저장(관리자용)

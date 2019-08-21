@@ -470,11 +470,14 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	 * @return
 	 */
 	@Override
-	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, Long workCalendarId) {
+	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, String sabun, String ymd) {
 		List<Map<String, Object>> workDayResult = null;
 		try {
 			Map<String, Object> paramMap = new HashMap();
-			paramMap.put("workCalendarId", workCalendarId);
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
 			
 			workDayResult = flexEmpMapper.getWorkDayResultByCalendarId(paramMap);
 		} catch (Exception e) {

@@ -103,6 +103,8 @@ public class WtmWorkteamEmpController {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		//근무조 저장 후 프로시저 호출 
+		//P_WTM_FLEXIBLE_EMP_RESET
 		
 		return rp;
 	}

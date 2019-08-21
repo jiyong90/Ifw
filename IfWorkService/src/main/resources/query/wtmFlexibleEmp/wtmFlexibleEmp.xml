@@ -657,6 +657,7 @@
     </select>
     
   	<select id="getWorkDayResultByCalendarId" parameterType="map" resultType="hashmap" >
+  	 	<![CDATA[
 	    	SELECT C.WORK_DAY_RESULT_ID as workDayResultId
 	    			, C.APPL_ID as applId
 	    			, C.TIME_TYPE_CD as timeTypeCd
@@ -668,17 +669,12 @@
 	    			, DATE_FORMAT(C.APPR_EDATE, '%Y%m%d%H%i%s') as apprEdate
 	    			, C.APPR_MINUTE as apprMinute
 	    			, C.WORK_YN as workYn
-	    			, C.WORK_CALENDAR_ID as workCalendarId
-	    			, E.FLEXIBLE_EMP_ID as flexibleEmpId
 			  FROM WTM_WORK_DAY_RESULT C
-			  JOIN WTM_WORK_CALENDAR D
-			    ON C.TENANT_ID = D.TENANT_ID
-			   AND C.ENTER_CD = D.ENTER_CD
-			   AND C.YMD = D.YMD
-			   AND C.SABUN = D.SABUN
-		    	JOIN WTM_FLEXIBLE_EMP E
-		    	ON D.TENANT_ID = E.TENANT_ID AND D.ENTER_CD = E.ENTER_CD AND D.SABUN = E.SABUN AND D.YMD BETWEEN E.SYMD AND E.EYMD
-			 WHERE C.WORK_CALENDAR_ID = #{workCalendarId}
+		    WHERE C.YMD = #{ymd} 
+		       AND C.TENANT_ID = #{tenantId} 
+			   AND C.ENTER_CD = #{enterCd} 
+			   AND C.SABUN = #{sabun} 
+		]]>
     </select>
     
     <select id="getWorkHour" parameterType="map" resultType="hashmap" >

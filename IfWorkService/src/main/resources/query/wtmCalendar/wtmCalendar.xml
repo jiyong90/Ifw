@@ -51,8 +51,6 @@
 				F_WTM_GET_EMP_CODE_NM(#{tenantId}, #{enterCd}, A.SABUN, 'ORG_CD', date_format(now(),'%Y%m%d')) AS orgNm,
 				F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, A.SABUN, date_format(now(),'%Y%m%d')) AS empNm,
 				A.YMD as ymd, 
-				A.FLEXIBLE_EMP_ID as flexibleEmpId, 
-				B.FLEXIBLE_STD_MGR_ID as flexibleStdMgrId,
 				A.TIME_CD_MGR_ID as timeCdMgrId,
 				A.ENTRY_SDATE as entrySdate,
 				A.ENTRY_STYPE_CD as entryStypeCd,
@@ -60,10 +58,27 @@
 				A.ENTRY_ETYPE_CD as enteryEtypeCd,
 				A.WORK_CLOSE_YN as workCloseYn,
 				A.HOLIDAY_YN as holidayYn,
-				A.NOTE as note
-				FROM WTM_WORK_CALENDAR A
-			JOIN WTM_FLEXIBLE_EMP B ON B.FLEXIBLE_EMP_ID=A.FLEXIBLE_EMP_ID
-			WHERE YMD BETWEEN #{sYmd} AND #{eYmd}
+				A.NOTE as note,
+				B.FLEXIBLE_STD_MGR_ID as flexibleStdMgrId,
+				D.EMP_NM as empNm,
+				CASE WHEN A.YMD > date_format(now(),'%Y%m%d') THEN SUM(PLAN_MINUTE)
+					 WHEN A.YMD < date_format(now(),'%Y%m%d') THEN SUM(APPR_MINUTE)
+					 WHEN (A.YMD = date_format(now(),'%Y%m%d') && A.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
+					 ELSE SUM(PLAN_MINUTE) END AS totTime
+			FROM WTM_WORK_CALENDAR A
+			JOIN WTM_FLEXIBLE_EMP B
+				ON B.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=B.ENTER_CD AND A.SABUN=B.SABUN AND A.YMD BETWEEN B.SYMD AND B.EYMD
+			LEFT JOIN WTM_WORK_DAY_RESULT C
+				ON C.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=C.ENTER_CD AND A.SABUN=C.SABUN AND C.YMD = A.YMD 
+			JOIN WTM_EMP_HIS D
+				ON D.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN=D.SABUN AND date_format(now(),'%Y%m%d') BETWEEN D.SYMD AND D.EYMD 
+			WHERE A.YMD BETWEEN #{sYmd} AND #{eYmd} 
+		]]>
+		<if test="searchKeyword!=null and !searchKeyword.equals('')">
+			AND (A.SABUN LIKE CONCAT('%', #{searchKeyword}, '%') OR D.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%'))
+		</if>
+		<![CDATA[
+			GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
 			ORDER BY YMD DESC
         ]]>
     </select>

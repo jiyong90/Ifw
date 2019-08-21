@@ -96,11 +96,13 @@ public class WtmCalendarController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String sYmd = paramMap.get("sYmd").toString();
 		String eYmd = paramMap.get("eYmd").toString();
+		String searchKeyword = paramMap.get("searchKeyword").toString();
 		
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sYmd", sYmd);
 		paramMap.put("eYmd", eYmd);
+		paramMap.put("searchKeyword", searchKeyword);
 		
 		rp.setSuccess("");
 	
