@@ -32,7 +32,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	WtmTimeBreakMgrRepository timeBreakMgrRepository; 
 
 	@Override
-	public List<Map<String, Object>> getTimeCdMgtList(Long tenantId, String enterCd,  Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getTimeCdMgrList(Long tenantId, String enterCd,  Map<String, Object> paramMap) {
 		List<Map<String, Object>> timeList = new ArrayList();	
 				List<WtmTimeCdMgr> list = timeCdMgrRepository.findByTenantIdAndEnterCd(tenantId, enterCd,paramMap.containsKey("sYmd")?paramMap.get("sYmd").toString():"");
 		
@@ -118,7 +118,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	}
 	
 	@Override
-	public List<Map<String, Object>> getTimeBreakMgtList(Long tenantId, String enterCd,  Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getTimeBreakMgrList(Long tenantId, String enterCd,  Map<String, Object> paramMap) {
 		List<Map<String, Object>> timeBreakList = new ArrayList();	
 		System.out.println("timecdmgrid : " + paramMap.get("timeCdMgrId").toString());
 		List<WtmTimeBreakMgr> list = timeBreakMgrRepository.findByTimeCdMgrId(paramMap.get("timeCdMgrId").toString());
@@ -138,7 +138,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	}
 	
 	@Override
-	public int setTimeBreakMgtList(Long userId, Map<String, Object> convertMap) {
+	public int setTimeBreakMgrList(Long userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {

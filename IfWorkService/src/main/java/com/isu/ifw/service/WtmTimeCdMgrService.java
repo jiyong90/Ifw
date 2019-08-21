@@ -16,12 +16,12 @@ import com.isu.option.vo.ReturnParam;
 @Service("WtmTimeCdMgrService")
 public interface WtmTimeCdMgrService{
 	
-	public List<Map<String, Object>> getTimeCdMgtList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+	public List<Map<String, Object>> getTimeCdMgrList(Long tenantId, String enterCd, Map<String, Object> paramMap);
 	
 	public int setTimeCodeMgrList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
 	
-	public List<Map<String, Object>> getTimeBreakMgtList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+	public List<Map<String, Object>> getTimeBreakMgrList(Long tenantId, String enterCd, Map<String, Object> paramMap);
 	
-	public int setTimeBreakMgtList(Long userId, Map<String, Object> convertMap);
+	public int setTimeBreakMgrList(Long userId, Map<String, Object> convertMap);
 	
 }

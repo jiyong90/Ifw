@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -15,27 +16,25 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="WTM_CODE")
-public class WtmCode {
+@Table(name="WTM_CODE_GRP")
+public class WtmCodeGrp {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="CODE_ID")
-	private Long codeId;
+	@Column(name="CODE_GRP_ID")
+	private Long codeGrpId;
 	@Column(name="TENANT_ID")
 	private Long tenantId;
 	@Column(name="ENTER_CD")
 	private String enterCd;
 	@Column(name="GRP_CODE_CD")
 	private String grpCodeCd;
-	@Column(name="CODE_CD")
-	private String codeCd;
-	@Column(name="CODE_NM")
-	private String codeNm;
-	@Column(name="SYMD")
-	private String symd;
-	@Column(name="EYMD")
-	private String eymd;
+	@Column(name="GRP_CODE_NM")
+	private String grpCodeNm;
+	@Column(name="EDIT_YN")
+	private String editYn;
+	@Column(name="USED_YN")
+	private String usedYn;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -45,118 +44,73 @@ public class WtmCode {
 	@Column(name="UPDATE_ID")
 	private Long updateId;
 
-	
-	public Long getCodeId() {
-		return codeId;
+	public Long getCodeGrpId() {
+		return codeGrpId;
 	}
-
-
-	public void setCodeId(Long codeId) {
-		this.codeId = codeId;
+	public void setCodeGrpId(Long codeGrpId) {
+		this.codeGrpId = codeGrpId;
 	}
-
-
 	public Long getTenantId() {
 		return tenantId;
 	}
-
-
 	public void setTenantId(Long tenantId) {
 		this.tenantId = tenantId;
 	}
-
-
 	public String getEnterCd() {
 		return enterCd;
 	}
-
-
 	public void setEnterCd(String enterCd) {
 		this.enterCd = enterCd;
 	}
-
-
 	public String getGrpCodeCd() {
 		return grpCodeCd;
 	}
-
-
 	public void setGrpCodeCd(String grpCodeCd) {
 		this.grpCodeCd = grpCodeCd;
 	}
-
-
-	public String getCodeCd() {
-		return codeCd;
+	public String getGrpCodeNm() {
+		return grpCodeNm;
 	}
-
-
-	public void setCodeCd(String codeCd) {
-		this.codeCd = codeCd;
+	public void setGrpCodeNm(String grpCodeNm) {
+		this.grpCodeNm = grpCodeNm;
 	}
-
-
-	public String getCodeNm() {
-		return codeNm;
+	public String getEditYn() {
+		return editYn;
 	}
-
-
-	public void setCodeNm(String codeNm) {
-		this.codeNm = codeNm;
+	public void setEditYn(String editYn) {
+		this.editYn = editYn;
 	}
-
-
-	public String getSymd() {
-		return symd;
+	public String getUsedYn() {
+		return usedYn;
 	}
-
-
-	public void setSymd(String symd) {
-		this.symd = symd;
+	public void setUsedYn(String usedYn) {
+		this.usedYn = usedYn;
 	}
-
-
-	public String getEymd() {
-		return eymd;
-	}
-
-
-	public void setEymd(String eymd) {
-		this.eymd = eymd;
-	}
-
-
 	public String getNote() {
 		return note;
 	}
-
-
 	public void setNote(String note) {
 		this.note = note;
 	}
-
-
 	public Date getUpdateDate() {
 		return updateDate;
 	}
-
-
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-
-
 	public Long getUpdateId() {
 		return updateId;
 	}
-
-
 	public void setUpdateId(Long updateId) {
 		this.updateId = updateId;
 	}
-
-
+	
 	@PrePersist
+    protected void onCreate() {
+		this.updateDate = new Date();
+    }
+
+	@PreUpdate
     protected void onUpdate() {
 		this.updateDate = new Date();
     }

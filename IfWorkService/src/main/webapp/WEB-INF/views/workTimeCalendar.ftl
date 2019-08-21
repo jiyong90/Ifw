@@ -477,6 +477,8 @@
   	         	viewOvertimeApplDetail: function(applId){
   	         		var $this = this;
   	         		
+  	         		console.log(applId);
+  	         		
   	         		var param = {
   	         			applId: applId	
   	         		};

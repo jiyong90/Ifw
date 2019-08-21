@@ -23,7 +23,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title">
-							<li id="txt" class="txt">근무유형관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
+							<li id="txt" class="txt">그룹코드관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
 							<ul>
 								<li class="btn">
 									<a href="javascript:doAction1('Insert')" class="basic authA">입력</a>
@@ -39,7 +39,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title">
-							<li id="txt" class="txt">휴식시간관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
+							<li id="txt" class="txt">공통코드관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
 							<ul>
 								<li class="btn">
 									<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
@@ -67,19 +67,13 @@
 			{Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
    			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
-			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"oId",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"codeGrpId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"근무유형코드",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCd",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"근무유형명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"시작일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"symd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
-			{Header:"종료일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"eymd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
-			{Header:"휴일여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holYn",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"기본근무\n시작시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workShm",			KeyField:1,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"기본근무\n종료시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workEhm",			KeyField:1,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"지각체크\n여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"lateChkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"조퇴체크\n여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"leaveChkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"결근체크\n여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"absenceChkYn",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"그룹코드",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"grpCodeCd",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"그룹코드명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"grpCodeNm",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"수정여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"editYn",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"사용여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"usedYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 		]; 
 		
@@ -87,7 +81,6 @@
 		sheet1.SetEditable(true);
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
-		sheet1.SetCountPosition(8);
 		
 		var initdata2 = {};
 		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -97,12 +90,14 @@
             {Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
    			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
-			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeBreakMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"upid",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"휴식코드",  		Type:"Combo",     	Hidden:0,   Width:70,  Align:"Center",  ColMerge:0, SaveName:"breakTimeCd",  KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:0,  InsertEdit:1,  EditLen:100  },
-            {Header:"시작시각",		Type:"Text",	  Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"shm", 	 KeyField:1,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"종료시각",		Type:"Text",	  Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"ehm",	 KeyField:1,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"순서",			Type:"Int",	      Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"seq",	 KeyField:1,	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"codeId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"그룹코드",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"grpCodeCd",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"코드",			Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"codeCd",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"코드명",			Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"codeNm",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"시작일",			Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"symd",			KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"종료일",			Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"eymd",			KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",			Type:"Text",	  Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 			
         ];
@@ -111,10 +106,6 @@
 		sheet2.SetVisible(true);
 		sheet2.SetUnicodeByte(3);
         
-		//휴식코드
-		var breakCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "BREAK_TIME_CD"), "선택");
-		sheet2.SetColProperty("breakTimeCd", {ComboText:breakCdList[0], ComboCode:breakCdList[1]} );
-
 		sheetInit();
 		doAction1("Search");
 	});
@@ -122,17 +113,18 @@
    	function doAction1(sAction) {
 		switch (sAction) {
 		case "Search":
-			sheet1.DoSearch( "${rc.getContextPath()}/timeCdMgr/list" , $("#sheetForm").serialize());
+			sheet1.DoSearch( "${rc.getContextPath()}/code/listGrp" , $("#sheetForm").serialize());
 			break;
 		
 		case "Save":
-			if(!dupChk(sheet1,"tenantId|enterCd|timeCd|symd", false, true)){break;}
+			if(!dupChk(sheet1,"tenantId|enterCd|grpCodeCd", false, true)){break;}
 			IBS_SaveName(document.sheetForm,sheet1);
-			sheet1.DoSave("${rc.getContextPath()}/timeCdMgr/save", $("#sheetForm").serialize()); break;
+			sheet1.DoSave("${rc.getContextPath()}/code/saveGrp", $("#sheetForm").serialize()); break;
 			break;
 			
 		case "Insert":
-			sheet1.DataInsert(0) ;
+			var row = sheet1.DataInsert(0) ;
+			// alert(sheet1.GetRowEditable(row)); 
 			break;
 		}
 	}
@@ -140,22 +132,22 @@
 	function doAction2(sAction) {
 		switch (sAction) {
 		case "Search":
-			var param = "timeCdMgrId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
-			sheet2.DoSearch( "${rc.getContextPath()}/timeCdMgr/breakList" , param);
+			var param = "grpCodeCd="+sheet1.GetCellValue( sheet1.GetSelectRow(), "grpCodeCd");
+			sheet2.DoSearch( "${rc.getContextPath()}/code/listWeb" , param);
 			break;
 		
 		case "Save":
 			IBS_SaveName(document.sheetForm,sheet2);
-			sheet2.DoSave("${rc.getContextPath()}/timeCdMgr/breakSave", $("#sheetForm").serialize()); break;
+			sheet2.DoSave("${rc.getContextPath()}/code/save", $("#sheetForm").serialize()); break;
 			break;
 			
 		case "Insert":
-			var timeCdMgrId = sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
-			if(timeCdMgrId == ""){
-				alert("근무유형 저장 후 휴식시간을 입력하셔야 합니다");
+			var grpCodeCd = sheet1.GetCellValue( sheet1.GetSelectRow(), "grpCodeCd");
+			if(grpCodeCd == ""){
+				alert("그룹코드 저장 후 공통코드를 입력하셔야 합니다");
 			} else {
 				var row = sheet2.DataInsert(0) ;
-				sheet2.SetCellValue(row, "timeCdMgrId" , timeCdMgrId);
+				sheet2.SetCellValue(row, "grpCodeCd" , grpCodeCd);
 				// alert(sheet2.GetRowEditable(row));
 				// alert(sheet2.GetColEditable(row, "codeCd") + ", " + sheet2.GetColEditable(row, "codeNm"));
 			}

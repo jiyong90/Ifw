@@ -106,12 +106,12 @@
   		    		selEymd = moment(selEymd).format('YYYY-MM-DD');
   		    		
   		    		//선택한 유연근무제
-  		    		var selectedFlex = {};
+  		    		/* var selectedFlex = {};
   		    		$this.data.map(function(d){
   		    			if(moment(d.sYmd).diff(selSymd)<=0 && moment(selEymd).diff(d.eYmd)<=0)
   		    				selectedFlex = d;
   		    		});
-  		    		calendarLeftVue.flexibleAppl = selectedFlex;
+  		    		calendarLeftVue.flexibleAppl = selectedFlex; */
   		    		
   		    		//focus out
   		    		if($this.selectedWorkday.start!=selSymd && $('#startTime:focus').length>0) {
@@ -119,17 +119,16 @@
   		    		}
   		    		
   		    		//선택한 날짜 
-					$this.selectedWorkday  = {
+					/* $this.selectedWorkday  = {
 	    				start: selSymd,
 	    				end: selEymd
-	    			};
+	    			}; */
   		    		
   		    		var dayNum = moment(info.endStr).diff(info.startStr, 'days');
   		    		//선택한 날짜가 1일인 경우 저장된 데이터가 있으면 출/퇴근 시간 표기
   		    		//선택한 날짜가 기간인 경우 clear
   	         		if(dayNum==1) {
   		    			if(Object.keys($this.dayResult).length>0 && $this.dayResult.hasOwnProperty(moment(info.startStr).format('YYYYMMDD'))) {
-  		    				console.log('잉?');
   		    				//작성중인 근무 계획(저장할 데이터)
   		    				var day = moment(info.startStr).format('YYYYMMDD');
   		    				var valueMap = $this.dayResult[day];
@@ -247,9 +246,28 @@
        				//N인 경우엔 정해진 휴일엔 입력 못하게끔
   		    		//유연근무 신청 기간이 아닌 날짜와 휴일, 반차는 선택하지 못하게 함.
   	         		calendar.setOption('selectAllow', function(i){
-  	         			
   	         			var editYn = false;
   	         			
+  	         			var selSymd = i.startStr;
+  	  		    		var selEymd = new Date(i.endStr);
+  	  		    		selEymd.setDate(selEymd.getDate()-1);
+  	  		    		selEymd = moment(selEymd).format('YYYY-MM-DD');
+  	  		    		
+  	  		    		//선택한 날짜 
+	         			//유연근무제에 해당되지 않은 날짜여도 신청일자에 표시하기 위함.
+  	  					$this.selectedWorkday  = {
+  	  	    				start: selSymd,
+  	  	    				end: selEymd
+  	  	    			};
+  	         			
+  	         			//선택한 유연근무제
+	  		    		var selectedFlex = {};
+	  		    		$this.data.map(function(d){
+	  		    			if(moment(d.sYmd).diff(selSymd)<=0 && moment(selEymd).diff(d.eYmd)<=0)
+	  		    				selectedFlex = d;
+	  		    		});
+	  		    		calendarLeftVue.flexibleAppl = selectedFlex;
+	  		    		
   	         			$this.data.map(function(d){
   		  		    		var sYmd = moment(d.sYmd).format('YYYY-MM-DD');
   		  		    		var eYmd = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
@@ -283,20 +301,7 @@
   		    				$("#endTime").prop("disabled", false);
   		    				$("#timeSaveBtn").show();
   	         			} else {
-  	         				$("#startTime").prop("disabled", true);
-  	  		    			$("#endTime").prop("disabled", true);
-  	  		    			$("#timeSaveBtn").hide();
-  	  		    			
-  	         				//선택한 날짜 
-  	         				//유연근무제에 해당되지 않은 날짜여도 신청일자에 표시하기 위함.
-  	         				/*
-	  	  					$this.selectedWorkday  = {
-	  	  	    				start: moment(i.startStr).format('YYYY-MM-DD'),
-	  	  	    				end: moment(i.startStr).format('YYYY-MM-DD')
-	  	  	    			}; 
-  	         				*/
-  	         				
-  	         				if(Object.keys($this.dayWorks).length>0 && $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd].length>0) {
+  	         				if(calendarLeftVue.flexibleAppl.sYmd!=undefined && Object.keys($this.dayWorks).length>0 && $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd].length>0) {
   	  		    				//작성한 근무 계획 조회
   	  		    				var dayWorks = $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd];
   			  	         		dayWorks.map(function(dayWork){
@@ -310,6 +315,10 @@
   			  	         			} 
   								});
   	  		    			}
+  	         				
+  	         				$("#startTime").prop("disabled", true);
+  	  		    			$("#endTime").prop("disabled", true);
+  	  		    			$("#timeSaveBtn").hide();
   	         			}
   	         			
   	         			return editYn;
@@ -622,6 +631,10 @@
 								data.map(function(d){
 									if(d.hasOwnProperty("dayWorks"))
 										dayWorks[d.sYmd] = d.dayWorks;
+									
+									//오늘 날짜에 해당하는 유연근무제 선택
+									if(moment(d.sYmd).diff($this.today)<=0 && moment($this.today).diff(d.eYmd)<=0)
+			  		    				calendarLeftVue.flexibleAppl = d;
 								});
 								$this.dayWorks = dayWorks;
 								

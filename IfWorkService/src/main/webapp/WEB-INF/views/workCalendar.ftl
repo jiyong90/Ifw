@@ -409,9 +409,11 @@
                 </div>
                 <div id="flexibleDayPlan" class="white-box-wrap full-height mb-3" style="display:none;">
                 	<form class="needs-validation" novalidate>
-		                <div class="work-plan-wrap" v-if="Object.keys(flexibleAppl).length>0">
+		                <div class="work-plan-wrap">
 		                    <div class="big-title">
+		                    	<template v-if="flexibleAppl.sYmd && flexibleAppl.eYmd">
 		                    	{{moment(flexibleAppl.sYmd).format("YYYY년 M월 D일")}} ~ {{moment(flexibleAppl.eYmd).format("YYYY년 M월 D일")}}({{moment(flexibleAppl.eYmd).diff(flexibleAppl.sYmd, 'days')+1}}일)
+		                    	</template>
 		                    </div>
 		                    <div class="inner-wrap">
 		                    	<ul class="main-wrap">
@@ -497,7 +499,7 @@
 	                            <div class="main-title">계획 근무 시간</div>
 	                            <div class="main-desc">
 	                            	<template v-if="workTimeInfo.planSdate&&workTimeInfo.planEdate">
-	                            	{{moment(workTimeInfo.planSdate).format('HH:mm')}}~{{moment(workTimeInfo.planSdate).format('HH:mm')}}({{minuteToHHMM(workTimeInfo.planMinute)}})
+	                            	{{moment(workTimeInfo.planSdate).format('HH:mm')}}~{{moment(workTimeInfo.planEdate).format('HH:mm')}}({{minuteToHHMM(workTimeInfo.planMinute)}})
 	                            	</template>
 	                            </div>
 	                        </li>
@@ -782,8 +784,11 @@
 	  				var coreSh = moment(val.sYmd+' '+val.coreShm).format('HH');
 	  				var coreEh = moment(val.sYmd+' '+val.coreEhm).format('HH');
 	  				
-	  				$(".graph-wrap .core-time").css({ 'left': 'calc(('+coreSh+' - '+workSh+')/12*100%)' });
-	  				$(".graph-wrap .core-time").css({ 'width': 'calc(('+coreEh+' - '+coreSh+')/12*100%)' });
+	  				$(".graph-wrap .time-graph .core-time").css({ 'left': 'calc(('+coreSh+' - '+workSh+')/12*100%)' });
+	  				$(".graph-wrap .time-graph .core-time").css({ 'width': 'calc(('+coreEh+' - '+coreSh+')/12*100%)' });
+  				} else {
+  					$(".graph-wrap .time-graph .core-time").css({ 'left': 0 });
+	  				$(".graph-wrap .time-graph .core-time").css({ 'width': 0 });
   				}
   			}
   		},
