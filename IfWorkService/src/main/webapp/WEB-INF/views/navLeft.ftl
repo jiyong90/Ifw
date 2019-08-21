@@ -67,6 +67,7 @@
         <li>
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">
                 <span class="title">개인별근무시간관리</span>
+            </a>
         </li>
         <li>
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">

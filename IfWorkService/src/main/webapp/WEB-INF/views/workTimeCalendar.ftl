@@ -282,7 +282,7 @@
   		    	},
   		    	view: 'timeGridDay',
   		    	result: {}, //일근무시간
-  		    	workday: '', //근무일
+  		    	workday: '${today}', //근무일
   		    	reasons: [], //연장/휴일 근로 사유
   		    	subYmds: [], //대체휴일
   		    	overtimeAppl: {},
@@ -316,6 +316,7 @@
   		    		var calendar = this.$refs.fullCalendar.cal;
 
   		    		if(info.view.type == 'timeGridDay') { //month change
+  		    			console.log('여기야?????????????????');
   		    			var ymd = moment(calendar.getDate()).format('YYYYMMDD');
   		    			
   		    			$this.getFlexibleDayInfo(ymd);

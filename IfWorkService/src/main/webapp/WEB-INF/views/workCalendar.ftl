@@ -599,7 +599,6 @@
         });
         
         $( ".btn-info-wrap" ).on('click',function() {
-        	console.log('111');
             $('#btn-lbottom-wrap').toggle();
             $('#btn-lbottom-simple-wrap').toggle();
             $('#lbottom-wrap').toggle();

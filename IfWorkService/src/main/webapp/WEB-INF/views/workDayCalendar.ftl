@@ -111,7 +111,7 @@
   		    			if(moment(d.sYmd).diff(selSymd)<=0 && moment(selEymd).diff(d.eYmd)<=0)
   		    				selectedFlex = d;
   		    		});
-  		    		calendarLeftVue.flexibleAppl = selectedFlex; */
+  		    		calendarLeftVue.flexibleAppl = selectedFlex;
   		    		
   		    		//focus out
   		    		if($this.selectedWorkday.start!=selSymd && $('#startTime:focus').length>0) {
@@ -119,7 +119,7 @@
   		    		}
   		    		
   		    		//선택한 날짜 
-					/* $this.selectedWorkday  = {
+					$this.selectedWorkday  = {
 	    				start: selSymd,
 	    				end: selEymd
 	    			}; */
@@ -253,13 +253,6 @@
   	  		    		selEymd.setDate(selEymd.getDate()-1);
   	  		    		selEymd = moment(selEymd).format('YYYY-MM-DD');
   	  		    		
-  	  		    		//선택한 날짜 
-	         			//유연근무제에 해당되지 않은 날짜여도 신청일자에 표시하기 위함.
-  	  					$this.selectedWorkday  = {
-  	  	    				start: selSymd,
-  	  	    				end: selEymd
-  	  	    			};
-  	         			
   	         			//선택한 유연근무제
 	  		    		var selectedFlex = {};
 	  		    		$this.data.map(function(d){
@@ -267,6 +260,18 @@
 	  		    				selectedFlex = d;
 	  		    		});
 	  		    		calendarLeftVue.flexibleAppl = selectedFlex;
+	  		    		
+	  		    		//focus out
+	  		    		if($this.selectedWorkday.start!=selSymd && $('#startTime:focus').length>0) {
+	  		    			$('#startTime').blur();
+	  		    		}
+	  		    		
+	  		    		//선택한 날짜 
+	         			//유연근무제에 해당되지 않은 날짜여도 신청일자에 표시하기 위함.
+  	  					$this.selectedWorkday  = {
+  	  	    				start: selSymd,
+  	  	    				end: selEymd
+  	  	    			};
 	  		    		
   	         			$this.data.map(function(d){
   		  		    		var sYmd = moment(d.sYmd).format('YYYY-MM-DD');
