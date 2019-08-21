@@ -30,6 +30,11 @@
             </a>
         </li>
         <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/codeMgr';">
+                <span class="title">코드관리</span>
+            </a>
+        </li>
+        <li>
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaCodeMgr';">
                 <span class="title">근태코드관리</span>
             </a>

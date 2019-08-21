@@ -49,7 +49,7 @@ public class WtmTimeCdMgrController {
 		
 		List<Map<String, Object>> timeCdMgtList = null;
 		try {		
-			timeCdMgtList = timeCdMgrService.getTimeCdMgtList(tenantId, enterCd, paramMap);
+			timeCdMgtList = timeCdMgrService.getTimeCdMgrList(tenantId, enterCd, paramMap);
 			
 			rp.put("DATA", timeCdMgtList);
 		} catch(Exception e) {
@@ -102,7 +102,7 @@ public class WtmTimeCdMgrController {
 	}
 	
 	@RequestMapping(value="/breakList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getTimeBreakMgtList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+	public @ResponseBody ReturnParam getTimeBreakMgrList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
@@ -120,7 +120,7 @@ public class WtmTimeCdMgrController {
 		
 		List<Map<String, Object>> timeBreakMgtList = null;
 		try {		
-			timeBreakMgtList = timeCdMgrService.getTimeBreakMgtList(tenantId, enterCd, paramMap);
+			timeBreakMgtList = timeCdMgrService.getTimeBreakMgrList(tenantId, enterCd, paramMap);
 			
 			rp.put("DATA", timeBreakMgtList);
 		} catch(Exception e) {
@@ -132,7 +132,7 @@ public class WtmTimeCdMgrController {
 	}
 	
 	@RequestMapping(value="/breakSave", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam setTimeBreakMgtList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+	public @ResponseBody ReturnParam setTimeBreakMgrList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setFail("저장 시 오류가 발생했습니다.");
@@ -160,7 +160,7 @@ public class WtmTimeCdMgrController {
 		rp.setSuccess("");
 		int cnt = 0;
 		try {
-			cnt = timeCdMgrService.setTimeBreakMgtList(userId, convertMap);
+			cnt = timeCdMgrService.setTimeBreakMgrList(userId, convertMap);
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;
