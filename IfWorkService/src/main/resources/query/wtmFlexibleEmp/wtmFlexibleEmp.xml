@@ -296,7 +296,7 @@
     <update id="updatePlanMinute" parameterType="Long">
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
-			SELECT D.WORK_CALENDAR_ID  
+			SELECT D.WORK_DAY_RESULT_ID  
 				 , F_WTM_CALC_MINUTE( date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i'), '','', '') -
 				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i'), '' )) AS CM
 			  FROM WTM_FLEXIBLE_EMP E
@@ -320,7 +320,7 @@
 			     OR B.EHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i'))
 			 GROUP BY D.WORK_DAY_RESULT_ID
 			) XX
-			ON X.WORK_CALENDAR_ID = XX.WORK_CALENDAR_ID
+			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
 		   SET X.PLAN_MINUTE = XX.CM
     </update>
     <update id="updateApprDatetimeByYmdAndSabun" parameterType="map">
@@ -348,7 +348,7 @@
     <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
-			SELECT D.WORK_CALENDAR_ID  
+			SELECT D.WORK_DAY_RESULT_ID  
 				 , F_WTM_CALC_MINUTE( date_format(D.APPR_SDATE, '%H%i') ,  date_format(D.APPR_EDATE, '%H%i'), '','', '') -
 				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.APPR_SDATE, '%H%i') ,  date_format(D.APPR_EDATE, '%H%i'), '' )) AS CM
 			  FROM WTM_FLEXIBLE_EMP E
@@ -375,7 +375,7 @@
 			     OR B.EHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i'))
 			 GROUP BY D.WORK_DAY_RESULT_ID
 			) XX
-			ON X.WORK_CALENDAR_ID = XX.WORK_CALENDAR_ID
+			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
 		   SET X.APPR_MINUTE = XX.CM
     </update>
     
@@ -668,7 +668,7 @@
 	    			, DATE_FORMAT(C.APPR_EDATE, '%Y%m%d%H%i%s') as apprEdate
 	    			, C.APPR_MINUTE as apprMinute
 	    			, C.WORK_YN as workYn
-	    			, C.WORK_CALENDAR_ID as workCalendarId
+	    			, D.WORK_CALENDAR_ID as workCalendarId
 	    			, E.FLEXIBLE_EMP_ID as flexibleEmpId
 			  FROM WTM_WORK_DAY_RESULT C
 			  JOIN WTM_WORK_CALENDAR D
@@ -678,7 +678,7 @@
 			   AND C.SABUN = D.SABUN
 		    	JOIN WTM_FLEXIBLE_EMP E
 		    	ON D.TENANT_ID = E.TENANT_ID AND D.ENTER_CD = E.ENTER_CD AND D.SABUN = E.SABUN AND D.YMD BETWEEN E.SYMD AND E.EYMD
-			 WHERE C.WORK_CALENDAR_ID = #{workCalendarId}
+			 WHERE D.WORK_CALENDAR_ID = #{workCalendarId}
     </select>
     
     <select id="getWorkHour" parameterType="map" resultType="hashmap" >
