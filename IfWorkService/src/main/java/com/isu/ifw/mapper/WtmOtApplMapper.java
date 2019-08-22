@@ -25,4 +25,11 @@ public interface WtmOtApplMapper {
 	 * @return
 	 */
 	public List<Map<String, Object>> getPrevOtSubsApplList(Map<String, Object> paramMap);
+	
+	/**
+	 * 특정 구간의 연장근무 합을 가지고 오자
+	 * @param paramMap
+	 * @return totOtMinute
+	 */
+	public Map<String, Object> getTotOtMinuteBySymdAndEymd(Map<String, Object> paramMap);
 }

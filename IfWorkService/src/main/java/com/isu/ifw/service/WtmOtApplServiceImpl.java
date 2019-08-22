@@ -18,18 +18,23 @@ import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.entity.WtmOtSubsAppl;
 import com.isu.ifw.entity.WtmWorkCalendar;
+import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmApplMapper;
+import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
+import com.isu.ifw.mapper.WtmFlexibleStdMapper;
 import com.isu.ifw.mapper.WtmOtApplMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
+import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtApplRepository;
 import com.isu.ifw.repository.WtmOtSubsApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
+import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
@@ -62,12 +67,26 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	WtmWorkCalendarRepository wtmWorkCalendarRepository;
 	@Autowired
 	WtmFlexibleStdMgrRepository wtmFlexibleStdMgrRepo;
+	@Autowired
+	WtmWorkDayResultRepository wtmWorkDayResultRepo;
 	
 	@Autowired
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
 	
 	@Autowired
 	WtmOtApplMapper wtmOtApplMapper;
+	
+	@Autowired
+	WtmFlexibleApplRepository wtmFlexibleApplRepo;
+
+	@Autowired
+	WtmFlexibleStdMgrRepository  flexStdMgrRepo;
+	
+	@Autowired
+	WtmFlexibleApplMapper flexApplMapper;
+	
+	@Autowired
+	WtmFlexibleStdMapper wtmFlexibleStdMapper;
 
 	
 	@Override
@@ -161,10 +180,72 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		 
 	}
 
+	@Transactional
 	@Override
 	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception {
-		// TODO Auto-generated method stub
+		ReturnParam rp = new ReturnParam();
+		paramMap.put("applId", applId);
+		rp = this.validate(tenantId, enterCd, sabun, "", paramMap);
+		//rp = validate(applId);
+		if(rp.getStatus().equals("FAIL")) {
+			throw new Exception(rp.get("message").toString());
+		}
+		
+		//결재라인 상태값 업데이트
+		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
+		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
+
+		//마지막 결재자인지 확인하자
+		boolean lastAppr = false;
+		if(lines != null && lines.size() > 0) {
+			for(WtmApplLine line : lines) {
+				if(line.getApprSeq() == apprSeq && line.getApprSabun().equals(sabun)) {
+					line.setApprStatusCd(APPR_STATUS_APPLY);
+					line.setApprDate(WtmUtil.parseDateStr(new Date(), null));
+					//결재의견
+					if(paramMap != null && paramMap.containsKey("apprOpinion")) {
+						line.setApprOpinion(paramMap.get("apprOpinion").toString());
+						line.setUpdateId(userId);
+					}
+					line = wtmApplLineRepo.save(line);
+					lastAppr = true;
+				}else {
+					if(lastAppr) {
+						line.setApprStatusCd(APPR_STATUS_REQUEST);
+						line = wtmApplLineRepo.save(line);
+					}
+					lastAppr = false;
+				}
+			}
+		}
+		
+		
+		//신청서 메인 상태값 업데이트
+		WtmAppl appl = wtmApplRepo.findById(applId).get();
+		appl.setApplStatusCd((lastAppr)?APPL_STATUS_APPR:APPL_STATUS_APPLY_ING);
+		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
+		appl.setUpdateId(userId);
+		
+		appl = wtmApplRepo.save(appl);
+		
+		if(lastAppr) {
+			//대상자의 실제 근무 정보를 반영한다.
+			WtmOtAppl otAppl = wtmOtApplRepo.findByApplId(applId);
+			WtmWorkDayResult dayResult = new WtmWorkDayResult();
+			dayResult.setApplId(applId);
+			dayResult.setTenantId(tenantId);
+			dayResult.setEnterCd(enterCd);
+			dayResult.setYmd(otAppl.getYmd());
+			dayResult.setSabun(appl.getApplSabun());
+			dayResult.setPlanSdate(otAppl.getOtSdate());
+			dayResult.setPlanEdate(otAppl.getOtEdate());
+			dayResult.setPlanMinute(Integer.parseInt(otAppl.getOtMinute()));
+			dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_OT);
+			
+			wtmWorkDayResultRepo.save(dayResult);
+		}
+		
 
 	}
 
@@ -261,8 +342,44 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		resultMap.putAll(wtmFlexibleEmpMapper.getSumOtMinute(paramMap));
 		Integer sumOtMinute = Integer.parseInt(resultMap.get("otMinute").toString());
 		
+		//회사의 주 시작요일을 가지고 온다.
+		paramMap.put("d", ymd);
+		Map<String, Object> rMap = wtmFlexibleStdMapper.getRangeWeekDay(paramMap);
+		if(rMap == null) {
+			rp.setFail("기준 일자 정보가 없습니다. 관리자에게 문의하세요.");
+			return rp;
+		}
+		String symd = rMap.get("symd").toString();
+		String eymd = rMap.get("eymd").toString();
+		
+		boolean weekOtCheck = true;
+		
 		//연장근무 가능 시간을 가지고 오자
 		WtmFlexibleEmp emp = wtmFlexibleEmpRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, sabun, ymd);
+		//선근제 이면
+		if(emp.getWorkTypeCd().startsWith("SELE")) {
+			//1주의 범위가 선근제 기간내에 있는지 체크
+			if(Integer.parseInt(symd) >= Integer.parseInt(emp.getSymd() ) && Integer.parseInt(eymd) <= Integer.parseInt(emp.getEymd())) {
+				//선근제는 주단위 연장근무 시간을 체크하지 않는다.
+				weekOtCheck = false;
+			}
+		}
+		
+		if(weekOtCheck) {
+			paramMap.putAll(rMap);
+			
+			rMap = wtmOtApplMapper.getTotOtMinuteBySymdAndEymd(paramMap);
+			int totOtMinute = 0;
+			if(rMap != null && rMap.get("totOtMinute") != null && !rMap.get("totOtMinute").equals("")) {
+				totOtMinute = Integer.parseInt(rMap.get("totOtMinute")+"");
+			}
+			Float f = (float) ((totOtMinute + sumOtMinute) / 60);
+			if(f > 12) {
+				Float ff = (f - f.intValue()) * 60;
+				rp.setFail("연장근무 신청 가능 시간은 " + f.intValue() + "시간 " + ff.intValue() + "분 입니다.");
+				return rp;
+			}
+		}
 		
 		Integer otMinute = emp.getOtMinute();
 		//otMinute 연장근무 가능 시간이 0이면 체크 하지말자 우선!!
@@ -422,6 +539,42 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		}
 		
 		//2.연장근무 가능시간 초과 체크
+		
+		//회사의 주 시작요일을 가지고 온다.
+		paramMap.put("d", ymd);
+		Map<String, Object> rMap = wtmFlexibleStdMapper.getRangeWeekDay(paramMap);
+		
+		String symd = rMap.get("symd").toString();
+		String eymd = rMap.get("eymd").toString();
+		
+		boolean weekOtCheck = true;
+		
+		//연장근무 가능 시간을 가지고 오자
+		//선근제 이면
+		if(emp.getWorkTypeCd().startsWith("SELE")) {
+			//1주의 범위가 선근제 기간내에 있는지 체크
+			if(Integer.parseInt(symd) >= Integer.parseInt(emp.getSymd() ) && Integer.parseInt(eymd) <= Integer.parseInt(emp.getEymd())) {
+				//선근제는 주단위 연장근무 시간을 체크하지 않는다.
+				weekOtCheck = false;
+			}
+		}
+		
+		if(weekOtCheck) {
+			paramMap.putAll(rMap);
+			
+			rMap = wtmOtApplMapper.getTotOtMinuteBySymdAndEymd(paramMap);
+			int totOtMinute = 0;
+			if(rMap != null && rMap.get("totOtMinute") != null && !rMap.get("totOtMinute").equals("")) {
+				totOtMinute = Integer.parseInt(rMap.get("totOtMinute")+"");
+			}
+			Float f = (float) (totOtMinute / 60);
+			if(f > 12) {
+				Float ff = (f - f.intValue()) * 60;
+				rp.setFail("연장근무 신청 가능 시간은 " + f.intValue() + "시간 " + ff.intValue() + "분 입니다.");
+				return rp;
+			}
+		}
+		
 		Integer otMinute = emp.getOtMinute();
 		if(otMinute == null) {
 			otMinute = 0;
@@ -429,7 +582,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		
 		//우선 오티 시간이 없으면 체크하지 말자
 		if(otMinute > 0) {
-			Map<String, Object> rMap = wtmFlexibleEmpMapper.getSumOtMinute(paramMap);
+			rMap = wtmFlexibleEmpMapper.getSumOtMinute(paramMap);
 			Integer sumOtMinute = Integer.parseInt(rMap.get("otMinute").toString());
 			if(otMinute <= sumOtMinute) {
 				rp.setFail("금주 사용가능한 연장근무 시간이 없습니다. 담당자에게 문의하세요.");
