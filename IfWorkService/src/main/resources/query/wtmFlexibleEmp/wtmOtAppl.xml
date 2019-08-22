@@ -10,7 +10,10 @@
 			SELECT F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(O.OT_SDATE, '%H%i') ,F_WTM_DATE_FORMAT(O.OT_EDATE, '%H%i'),  '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,F_WTM_DATE_FORMAT(O.OT_SDATE, '%H%i') ,F_WTM_DATE_FORMAT(O.OT_EDATE, '%H%i'),  '')) 
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_WORK_CALENDAR C
-			    ON E.FLEXIBLE_EMP_ID = C.FLEXIBLE_EMP_ID
+			    ON E.TENANT_ID = C.TENANT_ID
+			   AND E.ENTER_CD = C.ENTER_CD
+			   AND E.SABUN = C.SABUN
+			   AND C.YMD BETWEEN E.SYMD AND E.EYMD
 			  JOIN WTM_TIME_CD_MGR T
 			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 			  JOIN WTM_TIME_BREAK_MGR B
@@ -49,6 +52,32 @@
 	        ]]>
     </select>
     
+    <select id="otSubsApplfindByOtApplId" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+			SELECT S.OT_SUBS_APPL_ID AS otSubsApplId
+			     , S.OT_APPL_ID AS otApplId
+			     , S.APPL_ID AS applId
+			     , S.HOLIDAY_TYPE AS holidayType
+			     , S.SUB_YMD AS subYmd
+			     , S.SUBS_SDATE AS subsSdate
+			     , S.SUBS_EDATE AS subsEdate
+			     , S.SUBS_MINUTE AS subsMinute
+			     , S.OLD_SUBS_APPL_ID AS oldSubsApplId
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(S.SUBS_SDATE, '%Y%m%d'), 'S') AS workSdateShm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(S.SUBS_SDATE, '%Y%m%d'), 'E') AS workSdateEhm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(S.SUBS_EDATE, '%Y%m%d'), 'S') AS workEdateShm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(S.SUBS_EDATE, '%Y%m%d'), 'E') AS workEdateEhm
+			  FROM WTM_OT_APPL O
+			  JOIN WTM_OT_SUBS_APPL S
+			    ON O.OT_APPL_ID = S.OT_APPL_ID
+			  JOIN WTM_APPL A
+			    ON S.APPL_ID = A.APPL_ID
+			 WHERE S.OT_APPL_ID = #{otApplId}
+			   AND (S.CANCEL_YN IS NULL OR S.CANCEL_YN = 'N')
+			 ORDER BY S.SUB_YMD, S.SUBS_SDATE
+	        ]]>
+    </select>
+    
     <select id="getPrevOtSubsApplList" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT O.OT_SDATE AS sDate
@@ -67,37 +96,50 @@
 			     , S.SUBS_MINUTE AS subsMinute
 			     , F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) AS sDate
 				  , F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE) AS eDate
-				  , T.WORK_SHM AS workShm
-				  , T.WORK_EHM AS workEhm
+				  , CASE WHEN E.WORK_TYPE_CD IN ('BASE','WORKTEAM') THEN T.WORK_SHM ELSE M.WORK_SHM END AS workShm
+				  , CASE WHEN E.WORK_TYPE_CD IN ('BASE','WORKTEAM') THEN T.WORK_EHM ELSE M.WORK_EHM END AS workEhm
 			  FROM WTM_OT_APPL O
 			  JOIN WTM_OT_SUBS_APPL S
 			    ON O.OT_APPL_ID = S.OT_APPL_ID
 			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
 			    ON O.APPL_ID = R.APPL_ID
 			  LEFT OUTER JOIN WTM_WORK_CALENDAR C
-			    ON R.WORK_CALENDAR_ID = C.WORK_CALENDAR_ID
+			    ON R.YMD = C.YMD
+			   AND R.SABUN = C.SABUN
+			   AND R.ENTER_CD = C.ENTER_CD
+			   AND R.TENANT_ID = C.TENANT_ID
 			  LEFT OUTER JOIN WTM_TIME_CD_MGR T
 			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			  LEFT OUTER JOIN WTM_FLEXIBLE_EMP E
+			    ON C.TENANT_ID = E.TENANT_ID
+			   AND C.ENTER_CD = E.ENTER_CD
+			   AND C.SABUN = E.SABUN
+			   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+			  LEFT OUTER JOIN WTM_FLEXIBLE_STD_MGR M
+			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
 			 WHERE C.TENANT_ID = #{tenantId}
 			   AND C.ENTER_CD = #{enterCd}
 			   AND C.SABUN = #{sabun}
 			   AND O.HOLIDAY_YN = 'Y'
-			   AND O.YMD <> #{ymd}
 	        ]]>
     </select>
     
     <select id="getTotOtMinuteBySymdAndEymd" parameterType="map" resultType="map">
+    <![CDATA[
     	SELECT SUM(X.OT_MINUTE) AS totOtMinute
 		  FROM (
-			SELECT O.OT_MINUTE AS OT_MINUTE
+			SELECT SUM(F_WTM_NVL(O.OT_MINUTE,0)) - SUM(F_WTM_NVL(S.SUBS_MINUTE,0)) AS OT_MINUTE
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_APPL O
 			    ON A.APPL_ID = O.APPL_ID
+			  LEFT OUTER JOIN WTM_OT_SUBS_APPL S
+			    ON A.APPL_ID = S.APPL_ID
+			   AND S.SUB_YMD BETWEEN #{symd} AND #{eymd}
 			 WHERE A.APPL_STATUS_CD IN ('21','31')
 			   AND O.YMD BETWEEN #{symd} AND #{eymd}
-			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
+			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '') 
 			 UNION ALL
-			SELECT CASE WHEN R.APPR_MINUTE IS NULL THEN R.PLAN_MINUTE ELSE R.APPR_MINUTE END AS OT_MINUTE
+			SELECT F_WTM_NVL(CASE WHEN R.APPR_MINUTE IS NULL THEN R.PLAN_MINUTE ELSE R.APPR_MINUTE END,0) AS OT_MINUTE
 			  FROM WTM_WORK_DAY_RESULT R
 			 WHERE R.TENANT_ID = #{tenantId}
 			   AND R.ENTER_CD = #{enterCd}
@@ -105,6 +147,7 @@
 			   AND R.TIME_TYPE_CD = 'OT'
 			   AND R.SABUN = #{sabun}
 		) X
+	]]>
     </select>
    
 </mapper>
