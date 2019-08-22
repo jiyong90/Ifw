@@ -61,11 +61,11 @@
                                 <div class="title mb-2">휴일대체방법</div>
                                 <div class="desc">
                                     <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" id="subYnY" name="subYn" class="custom-control-input" value="Y" @change="changeSubYn($event.target.value)" required>
+                                        <input type="radio" id="subYnY" name="subYn" class="custom-control-input" value="Y" @change="changeSubYn($event.target.value)" :required="subsRequired">
                                         <label class="custom-control-label" for="subYnY">휴일대체</label>
                                     </div>
                                     <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" id="subYnN" name="subYn" class="custom-control-input" value="N" @change="changeSubYn($event.target.value)" required>
+                                        <input type="radio" id="subYnN" name="subYn" class="custom-control-input" value="N" @change="changeSubYn($event.target.value)" :required="subsRequired">
                                         <label class="custom-control-label" for="subYnN">위로금/시급지급</label>
                                     </div>
                                 </div>
@@ -86,17 +86,25 @@
                                     <div class="desc" v-for="(s, idx) in subYmds">
                                         <div class="form-group clearfix">
                                             <div class="form-row">
-                                                <div class="col-11 col-sm-11 col-md-11 col-lg-6" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subYmd_'+idx" v-model="s.subYmd" data-toggle="datetimepicker" :data-target="'#subYmd_'+idx" placeholder="연도-월-일" autocomplete="off" required>
+                                           		<!--  
+                                                <div class="col-11 col-sm-11 col-md-11 col-lg-2" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subYmd_'+idx" v-model="s.subYmd" data-toggle="datetimepicker" :data-target="'#subYmd_'+idx" placeholder="연도-월-일" autocomplete="off" :required="subsRequired">
                                                 </div>
-                                                <div class="col-11 col-sm-11 col-md-11 col-lg-5 mt-xs-1 mt-sm-1 mt-lg-0 float-right ">
+                                                -->
+                                                <div class="col-12 col-sm-12 col-md-12 col-lg-11 mt-xs-1 mt-sm-1 mt-lg-0 float-right ">
                                                     <div class="form-row">
+                                                    	<div data-target-input="nearest">
+		                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsSymd_'+idx" v-model="s.subsSymd" data-toggle="datetimepicker" :data-target="'#subsSymd_'+idx" placeholder="연도-월-일" autocomplete="off" :required="subsRequired">
+		                                                </div>
                                                         <div class="col float-left" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsSdate_'+idx" v-model="s.subsSdate" data-toggle="datetimepicker" :data-target="'#subsSdate_'+idx" autocomplete="off" required>
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsShm_'+idx" v-model="s.subsShm" data-toggle="datetimepicker" :data-target="'#subsShm_'+idx" autocomplete="off" :required="subsRequired">
                                                         </div>
                                                         <span class="d-inline-block text-center pl-1 pr-2 mt-1">~</span>
+                                                        <div data-target-input="nearest">
+		                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsEymd_'+idx" v-model="s.subsEymd" data-toggle="datetimepicker" :data-target="'#subsEymd_'+idx" placeholder="연도-월-일" autocomplete="off" :required="subsRequired">
+		                                                </div>
                                                         <div class="col float-right" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsEdate_'+idx" v-model="s.subsEdate" data-toggle="datetimepicker" :data-target="'#subsEdate_'+idx" autocomplete="off" required>
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsEhm_'+idx" v-model="s.subsEhm" data-toggle="datetimepicker" :data-target="'#subsEhm_'+idx" autocomplete="off" :required="subsRequired">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -163,7 +171,8 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                    <h5 class="modal-title">연장근로신청</h5>
+                    <h5 class="modal-title" v-if="result.holidayYn!='Y'">연장근로신청</h5>
+                    <h5 class="modal-title" v-else>휴일근로신청</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -172,7 +181,8 @@
                     <form>
                         <div class="modal-app-wrap">
                             <div class="inner-wrap">
-                                <div class="title">연장근로시간</div>
+                                <div class="title" v-if="result.holidayYn!='Y'">연장근로시간</div>
+                                <div class="title" v-else>휴일근로시간</div>
                                 <div class="desc">
                                     <span class="time-wrap">
                                         <i class="fas fa-clock"></i>
@@ -223,10 +233,33 @@
                                 	</template>
                                 </div>
                             </div>
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
+                                <div class="title">휴일대체방법</div>
+                                <div class="desc">
+                                	<template v-if="overtimeAppl.subYn">
+                                	{{overtimeAppl.subYn=='Y'?'휴일대체':'수당지급'}}
+                                	</template>
+                                </div>
+                            </div>
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
+                                <div class="title">대체일시</div>
+                                <template v-if="overtimeAppl.subs" v-for="sub in overtimeAppl.subs">
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">{{moment(sub.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="day-end-time">{{moment(sub.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="sub-time">{{calendarLeftVue.minuteToHHMM(sub.subsMinute,'detail')}}</span>
+                                    </span>
+                                </div>
+                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.subYmd+' '+sub.workSdateShm).format('HH:mm')}}~{{moment(sub.subYmd+' '+sub.workSdateEhm).format('HH:mm')}} 입니다.</div>
+                                </template>
+                            </div>
                             <hr class="bar">
                         </div>
-                        <div class="btn-wrap text-center" v-if="overtimeAppl.applStatusCd=='99'">
-                            <button type="button" class="btn btn-default rounded-0">연장근로신청 취소하기</button>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'">연장근로신청 취소하기</button>
+                            <button type="button" class="btn btn-default rounded-0" v-else>휴일근로신청 취소하기</button>
                         </div>
                     </form>
                 </div>
@@ -288,6 +321,11 @@
   		    	overtimeAppl: {},
   		    	prevOtSubs: [] //이전에 신청한 휴일
   		    },
+  		    computed: {
+  		    	subsRequired: function(val, oldVal) {
+  		    		return this.result.holidayYn=='Y'?true:false;
+  		    	}
+  		    },
   		    mounted: function(){
   		    	<#if workday?? && workday!='' && workday?exists >
   		    		this.workday = moment('${workday}').format('YYYY-MM-DD');
@@ -316,7 +354,6 @@
   		    		var calendar = this.$refs.fullCalendar.cal;
 
   		    		if(info.view.type == 'timeGridDay') { //month change
-  		    			console.log('여기야?????????????????');
   		    			var ymd = moment(calendar.getDate()).format('YYYYMMDD');
   		    			
   		    			$this.getFlexibleDayInfo(ymd);
@@ -428,6 +465,9 @@
 					});
   	         	},
   	         	getWorkHour: function(id, ymd){
+  	         		
+  	         		console.log(ymd);
+  	         		
   	         		var $this = this;
   	         		var param = {
 	   		    		ymd : ymd
@@ -478,8 +518,6 @@
   	         	viewOvertimeApplDetail: function(applId){
   	         		var $this = this;
   	         		
-  	         		console.log(applId);
-  	         		
   	         		var param = {
   	         			applId: applId	
   	         		};
@@ -493,6 +531,7 @@
 						success: function(data) {
 							if(data!=null) {
 								$this.overtimeAppl = data;
+								console.log($this.overtimeAppl);
 								$("#overtimeApplDetail").modal("show"); 
 							}
 						},
@@ -595,7 +634,7 @@
   	         		
   	         		var param = {
   	         			ymd: moment($this.workday).format('YYYYMMDD'),
-  	         			workTypeCd: calendarTopVue.flexibleStd.workTypeCd 
+  	         			workTypeCd: ''
   	         		};
   	         		
   	         		//연장근무
@@ -622,38 +661,45 @@
   	         	},
   	         	validateOtAppl : function(){
   	         		var $this = this;
-  	         		var applYn = true;
+  	         		var isValid = true;
   	         		var forms = document.getElementById('overtimeAppl').getElementsByClassName('needs-validation');
   	         		var validation = Array.prototype.filter.call(forms, function(form) {
   	         			if (form.checkValidity() === false) {
-  	         				applYn = false;
+  	         				isValid = false;
   	         				event.preventDefault();
   	         		        event.stopPropagation();
   	         			}
   	         			form.classList.add('was-validated');
   	         		});
   	         		
-  	         		if(applYn) {
-  	         			//신청하려는 ot시간이 소정근무시간에 해당되지 않는지 체크
-  	         			var otSdate = moment($("#sDate").val()+' '+$("#sTime").val()).format('YYYY-MM-DD HH:mm');
-  	  	         		var otEdate = moment($("#eDate").val()+' '+$("#eTime").val()).format('YYYY-MM-DD HH:mm');
+  	         		if(isValid) {
+  	         			isValid = false;
   	         			
-  	  	         		var isBase = false;
+  	         			//신청하려는 ot시간이 소정근무시간에 해당되지 않는지 체크
+  	         			var sDate = $("#sDate").val().replace(/-/gi,"");
+			   			var eDate = $("#eDate").val().replace(/-/gi,"");
+			   			var sTime = $("#sTime").val().replace(/:/gi,"");
+			   			var eTime = $("#eTime").val().replace(/:/gi,"");
+			   			
+			   			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
+			         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
   	  	         		
   	  	         		if($this.result.hasOwnProperty('dayResults') && $this.result.dayResults!=null && $this.result.dayResults!='') {
 	         				var dayResults = JSON.parse($this.result.dayResults);
      						dayResults.map(function(dayResult){
-	  	  	         			if(dayResult.timeTypeCd == 'BASE'){
-		  	  	         			var baseSdate = moment(baseWork.sDate).format('YYYY-MM-DD HH:mm');
-			  	         			var baseEdate = moment(baseWork.eDate).format('YYYY-MM-DD HH:mm');
-			  	         			if(moment(baseSdate).diff(otSdate)<=0 && moment(otSdate).diff(baseEdate)<=0 
-			  	         					|| moment(baseSdate).diff(otEdate)<=0 && moment(otEdate).diff(baseEdate)<=0 )
-			  	         				isBase = true;
-	  	  	         			}
+	  	  	         			//if(dayResult.timeTypeCd == 'BASE'){
+		  	  	         			var workSdate = moment(dayResult.sDate).format('YYYY-MM-DD HH:mm');
+			  	         			var workEdate = moment(dayResult.eDate).format('YYYY-MM-DD HH:mm');
+			  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
+			  	         					|| moment(workSdate).diff(otEdate)<0 && moment(otEdate).diff(workEdate)<0 )
+			  	         				isValid = true;
+	  	  	         			//}
 	  	  	         		});
   	  	         		}
-  	         			
-  	  	         		if(!isBase) {
+  	  	         		
+  	  	         		//신청하려는 휴일근로시간과 이전에 신청한 휴일근로시간 합산한 시간보다 대체일시 합산 시간이 작거나 같아야한다.
+  	  	         		
+  	  	         		if(!isValid) {
   	         				$this.otAppl(otSdate, otEdate);
   	  	         		} else {
   	  	         			$("#alertText").html("소정근로 시간을 포함하여 신청할 수 없습니다.");
@@ -669,6 +715,10 @@
   	         	},
   	         	otAppl : function(otSdate, otEdate){ //연장근무신청
   	         		var $this = this;
+  	         	
+  	         		var holidayYn = $this.result.holidayYn;
+  	         		var subYn = '';
+  	         	
   	         		var param = {
         				flexibleStdMgrId : calendarTopVue.flexibleStd.flexibleStdMgrId,
         				workTypeCd : 'OT',
@@ -676,8 +726,32 @@
         				otSdate : moment(otSdate).format('YYYYMMDDHHmm'),
         				otEdate : moment(otEdate).format('YYYYMMDDHHmm'),
 	   		    		reasonCd : $("#reasonCd").val(),
-	   		    		reason: $("#reason").val()
+	   		    		reason: $("#reason").val(),
+	   		    		holidayYn: holidayYn,
+	   		    		subYn: subYn
 	   		    	};
+  	         		
+  	         		//휴일근로신청
+					if(holidayYn=='Y') {
+						param['subYn'] =  $('input[name="subYn"]').val();
+						
+						var subs = [];
+						if($this.subYmds!=null && $this.subYmds.length>0) {
+							$this.subYmds.map(function(s){
+								var subsSdate = moment(s.subsSymd+' '+s.subsShm).format('YYYY-MM-DD HH:mm');
+								var subsEdate = moment(s.subsEymd+' '+s.subsEhm).format('YYYY-MM-DD HH:mm');
+								
+								var sub = {
+									subYmd: moment(s.subsSymd).format('YYYYMMDD'),
+									subsSdate: moment(subsSdate).format('YYYYMMDDHHmm'),
+									subsEdate: moment(subsEdate).format('YYYYMMDDHHmm')
+								};
+								subs.push(sub);
+							});
+						}
+						param['subs'] = subs;
+						
+					}
   	         		
   	         		Util.ajax({
 						url: "${rc.getContextPath()}/otAppl/request",
@@ -693,7 +767,7 @@
 									location.reload();
 								});
 							} else {
-								$("#alertText").html("확인요청 시 오류가 발생했습니다.");
+								$("#alertText").html(data.message);
 								$("#alertModal").on('hidden.bs.modal',function(){
 									$("#alertModal").off('hidden.bs.modal');
 								});
@@ -719,7 +793,7 @@
   	                    $(".radio-toggle-wrap").show(500);
   	                }
   	                else if(val == "N") { //수당지급
-  	                	$this.subYmds = {};
+  	                	$this.subYmds = [];
   	                    $(".radio-toggle-wrap").hide(500);
   	                }
   	                else {
@@ -735,9 +809,10 @@
   	         	},
   	         	addSubYmd: function(){
   	         		var newSubYmd = {
-  	         			subYmd: '',
-  	         			subsSdate: '',
-  	         			subsEdate: ''
+  	         			subsSymd: '',
+  	         			subsShm: '',
+  	         			subsEymd: '',
+  	         			subsEhm: '',
   	         		};
   	         		
   	         		this.subYmds.push(newSubYmd);
@@ -749,7 +824,22 @@
    	});
    	
   	//동적으로 추가하는 요소에 datetimepicker를 그리기 위함
-  	$('body').on('focus',"input[id^='subYmd']", function(){
+  	/* $('body').on('focus',"input[id^='subYmd']", function(){
+   		var $this = this;
+ 		$(this).datetimepicker({
+ 			format: 'YYYY-MM-DD',
+ 		    language: 'ko'
+ 		});
+ 		
+ 		$(this).on("change.datetimepicker", function(e){
+ 			if(e.date!=null && e.date!='undefined' && e.date!='') {
+ 				timeCalendarVue.updateValue($($this).attr('id'), moment(e.date).format('YYYY-MM-DD'));
+ 				timeCalendarVue.getWorkHour($($this).attr('id'), moment(e.date).format('YYYYMMDD'));
+ 			}
+ 		});
+   	}); */
+  	
+  	$('body').on('focus',"input[id^='subsSymd'], input[id^='subsEymd']", function(){
    		var $this = this;
  		$(this).datetimepicker({
  			format: 'YYYY-MM-DD',
@@ -764,7 +854,7 @@
  		});
    	});
   	
-   	$('body').on('focus',"input[id^='subsSdate']", function(){
+   	$('body').on('focus',"input[id^='subsShm']", function(){
    		var $this = this;
 		$(this).datetimepicker({
 			format: 'HH:mm',
@@ -783,7 +873,7 @@
  		});
    	});
    	
-   	$('body').on('focus',"input[id^='subsEdate']", function(){
+   	$('body').on('focus',"input[id^='subsEhm']", function(){
    		var $this = this;
 		$(this).datetimepicker({
 			format: 'HH:mm',
@@ -804,9 +894,15 @@
 
    	//날짜,시간 변경 시 연장근로시간 계산
    	$('#sDate, #eDate, #sTime, #eTime').on("change.datetimepicker", function(e){
+   		
    		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
-   			var otSdate = moment($("#sDate").val()+' '+$("#sTime").val()).format('YYYY-MM-DD HH:mm');
-         	var otEdate = moment($("#eDate").val()+' '+$("#eTime").val()).format('YYYY-MM-DD HH:mm');
+   			var sDate = $("#sDate").val().replace(/-/gi,"");
+   			var eDate = $("#eDate").val().replace(/-/gi,"");
+   			var sTime = $("#sTime").val().replace(/:/gi,"");
+   			var eTime = $("#eTime").val().replace(/:/gi,"");
+   			
+   			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
+         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
          	
          	if(moment(otEdate).diff(otSdate)<0) {
          		$("#alertText").html("종료일이 시작일보다 작습니다.");

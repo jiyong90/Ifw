@@ -71,7 +71,7 @@ public class WtmApplController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
+		String sabun = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		Long applId = Long.valueOf(paramMap.get("applId").toString());
@@ -81,9 +81,9 @@ public class WtmApplController {
 		try {
 			if(applCd!=null && !"".equals(applCd)) {
 				if("OT".equals(applCd)) {
-					wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+					wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else {
-					flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+					flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				}
 			}
 			

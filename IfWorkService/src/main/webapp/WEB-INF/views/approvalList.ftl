@@ -320,12 +320,15 @@
 	    				//$('#apprOpinionModal').modal("hide"); 
 	    				$('#apprOpinionModal .close').click();
 	    				
-		    			var param = {
-	    	    			applId: appr.applId,
-	    	    			applCd: appr.applCd,
-	    	    			apprSeq: appr.apprSeq,
-	    	    			apprOpinion: $this.apprOpinion 
-	    	    		};
+	    				console.log(appr);
+	    				
+		    			var param = appr;
+		    			
+		    			if(appr.applCd=='OT') {
+		    				param['ymd'] = moment(appr.sYmd).format('YYYYMMDD');
+		    				param['otSdate'] = moment(appr.sYmd).format('YYYYMMDDHHmm');
+		    				param['otEdate'] = moment(appr.eYmd).format('YYYYMMDDHHmm');
+		    			}
 	    	    		
 	    	    		Util.ajax({
 	    					url: "${rc.getContextPath()}/appl/"+apprStatus,

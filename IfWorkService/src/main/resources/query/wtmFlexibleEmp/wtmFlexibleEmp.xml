@@ -303,6 +303,7 @@
 			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 			   AND E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 			   AND D.TIME_TYPE_CD = 'BASE'
+			   AND B.BREAK_TIME_CD = '01'
 			   AND (B.SHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i') 
 			     OR B.EHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i'))
 			 GROUP BY D.WORK_DAY_RESULT_ID
@@ -357,6 +358,7 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
 			   AND C.YMD = #{ymd}
+			   AND B.BREAK_TIME_CD = '01'
 			   AND D.TIME_TYPE_CD = #{timeTypeCd}
 			   AND (B.SHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i') 
 			     OR B.EHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i'))
@@ -460,6 +462,7 @@
  			   AND E.SABUN = #{sabun}
  			   AND E.TENANT_ID = #{tenantId}
  			   AND E.ENTER_CD = #{enterCd}
+ 			   AND B.BREAK_TIME_CD = '01'
    			   AND (B.SHM BETWEEN M.CORE_SHM  AND M.CORE_EHM 
 	 				OR B.EHM BETWEEN M.CORE_SHM  AND M.CORE_EHM)
  			 GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN, C.YMD
@@ -521,9 +524,11 @@
 		   AND E.ENTER_CD = #{enterCd}
 		   AND E.SABUN = #{sabun}
 		   AND C.YMD = #{ymd}
+		   AND B.BREAK_TIME_CD = '01'
   	</select>
   	
   	<select id="checkDuplicateWorktime" parameterType="map" resultType="map">
+  		<![CDATA[
   		SELECT COUNT(*) AS workCnt FROM (
 			SELECT 1 
 			  FROM WTM_FLEXIBLE_EMP E
@@ -549,9 +554,11 @@
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
 			   AND A.APPL_IN_SABUN = #{sabun}
+			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			   AND (O.OT_SDATE BETWEEN #{sdate} AND #{edate} OR O.OT_EDATE BETWEEN #{sdate} AND #{edate})
 			) X
+		]]>	
   	</select>
   	
   	<update id="createWorkteamOfWtmFlexibleEmp" parameterType="map">
@@ -666,16 +673,23 @@
     
     <select id="getWorkHour" parameterType="map" resultType="hashmap" >
 	    SELECT C.YMD AS ymd
-		     , T.WORK_SHM AS workShm
-		     , T.WORK_EHM AS workEhm
-		  FROM WTM_WORK_DAY_RESULT R
+		     , CASE WHEN E.WORK_TYPE_CD IN ('BASE','WORKTEAM') THEN T.WORK_SHM ELSE M.WORK_SHM END AS workShm
+		     , CASE WHEN E.WORK_TYPE_CD IN ('BASE','WORKTEAM') THEN T.WORK_EHM ELSE M.WORK_EHM END AS workEhm
+		  FROM WTM_FLEXIBLE_STD_MGR M
+		  JOIN WTM_FLEXIBLE_EMP E
+		    ON M.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
 		  JOIN WTM_WORK_CALENDAR C
+		    ON E.TENANT_ID = C.TENANT_ID
+		   AND E.ENTER_CD = C.ENTER_CD
+		   AND E.SABUN = C.SABUN
+		   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+		  JOIN WTM_TIME_CD_MGR T
+		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+		  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
 		    ON C.TENANT_ID = R.TENANT_ID
 		   AND C.ENTER_CD = R.ENTER_CD
 		   AND C.YMD = R.YMD
 		   AND C.SABUN = R.SABUN
-		  JOIN WTM_TIME_CD_MGR T
-		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 		 WHERE C.TENANT_ID = #{tenantId}
 		   AND C.ENTER_CD = #{enterCd}
 		   AND C.SABUN = #{sabun}

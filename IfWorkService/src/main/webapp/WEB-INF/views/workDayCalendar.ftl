@@ -693,7 +693,7 @@
 								}
 								
 							} else {
-								$("#alertText").html("저장 시 오류가 발생했습니다.");
+								$("#alertText").html(data.message);
 							}
 							$("#alertModal").on('hidden.bs.modal',function(){
 								$("#alertModal").off('hidden.bs.modal');
