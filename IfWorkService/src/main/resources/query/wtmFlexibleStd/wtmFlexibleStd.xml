@@ -21,7 +21,7 @@
 			 ORDER BY S.USE_SYMD DESC
         ]]>
     </select>
-    <select id="checkRequestDate" parameterType="Long" resultType="map">
+    <select id="checkRequestDate" parameterType="Long" resultType="map"> 
         <![CDATA[
         	SELECT SUM(XX.CNT) AS CNT FROM (
 			SELECT COUNT(*) AS CNT
