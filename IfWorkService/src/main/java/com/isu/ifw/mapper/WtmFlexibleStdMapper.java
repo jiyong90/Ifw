@@ -31,4 +31,18 @@ public interface WtmFlexibleStdMapper {
 	 * @return
 	 */
 	public Map<String, Object> getRangeWeekDay(Map<String, Object> paramMap);
+	
+	/**
+	 * 근무제도기본 입력
+	 * @param list
+	 * @return
+	 */
+	public int insertFlexibleStd(List<Map<String, Object>> list);
+	
+	/**
+	 * 근무제도기본 수정
+	 * @param list
+	 * @return
+	 */
+	public int updateFlexibleStd(List<Map<String, Object>> list);
 }

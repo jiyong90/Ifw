@@ -65,6 +65,11 @@ public class WtmFlexibleStdMgr {
 	private String usedTermOpt;
 	@Column(name="APPL_TERM_OPT")
 	private String applTermOpt;
+	@Column(name="CORE_CHK_YN")
+	private String coreChkYn;
+	@Column(name="BASE_WORK_YN")
+	private String baseWorkYn;
+	
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -243,6 +248,22 @@ public class WtmFlexibleStdMgr {
 
 	public void setApplTermOpt(String applTermOpt) {
 		this.applTermOpt = applTermOpt;
+	}
+	
+	public String getCoreChkYn() {
+		return coreChkYn;
+	}
+
+	public void setCoreChkYn(String coreChkYn) {
+		this.coreChkYn = coreChkYn;
+	}
+
+	public String getBaseWorkYn() {
+		return baseWorkYn;
+	}
+
+	public void setBaseWorkYn(String baseWorkYn) {
+		this.baseWorkYn = baseWorkYn;
 	}
 
 	public String getNote() {

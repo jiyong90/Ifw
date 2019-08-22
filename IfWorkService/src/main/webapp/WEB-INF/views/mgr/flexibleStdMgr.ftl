@@ -1,0 +1,280 @@
+<div id="flexibleStdMgr">
+ 	<div class="container-fluid">
+ 	<div class="ibsheet-wrapper">
+		<form id="sheetForm" name="sheetForm">
+			<div class="sheet_search outer">
+				<table>
+				<tr>
+					<td>
+						<span>기준일 </span>
+						<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}"/>
+					</td>
+					<td>
+						<a href="javascript:doAction1('Search');" class="button">조회</a>
+					</td>
+				</tr>
+				</table>
+			</div>
+		</form>
+		<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
+			<colgroup>
+				<col width="40%" />
+				<col width="60%" />
+			</colgroup>
+			<tr>
+				<td class="sheet_left">
+					<div class="inner">
+						<div class="sheet_title">
+							<li id="txt" class="txt">근무제도관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
+							<li class="btn">
+								<a href="javascript:doAction1('Insert')" class="basic authA">입력</a>
+								<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
+							</li>
+						</div>
+					</div>
+					<script type="text/javascript">createIBSheet("sheet1", "40%", "100%","kr"); </script>
+				</td>
+				<td class="sheet_right">
+					<div class="innertab inner" style="margin-top:5px; height:47%;">
+						<div id="tabs" class="tab">
+							<ul class="outer tab_bottom">
+								<li><a href="#tabs-1">근무제기준</a></li>
+								<li><a href="#tabs-2">근무제패턴</a></li>
+							</ul>
+							<div id="tabs-1">
+								<div  class="layout_tabs">
+									<div class="inner">
+										<div class="sheet_title">
+											<li id="txt" class="txt">근무제기준<span id="searchAppText"  style="margin-left:10px;"></span></li>
+											<li class="btn">
+												<a href="javascript:doAction1('Save2')" class="basic authA">저장</a>
+											</li>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="tabs-2">
+								<div  class="layout_tabs">
+									<div class="inner">
+										<div class="sheet_title">
+											<li id="txt" class="txt">반복패턴<span id="searchAppText"  style="margin-left:10px;"></span></li>
+											<li class="btn">
+												<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
+												<a href="javascript:doAction2('Save')" class="basic authA">저장</a>
+											</li>
+										</div>
+									</div>
+									<script type="text/javascript">createIBSheet("sheet2", "50%", "90%","kr"); </script>
+								</div>
+							</div>
+						</div>
+					</div> 
+				</td>
+			</tr>
+		</table>
+		</from>
+	</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+   	$(function() {
+		var initdata1 = {};
+		
+		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata1.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+
+		initdata1.Cols = [
+			{Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
+			{Header:"삭제",			Type:"DelCheck",	Hidden:1,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+   			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무시간",  		Type:"Combo",     	Hidden:0,   Width:70,  Align:"Center",  ColMerge:0, SaveName:"workTypeCd",  	KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:0,  InsertEdit:1,  EditLen:100  },
+			{Header:"근무명칭",		Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"flexibleNm",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"시작일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"useSymd",        	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
+			{Header:"종료일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"useEymd",        	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
+			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+		]; 
+		
+		IBS_InitSheet(sheet1, initdata1);
+		sheet1.SetEditable(true);
+		sheet1.SetVisible(true);
+		sheet1.SetUnicodeByte(3);
+		//근무제도코드
+		
+		var workTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "WORK_TYPE_CD"), "선택");
+		sheet1.SetColProperty("workTypeCd", {ComboText:workTypeCdList[0], ComboCode:workTypeCdList[1]} );
+		 
+		
+		var initdata2 = {};
+		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata2.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+		
+        initdata2.Cols = [
+            {Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
+			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+   			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workPattDetId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"upid",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+            {Header:"순서",			Type:"Int",	      	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"seq",	 KeyField:1,	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+            {Header:"근무시간",  		Type:"Combo",     	Hidden:0,   Width:70,  Align:"Center",  ColMerge:0, SaveName:"timeCdMgrId",  KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:0,  InsertEdit:1,  EditLen:100  },
+			{Header:"비고",			Type:"Text",	 	Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+			
+        ];
+        IBS_InitSheet(sheet2, initdata2);
+		sheet2.SetEditable(true);
+		sheet2.SetVisible(true);
+		sheet2.SetUnicodeByte(3);
+        
+		//근무시간
+		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/list", "",false).DATA, "선택");
+		sheet2.SetColProperty("timeCdMgrId", {ComboText:timeCdMgrIdList[0], ComboCode:timeCdMgrIdList[1]} );
+
+		sheetInit();
+		doAction1("Search");
+	});
+	
+	var newIframe;
+	var oldIframe;
+	var iframeIdx;
+	
+	$(function() {
+		newIframe = $('#tabs-1 layout_tabs');
+		iframeIdx = 0;
+
+		$( "#tabs" ).tabs({
+			beforeActivate: function(event, ui) {
+				iframeIdx = ui.newTab.index();
+				newIframe = $(ui.newPanel).find('layout_tabs');
+				oldIframe = $(ui.oldPanel).find('layout_tabs');
+				showIframe();
+			}
+		});
+	});
+	
+	function showIframe() {
+		if(iframeIdx == 0) {
+			$("#tabs-1").show();
+			$("#tabs-2").hide();
+		} else if(iframeIdx == 1) {
+			$("#tabs-1").hide();
+			$("#tabs-2").show();
+		}
+	}
+
+   	function doAction1(sAction) {
+		switch (sAction) {
+		case "Search":
+			sheet1.DoSearch( "${rc.getContextPath()}/flexibleStd/listWeb" , $("#sheetForm").serialize());
+			break;
+		
+		case "Save":
+			if(!dupChk(sheet1,"tenantId|enterCd|workTypeCd|flexibleNm|useSymd", false, true)){break;}
+			IBS_SaveName(document.sheetForm,sheet1);
+			sheet1.DoSave("${rc.getContextPath()}/flexibleStd/saveWeb", $("#sheetForm").serialize()); break;
+			break;
+			
+		case "Save2":
+			IBS_SaveName(document.sheetForm,sheet1);
+			sheet1.DoSave("${rc.getContextPath()}/flexibleStd/saveOpt", $("#sheetForm").serialize()); break;
+			break;	
+			
+		case "Insert":
+			sheet1.DataInsert(-1) ;
+			break;
+		}
+	}
+	
+	//근무제패턴저장
+	function doAction2(sAction) {
+		switch (sAction) {
+		case "Search":
+			var param = "flexibleStdMgrId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleStdMgrId");
+			sheet2.DoSearch( "${rc.getContextPath()}/flexibleStd/listPatt" , param);
+			break;
+		
+		case "Save":
+			IBS_SaveName(document.sheetForm,sheet2);
+			sheet2.DoSave("${rc.getContextPath()}/flexibleStd/savePatt", $("#sheetForm").serialize()); break;
+			break;
+			
+		case "Insert":
+			var flexibleStdMgrId = sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleStdMgrId");
+			if(flexibleStdMgrId == ""){
+				alert("근무제도 저장 후 근무제패턴을 입력하셔야 합니다");
+			} else {
+				var row = sheet2.DataInsert(-1) ;
+				sheet2.SetCellValue(row, "flexibleStdMgrId" , flexibleStdMgrId);
+				// alert(sheet2.GetRowEditable(row));
+				// alert(sheet2.GetColEditable(row, "codeCd") + ", " + sheet2.GetColEditable(row, "codeNm"));
+			}
+			break;
+		}
+	}
+
+	// 조회 후 에러 메시지
+	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+
+			sheetResize();
+			if(iframeIdx == 0) {
+				showIframe();
+			} else {
+				$( "#tabs" ).tabs({active:0});
+			}
+		} catch (ex) {
+			alert("OnSearchEnd Event Error : " + ex);
+		}
+	}
+
+	// 저장 후 메시지
+	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+			doAction1("Search");
+		} catch (ex) {
+			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+	
+	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
+		
+		if(OldRow != NewRow && sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus") != "I"){
+			sheet2.RemoveAll();
+			doAction2('Search');
+			// 옵션마스터용 화면그리고 값을 셋팅해야함.
+		}
+	}
+	
+	// 조회 후 에러 메시지
+	function sheet2_OnSearchEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+
+			sheetResize();
+		} catch (ex) {
+			alert("OnSearchEnd Event Error : " + ex);
+		}
+	}
+
+	// 저장 후 메시지
+	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+			doAction2("Search");
+		} catch (ex) {
+			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+</script>
