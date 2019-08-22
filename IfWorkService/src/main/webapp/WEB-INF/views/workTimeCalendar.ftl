@@ -637,18 +637,20 @@
   	         	},
   	         	validateOtAppl : function(){
   	         		var $this = this;
-  	         		var applYn = true;
+  	         		var isValid = true;
   	         		var forms = document.getElementById('overtimeAppl').getElementsByClassName('needs-validation');
   	         		var validation = Array.prototype.filter.call(forms, function(form) {
   	         			if (form.checkValidity() === false) {
-  	         				applYn = false;
+  	         				isValid = false;
   	         				event.preventDefault();
   	         		        event.stopPropagation();
   	         			}
   	         			form.classList.add('was-validated');
   	         		});
   	         		
-  	         		if(applYn) {
+  	         		if(isValid) {
+  	         			isValid = false;
+  	         			
   	         			//신청하려는 ot시간이 소정근무시간에 해당되지 않는지 체크
   	         			var sDate = $("#sDate").val().replace(/-/gi,"");
 			   			var eDate = $("#eDate").val().replace(/-/gi,"");
@@ -657,8 +659,6 @@
 			   			
 			   			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
 			         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
-  	         			
-  	  	         		var isWork = false;
   	  	         		
   	  	         		if($this.result.hasOwnProperty('dayResults') && $this.result.dayResults!=null && $this.result.dayResults!='') {
 	         				var dayResults = JSON.parse($this.result.dayResults);
@@ -668,12 +668,14 @@
 			  	         			var workEdate = moment(dayResult.eDate).format('YYYY-MM-DD HH:mm');
 			  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
 			  	         					|| moment(workSdate).diff(otEdate)<0 && moment(otEdate).diff(workEdate)<0 )
-			  	         				isWork = true;
+			  	         				isValid = true;
 	  	  	         			//}
 	  	  	         		});
   	  	         		}
   	  	         		
-  	  	         		if(!isWork) {
+  	  	         		//신청하려는 휴일근로시간과 이전에 신청한 휴일근로시간 합산한 시간보다 대체일시 합산 시간이 작거나 같아야한다.
+  	  	         		
+  	  	         		if(!isValid) {
   	         				$this.otAppl(otSdate, otEdate);
   	  	         		} else {
   	  	         			$("#alertText").html("소정근로 시간을 포함하여 신청할 수 없습니다.");
@@ -724,6 +726,7 @@
 							});
 						}
 						param['subs'] = subs;
+						
 					}
   	         		
   	         		Util.ajax({
@@ -740,7 +743,7 @@
 									location.reload();
 								});
 							} else {
-								$("#alertText").html("확인요청 시 오류가 발생했습니다.");
+								$("#alertText").html(data.message);
 								$("#alertModal").on('hidden.bs.modal',function(){
 									$("#alertModal").off('hidden.bs.modal');
 								});

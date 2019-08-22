@@ -139,7 +139,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	@Override
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception { 
-		 
+		/* 
 		ReturnParam rp = new ReturnParam();
 		paramMap.put("applId", applId);
 		
@@ -150,7 +150,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		if(rp.getStatus().equals("FAIL")) {
 			throw new Exception(rp.get("message").toString());
 		}
-		
+		*/
 		imsi(tenantId, enterCd, applId, workTypeCd, paramMap, this.APPL_STATUS_APPLY_ING, sabun, userId);
 		
 		//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
@@ -259,77 +259,74 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
-		try {
-			WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
-			Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
-			//신청서 최상위 테이블이다. 
-			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, status, sabun, userId);
-			
-			applId = appl.getApplId();
-			
-			String ymd = paramMap.get("ymd").toString();
-			String otSdate = paramMap.get("otSdate").toString();
-			String otEdate = paramMap.get("otEdate").toString();
-			String reasonCd = paramMap.get("reasonCd").toString();
-			String reason = paramMap.get("reason").toString();
-			
-			WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
-			
-			//근무제 신청서 테이블 조회
-			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), reasonCd, reason, sabun, userId);
-			
-			//휴일근무 신청 여부
-			if(paramMap.containsKey("holidayYn") && paramMap.get("holidayYn").equals("Y")) {
-				//대체휴일이면 subYn = Y
-				if(paramMap.containsKey("subYn") && paramMap.get("subYn").equals("Y") && paramMap.containsKey("subs")) {
-					List<WtmOtSubsAppl> otSubsAppl = wtmOtSubsApplRepo.findByApplId(applId);
+		WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
+		Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
+		//신청서 최상위 테이블이다. 
+		WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, status, sabun, userId);
+		
+		applId = appl.getApplId();
+		
+		String ymd = paramMap.get("ymd").toString();
+		String otSdate = paramMap.get("otSdate").toString();
+		String otEdate = paramMap.get("otEdate").toString();
+		String reasonCd = paramMap.get("reasonCd").toString();
+		String reason = paramMap.get("reason").toString();
+		
+		WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
+		
+		//근무제 신청서 테이블 조회
+		WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), reasonCd, reason, sabun, userId);
+		
+		//휴일근무 신청 여부
+		if(paramMap.containsKey("holidayYn") && paramMap.get("holidayYn").equals("Y")) {
+			//대체휴일이면 subYn = Y
+			if(paramMap.containsKey("subYn") && paramMap.get("subYn").equals("Y") && paramMap.containsKey("subs")) {
+				List<WtmOtSubsAppl> otSubsAppl = wtmOtSubsApplRepo.findByApplId(applId);
+				
+				wtmOtSubsApplRepo.deleteAll(otSubsAppl);
+				
+				List<Map<String, Object>> subs = (List<Map<String, Object>>) paramMap.get("subs");
+				if(subs != null && subs.size() > 0) {
+					Map<String, Object> resultMap = new HashMap<>();
 					
-					wtmOtSubsApplRepo.deleteAll(otSubsAppl);
-					
-					List<Map<String, Object>> subs = (List<Map<String, Object>>) paramMap.get("subs");
-					if(subs != null && subs.size() > 0) {
-						Map<String, Object> resultMap = new HashMap<>();
+					for(Map<String, Object> sub : subs) {
+						String subYmd = sub.get("subYmd").toString();
+						String subsSdate = sub.get("subsSdate").toString();
+						String subsEdate = sub.get("subsEdate").toString();
 						
-						for(Map<String, Object> sub : subs) {
-							String subYmd = sub.get("subYmd").toString();
-							String subsSdate = paramMap.get("subsSdate").toString();
-							String subsEdate = paramMap.get("subsEdate").toString();
-							
-							Date sd = WtmUtil.toDate(subsSdate, "yyyyMMddHHmm");
-							Date ed = WtmUtil.toDate(subsEdate, "yyyyMMddHHmm");
-							
-							WtmOtSubsAppl otSub = new WtmOtSubsAppl();
-							otSub.setApplId(applId);
-							otSub.setOtApplId(otAppl.getOtApplId());
-							otSub.setSubYmd(subYmd);
-							otSub.setSubsSdate(sd);
-							otSub.setSubsEdate(ed);
-							
-							String sHm = WtmUtil.parseDateStr(sd, "HHmm");
-							String eHm = WtmUtil.parseDateStr(ed, "HHmm");
-							paramMap.put("shm", sHm);
-							paramMap.put("ehm", eHm);
-							paramMap.put("sabun", appl.getApplSabun());
-							
-							//현재 신청할 연장근무 시간 계산
-							resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap));
-							
-							otSub.setSubsMinute(resultMap.get("calcMinute").toString());
-							wtmOtSubsApplRepo.save(otSub);
-						}
+						Date sd = WtmUtil.toDate(subsSdate, "yyyyMMddHHmm");
+						Date ed = WtmUtil.toDate(subsEdate, "yyyyMMddHHmm");
+						
+						WtmOtSubsAppl otSub = new WtmOtSubsAppl();
+						otSub.setApplId(applId);
+						otSub.setOtApplId(otAppl.getOtApplId());
+						otSub.setSubYmd(subYmd);
+						otSub.setSubsSdate(sd);
+						otSub.setSubsEdate(ed);
+						
+						String sHm = WtmUtil.parseDateStr(sd, "HHmm");
+						String eHm = WtmUtil.parseDateStr(ed, "HHmm");
+						paramMap.put("shm", sHm);
+						paramMap.put("ehm", eHm);
+						paramMap.put("sabun", appl.getApplSabun());
+						
+						//현재 신청할 연장근무 시간 계산
+						resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap));
+						
+						otSub.setSubsMinute(resultMap.get("calcMinute").toString());
+						otSub.setUpdateId(userId);
+						wtmOtSubsApplRepo.save(otSub);
 					}
 				}
 			}
-			
-			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
-			paramMap.put("applId", appl.getApplId());
-			//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
-			wtmOtApplMapper.calcOtMinute(paramMap);
-			rp.put("applId", appl.getApplId());
-		} catch(Exception e) {
-			throw new Exception("저장 시 오류가 발생했습니다.");
 		}
 		
+		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
+		paramMap.put("applId", appl.getApplId());
+		//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
+		wtmOtApplMapper.calcOtMinute(paramMap);
+		rp.put("applId", appl.getApplId());
+			
 		return rp;
 	}
 
@@ -346,9 +343,6 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		
 		Date sd = WtmUtil.toDate(otSdate, "yyyyMMddHHmm");
 		Date ed = WtmUtil.toDate(otEdate, "yyyyMMddHHmm");
-		
-		System.out.println("sd : " + WtmUtil.parseDateStr(sd, "yyyyMMddHHmm"));
-		System.out.println("ed : " + WtmUtil.parseDateStr(ed, "yyyyMMddHHmm"));
 		
 		Date chkD = WtmUtil.addDate(sd, 1);
 
@@ -411,7 +405,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 
 				for(Map<String, Object> sub : subs) {
 					if(!sub.containsKey("subYmd") || !sub.containsKey("subsSdate") || !sub.containsKey("subsEdate")
-							|| !sub.get("subYmd").equals("") || !sub.get("subsSdate").equals("") || !sub.get("subsEdate").equals("")) {
+							|| sub.get("subYmd").equals("") || sub.get("subsSdate").equals("") || sub.get("subsEdate").equals("")) {
 						rp.setFail("대체휴일을 선택하셨을 경우 대체휴일의 정보를 모두 입력해야합니다.");
 						return rp;
 					}
