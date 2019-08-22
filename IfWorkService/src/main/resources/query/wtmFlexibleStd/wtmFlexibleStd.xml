@@ -82,6 +82,7 @@
     </select>
     
     <select id="getRangeWeekDay" parameterType="map" resultType="map">
+    	<![CDATA[
     	SELECT X.FIRST_DAY AS symd
     		 , F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(X.FIRST_DAY,'%Y%m%d'), 6, 'D'), '%Y%m%d')  AS eymd
 		  FROM (
@@ -103,5 +104,6 @@
 		   AND P.ENTER_CD = #{enterCd}
 		   AND P.INFO_KEY = 'OPTION_FIRSTDAY_OF_WEEK'
 		 ) X
+		 ]]>
     </select>
 </mapper>

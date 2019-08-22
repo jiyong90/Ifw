@@ -87,6 +87,7 @@
     </select>
     
     <select id="getTotOtMinuteBySymdAndEymd" parameterType="map" resultType="map">
+    <![CDATA[
     	SELECT SUM(X.OT_MINUTE) AS totOtMinute
 		  FROM (
 			SELECT O.OT_MINUTE AS OT_MINUTE
@@ -105,6 +106,7 @@
 			   AND R.TIME_TYPE_CD = 'OT'
 			   AND R.SABUN = #{sabun}
 		) X
+	]]>
     </select>
    
 </mapper>
