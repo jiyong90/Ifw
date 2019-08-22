@@ -245,11 +245,37 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 
 	}
 
+	@Transactional
 	@Override
 	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception {
-		// TODO Auto-generated method stub
-
+		if(paramMap == null || !paramMap.containsKey("apprOpinion") && paramMap.get("apprOpinion").equals("")) {
+			throw new Exception("사유를 입력하세요.");
+		}
+		String apprOpinion = paramMap.get("apprOpinion").toString();
+		
+		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
+		if(lines != null && lines.size() > 0) {
+			for(WtmApplLine line : lines) {
+				if(line.getApprSeq() <= apprSeq) {
+					line.setApprStatusCd(APPR_STATUS_REJECT);
+					line.setApprDate("");
+					if(line.getApprSeq() == apprSeq) {
+						line.setApprOpinion(apprOpinion);
+					}
+				}else {
+					line.setApprStatusCd("");
+				}
+				line.setUpdateId(userId);
+				wtmApplLineRepo.save(line);
+			}
+		}
+		
+		WtmAppl appl = wtmApplRepo.findById(applId).get();
+		appl.setApplStatusCd(APPL_STATUS_APPLY_REJECT);
+		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
+		appl.setUpdateId(userId);	
+		wtmApplRepo.save(appl);
 	}
 
 	@Transactional
@@ -274,8 +300,12 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		
 		WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 		
+		String subYn = "";
+		if(paramMap.containsKey("subYn")) {
+			subYn = paramMap.get("subYn")+"";
+		}
 		//근무제 신청서 테이블 조회
-		WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), reasonCd, reason, sabun, userId);
+		WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), subYn,  reasonCd, reason, sabun, userId);
 		
 		//휴일근무 신청 여부
 		if(paramMap.containsKey("holidayYn") && paramMap.get("holidayYn").equals("Y")) {
@@ -565,7 +595,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		//결재라인 저장 끝
 	}
 	
-	protected WtmOtAppl saveWtmOtAppl(Long tenantId, String enterCd, Long applId, Long oldOtApplId, String otSdate, String otEdate, String holidayYn, String reasonCd, String reason, String sabun, Long userId) {
+	protected WtmOtAppl saveWtmOtAppl(Long tenantId, String enterCd, Long applId, Long oldOtApplId, String otSdate, String otEdate, String holidayYn, String subYn, String reasonCd, String reason, String sabun, Long userId) {
 		 
 		WtmOtAppl otAppl = wtmOtApplRepo.findByApplId(applId);
 		if(otAppl == null) {
@@ -579,6 +609,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		otAppl.setHolidayYn(holidayYn);
 		otAppl.setReasonCd(reasonCd);
 		otAppl.setReason(reason);
+		otAppl.setSubYn(subYn);
 		otAppl.setUpdateId(userId);
 		
 		return wtmOtApplRepo.save(otAppl);
