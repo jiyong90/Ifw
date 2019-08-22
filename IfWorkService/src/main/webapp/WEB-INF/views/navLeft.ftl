@@ -74,6 +74,11 @@
                 <span class="title">근무유형관리</span>
             </a>
         </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">
+                <span class="title">근무제도관리</span>
+            </a>
+        </li>
     </ul>
 
     <!-- <ul class="list-unstyled CTAs">
