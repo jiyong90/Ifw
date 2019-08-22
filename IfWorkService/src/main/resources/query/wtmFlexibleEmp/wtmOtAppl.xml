@@ -52,6 +52,32 @@
 	        ]]>
     </select>
     
+    <select id="otSubsApplfindByOtApplId" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+			SELECT S.OT_SUBS_APPL_ID AS otSubsApplId
+			     , S.OT_APPL_ID AS otApplId
+			     , S.APPL_ID AS applId
+			     , S.HOLIDAY_TYPE AS holidayType
+			     , S.SUB_YMD AS subYmd
+			     , S.SUBS_SDATE AS subsSdate
+			     , S.SUBS_EDATE AS subsEdate
+			     , S.SUBS_MINUTE AS subsMinute
+			     , S.OLD_SUBS_APPL_ID AS oldSubsApplId
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(S.SUBS_SDATE, '%Y%m%d'), 'S') AS workSdateShm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(S.SUBS_SDATE, '%Y%m%d'), 'E') AS workSdateEhm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(S.SUBS_EDATE, '%Y%m%d'), 'S') AS workEdateShm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(S.SUBS_EDATE, '%Y%m%d'), 'E') AS workEdateEhm
+			  FROM WTM_OT_APPL O
+			  JOIN WTM_OT_SUBS_APPL S
+			    ON O.OT_APPL_ID = S.OT_APPL_ID
+			  JOIN WTM_APPL A
+			    ON S.APPL_ID = A.APPL_ID
+			 WHERE S.OT_APPL_ID = #{otApplId}
+			   AND (S.CANCEL_YN IS NULL OR S.CANCEL_YN = 'N')
+			 ORDER BY S.SUB_YMD, S.SUBS_SDATE
+	        ]]>
+    </select>
+    
     <select id="getPrevOtSubsApplList" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT O.OT_SDATE AS sDate

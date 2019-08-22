@@ -171,7 +171,8 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                    <h5 class="modal-title">연장근로신청</h5>
+                    <h5 class="modal-title" v-if="result.holidayYn!='Y'">연장근로신청</h5>
+                    <h5 class="modal-title" v-else>휴일근로신청</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -180,7 +181,8 @@
                     <form>
                         <div class="modal-app-wrap">
                             <div class="inner-wrap">
-                                <div class="title">연장근로시간</div>
+                                <div class="title" v-if="result.holidayYn!='Y'">연장근로시간</div>
+                                <div class="title" v-else>휴일근로시간</div>
                                 <div class="desc">
                                     <span class="time-wrap">
                                         <i class="fas fa-clock"></i>
@@ -231,10 +233,33 @@
                                 	</template>
                                 </div>
                             </div>
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
+                                <div class="title">휴일대체방법</div>
+                                <div class="desc">
+                                	<template v-if="overtimeAppl.subYn">
+                                	{{overtimeAppl.subYn=='Y'?'휴일대체':'수당지급'}}
+                                	</template>
+                                </div>
+                            </div>
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
+                                <div class="title">대체일시</div>
+                                <template v-if="overtimeAppl.subs" v-for="sub in overtimeAppl.subs">
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">{{moment(sub.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="day-end-time">{{moment(sub.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="sub-time">{{calendarLeftVue.minuteToHHMM(sub.subsMinute,'detail')}}</span>
+                                    </span>
+                                </div>
+                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.subYmd+' '+sub.workSdateShm).format('HH:mm')}}~{{moment(sub.subYmd+' '+sub.workSdateEhm).format('HH:mm')}} 입니다.</div>
+                                </template>
+                            </div>
                             <hr class="bar">
                         </div>
                         <div class="btn-wrap text-center">
-                            <button type="button" class="btn btn-default rounded-0">연장근로신청 취소하기</button>
+                            <button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'">연장근로신청 취소하기</button>
+                            <button type="button" class="btn btn-default rounded-0" v-else>휴일근로신청 취소하기</button>
                         </div>
                     </form>
                 </div>
@@ -493,8 +518,6 @@
   	         	viewOvertimeApplDetail: function(applId){
   	         		var $this = this;
   	         		
-  	         		console.log(applId);
-  	         		
   	         		var param = {
   	         			applId: applId	
   	         		};
@@ -508,6 +531,7 @@
 						success: function(data) {
 							if(data!=null) {
 								$this.overtimeAppl = data;
+								console.log($this.overtimeAppl);
 								$("#overtimeApplDetail").modal("show"); 
 							}
 						},
@@ -693,7 +717,7 @@
   	         		var $this = this;
   	         	
   	         		var holidayYn = $this.result.holidayYn;
-  	         		var subYn = 'N';
+  	         		var subYn = '';
   	         	
   	         		var param = {
         				flexibleStdMgrId : calendarTopVue.flexibleStd.flexibleStdMgrId,
