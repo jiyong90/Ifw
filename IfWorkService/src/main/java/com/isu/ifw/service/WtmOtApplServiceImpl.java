@@ -264,7 +264,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	@Transactional
 	@Override
 	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
-			String sabun, Long userId) throws Exception {
+			String status, String sabun, Long userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
@@ -272,7 +272,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
 			Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
 			//신청서 최상위 테이블이다. 
-			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_IMSI, sabun, userId);
+			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, status, sabun, userId);
 			
 			applId = appl.getApplId();
 			
@@ -286,6 +286,49 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			
 			//근무제 신청서 테이블 조회
 			WtmOtAppl otAppl = saveWtmOtAppl(tenantId, enterCd, applId, applId, otSdate, otEdate, calendar.getHolidayYn(), reasonCd, reason, sabun, userId);
+			
+			//휴일근무 신청 여부
+			if(paramMap.containsKey("holidayYn") && paramMap.get("holidayYn").equals("Y")) {
+				//대체휴일이면 subYn = Y
+				if(paramMap.containsKey("subYn") && paramMap.get("subYn").equals("Y") & paramMap.containsKey("subs")) {
+					List<WtmOtSubsAppl> otSubsAppl = wtmOtSubsApplRepo.findByApplId(applId);
+					
+					wtmOtSubsApplRepo.deleteAll(otSubsAppl);
+					
+					List<Map<String, Object>> subs = (List<Map<String, Object>>) paramMap.get("subs");
+					if(subs != null && subs.size() > 0) {
+						Map<String, Object> resultMap = new HashMap<>();
+						
+						for(Map<String, Object> sub : subs) {
+							String subYmd = sub.get("subYmd").toString();
+							String subsSdate = paramMap.get("subsSdate").toString();
+							String subsEdate = paramMap.get("subsEdate").toString();
+							
+							Date sd = WtmUtil.toDate(subsSdate, "yyyyMMddHHmm");
+							Date ed = WtmUtil.toDate(subsEdate, "yyyyMMddHHmm");
+							
+							WtmOtSubsAppl otSub = new WtmOtSubsAppl();
+							otSub.setApplId(applId);
+							otSub.setOtApplId(otAppl.getOtApplId());
+							otSub.setSubYmd(subYmd);
+							otSub.setSubsSdate(sd);
+							otSub.setSubsEdate(ed);
+							
+							String sHm = WtmUtil.parseDateStr(sd, "HHmm");
+							String eHm = WtmUtil.parseDateStr(ed, "HHmm");
+							paramMap.put("shm", sHm);
+							paramMap.put("ehm", eHm);
+							paramMap.put("sabun", appl.getApplSabun());
+							
+							//현재 신청할 연장근무 시간 계산
+							resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap));
+							
+							otSub.setSubsMinute(resultMap.get("calcMinute").toString());
+							wtmOtSubsApplRepo.save(otSub);
+						}
+					}
+				}
+			}
 			
 			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
