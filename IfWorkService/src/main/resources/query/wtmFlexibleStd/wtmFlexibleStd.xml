@@ -17,7 +17,7 @@
 			 WHERE S.TENANT_ID = #{tenantId}
 			   AND S.ENTER_CD = #{enterCd}
 			   AND #{d} BETWEEN S.USE_SYMD AND S.USE_EYMD
-			   AND S.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM')
+			   AND S.BASE_WORK_YN = 'N'
 			 ORDER BY S.USE_SYMD DESC
         ]]>
     </select>

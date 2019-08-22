@@ -533,4 +533,13 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		return flexEmpMapper.getWorkHour(paramMap);
 	}
+
+	@Override
+	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		return flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
+	}
 }

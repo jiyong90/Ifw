@@ -765,13 +765,27 @@
   		watch: {
   			rangeInfo : function(val, oldVal) {
   				//총 계획 근무시간,잔여 근무시간 그래프 표기
-  				$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc(40/52 * 100%)' });
-  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc((40 - 1)/52 * 100%)' });
-  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc((12 + 1)/52 * 100%)' });
-  				
-  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc((40 - 30)/52 * 100%)' });
-  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc((40 - 30 - 1)/52 * 100%)' });
-  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc((40 - 30 - 1 + 1)/52 * 100%)' });
+  				if(val.baseWorkYn!=null && val.baseWorkYn!=undefined) {
+  					if(val.baseWorkYn=='Y') {
+		  				$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc(40/52 * 100%)' });
+		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc((40 - 1)/52 * 100%)' });
+		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc((12 + 1)/52 * 100%)' });
+		  				
+		  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc((40 - 30)/52 * 100%)' });
+		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc((40 - 30 - 1)/52 * 100%)' });
+		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc((40 - 30 - 1 + 1)/52 * 100%)' });
+  					} else {
+  						$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc(40/52 * 100%)' });
+		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc((40 - 1)/52 * 100%)' });
+		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc((12 + 1)/52 * 100%)' });
+		  				
+		  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc((40 - 30)/52 * 100%)' });
+		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc((40 - 30 - 1)/52 * 100%)' });
+		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc((40 - 30 - 1 + 1)/52 * 100%)' });
+  					}
+  				} else {
+  					
+  				}
   			},
   			flexibleAppl : function(val, oldVal) {
   				//근무시간, 코어시간 그래프 표기
@@ -852,8 +866,8 @@
 							$this.rangeInfo = data;
 							
 							//근무계획작성
-							if(data.hasOwnProperty('workTypeCd') && data.workTypeCd!=null && data.workTypeCd!=undefined && data.workTypeCd!=''
-									&& data.workTypeCd!='BASE' && data.workTypeCd!='WORKTEAM') {
+							if(data.hasOwnProperty('baseWorkYn') && data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!=''
+									&& data.baseWorkYn!='Y') {
 								$("#workPlanBtn").show();
 							} else {
 								$("#workPlanBtn").hide();

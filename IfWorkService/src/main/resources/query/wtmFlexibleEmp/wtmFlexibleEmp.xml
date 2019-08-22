@@ -19,10 +19,12 @@
 				 , NULL AS applStatusCd
 				 , NULL AS applStatusNm
 			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_FLEXIBLE_STD_MGR M
+			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
 			 WHERE E.TENANT_ID = #{tenantId}
 				AND E.ENTER_CD = #{enterCd}
 				AND E.SABUN = #{sabun}
-				AND E.WORK_TYPE_CD IN ('BASE', 'WORKTEAM')
+				AND M.BASE_WORK_YN = 'Y'
 				AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(E.EYMD, '%Y%m%d') OR F_WTM_TO_DATE(E.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
 			UNION
 			SELECT A.TENANT_ID AS tenantId
@@ -114,6 +116,7 @@
 			  , E.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
 			  , M.FLEXIBLE_NM AS flexibleNm
 			  , M.WORK_TYPE_CD AS workTypeCd
+			  , M.BASE_WORK_YN AS baseWorkYn
 			  , E.SYMD AS sYmd
 			  , E.EYMD AS eYmd
 			  , IFNULL(SUM(CASE WHEN R.TIME_TYPE_CD='BASE' AND R.PLAN_MINUTE IS NOT NULL AND R.PLAN_MINUTE != '' AND R.PLAN_MINUTE > 0 THEN R.PLAN_MINUTE ELSE 0 END), 0) AS planBaseMinute
@@ -672,27 +675,8 @@
     </select>
     
     <select id="getWorkHour" parameterType="map" resultType="hashmap" >
-	    SELECT C.YMD AS ymd
-		     , CASE WHEN E.WORK_TYPE_CD IN ('BASE','WORKTEAM') THEN T.WORK_SHM ELSE M.WORK_SHM END AS workShm
-		     , CASE WHEN E.WORK_TYPE_CD IN ('BASE','WORKTEAM') THEN T.WORK_EHM ELSE M.WORK_EHM END AS workEhm
-		  FROM WTM_FLEXIBLE_STD_MGR M
-		  JOIN WTM_FLEXIBLE_EMP E
-		    ON M.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
-		  JOIN WTM_WORK_CALENDAR C
-		    ON E.TENANT_ID = C.TENANT_ID
-		   AND E.ENTER_CD = C.ENTER_CD
-		   AND E.SABUN = C.SABUN
-		   AND C.YMD BETWEEN E.SYMD AND E.EYMD
-		  JOIN WTM_TIME_CD_MGR T
-		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-		  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
-		    ON C.TENANT_ID = R.TENANT_ID
-		   AND C.ENTER_CD = R.ENTER_CD
-		   AND C.YMD = R.YMD
-		   AND C.SABUN = R.SABUN
-		 WHERE C.TENANT_ID = #{tenantId}
-		   AND C.ENTER_CD = #{enterCd}
-		   AND C.SABUN = #{sabun}
-		   AND C.YMD = #{ymd}
+	    SELECT F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'S') AS workShm
+     		 , F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'E') AS workEhm
+		  FROM DUAL
     </select>
 </mapper>

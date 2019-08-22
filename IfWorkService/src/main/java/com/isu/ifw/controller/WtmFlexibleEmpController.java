@@ -122,7 +122,7 @@ public class WtmFlexibleEmpController {
 	}
 	
 	/**
-	 * 해당 일의 근무시간 조회
+	 * 해당 일의 근무가능시간 조회
 	 * @param paramMap
 	 * @param request
 	 * @return
@@ -198,6 +198,26 @@ public class WtmFlexibleEmpController {
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		return flexibleEmpService.getFlexibleEmpListForPlan(tenantId, enterCd, sabun, paramMap, userId);
+	}
+	
+	/**
+	 * 해당 일의 근무시간(분) 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/workHm",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> calcMinuteExceptBreaktime(@RequestParam Map<String, Object> paramMap
+													    			, HttpServletRequest request) throws Exception {
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		return flexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, paramMap);
 	}
 	
 	@RequestMapping(value="/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

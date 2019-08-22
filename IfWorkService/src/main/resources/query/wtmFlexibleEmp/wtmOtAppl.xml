@@ -80,46 +80,36 @@
     
     <select id="getPrevOtSubsApplList" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT O.OT_SDATE AS sDate
+			SELECT O.YMD AS ymd
+			     , O.OT_SDATE AS sDate
 			     , O.OT_EDATE AS eDate
 			     , O.OT_MINUTE AS otMinute
-			     , S.SUBS_SDATE AS subsSdate
-			     , S.SUBS_EDATE AS subsEdate
-			     , CASE F_WTM_WEEKDAY(S.SUBS_SDATE) 
+			     , CASE F_WTM_WEEKDAY(F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d')) 
 			  			WHEN 1 THEN '일' 
 						WHEN 2 THEN '월'
 						WHEN 3 THEN '화' 
 						WHEN 4 THEN '수' 
 						WHEN 5 THEN '목' 
 						WHEN 6 THEN '금' 
-						WHEN 7 THEN '토' END AS subsDay
-			     , S.SUBS_MINUTE AS subsMinute
-			     , F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) AS sDate
-				  , F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE) AS eDate
-				  , CASE WHEN E.WORK_TYPE_CD IN ('BASE','WORKTEAM') THEN T.WORK_SHM ELSE M.WORK_SHM END AS workShm
-				  , CASE WHEN E.WORK_TYPE_CD IN ('BASE','WORKTEAM') THEN T.WORK_EHM ELSE M.WORK_EHM END AS workEhm
+						WHEN 7 THEN '토' END AS sDay
+				  , CASE F_WTM_WEEKDAY(F_WTM_DATE_FORMAT(O.OT_EDATE, '%Y%m%d')) 
+			  			WHEN 1 THEN '일' 
+						WHEN 2 THEN '월'
+						WHEN 3 THEN '화' 
+						WHEN 4 THEN '수' 
+						WHEN 5 THEN '목' 
+						WHEN 6 THEN '금' 
+						WHEN 7 THEN '토' END AS eDay
+				  , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d'), 'S') AS workSdateShm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d'), 'E') AS workSdateEhm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(O.OT_EDATE, '%Y%m%d'), 'S') AS workEdateShm
+			     , F_WTM_GET_WORK_HM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, F_WTM_DATE_FORMAT(O.OT_EDATE, '%Y%m%d'), 'E') AS workEdateEhm
 			  FROM WTM_OT_APPL O
-			  JOIN WTM_OT_SUBS_APPL S
-			    ON O.OT_APPL_ID = S.OT_APPL_ID
-			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
-			    ON O.APPL_ID = R.APPL_ID
-			  LEFT OUTER JOIN WTM_WORK_CALENDAR C
-			    ON R.YMD = C.YMD
-			   AND R.SABUN = C.SABUN
-			   AND R.ENTER_CD = C.ENTER_CD
-			   AND R.TENANT_ID = C.TENANT_ID
-			  LEFT OUTER JOIN WTM_TIME_CD_MGR T
-			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-			  LEFT OUTER JOIN WTM_FLEXIBLE_EMP E
-			    ON C.TENANT_ID = E.TENANT_ID
-			   AND C.ENTER_CD = E.ENTER_CD
-			   AND C.SABUN = E.SABUN
-			   AND C.YMD BETWEEN E.SYMD AND E.EYMD
-			  LEFT OUTER JOIN WTM_FLEXIBLE_STD_MGR M
-			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
-			 WHERE C.TENANT_ID = #{tenantId}
-			   AND C.ENTER_CD = #{enterCd}
-			   AND C.SABUN = #{sabun}
+			  JOIN WTM_APPL A
+			    ON O.APPL_ID = A.APPL_ID
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.ENTER_CD = #{enterCd}
+			   AND A.APPL_SABUN = #{sabun}
 			   AND O.HOLIDAY_YN = 'Y'
 	        ]]>
     </select>
@@ -143,7 +133,7 @@
 			  FROM WTM_WORK_DAY_RESULT R
 			 WHERE R.TENANT_ID = #{tenantId}
 			   AND R.ENTER_CD = #{enterCd}
-			   AND R.YMD BETWEEN #{symd} AND #{eymd|
+			   AND R.YMD BETWEEN #{symd} AND #{eymd}
 			   AND R.TIME_TYPE_CD = 'OT'
 			   AND R.SABUN = #{sabun}
 		) X

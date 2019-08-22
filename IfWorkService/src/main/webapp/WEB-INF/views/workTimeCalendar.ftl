@@ -75,11 +75,13 @@
                                 <div class="big-title">8시간의 대체 휴일을 지정하세요.</div>
                                 <div class="info-box clearfix mt-2" v-if="prevOtSubs.length>0">
                                     <div class="title">이전에 신청한 휴일</div>
-                                    <div class="desc">{{moment(prevOtSubs.subsSdate).format('YYYY-MM-DD')}}({{prevOtSubs.subsDay}}) {{moment(prevOtSubs.subsSdate).format('HH:mm')}}~{{moment(prevOtSubs.subsEdate).format('HH:mm')}}({{prevOtSubs.subsMinute}}시간)
+                                    <template v-for="s in prevOtSubs">
+                                    <div class="desc">{{moment(s.sDate).format('YYYY-MM-DD HH:mm')}} ~ {{moment(s.eDate).format('YYYY-MM-DD HH:mm')}}({{calendarLeftVue.minuteToHHMM(s.otMinute,'detail')}})
                                     	<span class="guide d-sm-block">
-                                    		해당일 근무시간 {{moment(moment(prevOtSubs.subsSdate).format('YYYYMMDD')+' '+prevOtSubs.workShm).format('HH:mm')}}~{{moment(moment(prevOtSubs.subsSdate).format('YYYYMMDD')+' '+prevOtSubs.workEhm).format('HH:mm')}}
+                                    		해당일 근무시간 {{moment(moment(s.ymd).format('YYYYMMDD')+' '+s.workSdateShm).format('HH:mm')}}~{{moment(moment(s.ymd).format('YYYYMMDD')+' '+s.workSdateEhm).format('HH:mm')}}
                                     	</span>
                                     </div>
+                                    </template>
                                 </div>
                                 <div class="inner-wrap">
                                     <div class="title">대체일시</div>
@@ -456,6 +458,7 @@
 						success: function(data) {
 							if(data!=null) {
 								$this.prevOtSubs = data;
+								console.log(data);
 							}
 						},
 						error: function(e) {
@@ -464,6 +467,33 @@
 						}
 					});
   	         	},
+  	         	calcMinuteExceptBreaktime: function(shm, ehm){
+  	         		var $this = this;
+  	         		var param = {
+  	         			ymd: moment($this.workday).format('YYYYMMDD'),
+	   		    		shm : shm,
+	   		    		ehm : ehm
+	   		    	};
+   		    		
+   		    		Util.ajax({
+						url: "${rc.getContextPath()}/flexibleEmp/workHm",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							if(data!=null && data.hasOwnProperty('calcMinute')) {
+								$("#overtime").text(calendarLeftVue.minuteToHHMM(data.calcMinute, 'detail'));
+							} else{
+								$("#overtime").text("");
+							}
+						},
+						error: function(e) {
+							console.log(e);
+							$("#overtime").text("");
+						}
+					});
+  	         	},		
   	         	getWorkHour: function(id, ymd){
   	         		
   	         		console.log(ymd);
@@ -505,7 +535,7 @@
 					$("#sTime").val(moment(sYmd).format('HH:mm'));
 					$("#eTime").val(moment(eYmd).format('HH:mm'));
 					
-					$("#overtime").text("1시간");
+					$this.calcMinuteExceptBreaktime(moment(sYmd).format('HHmm'), moment(eYmd).format('HHmm'));
 					
 					//휴일근로신청의 경우 이전에 신청한 휴일 가져옴
 					if(Object.keys($this.result).length>0 && $this.result.hasOwnProperty('holidayYn')
@@ -531,7 +561,6 @@
 						success: function(data) {
 							if(data!=null) {
 								$this.overtimeAppl = data;
-								console.log($this.overtimeAppl);
 								$("#overtimeApplDetail").modal("show"); 
 							}
 						},
@@ -892,7 +921,7 @@
  		});
    	})
 
-   	//날짜,시간 변경 시 연장근로시간 계산
+   	//날짜,시간 변경 시 근로시간 계산
    	$('#sDate, #eDate, #sTime, #eTime').on("change.datetimepicker", function(e){
    		
    		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
@@ -915,8 +944,7 @@
          		});
          		$("#alertModal").modal("show"); 
          	} else {
-         		var minutes = moment(otEdate).diff(otSdate, 'minutes');
-             	$("#overtime").text(calendarLeftVue.minuteToHHMM(minutes, 'detail'));
+         		timeCalendarVue.calcMinuteExceptBreaktime(sTime, eTime);
          	}
    		}
     }); 
