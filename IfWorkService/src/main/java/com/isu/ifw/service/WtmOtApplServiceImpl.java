@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
@@ -186,7 +187,10 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			String sabun, Long userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		paramMap.put("applId", applId);
-		rp = this.validate(tenantId, enterCd, sabun, "", paramMap);
+		
+		String applSabun = paramMap.get("applSabun").toString();
+		
+		rp = this.validate(tenantId, enterCd, applSabun, "", paramMap);
 		//rp = validate(applId);
 		if(rp.getStatus().equals("FAIL")) {
 			throw new Exception(rp.get("message").toString());
@@ -242,6 +246,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			dayResult.setPlanEdate(otAppl.getOtEdate());
 			dayResult.setPlanMinute(Integer.parseInt(otAppl.getOtMinute()));
 			dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_OT);
+			dayResult.setUpdateId(userId);
 			
 			wtmWorkDayResultRepo.save(dayResult);
 		}
@@ -308,6 +313,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		Date sd = WtmUtil.toDate(otSdate, "yyyyMMddHHmm");
 		Date ed = WtmUtil.toDate(otEdate, "yyyyMMddHHmm");
 		
+		System.out.println("sd : " + WtmUtil.parseDateStr(sd, "yyyyMMddHHmm"));
+		System.out.println("ed : " + WtmUtil.parseDateStr(ed, "yyyyMMddHHmm"));
+		
 		Date chkD = WtmUtil.addDate(sd, 1);
 
 		//연장근무 신청 기간이 1일 이상이어서도 안된다! 미쳐가지고..
@@ -334,6 +342,11 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			rp.setFail("이미 근무정보(신청중인 근무 포함)가 존재합니다.");
 			return rp;
 		}
+		
+		String sHm = WtmUtil.parseDateStr(sd, "HHmm");
+		String eHm = WtmUtil.parseDateStr(ed, "HHmm");
+		paramMap.put("shm", sHm);
+		paramMap.put("ehm", eHm);
 		
 		//현재 신청할 연장근무 시간 계산
 		resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap));

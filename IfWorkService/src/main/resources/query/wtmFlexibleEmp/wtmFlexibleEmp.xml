@@ -524,6 +524,7 @@
   	</select>
   	
   	<select id="checkDuplicateWorktime" parameterType="map" resultType="map">
+  		<![CDATA[
   		SELECT COUNT(*) AS workCnt FROM (
 			SELECT 1 
 			  FROM WTM_FLEXIBLE_EMP E
@@ -549,9 +550,11 @@
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
 			   AND A.APPL_IN_SABUN = #{sabun}
+			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			   AND (O.OT_SDATE BETWEEN #{sdate} AND #{edate} OR O.OT_EDATE BETWEEN #{sdate} AND #{edate})
 			) X
+		]]>	
   	</select>
   	
   	<update id="createWorkteamOfWtmFlexibleEmp" parameterType="map">
