@@ -32,10 +32,17 @@ public class WtmOtSubsAppl {
 	
 	@Column(name="SUB_YMD")
 	private String subYmd;
-	@Column(name="SUBS_SDATE")
-	private String subsSdate;
-	@Column(name="SUBS_EDATE")
-	private String subsEdate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="SUBS_SDATE", columnDefinition="DATETIME") 
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date subsSdate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="SUBS_EDATE", columnDefinition="DATETIME") 
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date subsEdate;
+	
 	@Column(name="SUBS_MINUTE")
 	private String subsMinute;
 	@Column(name="CANCEL_YN")
@@ -87,20 +94,20 @@ public class WtmOtSubsAppl {
 	public void setSubYmd(String subYmd) {
 		this.subYmd = subYmd;
 	}
-
-	public String getSubsSdate() {
+	
+	public Date getSubsSdate() {
 		return subsSdate;
 	}
 
-	public void setSubsSdate(String subsSdate) {
+	public void setSubsSdate(Date subsSdate) {
 		this.subsSdate = subsSdate;
 	}
 
-	public String getSubsEdate() {
+	public Date getSubsEdate() {
 		return subsEdate;
 	}
 
-	public void setSubsEdate(String subsEdate) {
+	public void setSubsEdate(Date subsEdate) {
 		this.subsEdate = subsEdate;
 	}
 

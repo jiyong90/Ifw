@@ -87,7 +87,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Transactional
 	@Override
-	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
+	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String status, String sabun, Long userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
@@ -95,7 +95,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
 			Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
 			//신청서 최상위 테이블이다. 
-			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_IMSI, sabun, userId);
+			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, status, sabun, userId);
 			
 			applId = appl.getApplId();
 			

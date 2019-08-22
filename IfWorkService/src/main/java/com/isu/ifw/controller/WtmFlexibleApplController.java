@@ -71,7 +71,7 @@ public class WtmFlexibleApplController {
 			workTypeCd = paramMap.get("workTypeCd").toString();
 			
 		try {
-			rp = flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
+			rp = flexibleApplService.imsi(tenantId, enterCd, applId, workTypeCd, paramMap, WtmApplService.APPL_STATUS_IMSI, empNo, userId);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
