@@ -348,4 +348,35 @@ public class WtmFlexibleEmpController {
 		
 		return rp;
 	}
+	
+	/**
+	 * 개인별 근무제도조회 관리자 화면
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/listWeb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getFlexibleEmpWebList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> flexibleList = null;
+		try {		
+			
+			flexibleList = flexibleEmpService.getFlexibleEmpWebList(tenantId, enterCd, paramMap);
+			
+			rp.put("DATA", flexibleList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 }

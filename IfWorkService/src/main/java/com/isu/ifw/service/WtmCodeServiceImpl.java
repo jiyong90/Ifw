@@ -86,7 +86,7 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 				if(iList != null && iList.size() > 0) {
 					for(Map<String, Object> l : iList) {
 						WtmCode code = new WtmCode();
-						code.setCodeId(Long.parseLong(l.get("setCodeId").toString()));
+						code.setCodeId(Long.parseLong(l.get("codeId").toString()));
 						delList.add(code);
 					}
 					codeRepository.deleteAll(delList);

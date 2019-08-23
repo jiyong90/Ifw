@@ -79,6 +79,11 @@
                 <span class="title">근무제도관리</span>
             </a>
         </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">
+                <span class="title">개인별 근무제도 조회</span>
+            </a>
+        </li>
     </ul>
 
     <!-- <ul class="list-unstyled CTAs">

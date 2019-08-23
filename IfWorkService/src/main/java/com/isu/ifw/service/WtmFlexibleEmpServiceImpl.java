@@ -542,4 +542,16 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		return flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
 	}
+	
+	@Override
+	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		
+		List<Map<String, Object>> flexibleList = flexEmpMapper.getFlexibleEmpWebList(paramMap);
+		
+		return flexibleList;
+	}
+	
 }
