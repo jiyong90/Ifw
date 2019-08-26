@@ -52,6 +52,28 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 	}
 	
 	@Override
+	public List<Map<String, Object>> getCodeListWeb(Long tenantId, String enterCd, String grpCodeCd, String ymd) {
+		List<Map<String, Object>> codeList = new ArrayList();	
+		List<WtmCode> list = codeRepository.findByTenantIdAndEnterCdAndGrpCodeCdAndYmd(tenantId, enterCd, grpCodeCd, ymd);
+		
+		for(WtmCode l : list) {
+			Map<String, Object> code = new HashMap();
+			code.put("codeId", l.getCodeId());
+			code.put("grpCodeCd", l.getGrpCodeCd());
+			code.put("code", l.getCodeCd());
+			code.put("codeCd", l.getCodeCd());
+			code.put("codeNm", l.getCodeNm());
+			code.put("symd", l.getSymd());
+			code.put("eymd", l.getEymd());
+			code.put("note", l.getNote());
+			code.put("tenantId", l.getTenantId());
+			code.put("enterCd", l.getEnterCd());
+			codeList.add(code);
+		}
+		return codeList;
+	}
+	
+	@Override
 	public int setCodeList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {

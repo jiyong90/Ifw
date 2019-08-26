@@ -45,7 +45,7 @@ public class WtmCodeController {
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> codeList = null;
-		try {		
+		try {
 			codeList = codeService.getCodeList(tenantId, enterCd, paramMap.get("grpCodeCd").toString());
 			
 			rp.put("codeList", codeList);
@@ -70,8 +70,8 @@ public class WtmCodeController {
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> codeList = null;
-		try {		
-			codeList = codeService.getCodeList(tenantId, enterCd, paramMap.get("grpCodeCd").toString());
+		try {
+			codeList = codeService.getCodeListWeb(tenantId, enterCd, paramMap.get("grpCodeCd").toString(), paramMap.get("sYmd").toString());
 			
 			rp.put("DATA", codeList);
 		} catch(Exception e) {
