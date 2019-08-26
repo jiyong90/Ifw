@@ -1,19 +1,21 @@
 <div id="flexibleStdMgr">
- 	<div class="container-fluid">
+ 	<div class="container-fluid pt-3 pb-3 bg-white">
  	<div class="ibsheet-wrapper">
 		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
-				<table>
-				<tr>
-					<td>
-						<span>기준일 </span>
-						<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}"/>
-					</td>
-					<td>
-						<a href="javascript:doAction1('Search');" class="button">조회</a>
-					</td>
-				</tr>
-				</table>
+				<div>
+					<table>
+						<tr>
+							<td>
+								<span>기준일 </span>
+								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+							</td>
+							<td>
+								<a href="javascript:doAction1('Search');" class="button">조회</a>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</form>
 		<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
@@ -24,47 +26,51 @@
 			<tr>
 				<td class="sheet_left">
 					<div class="inner">
-						<div class="sheet_title">
-							<li id="txt" class="txt">근무제도관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
-							<li class="btn">
-								<a href="javascript:doAction1('Insert')" class="basic authA">입력</a>
+						<div class="sheet_title_wrap clearfix">
+							<div class="float-left title">근무제도관리</div>
+							<ul class="float-right btn-wrap">
+								<li class="btn">
+									<a href="javascript:doAction1('Insert')" class="basic authA">입력</a>
 								<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
-							</li>
+								</li>
+							</ul>
 						</div>
 					</div>
 					<script type="text/javascript">createIBSheet("sheet1", "40%", "100%","kr"); </script>
 				</td>
 				<td class="sheet_right">
-					<div class="innertab inner" style="margin-top:5px; height:47%;">
-						<div id="tabs" class="tab">
-							<ul class="outer tab_bottom">
-								<li><a href="#tabs-1">근무제기준</a></li>
-								<li><a href="#tabs-2">근무제패턴</a></li>
-							</ul>
-							<div id="tabs-1">
-								<div  class="layout_tabs">
-									<div class="inner">
-										<div class="sheet_title">
-											<li id="txt" class="txt">근무제기준<span id="searchAppText"  style="margin-left:10px;"></span></li>
-											<li class="btn">
-												<a href="javascript:doAction1('Save2')" class="basic authA">저장</a>
-											</li>
+					<div class="inner">
+						<div class="innertab inner" style="margin-top:5px; height:47%;">
+							<div id="tabs" class="tab">
+								<ul class="outer tab_bottom">
+									<li><a href="#tabs-1">근무제기준</a></li>
+									<li><a href="#tabs-2">근무제패턴</a></li>
+								</ul>
+								<div id="tabs-1">
+									<div  class="layout_tabs">
+										<div class="inner">
+											<div class="sheet_title">
+												<li id="txt" class="txt">근무제기준<span id="searchAppText"  style="margin-left:10px;"></span></li>
+												<li class="btn">
+													<a href="javascript:doAction1('Save2')" class="basic authA">저장</a>
+												</li>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<div id="tabs-2">
-								<div  class="layout_tabs">
-									<div class="inner">
-										<div class="sheet_title">
-											<li id="txt" class="txt">반복패턴<span id="searchAppText"  style="margin-left:10px;"></span></li>
-											<li class="btn">
-												<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
-												<a href="javascript:doAction2('Save')" class="basic authA">저장</a>
-											</li>
+								<div id="tabs-2">
+									<div  class="layout_tabs">
+										<div class="inner">
+											<div class="sheet_title">
+												<li id="txt" class="txt">반복패턴<span id="searchAppText"  style="margin-left:10px;"></span></li>
+												<li class="btn">
+													<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
+													<a href="javascript:doAction2('Save')" class="basic authA">저장</a>
+												</li>
+											</div>
 										</div>
+										<script type="text/javascript">createIBSheet("sheet2", "50%", "90%","kr"); </script>
 									</div>
-									<script type="text/javascript">createIBSheet("sheet2", "50%", "90%","kr"); </script>
 								</div>
 							</div>
 						</div>
@@ -79,6 +85,11 @@
 
 <script type="text/javascript">
    	$(function() {
+   		$('#sYmd').datetimepicker({
+            format: 'YYYY-MM-DD',
+            language: 'ko'
+        });
+        
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -220,7 +231,7 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
-
+			sheet2.RemoveAll();
 			sheetResize();
 			if(iframeIdx == 0) {
 				showIframe();

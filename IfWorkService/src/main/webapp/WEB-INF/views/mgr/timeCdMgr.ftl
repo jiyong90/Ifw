@@ -1,20 +1,20 @@
 <div id="timeCdMgr">
- 	<div class="container-fluid">
+ 	<div class="container-fluid pt-3 pb-3 bg-white">
  	<div class="ibsheet-wrapper">
-		<form id="sheetForm" name="sheetForm">
+ 		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
 				<div>
-				<table>
-				<tr>
-					<td>
-						<span>기준일 </span>
-						<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}"/>
-					</td>
-					<td>
-						<a href="javascript:doAction1('Search');" class="button">조회</a>
-					</td>
-				</tr>
-				</table>
+					<table>
+						<tr>
+							<td>
+								<span>기준일 </span>
+								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+							</td>
+							<td>
+								<a href="javascript:doAction1('Search');" class="button">조회</a>
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</form>
@@ -22,9 +22,9 @@
 			<tr>
 				<td>
 					<div class="inner">
-						<div class="sheet_title">
-							<li id="txt" class="txt">근무유형관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
-							<ul>
+						<div class="sheet_title_wrap clearfix">
+							<div class="float-left title">근무유형관리</div>
+							<ul class="float-right btn-wrap">
 								<li class="btn">
 									<a href="javascript:doAction1('Insert')" class="basic authA">입력</a>
 									<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
@@ -38,9 +38,9 @@
 			<tr>
 				<td>
 					<div class="inner">
-						<div class="sheet_title">
-							<li id="txt" class="txt">휴식시간관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
-							<ul>
+						<div class="sheet_title_wrap clearfix">
+						<div class="float-left title">휴식시간관리</div>
+							<ul class="float-right btn-wrap">
 								<li class="btn">
 									<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
 									<a href="javascript:doAction2('Save')" class="basic authA">저장</a>
@@ -58,6 +58,11 @@
 
 <script type="text/javascript">
    	$(function() {
+		$('#sYmd').datetimepicker({
+            format: 'YYYY-MM-DD',
+            language: 'ko'
+        });
+        
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -87,6 +92,7 @@
 		sheet1.SetEditable(true);
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
+		sheet1.SetUseDefaultTime(0);
 		sheet1.SetCountPosition(8);
 		
 		var initdata2 = {};
@@ -109,6 +115,7 @@
         IBS_InitSheet(sheet2, initdata2);
 		sheet2.SetEditable(true);
 		sheet2.SetVisible(true);
+		sheet2.SetUseDefaultTime(0);
 		sheet2.SetUnicodeByte(3);
         
 		//휴식코드
@@ -169,7 +176,7 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
-
+			sheet2.RemoveAll();
 			sheetResize();
 		} catch (ex) {
 			alert("OnSearchEnd Event Error : " + ex);
@@ -190,6 +197,7 @@
 	
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
 		if(OldRow != NewRow){
+			sheet2.RemoveAll();
 			doAction2('Search');
 		}
 	}
