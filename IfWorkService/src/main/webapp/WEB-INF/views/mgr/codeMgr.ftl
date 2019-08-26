@@ -1,5 +1,5 @@
 <div id="timeCdMgr">
- 	<div class="container-fluid">
+ 	<div class="container-fluid pt-3 pb-3 bg-white">
  	<div class="ibsheet-wrapper">
 		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
@@ -22,9 +22,9 @@
 			<tr>
 				<td>
 					<div class="inner">
-						<div class="sheet_title">
-							<li id="txt" class="txt">그룹코드관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
-							<ul>
+						<div class="sheet_title_wrap clearfix">
+						<div class="float-left title">그룹코드관리</div>
+							<ul class="float-right btn-wrap">
 								<li class="btn">
 									<a href="javascript:doAction1('Insert')" class="basic authA">입력</a>
 									<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
@@ -38,9 +38,9 @@
 			<tr>
 				<td>
 					<div class="inner">
-						<div class="sheet_title">
-							<li id="txt" class="txt">공통코드관리<span id="searchAppText"  style="margin-left:10px;"></span></li>
-							<ul>
+					<div class="sheet_title_wrap clearfix">
+						<div class="float-left title">공통코드관리</div>
+							<ul class="float-right btn-wrap">
 								<li class="btn">
 									<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
 									<a href="javascript:doAction2('Save')" class="basic authA">저장</a>

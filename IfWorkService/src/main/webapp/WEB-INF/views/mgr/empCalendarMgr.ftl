@@ -1,5 +1,5 @@
 <div id="empCalendarMgr">
- 	<div class="container-fluid">
+ 	<div class="container-fluid pt-3 pb-3 bg-white">
  	<div class="ibsheet-wrapper">
  		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
@@ -27,9 +27,9 @@
 			<tr>
 				<td>
 					<div class="inner">
-						<div class="sheet_title">
-							<li id="txt" class="txt">근무캘린더<span id="searchAppText1"  style="margin-left:10px;"></span></li>
-							<ul>
+						<div class="sheet_title_wrap clearfix">
+						<div class="float-left title">근무캘린더</div>
+							<ul class="float-right btn-wrap">
 								<li class="btn">
 									<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
 								</li>
@@ -42,9 +42,9 @@
 			<tr>
 				<td>
 					<div class="inner">
-						<div class="sheet_title">
-							<li id="txt" class="txt">근무상세결과<span id="searchAppText2"  style="margin-left:10px;"></span></li>
-							<ul>
+						<div class="sheet_title_wrap clearfix">
+						<div class="float-left title">근무상세결과</div>
+							<ul class="float-right btn-wrap">
 								<li class="btn">
 									<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
 									<a href="javascript:doAction2('Save')" class="basic authA">저장</a>

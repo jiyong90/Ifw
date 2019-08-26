@@ -606,6 +606,10 @@
   		{ call P_WTM_WORKTEAM_CREATE( #{workteamMgrId}, #{pId} ) }
   	</update>
   	
+  	<update id="resetWtmWorkteamOfWtmWorkDayResult" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_FLEXIBLE_EMP_RESET( #{workteamMgrId}, #{sabun} , #{pId} ) }
+  	</update>
+  	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->
   	<select id="getFlexibleEmpListForPlan" parameterType="map" resultType="hashmap">
         <![CDATA[

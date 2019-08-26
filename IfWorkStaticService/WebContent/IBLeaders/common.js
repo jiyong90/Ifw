@@ -959,7 +959,7 @@ function sheetResize() {
 // datepicker 기본설정
 $.datepicker.setDefaults({
 	showOn: "both",
-	buttonImage: "/common/images/common/calendar.gif",
+	buttonImage: "/ifw/IBLeaders/Sheet/js/Main/calendar.gif",
 	buttonImageOnly: true,
 	buttonText: "달력",
 	dateFormat: "yy-mm-dd",	// 날짜 포맷

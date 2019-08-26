@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.isu.ifw.entity.WtmWorkteamMgr;
+import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmWorkteamMgrMapper;
 import com.isu.ifw.repository.WtmWorkteamMgrRepository;
 
@@ -27,6 +28,9 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 	
 	@Autowired
 	WtmWorkteamMgrMapper workteamMgrMapper;
+	
+	@Autowired
+	WtmFlexibleEmpMapper flexEmpMapper;
 	
 	
 	@Override
@@ -50,10 +54,11 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 	@Override
 	public int setWorkteamMgrList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
 		int cnt = 0;
+		Map<String, Object> paramMap = new HashMap();
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
 				List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("mergeRows");
-				List<WtmWorkteamMgr> saveList = new ArrayList();
+				//List<WtmWorkteamMgr> saveList = new ArrayList();
 				if(iList != null && iList.size() > 0) {
 					for(Map<String, Object> l : iList) {
 						WtmWorkteamMgr workteam = new WtmWorkteamMgr();
@@ -66,10 +71,18 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 						workteam.setNote(l.get("note").toString());
 						workteam.setSymd(l.get("symd").toString());
 						workteam.setFlexibleStdMgrId(Long.parseLong(l.get("flexibleStdMgrId").toString()));
-						saveList.add(workteam);
+						
+						workteam = workteamMgrRepository.save(workteam);
+
+						paramMap.put("workteamMgrId", workteam.getWorkteamMgrId());
+						paramMap.put("sabun", "");
+						paramMap.put("pId", userId);
+						
+						flexEmpMapper.resetWtmWorkteamOfWtmWorkDayResult(paramMap);
+						cnt++;
 					}
-					saveList = workteamMgrRepository.saveAll(saveList);
-					cnt += saveList.size();
+					//saveList = workteamMgrRepository.saveAll(saveList);
+					//cnt += saveList.size();
 				}
 				
 				MDC.put("insert cnt", "" + cnt);
@@ -82,9 +95,18 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 					for(Map<String, Object> l : iList) {
 						WtmWorkteamMgr workteam = new WtmWorkteamMgr();
 						workteam.setWorkteamMgrId(Long.parseLong(l.get("workteamMgrId").toString()));
-						deleteList.add(workteam);
+						//deleteList.add(workteam);
+						
+						workteamMgrRepository.delete(workteam);
+						
+						paramMap.put("workteamMgrId", l.get("workteamMgrId").toString());
+						paramMap.put("sabun", "");
+						paramMap.put("pId", userId);
+						
+						flexEmpMapper.resetWtmWorkteamOfWtmWorkDayResult(paramMap);
+						cnt++;
 					}
-					workteamMgrRepository.deleteAll(deleteList);
+//					workteamMgrRepository.deleteAll(deleteList);
 				}
 				
 				MDC.put("delete cnt", "" + iList.size());
