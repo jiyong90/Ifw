@@ -10,4 +10,7 @@ import com.isu.ifw.entity.WtmOtSubsAppl;
 @Repository
 public interface WtmOtSubsApplRepository extends JpaRepository<WtmOtSubsAppl, Long> {
 	public List<WtmOtSubsAppl> findByOtApplId(Long otApplId);
+	
+	public List<WtmOtSubsAppl> findByApplId(Long applId);
+	
 }

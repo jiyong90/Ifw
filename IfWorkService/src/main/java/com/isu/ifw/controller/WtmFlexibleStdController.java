@@ -2,9 +2,11 @@ package com.isu.ifw.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.logging.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmFlexibleStdService;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmFlexibleStdVO;
 import com.isu.option.vo.ReturnParam;
 
@@ -210,4 +213,115 @@ public class WtmFlexibleStdController {
 		
 		return rp;
 	}
+	
+	
+	@RequestMapping(value="/listWeb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam stdListWeb(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String ymd = paramMap.get("sYmd").toString();
+		
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> stdList = null;
+		try {		
+			stdList = WtmFlexibleStdService.getStdListWeb(tenantId, enterCd, ymd);
+			
+			rp.put("DATA", stdList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/saveWeb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam setStdListWeb(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setFail("저장 시 오류가 발생했습니다.");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
+		convertMap.put("userId", userId);
+
+		MDC.put("convertMap", convertMap);
+
+		
+		rp.setSuccess("");
+		int cnt = 0;
+		try {
+			cnt = WtmFlexibleStdService.setStdListWeb(tenantId, enterCd, userId, convertMap);
+			if(cnt > 0) {
+				rp.setSuccess("저장이 성공하였습니다.");
+				return rp;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/listPatt", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getWorkPattList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long flexibleStdMgrId = Long.valueOf(paramMap.get("flexibleStdMgrId").toString());
+		
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> stdList = null;
+		try {		
+			stdList = WtmFlexibleStdService.getWorkPattList(flexibleStdMgrId);
+			
+			rp.put("DATA", stdList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	
+	@RequestMapping(value="/savePatt", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam setWorkPattList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setFail("저장 시 오류가 발생했습니다.");
+		
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
+		convertMap.put("userId", userId);
+
+		MDC.put("convertMap", convertMap);
+
+		
+		rp.setSuccess("");
+		int cnt = 0;
+		try {
+			cnt = WtmFlexibleStdService.setWorkPattList(userId, convertMap);
+			if(cnt > 0) {
+				rp.setSuccess("저장이 성공하였습니다.");
+				return rp;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return rp;
+	}
+	
+	
 }

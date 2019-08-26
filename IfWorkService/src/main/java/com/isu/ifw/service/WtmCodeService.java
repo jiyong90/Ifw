@@ -12,6 +12,8 @@ public interface WtmCodeService {
 	
 	public List<Map<String, Object>> getCodeList(Long tenantId, String enterCd, String grpCodeCd);
 	
+	public List<Map<String, Object>> getCodeListWeb(Long tenantId, String enterCd, String grpCodeCd, String ymd);
+	
 	public int setCodeList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
 	
 	public List<Map<String, Object>> getCodeGrpList(Long tenantId, String enterCd);

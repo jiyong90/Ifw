@@ -17,11 +17,11 @@
 			 WHERE S.TENANT_ID = #{tenantId}
 			   AND S.ENTER_CD = #{enterCd}
 			   AND #{d} BETWEEN S.USE_SYMD AND S.USE_EYMD
-			   AND S.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM')
+			   AND S.BASE_WORK_YN = 'N'
 			 ORDER BY S.USE_SYMD DESC
         ]]>
     </select>
-    <select id="checkRequestDate" parameterType="Long" resultType="map">
+    <select id="checkRequestDate" parameterType="Long" resultType="map"> 
         <![CDATA[
         	SELECT SUM(XX.CNT) AS CNT FROM (
 			SELECT COUNT(*) AS CNT
@@ -106,4 +106,43 @@
 		 ) X
 		 ]]>
     </select>
+    
+    <update id="insertFlexibleStd" parameterType="java.util.HashMap">
+		INSERT INTO WTM_FLEXIBLE_STD_MGR 
+				(TENANT_ID, 
+				ENTER_CD, 
+				WORK_TYPE_CD, 
+				FLEXIBLE_NM, 
+				USE_SYMD, 
+				USE_EYMD, 
+				BASE_WORK_YN,
+				NOTE, 
+				UPDATE_DATE,
+				UPDATE_ID)
+			VALUES
+			<foreach collection="list" item="item" separator=", ">
+				(#{item.tenantId},
+				 #{item.enterCd} ,
+				 #{item.workTypeCd} ,
+				 #{item.flexibleNm} ,
+				 #{item.useSymd} ,
+				 #{item.useEymd} ,
+				 #{item.baseWorkYn} ,
+				 #{item.note} ,
+				 now(),
+				 #{item.userId}
+				)
+			</foreach>
+	</update>
+
+	<update id="updateFlexibleStd" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE WTM_FLEXIBLE_STD_MGR SET 
+				USE_EYMD =  #{item.useEymd}
+				, NOTE = #{item.note}  
+				, UPDATE_DATE = NOW()
+				, UPDATE_ID = #{item.userId}
+			WHERE FLEXIBLE_STD_MGR_ID = #{item.flexibleStdMgrId}
+		</foreach>
+	</update>
 </mapper>

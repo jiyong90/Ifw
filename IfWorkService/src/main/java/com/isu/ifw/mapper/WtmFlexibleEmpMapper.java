@@ -163,4 +163,12 @@ public interface WtmFlexibleEmpMapper {
 	 * @return
 	 */
 	public Map<String, Object> getWorkHour(Map<String, Object> paramMap);
+	
+	/**
+	 * 개인별 근무제도조회 관리자 화면
+	 * @param paramMap
+	 * @return 
+	 */
+	public List<Map<String, Object>> getFlexibleEmpWebList(Map<String, Object> paramMap);
+	
 }

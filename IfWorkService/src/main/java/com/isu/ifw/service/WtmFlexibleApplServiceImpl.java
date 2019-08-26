@@ -87,7 +87,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Transactional
 	@Override
-	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
+	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String status, String sabun, Long userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
@@ -95,7 +95,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
 			Long flexibleStdMgrId = Long.parseLong(paramMap.get("flexibleStdMgrId").toString());
 			//신청서 최상위 테이블이다. 
-			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, this.APPL_STATUS_IMSI, sabun, userId);
+			WtmAppl appl = saveWtmAppl(tenantId, enterCd, applId, workTypeCd, status, sabun, userId);
 			
 			applId = appl.getApplId();
 			
@@ -305,32 +305,36 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	 
 	
-	
+	@Transactional
 	@Override
 	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId)  throws Exception {
-		ReturnParam rp = new ReturnParam();
-		rp = checkRequestDate(applId);
-		if(rp.getStatus().equals("FAIL")) {
-			throw new Exception("신청중인 또는 이미 적용된 근무정보가 있습니다.");
+		if(paramMap == null || !paramMap.containsKey("apprOpinion") && paramMap.get("apprOpinion").equals("")) {
+			throw new Exception("사유를 입력하세요.");
 		}
-		//신청서 메인 상태값 업데이트
+		String apprOpinion = paramMap.get("apprOpinion").toString();
+		
+		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
+		if(lines != null && lines.size() > 0) {
+			for(WtmApplLine line : lines) {
+				if(line.getApprSeq() <= apprSeq) {
+					line.setApprStatusCd(APPR_STATUS_REJECT);
+					line.setApprDate("");
+					if(line.getApprSeq() == apprSeq) {
+						line.setApprOpinion(apprOpinion);
+					}
+				}else {
+					line.setApprStatusCd("");
+				}
+				line.setUpdateId(userId);
+				wtmApplLineRepo.save(line);
+			}
+		}
+		
 		WtmAppl appl = wtmApplRepo.findById(applId).get();
-		appl.setApplStatusCd(APPL_STATUS_APPR_REJECT);
+		appl.setApplStatusCd(APPL_STATUS_APPLY_REJECT);
 		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
-		appl.setUpdateId(userId);
-		
-		appl = wtmApplRepo.save(appl);
-		
-		//결재라인 상태값 업데이트
-		WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
-		line.setApprStatusCd(APPR_STATUS_REJECT);
-		line.setApprDate(WtmUtil.parseDateStr(new Date(), null));
-		//결재의견
-		if(paramMap != null && paramMap.containsKey("apprOpinion")) {
-			line.setApprOpinion(paramMap.get("apprOpinion").toString());
-		}
-		line = wtmApplLineRepo.save(line);
-		
+		appl.setUpdateId(userId);	
+		wtmApplRepo.save(appl);
 	}
 
 	

@@ -122,7 +122,7 @@ public class WtmFlexibleEmpController {
 	}
 	
 	/**
-	 * 해당 일의 근무시간 조회
+	 * 해당 일의 근무가능시간 조회
 	 * @param paramMap
 	 * @param request
 	 * @return
@@ -198,6 +198,26 @@ public class WtmFlexibleEmpController {
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		return flexibleEmpService.getFlexibleEmpListForPlan(tenantId, enterCd, sabun, paramMap, userId);
+	}
+	
+	/**
+	 * 해당 일의 근무시간(분) 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/workHm",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> calcMinuteExceptBreaktime(@RequestParam Map<String, Object> paramMap
+													    			, HttpServletRequest request) throws Exception {
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		return flexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, paramMap);
 	}
 	
 	@RequestMapping(value="/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -324,6 +344,37 @@ public class WtmFlexibleEmpController {
 			flexibleEmpService.saveEmpDayResults(tenantId, enterCd, userId, convertMap);
 		} catch(Exception e) {
 			e.printStackTrace();
+		}
+		
+		return rp;
+	}
+	
+	/**
+	 * 개인별 근무제도조회 관리자 화면
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/listWeb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getFlexibleEmpWebList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> flexibleList = null;
+		try {		
+			
+			flexibleList = flexibleEmpService.getFlexibleEmpWebList(tenantId, enterCd, paramMap);
+			
+			rp.put("DATA", flexibleList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
 		}
 		
 		return rp;

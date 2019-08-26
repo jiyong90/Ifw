@@ -8,7 +8,7 @@
 				<tr>
 					<td>
 						<span>기준일 </span>
-						<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}"/>
+						<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 					</td>
 					<td>
 						<a href="javascript:doAction1('Search');" class="button">조회</a>
@@ -138,7 +138,8 @@
 	function doAction2(sAction) {
 		switch (sAction) {
 		case "Search":
-			var param = "grpCodeCd="+sheet1.GetCellValue( sheet1.GetSelectRow(), "grpCodeCd");
+			var param = "grpCodeCd=" + sheet1.GetCellValue( sheet1.GetSelectRow(), "grpCodeCd");
+			param = param + "&sYmd=" + $("#sYmd").val();
 			sheet2.DoSearch( "${rc.getContextPath()}/code/listWeb" , param);
 			break;
 		

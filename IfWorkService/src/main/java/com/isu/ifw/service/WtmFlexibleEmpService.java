@@ -166,4 +166,20 @@ public interface WtmFlexibleEmpService {
 	 * @return
 	 */
 	public Map<String, Object> getWorkHour(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+	
+	/**
+	 * 휴게시간을 제외한 시간 계산
+	 * @param paramMap { timeCdMgrId : 휴게시간아이디,shm : '2200', ehm : '0200'}
+	 * @return { calcMinute : 22 } 
+	 */
+	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
+	
+	/**
+	 * 개인별 근무제도조회 관리자 화면
+	 * @param tenantId
+	 * @param enterCd
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, Map<String, Object> paramMap);
 }

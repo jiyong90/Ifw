@@ -45,4 +45,36 @@ public interface WtmFlexibleStdService {
 	//public void saveFlexibleStdOption();
 	//public void saveFlexibleStdBreaktime();
 	
+	/**
+	 * 근무제도관리 (관리자화면)
+	 * @param tenantId - 테넌트 아이디
+	 * @param enterCd - 회사코드
+	 * @param ymd - 기준일
+	 * @return 
+	 */
+	public List<Map<String, Object>> getStdListWeb(Long tenantId, String enterCd, String ymd);
+	
+	/**
+	 * 근무제도관리 저장 (관리자화면)
+	 * @param userId - 수정자
+	 * @param convertMap - 저장sheet
+	 * @return 
+	 */
+	public int setStdListWeb(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
+	
+	/**
+	 * 근무패턴관리 (관리자화면)
+	 * @param flexibleStdMgrId - 근무제도id
+	 * @return 
+	 */
+	public List<Map<String, Object>> getWorkPattList(Long flexibleStdMgrId);
+	
+	/**
+	 * 근무패턴관리 저장 (관리자화면)
+	 * @param userId - 수정자
+	 * @param convertMap - 저장sheet
+	 * @return 
+	 */
+	public int setWorkPattList(Long userId, Map<String, Object> convertMap);
+	
 }
