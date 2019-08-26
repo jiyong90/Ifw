@@ -58,6 +58,12 @@
 
 <script type="text/javascript">
    	$(function() {
+   	
+   		$('#sYmd').datetimepicker({
+            format: 'YYYY-MM-DD',
+            language: 'ko'
+        });
+        
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
