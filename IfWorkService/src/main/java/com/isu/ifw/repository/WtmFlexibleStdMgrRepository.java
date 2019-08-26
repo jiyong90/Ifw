@@ -15,6 +15,6 @@ public interface WtmFlexibleStdMgrRepository extends JpaRepository<WtmFlexibleSt
 
 	public WtmFlexibleStdMgr findByTenantIdAndEnterCdAndWorkTypeCd(Long tenantId, String enterCd, String workTypeCd);
 	
-	@Query(value="SELECT * FROM WTM_FLEXIBLE_STD_MGR WHERE TENANT_ID = :tenantId AND ENTER_CD = :enterCd AND :ymd BETWEEN USE_SYMD AND IFNULL(USE_EYMD, '99991231') ORDER BY WORK_TYPE_CD, USE_SYMD DESC", nativeQuery = true)
+	@Query(value="SELECT * FROM WTM_FLEXIBLE_STD_MGR WHERE TENANT_ID = :tenantId AND ENTER_CD = :enterCd AND REPLACE(:ymd, '-', '') BETWEEN USE_SYMD AND F_WTM_NVL(USE_EYMD, '99991231') ORDER BY WORK_TYPE_CD, USE_SYMD DESC", nativeQuery = true)
 	public List<Map<String, Object>> findByTenantIdAndEnterCdAndYmd(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd, @Param(value="ymd")String ymd);
 }
