@@ -106,7 +106,6 @@ public class WtmOtApplController {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			rp = otApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
-			
 			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
 				otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
 			}
