@@ -31,9 +31,7 @@
 						<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">근무캘린더</div>
 							<ul class="float-right btn-wrap">
-								<li class="btn">
-									<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
-								</li>
+								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
 							</ul>
 						</div>
 					</div>
@@ -46,10 +44,8 @@
 						<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">근무상세결과</div>
 							<ul class="float-right btn-wrap">
-								<li class="btn">
-									<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
-									<a href="javascript:doAction2('Save')" class="basic authA">저장</a>
-								</li>
+								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
+								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 							</ul>
 						</div>
 					</div>
