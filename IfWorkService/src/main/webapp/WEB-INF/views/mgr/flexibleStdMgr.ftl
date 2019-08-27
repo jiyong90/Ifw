@@ -46,26 +46,22 @@
 								</ul>
 								<div id="tabs-1">
 									<div  class="layout_tabs">
-										<div class="inner">
-											<div class="sheet_title">
-												<li id="txt" class="txt">근무제기준<span id="searchAppText"  style="margin-left:10px;"></span></li>
-												<li class="btn">
-													<a href="javascript:doAction1('Save2')" class="basic authA">저장</a>
-												</li>
-											</div>
+										<div class="inner sheet_title_wrap clearfix">
+											<div class="float-left title" id="searchAppText">근무제기준</div>
+											<ul class="float-right btn-wrap">
+												<li><a href="javascript:doAction1('Save2')" class="basic authA">저장</a></li>
+											</ul>
 										</div>
 									</div>
 								</div>
 								<div id="tabs-2">
 									<div  class="layout_tabs">
-										<div class="inner">
-											<div class="sheet_title">
-												<li id="txt" class="txt">반복패턴<span id="searchAppText"  style="margin-left:10px;"></span></li>
-												<li class="btn">
-													<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
-													<a href="javascript:doAction2('Save')" class="basic authA">저장</a>
-												</li>
-											</div>
+										<div class="inner sheet_title_wrap clearfix">
+											<div class="float-left title" id="searchAppText">반복패턴</div>
+											<ul class="float-right btn-wrap">
+												<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
+												<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
+											</ul>
 										</div>
 										<script type="text/javascript">createIBSheet("sheet2", "50%", "90%","kr"); </script>
 									</div>

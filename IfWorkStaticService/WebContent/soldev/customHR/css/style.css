@@ -118,7 +118,7 @@ a.button7 img {
     height: 27px;
     line-height: 27px;
     font-size: 12px;
-    text-align: center;
+    text-align: left;
     position: relative;
     z-index: 20;
 }
