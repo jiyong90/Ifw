@@ -143,10 +143,11 @@ html {
 #alertSidebar {
   display:block;
   width: 320px;
-  position: absolute;
+  position: fixed;
   top: 0;
-  right: 0;
+  right: -320px;
   height: calc(100vh - 70px);
+  margin-top: 70px;
   z-index: 999;
   background: #ffffff;
   color: #272740;
@@ -155,9 +156,9 @@ html {
   box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.16);
 }
 
-/* #alertSidebar.active {
-  transition: all 0.3s;
-} */
+#alertSidebar.active {
+  right: 0;
+}
 
 #alertSidebar .alert-list-wrap li{
   position: relative;
