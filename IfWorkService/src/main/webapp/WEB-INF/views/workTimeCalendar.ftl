@@ -16,8 +16,8 @@
                             <div class="inner-wrap">
                                 <div class="desc row">
                                     <div class="col-sm-12 col-md-12 col-lg-2">
-                                        <div class="title" v-if="result.holidayYn!='Y'">연장근로시간</div>
-                                        <div class="title" v-else>휴일근로시간</div>
+                                        <div class="title" id="overtime" v-if="result.holidayYn!='Y'">연장근로시간</div>
+                                        <div class="title" id="overtime" v-else>휴일근로시간</div>
                                         <span class="time-wrap">
                                             <i class="fas fa-clock"></i>
                                             <span class="time" v-if="overtime">{{calendarLeftVue.minuteToHHMM(overtime, 'detail')}}</span>
@@ -72,7 +72,7 @@
                             </div>
                             <div class="radio-toggle-wrap" style="display:none;">
                                 <hr>
-                                <div class="big-title" v-if="overtime">{{calendarLeftVue.minuteToHHMM(overtime, 'detail')}}의 대체 휴일을 지정하세요.</div>
+                                <div class="big-title" id="subTitle" v-if="overtime">{{calendarLeftVue.minuteToHHMM(overtime, 'detail')}}의 대체 휴일을 지정하세요.</div>
                                 <!--  
                                 <div class="info-box clearfix mt-2" v-if="prevOtSubs.length>0">
                                     <div class="title">이전에 신청한 휴일</div>
@@ -323,7 +323,7 @@
   		    	reasons: [], //연장/휴일 근로 사유
   		    	subYmds: [], //대체휴일
   		    	overtime: '', //연장/휴일 근로시간
-  		    	overtimeAppl: {},
+  		    	overtimeAppl: {}
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    },
   		    computed: {
@@ -472,8 +472,8 @@
   	         	}, */
   	         	calcMinuteExceptBreaktime: function(ymd, shm, ehm){
   	         		var $this = this;
-  	         		
-  	         		if($this.workday!=null && $this.workday!=undefined && $this.workday!=''
+  	         		var resultValue;
+  	         		if(ymd!=null && ymd!=undefined && ymd!=''
   	         				&& shm!=null && shm!=undefined && shm!='' && ehm!=null && ehm!=undefined && ehm!='') {
 	  	         		
 	  	         		var param = {
@@ -488,19 +488,21 @@
 							contentType: 'application/json',
 							data: param,
 							dataType: "json",
+							async: false,
 							success: function(data) {
-								if(data!=null && data.hasOwnProperty('calcMinute')) {
-									$this.overtime = data.calcMinute;
+								if(data!=null) {
+									resultValue=data.calcMinute;
 								} else{
-									$this.overtime = '';
+									resultValue=0;
 								}
 							},
 							error: function(e) {
-								console.log(e);
-								$this.overtime = '';
+								resultValue=0;
 							}
 						});
+	   		    		
   	         		}
+  	         		return resultValue;
   	         	},		
   	         	getWorkHour: function(id, ymd){
   	         		var $this = this;
@@ -540,7 +542,7 @@
 					$("#sTime").val(moment(sYmd).format('HH:mm'));
 					$("#eTime").val(moment(eYmd).format('HH:mm'));
 					
-					$this.calcMinuteExceptBreaktime(moment($this.workday).format('YYYYMMDD'), moment(sYmd).format('HHmm'), moment(eYmd).format('HHmm'));
+					$this.overtime = $this.calcMinuteExceptBreaktime(moment($this.workday).format('YYYYMMDD'), moment(sYmd).format('HHmm'), moment(eYmd).format('HHmm'));
 					
 					//휴일근로신청의 경우 이전에 신청한 휴일 가져옴
 					/* if(Object.keys($this.result).length>0 && $this.result.hasOwnProperty('holidayYn')
@@ -727,7 +729,9 @@
 			  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
 			  	         					|| moment(workSdate).diff(otEdate)<0 && moment(otEdate).diff(workEdate)<0 ) {
 			  	         				isValid = false;
-			  	         				msg = '소정근로 시간을 포함하여 신청할 수 없습니다.';
+			  	         				msg = '이미 근무정보(신청중인 근무 포함)가 존재합니다.';
+			  	         				$("#sTime").val('');
+			  	  	         			$("#eTime").val('');
 			  	         			}
 			  	         				
 	  	  	         			//}
@@ -744,7 +748,7 @@
 		  	  	         			$this.subYmds.map(function(sub){
 			  	  	         			var shm = sub.subsShm.replace(/:/gi,"");
 			  	  	           			var ehm = sub.subsEhm.replace(/:/gi,"");
-		  	  	         				var min = $this.calcMinuteExceptBreaktime(moment(sub.subYmd).format('YYYYMMDD'), shm, ehm);
+		  	  	         				var min = $this.calcMinuteExceptBreaktime(moment(sub.subsSymd).format('YYYYMMDD'), shm, ehm);
 		  	  	         				subsMin += min;
 		  	  	         			});
 		  	  	         			
@@ -766,8 +770,6 @@
   	  	         			$("#alertText").html(msg);
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
 	  	  	         			$("#alertModal").off('hidden.bs.modal');
-	  	  	         			$("#sTime").val('');
-	  	  	         			$("#eTime").val('');
 	  	  	         		});
 	  	  	         		$("#alertModal").modal("show"); 
   	  	         		}
@@ -966,19 +968,27 @@
    			
    			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
          	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
-         	
+         	var msg = '';
          	if(moment(otEdate).diff(otSdate)<0) {
-         		$("#alertText").html("종료일이 시작일보다 작습니다.");
+         		msg = "종료일이 시작일보다 작습니다.";
+         	} else {
+         		//연장근무 신청 기간이 1일 이상이어서도 안된다!
+       			if(moment(otEdate).diff(otSdate,'days') > 0) {
+       				msg = '하루 이상 신청할 수 없습니다.';
+       			} else {
+       				timeCalendarVue.overtime = timeCalendarVue.calcMinuteExceptBreaktime(moment(timeCalendarVue.workday).format('YYYYMMDD'), sTime, eTime);
+       			}
+         	}
+         	
+         	if(msg!='') {
+         		$("#alertText").html(msg);
          		$("#alertModal").on('hidden.bs.modal',function(){
          			$("#alertModal").off('hidden.bs.modal');
-         			$("#sDate").val('');
-         			$("#eDate").val('');
+         			timeCalendarVue.overtime = 0;
          			$("#sTime").val('');
          			$("#eTime").val('');
          		});
          		$("#alertModal").modal("show"); 
-         	} else {
-         		timeCalendarVue.calcMinuteExceptBreaktime(moment($this.workday).format('YYYYMMDD'), sTime, eTime);
          	}
    		}
     }); 
