@@ -740,31 +740,3 @@ No media query for `xs` since this is the default in Bootstrap */
     margin-left: 0px;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#autoCompleteDiv {position:absolute;left:100px;top:100px;width:100px;height:0;overflow:hidden;width:300px;z-index:9999}
-#autoCompleteDiv {border:none}

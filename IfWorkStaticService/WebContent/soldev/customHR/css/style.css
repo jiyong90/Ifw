@@ -1140,3 +1140,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5fafd', end
     background:#E8E8E8; padding: 8px; border: 1px solid #C8C8C8; z-index:300; box-shadow: 3px 3px 3px #888888;
 }
 
+
+/* autoComplete */
+#autoCompleteDiv {position:absolute;left:100px;top:100px;width:100px;height:0;overflow:hidden;width:300px;z-index:9999}
+#autoCompleteDiv {border:none}
