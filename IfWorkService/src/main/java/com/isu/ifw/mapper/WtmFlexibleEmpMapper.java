@@ -137,6 +137,13 @@ public interface WtmFlexibleEmpMapper {
 	public void createWtmWorkteamOfWtmWorkDayResult(Map<String, Object> paramMap);
 	
 	/**
+	 * 근무조, 근무조대상자 변경 시 호출
+	 * @param paramMap
+	 * @return
+	 */
+	public void resetWtmWorkteamOfWtmWorkDayResult(Map<String, Object> paramMap);
+
+	/**
 	 * 계획을 작성 해야 하는 유연근무제 리스트
 	 * @param paramMap
 	 * @return
@@ -156,4 +163,12 @@ public interface WtmFlexibleEmpMapper {
 	 * @return
 	 */
 	public Map<String, Object> getWorkHour(Map<String, Object> paramMap);
+	
+	/**
+	 * 개인별 근무제도조회 관리자 화면
+	 * @param paramMap
+	 * @return 
+	 */
+	public List<Map<String, Object>> getFlexibleEmpWebList(Map<String, Object> paramMap);
+	
 }

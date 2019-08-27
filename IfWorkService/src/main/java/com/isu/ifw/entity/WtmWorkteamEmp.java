@@ -23,10 +23,6 @@ public class WtmWorkteamEmp {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="WORKTEAM_EMP_ID")
 	private Long workteamEmpId;
-	@Column(name="TENANT_ID")
-	private Long tenantId;
-	@Column(name="ENTER_CD")
-	private String enterCd;
 	@Column(name="WORKTEAM_MGR_ID")
 	private Long workteamMgrId;
 	@Column(name="SABUN")
@@ -52,27 +48,6 @@ public class WtmWorkteamEmp {
 	public void setWorkteamEmpId(Long workteamEmpId) {
 		this.workteamEmpId = workteamEmpId;
 	}
-
-
-	public Long getTenantId() {
-		return tenantId;
-	}
-
-
-	public void setTenantId(Long tenantId) {
-		this.tenantId = tenantId;
-	}
-
-
-	public String getEnterCd() {
-		return enterCd;
-	}
-
-
-	public void setEnterCd(String enterCd) {
-		this.enterCd = enterCd;
-	}
-
 
 	public Long getWorkteamMgrId() {
 		return workteamMgrId;

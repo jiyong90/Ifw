@@ -70,7 +70,6 @@ public class WtmWorkteamEmpController {
 	public @ResponseBody ReturnParam setWorkteamList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
-		rp.setFail("저장 시 오류가 발생했습니다.");
 		
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
@@ -91,15 +90,8 @@ public class WtmWorkteamEmpController {
 
 		MDC.put("convertMap", convertMap);
 
-		
-		rp.setSuccess("");
-		int cnt = 0;
 		try {		
-			cnt = workteamService.setWorkteamList(tenantId, enterCd, userId, convertMap);
-			if(cnt > 0) {
-				rp.setSuccess("저장이 성공하였습니다.");
-				return rp;
-			}
+			rp = workteamService.setWorkteamList(tenantId, enterCd, userId, convertMap);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -7,8 +7,8 @@
 					<table>
 						<tr>
 							<td>
-								<span>기준일 </span>
-								<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM")?string("yyyyMM")}"/>
+								<span>년월 </span>
+								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM")?string("yyyyMM")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월" autocomplete="off"/>
 							</td>
 							<td>
 								<span>사번</span>
@@ -44,6 +44,11 @@
 
 <script type="text/javascript">
 	$(function() {
+		$('#sYmd').datetimepicker({
+            format: 'YYYY-MM',
+            language: 'ko'
+        });
+        
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};

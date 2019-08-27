@@ -173,4 +173,13 @@ public interface WtmFlexibleEmpService {
 	 * @return { calcMinute : 22 } 
 	 */
 	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
+	
+	/**
+	 * 개인별 근무제도조회 관리자 화면
+	 * @param tenantId
+	 * @param enterCd
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, Map<String, Object> paramMap);
 }
