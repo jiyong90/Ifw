@@ -613,6 +613,10 @@
   		{ call P_WTM_WORKTEAM_CREATE( #{workteamMgrId}, #{pId} ) }
   	</update>
   	
+  	<update id="resetWtmWorkteamOfWtmWorkDayResult" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_FLEXIBLE_EMP_RESET( #{workteamMgrId}, #{sabun} , #{pId} ) }
+  	</update>
+  	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->
   	<select id="getFlexibleEmpListForPlan" parameterType="map" resultType="hashmap">
         <![CDATA[
@@ -675,8 +679,39 @@
     </select>
     
     <select id="getWorkHour" parameterType="map" resultType="hashmap" >
-	    SELECT F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'S') AS workShm
+	    SELECT #{ymd} AS ymd
+	         , F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'S') AS workShm
      		 , F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'E') AS workEhm
 		  FROM DUAL
     </select>
+    
+    <!--해당 기간의 근무 정보 -->
+  	<select id="getFlexibleEmpWebList" parameterType="map" resultType="map">
+  	<![CDATA[
+  		SELECT F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'ORG_CD', C.ORG_CD, C.SYMD) AS orgNm
+			  , A.SABUN AS sabun
+			  , C.EMP_NM AS empNm 
+			  , B.WORK_TYPE_CD AS workTypeCd
+			  , B.FLEXIBLE_NM AS flexibleNm
+			  , A.SYMD AS symd
+			  , A.EYMD AS eymd
+			  , A.NOTE AS note
+		  FROM WTM_FLEXIBLE_EMP A
+		 INNER JOIN WTM_FLEXIBLE_STD_MGR B
+		    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+		   AND A.TENANT_ID = B.TENANT_ID
+		   AND A.ENTER_CD = B.ENTER_CD
+		 INNER JOIN WTM_EMP_HIS C
+		    ON A.TENANT_ID = C.TENANT_ID
+		   AND A.ENTER_CD = C.ENTER_CD
+		   AND A.SABUN = C.SABUN
+		   AND A.SYMD BETWEEN C.SYMD AND C.EYMD
+		 WHERE A.TENANT_ID = #{tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.SYMD <= REPLACE(#{sYmd}, '-', '') 
+		   AND A.EYMD >= REPLACE(#{eYmd}, '-', '') 
+		   AND IF(#{searchKeyword}='',1=1,(C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')))
+		   AND IF(#{searchWorkTypeCd}='',1=1,(B.WORK_TYPE_CD = #{searchWorkTypeCd}))
+  		]]>
+  	</select>
 </mapper>
