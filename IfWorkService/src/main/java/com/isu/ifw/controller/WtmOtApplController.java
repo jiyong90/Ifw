@@ -46,7 +46,7 @@ public class WtmOtApplController {
 		return otApplService.getAppl(applId);
 	}
 	
-	@RequestMapping(value="/subs/prev", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@RequestMapping(value="/subs/prev", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> getPrevOtSubsAppl(@RequestParam Map<String, Object> paramMap
 												, HttpServletRequest request) {
 		ReturnParam rp = new ReturnParam();
@@ -59,7 +59,7 @@ public class WtmOtApplController {
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		return otApplService.getPrevApplList(tenantId, enterCd, sabun, paramMap, userId);
-	}
+	}*/
 	
 	@RequestMapping(value="/preCheck", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam preCheckOtAppl(@RequestParam Map<String, Object> paramMap

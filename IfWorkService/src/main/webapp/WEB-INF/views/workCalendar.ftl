@@ -829,9 +829,14 @@
 			   	    var minutes = Math.floor(min - (hours * 60));
 		
 			   	 	if(type=='detail') {
-			   	 		var h = hours==0?'':hours+'시간 ';
+			   	 		var h = hours==0?'':hours+'시간';
 			   	 		var m = minutes==0?'':minutes+'분';
-			   	    	return h+''+m;
+			   	 		
+			   	 		var s = h;
+			   	 		if(h!=''&&m!='') s+=' ';
+			   	 		s+=m;
+			   	 		
+			   	    	return s;
 			   	 	}
 			   	    	
 			   	    if (hours   < 10) {hours   = "0"+hours;}
