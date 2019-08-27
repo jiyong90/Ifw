@@ -29,6 +29,7 @@ import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.repository.WtmCodeRepository;
+import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
@@ -62,6 +63,9 @@ public class ViewController {
 	
 	@Resource
 	WtmCodeRepository codeRepo;
+	
+	@Resource
+	WtmFlexibleEmpRepository flexibleEmpRepo;
 	
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
@@ -228,8 +232,11 @@ public class ViewController {
 					flexibleStdMgr = flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
 				}
 			} else {
+				Calendar date = Calendar.getInstance();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+				
 				//기본근무
-				flexibleStdMgr = flexibleStdMgrRepo.findByTenantIdAndEnterCdAndWorkTypeCd(tenantId, enterCd, WtmApplService.TIME_TYPE_BASE);
+				flexibleStdMgr = flexibleStdMgrRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, empNo, sdf.format(date.getTime()));
 			}
 			mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
 			

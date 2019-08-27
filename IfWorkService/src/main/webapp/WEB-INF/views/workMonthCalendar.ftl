@@ -79,6 +79,8 @@
 							
 						}
 					});
+	 		    	
+	 		    	//console.log(calendar.getEvents());
 		    	}
 	    	},
 	    	dateClickCallback : function(info){
@@ -156,25 +158,25 @@
          			
          			var event = calendar.getEventById(Obj.id);
          			
-       			/* if(event==null) {
-       				//이벤트 새로 생성
-       				calendar.batchRendering(function() {
-	  	         			calendar.addEvent(Obj);
-	  	         		});
-       			} else {
-       				//이벤트 날짜 수정
-       				calendar.batchRendering(function() {
-        				event.setStart(Obj.start);
-        				event.setEnd(Obj.end);
-        				event.setProp("startRecur",Obj.startRecur);
-        				event.setProp("endRecur",Obj.endRecur);
-       				});
-       			} */
-       			
-       			if(event!=null) {
-       				event.remove();
-       			}
-       			//이벤트 새로 생성
+	       			/* if(event==null) {
+	       				//이벤트 새로 생성
+	       				calendar.batchRendering(function() {
+		  	         			calendar.addEvent(Obj);
+		  	         		});
+	       			} else {
+	       				//이벤트 날짜 수정
+	       				calendar.batchRendering(function() {
+	        				event.setStart(Obj.start);
+	        				event.setEnd(Obj.end);
+	        				event.setProp("startRecur",Obj.startRecur);
+	        				event.setProp("endRecur",Obj.endRecur);
+	       				});
+	       			} */
+	       			
+	       			if(event!=null) {
+	       				event.remove();
+	       			}
+	       			//이벤트 새로 생성
       				calendar.batchRendering(function() {
   	         			calendar.addEvent(Obj);
   	         		});

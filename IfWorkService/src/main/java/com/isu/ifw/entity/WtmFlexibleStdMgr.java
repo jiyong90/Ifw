@@ -50,9 +50,9 @@ public class WtmFlexibleStdMgr {
 	@Column(name="CORE_EHM")
 	private String coreEhm;
 	@Column(name="DEFAULT_WORK_MINUTE")
-	private int defaultWorkMinute;
+	private Integer defaultWorkMinute;
 	@Column(name="UNIT_MINUTE")
-	private int unitMinute;
+	private Integer unitMinute;
 	@Column(name="EXHAUSTION_YN")
 	private String exhaustionYn;
 	@Column(name="HOL_EXCEPT_YN")
@@ -167,19 +167,19 @@ public class WtmFlexibleStdMgr {
 		this.coreEhm = coreEhm;
 	}
 
-	public int getDefaultWorkMinute() {
+	public Integer getDefaultWorkMinute() {
 		return defaultWorkMinute;
 	}
 
-	public void setDefaultWorkMinute(int defaultWorkMinute) {
+	public void setDefaultWorkMinute(Integer defaultWorkMinute) {
 		this.defaultWorkMinute = defaultWorkMinute;
 	}
 
-	public int getUnitMinute() {
+	public Integer getUnitMinute() {
 		return unitMinute;
 	}
 
-	public void setUnitMinute(int unitMinute) {
+	public void setUnitMinute(Integer unitMinute) {
 		this.unitMinute = unitMinute;
 	}
 
