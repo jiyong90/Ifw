@@ -130,10 +130,14 @@ public class WtmInoutController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("퇴근 체크 되었습니다.");
 		
+		String userToken = (String)params.get("userToken");
 		String empKey = (String)params.get("empKey");
 		String ymd = (String)params.get("ymd");
 		String enterCd = null;
 		String sabun = null;
+		
+		Aes256 aes = new Aes256(userToken);
+		empKey = aes.decrypt(empKey);
 		
 		if(empKey != null && empKey.indexOf("@") >=0 ){
 			String separator = "@";
