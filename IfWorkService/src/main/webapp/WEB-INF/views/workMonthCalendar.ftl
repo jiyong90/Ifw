@@ -249,9 +249,11 @@
 						//회사 캘린더(휴무일 포함)
 						if(data.companyCalendar!=null) {
 							data.companyCalendar.map(function(cal){
+								//if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
 									//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
 									$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
 									$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday' class='fc-holiday'>"+cal.holidayNm+"</span>");
+								//}
 							});
 						}
 						
@@ -279,9 +281,9 @@
 				    					};
 			  		    				events.push(taaEvent); */
 			  		    				
-			  		    				if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0)
+			  		    				if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0) {
 		 		    						$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
-			  		    				else {
+			  		    				}else {
 			  		    					if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").text().indexOf(plan.label)==-1)
 			  		    						$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").append(' '+plan.label);
 			  		    				}

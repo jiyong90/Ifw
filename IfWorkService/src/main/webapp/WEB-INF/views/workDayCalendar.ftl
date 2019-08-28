@@ -44,57 +44,7 @@
   		    		var calendar = this.$refs.fullCalendar.cal;
 
   		    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
-  		    			var param = {
-		   		    		ym : moment(calendar.getDate()).format('YYYYMM')
-		   		    	};
-	   		    		Util.ajax({
-							url: "${rc.getContextPath()}/calendar",
-							type: "GET",
-							contentType: 'application/json',
-							data: param,
-							dataType: "json",
-							success: function(data) {
-								//회사 캘린더(휴무일 포함)
-								if(data.companyCalendar!=null) {
-									data.companyCalendar.map(function(cal){
-										if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
-											//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
-											$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
-											$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span class='fc-holiday'>"+cal.holidayNm+"</span>");
-										}
-									});
-								}
-								
-								//근태 정보 달력에 표기
-								if(Object.keys($this.dayWorks).length>0) {
-			  	         			$.each($this.dayWorks, function(k, v){
-					  	         		v.map(function(dayWork){
-					  	         			//근무일
-					  	         			if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
-												dayWork.plans.map(function(plan){
-													var day = moment(plan.key).format('YYYY-MM-DD');
-													
-						  		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
-						  		    					
-						  		    					if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0)
-						 		    						$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
-							  		    				else
-							  		    					$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").append(' '+plan.label);
-						  		    					
-							  		    				$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").css({"color":"#4d84fe"});
-						  		    				}
-												});
-					  	         			}
-					  	         		});
-			  	         			});
-								} 
-					  	         	
-							},
-							error: function() {
-								
-							}
-						});
-	   		    		
+  		    			$this.markAdditionalInfo();
 	  		    	}
   		    		
   		    	},
@@ -335,6 +285,62 @@
   	         			
   	         		});
   		    	},
+  		    	markAdditionalInfo : function() { //회사 휴일과 근태 정보 달력에 표기
+  		    		var $this = this;
+  		    		var calendar = this.$refs.fullCalendar.cal;
+
+ 		    		var param = {
+	   		    		ym : moment(calendar.getDate()).format('YYYYMM')
+	   		    	};
+   		    		Util.ajax({
+						url: "${rc.getContextPath()}/calendar",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							//회사 캘린더(휴무일 포함)
+							if(data.companyCalendar!=null) {
+								data.companyCalendar.map(function(cal){
+									//if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
+										//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
+										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
+										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span class='fc-holiday'>"+cal.holidayNm+"</span>");
+									//}
+								});
+							}
+						},
+						error: function() {
+							
+						}
+					});
+   		    		
+   		    		//근태 정보 달력에 표기
+					if(Object.keys($this.dayWorks).length>0) {
+  	         			$.each($this.dayWorks, function(k, v){
+		  	         		v.map(function(dayWork){
+		  	         			//근무일
+		  	         			if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+									dayWork.plans.map(function(plan){
+										var day = moment(plan.key).format('YYYY-MM-DD');
+										
+			  		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
+			  		    					
+			  		    					if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0) {
+			 		    						$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
+			  		    					}else {
+			  		    						if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").text().indexOf(plan.label)==-1)
+				  		    						$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").append(' '+plan.label);
+			  		    					}
+				  		    				$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").css({"color":"#4d84fe"});
+			  		    				}
+									});
+		  	         			}
+		  	         		});
+  	         			});
+					} 
+  		    		
+  		    	},
   	         	addDayWorks : function(){ //근무시간 생성
   	         		var $this = this;
   	         		
@@ -508,6 +514,7 @@
 	  	         				$("#startTime").prop("disabled", true);
 	  		  		    		$("#endTime").prop("disabled", true);
 	  	         			}
+	  	         			calendar.gotoDate(workday);
 	  	         			calendar.select(workday);
   	         			}
   	         		});
