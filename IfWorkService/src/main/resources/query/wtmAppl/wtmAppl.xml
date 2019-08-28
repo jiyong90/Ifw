@@ -6,7 +6,7 @@
 <mapper namespace="com.isu.ifw.mapper.WtmApplMapper">
 	<select id="getWtmApplLine" parameterType="map" resultType="wtmApplLine">
         <![CDATA[
-			SELECT X.APPR_SEQ, X.SABUN
+			SELECT X.APPR_SEQ, X.SABUN, F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, X.SABUN, #{d}) AS EMP_NM
 			  FROM (
 				SELECT 1 AS APPR_SEQ, E1.SABUN
 				  FROM WTM_EMP_HIS E
@@ -42,6 +42,37 @@
 				   AND E1.ORG_PATH = F_WTM_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 3) 
 				) X 
 				ORDER BY X.APPR_SEQ 
+        ]]>
+    </select>
+    
+    <select id="getWtmApplLineByApplId" parameterType="Long" resultType="wtmApplLine">
+        <![CDATA[
+			SELECT 1 AS APPR_TYPE_CD
+			     , 0 AS APPR_SEQ
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPR_TYPE_CD', 1, A.APPL_YMD) AS APPR_TYPE_NM
+			     , A.APPL_SABUN AS SABUN
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD) AS EMP_NM
+			     , F_WTM_DATE_FORMAT(A.APPL_YMD, '%Y%m%d') AS APPR_DATE
+			     , NULL AS APPR_STATUS_CD
+			     , NULL AS APPR_STATUS_NM
+			     , NULL AS APPR_OPINION
+			  FROM WTM_APPL A
+			 WHERE A.APPL_ID = #{applId}
+			UNION ALL
+			SELECT L.APPR_TYPE_CD
+			     , L.APPR_SEQ
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPR_TYPE_CD', L.APPR_TYPE_CD, A.APPL_YMD) AS APPR_TYPE_NM
+			     , L.APPR_SABUN AS SABUN
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, L.APPR_SABUN, A.APPL_YMD) AS EMP_NM
+			     , F_WTM_DATE_FORMAT(L.APPR_DATE, '%Y%m%d') AS APPR_DATE
+			     , L.APPR_STATUS_CD
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPR_STATUS_CD', L.APPR_STATUS_CD, A.APPL_YMD) AS APPR_STATUS_NM
+			     , L.APPR_OPINION
+			  FROM WTM_APPL_LINE L
+			  JOIN WTM_APPL A
+			    ON L.APPL_ID = A.APPL_ID
+			 WHERE L.APPL_ID = #{applId}
+			ORDER BY APPR_SEQ
         ]]>
     </select>
     

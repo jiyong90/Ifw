@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
@@ -44,6 +46,18 @@ public class WtmOtApplController {
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
 		return otApplService.getAppl(applId);
+	}
+	
+	@RequestMapping(value="/line", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<WtmApplLineVO> getApplLine(@RequestParam Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		return otApplService.getApplLine(tenantId, enterCd, empNo, paramMap, userId);
 	}
 	
 	/*@RequestMapping(value="/subs/prev", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

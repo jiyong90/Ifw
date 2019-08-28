@@ -77,7 +77,17 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
-		return flexApplMapper.findByApplId(applId);
+		Map<String, Object> appl = flexApplMapper.findByApplId(applId);
+		appl.put("applLine", applMapper.getWtmApplLineByApplId(applId));
+		return appl;
+	}
+	
+	@Override
+	public List<WtmApplLineVO> getApplLine(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("tenantId", tenantId);
+		return applMapper.getWtmApplLine(paramMap);
 	}
 	
 	@Override

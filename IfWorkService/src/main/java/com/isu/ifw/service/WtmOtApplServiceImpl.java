@@ -104,12 +104,22 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				}
 			}
 			
+			otAppl.put("applLine", applMapper.getWtmApplLineByApplId(applId));
+			
 			return otAppl;
 			
 		}catch(Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	@Override
+	public List<WtmApplLineVO> getApplLine(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("tenantId", tenantId);
+		return applMapper.getWtmApplLine(paramMap);
 	}
 	
 	@Override

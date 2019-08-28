@@ -184,6 +184,15 @@
                 <div class="modal-body">
                     <form>
                         <div class="modal-app-wrap">
+                        	<div class="inner-wrap">
+                        		<div class="row">
+	                        		<div class="col-4 col-sm-4 col-xl-4" v-for="l in overtimeAppl.applLine">
+					                    <div class="title">{{l.apprTypeNm}}</div>
+					                    <div class="desc">{{l.empNm}}({{l.sabun}})</div>
+					                </div>
+				                </div>
+                        	</div>
+                        	<hr class="bar">
                             <div class="inner-wrap">
                                 <div class="title" v-if="result.holidayYn!='Y'">연장근로시간</div>
                                 <div class="title" v-else>휴일근로시간</div>
@@ -551,7 +560,26 @@
 						$this.getOtSubs(moment(sYmd).format('YYYYMMDD'));
 					} */
 					
-					$("#overtimeAppl").modal("show"); 
+					var param = {
+						d : moment($this.workday).format('YYYYMMDD')
+					};
+					
+					//결재라인
+					Util.ajax({
+						url: "${rc.getContextPath()}/otAppl/line",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							console.log(data);
+							$("#overtimeAppl").modal("show"); 
+						},
+						error: function(e) {
+							console.log(e);
+						}
+					});
+					
   	         	},
   	         	viewOvertimeApplDetail: function(applId){
   	         		var $this = this;

@@ -3,6 +3,7 @@ package com.isu.ifw.service;
 import java.util.List;
 import java.util.Map;
 
+import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
 
 /**
@@ -44,6 +45,8 @@ public interface WtmApplService {
 	final static String TIME_TYPE_OT = "OT";
 	
 	public Map<String, Object> getAppl(Long applId);
+	
+	public List<WtmApplLineVO> getApplLine(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
 	
 	public List<Map<String, Object>> getPrevApplList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
 	
