@@ -159,7 +159,7 @@
     <!-- 결재의견 modal end -->
 	<div class="container-fluid">
 		<p class="page-title">결재 알림</p>
-		<div class="row no-gutters notice-card" v-for="appr in apprList">
+		<div class="row no-gutters notice-card" v-if="apprList.length>0" v-for="appr in apprList">
 			<div class="col-12 col-md-6 col-lg-9" @click="viewAppl(appr)">
 				<div :class="['rounded-circle notice-mark '] + appr.applCd">{{appr.applNm.substr(0,1)}}</div>
 				<div class="inner-wrap">
@@ -181,6 +181,16 @@
 			<div class="col-6 col-md-2 col-lg-1 pl-1">
 				<button type="button"
 					class="btn btn-block btn-outline btn-approval sign" @click="approval(appr,'apply')">승인</button>
+			</div>
+		</div>
+		<div class="row no-gutters notice-card" v-if="apprList.length==0">
+			<div class="col-12 col-md-12 col-lg-12">
+				<div class="inner-wrap">
+					<div class="title">
+						<span class="ico-wrap"><i class="far fa-bell-slash"></i></span>
+						결재 알림을 모두 확인했습니다.
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
