@@ -39,9 +39,9 @@ public class WtmFlexibleEmp {
 	private String workTypeCd;
 	
 	@Column(name="WORK_MINUTE")
-	private int workMinute;
+	private Integer workMinute;
 	@Column(name="OT_MINUTE")
-	private int otMinute;
+	private Integer otMinute;
 	
 	@Column(name="NOTE")
 	private String note;
@@ -101,17 +101,17 @@ public class WtmFlexibleEmp {
 		this.workTypeCd = workTypeCd;
 	}
 	
-	public int getWorkMinute() {
+	public Integer getWorkMinute() {
 		return workMinute;
 	}
-	public void setWorkMinute(int workMinute) {
+	public void setWorkMinute(Integer workMinute) {
 		this.workMinute = workMinute;
 	}
 	
-	public int getOtMinute() {
+	public Integer getOtMinute() {
 		return otMinute;
 	}
-	public void setOtMinute(int otMinute) {
+	public void setOtMinute(Integer otMinute) {
 		this.otMinute = otMinute;
 	}
 	public String getNote() {
