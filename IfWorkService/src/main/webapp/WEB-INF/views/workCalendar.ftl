@@ -345,7 +345,7 @@
                 </div>
                 <div id="flexibleAppl" class="white-box-wrap full-height mb-3" style="display:none;">
                     <div class="work-plan-wrap">
-                        <div class="main-wrap">
+                        <div class="main-wrap" v-if="calendarTopVue.flexibleStd">
                             <div class="main-title">해당일의 근무계획 구분</div>
                             <div class="main-desc">{{calendarTopVue.flexibleStd.flexibleNm}}</div>
                             <ul class="time-list">
@@ -392,7 +392,7 @@
                                 </div>
                                 <div class="form-group col-12">
                                     <label for="workTime">근무기간</label>
-                                    <select id="workTime" class="form-control" v-model="applInfo.workRange" :value="applInfo.workRange" @change="changeWorkRange" required>
+                                    <select id="workTime" v-if="calendarTopVue.flexibleStd" class="form-control" v-model="applInfo.workRange" :value="applInfo.workRange" @change="changeWorkRange" required>
                                         <option v-for="term in calendarTopVue.flexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
                                     </select>
                                 </div>
@@ -829,9 +829,14 @@
 			   	    var minutes = Math.floor(min - (hours * 60));
 		
 			   	 	if(type=='detail') {
-			   	 		var h = hours==0?'':hours+'시간 ';
+			   	 		var h = hours==0?'':hours+'시간';
 			   	 		var m = minutes==0?'':minutes+'분';
-			   	    	return h+''+m;
+			   	 		
+			   	 		var s = h;
+			   	 		if(h!=''&&m!='') s+=' ';
+			   	 		s+=m;
+			   	 		
+			   	    	return s;
 			   	 	}
 			   	    	
 			   	    if (hours   < 10) {hours   = "0"+hours;}

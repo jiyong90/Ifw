@@ -72,7 +72,7 @@
 				ON C.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=C.ENTER_CD AND A.SABUN=C.SABUN AND C.YMD = A.YMD 
 			JOIN WTM_EMP_HIS D
 				ON D.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN=D.SABUN AND date_format(now(),'%Y%m%d') BETWEEN D.SYMD AND D.EYMD 
-			WHERE A.YMD BETWEEN #{sYmd} AND #{eYmd} 
+			WHERE A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '') 
 		]]>
 		<if test="searchKeyword!=null and !searchKeyword.equals('')">
 			AND (A.SABUN LIKE CONCAT('%', #{searchKeyword}, '%') OR D.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%'))

@@ -1,4 +1,4 @@
-<aside id="alertSidebar" class="control-sidebar" style="display:none;" v-clock>
+<aside id="alertSidebar" class="control-sidebar" v-clock>
 	<ul class="alert-list-wrap" v-if="inboxCount>0">
 		<li v-if="workPlan.toDoPlanDays && Number(workPlan.toDoPlanDays)!=0">
             <span class="status SELE_F"></span>
@@ -22,7 +22,7 @@
 <script type="text/javascript">
 	$(function(){
 		$('#alertLink').on('click', function () {
-		    $('#alertSidebar').toggle('active');
+		    $('#alertSidebar').toggleClass('active');
 		});
 	});
 

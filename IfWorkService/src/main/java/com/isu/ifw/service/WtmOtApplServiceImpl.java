@@ -151,22 +151,25 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			throw new Exception(rp.get("message").toString());
 		}
 		*/
-		imsi(tenantId, enterCd, applId, workTypeCd, paramMap, this.APPL_STATUS_APPLY_ING, sabun, userId);
+		ReturnParam rp = imsi(tenantId, enterCd, applId, workTypeCd, paramMap, this.APPL_STATUS_APPLY_ING, sabun, userId);
 		
 		//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
 		
 		//결재라인 상태값 업데이트
 		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
-		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
-
-		 
-		if(lines != null && lines.size() > 0) {
-			for(WtmApplLine line : lines) {
-				//첫번째 결재자의 상태만 변경 후 스탑
-				line.setApprStatusCd(APPR_STATUS_REQUEST);
-				line = wtmApplLineRepo.save(line);
-				break;
-				 
+		
+		if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
+			applId = Long.valueOf(rp.get("applId").toString());
+			List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
+			 
+			if(lines != null && lines.size() > 0) {
+				for(WtmApplLine line : lines) {
+					//첫번째 결재자의 상태만 변경 후 스탑
+					line.setApprStatusCd(APPR_STATUS_REQUEST);
+					line = wtmApplLineRepo.save(line);
+					break;
+					 
+				}
 			}
 		}
 		 

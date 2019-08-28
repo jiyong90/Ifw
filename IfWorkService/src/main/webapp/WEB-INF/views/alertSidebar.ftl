@@ -1,4 +1,4 @@
-<aside id="alertSidebar" class="control-sidebar" style="display:none;">
+<aside id="alertSidebar" class="control-sidebar">
     <ul class="alert-list-wrap">
         <li>
             <span class="status SELE_F"></span>
@@ -34,7 +34,7 @@
 <script type="text/javascript">
 $(function(){
 	$('#alertLink').on('click', function () {
-	    $('#alertSidebar').toggle('active');
+	    $('#alertSidebar').toggleClass('active');
 	});
 });
 </script>

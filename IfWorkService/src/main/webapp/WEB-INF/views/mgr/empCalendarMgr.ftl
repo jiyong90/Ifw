@@ -8,8 +8,9 @@
 				<tr>
 					<td>
 						<span>근무기간 </span>
-						<input type="text" id="sYmd" name="sYmd" class="date2" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}"/> ~
-						<input type="text" id="eYmd" name="eYmd" class="date2" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}"/>
+						<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+									~
+									<input type="text" id="eYmd" name="eYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
 					</td>
 					<td>
 						<span>사번/성명</span>
@@ -30,9 +31,7 @@
 						<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">근무캘린더</div>
 							<ul class="float-right btn-wrap">
-								<li class="btn">
-									<a href="javascript:doAction1('Save')" class="basic authA">저장</a>
-								</li>
+								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
 							</ul>
 						</div>
 					</div>
@@ -45,10 +44,8 @@
 						<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">근무상세결과</div>
 							<ul class="float-right btn-wrap">
-								<li class="btn">
-									<a href="javascript:doAction2('Insert')" class="basic authA">입력</a>
-									<a href="javascript:doAction2('Save')" class="basic authA">저장</a>
-								</li>
+								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
+								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 							</ul>
 						</div>
 					</div>
@@ -62,6 +59,11 @@
 
 <script type="text/javascript">
    	$(function() {
+   		$('#sYmd, #eYmd').datetimepicker({
+            format: 'YYYY-MM-DD',
+            language: 'ko'
+        });
+        
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -182,7 +184,7 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
-
+			sheet2.RemoveAll();
 			sheetResize();
 		} catch (ex) {
 			alert("OnSearchEnd Event Error : " + ex);
@@ -203,6 +205,7 @@
 	
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
 		if(OldRow != NewRow){
+			sheet2.RemoveAll();
 			doAction2('Search');
 		}
 	}

@@ -18,9 +18,9 @@ public interface WtmWorkteamEmpRepository extends JpaRepository<WtmWorkteamEmp, 
 			+ "FROM WTM_WORKTEAM_EMP E, WTM_EMP_HIS C "
 			+ "WHERE C.TENANT_ID=:tenantId "
 			+ "		AND E.SABUN = C.SABUN "
-			+ "		AND IF(:sYmd='',date_format(now(),'%Y%m%d'),:sYmd) BETWEEN C.SYMD AND C.EYMD "
+			+ "		AND IF(:sYmd='',date_format(now(),'%Y%m%d'),REPLACE(:sYmd, '-', '')) BETWEEN C.SYMD AND C.EYMD "
 			+ "		AND C.ENTER_CD=:enterCd "
-			+ "		AND IF(:sYmd='',date_format(now(),'%Y%m%d'),:sYmd) BETWEEN E.SYMD AND E.EYMD "
+			+ "		AND IF(:sYmd='',date_format(now(),'%Y%m%d'),REPLACE(:sYmd, '-', '')) BETWEEN E.SYMD AND E.EYMD "
 			+ "		AND (E.SABUN like IF(:sData='', '%', '%'|| :sData ||'%')  OR C.EMP_NM like IF(:sData='', '%', '%'|| :sData ||'%'))", nativeQuery = true)
 	public List<Map<String, Object>> findByTenantIdAndEnterCd(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd, @Param(value="sYmd")String sYmd, @Param(value="sData")String sData);
 	

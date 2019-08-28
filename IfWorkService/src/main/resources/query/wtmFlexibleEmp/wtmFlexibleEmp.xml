@@ -180,7 +180,8 @@
     
     <!--해당 일의 근무시간 정보 -->
   	<select id="getFlexibleWorkTimeInfo" parameterType="map" resultType="map">
-	   SELECT F_WTM_GET_TAA_NAMES(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 2)  AS taaNames
+  		<![CDATA[
+	    SELECT F_WTM_GET_TAA_NAMES(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 2)  AS taaNames
 		     , MIN(C.ENTRY_SDATE) as entrySdate
 		     , MAX(C.ENTRY_EDATE) as entryEdate
 		     , MIN(R.PLAN_SDATE) AS planSdate
@@ -189,8 +190,10 @@
 		     , MIN(R.APPR_SDATE) AS apprSdate
 		     , MAX(R.APPR_EDATE) AS apprEdate
 		     , SUM(R.APPR_MINUTE) AS apprMinute
-		     , SUM(CASE WHEN R.TIME_TYPE_CD='BASE' THEN F_WTM_NVL(R.APPR_MINUTE,R.PLAN_MINUTE) ELSE 0 END) AS apprBaseMinute
-		     , SUM(CASE WHEN R.TIME_TYPE_CD='OT' THEN F_WTM_NVL(R.APPR_MINUTE,R.PLAN_MINUTE) ELSE 0 END) AS apprOtMinute
+		     , SUM(CASE WHEN R.TIME_TYPE_CD='BASE' THEN CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE <> 0 THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END 
+		     		    ELSE 0 END) AS apprBaseMinute
+		     , SUM(CASE WHEN R.TIME_TYPE_CD='OT' THEN CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE <> 0 THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END 
+		                ELSE 0 END) AS apprOtMinute
 		  FROM WTM_WORK_CALENDAR C
 		  JOIN WTM_WORK_DAY_RESULT R
 		    ON C.TENANT_ID = R.TENANT_ID
@@ -203,6 +206,7 @@
 		   AND R.TENANT_ID = #{tenantId}
 		   AND R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS')
 		GROUP BY R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD
+		]]>
   	</select>
 
 	<select id="getFlexibleEmp" parameterType="map" resultType="wtmFlexibleEmp">
@@ -679,7 +683,8 @@
     </select>
     
     <select id="getWorkHour" parameterType="map" resultType="hashmap" >
-	    SELECT F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'S') AS workShm
+	    SELECT #{ymd} AS ymd
+	         , F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'S') AS workShm
      		 , F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'E') AS workEhm
 		  FROM DUAL
     </select>
