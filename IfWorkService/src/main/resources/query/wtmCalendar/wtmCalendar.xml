@@ -21,6 +21,7 @@
 			   AND (#{enterCd, jdbcType=VARCHAR} IS NULL OR h.ENTER_CD IS NULL OR h.ENTER_CD = #{enterCd, jdbcType=VARCHAR})
 			   AND (#{bisinessPlaceCd, jdbcType=VARCHAR} IS NULL OR h.BISINESS_PLACE_CD IS NULL OR h.BISINESS_PLACE_CD = #{bisinessPlaceCd, jdbcType=VARCHAR})
 			   AND F_WTM_DATE_FORMAT(F_WTM_TO_DATE(SUN_YMD,'%Y%m%d'),'%Y%m') = #{ym}
+			   AND h.HOLIDAY_YMD IS NOT NULL AND h.HOLIDAY_YMD <> ''
 			ORDER BY d.SUN_YMD
         ]]>
     </select>

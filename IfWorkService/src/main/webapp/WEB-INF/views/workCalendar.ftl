@@ -562,7 +562,12 @@
 	             		</ul>
 	                    <div class="btn-wrap">
                            	<button type="button" class="btn btn-apply btn-block btn-lg" @click="viewOvertimeAppl">
+                           		<template v-if="holidayYn=='Y'">
+                           		휴일근로신청
+                           		</template>
+                           		<template v-else>
                            		연장근로신청
+                           		</template>
                            	</button>
                         </div>
 	                </div>
@@ -754,6 +759,7 @@
 	    	rangeInfo: {}, //선택한 기간의 근무제 정보
 	    	workDayInfo: {}, //선택한 날의 근무 정보
 	    	workTimeInfo: {}, //선택한 날의 근무시간 정보
+	    	holidayYn: '',
 	    	useYn: 'N', //근무제 적용 여부
 	    	applInfo: { //신청 데이터
 	    		flexibleApplId:'',
@@ -818,9 +824,9 @@
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
     			this.flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); 
     			
-    			if('${calendar}' == 'workDayCalendar') {
-    				dayCalendarVue.getWorkDayResult();
-    	    	}
+    			//if('${calendar}' == 'workDayCalendar') {
+    			//	dayCalendarVue.getWorkDayResult();
+    	    	//}
     		</#if>
 	    },
 	    methods : {
