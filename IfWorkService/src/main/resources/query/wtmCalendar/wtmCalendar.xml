@@ -82,4 +82,25 @@
 			ORDER BY YMD DESC
         ]]>
     </select>
+    
+   	<update id="updateEntryDate" parameterType="map">
+        <![CDATA[ 
+			UPDATE WTM_WORK_CALENDAR
+			SET 
+			]]>
+			<choose>
+				<when test="inoutTypeCd.equals('IN')">
+					ENTRY_SDATE=#{now}
+			 	</when>
+				<when test="inoutTypeCd.equals('OUT')">
+					ENTRY_EDATE=#{now}
+			 	</when>
+			</choose>
+			<![CDATA[ 
+			WHERE TENANT_ID = #{tenantId} 
+				AND ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun}
+				AND YMD = #{ymd}
+        ]]>
+    </update>
 </mapper>

@@ -31,4 +31,12 @@ public interface WtmCalendarMapper {
 	 * @throws Exception
 	 */
 	public List<Map<String, Object>> getEmpWorkCalendar(Map<String, Object> paramMap) throws Exception;
+
+	/**
+	 * 달력에서 출퇴근 시간만 업데이트
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public int updateEntryDate(Map<String, Object> paramMap) throws Exception;
 }

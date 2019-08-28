@@ -40,11 +40,16 @@ public class IfWorkServiceApplication {
 	@Qualifier("httpStatusFilter")
     private javax.servlet.Filter httpStatusFilter;
 
+//	@Autowired
+//	@Qualifier("accessTokenFilter")
+//    private javax.servlet.Filter accessTokenFilter;
+
 	@Bean 
 	public FilterRegistrationBean getUserTokenFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(userTokenFilter);
 		registrationBean.addUrlPatterns("/*");
-		registrationBean.addInitParameter("freePassPath", "/error,/logout,/login,/login/certificate,/v2/api-docs,/api,/resource,/schedule,/we");
+		//saas 연동시에는 usertokenfilter안쓰고 아래에 accesstokenfilter사용
+		registrationBean.addInitParameter("freePassPath", "/error,/logout,/login,/login/certificate,/v2/api-docs,/api,/resource,/schedule,/we,/certificate,/mobile");
 		registrationBean.addInitParameter("moduleId", "1");
 		return registrationBean;
 	    
@@ -68,6 +73,16 @@ public class IfWorkServiceApplication {
 	    
 	}
 	
+//	@Bean 
+//	public FilterRegistrationBean getAccessTokenFilterRegistrationBean() {
+//		FilterRegistrationBean registrationBean = new FilterRegistrationBean(accessTokenFilter);
+//		registrationBean.addUrlPatterns("/*"); 
+//		registrationBean.addInitParameter("freePassPath", "/certificate,/error,/mobile");
+//		registrationBean.addInitParameter("moduleId", "1");
+//		return registrationBean;
+//	    
+//	}
+	
 	@Bean 
 	public FilterRegistrationBean getHttpStatusFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(httpStatusFilter);
@@ -75,31 +90,6 @@ public class IfWorkServiceApplication {
 		return registrationBean;
 	    
 	} 
-//	 
-//	@Bean
-//	public ErrorPageFilter errorPageFilter() {
-//	    return new ErrorPageFilter();
-//	}
-//
-//	@Bean
-//	public FilterRegistrationBean disableSpringBootErrorFilter(ErrorPageFilter filter) {
-//	    FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-//	    filterRegistrationBean.setFilter(filter);
-//	    filterRegistrationBean.setEnabled(false);
-//	    return filterRegistrationBean;
-//	}
-//	
-//	@Bean
-//    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-//        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
-//        jsonConverter.setDefaultCharset(Charset.forName("UTF-8"));
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        // 생성한 모듈을 등록해 준다.
-//        objectMapper.registerModule(new EncryptVOModule());  
-//        jsonConverter.setObjectMapper(objectMapper);
-//
-//        return jsonConverter;
-//    } 
 	  
 	public static void main(String[] args) {
 		SpringApplication.run(IfWorkServiceApplication.class, args);

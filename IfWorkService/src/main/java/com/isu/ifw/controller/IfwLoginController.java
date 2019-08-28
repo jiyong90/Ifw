@@ -7,6 +7,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.cert.CertificateException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +33,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,10 +48,15 @@ import com.isu.auth.entity.CommTenantModule;
 import com.isu.auth.repository.CommTenantModuleRepository;
 import com.isu.auth.service.OAuthService;
 import com.isu.ifw.StringUtil;
+import com.isu.ifw.entity.WtmToken;
+import com.isu.ifw.repository.WtmEmpHisRepository;
+import com.isu.ifw.repository.WtmTokenRepository;
+import com.isu.ifw.repository.WtmWorkteamEmpRepository;
 import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
-import com.isu.ifw.vo.Login;
 import com.isu.option.service.TenantConfigManagerService;
+import com.isu.option.util.Aes256;
+import com.isu.option.vo.ReturnParam;
 
 @RestController
 public class IfwLoginController {
@@ -80,8 +88,10 @@ public class IfwLoginController {
 	
 	@Autowired
 	TenantConfigManagerService tcms;
-
 	
+	@Resource
+	WtmTokenRepository tokenRepository;
+
 	@RequestMapping(value = "/login/certificate/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void loginForRecruitManagement(@PathVariable String tsId, HttpServletRequest request,
 										  HttpServletResponse response, RedirectAttributes redirectAttr) {
@@ -382,6 +392,110 @@ public class IfwLoginController {
 		
 	}
 		
+	@RequestMapping(value = "/certificate/token", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
+	public void loginForToken(HttpServletRequest request, HttpServletResponse response, @RequestBody(required = true) Map<String, String> body) {
+
+		try {
+			WtmToken token = new WtmToken();
+			token.setAccessToken(body.get("accessToken"));
+			token.setEnterCd(body.get("enterCd"));
+			token.setRefreshToken(body.get("refreshToken"));
+			token.setSabun(body.get("sabun"));
+			token.setTenantId(Long.valueOf(body.get("tenantId")));
+			
+			String expiresAt = body.get("expiresAt");
+			Calendar cal = Calendar.getInstance();
+		    cal.add( Calendar.SECOND, Integer.valueOf(expiresAt)); 
+ 	        Date date = cal.getTime(); 
+
+ 	        token.setExpiresAt(date);
+ 	        
+ 	        loginService.creatAccessToken(response, token);
+		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/certificate/deltoken", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
+	public void logoutForToken(HttpServletRequest request, HttpServletResponse response, @RequestBody(required = true) Map<String, String> body) {
+
+		try {
+			WtmToken token = new WtmToken();
+			token.setEnterCd(body.get("enterCd"));
+			token.setSabun(body.get("sabun"));
+			token.setTenantId(Long.valueOf(body.get("tenantId")));
+ 	        
+ 	        loginService.deleteAccessToken(response, token);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/certificate/mobile/request", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam loginForMobile(HttpServletRequest request, @RequestBody(required = true) Map<String, String> body) {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String loginEnterCd = body.get("loginEnterCd");
+			String loginUserId = body.get("loginUserId").toUpperCase();
+			String loginPassword = body.get("loginPassword");
+			String localeCd = body.get("locale");
+			String userToken = body.get("userToken");
+		
+			String empKey = loginEnterCd + "@"	+ loginUserId;
+			
+			Aes256 aes = new Aes256(userToken);
+			empKey = aes.encrypt(empKey);
+			
+			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+			rtnMap.put("empKey", empKey);
+
+			HashMap<String, Object> sessionMap = new HashMap<String, Object>();
+			sessionMap.put("empNm", "테스트");
+			sessionMap.put("orgNm", "테스트");
+			sessionMap.put("id", loginEnterCd + loginUserId);
+			sessionMap.put("accessToken", "123456789");
+			
+			rtnMap.put("sessionData", sessionMap);
+			rp.put("result", rtnMap);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		return rp;
+	}
+	
+	@RequestMapping(value = "/certificate/mobile/valid", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam validEmp(HttpServletRequest request,
+			@RequestParam(value = "locale", required = true) String locale,
+			@RequestParam(value = "empKey", required = true) String empKey,
+			@RequestParam(value = "accessToken", required = true) String accessToken) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+		
+		String enterCd = empKey.split("@")[0];
+		String sabun = empKey.split("@")[1];
+		
+		rtnMap.put("empKey", enterCd + "@"	+ sabun);
+
+		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
+		sessionMap.put("empNm", "테스트");
+		sessionMap.put("orgNm", "테스트");
+		sessionMap.put("id", enterCd + sabun);
+		sessionMap.put("accessToken", "123456789");
+
+		rtnMap.put("sessionData", sessionMap);
+		rp.put("result", rtnMap);
+
+		
+		rp.put("result", rtnMap);
+		return rp;
+	}
+	
 	@RequestMapping(value="/logout/{tsId}", method=RequestMethod.GET)
 	public void logout(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response){
 		
@@ -417,5 +531,11 @@ public class IfwLoginController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@RequestMapping(value = "/login/token/{tsid}", method = RequestMethod.GET)
+	public void loginForToken(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = ((HttpServletRequest) request).getSession();
+		session.setAttribute("token", "111111");
 	}
 }
