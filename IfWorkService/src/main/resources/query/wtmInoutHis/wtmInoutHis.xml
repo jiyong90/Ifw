@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmInoutHisMapper">
+	<select id="getInoutStatus" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT X.YMD AS ymd, 
+				X.P_SDATE AS pSdate, 
+				X.P_EDATE AS pEdate, 
+				DATE_FORMAT(X.P_SDATE,'%Y%m%d') AS pSymd, 
+				DATE_FORMAT(X.P_EDATE,'%Y%m%d') AS pEymd, 
+				C.ENTRY_SDATE AS entrySdate, 
+				C.ENTRY_EDATE AS entryEdate 
+			FROM 
+				(SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS P_SDATE, MAX(A.PLAN_EDATE) AS P_EDATE
+					FROM WTM_WORK_DAY_RESULT A 
+					WHERE A.TENANT_ID = #{tenantId}
+						AND A.ENTER_CD = #{enterCd}
+						AND A.SABUN = #{sabun}
+						AND A.TIME_TYPE_CD IN ('BASE', 'OT') 
+						GROUP BY YMD
+						ORDER BY YMD) AS X
+				JOIN WTM_WORK_CALENDAR C ON C.TENANT_ID = X.TENANT_ID AND C.ENTER_CD = X.ENTER_CD AND C.SABUN = X.SABUN AND C.YMD = X.YMD
+				WHERE (DATE_FORMAT(X.P_SDATE, '%Y%m%d') = DATE_FORMAT(now(),'%Y%m%d') 
+					OR DATE_FORMAT(X.P_EDATE, '%Y%m%d') = DATE_FORMAT(now(),'%Y%m%d'))
+        ]]>
+    </select>
+    
+	<update id="saveWtmInoutHis" parameterType="map">
+        <![CDATA[ 
+			INSERT INTO WTM_INOUT_HIS
+				(TENANT_ID,
+				ENTER_CD,
+				SABUN,
+				INOUT_TYPE_CD,
+				ENTRY_TYPE_CD,
+				YMD,
+				INOUT_DATE)
+			VALUES
+				(#{tenantId},
+				#{enterCd} ,
+				#{sabun} ,
+				#{inoutTypeCd} ,
+				#{entryTypeCd} ,
+				#{ymd} ,
+				#{now}
+				)
+        ]]>
+    </update>
+</mapper>
