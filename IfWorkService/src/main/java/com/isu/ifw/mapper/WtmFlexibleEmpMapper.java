@@ -134,6 +134,13 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public void updateWorkteamOfWtmFlexibleEmp(Map<String, Object> paramMap);
 	
+	/**
+	 * 기본근무제에 대한 정보를 갱신한다. 
+	 * 유연근무제 > 근무조 > 기본근무 순으로 기본근무로 구분되는 근무조와 기본근무에 대한 정보를 다시 셋팅한다.
+	 * @param paramMap
+	 */
+	public void initWtmFlexibleEmpOfWtmWorkDayResult(Map<String, Object> paramMap);
+	
 	public void createWtmWorkteamOfWtmWorkDayResult(Map<String, Object> paramMap);
 	
 	/**
