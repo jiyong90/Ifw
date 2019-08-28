@@ -561,7 +561,9 @@
 	                        </li>
 	             		</ul>
 	                    <div class="btn-wrap">
-                           	<button type="button" class="btn btn-apply btn-block btn-lg" @click="viewOvertimeAppl">연장근로신청</button>
+                           	<button type="button" class="btn btn-apply btn-block btn-lg" @click="viewOvertimeAppl">
+                           		연장근로신청
+                           	</button>
                         </div>
 	                </div>
 	            </div>
@@ -652,7 +654,7 @@
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
 	    		var flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //임시저장된 신청서
 	    		
-	    		if(flexibleAppl.applStatusCd!=null && flexibleAppl.applStatusCd!='' && flexibleAppl.applStatusCd!='99') {
+	    		/* if(flexibleAppl.applStatusCd!=null && flexibleAppl.applStatusCd!='' && flexibleAppl.applStatusCd!='99') {
 					//신청화면 전환
 					$("#applyBtn").bind('click', function(){
 						 calendarLeftVue.viewFlexitimeAppl(flexibleAppl);
@@ -661,8 +663,11 @@
 	    			$("#applyBtn").bind('click', function(){
 	    				$this.getFlexitimeList();
 					});
-	    		}
+	    		} */
        		
+	    		$("#applyBtn").bind('click', function(){
+    				$this.getFlexitimeList();
+				});
        		<#else>
 	    		//사용할 근무제 리스트 조회
 				$("#applyBtn").bind('click', function(){
@@ -869,10 +874,8 @@
 						
 						if(data!=null) {
 							$this.rangeInfo = data;
-							console.log(data);
 							//근무계획작성
 							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
-								console.log('show!!!!!!!!!!!!!!');
 								$("#workPlanBtn").show();
 							} else {
 								$("#workPlanBtn").hide();
