@@ -869,10 +869,10 @@
 						
 						if(data!=null) {
 							$this.rangeInfo = data;
-							
+							console.log(range);
 							//근무계획작성
-							if(data.hasOwnProperty('baseWorkYn') && data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!=''
-									&& data.baseWorkYn!='Y') {
+							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
+								console.log('show!!!!!!!!!!!!!!');
 								$("#workPlanBtn").show();
 							} else {
 								$("#workPlanBtn").hide();
