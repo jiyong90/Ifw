@@ -325,7 +325,6 @@
 										var day = moment(plan.key).format('YYYY-MM-DD');
 										
 			  		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
-			  		    					
 			  		    					if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0) {
 			 		    						$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
 			  		    					}else {
@@ -341,6 +340,122 @@
 					} 
   		    		
   		    	},
+  		    	getWorkDayResult : function(){ //일근무결과 조회
+	         		var $this = this;
+	  	         	
+         			var param = {};
+         			
+   		    		Util.ajax({
+						url: "${rc.getContextPath()}/flexibleEmp/dayWorks",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						success: function(data) {
+							if(data!=null && data.length>0) {
+								//근무계획을 작성해야 할 유연근무제가 여러 개 일 수 있다...
+								//$this.dayWorks = data;
+								
+								$this.data = data;
+								
+								var workday = '';
+			  	         		<#if workday?? && workday!='' && workday?exists >
+			  	         			workday = moment('${workday}').format('YYYY-MM-DD');
+			  	         		<#else>
+			  	  		    		workday = '${today}';
+			  	  		    	</#if>
+			  	  		    	
+			  	  		    	$this.selectedWorkday  = {
+		  	  	    				start: workday,
+		  	  	    				end: workday
+		  	  	    			};
+			  	  		    	
+								var dayWorks = {};
+								data.map(function(d){
+									if(d.hasOwnProperty("dayWorks"))
+										dayWorks[d.sYmd] = d.dayWorks;
+									
+									//오늘 날짜에 해당하는 유연근무제 선택
+									if(moment(d.sYmd).diff(workday)<=0 && moment(workday).diff(d.eYmd)<=0)
+			  		    				calendarLeftVue.flexibleAppl = d;
+								});
+								$this.dayWorks = dayWorks;
+								
+								//상세 계획 입력 화면 전환
+				         		$this.viewWorkPlan();
+								
+								//일근무결과 달력에 표기
+								$this.addDayWorks();
+								
+								//유연근무제 신청 기간 이외의 날짜는 선택하지 못하게 함
+			  		    		$this.selectAllow();
+							} 
+						},
+						error: function(e) {
+							console.log(e);
+							$("#alertText").html("근무시간 조회 시 오류가 발생했습니다.");
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+	  	  	         			$("#alertModal").off('hidden.bs.modal');
+	  	  	         		});
+	  	  	         		$("#alertModal").modal("show"); 
+						}
+					}); 
+
+	         	},
+	         	viewWorkPlan : function(data){
+  	         		var $this = this;
+  	         		var calendar = $this.$refs.fullCalendar.cal;
+  	         		
+  	         		var workday = '';
+  	         		<#if workday?? && workday!='' && workday?exists >
+  	         			workday = moment('${workday}').format('YYYY-MM-DD');
+  	         		<#else>
+  	  		    		workday = '${today}';
+  	  		    	</#if>
+  	         		
+  	         		$this.data.map(function(d){
+  	         			var eDate = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
+  	         			eDate.setDate(eDate.getDate()+1);
+  	         			
+  	         			//유연근무제 표기
+  	         			var newEvent = {
+  							id: 'workRange.'+d.sYmd,
+  							start: moment(d.sYmd).format('YYYY-MM-DD'),
+  		  		        	end: moment(eDate).format('YYYY-MM-DD'),
+  		  		        	rendering: 'background',
+  		  		        	extendedProps: {
+  		  		        		workTypeCd: d.workTypeCd
+  		  		        	}
+  						};
+  	         			
+  	         			$this.addEvent(newEvent);
+  	         			
+  	         			if(moment(d.sYmd).diff(workday)<=0 && moment(workday).diff(d.eYmd)<=0){
+	  	         			var calStart = calendar.view.activeStart;
+	  	         			var calEnd = calendar.view.activeEnd;
+	  	         			if(moment(calStart).diff(d.sYmd)<=0 && moment(d.sYmd).diff(calEnd)<=0) {
+	  	         				if(moment(d.sYmd).diff($this.today)<0) {
+	  	         					$("#timeSaveBtn").hide();
+	  	         					$("#startTime").prop("disabled", true);
+	  	    	  		    		$("#endTime").prop("disabled", true);
+	  	         				} else {
+	  	         					$("#startTime").prop("disabled", false);
+	  	    	  		    		$("#endTime").prop("disabled", false);
+	  	    	  		    		$("#timeSaveBtn").show();
+	  	         				}
+	  	         			} else {
+	  	         				$("#startTime").val("");
+	  	         				$("#endTime").val("");
+	  	         				$("#timeSaveBtn").hide();
+	  	         				$("#startTime").prop("disabled", true);
+	  		  		    		$("#endTime").prop("disabled", true);
+	  	         			}
+	  	         			calendar.gotoDate(workday);
+	  	         			calendar.select(workday);
+  	         			}
+  	         		});
+         			
+  	         	},
   	         	addDayWorks : function(){ //근무시간 생성
   	         		var $this = this;
   	         		
@@ -466,66 +581,13 @@
 				getWorkDayInfo : function(ymd){ //해당일의 근무 정보
 					
 				},
-				viewWorkPlan : function(data){
-  	         		var $this = this;
-  	         		var calendar = $this.$refs.fullCalendar.cal;
-  	         		
-  	         		var workday = '';
-  	         		<#if workday?? && workday!='' && workday?exists >
-  	         			workday = moment('${workday}').format('YYYY-MM-DD');
-  	         		<#else>
-  	  		    		workday = '${today}';
-  	  		    	</#if>
-  	         		
-  	         		$this.data.map(function(d){
-  	         			var eDate = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
-  	         			eDate.setDate(eDate.getDate()+1);
-  	         			
-  	         			//유연근무제 표기
-  	         			var newEvent = {
-  							id: 'workRange.'+d.sYmd,
-  							start: moment(d.sYmd).format('YYYY-MM-DD'),
-  		  		        	end: moment(eDate).format('YYYY-MM-DD'),
-  		  		        	rendering: 'background',
-  		  		        	extendedProps: {
-  		  		        		workTypeCd: d.workTypeCd
-  		  		        	}
-  						};
-  	         			
-  	         			$this.addEvent(newEvent);
-  	         			
-  	         			if(moment(d.sYmd).diff(workday)<=0 && moment(workday).diff(d.eYmd)<=0){
-	  	         			var calStart = calendar.view.activeStart;
-	  	         			var calEnd = calendar.view.activeEnd;
-	  	         			if(moment(calStart).diff(d.sYmd)<=0 && moment(d.sYmd).diff(calEnd)<=0) {
-	  	         				if(moment(d.sYmd).diff($this.today)<0) {
-	  	         					$("#timeSaveBtn").hide();
-	  	         					$("#startTime").prop("disabled", true);
-	  	    	  		    		$("#endTime").prop("disabled", true);
-	  	         				} else {
-	  	         					$("#startTime").prop("disabled", false);
-	  	    	  		    		$("#endTime").prop("disabled", false);
-	  	    	  		    		$("#timeSaveBtn").show();
-	  	         				}
-	  	         			} else {
-	  	         				$("#startTime").val("");
-	  	         				$("#endTime").val("");
-	  	         				$("#timeSaveBtn").hide();
-	  	         				$("#startTime").prop("disabled", true);
-	  		  		    		$("#endTime").prop("disabled", true);
-	  	         			}
-	  	         			calendar.gotoDate(workday);
-	  	         			calendar.select(workday);
-  	         			}
-  	         		});
-         			
-  	         	},
   	         	changeWorkTime : function(){ //상세 근무계획 등록
 					var $this = this;
   	         		var selday = $this.selectedWorkday;
   	         		var flexibleAppl = calendarLeftVue.flexibleAppl;
 					var workDaysOpt = calendarTopVue.flexibleStd.workDaysOpt; //근무요일
 		    		//var applTermOpt = calendarTopVue.flexibleStd.applTermOpt; //신청기간
+		    		
 		    		
   		    		if(selday.start!='undefined'&& selday.end!='undefined' 
   		    				&& $("#startTime").val()!=='' && $("#endTime").val()!=='') {
@@ -626,56 +688,6 @@
   		    		} 
   		    		
   	         	},
-  	         	getWorkDayResult : function(){ //일근무결과 조회
-	         		var $this = this;
-	  	         	
-         			var param = {};
-         			
-   		    		Util.ajax({
-						url: "${rc.getContextPath()}/flexibleEmp/dayWorks",
-						type: "GET",
-						contentType: 'application/json',
-						data: param,
-						dataType: "json",
-						success: function(data) {
-							if(data!=null && data.length>0) {
-								//근무계획을 작성해야 할 유연근무제가 여러 개 일 수 있다...
-								//$this.dayWorks = data;
-								
-								$this.data = data;
-								
-								var dayWorks = {};
-								data.map(function(d){
-									if(d.hasOwnProperty("dayWorks"))
-										dayWorks[d.sYmd] = d.dayWorks;
-									
-									//오늘 날짜에 해당하는 유연근무제 선택
-									if(moment(d.sYmd).diff($this.today)<=0 && moment($this.today).diff(d.eYmd)<=0)
-			  		    				calendarLeftVue.flexibleAppl = d;
-								});
-								$this.dayWorks = dayWorks;
-								
-								//상세 계획 입력 화면 전환
-				         		$this.viewWorkPlan();
-								
-								//일근무결과 달력에 표기
-								$this.addDayWorks();
-								
-								//유연근무제 신청 기간 이외의 날짜는 선택하지 못하게 함
-			  		    		$this.selectAllow();
-							} 
-						},
-						error: function(e) {
-							console.log(e);
-							$("#alertText").html("근무시간 조회 시 오류가 발생했습니다.");
-	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
-	  	  	         			$("#alertModal").off('hidden.bs.modal');
-	  	  	         		});
-	  	  	         		$("#alertModal").modal("show"); 
-						}
-					}); 
-
-	         	},
   	         	saveWorkDayResult : function(){ //일근무결과 저장
 	         		var $this = this;
 	  	         	
