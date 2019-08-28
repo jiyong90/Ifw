@@ -159,7 +159,8 @@
     <!-- 결재의견 modal end -->
 	<div class="container-fluid">
 		<p class="page-title">결재 알림</p>
-		<div class="row no-gutters notice-card" v-if="apprList.length>0" v-for="appr in apprList">
+		<template v-if="apprList.length>0">
+		<div class="row no-gutters notice-card" v-for="appr in apprList">
 			<div class="col-12 col-md-6 col-lg-9" @click="viewAppl(appr)">
 				<div :class="['rounded-circle notice-mark '] + appr.applCd">{{appr.applNm.substr(0,1)}}</div>
 				<div class="inner-wrap">
@@ -183,7 +184,9 @@
 					class="btn btn-block btn-outline btn-approval sign" @click="approval(appr,'apply')">승인</button>
 			</div>
 		</div>
-		<div class="row no-gutters notice-card" v-if="apprList.length==0">
+		</template>
+		<template v-else>
+		<div class="row no-gutters notice-card">
 			<div class="col-12 col-md-12 col-lg-12">
 				<div class="inner-wrap">
 					<div class="title">
@@ -193,6 +196,7 @@
 				</div>
 			</div>
 		</div>
+		</template>
 	</div>
 </div>
 <script type="text/javascript">
@@ -242,7 +246,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.apprList = [];
-						console.log(data);
+						//console.log(data);
 						if(data.status=='OK' && data!=null && data.apprList!=null) {
 							$this.apprList = data.apprList;
 						}
@@ -330,7 +334,7 @@
 	    				//$('#apprOpinionModal').modal("hide"); 
 	    				$('#apprOpinionModal .close').click();
 	    				
-	    				console.log(appr);
+	    				//console.log(appr);
 	    				
 		    			var param = appr;
 		    			
