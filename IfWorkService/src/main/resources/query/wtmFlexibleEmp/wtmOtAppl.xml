@@ -112,7 +112,7 @@
     
     <select id="getTotOtMinuteBySymdAndEymd" parameterType="map" resultType="map">
     <![CDATA[
-    	SELECT SUM(X.OT_MINUTE) AS totOtMinute
+    	SELECT F_WTM_TO_NUMBER(SUM(X.OT_MINUTE),'N') AS totOtMinute
 		  FROM (
 			SELECT SUM(F_WTM_NVL(O.OT_MINUTE,0)) - SUM(F_WTM_NVL(S.SUBS_MINUTE,0)) AS OT_MINUTE
 			  FROM WTM_APPL A
