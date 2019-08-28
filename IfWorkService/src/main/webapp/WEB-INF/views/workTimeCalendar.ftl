@@ -436,6 +436,7 @@
 							//console.log(data);
 							if(data!=null) {
 								$this.result = data;
+								calendarLeftVue.holidayYn = $this.result.holidayYn;
 								
 								$this.viewDayResults(ymd);
 							}

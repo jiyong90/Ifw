@@ -42,7 +42,6 @@
 	    		//화면에 보이는 달력의 시작일, 종료일을 파라미터로 넘김
 	    		var calendar = this.$refs.fullCalendar.cal;
 	    		calendarLeftVue.calendar = calendar;
-		    	this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
 	    	},
 	    	navLinkDayClickCallback: function(info){
          		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment(info).format('YYYYMMDD');
@@ -51,35 +50,9 @@
 	    		var $this = this;
 	    		var calendar = this.$refs.fullCalendar.cal;
 	    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
- 		    		var param = {
-  		    			ym : moment(calendar.getDate()).format('YYYYMM')
-  		    		};
- 		    		
-	 		    	Util.ajax({
-						url: "${rc.getContextPath()}/calendar",
-						type: "GET",
-						contentType: 'application/json',
-						data: param,
-						dataType: "json",
-						success: function(data) {
-							//회사 캘린더(휴무일 포함)
-							if(data.companyCalendar!=null) {
-								data.companyCalendar.map(function(cal){
-									if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
-										//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
-										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
-										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday' class='fc-holiday'>"+cal.holidayNm+"</span>");
-									}
-								});
-							}
-							
-							calendar.select(moment(calendar.getDate()).format('YYYY-MM-DD'));
-						},
-						error: function() {
-							
-						}
-					});
-	 		    	
+	    			calendar.select(moment(calendar.getDate()).format('YYYY-MM-DD'));
+	    			
+	 		    	this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
 	 		    	//console.log(calendar.getEvents());
 		    	}
 	    	},
@@ -189,9 +162,9 @@
          			var calendar = this.$refs.fullCalendar.cal;
          			
 	         		var eventSource = calendar.getEventSourceById(id);
-	         		if(eventSource!=null) {
-	         			eventSource.remove();
-	         		} 
+	         		//if(eventSource!=null) {
+	         		//	eventSource.remove();
+	         		//} 
 	         		
 	         		//이벤트 새로 생성
 	         		var eMap = {
@@ -215,7 +188,6 @@
    		    	};
   		    		
 				$this.monthFlexitimeList = [];
-				
   		    	Util.ajax({
 					url: "${rc.getContextPath()}/flexibleEmp/list",
 					type: "GET",
@@ -244,24 +216,53 @@
 								});
 								
 								//근무계획
-								if(f.hasOwnProperty('flexibleEmp')) {
+								if(f.hasOwnProperty('flexibleEmp') && ($this.dayWorks[f.sYmd]==null || $this.dayWorks[f.sYmd]==undefined)) {
 									$this.dayWorks[f.sYmd] = f.flexibleEmp;
+									$this.addDayWorks(f.flexibleEmp);
 								}
 							});
-							$this.addDayWorks();
+							
+							$this.markAdditionalInfo();
 						}
 					},
 					error: function(e) {
 						$this.monthFlexitimeList = [];
 					}
 				});
+  		    	
  	        },
-	        addDayWorks : function(){ //근무시간 생성
-	         	var $this = this;
-	         	
-	        	if(Object.keys($this.dayWorks).length>0) {
-		         	var events = [];
-		         	$.each($this.dayWorks, function(k, v){
+ 	        markAdditionalInfo : function(){ //회사 휴일과 근태 정보 달력에 표기
+ 	        	var $this = this;
+ 	        	var calendar = this.$refs.fullCalendar.cal;
+ 	        
+ 	        	var param = {
+	    			ym : moment(calendar.getDate()).format('YYYYMM')
+	    		};
+		    		
+ 		    	Util.ajax({
+					url: "${rc.getContextPath()}/calendar",
+					type: "GET",
+					contentType: 'application/json',
+					data: param,
+					dataType: "json",
+					success: function(data) {
+						//회사 캘린더(휴무일 포함)
+						if(data.companyCalendar!=null) {
+							data.companyCalendar.map(function(cal){
+									//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
+									$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
+									$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday' class='fc-holiday'>"+cal.holidayNm+"</span>");
+							});
+						}
+						
+					},
+					error: function() {
+						
+					}
+				});
+ 		    	
+ 		    	if(Object.keys($this.dayWorks).length>0) {
+	         		$.each($this.dayWorks, function(k, v){
 			         	v.map(function(dayWork){
 			         		//근무일
 			         		if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
@@ -280,11 +281,51 @@
 			  		    				
 			  		    				if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0)
 		 		    						$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
-			  		    				else
-			  		    					$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").append(' '+plan.label);
+			  		    				else {
+			  		    					if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").text().indexOf(plan.label)==-1)
+			  		    						$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").append(' '+plan.label);
+			  		    				}
 			  		    				$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").css({"color":"#4d84fe"});
 		  		    				
-		 		    				} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
+		 		    				} 
+								});
+			         		} 
+						});
+	         		});
+        		}
+ 	        
+ 	        },
+	        addDayWorks : function(v){ //근무시간 생성
+	         	var $this = this;
+	         	
+	        	//if(Object.keys($this.dayWorks).length>0) {
+		         	var events = [];
+		         	//$.each($this.dayWorks, function(k, v){
+			         	v.map(function(dayWork){
+			         		//근무일
+			         		if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+								dayWork.plans.map(function(plan){
+									var day = moment(plan.key).format('YYYY-MM-DD');
+								
+		 		    				//if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
+		 		    					//개인 근태
+		  		    					/* var taaEvent = {
+											id: day,
+				    						title: "<div class='dot work-type'><span>" + plan.label + "</span></div>",
+				    						start: day,
+				    						end: day
+				    					};
+			  		    				events.push(taaEvent); */
+			  		    				
+			  		    			//	if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0)
+		 		    				//		$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
+			  		    			//	else
+			  		    			//		$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").append(' '+plan.label);
+			  		    			//	$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").css({"color":"#4d84fe"});
+		  		    				
+		 		    				//} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
+		 		    				if((plan.valueMap.taaCd==undefined || plan.valueMap.taaCd=='') 
+		 		    						&& (plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='')) {
 		 		    					//계획시간
 										var timeEvent = {
 											id: day,
@@ -297,10 +338,9 @@
 								});
 			         		} 
 						});
-		         	});
-	
+		         	//});
 		         	$this.addEventSource('dayWorks', events);
-	        	}
+	        	//}
 	        },
 			selectAllow : function(){
 	    		var $this = this;

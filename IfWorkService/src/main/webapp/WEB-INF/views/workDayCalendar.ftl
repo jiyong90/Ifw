@@ -37,6 +37,7 @@
   		    	renderCallback: function(){
   		    		var calendar = this.$refs.fullCalendar.cal;
   		    		calendarLeftVue.calendar = calendar;
+  		    		this.getWorkDayResult();
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
