@@ -634,6 +634,8 @@ box-sizing: border-box;
   cursor: pointer;  
 }
 .notice-card.none{
+  background-color: #e2e5ed;
+  box-shadow: none;
   cursor: default;
 }
 .notice-card.none .msg{
