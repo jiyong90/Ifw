@@ -356,6 +356,7 @@
   		    	//근무일 화면 전환
          		$("#workRangeInfo").show();
          		$("#flexibleDayInfo").show();
+         		
   		    },
   		    methods : {
   		    	renderCallback: function(){
@@ -370,6 +371,7 @@
   		    		if(info.view.type == 'timeGridDay') { //month change
   		    			var ymd = moment(calendar.getDate()).format('YYYYMMDD');
   		    			
+  		    			calendarLeftVue.getFlexibleRangeInfo(ymd);
   		    			$this.getFlexibleDayInfo(ymd);
   		    			$this.getDayResults(ymd);
 	   		    		
@@ -527,16 +529,35 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
-							if(data!=null && data.workShm && data.workEhm) {
-								var workShm = moment(data.ymd+' '+data.workShm).format('HH:mm');
-								var workEhm = moment(data.ymd+' '+data.workEhm).format('HH:mm');
-								$("#"+id).closest(".desc").children(".guide").text("*해당일 근무시간은 " + workShm+ "~" + workEhm + " 입니다.");
+							if(data!=null) {
+								if(data.holidayYn && data.holidayYn=='Y') {
+									$("#alertText").html("휴일을 대체일시로 선택할 수 없습니다.");
+			  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+			  	  	         			$("#alertModal").off('hidden.bs.modal');
+			  	  	         			$("#"+id).val("");
+			  	  	         			$this.updateValue(id, '');
+			  	  	         			$("#"+id).closest(".desc").children(".guide").text("");
+			  	  	         		});
+			  	  	         		$("#alertModal").modal("show"); 
+									
+								} else {
+									$this.updateValue(id, moment(ymd).format('YYYY-MM-DD'));
+									
+									//근무 가능 시간 세팅
+									var workShm = moment(data.ymd+' '+data.workShm).format('HH:mm');
+									var workEhm = moment(data.ymd+' '+data.workEhm).format('HH:mm');
+									if(id.indexOf('subsSymd')!=-1) {
+										$("#"+id).closest(".desc").children(".guide").text("*해당일 근무시간은 " + workShm+ "~" + workEhm + " 입니다.");
+									}
+								}
 							} else {
+								$this.updateValue(id, '');
 								$("#"+id).closest(".desc").children(".guide").text("");
 							}
 						},
 						error: function(e) {
 							console.log(e);
+							$this.updateValue(id, '');
 							$("#"+id).closest(".desc").children(".guide").text("");
 						}
 					});
@@ -893,6 +914,7 @@
   	                }
   	         	},
   	         	updateValue: function(id, val){
+  	         		console.log('id::::' + id);
   	         		var $this = this;
   	         		var key = id.split('_');
   	         		if(key!=null && key!='undefined' && key.length>0) {
@@ -935,15 +957,13 @@
    		var $this = this;
  		$(this).datetimepicker({
  			format: 'YYYY-MM-DD',
- 		    language: 'ko'
+ 		    language: 'ko',
+ 		    useCurrent: false
  		});
  		
  		$(this).on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
- 				timeCalendarVue.updateValue($($this).attr('id'), moment(e.date).format('YYYY-MM-DD'));
- 				
- 				if($($this).attr('id').indexOf('subsSymd')!=-1)
- 					timeCalendarVue.getWorkHour($($this).attr('id'), moment(e.date).format('YYYYMMDD'));
+ 				timeCalendarVue.getWorkHour($($this).attr('id'), moment(e.date).format('YYYYMMDD'));
  			}
  		});
    	});
@@ -957,7 +977,8 @@
             widgetPositioning: {
                 horizontal: 'left',
                 vertical: 'top'
-            }
+            },
+            useCurrent: false
 		});
 		
 		$(this).on("change.datetimepicker", function(e){
@@ -976,7 +997,8 @@
             widgetPositioning: {
                 horizontal: 'right',
                 vertical: 'top'
-            }
+            },
+            useCurrent: false
 		});
 		
 		$(this).on("change.datetimepicker", function(e){
@@ -1032,5 +1054,7 @@
 	  	$(target).find(".needs-validation").removeClass('was-validated');
 	  	
 	});
+	
+	
 </script>
 

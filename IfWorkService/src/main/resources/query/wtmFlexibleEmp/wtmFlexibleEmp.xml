@@ -688,6 +688,7 @@
     
     <select id="getWorkHour" parameterType="map" resultType="hashmap" >
 	    SELECT #{ymd} AS ymd
+	         , F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'H') AS holidayYn
 	         , F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'S') AS workShm
      		 , F_WTM_GET_WORK_HM(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d'), 'E') AS workEhm
 		  FROM DUAL

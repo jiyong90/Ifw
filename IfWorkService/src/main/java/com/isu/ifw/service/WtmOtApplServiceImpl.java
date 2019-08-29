@@ -647,7 +647,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 		
-		if(exhaustionYn.equals("Y")) {
+		if(exhaustionYn!=null && exhaustionYn.equals("Y")) {
 			//선소진시
 			//코어타임을 제외한 잔여 소정근로시간을 알려준다
 			//근무제 기간 내의 총 소정근로 시간
