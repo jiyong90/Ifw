@@ -24,6 +24,10 @@
 		$('#alertLink').on('click', function () {
 		    $('#alertSidebar').toggleClass('active');
 		});
+		
+		$('.alert-list-wrap').slimScroll({
+	        height: '100%'
+	    });
 	});
 
 	var inboxVue = new Vue({
