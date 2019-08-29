@@ -7,11 +7,13 @@
 <script src="${rc.getContextPath()}/jQuery-3.4.1/jquery-ui.min.js"></script>
 <script src="${rc.getContextPath()}/jQuery-3.4.1/jquery-migrate-3.0.0.min.js"></script>
 <script src="${rc.getContextPath()}/jQuery-3.4.1/datepicker_lang_KR.js"></script>
+<script src="${rc.getContextPath()}/jQuery-slimScroll-master-1.3.8/jquery.slimscroll.min.js"></script>
 <script src="${rc.getContextPath()}/popper-1.15.0/popper.min.js"></script>
 <script src="${rc.getContextPath()}/moment/moment.js"></script>
 <script src="${rc.getContextPath()}/moment/ko.js"></script>
 <script src="${rc.getContextPath()}/tooltip-1.3.2/tooltip.min.js"></script>
 <script src="${rc.getContextPath()}/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+
 <!-- for dateTimepicker -->
 <script src="${rc.getContextPath()}/tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.js"></script>
 <!-- <script src="${rc.getContextPath()}/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script> -->

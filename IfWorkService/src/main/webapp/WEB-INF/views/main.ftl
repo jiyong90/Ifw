@@ -629,7 +629,10 @@
             
             $('.calendar-wrap').toggleClass('collapse-height');
             $('.white-box-wrap').toggleClass('collapse-height');
-            
+        });
+        
+        $('.white-box-wrap').slimScroll({
+            height: 'calc(100vh - 530px)'
         });
     });
 </script>

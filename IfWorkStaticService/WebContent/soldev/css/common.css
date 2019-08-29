@@ -832,9 +832,10 @@ No media query for `xs` since this is the default in Bootstrap */
 
 /* Small devices (landscape phones, 576px and up) */
 @media only screen and (max-width: 767px) {
-  .white-box-wrap{
-    height: auto;
+  .slimScrollDiv {
+    height: auto !important;
   }
+  .slimScrollDiv .white-box-wrap{height: auto !important;}
 
   .white-box-wrap.collapse-height{
     height: auto;
