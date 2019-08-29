@@ -633,6 +633,13 @@ box-sizing: border-box;
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.08);
   cursor: pointer;  
 }
+.notice-card.none{
+  cursor: default;
+}
+.notice-card.none .msg{
+  font-size: 16px;
+}
+
 .notice-card .notice-mark{
   float:left;
   display: inline-block;

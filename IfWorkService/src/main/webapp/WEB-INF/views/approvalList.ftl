@@ -186,14 +186,10 @@
 		</div>
 		</template>
 		<template v-else>
-		<div class="row no-gutters notice-card">
-			<div class="col-12 col-md-12 col-lg-12">
-				<div class="inner-wrap">
-					<div class="title">
-						<span class="ico-wrap"><i class="far fa-bell-slash"></i></span>
-						결재 알림을 모두 확인했습니다.
-					</div>
-				</div>
+		<div class="row no-gutters notice-card none">
+			<div class="col-12">
+				<div class="rounded-circle notice-mark AUTO"><i class="far fa-bell-slash"></i></div>
+                <p class="name msg">결재 알림을 모두 확인했습니다.</p>
 			</div>
 		</div>
 		</template>
