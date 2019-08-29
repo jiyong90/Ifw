@@ -30,7 +30,7 @@
 								</ul>
 							</div>
 						</div>
-						<script type="text/javascript">createIBSheet("sheet1", "100%", "100%","kr"); </script>
+						<script type="text/javascript"> createIBSheet("sheet1", "100%", "calc(100vh - 232px)", "kr"); </script>
 					</td>
 				</tr>
 			</table>
@@ -40,6 +40,9 @@
 
 <script type="text/javascript">
    	$(function() {
+   		//resize
+		$(window).smartresize(sheetResize);
+   	
    		$('#sYmd').datetimepicker({
             format: 'YYYY-MM-DD',
             language: 'ko'
