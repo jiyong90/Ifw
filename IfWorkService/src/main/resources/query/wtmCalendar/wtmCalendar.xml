@@ -96,6 +96,9 @@
 				<when test="inoutTypeCd.equals('OUT')">
 					ENTRY_EDATE=#{now}
 			 	</when>
+				<when test="inoutTypeCd.equals('OUTC')">
+					ENTRY_EDATE=null
+			 	</when>
 			</choose>
 			<![CDATA[ 
 			WHERE TENANT_ID = #{tenantId} 

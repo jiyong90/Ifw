@@ -49,4 +49,35 @@
 				)
         ]]>
     </update>
+    
+    <select id="getMyInoutList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT A.YMD as key2, RIGHT(A.YMD, 2) as title, DATE_FORMAT(A.ENTRY_SDATE, '%H:%i') as caption_lb, DATE_FORMAT(A.ENTRY_EDATE, '%H:%i') as caption_rb, T.TIME_NM as status 
+			FROM WTM_WORK_CALENDAR A 
+				JOIN WTM_TIME_CD_MGR T
+			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID	
+			WHERE A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+				AND A.SABUN = #{sabun}
+				AND A.YMD LIKE CONCAT(#{month}, '%') 
+				ORDER BY A.YMD DESC
+	        ]]>
+    </select>
+    
+    <select id="getMyInoutDetail" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CONCAT(LEFT(A.YMD, 4),'-',MID(A.YMD, 5,2),'-',RIGHT(A.YMD,2)) as ymd,
+				T.TIME_NM as timeNm,
+				A.ENTRY_SDATE as sdate,
+				A.ENTRY_EDATE as edate
+			FROM WTM_WORK_CALENDAR A 
+				JOIN WTM_TIME_CD_MGR T
+			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID	
+			WHERE A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+				AND A.SABUN = #{sabun}
+				AND A.YMD = #{month} 
+				ORDER BY A.YMD DESC
+	        ]]>
+    </select>
 </mapper>

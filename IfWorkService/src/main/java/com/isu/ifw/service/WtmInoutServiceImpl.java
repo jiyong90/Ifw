@@ -36,7 +36,7 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 	WtmCalendarMapper wtmCalendarMapper;
 	
 	@Override
-	public Map<String, Object> getMenuContext(String enterCd, String sabun) {
+	public Map<String, Object> getMenuContext(Long tenantId, String enterCd, String sabun) {
 
 		Map <String,Object> menuAttributeMap = new HashMap<String,Object>();
 		Map <String,Object> paramMap = new HashMap<String, Object>();
@@ -87,7 +87,7 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 	}
 
 	@Override
-	public int checkInoutHis(String enterCd, String sabun, String inoutType, String ymd) throws Exception {
+	public int checkInoutHis(Long tenantId, String enterCd, String sabun, String inoutType, String ymd) throws Exception {
 		
 		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
@@ -111,5 +111,29 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 		cnt += wtmCalendarMapper.updateEntryDate(paramMap);
 		//근무캘린더에 시간만 업데이트
 		return cnt;
+	}
+
+	@Override
+	public List<Map<String, Object>> getMyInoutList(Long tenantId, String enterCd, String sabun, String month) throws Exception {
+		
+		Map<String, Object> paramMap = new HashMap();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("month", month);
+		
+		return inoutHisMapper.getMyInoutList(paramMap);
+	}
+	
+	@Override
+	public Map<String, Object> getMyInoutDetail(Long tenantId, String enterCd, String sabun, String month) throws Exception {
+		
+		Map<String, Object> paramMap = new HashMap();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("month", month);
+		
+		return inoutHisMapper.getMyInoutDetail(paramMap);
 	}
 }

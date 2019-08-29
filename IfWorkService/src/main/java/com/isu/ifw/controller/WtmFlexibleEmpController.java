@@ -120,25 +120,6 @@ public class WtmFlexibleEmpController {
 
 		return flexibleEmpService.getFlexibleWorkTimeInfo(tenantId, enterCd, sabun, paramMap);
 	}
-	
-	/**
-	 * 해당 일의 근무가능시간 조회
-	 * @param paramMap
-	 * @param request
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="/workhour", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getWorkHour(@RequestParam Map<String, Object> paramMap
-													    		, HttpServletRequest request) throws Exception {
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd").toString();
-		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
-
-		return flexibleEmpService.getWorkHour(tenantId, enterCd, sabun, paramMap, userId);
-	}
 
 	/**
 	 * 이전에 시행한 근무제 기간 조회

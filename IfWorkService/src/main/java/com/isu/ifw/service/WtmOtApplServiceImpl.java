@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
@@ -331,6 +329,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				List<Map<String, Object>> subs = (List<Map<String, Object>>) paramMap.get("subs");
 				if(subs != null && subs.size() > 0) {
 					Map<String, Object> resultMap = new HashMap<>();
+					Map<String, Object> pMap = new HashMap<>();
+					pMap.put("tenantId", tenantId);
+					pMap.put("enterCd", enterCd);
 					
 					for(Map<String, Object> sub : subs) {
 						String subYmd = sub.get("subYmd").toString();
@@ -349,12 +350,13 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 						
 						String sHm = WtmUtil.parseDateStr(sd, "HHmm");
 						String eHm = WtmUtil.parseDateStr(ed, "HHmm");
-						paramMap.put("shm", sHm);
-						paramMap.put("ehm", eHm);
-						paramMap.put("sabun", appl.getApplSabun());
+						pMap.put("ymd", subYmd);
+						pMap.put("shm", sHm);
+						pMap.put("ehm", eHm);
+						pMap.put("sabun", appl.getApplSabun());
 						
 						//현재 신청할 연장근무 시간 계산
-						resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap));
+						resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(pMap));
 						
 						otSub.setSubsMinute(resultMap.get("calcMinute").toString());
 						otSub.setUpdateId(userId);
@@ -455,8 +457,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					String subYmd = sub.get("subYmd").toString();
 					//같은 주에 있는 대체휴일 시간정보만
 					if(Integer.parseInt(subYmd) >= Integer.parseInt(symd) && Integer.parseInt(subYmd) <= Integer.parseInt(eymd)) {
-						String subsSdate = paramMap.get("subsSdate").toString();
-						String subsEdate = paramMap.get("subsEdate").toString();
+						String subsSdate = sub.get("subsSdate").toString();
+						String subsEdate = sub.get("subsEdate").toString();
 						
 						Date subSd = WtmUtil.toDate(subsSdate, "yyyyMMddHHmm");
 						Date subEd = WtmUtil.toDate(subsEdate, "yyyyMMddHHmm");
@@ -598,6 +600,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 						applLine.setApplId(applId);
 						applLine.setApprSeq(applLineVO.getApprSeq());
 						applLine.setApprSabun(applLineVO.getSabun());
+						applLine.setApprTypeCd(APPL_LINE_S);
 						applLine.setUpdateId(userId);
 						wtmApplLineRepo.save(applLine);
 					}
