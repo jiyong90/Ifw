@@ -448,10 +448,12 @@ public class IfwLoginController {
 			
 			Aes256 aes = new Aes256(userToken);
 			empKey = aes.encrypt(empKey);
-			
+			//비밀번호 검증을 위한 hr연동필요
+						
 			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("empKey", empKey);
 
+			//우리쪽 empHis조회 추가해야함
 			HashMap<String, Object> sessionMap = new HashMap<String, Object>();
 			sessionMap.put("empNm", "테스트");
 			sessionMap.put("orgNm", "테스트");
@@ -489,9 +491,6 @@ public class IfwLoginController {
 		sessionMap.put("accessToken", "123456789");
 
 		rtnMap.put("sessionData", sessionMap);
-		rp.put("result", rtnMap);
-
-		
 		rp.put("result", rtnMap);
 		return rp;
 	}
