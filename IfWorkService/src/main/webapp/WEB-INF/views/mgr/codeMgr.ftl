@@ -8,7 +8,7 @@
 				<tr>
 					<td>
 						<span>기준일 </span>
-						<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+						<input type="text" id="sYmd" name="sYmd" class="date2 date-custom required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 					</td>
 					<td>
 						<a href="javascript:doAction1('Search');" class="button">조회</a>
@@ -24,10 +24,10 @@
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">그룹코드관리</div>
-							<ul class="float-right btn-wrap">
-								<li><a href="javascript:doAction1('Insert')" class="basic">입력</a></li>
-								<li><a href="javascript:doAction1('Save')" class="basic">저장</a></li>
-							</ul>
+						<ul class="float-right btn-wrap">
+							<li><a href="javascript:doAction1('Insert')" class="basic button">입력</a></li>
+							<li><a href="javascript:doAction1('Save')" class="basic">저장</a></li>
+						</ul>
 						</div>
 					</div>
 					<script type="text/javascript">createIBSheet("sheet1", "100%", "40%","kr"); </script>
@@ -39,8 +39,8 @@
 					<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">공통코드관리</div>
 							<ul class="float-right btn-wrap">
-								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
-								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
+								<li><a href="javascript:doAction2('Insert')" class="basic button">입력</a></li>
+								<li><a href="javascript:doAction2('Save')" class="basic">저장</a></li>
 							</ul>
 						</div>
 					</div>
@@ -54,7 +54,9 @@
 
 <script type="text/javascript">
    	$(function() {
-   	
+   		//resize
+   		$(window).smartresize(sheetResize);
+   		
    		$('#sYmd').datetimepicker({
             format: 'YYYY-MM-DD',
             language: 'ko'
