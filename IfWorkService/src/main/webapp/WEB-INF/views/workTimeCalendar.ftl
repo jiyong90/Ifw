@@ -265,7 +265,7 @@
                                         <span class="sub-time">{{calendarLeftVue.minuteToHHMM(sub.subsMinute,'detail')}}</span>
                                     </span>
                                 </div>
-                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.subYmd+' '+sub.workShm).format('HH:mm')}}~{{moment(sub.subYmd+' '+sub.workEhm).format('HH:mm')}} 입니다.</div>
+                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.sDate).format('HH:mm')}}~{{moment(sub.eDate).format('HH:mm')}} 입니다.</div>
                                 </template>
                             </div>
                             <hr class="bar">
@@ -523,7 +523,7 @@
 	   		    	};
    		    		
    		    		Util.ajax({
-						url: "${rc.getContextPath()}/flexibleEmp/workhour",
+						url: "${rc.getContextPath()}/flexibleEmp/worktime",
 						type: "GET",
 						contentType: 'application/json',
 						data: param,
@@ -543,9 +543,9 @@
 								} else {
 									$this.updateValue(id, moment(ymd).format('YYYY-MM-DD'));
 									
-									//근무 가능 시간 세팅
-									var workShm = moment(data.ymd+' '+data.workShm).format('HH:mm');
-									var workEhm = moment(data.ymd+' '+data.workEhm).format('HH:mm');
+									//근무 시간 세팅
+									var workShm = moment(data.sDate).format('HH:mm');
+									var workEhm = moment(data.eDate).format('HH:mm');
 									if(id.indexOf('subsSymd')!=-1) {
 										$("#"+id).closest(".desc").children(".guide").text("*해당일 근무시간은 " + workShm+ "~" + workEhm + " 입니다.");
 									}
@@ -914,7 +914,6 @@
   	                }
   	         	},
   	         	updateValue: function(id, val){
-  	         		console.log('id::::' + id);
   	         		var $this = this;
   	         		var key = id.split('_');
   	         		if(key!=null && key!='undefined' && key.length>0) {
@@ -1054,7 +1053,6 @@
 	  	$(target).find(".needs-validation").removeClass('was-validated');
 	  	
 	});
-	
 	
 </script>
 
