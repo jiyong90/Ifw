@@ -7,7 +7,7 @@
 					<table>
 						<tr>
 							<td>
-								<span>기준일 </span>
+								<span class="label">기준일 </span>
 								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 							</td>
 							<td>
@@ -18,60 +18,53 @@
 				</div>
 			</div>
 		</form>
-		<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
-			<colgroup>
-				<col width="40%" />
-				<col width="60%" />
-			</colgroup>
-			<tr>
-				<td class="sheet_left">
-					<div class="inner">
-						<div class="sheet_title_wrap clearfix">
-							<div class="float-left title">근무제도관리</div>
-							<ul class="float-right btn-wrap">
-								<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
-								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
-							</ul>
-						</div>
+		<div class="row no-gutters">
+			<div class="col-5 pr-3">
+				<div class="inner">
+					<div class="sheet_title_wrap clearfix">
+						<div class="float-left title">근무제도관리</div>
+						<ul class="float-right btn-wrap">
+							<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
+							<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
+						</ul>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet1", "40%", "100%","kr"); </script>
-				</td>
-				<td class="sheet_right">
-					<div class="inner">
-						<div class="innertab inner" style="margin-top:5px; height:47%;">
-							<div id="tabs" class="tab">
-								<ul class="outer tab_bottom">
-									<li><a href="#tabs-1">근무제기준</a></li>
-									<li><a href="#tabs-2">근무제패턴</a></li>
-								</ul>
-								<div id="tabs-1">
-									<div  class="layout_tabs">
-										<div class="inner sheet_title_wrap clearfix">
-											<div class="float-left title" id="searchAppText">근무제기준</div>
-											<ul class="float-right btn-wrap">
-												<li><a href="javascript:doAction1('Save2')" class="basic authA">저장</a></li>
-											</ul>
-										</div>
-									</div>
+				</div>
+				<script type="text/javascript">createIBSheet("sheet1", "100%", "calc(100vh - 232px)","kr"); </script>
+			</div>
+			<div class="col-7 pt-2">
+				<div class="innertab inner">
+					<div id="tabs" class="tab">
+						<ul class="outer tab_bottom">
+							<li><a href="#tabs-1">근무제기준</a></li>
+							<li><a href="#tabs-2">근무제패턴</a></li>
+						</ul>
+						<div id="tabs-1">
+							<div  class="layout_tabs">
+								<div class="inner sheet_title_wrap clearfix">
+									<div class="float-left title" id="searchAppText">근무제기준</div>
+									<ul class="float-right btn-wrap">
+										<li><a href="javascript:doAction1('Save2')" class="basic authA">저장</a></li>
+									</ul>
 								</div>
-								<div id="tabs-2">
-									<div  class="layout_tabs">
-										<div class="inner sheet_title_wrap clearfix">
-											<div class="float-left title" id="searchAppText">반복패턴</div>
-											<ul class="float-right btn-wrap">
-												<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
-												<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
-											</ul>
-										</div>
-										<script type="text/javascript">createIBSheet("sheet2", "50%", "90%","kr"); </script>
-									</div>
-								</div>
+									
 							</div>
 						</div>
-					</div> 
-				</td>
-			</tr>
-		</table>
+						<div id="tabs-2">
+							<div  class="layout_tabs">
+								<div class="inner sheet_title_wrap clearfix">
+									<div class="float-left title" id="searchAppText">반복패턴</div>
+									<ul class="float-right btn-wrap">
+										<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
+										<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
+									</ul>
+								</div>
+								<script type="text/javascript">createIBSheet("sheet2", "100%", "calc(100vh - 270px)","kr"); </script>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		</from>
 	</div>
 	</div>
@@ -79,6 +72,9 @@
 
 <script type="text/javascript">
    	$(function() {
+   		//resize
+		$(window).smartresize(sheetResize);
+   	
    		$('#sYmd').datetimepicker({
             format: 'YYYY-MM-DD',
             language: 'ko'
