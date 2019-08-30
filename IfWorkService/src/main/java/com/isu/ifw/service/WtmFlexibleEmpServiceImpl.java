@@ -226,6 +226,16 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 						}
 						result.setPlanSdate(s);
 						result.setPlanEdate(e);
+						Map<String, Object> paramMap = new HashMap<>();
+						paramMap.put("shm", shm);
+						paramMap.put("ehm", ehm);
+						paramMap.put("tenantId", emp.getTenantId());
+						paramMap.put("enterCd", emp.getEnterCd());
+						paramMap.put("sabun", emp.getSabun());
+						paramMap.put("ymd", result.getYmd());
+						
+						Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
+						result.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+""));
 					}else {
 						result.setPlanSdate(null);
 						result.setPlanEdate(null);
@@ -251,7 +261,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			//holidayYn 갱신
 			//flexEmpMapper.updateHolidayYnOFWorkCalendar(paramMap);
 			//planMinute갱신
-			flexEmpMapper.updatePlanMinute(flexibleEmpId);
+			//flexEmpMapper.updatePlanMinute(flexibleEmpId);
 			
 			Map<String, Object> result = flexEmpMapper.checkBaseWorktime(flexibleEmpId);
 			if(result!=null && result.get("isValid")!=null && result.get("isValid").equals("0")) {
