@@ -1,12 +1,14 @@
 @charset "utf-8";
+
 /* datepicker2 css */
 .bbit-dp {
     position: absolute;
     width: 191px;
-    height: 200px;
+    height: 216px;
     border: #b8c6cc 1px solid;
     overflow: hidden;
-    zoom:1;padding: 0;
+    zoom:1;
+    padding: 0;
     visibility: hidden;
     background: #fff;
     left: 0px;
@@ -44,7 +46,7 @@
     width: auto;
     -moz-outline: 0 none;
     outline: 0 none;
-    background: #fff url(/common/images/common/btn_calendar_month.gif) no-repeat 95% 8px;
+    background: #fff url(../img/btn_calendar_month.gif) no-repeat 95% 8px;
     padding: 0 20px 0 0;
 }
 
@@ -91,19 +93,19 @@
 }
 
 .bbit-dp-top-left a {
-    background: url(/common/images/common/btn_calendar_prev2.gif) no-repeat 0 50%;
+    background: url(../img/btn_calendar_prev2.gif) no-repeat 0 50%;
 }
 
 .bbit-dp-top-right a {
-    background: url(/common/images/common/btn_calendar_next2.gif) no-repeat 0 50%;
+    background: url(../img/btn_calendar_next2.gif) no-repeat 0 50%;
 }
 
 .bbit-dp-top-left a:hover {
-    background-image: url(/common/images/common/btn_calendar_prev2_over.gif);
+    background-image: url(../img/btn_calendar_prev2_over.gif);
 }
 
 .bbit-dp-top-right a:hover {
-    background-image: url(/common/images/common/btn_calendar_next2_over.gif);
+    background-image: url(../img/btn_calendar_next2_over.gif);
 }
 
 .bbit-dp-inner {
@@ -182,7 +184,7 @@
 
 .bbit-dp-inner .bbit-dp-disabled a {
     cursor: default;
-    ;color: #eee;
+    color: #eee;
     background: none
 }
 
@@ -220,7 +222,7 @@
 }
 
 td.bbit-dp-mp-month,td.bbit-dp-mp-year {
-    ;text-align: center;
+    text-align: center;
     vertical-align: middle;
     width: 25%;
 }
@@ -301,7 +303,7 @@ td.bbit-dp-mp-ybtn {
 .bbit-dp-mp-ybtn a {
     font-famliy: Verdana;
     overflow: hidden;
-    ;cursor: pointer;
+    cursor: pointer;
     display: block;
     margin: 0 auto;
 }
@@ -309,21 +311,21 @@ td.bbit-dp-mp-ybtn {
 .bbit-dp-mp-ybtn a.bbit-dp-mp-next {
     width: 11px;
     height: 17px;
-    background: url(/common/images/common/btn_calendar_next2.gif) no-repeat;
+    background: url(../img/btn_calendar_next2.gif) no-repeat;
 }
 
 .bbit-dp-mp-ybtn a.bbit-dp-mp-next:hover {
-    background-image: url(/common/images/common/btn_calendar_next2_over.gif)
+    background-image: url(../img/btn_calendar_next2_over.gif)
 }
 
 .bbit-dp-mp-ybtn a.bbit-dp-mp-prev {
     width: 11px;
     height: 17px;
-    background: url(/common/images/common/btn_calendar_prev2.gif) no-repeat
+    background: url(../img/btn_calendar_prev2.gif) no-repeat
 }
 
 .bbit-dp-mp-ybtn a.bbit-dp-mp-prev:hover {
-    background-image: url(/common/images/common/btn_calendar_prev2_over.gif)
+    background-image: url(../img/btn_calendar_prev2_over.gif)
 }
 
 .bbit-dp-mp-ybtn {
@@ -333,3 +335,5 @@ td.bbit-dp-mp-ybtn {
 td.bbit-dp-mp-sep {
     border-right: 1px dashed #b8c6cc;
 }
+
+.date-custom .dropdown-menu{font-size:0.7rem;}

@@ -35,7 +35,7 @@
 							</ul>
 						</div>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet1", "100%", "40%","kr"); </script>
+					<script type="text/javascript">createIBSheet("sheet1", "100%", "calc(50vh - 140px)","kr"); </script>
 				</td>
 			</tr>
 			<tr>
@@ -49,7 +49,7 @@
 							</ul>
 						</div>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet2", "100%", "30%","kr"); </script>
+					<script type="text/javascript">createIBSheet("sheet2", "100%", "calc(50vh - 140px)","kr"); </script>
 				</td>
 			</tr>
 		</table>
