@@ -882,8 +882,10 @@
 						
 						if(data!=null) {
 							$this.rangeInfo = data;
+							
 							//근무계획작성
-							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
+							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y'
+								&& moment(data.sYmd).diff('${today}')<=0 && moment('${today}').diff(data.eYmd)<=0) {
 								$("#workPlanBtn").show();
 							} else {
 								$("#workPlanBtn").hide();
