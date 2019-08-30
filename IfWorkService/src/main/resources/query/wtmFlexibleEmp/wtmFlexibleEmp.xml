@@ -669,6 +669,7 @@
 			     , M.WORK_DAYS_OPT AS workDaysOpt
 			     , M.USED_TERM_OPT AS usedTermOpt
 			     , M.APPL_TERM_OPT AS applTermOpt
+			     , M.UNIT_MINUTE AS unitMinute
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
     		    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID

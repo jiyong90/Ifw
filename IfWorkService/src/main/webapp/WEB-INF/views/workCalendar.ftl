@@ -627,7 +627,8 @@
             widgetPositioning: {
                 horizontal: 'left',
                 vertical: 'bottom'
-            }
+            },
+ 		    useCurrent: false
         });
 		
 		$('#endTime').datetimepicker({
@@ -638,7 +639,8 @@
             widgetPositioning: {
                 horizontal: 'right',
                 vertical: 'bottom'
-            }
+            },
+ 		    useCurrent: false
         });
 	});
 	
