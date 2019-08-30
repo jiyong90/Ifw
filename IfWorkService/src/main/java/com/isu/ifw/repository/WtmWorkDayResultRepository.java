@@ -19,4 +19,6 @@ public interface WtmWorkDayResultRepository extends JpaRepository<WtmWorkDayResu
 
 	@Query("SELECT D FROM WtmWorkDayResult D JOIN WtmWorkCalendar C ON D.tenantId = C.tenantId AND D.enterCd = C.enterCd AND D.ymd = C.ymd AND D.sabun = C.sabun WHERE C.workCalendarId = ?1")
 	public List<WtmWorkDayResult> findByWorkCalendarId(Long workCalendarId);
+	
+	public List<WtmWorkDayResult> findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(Long tenantId, String enterCd, String sabun, String timeTypeCd, String symd, String eymd);
 }

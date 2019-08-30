@@ -17,6 +17,7 @@ import com.isu.ifw.entity.WtmFlexibleDayPlan;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
@@ -29,6 +30,7 @@ import com.isu.ifw.repository.WtmFlexibleDayPlanRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
+import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
@@ -74,6 +76,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
+	
+	@Autowired
+	WtmWorkDayResultRepository wtmWorkDayResultRepo;
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -311,7 +316,16 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			
 			wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
 			
+			List<WtmWorkDayResult> days = wtmWorkDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, sabun, "BASE",flexibleAppl.getSymd(), flexibleAppl.getEymd() );
+			
 			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
+			
+			//선근제면 초기화 하자
+			if(stdMgr.getWorkTypeCd().startsWith("SELE")) {
+				//기본근무  정보가 있었기 때문에 지워주자
+				wtmWorkDayResultRepo.deleteAll(days);
+			}
+			
 			paramMap.putAll(stdMgr.getWorkDaysOpt());
 			paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
 			//근무제 기간의 총 소정근로 시간을 업데이트 한다.
