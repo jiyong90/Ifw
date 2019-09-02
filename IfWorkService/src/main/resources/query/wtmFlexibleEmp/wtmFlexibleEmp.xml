@@ -700,11 +700,11 @@
 	    			, C.APPL_ID as applId
 	    			, C.TIME_TYPE_CD as timeTypeCd
 	    			, C.TAA_CD as taaCd
-	    			, DATE_FORMAT(C.PLAN_SDATE, '%Y%m%d%H%i%s') as planSdate
-	    			, DATE_FORMAT(C.PLAN_EDATE, '%Y%m%d%H%i%s') as planEdate
+	    			, DATE_FORMAT(C.PLAN_SDATE, '%Y%m%d%H%i') as planSdate
+	    			, DATE_FORMAT(C.PLAN_EDATE, '%Y%m%d%H%i') as planEdate
 	    			, C.PLAN_MINUTE as planMinute
-	    			, DATE_FORMAT(C.APPR_SDATE, '%Y%m%d%H%i%s') as apprSdate
-	    			, DATE_FORMAT(C.APPR_EDATE, '%Y%m%d%H%i%s') as apprEdate
+	    			, DATE_FORMAT(C.APPR_SDATE, '%Y%m%d%H%i') as apprSdate
+	    			, DATE_FORMAT(C.APPR_EDATE, '%Y%m%d%H%i') as apprEdate
 	    			, C.APPR_MINUTE as apprMinute
 	    			, C.WORK_YN as workYn
 			  FROM WTM_WORK_DAY_RESULT C

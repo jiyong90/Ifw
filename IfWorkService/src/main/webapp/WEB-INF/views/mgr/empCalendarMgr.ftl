@@ -7,13 +7,13 @@
 				<table>
 				<tr>
 					<td>
-						<span>근무기간 </span>
+						<span class="label">근무기간 </span>
 						<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 									~
 									<input type="text" id="eYmd" name="eYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
 					</td>
 					<td>
-						<span>사번/성명</span>
+						<span class="label">사번/성명</span>
 						<input id="searchKeyword"  name="searchKeyword"  type="text" class="text" />
 					</td>
 					<td>
@@ -85,7 +85,9 @@
 			{Header:"출근구분",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"entryStypeCd",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"퇴근구분",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"entryEdate",		KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"퇴근시각",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"entryEtypeCd",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 }
+			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
+			{Header:"코어시작시간",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"coreShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"코어종료시간",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"coreEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -114,11 +116,11 @@
 			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workDayResultId",		KeyField:1,	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"시간구분",		Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeTypeCd",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"근태코드",  		Type:"Combo",     	Hidden:0,   Width:70,  	Align:"Center",  ColMerge:0, SaveName:"taaCd",   	 KeyField:0,    Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:100  },
-            {Header:"계획시작시각",		Type:"Text",	 	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"planSdate", 	 KeyField:0,	Format:"YmdHms",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"계획종료시각",		Type:"Text",	 	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"planEdate",	 KeyField:0,	Format:"YmdHms",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+            {Header:"계획시작시각",		Type:"Text",	 	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"planSdate", 	 KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"계획종료시각",		Type:"Text",	 	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"planEdate",	 KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"계획근무시간",		Type:"Int",	      	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"planMinute",	 KeyField:0,	Format:"", 		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"인정시작시각",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprSdate", 	 KeyField:0,	Format:"",	 	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"인정종료시각",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprEdate", 	 KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"인정시작시각",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprSdate", 	 KeyField:0,	Format:"YmdHm",	 	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"인정종료시각",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprEdate", 	 KeyField:0,	Format:"YmdHm",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"인정근무시간",		Type:"Int",	      	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprMinute",	 KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"비고",			Type:"Text",	  	Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
         ];
@@ -166,17 +168,43 @@
 			break;
 		
 		case "Save":
+        	for(var i=sheet2.HeaderRows();i<sheet2.RowCount()+sheet2.HeaderRows(); i++){
+        		if((sheet2.GetCellValue(i, "sStatus") == "I" || sheet2.GetCellValue(i, "sStatus") == "U") 
+        				&& (sheet2.GetCellValue(i, "timeTypeCd") == "BASE")) {
+					var s = sheet2.GetCellValue(i, "planSdate");
+					s = s.substring(8, s.length);
+
+					var e = sheet2.GetCellValue(i, "planEdate");
+					e = e.substring(8, e.length);
+					
+					var row = sheet1.GetSelectRow();
+		        	var cores = sheet1.GetCellValue(row, "coreShm");
+		        	var coree = sheet1.GetCellValue(row, "coreEhm");
+
+		        	if(s <= cores && e >= coree) {
+		        		
+		        	} else {
+		        		alert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
+		        		return;
+		        	}
+        		}
+        	}
 			IBS_SaveName(document.sheetForm,sheet2);
 			sheet2.DoSave("${rc.getContextPath()}/flexibleEmp/save/caldays", $("#sheetForm").serialize()); break;
 			break;
 			
 		case "Insert":
-            for(var i=sheet2.HeaderRows(); i < sheet2.RowCount()+sheet2.HeaderRows(); i++){
+			for(var i=sheet2.HeaderRows(); i < sheet2.RowCount()+sheet2.HeaderRows(); i++){
  	            if(sheet2.GetCellValue(i, "timeTypeCd") == "BASE") {
 	            	alert("관리자는 기본 근무만 추가할 수 있습니다. 이미 해당일에 기본근무가 존재합니다.");
 	            	return;
-	            }
+ 	            }
+ 	            if(sheet2.GetCellValue(i, "taaCd") == "") {
+	            	alert("근태코드로 인해 기본 근무를 추가할 수 없습니다.");
+	            	return;
+ 	            }
             }
+            
             var row = sheet2.DataInsert(0);
 			sheet2.SetCellValue(row, "timeTypeCd", "BASE");
 			break;

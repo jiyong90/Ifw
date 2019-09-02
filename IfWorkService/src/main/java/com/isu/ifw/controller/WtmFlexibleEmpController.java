@@ -321,6 +321,9 @@ public class WtmFlexibleEmpController {
 
 		rp.setSuccess("");
 		
+		//기본근무의 경우 코어시간 확인
+		//연장근무의경우 전체 소정근로시간 오버 안되는지 확인
+		
 		try {
 			flexibleEmpService.saveEmpDayResults(tenantId, enterCd, userId, convertMap);
 		} catch(Exception e) {

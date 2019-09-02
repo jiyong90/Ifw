@@ -65,7 +65,9 @@
 				CASE WHEN A.YMD > date_format(now(),'%Y%m%d') THEN SUM(PLAN_MINUTE)
 					 WHEN A.YMD < date_format(now(),'%Y%m%d') THEN SUM(APPR_MINUTE)
 					 WHEN (A.YMD = date_format(now(),'%Y%m%d') && A.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
-					 ELSE SUM(PLAN_MINUTE) END AS totTime
+					 ELSE SUM(PLAN_MINUTE) END AS totTime,
+				E.CORE_SHM as coreShm,
+				E.CORE_EHM as coreEhm
 			FROM WTM_WORK_CALENDAR A
 			JOIN WTM_FLEXIBLE_EMP B
 				ON B.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=B.ENTER_CD AND A.SABUN=B.SABUN AND A.YMD BETWEEN B.SYMD AND B.EYMD
@@ -73,6 +75,8 @@
 				ON C.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=C.ENTER_CD AND A.SABUN=C.SABUN AND C.YMD = A.YMD 
 			JOIN WTM_EMP_HIS D
 				ON D.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN=D.SABUN AND date_format(now(),'%Y%m%d') BETWEEN D.SYMD AND D.EYMD 
+			JOIN WTM_FLEXIBLE_STD_MGR E
+				ON E.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
 			WHERE A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '') 
 		]]>
 		<if test="searchKeyword!=null and !searchKeyword.equals('')">
@@ -80,7 +84,7 @@
 		</if>
 		<![CDATA[
 			GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
-			ORDER BY YMD DESC
+			ORDER BY YMD DESC, SABUN
         ]]>
     </select>
     
