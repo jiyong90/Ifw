@@ -7,17 +7,17 @@
 						<table>
 							<tr>
 								<td>
-									<span>근무기간 </span>
+									<span class="label">근무기간 </span>
 									<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 									~
 									<input type="text" id="eYmd" name="eYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
 								</td>
 								<td>
-									<span>사번/성명 </span>
+									<span class="label">사번/성명 </span>
 									<input type="text" id="searchKeyword" name="searchKeyword" />
 								</td>
 								<td>
-									<span>근무제도 </span>
+									<span class="label">근무제도 </span>
 									<select id="searchWorkTypeCd" name="searchWorkTypeCd" class="box" onchange="javascript:doAction1('Search');"></select>
 								</td>
 								<td>

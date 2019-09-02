@@ -7,7 +7,7 @@
 				<table>
 				<tr>
 					<td>
-						<span>기준일 </span>
+						<span class="label">기준일 </span>
 						<input type="text" id="sYmd" name="sYmd" class="date2 date-custom required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 					</td>
 					<td>

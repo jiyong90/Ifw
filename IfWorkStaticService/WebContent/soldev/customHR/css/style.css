@@ -131,14 +131,13 @@ a.button7 img {
     padding: 0 5px 0 8px;
     line-height: 33px;
     color: #3f4145;
-    font-weight: 500;
     font-weight: bold;
     font-size: 12px;
     /*margin-left: 10px;*/
     position: relative;
 }
 .sheet_search span.label:after {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
     content: "\f111";
     font-size: 4px;
     -webkit-transform: scale(0.4);
@@ -218,14 +217,27 @@ a.button7 img {
 }
 
 .sheet_title_wrap .title {
+	padding-left: 16px;
     font-size: 13px;
     font-weight: bold;
     color: #3f4145;
-    padding-left: 0px;
+    padding-left: 20px;
     line-height: 26px;
     text-align: left;
     position: relative;
 }
+
+ .sheet_title_wrap .title:after{
+    font-family : "Font Awesome 5 Free";
+    content: "\f111";
+    font-size: 14px;
+    font-weight: 400;
+    /* -webkit-transform: scale(0.4); */
+    color: #008fd5;
+    position: absolute;
+    left: 0;
+    top: 2px;
+} 
 
 /* btn 추가 */
 .sheet_title_wrap .btn-wrap{}
