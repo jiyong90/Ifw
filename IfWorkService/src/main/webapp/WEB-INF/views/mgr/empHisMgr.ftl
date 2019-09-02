@@ -7,11 +7,11 @@
 					<table>
 					<tr>
 						<td>
-							<span>기준일 </span>
+							<span class="label">기준일 </span>
 							<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 						</td>
 						<td>
-							<span>사번/성명</span>
+							<span class="label">사번/성명</span>
 							<input id="searchKeyword"  name="searchKeyword"  type="text" class="text" />
 						</td>
 						<td>
