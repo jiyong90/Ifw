@@ -524,10 +524,6 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					}
 				}
 			}
-		
-			if(convertMap.containsKey("deleteRows") && ((List)convertMap.get("deleteRows")).size() > 0) {
-			}
-			
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
