@@ -114,7 +114,12 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			
 		}
 		result.put("entry", entry);*/
-		result.put("holidayYn", workCalendar.getHolidayYn());
+		
+		String holidayYn = "";
+		if(workCalendar!=null && workCalendar.getHolidayYn()!=null)
+			holidayYn = workCalendar.getHolidayYn();
+		
+		result.put("holidayYn", holidayYn);
 		result.put("entry", workCalendar);
 		
 		//근태, 근무 정보
