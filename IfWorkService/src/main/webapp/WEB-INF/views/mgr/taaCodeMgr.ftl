@@ -7,7 +7,7 @@
 						<table>
 							<tr>
 								<td>
-									<span>근태코드/근태명 </span>
+									<span class="label">근태코드/근태명 </span>
 									<input type="text" id="searchKeyword" name="searchKeyword" class="text" />
 								</td>
 								<td>

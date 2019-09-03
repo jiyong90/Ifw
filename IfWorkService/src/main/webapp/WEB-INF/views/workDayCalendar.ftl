@@ -211,8 +211,13 @@
   	         			//선택한 유연근무제
 	  		    		var selectedFlex = {};
 	  		    		$this.data.map(function(d){
-	  		    			if(moment(d.sYmd).diff(selSymd)<=0 && moment(selEymd).diff(d.eYmd)<=0)
+	  		    			if(moment(d.sYmd).diff(selSymd)<=0 && moment(selEymd).diff(d.eYmd)<=0) {
 	  		    				selectedFlex = d;
+	  		    				if(d.unitMinute!=null && d.unitMinute!='' && d.unitMinute!=undefined) {
+	  		    					$('#startTime').datetimepicker('stepping',Number(d.unitMinute));
+	  		    					$('#endTime').datetimepicker('stepping',Number(d.unitMinute));
+	  		    				}
+	  		    			}
 	  		    		});
 	  		    		calendarLeftVue.flexibleAppl = selectedFlex;
 	  		    		
@@ -376,8 +381,13 @@
 										dayWorks[d.sYmd] = d.dayWorks;
 									
 									//오늘 날짜에 해당하는 유연근무제 선택
-									if(moment(d.sYmd).diff(workday)<=0 && moment(workday).diff(d.eYmd)<=0)
+									if(moment(d.sYmd).diff(workday)<=0 && moment(workday).diff(d.eYmd)<=0) {
 			  		    				calendarLeftVue.flexibleAppl = d;
+			  		    				if(d.unitMinute!=null && d.unitMinute!='' && d.unitMinute!=undefined) {
+			  		    					$('#startTime').datetimepicker('stepping',Number(d.unitMinute));
+			  		    					$('#endTime').datetimepicker('stepping',Number(d.unitMinute));
+			  		    				}
+									}
 								});
 								$this.dayWorks = dayWorks;
 								
