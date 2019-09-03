@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +39,654 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	WtmInterfaceMapper wtmInterfaceMapper;
 	
 	@Override
-	public void getEmpHisIfResult(Long tenantId) throws Exception {
+	public void getCodeIfResult(Long tenantId, String lastDataTime) throws Exception {
 		// TODO Auto-generated method stub
-//		Map<String, Object> paramMap = new HashMap<>();
-//		paramMap.put("tenantId", tenantId);
-		// interfaseMapper.getWtmEmpHis(paramMap);
+		System.out.println("WtmInterfaceServiceImpl getCodeIfResult");
+        try {
+        	String retMsg = "";
+        	int resultCnt = 0;
+        	
+        	Map<String, Object> ifHisMap = new HashMap<>();
+        	ifHisMap.put("tenantId", tenantId);
+        	ifHisMap.put("ifItem", "V_IF_WTM_CODE");
+        	ifHisMap.put("ifEndDate", lastDataTime);
+        	
+        	Class.forName(DRIVER);
+        	con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        	stmt = con.createStatement();
+        	
+            // 1. 공통코드 데이터 조회
+        	
+        	// if 가져올 인사db 그룹코드
+        	String[] hrGrpCode = {"H20010", "H20020", "H20030", "H10050", "H10110", "T10003"};
+        	//                    직급            직책             직위             직군            급여유형        근태타입
+        	// if 저장할 wtmdb 그룹코드
+        	String[] wtmGrpCode = {"CLASS_CD", "DUTY_CD", "POS_CD", "JOB_CD", "PAY_TYPE_CD", "TAA_TYPE_CD"};
+        	
+    		//hrGrpCode[i-1];
+    		rs = null;
+    		int i = 0;
+    		
+    		StringBuffer codeSb = new StringBuffer();
+    		codeSb.append("SELECT ENTER_CD");
+    		codeSb.append("     , GRCODE_CD");
+    		codeSb.append("     , CODE");
+    		codeSb.append("     , CODE_NM");
+    		codeSb.append("     , SYMD");
+    		codeSb.append("     , NOTE");
+    		codeSb.append("  FROM V_IF_WTM_CODE ");
+    		codeSb.append(" WHERE ENTER_CD = 'KABANG' ");
+    		codeSb.append("   AND CHKDATE > TO_DATE('" + lastDataTime + "', 'YYYYMMDDHH24MISS')");
+    		codeSb.append(" ORDER BY ENTER_CD, GRCODE_CD ");
+    		
+        	rs = stmt.executeQuery(codeSb.toString());
+        	List<Map<String, Object>> ifList = new ArrayList();
+        	List<Map<String, Object>> ifUpdateList = new ArrayList();
+        	
+        	while (rs.next()) { 
+        		i = Arrays.asList(hrGrpCode).indexOf(rs.getString("GRCODE_CD"));
+        		Map<String, Object> ifMap = new HashMap<>();
+        		ifMap.put("tenantId", tenantId);
+        		ifMap.put("enterCd", rs.getString("ENTER_CD"));
+        		ifMap.put("grpCodeCd", wtmGrpCode[i].toString());
+        		ifMap.put("codeCd", rs.getString("CODE"));
+        		ifMap.put("codeNm", rs.getString("CODE_NM"));
+        		ifMap.put("symd", rs.getString("SYMD"));
+        		ifMap.put("eymd", "29991231");
+        		ifMap.put("note", rs.getString("NOTE"));
+        		
+//            		String[] akList = {"TENANT_ID","ENTER_CD","GRP_CODE_CD","CODE_CD"};
+//            		Map<String, Object> akMap = new HashMap<>();
+//            		ifMap.put("tableName", "WTM_CODE");
+//            		ifMap.put("akList", akList);
+//            		ifMap.put("TENANT_ID", tenantId);
+//            		ifMap.put("ENTER_CD", enterCd);
+//            		ifMap.put("GRP_CODE_CD", grpCodeCd);
+//            		ifMap.put("CODE_CD", codeCd);
+//            		ifMap.put("symd", symd);
+//            		ifMap.put("eymd", eymd);
+        		
+        		// 2. 건별 data 저장
+        		try {
+        			// DATA KEY기준으로 SELECT 
+        			Map<String, Object> result = wtmInterfaceMapper.getWtmCodeId(ifMap);
+        			
+        			if(result != null) {
+        				try {
+	            			String codeId = result.get("CODE_ID").toString();
+	            			System.out.println(codeId);
+	            			if(codeId != null && codeId.equals("")) {
+	            				ifMap.put("codeId", codeId);
+	            				ifUpdateList.add(ifMap);
+	            			}
+        				} catch(Exception e){
+        					retMsg = e.getMessage();
+        		            e.printStackTrace();
+        		            // 에러걸리면 그냥 아웃시키기
+        		            break;
+        		        }
+        			} else {
+        				ifList.add(ifMap);
+        			}
+    			} catch (Exception e) {
+    				retMsg = e.getMessage();
+		            e.printStackTrace();
+		            // 에러걸리면 그냥 아웃시키기
+		            break;
+    			}
+        	}
+        	if("".equals(retMsg)) {
+        		try {
+	        		//수정건이 있으면....
+	        		if (ifUpdateList.size() > 0) {
+	        			System.out.println("update size : " + ifUpdateList.size());
+	        			resultCnt += wtmInterfaceMapper.updateWtmCode(ifUpdateList);
+	        		}
+	        		// 추가건이 있으면
+	        		if (ifList.size() > 0) {
+	        			System.out.println("insert size : " + ifList.size());
+	        			resultCnt += wtmInterfaceMapper.insertWtmCode(ifList);
+	        		}
+	        		if(resultCnt > 0) {
+	        			retMsg = resultCnt + "건 반영완료";
+	        		} else {
+	        			retMsg = "갱신자료없음";
+	        		}
+	        		ifHisMap.put("ifStatus", "OK");
+	        		
+	        		// 이력데이터 수정은 건별로
+	        		for(i=0; i< ifList.size(); i++) {
+	        			Map<String, Object> ifCodeHisMap = new HashMap<>();
+	        			ifCodeHisMap = ifList.get(i);
+	        			try {
+		    				int resultCnt2 = 0 ;
+		    				resultCnt2 = wtmInterfaceMapper.updateWtmCodeHisEymd(ifCodeHisMap);
+		    				resultCnt2 = wtmInterfaceMapper.updateWtmCodeHisSymd(ifCodeHisMap);
+	        			} catch (Exception e) {
+	            			// 이력수정의 오류는 어쩌나?
+	            			retMsg = e.getMessage();
+	    		            e.printStackTrace();
+	        			}
+	        		}
+        		} catch (Exception e) {
+        			ifHisMap.put("ifStatus", "ERR");
+        			retMsg = e.getMessage();
+		            e.printStackTrace();
+    			}
+        	} else {
+        		ifHisMap.put("ifStatus", "ERR");
+        	}
+        	
+        	// 3. 처리결과 저장
+    		try {
+    			// WTM_IF_HIS 테이블에 결과저장
+    			ifHisMap.put("ifMsg", retMsg);
+				wtmInterfaceMapper.insertIfHis(ifHisMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+        	rs.close();
+        	stmt.close();
+        	con.close();  
+        }
+		return;
+	}
+	
+	@Override
+	public void getHolidayIfResult(Long tenantId, String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		
+		String retMsg = "";
+        try {
+        	Map<String, Object> ifHisMap = new HashMap<>();
+        	ifHisMap.put("tenantId", tenantId);
+        	ifHisMap.put("ifItem", "V_FTM_HOLIDAY");
+        	ifHisMap.put("ifEndDate", lastDataTime);
+        	
+        	Class.forName(DRIVER);
+        	con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        	stmt = con.createStatement();
+        	
+            // 1. 공휴일 데이터 조회
+    		rs = null;
+    		StringBuffer codeSb = new StringBuffer();
+    		codeSb.append("SELECT ENTER_CD");
+    		codeSb.append("     , LOCATION_CD");
+    		codeSb.append("     , YY||MM||DD AS YMD");
+    		codeSb.append("     , HOLIDAY_NM");
+    		codeSb.append("     , FESTIVE_YN");
+    		codeSb.append("     , PAY_YN");
+    		codeSb.append("  FROM V_FTM_HOLIDAY ");
+    		codeSb.append(" WHERE ENTER_CD = 'KABANG' ");
+    		codeSb.append("   AND CHKDATE > TO_DATE('" + lastDataTime + "', 'YYYYMMDDHH24MISS')");
+    		
+        	rs = stmt.executeQuery(codeSb.toString());
+        	List<Map<String, Object>> ifList = new ArrayList();
+        	
+        	while (rs.next()) { 
+        		Map<String, Object> ifMap = new HashMap<>();
+        		ifMap.put("tenantId", tenantId);
+        		ifMap.put("enterCd", rs.getString("ENTER_CD"));
+        		ifMap.put("locationCd", rs.getString("LOCATION_CD"));
+        		ifMap.put("holidayYmd", rs.getString("YMD"));
+        		ifMap.put("holidayNm", rs.getString("HOLIDAY_NM"));
+        		ifMap.put("sunYn", "Y");
+        		ifMap.put("festiveYn", rs.getString("FESTIVE_YN"));
+        		ifMap.put("payYn", rs.getString("PAY_YN"));
+        		ifList.add(ifMap);
+        	}
+        	if (ifList.size() > 0) {
+	        	// 2. data 저장
+	    		try {
+	    			// key값을 기준으로 mergeinto하자
+					int resultCnt = wtmInterfaceMapper.insertWtmHoliday(ifList);
+					retMsg = resultCnt + "건 반영완료";
+					ifHisMap.put("ifStatus", "OK");
+				} catch (Exception e) {
+					ifHisMap.put("ifStatus", "ERR");
+					retMsg = e.getMessage();
+					e.printStackTrace();
+				}
+        	} else {
+        		retMsg = "갱신자료없음";
+				ifHisMap.put("ifStatus", "OK");
+        	}
+    		// 3. 처리결과 저장
+    		try {
+    			// key값을 기준으로 mergeinto하자
+    			ifHisMap.put("ifMsg", retMsg);
+				wtmInterfaceMapper.insertIfHis(ifHisMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+        	rs.close();
+        	stmt.close();
+        	con.close();
+        }
+		return;
+	}
+	
+	@Override
+	public void getTaaCodeIfResult(Long tenantId, String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getTaaCodeIfResult");
+        try {
+        	String retMsg = "";
+        	Map<String, Object> ifHisMap = new HashMap<>();
+        	ifHisMap.put("tenantId", tenantId);
+        	ifHisMap.put("ifItem", "TTIM014");
+        	ifHisMap.put("ifEndDate", lastDataTime);
+        	
+        	Class.forName(DRIVER);
+        	con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        	stmt = con.createStatement();
+        	
+            // 1. 공휴일 데이터 조회
+    		rs = null;
+    		StringBuffer codeSb = new StringBuffer();
+    		codeSb.append("SELECT ENTER_CD");
+    		codeSb.append("     , GNT_CD");
+    		codeSb.append("     , GNT_NM");
+    		codeSb.append("     , GNT_GUBUN_CD");
+    		codeSb.append("     , HOL_INCL_YN");
+    		codeSb.append("     , REQUEST_USE_TYPE");
+    		codeSb.append("     , WORK_YN");
+    		codeSb.append("  FROM TTIM014 ");
+    		codeSb.append(" WHERE ENTER_CD = 'KABANG' ");
+    		codeSb.append("   AND CHKDATE > TO_DATE('" + lastDataTime + "', 'YYYYMMDDHH24MISS')");
+        	rs = stmt.executeQuery(codeSb.toString());
+        	
+        	List<Map<String, Object>> ifList = new ArrayList();
+        	List<Map<String, Object>> ifUpdateList = new ArrayList();
+        	int resultCnt = 0;
+        	while (rs.next()) { 
+        		
+        		Map<String, Object> ifMap = new HashMap<>();
+        		ifMap.put("tenantId", tenantId);
+        		ifMap.put("enterCd", rs.getString("ENTER_CD"));
+        		ifMap.put("taaCd", rs.getString("GNT_CD"));
+        		ifMap.put("taaNm", rs.getString("GNT_NM"));
+        		ifMap.put("taaTypeCd", rs.getString("GNT_GUBUN_CD"));
+        		ifMap.put("holInclYn", rs.getString("HOL_INCL_YN"));
+        		ifMap.put("requestTypeCd", rs.getString("REQUEST_USE_TYPE"));
+        		ifMap.put("workYn", rs.getString("WORK_YN"));
+        		
+        		// 2. 건별 data 저장
+        		try {
+        			// 중복여부 확인해서 insert/update 구분해야함.
+        			// DATA KEY기준으로 SELECT 
+        			Map<String, Object> result = wtmInterfaceMapper.getWtmTaaCodeId(ifMap);
+        			if(result != null) {
+        				try {
+        					String taaCodeId = result.get("TAA_CODE_ID").toString();
+        					if(taaCodeId != null && taaCodeId.equals("")) {
+	            				ifMap.put("taaCodeId", taaCodeId);
+	            				ifUpdateList.add(ifMap);
+	            			}
+        				} catch(Exception e){
+        					retMsg = e.getMessage();
+        		            e.printStackTrace();
+        		            // 에러걸리면 그냥 아웃시키기
+        		            break;
+        		        }
+        			} else {
+        				ifList.add(ifMap);
+        			}
+    			} catch (Exception e) {
+    				retMsg = e.getMessage();
+    				e.printStackTrace();
+    				// 에러걸리면 그냥 아웃시키기
+		            break;
+    			}
+        	}
+        	
+        	if("".equals(retMsg)) {
+        		try {
+	        		//수정건이 있으면....
+	        		if (ifUpdateList.size() > 0) {
+	        			System.out.println("update size : " + ifUpdateList.size());
+	        			resultCnt += wtmInterfaceMapper.updateTaaCode(ifUpdateList);
+	        		}
+	        		// 추가건이 있으면
+	        		if (ifList.size() > 0) {
+	        			System.out.println("insert size : " + ifList.size());
+	        			resultCnt += wtmInterfaceMapper.insertTaaCode(ifList);
+	        		}
+	        		if(resultCnt > 0) {
+	        			retMsg = resultCnt + "건 반영완료";
+	        		} else {
+	        			retMsg = "갱신자료없음";
+	        		}
+	        		ifHisMap.put("ifStatus", "OK");
+        		} catch (Exception e) {
+        			ifHisMap.put("ifStatus", "ERR");
+        			retMsg = e.getMessage();
+		            e.printStackTrace();
+    			}
+        	} else {
+        		ifHisMap.put("ifStatus", "ERR");
+        	}
+        	
+        	// 3. 처리결과 저장
+    		try {
+    			// WTM_IF_HIS 테이블에 결과저장
+    			ifHisMap.put("ifMsg", retMsg);
+				wtmInterfaceMapper.insertIfHis(ifHisMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+        	rs.close();
+        	stmt.close();
+        	con.close();    
+        }
+        System.out.println("WtmInterfaceServiceImpl getTaaCodeIfResult end");
+		return;
+	}
+	
+	@Override
+	public void getOrgCodeIfResult(Long tenantId, String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getOrgCodeIfResult");
+        try {
+        	String retMsg = "";
+        	int resultCnt = 0;
+        	
+        	Map<String, Object> ifHisMap = new HashMap<>();
+        	ifHisMap.put("tenantId", tenantId);
+        	ifHisMap.put("ifItem", "V_IF_ORG_CODE");
+        	ifHisMap.put("ifEndDate", lastDataTime);
+        	
+        	Class.forName(DRIVER);
+        	con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        	stmt = con.createStatement();
+        	
+            // 1. 조직코드 데이터 조회
+    		rs = null;
+    		int i = 0;
+    		
+    		StringBuffer codeSb = new StringBuffer();
+    		codeSb.append("SELECT ENTER_CD");
+    		codeSb.append("     , ORG_CD");
+    		codeSb.append("     , ORG_NM");
+    		codeSb.append("     , SDATE");
+    		codeSb.append("     , EDATE");
+    		codeSb.append("     , MEMO");
+    		codeSb.append("  FROM V_IF_ORG_CODE ");
+    		codeSb.append(" WHERE ENTER_CD = 'KABANG' ");
+    		codeSb.append("   AND CHKDATE > TO_DATE('" + lastDataTime + "', 'YYYYMMDDHH24MISS')");
+    		codeSb.append(" ORDER BY ENTER_CD, CHKDATE ");
+    		
+        	rs = stmt.executeQuery(codeSb.toString());
+        	List<Map<String, Object>> ifList = new ArrayList();
+        	List<Map<String, Object>> ifUpdateList = new ArrayList();
+        	
+        	while (rs.next()) {
+        		Map<String, Object> ifMap = new HashMap<>();
+        		ifMap.put("tenantId", tenantId);
+        		ifMap.put("enterCd", rs.getString("ENTER_CD"));
+        		ifMap.put("grpCodeCd", "ORG_CD");
+        		ifMap.put("codeCd", rs.getString("ORG_CD"));
+        		ifMap.put("codeNm", rs.getString("ORG_NM"));
+        		ifMap.put("symd", rs.getString("SDATE"));
+        		ifMap.put("eymd", rs.getString("EDATE"));
+        		ifMap.put("note", rs.getString("MEMO"));
+        		
+        		// 2. 건별 data 저장용 만들기
+        		try {
+        			// DATA KEY기준으로 SELECT 
+        			Map<String, Object> result = wtmInterfaceMapper.getWtmCodeId(ifMap);
+        			
+        			if(result != null) {
+        				try {
+	            			String codeId = result.get("CODE_ID").toString();
+	            			System.out.println(codeId);
+	            			if(codeId != null && codeId.equals("")) {
+	            				ifMap.put("codeId", codeId);
+	            				ifUpdateList.add(ifMap);
+	            			}
+        				} catch(Exception e){
+        					retMsg = e.getMessage();
+        		            e.printStackTrace();
+        		            // 에러걸리면 그냥 아웃시키기
+        		            break;
+        		        }
+        			} else {
+        				ifList.add(ifMap);
+        			}
+    			} catch (Exception e) {
+    				retMsg = e.getMessage();
+		            e.printStackTrace();
+		            // 에러걸리면 그냥 아웃시키기
+		            break;
+    			}
+        	}
+        	if("".equals(retMsg)) {
+        		try {
+	        		//수정건이 있으면....
+	        		if (ifUpdateList.size() > 0) {
+	        			System.out.println("update size : " + ifUpdateList.size());
+	        			resultCnt += wtmInterfaceMapper.updateWtmCode(ifUpdateList);
+	        		}
+	        		// 추가건이 있으면
+	        		if (ifList.size() > 0) {
+	        			System.out.println("insert size : " + ifList.size());
+	        			resultCnt += wtmInterfaceMapper.insertWtmCode(ifList);
+	        		}
+	        		if(resultCnt > 0) {
+	        			retMsg = resultCnt + "건 반영완료";
+	        		} else {
+	        			retMsg = "갱신자료없음";
+	        		}
+	        		ifHisMap.put("ifStatus", "OK");
+	        		
+	        		// 이력데이터 수정은 건별로
+	        		for(i=0; i< ifList.size(); i++) {
+	        			Map<String, Object> ifCodeHisMap = new HashMap<>();
+	        			ifCodeHisMap = ifList.get(i);
+	        			try {
+		    				int resultCnt2 = 0 ;
+		    				resultCnt2 = wtmInterfaceMapper.updateWtmCodeHisEymd(ifCodeHisMap);
+		    				resultCnt2 = wtmInterfaceMapper.updateWtmCodeHisSymd(ifCodeHisMap);
+	        			} catch (Exception e) {
+	            			// 이력수정의 오류는 어쩌나?
+	            			retMsg = e.getMessage();
+	    		            e.printStackTrace();
+	        			}
+	        		}
+        		} catch (Exception e) {
+        			ifHisMap.put("ifStatus", "ERR");
+        			retMsg = e.getMessage();
+		            e.printStackTrace();
+    			}
+        	} else {
+        		ifHisMap.put("ifStatus", "ERR");
+        	}
+        	
+        	// 3. 처리결과 저장
+    		try {
+    			// WTM_IF_HIS 테이블에 결과저장
+    			ifHisMap.put("ifMsg", retMsg);
+				wtmInterfaceMapper.insertIfHis(ifHisMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+        	rs.close();
+        	stmt.close();
+        	con.close();  
+        }
+		return;
+	}
+	
+	@Override
+	public void getOrgMapCodeIfResult(Long tenantId, String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getOrgMapCodeIfResult");
+        try {
+        	String retMsg = "";
+        	int resultCnt = 0;
+        	
+        	Map<String, Object> ifHisMap = new HashMap<>();
+        	ifHisMap.put("tenantId", tenantId);
+        	ifHisMap.put("ifItem", "V_IF_ORG_MAP_CODE");
+        	ifHisMap.put("ifEndDate", lastDataTime);
+        	
+        	Class.forName(DRIVER);
+        	con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        	stmt = con.createStatement();
+        	
+            // 1. 조직코드 데이터 조회
+        	// if 가져올 인사db 그룹코드
+        	String[] hrGrpCode = {"100", "500"};
+        	//                    사업장     근무조
+        	// if 저장할 wtmdb 그룹코드
+        	String[] wtmGrpCode = {"BUSINESS_PLACE_CD", "WORKTYPE_CD"};
+    		rs = null;
+    		int i = 0;
+    		
+    		StringBuffer codeSb = new StringBuffer();
+    		codeSb.append("SELECT ENTER_CD");
+    		codeSb.append("     , MAP_TYPE_CD");
+    		codeSb.append("     , MAP_CD");
+    		codeSb.append("     , MAP_NM");
+    		codeSb.append("     , SDATE");
+    		codeSb.append("     , EDATE");
+    		codeSb.append("     , NOTE");
+    		codeSb.append("  FROM V_IF_ORG_MAP_CODE ");
+    		codeSb.append(" WHERE ENTER_CD = 'KABANG' ");
+    		codeSb.append("   AND CHKDATE > TO_DATE('" + lastDataTime + "', 'YYYYMMDDHH24MISS')");
+    		codeSb.append(" ORDER BY ENTER_CD, MAP_TYPE_CD, CHKDATE ");
+    		
+        	rs = stmt.executeQuery(codeSb.toString());
+        	List<Map<String, Object>> ifList = new ArrayList();
+        	List<Map<String, Object>> ifUpdateList = new ArrayList();
+        	
+        	while (rs.next()) {
+        		i = Arrays.asList(hrGrpCode).indexOf(rs.getString("MAP_TYPE_CD"));
+        		Map<String, Object> ifMap = new HashMap<>();
+        		
+        		ifMap.put("tenantId", tenantId);
+        		ifMap.put("enterCd", rs.getString("ENTER_CD"));
+        		ifMap.put("grpCodeCd", wtmGrpCode[i].toString());
+        		ifMap.put("codeCd", rs.getString("MAP_CD"));
+        		ifMap.put("codeNm", rs.getString("MAP_NM"));
+        		ifMap.put("symd", rs.getString("SDATE"));
+        		ifMap.put("eymd", rs.getString("EDATE"));
+        		ifMap.put("note", rs.getString("NOTE"));
+        		
+        		// 2. 건별 data 저장용 만들기
+        		try {
+        			// DATA KEY기준으로 SELECT 
+        			Map<String, Object> result = wtmInterfaceMapper.getWtmCodeId(ifMap);
+        			
+        			if(result != null) {
+        				try {
+	            			String codeId = result.get("CODE_ID").toString();
+	            			System.out.println(codeId);
+	            			if(codeId != null && codeId.equals("")) {
+	            				ifMap.put("codeId", codeId);
+	            				ifUpdateList.add(ifMap);
+	            			}
+        				} catch(Exception e){
+        					retMsg = e.getMessage();
+        		            e.printStackTrace();
+        		            // 에러걸리면 그냥 아웃시키기
+        		            break;
+        		        }
+        			} else {
+        				ifList.add(ifMap);
+        			}
+    			} catch (Exception e) {
+    				retMsg = e.getMessage();
+		            e.printStackTrace();
+		            // 에러걸리면 그냥 아웃시키기
+		            break;
+    			}
+        	}
+        	if("".equals(retMsg)) {
+        		try {
+	        		//수정건이 있으면....
+	        		if (ifUpdateList.size() > 0) {
+	        			System.out.println("update size : " + ifUpdateList.size());
+	        			resultCnt += wtmInterfaceMapper.updateWtmCode(ifUpdateList);
+	        		}
+	        		// 추가건이 있으면
+	        		if (ifList.size() > 0) {
+	        			System.out.println("insert size : " + ifList.size());
+	        			resultCnt += wtmInterfaceMapper.insertWtmCode(ifList);
+	        		}
+	        		if(resultCnt > 0) {
+	        			retMsg = resultCnt + "건 반영완료";
+	        		} else {
+	        			retMsg = "갱신자료없음";
+	        		}
+	        		ifHisMap.put("ifStatus", "OK");
+	        		
+	        		// 이력데이터 수정은 건별로
+	        		for(i=0; i< ifList.size(); i++) {
+	        			Map<String, Object> ifCodeHisMap = new HashMap<>();
+	        			ifCodeHisMap = ifList.get(i);
+	        			try {
+		    				int resultCnt2 = 0 ;
+		    				resultCnt2 = wtmInterfaceMapper.updateWtmCodeHisEymd(ifCodeHisMap);
+		    				resultCnt2 = wtmInterfaceMapper.updateWtmCodeHisSymd(ifCodeHisMap);
+	        			} catch (Exception e) {
+	            			// 이력수정의 오류는 어쩌나?
+	            			retMsg = e.getMessage();
+	    		            e.printStackTrace();
+	        			}
+	        		}
+        		} catch (Exception e) {
+        			ifHisMap.put("ifStatus", "ERR");
+        			retMsg = e.getMessage();
+		            e.printStackTrace();
+    			}
+        	} else {
+        		ifHisMap.put("ifStatus", "ERR");
+        	}
+        	
+        	// 3. 처리결과 저장
+    		try {
+    			// WTM_IF_HIS 테이블에 결과저장
+    			ifHisMap.put("ifMsg", retMsg);
+				wtmInterfaceMapper.insertIfHis(ifHisMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+        	rs.close();
+        	stmt.close();
+        	con.close();  
+        }
+		return;
+	}
+	
+	@Override
+	public void getEmpHisIfResult(Long tenantId, String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
 		String rtn = "";
         try {
+        	String retMsg = "";
+        	int resultCnt = 0;
+        	
+        	Map<String, Object> ifHisMap = new HashMap<>();
+        	ifHisMap.put("tenantId", tenantId);
+        	ifHisMap.put("ifItem", "V_IF_WTM_EMPHIS");
+        	ifHisMap.put("ifEndDate", lastDataTime);
+        	
         	Class.forName(DRIVER);
         	con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         	stmt = con.createStatement();
@@ -65,136 +709,68 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	empSb.append("     , PAY_TYPE_CD");
         	empSb.append("     , ORG_PATH");
         	empSb.append("     , LEADER_YN");
-        	empSb.append("FROM V_IF_WTM_EMPHIS ");
+        	empSb.append("  FROM V_IF_WTM_EMPHIS ");
+        	empSb.append(" WHERE ENTER_CD = 'KABANG' ");
+        	empSb.append("   AND CHKDATE > TO_DATE('" + lastDataTime + "', 'YYYYMMDDHH24MISS')");
+        	empSb.append(" ORDER BY ENTER_CD, CHKDATE ");
+        	
         	rs = stmt.executeQuery(empSb.toString());
         	
+        	List<Map<String, Object>> ifList = new ArrayList();
         	while (rs.next()) { 
-        		String enter_cd = rs.getString("enter_cd"); 
-        		//System.out.println(enter_cd); 
-        		
-        		// 2. TENANT_ID, ENTER_CD, SABUN 으로 데이터 유무 체크
-            	// 2.1 없으면 WTM_IF_EMP_MSG, WTM_EMP_HIS무조건생성
-            	// 2.2 있으면 데이터 비교용 자료조회
-            	// 3. 이름, 일자, 재직상태, 조직코드(조직경로 포함), 사업장코드, 직책, 직위, 직급, 직군, 직무, 급여유형, 조직장여부 항목 체크
-            	// 3.1 데이터 변경 없으면 PASS
-            	// 3.2 데이터 변경이 있으면 WTM_IF_EMP_MSG 변경정보생성
-            	// 3.3 데이터 변경이 1개의 항목이라도 있으면 WTM_EMP_HIS 이력 생성 및 시작일, 종료일 정리요함
-            	
-            	// 사진은 어케하나요??? ㅠㅠ
+        		// 사원이력을 임시테이블로 이관 후 프로시저에서 이력을 정리한다.
+        		Map<String, Object> ifMap = new HashMap<>();
+        		ifMap.put("tenantId", tenantId);
+        		ifMap.put("enterCd", rs.getString("ENTER_CD"));
+        		ifMap.put("sabun", rs.getString("SABUN"));
+        		ifMap.put("empNm", rs.getString("EMP_NM"));
+        		ifMap.put("empEngNm", rs.getString("EMP_ENG_NM"));
+        		ifMap.put("symd", rs.getString("SYMD"));
+        		ifMap.put("eymd", "29991231");
+        		ifMap.put("statusCd", rs.getString("STATUS_CD"));
+        		ifMap.put("orgCd", rs.getString("ORG_CD"));
+        		ifMap.put("businessPlaceCd", rs.getString("BUSINESS_PLACE_CD"));
+        		ifMap.put("dutyCd", rs.getString("DUTY_CD"));
+        		ifMap.put("posCd", rs.getString("POS_CD"));
+        		ifMap.put("classCd", rs.getString("CLASS_CD"));
+        		ifMap.put("jobGroupCd", rs.getString("JOB_GROUP_CD"));
+        		ifMap.put("jobCd", rs.getString("JOB_CD"));
+        		ifMap.put("payTypeCd", rs.getString("PAY_TYPE_CD"));
+        		ifMap.put("orgPath", rs.getString("ORG_PATH"));
+        		ifMap.put("leaderYn", rs.getString("LEADER_YN"));
+        		ifList.add(ifMap);
         	}
-
-    		rtn = "ok";
+        	
+        	try {
+        	// 추가건이 있으면
+    		if (ifList.size() > 0) {
+    			System.out.println("insert size : " + ifList.size());
+    			resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifList);
+    			if(resultCnt > 0) {
+        			retMsg = resultCnt + "건 반영완료";
+        		} else {
+        			retMsg = "갱신자료없음";
+        		}
+        		ifHisMap.put("ifStatus", "OK");
+    		}
+        	}catch(Exception e) {
+        		ifHisMap.put("ifStatus", "ERR");
+    			retMsg = e.getMessage();
+	            e.printStackTrace();
+        	}
+        	
+        	// 이력정리용 프로시저 호출하기
+        	// wtmInterfaceMapper.setEmpHis(ifMap);
+        	
+        	// 3. 처리결과 저장
+    		try {
+    			// WTM_IF_HIS 테이블에 결과저장
+    			ifHisMap.put("ifMsg", retMsg);
+				wtmInterfaceMapper.insertIfHis(ifHisMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
         }catch(Exception e){
-            e.printStackTrace();
-        }
-		return;
-	}
-	
-	@Override
-	public void getCodeIfResult(Long tenantId) throws Exception {
-		// TODO Auto-generated method stub
-		
-        try {
-        	Class.forName(DRIVER);
-        	con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-        	stmt = con.createStatement();
-        	
-            // 1. 공통코드 데이터 조회
-        	
-        	/* 공통코드 매핑기준은 어따다 정할까???? 코드별 루프를 돌리는게 좋겠음.
-        	 *
-        	'H20010', -- 직급 	'H20020', -- 직책	  'H20030', -- 직위	'H10050', -- 직군	   'H10110' -- 급여유형
-        	 */
-        	
-        	// if 가져올 인사db 그룹코드
-        	String[] hrGrpCode = {"H10110", "H20020"};
-//        	String[] hrGrpCode = {"H20010", "H20020", "H20030", "H10050", "H10110"};
-        	// if 저장할 wtmdb 그룹코드
-        	String[] wtmGrpCode = {"PAY_TYPE_CD", "DUTY_CD"};
-//        	String[] wtmGrpCode = {"CLASS_CD", "DUTY_CD", "POS_CD", "JOB_CD", "PAY_TYPE_CD"};
-        	
-        	for(int i=1; i<=hrGrpCode.length; i++) {
-        		//hrGrpCode[i-1];
-        		rs = null;
-        		
-        		StringBuffer codeSb = new StringBuffer();
-        		codeSb.append("SELECT ENTER_CD");
-        		codeSb.append("     , GRCODE_CD");
-        		codeSb.append("     , CODE");
-        		codeSb.append("     , CODE_NM");
-        		codeSb.append("     , SYMD");
-        		codeSb.append("     , NOTE");
-        		codeSb.append("  FROM V_IF_WTM_CODE ");
-        		codeSb.append(" WHERE GRCODE_CD = '" + hrGrpCode[i-1].toString() + "'");
-            	rs = stmt.executeQuery(codeSb.toString());
-            	
-            	while (rs.next()) { 
-            		String enterCd = rs.getString("ENTER_CD");
-            		String grpCodeCd = wtmGrpCode[i-1].toString(); 
-            		String codeCd = rs.getString("CODE"); 
-            		String codeNm = rs.getString("CODE_NM"); 
-            		String symd = rs.getString("SYMD");
-            		String note = rs.getString("NOTE");
-            		
-            		Map<String, Object> codeMap = new HashMap<>();
-            		codeMap.put("tenantId", tenantId);
-            		codeMap.put("enterCd", enterCd);
-            		codeMap.put("grpCodeCd", grpCodeCd);
-            		codeMap.put("codeCd", codeCd);
-            		codeMap.put("codeNm", codeNm);
-            		codeMap.put("symd", symd);
-            		codeMap.put("note", note);
-            		
-            		// 2. 건별 data 저장(MARGE INTO가 없으니깐 ㅠㅠ)
-            		try {
-            			// DATA KEY기준으로 SELECT 
-            			Map<String, Object> result = wtmInterfaceMapper.getWtmCodeId(codeMap);
-            			
-            			if(result != null) {
-            				try {
-		            			String codeId = result.get("CODE_ID").toString();
-		            			System.out.println("update : " + codeId);
-		            			if(codeId != null && codeId.equals("")) {
-		            				codeMap.put("codeId", codeId);
-		            				int resultCnt = wtmInterfaceMapper.updateWtmCode(codeMap);
-		            				System.out.println("update : " + codeId);
-		            			}
-            				} catch(Exception e){
-            		            e.printStackTrace();
-            		        }
-            			} else {
-            				try {
-            					// 이력기준 insert 하자
-            					int resultCnt = 0;
-            					// 이전일자로 저장된건이 있으면....시작일 -1일로 업데이트가 필요함.
-            					resultCnt = wtmInterfaceMapper.updateWtmCodeEymd(codeMap);
-            					// 이후일자 데이터가 있으면, 시작일을 알아야함.시작일 -1일로 저장해야함.
-            					// EYMD = wtmInterfaceMapper.insertWtmCode(codeMap);
-            					Map<String, Object> result2 = wtmInterfaceMapper.getWtmCodeEymd(codeMap);
-            					if(result2 != null) {
-            						String eymd = result2.get("EYMD").toString();
-            						codeMap.put("eymd", eymd);
-            					} else {
-            						codeMap.put("eymd", "29991231");
-            					}
-            					// 이력갱신했으니깐 INSERT 하자.
-	            				resultCnt = wtmInterfaceMapper.insertWtmCode(codeMap);
-	            				System.out.println("insert : " + codeCd);
-	            				// 그럼 이력정리를 해야하는지 체크하자
-	            				
-            				} catch(Exception e){
-            		            e.printStackTrace();
-            		        }
-            			}
-        			} catch (Exception e) {
-        				e.printStackTrace();
-        			}
-            	}
-            	rs.close();
-        	}
-        	stmt.close();
-        	con.close();    		
-        } catch(Exception e){
             e.printStackTrace();
         }
 		return;

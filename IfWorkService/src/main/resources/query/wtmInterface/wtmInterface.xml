@@ -4,6 +4,25 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmInterfaceMapper">
+	<insert id="insertIfHis" parameterType="hashmap">
+		INSERT INTO WTM_IF_HIS
+		(
+			  TENANT_ID
+			, IF_STATUS
+			, IF_ITEM 
+			, IF_END_DATE 
+			, IF_MSG 
+			, UPDATE_DATE
+		) VALUES (
+			  #{tenantId}
+			, #{ifStatus}
+			, #{ifItem}
+			, F_WTM_TO_DATE(#{ifEndDate}, '%Y%m%d%H%i%s')
+			, #{ifMsg}
+			, NOW()
+		)
+	</insert>
+	
 	<select id="getWtmCodeId" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CODE_ID
@@ -17,8 +36,7 @@
         ]]>
     </select>
     
-    <update id="insertWtmCode" parameterType="hashmap">
-		<![CDATA[
+    <insert id="insertWtmCode" parameterType="hashmap">
 			INSERT INTO WTM_CODE
 			(
 				  TENANT_ID
@@ -31,56 +49,218 @@
 				, NOTE
 				, UPDATE_DATE
 				, UPDATE_ID
-			) VALUES (
-				  #{tenantId}
-				, #{enterCd}
-				, #{grpCodeCd}
-				, #{codeCd}
-				, #{codeNm}
-				, #{symd}
-				, #{eymd}
-				, #{note}
-				, NOW()
-				, 0
-			)
-		]]>
-	</update>
+			) VALUES 
+			<foreach collection="list" item="item" separator=", ">
+			(     #{item.tenantId}
+	        	, #{item.enterCd}
+	        	, #{item.grpCodeCd}
+	        	, #{item.codeCd}
+	        	, #{item.codeNm}
+	        	, #{item.symd}
+	        	, #{item.eymd}
+	        	, #{item.note}
+	        	, NOW()
+	        	, 0
+	        )
+			</foreach>
+	</insert>
 	
 	<update id="updateWtmCode" parameterType="hashmap">
-		<![CDATA[
-			UPDATE WTM_CODE SET
-			    NOTE = #{note}
-			  , UPDATE_DATE = NOW()
-			  , UPDATE_ID = 0
-			WHERE CODE_ID = #{codeId}
-		]]>
+		UPDATE WTM_CODE SET
+		    NOTE = CASE
+		    <foreach collection="list" item="item" separator="">
+		        when CODE_ID = #{item.codeId} then #{item.note}
+		    </foreach>
+    		END
+		  , UPDATE_DATE = NOW()
+		  , UPDATE_ID = 0
+		WHERE CODE_ID IN
+		<foreach collection="list" item="item" open="(" close=")" separator=", ">
+			#{item.codeId}
+		</foreach>
 	</update>
 	
-	<update id="updateWtmCodeEymd" parameterType="hashmap">
+	<update id="updateWtmCodeHisEymd" parameterType="hashmap">
 		<![CDATA[
-			UPDATE WTM_CODE SET
-			    EYMD = DATE_FORMAT(DATE_ADD(STR_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL - 1 DAY), '%Y%m%d')
+			UPDATE WTM_CODE
+			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
 			  , UPDATE_DATE = NOW()
 			  , UPDATE_ID = 0
-			WHERE TENANT_ID = #{tenantId}
+			WHERE 1=1
+			  AND TENANT_ID = #{tenantId}
 			  AND ENTER_CD = #{enterCd}
 			  AND GRP_CODE_CD = #{grpCodeCd}
 			  AND CODE_CD = #{codeCd}
-			  AND SYMD <> #{symd}
-			  AND SYMD < #{symd}
+			  AND #{symd} > SYMD
 		]]>
 	</update>
 	
-	<select id="getWtmCodeEymd" parameterType="map" resultType="hashmap">
+	<update id="updateWtmCodeHisSymd" parameterType="hashmap" >
         <![CDATA[
-			SELECT DATE_FORMAT(DATE_ADD(STR_TO_DATE(SYMD, '%Y%m%d'), INTERVAL - 1 DAY), '%Y%m%d') AS EYMD
-			  FROM WTM_CODE
-			 WHERE TENANT_ID = #{tenantId}
-			   AND ENTER_CD = #{enterCd}
-			   AND GRP_CODE_CD = #{grpCodeCd}
-			   AND CODE_CD = #{codeCd}
-			   AND SYMD <> #{symd}
-			   AND SYMD > #{symd}
+			UPDATE WTM_CODE
+			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			  , UPDATE_DATE = NOW()
+			  , UPDATE_ID = 0
+			WHERE 1=1
+			  AND TENANT_ID = #{tenantId}
+			  AND ENTER_CD = #{enterCd}
+			  AND GRP_CODE_CD = #{grpCodeCd}
+			  AND CODE_CD = #{codeCd}
+			  AND #{symd} < SYMD
         ]]>
+    </update>
+    
+    <insert id="insertWtmHoliday" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_HOLIDAY_MGR (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, BISINESS_PLACE_CD
+        	, HOLIDAY_YMD
+        	, HOLIDAY_NM
+        	, SUN_YN
+        	, FESTIVE_YN
+        	, PAY_YN
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.tenantId}
+        	, #{item.enterCd}
+        	, #{item.locationCd}
+        	, #{item.holidayYmd}
+        	, #{item.holidayNm}
+        	, #{item.sunYn}
+        	, #{item.festiveYn}
+        	, #{item.payYn}
+        	, NOW()
+        	, 0
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              HOLIDAY_NM = VALUES(HOLIDAY_NM)
+            , SUN_YN = VALUES(SUN_YN)
+            , FESTIVE_YN = VALUES(FESTIVE_YN)
+            , PAY_YN = VALUES(PAY_YN)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = 0
+    </insert>
+    
+    <select id="getWtmTaaCodeId" parameterType="map" resultType="hashmap">
+		SELECT TAA_CODE_ID
+		  FROM WTM_TAA_CODE
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND TAA_CD = #{taaCd}
     </select>
+    
+    <insert id="insertTaaCode" parameterType="hashmap">
+		INSERT INTO WTM_TAA_CODE
+		(
+			  TENANT_ID
+			, ENTER_CD 
+			, TAA_CD 
+			, TAA_NM 
+			, TAA_TYPE_CD 
+			, HOL_INCL_YN 
+			, REQUEST_TYPE_CD 
+			, WORK_YN
+			, UPDATE_DATE
+			, UPDATE_ID
+		) VALUES 
+		<foreach collection="list" item="item" separator=", ">
+			(
+			  #{item.tenantId}
+			, #{item.enterCd}
+			, #{item.taaCd}
+			, #{item.taaNm}
+			, #{item.taaTypeCd}
+			, #{item.holInclYn}
+			, #{item.requestTypeCd}
+			, #{item.workYn}
+			, NOW()
+			, 0
+			)
+		</foreach>
+	</insert>
+	
+	<update id="updateTaaCode" parameterType="hashmap">
+		UPDATE WTM_TAA_CODE SET
+		    TAA_NM = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.taaNm}
+		    </foreach> END
+		  , TAA_TYPE_CD = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.taaTypeCd}
+		    </foreach> END
+		  , HOL_INCL_YN = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.holInclYn}
+		    </foreach> END
+		  , REQUEST_TYPE_CD = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.requestTypeCd}
+		    </foreach> END
+		  , WORK_YN = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.workYn}
+		    </foreach> END
+		  , UPDATE_DATE = NOW()
+		  , UPDATE_ID = 0
+		WHERE TAA_CODE_ID IN 
+		<foreach collection="list" item="item" open="(" close=")" separator=", ">
+			#{item.taaCodeId}
+		</foreach>
+	</update>
+	
+	<insert id="insertEmpHisTemp" parameterType="hashmap">
+		INSERT INTO WTM_EMP_TEMP
+		(
+			  TENANT_ID
+			, ENTER_CD
+			, SABUN
+			, EMP_NM
+			, EMP_ENG_NM
+			, SYMD
+			, EYMD
+			, STATUS_CD
+			, ORG_CD
+			, BUSINESS_PLACE_CD
+			, DUTY_CD
+			, POS_CD
+			, CLASS_CD
+			, JOB_GROUP_CD
+			, JOB_CD
+			, PAY_TYPE_CD
+			, ORG_PATH
+			, LEADER_YN
+			, NOTE
+		) VALUES 
+		<foreach collection="list" item="item" separator=", ">
+			(
+			  #{item.tenantId}
+			, #{item.enterCd}
+			, #{item.sabun}
+			, #{item.empNm}
+			, #{item.empEngNm}
+			, #{item.symd}
+			, #{item.eymd}
+			, #{item.statusCd}
+			, #{item.orgCd}
+			, #{item.businessPlaceCd}
+			, #{item.dutyCd}
+			, #{item.posCd}
+			, #{item.classCd}
+			, #{item.jobGroupCd}
+			, #{item.jobCd}
+			, #{item.payTypeCd}
+			, #{item.orgPath}
+			, #{item.leaderYn}
+			, #{item.note}
+			)
+		</foreach>
+	</insert>
+	<update id="setEmpHis" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_IF_EMP_HIS ( #{tenantId} ) }
+  	</update>
 </mapper>

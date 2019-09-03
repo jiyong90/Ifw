@@ -13,20 +13,12 @@ import com.isu.ifw.vo.WtmFlexibleStdVO;
 public interface WtmInterfaceService {
 
 	/**
-	 * 임직원정보 이관
-	 * @param tenantId - 테넌트 아이디
-	 * @return 
-	 * @throws Exception 
-	 */
-	public void getEmpHisIfResult(Long tenantId) throws Exception;
-	
-	/**
 	 * 공통코드 이관
 	 * @param tenantId - 테넌트 아이디
 	 * @return 
 	 * @throws Exception 
 	 */
-	public void getCodeIfResult(Long tenantId) throws Exception;
+	public void getCodeIfResult(String lastDataTime) throws Exception;
 	
 	
 }
