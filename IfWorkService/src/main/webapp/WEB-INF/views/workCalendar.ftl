@@ -865,7 +865,7 @@
 				var $this = this;
 		    	
 	    		//근무계획작성 버튼 숨기기
-				//$("#workPlanBtn").hide();
+				$("#workPlanBtn").hide();
 	    	
 				var param = {
    		    		ymd : moment(ymd).format('YYYYMMDD')
@@ -883,13 +883,17 @@
 						if(data!=null) {
 							$this.rangeInfo = data;
 							
+							var now = '';
+							<#if today?? && today!='' && today?exists >
+								now = '${today}';
+							</#if>
+							
 							//근무계획작성
 							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y'
-								&& moment(data.sYmd).diff('${today}')<=0 && moment('${today}').diff(data.eYmd)<=0) {
+								&& now!='' && moment(data.sYmd).diff(now)<=0 && moment(now).diff(data.eYmd)<=0) {
+								
 								$("#workPlanBtn").show();
-							} else {
-								$("#workPlanBtn").hide();
-							}
+							} 
 						}
 					},
 					error: function(e) {
