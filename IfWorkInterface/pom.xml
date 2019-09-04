@@ -24,7 +24,7 @@
 		<repository>
 			<id>thirdparty</id>
 			<url>http://hatch.pearbranch.com:8081/content/repositories/thirdparty</url>
-		</repository>
+		</repository> 
 	</repositories>
 
 	<dependencies>
@@ -82,7 +82,7 @@
 		<!-- oracle -->
 		<dependency>
 			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6a</artifactId>
+			<artifactId>ojdbc6</artifactId>
 			<version>11.2.0.1</version>
 			<scope>system</scope>
 			<systemPath> ${basedir}/src/main/webapp/WEB-INF/lib/ojdbc6.jar</systemPath>
@@ -119,15 +119,15 @@
 
 		<!-- isu -->
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
 		<dependency>
-			<groupId>com.isu.commons</groupId>
-			<artifactId>isu-commons-auth</artifactId>
-			<version>3.0.5.D5</version>
-		</dependency>
+            <groupId>com.isu.commons</groupId>
+            <artifactId>isu-commons-auth</artifactId>
+            <version>3.0.5.D5</version>
+        </dependency> 
 		<dependency>
 			<groupId>com.isu.commons</groupId>
 			<artifactId>isu-commons-option</artifactId>
