@@ -251,6 +251,28 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			dayResult.setUpdateId(userId);
 			
 			wtmWorkDayResultRepo.save(dayResult);
+			
+			List<WtmOtSubsAppl> subs = wtmOtSubsApplRepo.findByApplId(applId);
+			if(subs != null && subs.size() >0) {
+				for(WtmOtSubsAppl sub : subs) {
+
+					WtmWorkDayResult subDayResult = new WtmWorkDayResult();
+					subDayResult.setApplId(applId);
+					subDayResult.setTenantId(tenantId);
+					subDayResult.setEnterCd(enterCd);
+					subDayResult.setYmd(sub.getSubYmd());
+					subDayResult.setSabun(appl.getApplSabun());
+					subDayResult.setPlanSdate(sub.getSubsSdate());
+					subDayResult.setPlanEdate(sub.getSubsEdate());
+					subDayResult.setPlanMinute(Integer.parseInt(sub.getSubsMinute()));
+					subDayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_SUBS);
+					subDayResult.setUpdateId(userId);
+					
+					wtmWorkDayResultRepo.save(subDayResult);
+					
+					
+				}
+			}
 		}
 		
 
