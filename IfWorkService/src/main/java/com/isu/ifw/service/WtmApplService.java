@@ -43,6 +43,12 @@ public interface WtmApplService {
 	final static String TIME_TYPE_BASE = "BASE";
 	//연장근무
 	final static String TIME_TYPE_OT = "OT";
+	//대체휴가
+	final static String TIME_TYPE_SUBS = "SUBS";
+	//간주근무
+	final static String TIME_TYPE_REGA = "REGA";
+	//휴가
+	final static String TIME_TYPE_TAA = "TAA";
 	
 	public Map<String, Object> getAppl(Long applId);
 	
