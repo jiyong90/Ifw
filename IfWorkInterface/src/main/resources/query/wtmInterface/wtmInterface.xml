@@ -4,15 +4,6 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmInterfaceMapper">
-	<select id="getCodeLastDate" parameterType="map" resultType="hashmap">
-        <![CDATA[
-			SELECT TO_CHAR(MAX(CHKDATE), 'YYYYMMDDHH24MISS') AS END_DATE
-			  FROM V_IF_WTM_CODE
-			 WHERE ENTER_CD = 'KABANG'
-			   AND GRCODE_CD IN ('H20010', 'H20020', 'H20030', 'H10050', 'H10110', 'T10003')
-			   AND CHKDATE >= TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
-        ]]>
-    </select>
 	
 	<select id="getCode" parameterType="map" resultType="hashmap">
         <![CDATA[
@@ -21,7 +12,6 @@
 			 WHERE ENTER_CD = 'KABANG'
 			   AND GRCODE_CD IN ('H20010', 'H20020', 'H20030', 'H10050', 'H10110', 'T10003')
 			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
-			   AND CHKDATE <= TO_DATE(#{ifLastDateTime}, 'YYYYMMDDHH24MISS')
 			 ORDER BY ENTER_CD, GRCODE_CD
         ]]>
     </select>

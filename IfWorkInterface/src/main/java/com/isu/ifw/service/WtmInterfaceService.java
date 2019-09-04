@@ -18,7 +18,7 @@ public interface WtmInterfaceService {
 	 * @return 
 	 * @throws Exception 
 	 */
-	public void getCodeIfResult(String lastDataTime) throws Exception;
+	public List<Map<String, Object>> getCodeIfResult(String lastDataTime) throws Exception;
 	
 	
 }

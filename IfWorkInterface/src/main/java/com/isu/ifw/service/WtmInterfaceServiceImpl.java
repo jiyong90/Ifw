@@ -22,31 +22,16 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	WtmInterfaceMapper wtmInterfaceMapper;
 
 	@Override
-	public void getCodeIfResult(String lastDataTime) throws Exception {
+	public List<Map<String, Object>> getCodeIfResult(String lastDataTime) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("WtmInterfaceServiceImpl getCodeIfResult");
+		List<Map<String, Object>> ifCodeList = null;
         try {
-        	// if 기간 크용 마지막 자료조회
-        	Map<String, Object> ifLastDate = wtmInterfaceMapper.getCodeLastDate(lastDataTime);
-        	if(ifLastDate != null && ifLastDate.size() > 0) {
-	        	String ifLastDateTime = ifLastDate.get("END_DATE").toString();
-	        	System.out.println("ifLastDateTime : " + ifLastDateTime);
-	        	List<Map<String, Object>> ifCodeList = wtmInterfaceMapper.getCode(lastDataTime, ifLastDateTime);
-	        	
-	        	if (ifCodeList != null && ifCodeList.size() > 0) {
-	        		for(int i=0; i< ifCodeList.size(); i++) {
-		        		Map<String, Object> ifCodeMap = new HashMap<>();
-		        		ifCodeMap = ifCodeList.get(i);
-		        		System.out.println(i + ", grcode : " + ifCodeMap.get("GRCODE_CD").toString());
-		        		System.out.println(i + ", code : " + ifCodeMap.get("CODE").toString());
-	        		}
-	        	}
-        	} else {
-        		System.out.println("no data found " + lastDataTime);
-        	}
+        	// if 데이터 조회
+        	ifCodeList = wtmInterfaceMapper.getCode(lastDataTime);
         } catch(Exception e){
             e.printStackTrace();
         }
-		return;
+		return ifCodeList;
 	}
 }
