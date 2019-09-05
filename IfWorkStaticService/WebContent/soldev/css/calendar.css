@@ -53,8 +53,16 @@
 .fc-next-button:hover,
 .fc-today-button:hover {
   color: #292944;
-  border-color: #E5E5E5;
+  border-color: #cccccc;
   background-color: #E5E5E5;
+}
+
+.fc-prev-button:not(:disabled):not(.disabled):active,
+.fc-next-button:not(:disabled):not(.disabled):active,
+.fc-today-button:not(:disabled):not(.disabled):active{
+  color:#ffffff !important;
+  border-color:#6b6b80 !important;
+  background-color:#6b6b80 !important;
 }
 
 .fc-today-button.btn-primary.disabled,
@@ -98,6 +106,14 @@
   background-color: #6b6b80;
 }
 
+.fc-day-header{
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b6b80;
+  font-weight: 500;
+}
+
+
 .fc-bgevent-header{
   font-size: 12px;
   color: #7b7c8d;
@@ -117,9 +133,13 @@
 }
 
 /* 날짜 크기 */
-.fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{font-size: 13px;}
+.fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{font-size: 13px; color:#6b6b80;}
 .fc-ltr .fc-dayGrid-view .fc-day-top .fc-holiday{font-size: 13px;}
 .fc-day-grid-event .fc-content .fc-title span{font-size: 10px; letter-spacing: -0.5px;}
+
+
+/* 일정 상세 페이지 : 날짜 눌렀을 때, 오전, 오후 글씨 크기 및 색상 */
+.fc-ltr .fc-axis{font-size:13px; color:#6b6b80;}
 
 /* .fc-row .fc-content-skeleton{z-index : 2;} */
 /* 클릭 이벤트 해제 */
@@ -287,3 +307,4 @@
   font-size: 14px;
   line-height: 1;
 }
+
