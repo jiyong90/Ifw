@@ -167,6 +167,13 @@
 					return false;
 				}
 			},
+			scrolltime: { //현재 시간으로 스크롤
+				type: String,
+				required: false,
+				default : function(){
+					return '06:00:00';
+				}
+			},
 			handleWindowResize: {
 				type: Boolean,
 				required: false,
@@ -213,6 +220,10 @@
 				
 				if(this.nowindicator) {
 					option.nowIndicator = this.nowindicator;
+				}
+				
+				if(this.scrolltime) {
+					option.scrollTime = this.scrolltime;
 				}
 				
 				return option;

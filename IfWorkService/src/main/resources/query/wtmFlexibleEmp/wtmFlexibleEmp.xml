@@ -25,7 +25,7 @@
 				AND E.ENTER_CD = #{enterCd}
 				AND E.SABUN = #{sabun}
 				AND M.BASE_WORK_YN = 'Y'
-				AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(E.EYMD, '%Y%m%d') OR F_WTM_TO_DATE(E.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
+				AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(E.EYMD, '%Y%m%d') AND F_WTM_TO_DATE(E.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
 			UNION
 			SELECT A.TENANT_ID AS tenantId
 			     , A.ENTER_CD AS enterCd
@@ -52,7 +52,7 @@
 			WHERE A.TENANT_ID = #{tenantId}
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
-			  AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(FA.EYMD, '%Y%m%d') OR F_WTM_TO_DATE(FA.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
+			  AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(FA.EYMD, '%Y%m%d') AND F_WTM_TO_DATE(FA.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
 			ORDER BY sYmd
         ]]>
     </select>

@@ -308,7 +308,7 @@
                             <div class="inner-wrap" v-if="overtimeAppl.cancelReason">
                                 <div class="title">취소사유</div>
                                 <div class="desc">
-                                	{{overtimeAppl.reason}}
+                                	{{overtimeAppl.cancelReason}}
                                 </div>
                             </div>
                             <hr class="bar">
@@ -324,7 +324,7 @@
     </div>
     <!-- 연장근무신청 상세보기 modal end -->
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">

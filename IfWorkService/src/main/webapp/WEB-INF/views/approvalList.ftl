@@ -62,8 +62,13 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                	<h5 class="modal-title" v-if="appl.holidayYn!='Y'">연장근로신청</h5>
-                    <h5 class="modal-title" v-else>휴일근로신청</h5>
+                    <template v-if="appl.otCanApplId!=null&&appl.otCanApplId!=undefined&&appl.otCanApplId!=''">
+                		<h5 class="modal-title">연장근로 취소신청</h5>
+                	</template>
+                	<template v-else="">
+                		<h5 class="modal-title" v-if="appl.holidayYn!='Y'">연장근로신청</h5>
+                    	<h5 class="modal-title" v-else>휴일근로신청</h5>
+                	</template>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -145,6 +150,12 @@
                                 </div>
                                 <div class="sub-desc">*해당일 근무시간은 {{moment(sub.sDate).format('HH:mm')}}~{{moment(sub.eDate).format('HH:mm')}} 입니다.</div>
                                 </template>
+                            </div>
+                            <div class="inner-wrap" v-if="appl.cancelReason">
+                                <div class="title">취소사유</div>
+                                <div class="desc">
+                                	{{appl.cancelReason}}
+                                </div>
                             </div>
                             <hr class="bar">
                         </div>
