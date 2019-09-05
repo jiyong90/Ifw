@@ -207,8 +207,13 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                    <h5 class="modal-title" v-if="result.holidayYn!='Y'">연장근로신청</h5>
-                    <h5 class="modal-title" v-else>휴일근로신청</h5>
+                	<template v-if="overtimeAppl.otCanApplId!=null&&overtimeAppl.otCanApplId!=undefined&&overtimeAppl.otCanApplId!=''">
+                		<h5 class="modal-title">연장근로 취소신청</h5>
+                	</template>
+                	<template v-else="">
+                		<h5 class="modal-title" v-if="result.holidayYn!='Y'">연장근로신청</h5>
+                    	<h5 class="modal-title" v-else>휴일근로신청</h5>
+                	</template>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -300,9 +305,15 @@
                                 <div class="sub-desc">*해당일 근무시간은 {{moment(sub.sDate).format('HH:mm')}}~{{moment(sub.eDate).format('HH:mm')}} 입니다.</div>
                                 </template>
                             </div>
+                            <div class="inner-wrap" v-if="overtimeAppl.cancelReason">
+                                <div class="title">취소사유</div>
+                                <div class="desc">
+                                	{{overtimeAppl.reason}}
+                                </div>
+                            </div>
                             <hr class="bar">
                         </div>
-                        <div class="btn-wrap text-center">
+                        <div class="btn-wrap text-center" v-if="overtimeAppl.otCanApplId==null||overtimeAppl.otCanApplId==undefined||overtimeAppl.otCanApplId==''">
                             <button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
                             <button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
                         </div>
@@ -725,7 +736,10 @@
 									classNames.push(vMap.timeTypeCd);
 									
 									var title = vMap.timeTypeNm;
-									if(vMap.applStatusCd!=null && vMap.applStatusCd!='')
+									if(vMap.otCanApplId!=null && vMap.otCanApplId!=undefined && vMap.otCanApplId!='')
+										title += ' 취소';
+									
+									if(vMap.applStatusCd!=null && vMap.applStatusCd!=undefined && vMap.applStatusCd!='' && vMap.applStatusCd!='99')
 										title += ' (' + vMap.applStatusNm + ')';
 										
   	  	         					var result = {

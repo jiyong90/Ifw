@@ -44,9 +44,10 @@
 			     , O.OLD_OT_APPL_ID AS oldOtApplId
 			     , O.CANCEL_YN AS cancelYn
 			     , A.APPL_STATUS_CD AS applStatusCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
 			     , R.WORK_DAY_RESULT_ID AS workDayResultId
 			     , C.OT_CAN_APPL_ID AS otCanApplId
-			     , C.REASON AS reason
+			     , C.REASON AS cancelReason
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_APPL O
 			    ON A.APPL_ID = O.APPL_ID
