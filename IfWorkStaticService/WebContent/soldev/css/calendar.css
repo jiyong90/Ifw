@@ -138,9 +138,6 @@
 .fc-day-grid-event .fc-content .fc-title span{font-size: 10px; letter-spacing: -0.5px;}
 
 
-/* 일정 상세 페이지 : 날짜 눌렀을 때, 오전, 오후 글씨 크기 및 색상 */
-.fc-ltr .fc-axis{font-size:13px; color:#6b6b80;}
-
 /* .fc-row .fc-content-skeleton{z-index : 2;} */
 /* 클릭 이벤트 해제 */
 .fc-day-grid-event{pointer-events: none;}
@@ -227,6 +224,13 @@
 }
 
 /* 타임 그리드  */
+/* 일정 상세 페이지 : 날짜 눌렀을 때, 오전, 오후 글씨 크기 및 색상 */
+.fc-time-grid .fc-slats td{cursor: pointer;}
+.fc-time-grid .fc-slats td.fc-axis{font-size:13px; color:#6b6b80; cursor: default;}
+
+.fc-time-grid-event.fc-event{
+  cursor: pointer;
+}
 /* 1) ENTRY  */
 .fc-time-grid-event.fc-event.entry,
 .fc-time-grid-event.fc-event.ENTRY {
@@ -249,6 +253,7 @@
 .fc-time-grid-event.fc-event.base,
 .fc-time-grid-event.fc-event.BASE {
   background-color: rgba(144, 233, 27, 0.3);
+  cursor: default;
 }
 
 /* 5) OT */
@@ -285,6 +290,7 @@
 .fc-content .dot.work-type:before {
   background-color: #7601dc;
 }
+
 /* button */
 #calendar-container .btn-default{
   font-size: 14px;
