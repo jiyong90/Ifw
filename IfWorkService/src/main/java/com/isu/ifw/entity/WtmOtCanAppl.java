@@ -16,7 +16,7 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="WTM_OT_APPL")
+@Table(name="WTM_OT_CAN_APPL")
 public class WtmOtCanAppl {
 	
 	@Id

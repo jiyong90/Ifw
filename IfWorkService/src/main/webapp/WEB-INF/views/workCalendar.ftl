@@ -66,7 +66,7 @@
 	                </div>
 	                <div class="col">
 	                </div>
-	                <div class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+	                <div v-if="'${calendar}'!='workTimeCalendar'" class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
 	                    <div class="btn-wrap text-right">
 	                        <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal">근무제 적용하기</button>
 	                    </div>
@@ -402,7 +402,10 @@
                                 </div>
                             </div>
                             <div class="btn-wrap mt-5">
-                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" @click="validateFlexitimeAppl">확인요청</button>
+                            	<template v-if="calendarTopVue.flexibleStd">
+	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-if="calendarTopVue.flexibleStd.workTypeCd=='ELAS'" @click="validateFlexitimeAppl(calendarTopVue.flexibleStd.workTypeCd)">다음</button>
+	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-else @click="validateFlexitimeAppl(calendarTopVue.flexibleStd.workTypeCd)">확인요청</button>
+                                </template>
                             </div>
                         </form>
                     </div>
@@ -1057,7 +1060,7 @@
          		}
 
          	},
-         	validateFlexitimeAppl : function(){
+         	validateFlexitimeAppl : function(workTypeCd){
          		var applYn = true;
          		var forms = document.getElementById('flexibleAppl').getElementsByClassName('needs-validation');
          		var validation = Array.prototype.filter.call(forms, function(form) {
@@ -1070,9 +1073,54 @@
          		});
          		
          		if(applYn) {
-         			this.flexitimeAppl();
+         			if(workTypeCd == 'ELAS') { //탄근제
+         				this.elasFlexitimeAppl();
+         			} else {
+         				this.flexitimeAppl();
+         			}
          		}
          		
+         	},
+         	elasFlexitimeAppl : function(){
+         		var $this = this;
+  	         	
+         		//선택한 근무제
+	         	var flexibleStd = calendarTopVue.flexibleStd;
+	         	//임시저장된 신청서
+	         	var flexibleAppl = $this.flexibleAppl;
+	         	//신청서 정보
+	         	var applInfo = $this.applInfo;
+	         	
+	         	var param = {
+         			flexibleStdMgrId : flexibleStd.flexibleStdMgrId,
+         			workTypeCd : flexibleStd.workTypeCd,
+   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
+   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
+   		    		reason: applInfo.reason
+   		    	};
+	         	
+	         	/* Util.ajax({
+					url: "${rc.getContextPath()}/flexibleAppl/imsi",
+					type: "POST",
+					contentType: 'application/json',
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: function(data) {
+						if(data!=null && data.status=='OK') {
+							applInfo.applId = data.applId;
+							applInfo.flexibleApplId = data.flexibleApplId;
+							
+							//근무 계획 화면 전환
+							location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day&date='+moment(applInfo.useSymd).format('YYYYMMDD');
+						}
+					},
+					error: function(e) {
+						console.log(e);
+						$("#alertText").html("저장 시 오류가 발생했습니다.");
+  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+  	  	         		$("#alertModal").modal("show"); 
+					}
+				}); */
          	},
          	flexitimeAppl : function(){ //확인요청
 	         	var $this = this;

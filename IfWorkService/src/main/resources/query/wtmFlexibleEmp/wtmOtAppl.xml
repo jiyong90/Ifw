@@ -44,9 +44,19 @@
 			     , O.OLD_OT_APPL_ID AS oldOtApplId
 			     , O.CANCEL_YN AS cancelYn
 			     , A.APPL_STATUS_CD AS applStatusCd
+			     , R.WORK_DAY_RESULT_ID AS workDayResultId
+			     , C.OT_CAN_APPL_ID AS otCanApplId
+			     , C.REASON AS reason
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_APPL O
 			    ON A.APPL_ID = O.APPL_ID
+			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+			    ON A.TENANT_ID = R.TENANT_ID
+			   AND A.ENTER_CD = R.ENTER_CD
+			   AND A.APPL_SABUN = R.SABUN
+				AND A.APPL_ID = R.APPL_ID
+			  LEFT OUTER JOIN WTM_OT_CAN_APPL C
+			    ON R.WORK_DAY_RESULT_ID = C.WORK_DAY_RESULT_ID
 			 WHERE O.APPL_ID = #{applId}   
 			 ORDER BY O.OT_SDATE
 	        ]]>

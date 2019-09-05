@@ -170,8 +170,40 @@
         </div>
     </div>    
     <!-- 연장근무신청 modal end -->
+    <!-- 연장근무취소사유 modal start -->
+    <div class="modal fade show" id="cancelOpinionModal" tabindex="-1" role="dialog"  data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">취소 사유</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap">
+                            <div class="form-row no-gutters">
+                                <div class="form-group col-12">
+                                    <label for="reason">취소 사유</label>
+                                    <textarea class="form-control" id="reason" rows="3" placeholder="취소 사유를 작성해주시기 바랍니다."
+                                        required=""></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-secondary rounded-0"
+                                data-dismiss="modal">취소</button>
+                            <button type="submit" class="btn btn-default rounded-0" @click="otCancelAppl">확인</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 연장근무취소사유 modal end -->
     <!-- 연장근무신청 상세보기 modal start -->
-    <div class="modal fade show" id="overtimeApplDetail" tabindex="-1" role="dialog">
+    <div class="modal fade show" id="overtimeApplDetail" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
@@ -271,8 +303,8 @@
                             <hr class="bar">
                         </div>
                         <div class="btn-wrap text-center">
-                            <button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'">연장근로신청 취소하기</button>
-                            <button type="button" class="btn btn-default rounded-0" v-else>휴일근로신청 취소하기</button>
+                            <button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
+                            <button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
                         </div>
                     </form>
                 </div>
@@ -895,6 +927,49 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						}
 					});
+  	         	},
+  	         	otCancelAppl: function(){ //연장근무취소신청
+  	         		var $this = this;
+  	         		
+  	         		var param = {
+  	         			workDayResultId: $this.overtimeAppl.workDayResultId,
+  	         			applId: $this.overtimeAppl.applId,
+  	         			status: $this.overtimeAppl.applStatusCd,
+        				workTypeCd : 'OT',
+	   		    		reason: $("#cancelOpinion").val()
+	   		    	};
+  	         		
+  	         		Util.ajax({
+						url: "${rc.getContextPath()}/otCanAppl/request",
+						type: "POST",
+						contentType: 'application/json',
+						data: JSON.stringify(param),
+						dataType: "json",
+						success: function(data) {
+							if(data!=null && data.status=='OK') {
+								$("#alertText").html("취소요청 되었습니다.");
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+									$("#cancelOpinionModal").modal("hide");
+									$("#overtimeApplDetail").modal("hide");
+								});
+							} else {
+								$("#alertText").html(data.message);
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+								});
+							}
+							
+	  	  	         		$("#alertModal").modal("show"); 
+						},
+						error: function(e) {
+							console.log(e);
+							$("#alertText").html("저장 시 오류가 발생했습니다.");
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+	  	  	         		$("#alertModal").modal("show"); 
+						}
+					});
+  	         		
   	         	},
   	         	changeSubYn: function(val){
   	         		var $this = this;
