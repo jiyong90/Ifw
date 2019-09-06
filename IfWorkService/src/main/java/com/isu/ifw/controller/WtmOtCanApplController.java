@@ -38,7 +38,7 @@ public class WtmOtCanApplController {
 	public @ResponseBody ReturnParam requestOtAppl(@RequestBody Map<String, Object> paramMap
 													    , HttpServletRequest request) {
 		
-		validateParamMap(paramMap, "workDayResultId", "applId", "status", "workTypeCd", "reason");
+		validateParamMap(paramMap, "workDayResultId", "status", "workTypeCd", "reason");
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");

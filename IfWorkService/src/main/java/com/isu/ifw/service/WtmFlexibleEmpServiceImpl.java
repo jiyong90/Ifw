@@ -9,22 +9,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
-import com.isu.ifw.entity.WtmTaaCode;
+import com.isu.ifw.entity.WtmOtCanAppl;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
-import com.isu.ifw.entity.WtmWorkteamEmp;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.repository.WtmOtCanApplRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.repository.WtmWorkteamEmpRepository;
@@ -50,6 +48,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Autowired
 	WtmWorkDayResultRepository workDayResultRepo;
+	
+	@Autowired
+	WtmOtCanApplRepository otCanApplRepo;
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
@@ -130,7 +131,18 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("ymd", ymd);
 		
 		List<Map<String, Object>> workDayResult = flexEmpMapper.getWorkDayResult(paramMap);
-		ObjectMapper mapper = new ObjectMapper();
+		
+		//취소 신청서 있는지 조회
+		if(workDayResult!=null && workDayResult.size()>0) {
+			for(Map<String, Object> r : workDayResult) {
+				if(r.get("applId")!=null && !"".equals(r.get("applId"))) {
+					WtmOtCanAppl otCanAppl = otCanApplRepo.findByOtApplId(Long.valueOf(r.get("applId").toString()));
+					if(otCanAppl!=null && otCanAppl.getOtCanApplId()!=null) {
+						r.put("otCanApplId", otCanAppl.getOtCanApplId());
+					}
+				}
+			}
+		}
 		/*Map<String, Object> dayResults = new HashMap<String, Object>();
 		if(result!=null && result.size()>0) {
 			for(Map<String, Object> r : workDayResult) {
@@ -146,6 +158,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				dayResults.put(ymd, dayResult);
 			}
 		}*/
+		
+		ObjectMapper mapper = new ObjectMapper();
 		try {
 			result.put("dayResults", mapper.writeValueAsString(workDayResult));
 		} catch (Exception e) {

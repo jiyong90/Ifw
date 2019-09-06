@@ -13,8 +13,6 @@ import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
 import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.entity.WtmOtCanAppl;
-import com.isu.ifw.entity.WtmOtSubsAppl;
-import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
@@ -23,6 +21,7 @@ import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.repository.WtmOtApplRepository;
 import com.isu.ifw.repository.WtmOtCanApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
@@ -50,6 +49,9 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
 
+	@Autowired
+	WtmOtApplRepository wtmOtApplRepo;
+	
 	@Autowired
 	WtmOtCanApplRepository wtmOtCanApplRepo;
 
@@ -251,6 +253,8 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		
 		WtmWorkDayResult result = wtmWorkDayResultRepo.findById(Long.parseLong(workDayResultId)).get();
 		
+		WtmOtAppl otAppl = wtmOtApplRepo.findByApplId(result.getApplId());
+		
 //		
 //		WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 //		
@@ -259,7 +263,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 //			subYn = paramMap.get("subYn")+"";
 //		}
 		//근무제 신청서 테이블 조회
-		WtmOtCanAppl otAppl = saveWtmOtCanAppl(tenantId, enterCd, applId, result.getApplId(), result.getWorkDayResultId(), result.getYmd(), result.getTimeTypeCd(), result.getPlanSdate(), result.getPlanEdate(), result.getPlanMinute(), result.getApprSdate(), result.getApprEdate(), result.getApprMinute(), reason, sabun, userId);
+		WtmOtCanAppl otCanAppl = saveWtmOtCanAppl(tenantId, enterCd, applId, otAppl.getOtApplId(), result.getWorkDayResultId(), result.getYmd(), result.getTimeTypeCd(), result.getPlanSdate(), result.getPlanEdate(), result.getPlanMinute(), result.getApprSdate(), result.getApprEdate(), result.getApprMinute(), reason, sabun, userId);
 				
 		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		paramMap.put("applId", appl.getApplId());

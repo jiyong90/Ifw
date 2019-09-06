@@ -365,7 +365,7 @@
 	    				//$('#apprOpinionModal').modal("hide"); 
 	    				$('#apprOpinionModal .close').click();
 	    				
-	    				//console.log(appr);
+	    				console.log(appr);
 	    				
 		    			var param = appr;
 		    			
