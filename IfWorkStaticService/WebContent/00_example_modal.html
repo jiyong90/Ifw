@@ -306,17 +306,17 @@
                                                     </div>
                                                     <div class="form-row col-md-12 col-lg-10 mb-sm-2">
                                                         <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
-                                                            <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate" data-toggle="datetimepicker" data-target="#startDate" placeholder="연도/월/일" autocomplete="off" required="">
+                                                            <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate5" data-toggle="datetimepicker" data-target="#startDate5" placeholder="연도/월/일" autocomplete="off" required="">
                                                         </div>
                                                         <div class="col-2 col-sm-2 col-md-2 col-lg-2" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime2" data-toggle="datetimepicker" data-target="#startTime2" autocomplete="off" required="">
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime5" data-toggle="datetimepicker" data-target="#startTime5" autocomplete="off" required="">
                                                         </div>
                                                         <span class="col-1 col-sm-1 col-md-1 col-lg-1 text-center pl-2 pr-2 mt-1">~</span>
                                                         <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
-                                                            <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate" data-toggle="datetimepicker" data-target="#endDate" placeholder="연도/월/일" autocomplete="off" required="">
+                                                            <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate5" data-toggle="datetimepicker" data-target="#endDate5" placeholder="연도/월/일" autocomplete="off" required="">
                                                         </div>
                                                         <div class="col-2 col-sm-2 col-md-2 col-lg-2" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime2" data-toggle="datetimepicker" data-target="#endTime2" autocomplete="off" required="">
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime5" data-toggle="datetimepicker" data-target="#endTime5" autocomplete="off" required="">
                                                         </div>
                                                         <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-md-text-right text-center"><a href="#" class="align-middle">삭제</a></div>
                                                         <div class="guide pl-1">*해당일 근무시간은 09:00~18:00 입니다.</div>
@@ -335,17 +335,17 @@
                                                     </div>
                                                     <div class="form-row col-md-12 col-lg-10 mb-sm-2">
                                                         <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
-                                                            <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate" data-toggle="datetimepicker" data-target="#startDate" placeholder="연도/월/일" autocomplete="off" required="">
+                                                            <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate4" data-toggle="datetimepicker" data-target="#startDate4" placeholder="연도/월/일" autocomplete="off" required="">
                                                         </div>
                                                         <div class="col-2 col-sm-2 col-md-2 col-lg-2" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime2" data-toggle="datetimepicker" data-target="#startTime2" autocomplete="off" required="">
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime4" data-toggle="datetimepicker" data-target="#startTime4" autocomplete="off" required="">
                                                         </div>
                                                         <span class="col-1 col-sm-1 col-md-1 col-lg-1 text-center pl-2 pr-2 mt-1">~</span>
                                                         <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
-                                                            <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate" data-toggle="datetimepicker" data-target="#endDate" placeholder="연도/월/일" autocomplete="off" required="">
+                                                            <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate4" data-toggle="datetimepicker" data-target="#endDate4" placeholder="연도/월/일" autocomplete="off" required="">
                                                         </div>
                                                         <div class="col-2 col-sm-2 col-md-2 col-lg-2" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime2" data-toggle="datetimepicker" data-target="#endTime2" autocomplete="off" required="">
+                                                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime4" data-toggle="datetimepicker" data-target="#endTime4" autocomplete="off" required="">
                                                         </div>
                                                         <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-md-text-right text-center"><a href="#" class="align-middle">삭제</a></div>
                                                         <div class="guide pl-1">*해당일 근무시간은 09:00~18:00 입니다.</div>
@@ -839,6 +839,22 @@
                 language: 'ko'
             });
             
+            $('#startTime4').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+             $('#endTime4').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+            $('#startTime4').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
+             $('#endTime4').datetimepicker({
+                format: 'LT',
+                language: 'ko'
+            });
 
             // radio toggle
             $('input[type="radio"]').click(function () {
