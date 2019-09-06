@@ -101,6 +101,7 @@
 		                                            </span>
 		                                        </div>
 			                                    <div class="form-row col-md-12 col-lg-10 mb-sm-2">
+			                                    	<!--  
 	                                             	<div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
 	                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsSymd_'+idx" v-model="s.subsSymd" data-toggle="datetimepicker" :data-target="'#subsSymd_'+idx" placeholder="연도-월-일" autocomplete="off" :required="subsRequired">
 	                                                </div>
@@ -117,6 +118,27 @@
 	                                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-md-text-right text-center"><a href="#" class="align-middle" @click="delSubYmd(idx)">삭제</a></div>
 		                                            <div class="guide pl-1">
 		                                            	<span></span>
+		                                            	<span v-if="s.subsBreakMinute"> 총 휴게시간은 {{calendarLeftVue.minuteToHHMM(s.subsBreakMinute, 'detail')}} 입니다.</span>
+		                                            </div>
+		                                            -->
+		                                            <div class="col-4 col-sm-4 col-md-4 col-lg-4" data-target-input="nearest">
+	                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsSymd_'+idx" v-model="s.subsSymd" data-toggle="datetimepicker" :data-target="'#subsSymd_'+idx" placeholder="연도-월-일" autocomplete="off" :required="subsRequired">
+	                                                </div>
+	                                                <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
+	                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsShm_'+idx" v-model="s.subsShm" data-toggle="datetimepicker" :data-target="'#subsShm_'+idx" autocomplete="off" :required="subsRequired">
+	                                                </div>
+	                                                <span class="col-1 col-sm-1 col-md-1 col-lg-1 text-center pl-2 pr-2 mt-1">~</span>
+	                                                <!--  
+	                                                <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
+	                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsEymd_'+idx" v-model="s.subsEymd" data-toggle="datetimepicker" :data-target="'#subsEymd_'+idx" placeholder="연도-월-일" autocomplete="off" :required="subsRequired">
+	                                                </div>
+	                                                -->
+	                                                <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
+	                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'subsEhm_'+idx" v-model="s.subsEhm" data-toggle="datetimepicker" :data-target="'#subsEhm_'+idx" autocomplete="off" :required="subsRequired">
+	                                                </div>
+	                                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-md-text-right text-center"><a href="#" class="align-middle" @click="delSubYmd(idx)">삭제</a></div>
+		                                            <div class="guide pl-1">
+		                                            	<span v-if="s.workShm && s.workEhm">*해당일 근무시간은 {{s.workShm}}~{{s.workEhm}} 입니다.</span>
 		                                            	<span v-if="s.subsBreakMinute"> 총 휴게시간은 {{calendarLeftVue.minuteToHHMM(s.subsBreakMinute, 'detail')}} 입니다.</span>
 		                                            </div>
 		                                        </div>
@@ -593,8 +615,8 @@
 						success: function(data) {
 							if(data!=null && Object.keys(data).length>0) {
 								
-								if(id.indexOf('subsSymd')!=-1) 
-									$("#"+id).closest(".form-row").children("div.guide.pl-1").children(":eq(0)").text("");
+								//if(id.indexOf('subsSymd')!=-1) 
+								//	$("#"+id).closest(".form-row").children("div.guide.pl-1").children(":eq(0)").text("");
 								
 								if(data.holidayYn && data.holidayYn=='Y') {
 									$("#alertText").html("휴일을 대체일시로 선택할 수 없습니다.");
@@ -609,10 +631,23 @@
 									$this.updateValue(id, moment(ymd).format('YYYY-MM-DD'));
 									
 									//근무 시간 세팅
-									var workShm = moment(data.sDate).format('HH:mm');
-									var workEhm = moment(data.eDate).format('HH:mm');
+									//var workShm = moment(data.sDate).format('HH:mm');
+									//var workEhm = moment(data.eDate).format('HH:mm');
+									var workShm = moment(data.planSdate).format('HH:mm');
+									var workEhm = moment(data.planEdate).format('HH:mm');
 									if(id.indexOf('subsSymd')!=-1) {
-										$("#"+id).closest(".form-row").children("div.guide.pl-1").children(":eq(0)").text("*해당일 근무시간은 " + workShm+ "~" + workEhm + " 입니다.");
+										//$("#"+id).closest(".form-row").children("div.guide.pl-1").children(":eq(0)").text("*해당일 근무시간은 " + workShm+ "~" + workEhm + " 입니다.");
+										
+										var key = id.split('_');
+					  	 				var idx;
+					  	 				if(key!=null && key!='undefined' && key.length>0) 
+					  	 					idx = key[1];
+					  	 				
+					  	 				if(idx!=null && idx!='' && idx!=undefined) {
+					  	 					$this.subYmds[idx]['workShm'] = workShm;
+					  	 					$this.subYmds[idx]['workEhm'] = workEhm;
+					  	 					console.log($this.subYmds);
+					  	 				}
 									}
 								}
 							} else {
@@ -621,8 +656,8 @@
 						},
 						error: function(e) {
 							$this.updateValue(id, moment(ymd).format('YYYY-MM-DD'));
-							if(id.indexOf('subsSymd')!=-1) 
-								$("#"+id).closest(".form-row").children("div.guide.pl-1").children(":eq(0)").text("");
+							//if(id.indexOf('subsSymd')!=-1) 
+							//	$("#"+id).closest(".form-row").children("div.guide.pl-1").children(":eq(0)").text("");
 						}
 					});
   	         	},
@@ -869,13 +904,30 @@
 	  	  	         				var subsMin = 0;
 	  	  	         				
 		  	  	         			$this.subYmds.map(function(sub){
+		  	  	         				//대체일시 근무시간 합산
 		  	  	         				if(sub.hasOwnProperty("subsMinute")) {
 		  	  	         					var min = sub.subsMinute;
 		  	  	         					subsMin += min;
 		  	  	         				}
+		  	  	         				
+		  	  	         				if(isValid) {
+			  	  	         				//대체 시간이 근무시간에 포함되는지 확인
+			  	  	         				if(sub.hasOwnProperty("workShm") && sub.hasOwnProperty("workEhm")) {
+			  	  	         					var workSdate = moment(sub.subsSymd+" "+sub.workShm).format('YYYY-MM-DD HH:mm');
+			  	  	         					var workEdate = moment(sub.subsSymd+" "+sub.workEhm).format('YYYY-MM-DD HH:mm');
+				  	  	         				var subSdate = moment(sub.subsSymd+" "+sub.subsShm).format('YYYY-MM-DD HH:mm');
+			  	  	         					var subEdate = moment(sub.subsSymd+" "+sub.subsEhm).format('YYYY-MM-DD HH:mm');
+			  	  	         					
+			  	  	         					if(!(moment(workSdate).diff(subSdate)<=0 && moment(subSdate).diff(workEdate)<=0 
+			  	  	         							&& moment(workSdate).diff(subEdate)<=0 && moment(subEdate).diff(workEdate)<=0)) {
+			  	  	         						isValid = false;
+			  	  	         						msg = sub.subsSymd+' 의 대체 근무 가능 시간은 '+sub.workShm+'~'+sub.workEhm+' 입니다.';
+			  	  	         					}
+			  	  	         				}
+		  	  	         				}
 		  	  	         			});
 		  	  	         			
-		  	  	         			if($this.overtime.calcMinute!=null && $this.overtime.calcMinute!='' && $this.overtime.calcMinute!=subsMin) {
+		  	  	         			if(isValid && $this.overtime.calcMinute!=null && $this.overtime.calcMinute!='' && $this.overtime.calcMinute!=subsMin) {
 		  	  	         				isValid = false;
 		  	  	         				msg = calendarLeftVue.minuteToHHMM($this.overtime.calcMinute, 'detail')+'의 대체 휴일을 지정하세요.';
 		  	  	         			}
@@ -1030,7 +1082,7 @@
   	                    $(".radio-toggle-wrap").hide(500);
   	                }
   	         	},
-  	         	calcSubsTime: function(id) {
+  	         	calcSubsTime: function(id) { //휴일 대체 근로 시간 계산
   	         		var $this = this;
   	         		var key = id.split('_');
   	 				var idx;
@@ -1044,11 +1096,25 @@
   	 							&& subsInfo.subsShm!=null && subsInfo.subsShm!=undefined && subsInfo.subsShm!=''
   	 							&& subsInfo.subsEhm!=null && subsInfo.subsEhm!=undefined && subsInfo.subsEhm!='') {
   	 						
-  	 						var shm = subsInfo.subsShm.replace(/:/gi,"");
-  	  	           			var ehm = subsInfo.subsEhm.replace(/:/gi,"");
-  	 						var result = $this.calcMinute(moment(subsInfo.subsSymd).format('YYYYMMDD'), shm, ehm);
-  	 						subsInfo['subsMinute'] = result.calcMinute;
-  	 						subsInfo['subsBreakMinute'] = result.breakMinute;
+  	 						var sDate = moment(subsInfo.subsSymd+" "+subsInfo.subsShm).format('YYYY-MM-DD HH:mm');
+  	 						var eDate = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYY-MM-DD HH:mm');
+  	 						
+  	  	           			if(sDate > eDate) {
+	  	  	           			$("#alertText").html("종료시간이 시작시간보다 작습니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+		  	  	         			$("#alertModal").off('hidden.bs.modal');
+		  	  	         			subsInfo.subsShm = '';
+		  	  	         			subsInfo.subsEhm = '';
+		  	  	         		});
+		  	  	         		$("#alertModal").modal("show"); 
+  	  	           			} else {
+	  	  	           			var shm = subsInfo.subsShm.replace(/:/gi,"");
+	  	  	           			var ehm = subsInfo.subsEhm.replace(/:/gi,"");
+	  	  	           			var result = $this.calcMinute(moment(subsInfo.subsSymd).format('YYYYMMDD'), shm, ehm);
+	  	 						subsInfo['subsMinute'] = result.calcMinute;
+	  	 						subsInfo['subsBreakMinute'] = result.breakMinute;
+  	  	           			}
+  	  	           			
   	 					}
   	 					
   	 				}
@@ -1104,7 +1170,9 @@
  		
  		$(this).on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
- 				timeCalendarVue.getWorkHour($($this).attr('id'), moment(e.date).format('YYYYMMDD'));
+ 				var id = $($this).attr('id');
+ 				timeCalendarVue.getWorkHour(id, moment(e.date).format('YYYYMMDD'));
+ 				timeCalendarVue.calcSubsTime(id);
  			}
  		});
    	});
