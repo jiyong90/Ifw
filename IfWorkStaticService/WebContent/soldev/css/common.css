@@ -659,7 +659,6 @@ box-sizing: border-box;
 .notice-mark.ELAS{
   background-color: #ff6f00;
   /* background-color: rgba(255, 111, 0,0.5); */
-
 }
 
 /* 완전선택근무 */
@@ -690,6 +689,10 @@ box-sizing: border-box;
 .notice-mark.OT {
   background-color: #7b5df6;
   /* background-color: rgba(8, 8, 9,0.5); */
+}
+/* 추가근무취소 */
+.notice-mark.OT_CAN{
+  background-color: #d82bb0;
 }
 
 .notice-card .inner-wrap{

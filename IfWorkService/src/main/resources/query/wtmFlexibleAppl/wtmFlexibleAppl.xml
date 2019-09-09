@@ -93,7 +93,7 @@
 						  JOIN WTM_PROPERTIE P
 						    ON E.TENANT_ID = P.TENANT_ID
 						   AND E.ENTER_CD = P.ENTER_CD
-						   AND P.INFO_KEY = 'OPTION_AVG_WORKTIME_1WEEK'
+						   AND P.INFO_KEY = 'OPTION_MAX_WORKTIME_1WEEK'
 						 WHERE E.TENANT_ID = #{tenantId}
 						   AND E.ENTER_CD = #{enterCd}
 						   AND E.FLEXIBLE_EMP_ID = #{flexibleEmpId}

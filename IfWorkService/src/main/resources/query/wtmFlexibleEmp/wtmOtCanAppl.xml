@@ -27,5 +27,27 @@
 	        ]]>
     </select>
      
-   
+    <select id="otApplAndOtCanApplfindByApplId" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+			SELECT C.APPL_ID AS applId
+			     , O.YMD AS ymd
+			     , O.HOLIDAY_YN AS holidayYn
+			     , O.OT_SDATE AS otSdate
+			     , O.OT_EDATE AS otEdate
+			     , O.OT_MINUTE AS otMinute
+			     , O.REASON_CD AS reasonCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS reasonNm
+			     , O.REASON AS reason
+			     , O.SUB_YN as subYn
+			     , O.OLD_OT_APPL_ID AS oldOtApplId
+			     , O.CANCEL_YN AS cancelYn
+			     , C.REASON AS cancelReason
+			  FROM WTM_OT_CAN_APPL C
+			  JOIN WTM_APPL A
+			    ON C.APPL_ID = A.APPL_ID
+			  JOIN WTM_OT_APPL O
+			    ON C.OT_APPL_ID = O.OT_APPL_ID
+			 WHERE C.APPL_ID = #{applId}    
+	        ]]>
+    </select> 
 </mapper>

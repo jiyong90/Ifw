@@ -34,6 +34,10 @@ public class WtmApplController {
 	@Qualifier("wtmOtApplService")
 	WtmApplService wtmOtApplService;
 	
+	@Autowired
+	@Qualifier("wtmOtCanApplService")
+	WtmApplService wtmOtCanApplService;
+	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(/*@RequestBody Map<String, Object> paramMap,*/ HttpServletRequest request) throws Exception {
 		
@@ -82,6 +86,8 @@ public class WtmApplController {
 			if(applCd!=null && !"".equals(applCd)) {
 				if("OT".equals(applCd)) {
 					wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+				} else if("OT_CAN".equals(applCd)){
+					wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else {
 					flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				}

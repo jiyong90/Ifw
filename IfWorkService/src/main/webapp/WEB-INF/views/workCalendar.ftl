@@ -893,7 +893,7 @@
 							
 							//근무계획작성
 							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y'
-								&& now!='' && moment(data.sYmd).diff(now)<=0 && moment(now).diff(data.eYmd)<=0) {
+								&& now!='' && (moment(data.sYmd).diff(now)<=0 || moment(now).diff(data.eYmd)<=0)) {
 								
 								$("#workPlanBtn").show();
 							} 

@@ -195,28 +195,33 @@
 	<div class="container-fluid">
 		<p class="page-title">결재 알림</p>
 		<template v-if="apprList.length>0">
-		<div class="row no-gutters notice-card" v-for="appr in apprList">
-			<div class="col-12 col-md-6 col-lg-9" @click="viewAppl(appr)">
-				<div :class="['rounded-circle notice-mark '] + appr.applCd">{{appr.applNm.substr(0,1)}}</div>
+		<div class="row no-gutters notice-card" v-for="a in apprList">
+			<div class="col-12 col-md-6 col-lg-9" @click="viewAppl(a)">
+				<div :class="['rounded-circle notice-mark '] + a.applCd">{{a.applNm.substr(0,1)}}</div>
 				<div class="inner-wrap">
-					<div class="title">{{appr.applNm}}</div>
+					<div class="title">{{a.applNm}}</div>
 					<div class="desc">
 						<span class="sub-title">사용기한</span> 
-						<span>{{moment(appr.sYmd).format('YYYY.MM.DD')}}~{{moment(appr.eYmd).format('YYYY.MM.DD')}}</span>
-						<span class="sub-desc" v-if="appr.reasonNm">{{appr.reasonNm}}</span>
+						<span v-if="a.applCd=='OT'||a.applCd=='OT_CAN'||a.applCd=='SUBS_CHG'">
+							{{moment(a.appl.otSdate).format('YYYY.MM.DD')}}~{{moment(a.appl.otEdate).format('YYYY.MM.DD')}}
+						</span>
+						<span v-else>
+							{{moment(a.appl.sYmd).format('YYYY.MM.DD')}}~{{moment(a.appl.eYmd).format('YYYY.MM.DD')}}
+						</span>
+						<span class="sub-desc" v-if="a.appl.reasonNm">{{a.appl.reasonNm}}</span>
 					</div>
 				</div>
 			</div>
 			<div class="col-12 col-md-2 col-lg-1">
-				<span class="name">{{appr.empNm}}</span>
+				<span class="name">{{a.empNm}}</span>
 			</div>
 			<div class="col-6 col-md-2 col-lg-1 pr-1">
 				<button type="button"
-					class="btn btn-block btn-outline btn-approval cancel" @click="approval(appr,'reject')">반송</button>
+					class="btn btn-block btn-outline btn-approval cancel" @click="approval(a,'reject')">반송</button>
 			</div>
 			<div class="col-6 col-md-2 col-lg-1 pl-1">
 				<button type="button"
-					class="btn btn-block btn-outline btn-approval sign" @click="approval(appr,'apply')">승인</button>
+					class="btn btn-block btn-outline btn-approval sign" @click="approval(a,'apply')">승인</button>
 			</div>
 		</div>
 		</template>
@@ -288,13 +293,22 @@
 				});
 	    	},
 	    	viewAppl: function(appr){
-	    		if(appr.applCd=='OT') {
+	    		/* if(appr.applCd=='OT') {
 	    			//연장근무신청서
 	    			this.getOTAppl(appr.applId);
 	    		} else if(appr.applCd=='SELE_F' || appr.applCd=='SELE_C') {
 	    			//선근제 신청서
 	    			this.getFlexibleSeleAppl(appr.applId);
+	    		} */
+	    		this.appl = appr.appl;
+	    		if(appr.applCd=='OT' || appr.applCd=='OT_CAN') {
+	    			//연장근무신청서
+	    			$("#otAppl").modal("show"); 
+	    		} else if(appr.applCd=='SELE_F' || appr.applCd=='SELE_C') {
+	    			//선근제 신청서
+	    			$("#flexibleAppl_SELE").modal("show");
 	    		}
+	    		
 	    	},
 	    	getOTAppl: function(applId){
          		var $this = this;
@@ -365,16 +379,14 @@
 	    				//$('#apprOpinionModal').modal("hide"); 
 	    				$('#apprOpinionModal .close').click();
 	    				
-	    				console.log(appr);
-	    				
 		    			var param = appr;
 		    			
 		    			if(appr.applCd=='OT') {
-		    				param['ymd'] = moment(appr.sYmd).format('YYYYMMDD');
-		    				param['otSdate'] = moment(appr.sYmd).format('YYYYMMDDHHmm');
-		    				param['otEdate'] = moment(appr.eYmd).format('YYYYMMDDHHmm');
+		    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
+		    				param['otSdate'] = moment(appr.appl.otSdate).format('YYYYMMDDHHmm');
+		    				param['otEdate'] = moment(appr.appl.otEdate).format('YYYYMMDDHHmm');
 		    			}
-	    	    		
+
 	    	    		Util.ajax({
 	    					url: "${rc.getContextPath()}/appl/"+apprStatus,
 	    					type: "POST",
