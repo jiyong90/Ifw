@@ -84,6 +84,12 @@ public interface WtmFlexibleEmpMapper {
 	public Map<String, Object> getSumOtMinute(Map<String, Object> paramMap);
 	
 	/**
+	 * WTM_PROPETIE OPTION_BREAKTIME_INCLUDED_YN_OF_OT_APPL 옵션여부에 따라 휴게시간 계산 여부 Y면 휴게시간을 인정시간으로 본다.즉근무시간 전체가 인정
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> calcMinuteAsBreaktimeOption(Map<String, Object> paramMap);
+	/**
 	 * 휴게시간을 제외한 시간 계산
 	 * @param paramMap { timeCdMgrId : 휴게시간아이디,shm : '2200', ehm : '0200'}
 	 * @return { calcMinute : 22 } 

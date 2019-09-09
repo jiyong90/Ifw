@@ -419,7 +419,7 @@
 			  , O.HOLIDAY_YN AS holidayYn
 		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_OT_APPL O
-		    ON O.OT_SDATE BETWEEN E.SYMD AND E.EYMD
+		    ON F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN E.SYMD AND E.EYMD
 		  JOIN WTM_APPL A
 		    ON O.APPL_ID = A.APPL_ID
 			AND E.TENANT_ID = A.TENANT_ID
@@ -556,6 +556,33 @@
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '') 
 			 ) X
 		]]>	
+  	</select>
+  	
+  	
+  	<select id="calcMinuteAsBreaktimeOption" parameterType="map" resultType="map">
+  		SELECT SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) AS breakMinute
+  		     , CASE WHEN P.INFO_VALUE = 'Y' THEN F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','')
+  		     		ELSE F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) END AS calcMinute 
+  		  FROM WTM_FLEXIBLE_EMP E
+		  JOIN WTM_WORK_CALENDAR C
+		    ON E.TENANT_ID = C.TENANT_ID
+		   AND E.ENTER_CD = C.ENTER_CD
+		   AND E.SABUN = C.SABUN
+		   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+		  JOIN WTM_TIME_CD_MGR T
+		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+		  JOIN WTM_TIME_BREAK_MGR B
+		    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+		  LEFT OUTER JOIN WTM_PROPERTIE P
+		    ON E.TENANT_ID = P.TENANT_ID
+		   AND E.ENTER_CD = P.ENTER_CD
+		   AND P.INFO_KEY = 'OPTION_BREAKTIME_INCLUDED_YN_OF_OT_APPL'
+		 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+		   AND E.TENANT_ID = #{tenantId}
+		   AND E.ENTER_CD = #{enterCd}
+		   AND E.SABUN = #{sabun}
+		   AND C.YMD = #{ymd}
+		   AND B.BREAK_TIME_CD = '01'
   	</select>
   	
   	<select id="calcMinuteExceptBreaktime" parameterType="map" resultType="map">
