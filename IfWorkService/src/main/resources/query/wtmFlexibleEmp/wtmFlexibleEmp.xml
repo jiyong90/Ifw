@@ -87,6 +87,7 @@
 		   AND A.APPL_SABUN = #{sabun}
 			AND O.YMD = #{ymd}
 			AND (R.APPL_ID IS NULL OR R.APPL_ID='')
+			AND A.APPL_STATUS_CD <> '99'
 		UNION ALL
 		SELECT C.TENANT_ID AS tenantId
 		     , C.ENTER_CD AS enterCd
