@@ -978,7 +978,7 @@
 						if($this.subYmds!=null && $this.subYmds.length>0) {
 							$this.subYmds.map(function(s){
 								var subsSdate = moment(s.subsSymd+' '+s.subsShm).format('YYYY-MM-DD HH:mm');
-								var subsEdate = moment(s.subsEymd+' '+s.subsEhm).format('YYYY-MM-DD HH:mm');
+								var subsEdate = moment(s.subsSymd+' '+s.subsEhm).format('YYYY-MM-DD HH:mm');
 								
 								var sub = {
 									subYmd: moment(s.subsSymd).format('YYYYMMDD'),

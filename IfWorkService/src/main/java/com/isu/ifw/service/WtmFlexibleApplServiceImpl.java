@@ -567,7 +567,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 					if("OT".equals(applCd)) { //연장, 휴일연장
 						Map<String, Object> otAppl = otApplMapper.otApplfindByApplId(applId);
 						if(otAppl!=null && otAppl.containsKey("subYn") && otAppl.get("subYn")!=null && "Y".equals(otAppl.get("subYn"))) {
-							otAppl.put("subs", otSubsApplRepo.findByOtApplId(Long.valueOf(otAppl.get("otApplId").toString())));
+							otAppl.put("subs", otApplMapper.otSubsApplfindByOtApplId(Long.valueOf(otAppl.get("otApplId").toString())));
 						}
 						appr.put("appl", otAppl);
 					} else if("OT_CAN".equals(applCd)) { //연장, 휴일연장 취소
