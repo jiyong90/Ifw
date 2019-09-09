@@ -273,7 +273,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		return rp;
 	}
 
-	protected WtmOtCanAppl saveWtmOtCanAppl(Long tenantId, String enterCd, Long applId, Long otApplId, Long workDayResultId, String ymd, String timeTypeCd, Date planSdate, Date planEdate, int planMinute, Date apprSdate, Date apprEdate, int apprMinute,  String reason, String sabun, Long userId) {
+	protected WtmOtCanAppl saveWtmOtCanAppl(Long tenantId, String enterCd, Long applId, Long otApplId, Long workDayResultId, String ymd, String timeTypeCd, Date planSdate, Date planEdate, Integer planMinute, Date apprSdate, Date apprEdate, Integer apprMinute,  String reason, String sabun, Long userId) {
 		 
 		WtmOtCanAppl otAppl = wtmOtCanApplRepo.findByApplId(applId);
 		if(otAppl == null) {
@@ -309,7 +309,10 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 	public ReturnParam validate(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
-		return null;
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		return rp;
 	}
 
 	@Override

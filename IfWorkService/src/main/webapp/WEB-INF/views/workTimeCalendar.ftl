@@ -846,6 +846,7 @@
 			  	         		$("#alertModal").on('hidden.bs.modal',function(){
 			  	         			$("#alertModal").off('hidden.bs.modal');
 			  	         		});
+			  	         		$("#alertModal").modal("show"); 
 							}
 						},
 						error: function(e) {
@@ -1044,6 +1045,7 @@
 									$("#alertModal").off('hidden.bs.modal');
 									$("#cancelOpinionModal").modal("hide");
 									$("#overtimeApplDetail").modal("hide");
+									location.reload();
 								});
 							} else {
 								$("#alertText").html(data.message);

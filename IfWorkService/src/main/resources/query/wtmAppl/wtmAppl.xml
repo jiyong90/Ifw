@@ -93,7 +93,7 @@
     
     <select id="getApprList" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT L.APPL_ID AS applId
+        	SELECT L.APPL_ID AS applId
 			     , L.APPR_SEQ AS apprSeq
 			     , L.APPR_SABUN AS apprSabun
 			     , L.APPR_DATE AS apprDate
@@ -108,49 +108,9 @@
 			     , A.APPL_IN_SABUN AS applInSabun
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
-			     , FA.FLEXIBLE_APPL_ID AS flexibleApplId
-			     , FA.SYMD AS sYmd
-			     , FA.EYMD AS eYmd
-			     , NULL AS reasonCd
-			     , NULL AS reasonNm
-			     , FA.REASON AS reason
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_LINE L
 			    ON L.APPL_ID = A.APPL_ID
-			  JOIN WTM_FLEXIBLE_APPL FA
-			    ON A.APPL_ID = FA.APPL_ID
-			 WHERE A.TENANT_ID = #{tenantId}
-			   AND A.ENTER_CD = #{enterCd}
-			   AND APPR_SABUN = #{empNo}
-			   AND L.APPR_STATUS_CD = '10'
-			   AND A.APPL_STATUS_CD IN ('21','31')
-			UNION ALL
-			SELECT L.APPL_ID AS applId
-			     , L.APPR_SEQ AS apprSeq
-			     , L.APPR_SABUN AS apprSabun
-			     , L.APPR_DATE AS apprDate
-			     , L.APPR_STATUS_CD AS apprStatusCd
-			     , L.APPR_TYPE_CD AS apprTypeCd
-			     , L.APPR_OPINION AS apprOpinion
-			     , A.APPL_CD AS applCd
-			     , (SELECT APPL_NM FROM WTM_APPL_CODE WHERE TENANT_ID = A.TENANT_ID AND ENTER_CD = A.ENTER_CD AND APPL_CD = A.APPL_CD) AS applNm
-			     , A.APPL_SABUN AS applSabun
-			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
-			     , A.APPL_YMD AS applYmd
-			     , A.APPL_IN_SABUN AS applInSabun
-			     , A.APPL_STATUS_CD AS applStatusCd
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
-			     , OA.OT_APPL_ID AS otApplId
-			     , OA.OT_SDATE AS sDate
-			     , OA.OT_EDATE AS eDate
-			     , OA.REASON_CD AS reasonCd
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', OA.REASON_CD, A.APPL_YMD) AS reasonNm
-			     , OA.REASON AS reason
-			  FROM WTM_APPL A
-			  JOIN WTM_APPL_LINE L
-			    ON L.APPL_ID = A.APPL_ID
-			  JOIN WTM_OT_APPL OA
-			    ON A.APPL_ID = OA.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
 			   AND APPR_SABUN = #{empNo}

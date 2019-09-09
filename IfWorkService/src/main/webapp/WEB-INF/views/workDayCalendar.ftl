@@ -246,7 +246,7 @@
   		  	         		if(d.hasOwnProperty("workDaysOpt") && d.workDaysOpt!=null && d.workDaysOpt!=undefined && d.workDaysOpt!=''){
   		  	         			workDaysOpt = JSON.parse(d.workDaysOpt);
   		  	         		}
-  	         			
+  		  		    		
 	  	  		    		if( moment(sYmd).diff(i.startStr)<=0 && moment(i.startStr).diff(eYmd)<=0
 									&& moment(sYmd).diff(i.endStr)<=0 && moment(i.endStr).diff(eYmd)<=0
 		    						&& moment($this.today).diff(i.startStr)<0 && moment($this.today).diff(i.endStr)<0
@@ -260,6 +260,9 @@
 	  	  		    			} 
 	  	  		    		}
   	         			});
+  	         			
+  	         			console.log($this.empHolidays);
+  	         			console.log(editYn);
   	         			
   	         			if(editYn) {
   	         				$("#startTime").prop("disabled", false);
@@ -636,11 +639,11 @@
   		    		    
 	    		    	//근무일 기준 근무시간과 코어시간 포함하도록 체크
   		    			if(	(workStime==''&&workEtime=='' || moment(workStime).diff(sTime)<=0 && moment(eTime).diff(workEtime)<=0 )
-  		    					&& (coreStime==''&&coreEtime || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0)) {
+  		    					&& (coreStime==''&&coreEtime=='' || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0)) {
   		    		    
 	  		    			var d = new Date(sDate);
 	  		    			while(moment(d).diff(eDate, 'days')<=0) {
-	  		    				if(workDaysOpt[d.getDay()+1]) { //근무요일이고, 신청기간이면
+	  		    				if(workDaysOpt[d.getDay()+1] && $this.empHolidays.indexOf(moment(d).format("YYYY-MM-DD"))==-1) { //근무요일이고, 신청기간이면
 		  		    				if($this.dayResult.hasOwnProperty(moment(d).format("YYYYMMDD"))) {
 		  		    					$this.dayResult[moment(d).format("YYYYMMDD")].shm = moment(sDate+' '+$("#startTime").val()).format('HHmm');
 		  		    					$this.dayResult[moment(d).format("YYYYMMDD")].ehm = moment(sDate+' '+$("#endTime").val()).format('HHmm');

@@ -54,9 +54,9 @@ public class WtmWorkDayResult {
 	private Date apprEdate;
 	
 	@Column(name="PLAN_MINUTE")
-	private int planMinute; 
+	private Integer planMinute; 
 	@Column(name="APPR_MINUTE")
-	private int apprMinute;
+	private Integer apprMinute;
 	
 	@Column(name="WORK_YN")
 	private String workYn;
@@ -140,16 +140,16 @@ public class WtmWorkDayResult {
 	public void setApprEdate(Date apprEdate) {
 		this.apprEdate = apprEdate;
 	}
-	public int getPlanMinute() {
+	public Integer getPlanMinute() {
 		return planMinute;
 	}
-	public void setPlanMinute(int planMinute) {
+	public void setPlanMinute(Integer planMinute) {
 		this.planMinute = planMinute;
 	}
-	public int getApprMinute() {
+	public Integer getApprMinute() {
 		return apprMinute;
 	}
-	public void setApprMinute(int apprMinute) {
+	public void setApprMinute(Integer apprMinute) {
 		this.apprMinute = apprMinute;
 	}
 	public String getWorkYn() {

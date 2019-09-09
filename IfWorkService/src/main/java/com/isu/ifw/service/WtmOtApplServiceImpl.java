@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
@@ -431,6 +432,13 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		paramMap.put("edate", ed);
 		Map<String, Object> resultMap = wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
 		//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+		System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
+		System.out.println("resultMap : " + mapper.writeValueAsString(resultMap));
+		}catch(Exception e) {
+			
+		}
 		
 		int workCnt = Integer.parseInt(resultMap.get("workCnt").toString());
 		if(workCnt > 0) {
@@ -683,9 +691,13 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			
 			
 			Map<String, Object> resultMap = wtmFlexibleEmpMapper.getTotalApprMinute(paramMap); //totalApprMinute
-			resultMap.putAll(wtmFlexibleEmpMapper.getTotalCoretime(paramMap)); //coreHm
+			Map<String, Object> resultCoreMap = wtmFlexibleEmpMapper.getTotalCoretime(paramMap); //coreHm
 			int apprMinute = Integer.parseInt(resultMap.get("totalApprMinute").toString());
-			int coreMinute = Integer.parseInt(resultMap.get("coreHm").toString());
+			int coreMinute = 0;
+			if(resultCoreMap != null) {
+				coreMinute = Integer.parseInt(resultCoreMap.get("coreHm").toString());
+			}
+			
 			//근무제 기간 내 총 소정근로 시간 > 연장근무신청일 포함 이전일의 인정소정근로시간(인정소정근로시간이 없을 경우 계획소정근로 시간) + 연장근무신청일 이후의 코어타임 시간			
 			if(workMinute > apprMinute + coreMinute) {
 				int baseWorkMinute = workMinute - apprMinute - coreMinute;
