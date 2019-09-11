@@ -32,16 +32,13 @@ import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.repository.WtmTokenRepository;
 import com.isu.ifw.service.LoginService;
 
-//@Component("accessTokenFilter") 
+@Component("accessTokenFilter") 
 public class AccessTokenFilter implements Filter {
 
 	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
 
-	static String PARAM_NAME_USER_TOKEN = "ACCESS_TOKEN";
+	static String PARAM_NAME_USER_TOKEN = "accessToken";
 	String freePassPath = null;
-	
-	@Value("${path.hr}")
-	private String pathHr;
 	
 	@Autowired
 	LoginService loginService;
@@ -78,58 +75,65 @@ public class AccessTokenFilter implements Filter {
 			}
 			
 			String token = null;
+			token = request.getParameter(PARAM_NAME_USER_TOKEN);
+			
 			Cookie[] cookies = ((HttpServletRequest)request).getCookies();
 			
-			if(cookies != null){
-				for(int i=0 ; i< cookies.length ; i++){
-					String name = cookies[i].getName();
-					String value = cookies[i].getValue();
-					if(PARAM_NAME_USER_TOKEN.equalsIgnoreCase(name)){
-						System.out.println("session validate filter access token : "+value);
-						token = value;
-						break;
+			if(token == null) {
+				if(cookies != null){
+					for(int i=0 ; i< cookies.length ; i++){
+						String name = cookies[i].getName();
+						String value = cookies[i].getValue();
+						if(PARAM_NAME_USER_TOKEN.equalsIgnoreCase(name)){
+							System.out.println("session validate filter access token : "+value);
+							token = value;
+							break;
+						}
 					}
 				}
+			} else {
+				Cookie cookie = null;
+				cookie = new Cookie(PARAM_NAME_USER_TOKEN, token);
+				cookie.setPath("/");
+				((HttpServletResponse)response).addCookie(cookie);
 			}
-			
-			if(token == null) {
-				((HttpServletResponse) response).sendRedirect(pathHr);
+
+			WtmToken wtmToken = loginService.getAccessToken(token);
+			if(wtmToken == null) {
+				logger.debug("DB에 토큰 없음 " +  token);
+				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return;
 			} else {
-				WtmToken wtmToken = loginService.getAccessToken(token);
-				if(wtmToken == null) {
-					logger.debug("DB에 토큰 없음" + pathHr + "로 redirect", token);
-					((HttpServletResponse) response).sendRedirect(pathHr);
-					loginService.removeTokenCookie(response, PARAM_NAME_USER_TOKEN);
-					return;
-				} else {
-					Date expiresAt = wtmToken.getExpiresAt();
-					
-					Calendar cal = Calendar.getInstance();
-		 	        Date date = cal.getTime(); 
-		 	         
-		 	        int compare = date.compareTo(expiresAt);
-					if(compare >= 0) {
-						System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxx 토큰만료");
-						wtmToken = loginService.refreshAccessToken(response, wtmToken);
-						if(wtmToken == null) {
-							//hr세선 만료일 경우 토큰 갱신 불가
-							((HttpServletResponse) response).sendRedirect(pathHr);
-							return;
-						}
-					} 
-					request.setAttribute("tenantId", wtmToken.getTenantId());
-					Map<String, Object> sessionData = new HashMap();
-					sessionData.put("enterCd", wtmToken.getEnterCd());
-					sessionData.put("empNo", wtmToken.getSabun());
-					sessionData.put("userId", wtmToken.getUserId());
-					
-					request.setAttribute("sessionData", sessionData);
-				}
+				Date expiresAt = wtmToken.getExpiresAt();
 				
+				Calendar cal = Calendar.getInstance();
+	 	        Date date = cal.getTime(); 
+	 	         
+	 	        int compare = date.compareTo(expiresAt);
+				if(compare >= 0) {
+					System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxx 토큰만료");
+					wtmToken = loginService.refreshAccessToken(response, wtmToken);
+					if(wtmToken == null) {
+						//hr세선 만료일 경우 토큰 갱신 불가
+						((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+						return;
+					}
+					Cookie cookie = null;
+					cookie = new Cookie(PARAM_NAME_USER_TOKEN, wtmToken.getAccessToken());
+					cookie.setPath("/");
+					((HttpServletResponse)response).addCookie(cookie);
+				} 
+				request.setAttribute("tenantId", wtmToken.getTenantId());
+				Map<String, Object> sessionData = new HashMap();
+				sessionData.put("enterCd", wtmToken.getEnterCd());
+				sessionData.put("empNo", wtmToken.getSabun());
+				sessionData.put("userId", wtmToken.getUserId());
+				
+				request.setAttribute("sessionData", sessionData);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return;
 		}
 		chain.doFilter(request, response);
 	}
