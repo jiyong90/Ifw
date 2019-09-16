@@ -259,9 +259,32 @@ public class ViewController {
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
-		if(viewPage.equals("workCalendar") || viewPage.equals("workDayCalendar")
-				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar"))
+		
+		if("workCalendar".equals(viewPage)){
+			ObjectMapper mapper = new ObjectMapper();
+			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
+				String workday = request.getParameter("date");
+				mv.addObject("workday", workday); 
+			}
+			
+			if(request.getParameter("calendarType")!=null) {
+				String calendarType = request.getParameter("calendarType").toString();
+				mv.addObject("calendar", "work"+ calendarType +"Calendar");
+				
+				if("Time".equals(calendarType)) {
+					//연장근무 또는 휴일근무 신청 시 사유
+					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+					mv.addObject("reasons", mapper.writeValueAsString(reasons));
+				}
+			}
+			
+			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
+		}
+		else if(viewPage.equals("workDayCalendar")
+				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar")) {
+		
 			mv.addObject("pageName", viewPage);
+		}
 		else
 			mv.addObject("pageName", "mgr/"+viewPage);
 		
