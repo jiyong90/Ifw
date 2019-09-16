@@ -277,7 +277,7 @@ public class ViewController {
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
 				}
 			}
-			
+			mv.addObject("pageName", viewPage);
 			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		}
 		else if(viewPage.equals("workDayCalendar")
