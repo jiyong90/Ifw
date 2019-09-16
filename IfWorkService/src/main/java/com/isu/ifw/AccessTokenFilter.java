@@ -98,6 +98,7 @@ public class AccessTokenFilter implements Filter {
 				((HttpServletResponse)response).addCookie(cookie);
 			}
 
+			System.out.println("xxxxxxxxxxxxx token : " + token);
 			WtmToken wtmToken = loginService.getAccessToken(token);
 			if(wtmToken == null) {
 				logger.debug("DB에 토큰 없음 " +  token);
