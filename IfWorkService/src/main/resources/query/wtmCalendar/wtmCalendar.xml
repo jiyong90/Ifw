@@ -78,6 +78,7 @@
 			JOIN WTM_FLEXIBLE_STD_MGR E
 				ON E.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
 			WHERE A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '') 
+				AND #{tenantId} = A.TENANT_ID AND A.ENTER_CD = #{enterCd}
 		]]>
 		<if test="searchKeyword!=null and !searchKeyword.equals('')">
 			AND (A.SABUN LIKE CONCAT('%', #{searchKeyword}, '%') OR D.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%'))

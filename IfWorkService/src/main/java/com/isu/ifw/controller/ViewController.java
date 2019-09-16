@@ -212,7 +212,6 @@ public class ViewController {
 		mv.addObject("today", today);
 		
 		return mv;
-		
 	}
 	
 	protected ModelAndView workCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, Long userId, HttpServletRequest request) {
@@ -246,11 +245,10 @@ public class ViewController {
 		
 		return mv;
 	}
-	
-	//TEST용
-	@RequestMapping(value = "/hr/{tsId}/views/{viewPage}", method = RequestMethod.GET)
-	public ModelAndView testviews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
-		ModelAndView mv = new ModelAndView("imsitemplate");
+
+	@RequestMapping(value = "/hr/{tsId}/views/{viewPage}", method = RequestMethod.POST)
+	public ModelAndView hrViews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
+		ModelAndView mv = new ModelAndView("hrtemplate");
 		
 		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
@@ -269,6 +267,20 @@ public class ViewController {
 		mv.addObject("today", today);
 		
 		return mv;
+	}
+
+
+	@RequestMapping(value = "/hr/{tsId}/view/{viewPage}", method = RequestMethod.GET)
+	public ModelAndView infoViews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
+		ModelAndView mv = new ModelAndView("hrtemplate");
+		mv.addObject("tsId", tsId);
+		mv.addObject("pageName", viewPage);
 		
+		Calendar date = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date.getTime());
+		mv.addObject("today", today);
+		
+		return mv;
 	}
 }

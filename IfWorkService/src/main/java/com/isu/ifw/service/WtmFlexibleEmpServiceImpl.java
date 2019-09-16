@@ -525,27 +525,46 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	 */
 	@Override
 	public void saveEmpDayResults(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) throws Exception {
-		try {
-			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
-				List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("mergeRows");
-				List<Map<String, Object>> day = new ArrayList();
-				if(iList != null && iList.size() > 0) {
-					for(Map<String, Object> l : iList) {
-						if(l.get("timeTypeCd").equals("BASE")) {
-							Map<String, Object> temp = new HashMap();
-							Map<String, Object> param = new HashMap();
-							param.put("dayResult", temp);
-							temp.put("shm", l.get("planSdate"));
-							temp.put("ehm", l.get("planEdate"));
-								
-							this.save(Long.valueOf(l.get("flexibleEmpId").toString()), param, userId);
-						}
+		if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
+			List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("mergeRows");
+			List<Map<String, Object>> day = new ArrayList();
+			if(iList != null && iList.size() > 0) {
+				for(Map<String, Object> l : iList) {
+					
+					l.put("shm", l.get("planSdate").toString().substring(8,12));
+					l.put("ehm", l.get("planEdate").toString().substring(8,12));
+
+					Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(l);
+					l.put("planMinute", (Integer.parseInt(planMinuteMap.get("calcMinute")+"")));
+					l.put("updateId", userId);
+					l.put("tenantId", tenantId);
+					l.put("enterCd", enterCd);
+					
+					WtmWorkDayResult result = new WtmWorkDayResult();
+					if(l.get("workDayResultId") != "") {
+						result = workDayResultRepo.findByWorkDayResultId(Long.parseLong(l.get("workDayResultId").toString()));
+					} else {
+						result.setEnterCd(enterCd);
+						result.setSabun(l.get("sabun").toString());
+						result.setTenantId(tenantId);
+						result.setTimeTypeCd("BASE");
+						result.setYmd(l.get("ymd").toString());
+					}
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+					
+					result.setPlanSdate(sdf.parse(l.get("planSdate").toString()));
+					result.setPlanEdate(sdf.parse(l.get("planEdate").toString()));
+					result.setUpdateId(userId);	
+				
+					
+					workDayResultRepo.save(result);
+					
+					Map<String, Object> result2 = flexEmpMapper.checkBaseWorktime(Long.parseLong(l.get("flexibleEmpId").toString()));
+					if(result2!=null && result2.get("isValid")!=null && result2.get("isValid").equals("0")) {
+						throw new RuntimeException(result2.get("totalWorktime").toString() + "시간의 소정근로시간을 넘을 수 없습니다.");
 					}
 				}
 			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
 		}
 	}	
 	

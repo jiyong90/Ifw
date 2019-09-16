@@ -394,7 +394,9 @@ public class IfwLoginController {
 		
 	@RequestMapping(value = "/certificate/token", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	public void loginForToken(HttpServletRequest request, HttpServletResponse response, @RequestBody(required = true) Map<String, String> body) {
-
+	
+		ReturnParam rp =  new ReturnParam();
+		rp.setSuccess("");
 		try {
 			WtmToken token = new WtmToken();
 			token.setAccessToken(body.get("accessToken"));
@@ -409,9 +411,8 @@ public class IfwLoginController {
  	        Date date = cal.getTime(); 
 
  	        token.setExpiresAt(date);
- 	        
- 	        loginService.creatAccessToken(response, token);
-		
+ 	       
+ 	        loginService.creatAccessToken(request, response, token);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
