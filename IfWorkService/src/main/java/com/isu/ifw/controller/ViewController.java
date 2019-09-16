@@ -256,9 +256,17 @@ public class ViewController {
 		String empNo = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
+		Calendar date = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date.getTime());
+		mv.addObject("today", today);
+
+		
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
+		mv.addObject("loginId", userId);
+		mv.addObject("pageName", viewPage);
 		
 		if("workCalendar".equals(viewPage)){
 			ObjectMapper mapper = new ObjectMapper();
@@ -287,11 +295,6 @@ public class ViewController {
 		}
 		else
 			mv.addObject("pageName", "mgr/"+viewPage);
-		
-		Calendar date = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String today = sdf.format(date.getTime());
-		mv.addObject("today", today);
 		
 		return mv;
 	}
