@@ -138,7 +138,7 @@ public class WtmCodeController {
 		MDC.put("type", "C");
 		logger.debug("getCodeGrpList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 		
-		System.out.println("paramMap : " + paramMap.toString());
+		System.out.println("paramMap : " + paramMap.toString() + ", " + tenantId + ", " + enterCd);
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> codeGrpList = null;
