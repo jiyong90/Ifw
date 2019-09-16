@@ -304,16 +304,24 @@ public class ViewController {
 	public ModelAndView infoViews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("hrtemplate");
 		
+		Calendar date = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date.getTime());
+		mv.addObject("today", today);
+
+		
+		if(viewPage.equals("info")) {
+			mv.addObject("tsId", tsId);
+			mv.addObject("pageName", viewPage);
+			mv.addObject("pageName", viewPage);
+			return mv;
+		}
 		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
-		Calendar date = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String today = sdf.format(date.getTime());
-		mv.addObject("today", today);
 
 		
 		mv.addObject("tsId", tsId);

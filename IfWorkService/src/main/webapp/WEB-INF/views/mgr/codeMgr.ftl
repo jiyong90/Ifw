@@ -161,17 +161,17 @@
 	}
 
 	// 조회 후 에러 메시지
+
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
-			if (Msg != "") {
-				alert(Msg);
+			if (StCode == 401) {
+	       		location.href='${rc.getContextPath()}/hr/${tsId}/views/info';
 			}
-
-			sheetResize();
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
+	
 
 	// 저장 후 메시지
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
@@ -194,13 +194,11 @@
 	// 조회 후 에러 메시지
 	function sheet2_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
-			if (Msg != "") {
-				alert(Msg);
+			if (StCode == 401) {
+	       		location.href='${rc.getContextPath()}/hr/${tsId}/views/info';
 			}
-
-			sheetResize();
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
