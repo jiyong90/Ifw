@@ -318,16 +318,14 @@ public class WtmFlexibleEmpController {
 		convertMap.put("enterCd", enterCd);
 		convertMap.put("tenantId", tenantId);
 		convertMap.put("userId", userId);
-
-		rp.setSuccess("");
 		
-		//기본근무의 경우 코어시간 확인
-		//연장근무의경우 전체 소정근로시간 오버 안되는지 확인
+		rp.setSuccess("");
 		
 		try {
 			flexibleEmpService.saveEmpDayResults(tenantId, enterCd, userId, convertMap);
 		} catch(Exception e) {
 			e.printStackTrace();
+			rp.setFail("저장에 실패하였습니다.");
 		}
 		
 		return rp;

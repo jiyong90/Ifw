@@ -293,3 +293,6 @@ public class WtmInoutController {
 		return rp;
 	}
 }
+
+//출근, 퇴근 정보 전부 있으면 > calcApprDayInfo
+//퇴근 취소 시 타각 데이터 지우고 인정시간도 지워주기

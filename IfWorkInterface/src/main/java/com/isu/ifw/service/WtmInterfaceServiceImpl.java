@@ -1,11 +1,5 @@
 package com.isu.ifw.service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,4 +28,75 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         }
 		return ifCodeList;
 	}
+	
+	@Override
+	public List<Map<String, Object>> getHolidayIfResult(String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getHolidayIfResult");
+		List<Map<String, Object>> ifList = null;
+        try {
+        	// if 데이터 조회
+        	ifList = wtmInterfaceMapper.getHoliday(lastDataTime);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return ifList;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getGntCodeIfResult(String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getTaaCodeIfResult");
+		List<Map<String, Object>> ifList = null;
+        try {
+        	// if 데이터 조회
+        	ifList = wtmInterfaceMapper.getGnt(lastDataTime);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return ifList;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getOrgCodeIfResult(String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getOrgCodeIfResult");
+		List<Map<String, Object>> ifList = null;
+        try {
+        	// if 데이터 조회
+        	ifList = wtmInterfaceMapper.getOrg(lastDataTime);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return ifList;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getOrgMapCodeIfResult(String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getOrgMapCodeIfResult");
+		List<Map<String, Object>> ifList = null;
+        try {
+        	// if 데이터 조회
+        	ifList = wtmInterfaceMapper.getOrgMap(lastDataTime);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return ifList;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getEmpHisIfResult(String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getEmpHisIfResult");
+		List<Map<String, Object>> ifList = null;
+        try {
+        	// if 데이터 조회
+        	ifList = wtmInterfaceMapper.getEmp(lastDataTime);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return ifList;
+	}
+	
 }

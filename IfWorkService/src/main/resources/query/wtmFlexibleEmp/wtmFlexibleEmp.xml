@@ -736,10 +736,13 @@
         ]]>
     </select>
     
-  	<select id="getWorkDayResultByCalendarId" parameterType="map" resultType="hashmap" >
+
+    <select id="getWorkDayResultByCalendarId" parameterType="map" resultType="hashmap" >
   	 	<![CDATA[
 	    	SELECT C.WORK_DAY_RESULT_ID as workDayResultId
 	    			, C.APPL_ID as applId
+	    			, C.YMD as ymd
+	    			, C.SABUN as sabun
 	    			, C.TIME_TYPE_CD as timeTypeCd
 	    			, C.TAA_CD as taaCd
 	    			, DATE_FORMAT(C.PLAN_SDATE, '%Y%m%d%H%i') as planSdate
