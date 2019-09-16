@@ -259,7 +259,11 @@ public class ViewController {
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
-		mv.addObject("pageName", "mgr/"+viewPage);
+		if(viewPage.equals("workCalendar") || viewPage.equals("workDayCalendar")
+				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar"))
+			mv.addObject("pageName", viewPage);
+		else
+			mv.addObject("pageName", "mgr/"+viewPage);
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
