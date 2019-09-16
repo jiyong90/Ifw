@@ -15,4 +15,56 @@
 			 ORDER BY ENTER_CD, GRCODE_CD
         ]]>
     </select>
+    
+    <select id="getHoliday" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, LOCATION_CD, YY||MM||DD AS YMD, HOLIDAY_NM, FESTIVE_YN, PAY_YN
+			  FROM V_FTM_HOLIDAY
+			 WHERE ENTER_CD = 'KABANG'
+			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getGnt" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, GNT_CD, GNT_NM, GNT_GUBUN_CD, HOL_INCL_YN, REQUEST_USE_TYPE, WORK_YN
+			  FROM TTIM014
+			 WHERE ENTER_CD = 'KABANG'
+			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getOrg" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, ORG_CD, ORG_NM, SDATE, EDATE, MEMO
+			  FROM V_IF_ORG_CODE
+			 WHERE ENTER_CD = 'KABANG'
+			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getOrgMap" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, MAP_TYPE_CD, MAP_CD, MAP_NM, SDATE, EDATE, NOTE
+			  FROM V_IF_ORG_MAP_CODE
+			 WHERE ENTER_CD = 'KABANG'
+			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD, MAP_TYPE_CD
+        ]]>
+    </select>
+    
+    <select id="getEmp" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, SYMD, STATUS_CD, ORG_CD, BUSINESS_PLACE_CD
+			     , DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, ORG_PATH, LEADER_YN
+			  FROM V_IF_WTM_EMPHIS
+			 WHERE ENTER_CD = 'KABANG'
+			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
+			   AND SABUN IN ('201601001', '201604004','201611006')
+			 ORDER BY ENTER_CD, SABUN, SYMD
+        ]]>
+    </select>
 </mapper>

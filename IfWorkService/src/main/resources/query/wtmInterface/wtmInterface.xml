@@ -4,13 +4,30 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmInterfaceMapper">
+
+	<select id="getIfLastDate" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT DATE_FORMAT(MAX(UPDATE_DATE), '%Y%m%d%H%i%s') AS LAST_DATE
+			  FROM WTM_IF_HIS
+			 WHERE TENANT_ID = #{tenantId}
+			   AND IF_ITEM = #{ifType}
+			   AND IF_STATUS = 'OK'
+        ]]>
+    </select>
+    <select id="getIfNowDate" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT DATE_FORMAT(NOW(), '%Y%m%d%H%i%s') AS IF_DATE
+			  FROM DUAL
+        ]]>
+    </select>
+    
 	<insert id="insertIfHis" parameterType="hashmap">
 		INSERT INTO WTM_IF_HIS
 		(
 			  TENANT_ID
 			, IF_STATUS
 			, IF_ITEM 
-			, IF_END_DATE 
+			, IF_SEARCH_DATE 
 			, IF_MSG 
 			, UPDATE_DATE
 		) VALUES (
@@ -19,7 +36,7 @@
 			, #{ifItem}
 			, F_WTM_TO_DATE(#{ifEndDate}, '%Y%m%d%H%i%s')
 			, #{ifMsg}
-			, NOW()
+			, F_WTM_TO_DATE(#{updateDate}, '%Y%m%d%H%i%s')
 		)
 	</insert>
 	
@@ -214,7 +231,7 @@
 	</update>
 	
 	<insert id="insertEmpHisTemp" parameterType="hashmap">
-		INSERT INTO WTM_EMP_TEMP
+		INSERT INTO WTM_IF_EMP_TEMP
 		(
 			  TENANT_ID
 			, ENTER_CD
@@ -260,7 +277,21 @@
 			)
 		</foreach>
 	</insert>
-	<update id="setEmpHis" statementType="CALLABLE"  parameterType="map"  >
-  		{ call P_WTM_IF_EMP_HIS ( #{tenantId} ) }
-  	</update>
+	
+	<select id="setEmpHis" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_IF_EMP_HIS( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{nowDataTime, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}) }
+  	</select>
+  	
+  	<select id="getEmpBaseList" parameterType="map" resultType="hashmap">
+		SELECT TENANT_ID AS tenantId, ENTER_CD AS enterCd, SABUN AS sabun, 0 as userId 
+		  FROM WTM_IF_EMP_MSG
+		 WHERE TENANT_ID = #{tenantId}
+		   AND DATE_FORMAT(UPDATE_DATE, '%Y%m%d%H%i%s') BETWEEN #{ifEndDate} AND #{updateDate}
+		   AND CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
+		   AND NEW_VALUE IS NOT NULL
+		 ORDER BY ENTER_CD, SABUN
+    </select>
 </mapper>
