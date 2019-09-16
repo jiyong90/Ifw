@@ -274,16 +274,16 @@ public class ViewController {
 				String workday = request.getParameter("date");
 				mv.addObject("workday", workday); 
 			}
-			
+			String calendarType = "Month";
 			if(request.getParameter("calendarType")!=null) {
-				String calendarType = request.getParameter("calendarType").toString();
-				mv.addObject("calendar", "work"+ calendarType +"Calendar");
-				
-				if("Time".equals(calendarType)) {
-					//연장근무 또는 휴일근무 신청 시 사유
-					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
-					mv.addObject("reasons", mapper.writeValueAsString(reasons));
-				}
+				calendarType = request.getParameter("calendarType").toString();
+			} 
+			mv.addObject("calendar", "work"+ calendarType +"Calendar");
+			
+			if("Time".equals(calendarType)) {
+				//연장근무 또는 휴일근무 신청 시 사유
+				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+				mv.addObject("reasons", mapper.writeValueAsString(reasons));
 			}
 			mv.addObject("pageName", viewPage);
 			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
