@@ -560,8 +560,7 @@
   	
   	
   	<select id="calcMinuteAsBreaktimeOption" parameterType="map" resultType="map">
-  		SELECT SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) AS breakMinute
-  		     , CASE WHEN P.INFO_VALUE = 'Y' THEN F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','')
+  		SELECT CASE WHEN P.INFO_VALUE = 'Y' THEN F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','')
   		     		ELSE F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) END AS calcMinute 
   		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_WORK_CALENDAR C
@@ -624,7 +623,7 @@
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
-			   AND (F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) BETWEEN #{sdate} AND #{edate} OR F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE)  BETWEEN #{sdate} AND #{edate} )
+			   AND ((F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) > #{sdate} AND F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) < #{edate} ) OR ( F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE) > #{sdate} AND  F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE) < #{edate} ))
 			 UNION ALL
 			SELECT 2 
 			  FROM WTM_APPL A
@@ -635,7 +634,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND (O.OT_SDATE BETWEEN #{sdate} AND #{edate} OR O.OT_EDATE BETWEEN #{sdate} AND #{edate})
+			   AND ((O.OT_SDATE > #{sdate} AND O.OT_SDATE < #{edate}) OR (O.OT_EDATE > #{sdate} AND O.OT_EDATE < #{edate}))
 			) X
 		]]>	
   	</select>
@@ -790,4 +789,8 @@
 		   AND IF(#{searchWorkTypeCd}='',1=1,(B.WORK_TYPE_CD = #{searchWorkTypeCd}))
   		]]>
   	</select>
+  	
+    <update id="createWorkTermBySabunAndSymdAndEymd" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_FLEXIBLE_EMP_WORKTERM_CREATE( #{tenantId}, #{enterCd}, #{sabun}, #{symd}, #{eymd}, #{pId} ) }
+  	</update>
 </mapper>
