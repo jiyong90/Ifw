@@ -1,5 +1,9 @@
 package com.isu.ifw.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -8,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.isu.ifw.service.WtmInterfaceService;
 
@@ -17,13 +22,20 @@ public class WtmInterfaceController {
 	
 	@Autowired
 	private WtmInterfaceService WtmInterfaceService;
-
+	
+	private RestTemplate restTemplate;
+	
+	@Autowired
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+	
 	@RequestMapping(value = "/code",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void codeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void getcodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공통코드
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		String lastDataTime = "20080101023000";	// 최종 data 전달data시간
-		WtmInterfaceService.getCodeIfResult(tenantId, lastDataTime); //Servie 호출
+		WtmInterfaceService.getCodeIfResult(tenantId);
+		
 		return;
 	}
 	
@@ -31,8 +43,7 @@ public class WtmInterfaceController {
 	public void holidayIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공휴일정보
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		String lastDataTime = "20190817023000";	// 최종 data 전달data시간
-		WtmInterfaceService.getHolidayIfResult(tenantId, lastDataTime); //Servie 호출
+		WtmInterfaceService.getHolidayIfResult(tenantId); //Servie 호출
 		return;
 	}
 	
@@ -40,8 +51,7 @@ public class WtmInterfaceController {
 	public void taaCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 근태코드정보
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		String lastDataTime = "20080101023000";	// 최종 data 전달data시간
-		WtmInterfaceService.getTaaCodeIfResult(tenantId, lastDataTime); //Servie 호출
+		WtmInterfaceService.getTaaCodeIfResult(tenantId); //Servie 호출
 		return;
 	}
 	
@@ -49,8 +59,7 @@ public class WtmInterfaceController {
 	public void orgCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 조직코드정보
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		String lastDataTime = "20080101023000";	// 최종 data 전달data시간
-		WtmInterfaceService.getOrgCodeIfResult(tenantId, lastDataTime); //Servie 호출
+		WtmInterfaceService.getOrgCodeIfResult(tenantId); //Servie 호출
 		return;
 	}
 	
@@ -58,8 +67,7 @@ public class WtmInterfaceController {
 	public void orgMapCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사업장, 근무조 정보
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		String lastDataTime = "20080101023000";	// 최종 data 전달data시간
-		WtmInterfaceService.getOrgMapCodeIfResult(tenantId, lastDataTime); //Servie 호출
+		WtmInterfaceService.getOrgMapCodeIfResult(tenantId); //Servie 호출
 		return;
 	}
 	
@@ -67,8 +75,7 @@ public class WtmInterfaceController {
 	public void empHisIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		String lastDataTime = "20170701023000";	// 최종 data 전달data시간
-		WtmInterfaceService.getEmpHisIfResult(tenantId, lastDataTime); //Servie 호출;
+		WtmInterfaceService.getEmpHisIfResult(tenantId); //사원 변경정보 저장 Servie 호출
 		return ;
 	}
 }

@@ -20,13 +20,6 @@
 		<java.version>1.8</java.version>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>thirdparty</id>
-			<url>http://hatch.pearbranch.com:8081/content/repositories/thirdparty</url>
-		</repository> 
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -114,24 +107,6 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-		</dependency>
-
-
-		<!-- isu -->
-		<dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-		<dependency>
-            <groupId>com.isu.commons</groupId>
-            <artifactId>isu-commons-auth</artifactId>
-            <version>3.0.5.D5</version>
-        </dependency> 
-		<dependency>
-			<groupId>com.isu.commons</groupId>
-			<artifactId>isu-commons-option</artifactId>
-			<version>3.0.3</version>
 		</dependency>
 
 
