@@ -47,80 +47,84 @@
 									</ul>
 								</div>
 								<div id="view_sele">
-									<table>
-										<tr>
-											<td colspan="2">
-												<span class="label">근무가능시각 </span>
-												<input type="text" id="workShm" name="workShm" class="date2 required" data-toggle="datetimepicker" data-target="#workShm" autocomplete="off"/>
-												~
-												<input type="text" id="workEhm" name="workEhm" class="date2 required" data-toggle="datetimepicker" data-target="#workEhm" autocomplete="off"/>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<span class="label">코어근무시각 </span>
-												<input type="text" id="coreShm" name="coreShm" class="date2 required" data-toggle="datetimepicker" data-target="#coreShm" autocomplete="off"/>
-												~
-												<input type="text" id="coreEhm" name="coreEhm" class="date2 required" data-toggle="datetimepicker" data-target="#coreEhm" autocomplete="off"/>
-											</td>
-											<td>
-												<span class="label">코어시간체크여부 </span>
-												<input type="checkbox" id="coreChkYn" name="coreChkYn" data-target="#coreChkYn"/>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<span class="label">기본근무선소진여부 </span>
-												<input type="checkbox" id="exhaustionYn" name="exhaustionYn" data-target="#exhaustionYn"/>
-											</td>
-											<td>
-												<span class="label">공휴일제외여부 </span>
-												<input type="checkbox" id="holExceptYn" name="holExceptYn" data-target="#holExceptYn"/>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<span class="label">간주근무시간 </span>
-												<select id="regardTimeCdId">
-				                                    <option>Default select</option>
-				                                </select>
-											</td>
-											<td>
-												<span class="label">일 기본근무시간 </span>
-												<input type="text" id="defaultWorkMinute" name="defaultWorkMinute" data-target="#defaultWorkMinute" />
-											</td>
-										</tr>
-										<tr>
-											<td colspan="2">
-												<span class="label">근무요일지정 </span>
-												<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 월
-												<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 화
-												<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 수
-												<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 목
-												<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 금
-												<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 토
-												<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 일
-											</td>
-										</tr>
-										<tr>
-											<td colspan="2">
-												<span class="label">신청기간지정 </span>
-												<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 1주
-												<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 2주
-												<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 3주
-												<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 4주
-												<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 1개월
-												<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 2개월
-												<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 3개월
-											</td>
-										</tr>
-										<tr>
-											<td colspan="2">
-												<span class="label">비고 </span>
-												<textarea id="note" cols=50 rows=3>
-												</textarea>
-											</td>
-										</tr>
+									<table class="default">
+										<tbody>
+											<tr>
+												<th>근무가능시각</th>
+												<td colspan="3">
+													
+													<input type="text" id="workShm" name="workShm" class="date2 required" data-toggle="datetimepicker" data-target="#workShm" autocomplete="off"/>
+													~
+													<input type="text" id="workEhm" name="workEhm" class="date2 required" data-toggle="datetimepicker" data-target="#workEhm" autocomplete="off"/>
+												</td>
+											</tr>
+											<tr>
+												<th>코어근무시각</th>
+												<td>
+													<input type="text" id="coreShm" name="coreShm" class="date2 required" data-toggle="datetimepicker" data-target="#coreShm" autocomplete="off"/>
+													~
+													<input type="text" id="coreEhm" name="coreEhm" class="date2 required" data-toggle="datetimepicker" data-target="#coreEhm" autocomplete="off"/>
+												</td>
+												<th>코어시간체크여부</th>
+												<td>
+													<input type="checkbox" id="coreChkYn" name="coreChkYn" data-target="#coreChkYn"/>
+												</td>
+											</tr>
+											<tr>
+												<th>기본근무선소진여부</th>
+												<td>
+													<input type="checkbox" id="exhaustionYn" name="exhaustionYn" data-target="#exhaustionYn"/>
+												</td>
+												<th>공휴일제외여부</th>
+												<td>
+													<input type="checkbox" id="holExceptYn" name="holExceptYn" data-target="#holExceptYn"/>
+												</td>
+											</tr>
+											<tr>
+												<th>간주근무시간</th>
+												<td>
+													<select id="regardTimeCdId">
+					                                    <option>Default select</option>
+					                                </select>
+												</td>
+												<th>일 기본근무시간</th>
+												<td>
+													<input type="text" id="defaultWorkMinute" name="defaultWorkMinute" data-target="#defaultWorkMinute" />
+												</td>
+											</tr>
+											<tr>
+												<th>근무요일지정</th>
+												<td colspan="3">
+													<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 월
+													<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 화
+													<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 수
+													<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 목
+													<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 금
+													<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 토
+													<input type="checkbox" id="workDaysOpt" name="workDaysOpt" data-target="#workDaysOpt"/> 일
+												</td>
+											</tr>
+											<tr>
+												<th>신청기간지정</th>
+												<td colspan="3">
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 1주
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 2주
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 3주
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 4주
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 1개월
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 2개월
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" data-target="#usedTermOpt"/> 3개월
+												</td>
+											</tr>
+											<tr>
+												<th>비고</th>
+												<td colspan="3">
+													<textarea id="note" cols=50 rows=3>
+													</textarea>
+												</td>
+											</tr>
+										</tbody>
+										
 									</table>
 								</div>
 									
