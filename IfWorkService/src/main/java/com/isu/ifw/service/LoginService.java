@@ -107,7 +107,7 @@ public class LoginService{
 	        
 			responseEntity = restTemplate.postForEntity(uri, "", String.class);
 			if(responseEntity.getBody() == null) {
-				System.out.println("body is null " + responseEntity.getStatusCodeValue());
+				System.out.println("body is null " + uri + " " + responseEntity.getStatusCodeValue());
 				return null;
 			}
 			responseMap = mapper.readValue(responseEntity.getBody(), new HashMap<>().getClass());
