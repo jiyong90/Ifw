@@ -101,6 +101,7 @@ public class AccessTokenFilter implements Filter {
 				cookie.setPath("/");
 				cookie.setMaxAge(60*60*24);   
 				((HttpServletResponse)response).addCookie(cookie);
+				response.flushBuffer();
 			}
 
 			WtmToken wtmToken = loginService.getAccessToken(token);
@@ -128,6 +129,7 @@ public class AccessTokenFilter implements Filter {
 					cookie.setPath("/");
 					cookie.setMaxAge(60*60*24);   
 					((HttpServletResponse)response).addCookie(cookie);
+					response.flushBuffer();
 				} 
 				request.setAttribute("tenantId", wtmToken.getTenantId());
 				Map<String, Object> sessionData = new HashMap();
