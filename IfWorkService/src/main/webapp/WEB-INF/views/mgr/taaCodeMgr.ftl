@@ -99,6 +99,10 @@
 	// 조회 후 에러 메시지
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
+			if (StCode == 401) {
+				window.parent.location.href = loginUrl;
+			}
+			
 			if (Msg != "") {
 				alert(Msg);
 			}

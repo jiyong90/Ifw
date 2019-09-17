@@ -161,21 +161,24 @@
 	}
 
 	// 조회 후 에러 메시지
-
-	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
-		try {
-			if (StCode == 401) {
-	       		location.href='${rc.getContextPath()}/hr/${tsId}/views/info';
-			}
-		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
-		}
+    function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
+       try {
+          if (StCode == 401) {
+        	  window.parent.location.href = loginUrl;
+	   	  } 
+       } catch (ex) {
+			alert(ex);
+       }
 	}
+
 	
 
 	// 저장 후 메시지
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
+			if (StCode == 401) {
+				window.parent.location.href = loginUrl;
+			}
 			if (Msg != "") {
 				alert(Msg);
 			}
@@ -194,8 +197,9 @@
 	// 조회 후 에러 메시지
 	function sheet2_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
+			
 			if (StCode == 401) {
-	       		location.href='${rc.getContextPath()}/hr/${tsId}/views/info';
+				window.parent.location.href = loginUrl;
 			}
 		} catch (ex) {
 			alert("OnSearchEnd Event Error " + ex);
@@ -205,6 +209,9 @@
 	// 저장 후 메시지
 	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
+			if (StCode == 401) {
+				window.parent.location.href = loginUrl;
+			}
 			if (Msg != "") {
 				alert(Msg);
 			}
