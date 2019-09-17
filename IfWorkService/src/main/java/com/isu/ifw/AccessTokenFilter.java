@@ -99,9 +99,8 @@ public class AccessTokenFilter implements Filter {
 				Cookie cookie = null;
 				cookie = new Cookie(PARAM_NAME_USER_TOKEN, token);
 				cookie.setPath("/");
-				cookie.setMaxAge(60*60*24);   
+				cookie.setHttpOnly(true);
 				((HttpServletResponse)response).addCookie(cookie);
-				response.flushBuffer();
 			}
 
 			WtmToken wtmToken = loginService.getAccessToken(token);
@@ -128,8 +127,8 @@ public class AccessTokenFilter implements Filter {
 					cookie = new Cookie(PARAM_NAME_USER_TOKEN, wtmToken.getAccessToken());
 					cookie.setPath("/");
 					cookie.setMaxAge(60*60*24);   
+					cookie.setHttpOnly(true);
 					((HttpServletResponse)response).addCookie(cookie);
-					response.flushBuffer();
 				} 
 				request.setAttribute("tenantId", wtmToken.getTenantId());
 				Map<String, Object> sessionData = new HashMap();
