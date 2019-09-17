@@ -76,6 +76,7 @@ public class AccessTokenFilter implements Filter {
 			
 			String token = null;
 			token = request.getParameter(PARAM_NAME_USER_TOKEN);
+			System.out.println("xxxxxxxxxxxxx token : " + token);
 			
 			Cookie[] cookies = ((HttpServletRequest)request).getCookies();
 			
@@ -84,6 +85,7 @@ public class AccessTokenFilter implements Filter {
 					for(int i=0 ; i< cookies.length ; i++){
 						String name = cookies[i].getName();
 						String value = cookies[i].getValue();
+						System.out.println("xxxxxxxxxxxxx name : " + name + " value : " + value);
 						if(PARAM_NAME_USER_TOKEN.equalsIgnoreCase(name)){
 							System.out.println("session validate filter access token : "+value);
 							token = value;
@@ -92,6 +94,7 @@ public class AccessTokenFilter implements Filter {
 					}
 				}
 			} else {
+				System.out.println("xxxxxxxxxxxxx add cookie : ");
 				Cookie cookie = null;
 				cookie = new Cookie(PARAM_NAME_USER_TOKEN, token);
 				cookie.setPath("/");
