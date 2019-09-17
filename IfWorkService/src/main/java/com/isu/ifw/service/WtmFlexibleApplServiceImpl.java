@@ -223,7 +223,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	 */
 	@Transactional
 	@Override
-	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
+	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp = checkRequestDate(applId);
 		if(rp.getStatus().equals("FAIL")) {
@@ -321,6 +321,11 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			
 			emp = wtmFlexibleEmpRepo.save(emp);
 
+			//승인완료 시 해당 대상자의 통계데이터를 갱신하기 위함.
+			rp.put("sabun", emp.getSabun());
+			rp.put("symd", emp.getSymd());
+			rp.put("eymd", emp.getEymd());
+			
 			paramMap.put("userId", userId);
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("tenantId", tenantId);
@@ -344,6 +349,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			flexApplMapper.updateWorkMinuteOfWtmFlexibleEmp(paramMap);
 		}
 		
+		return rp;
 		
 	}
 	

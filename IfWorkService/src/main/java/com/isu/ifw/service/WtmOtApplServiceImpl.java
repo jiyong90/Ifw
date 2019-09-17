@@ -44,7 +44,7 @@ import com.isu.option.vo.ReturnParam;
 
 @Service("wtmOtApplService")
 public class WtmOtApplServiceImpl implements WtmApplService {
-
+	
 	@Autowired
 	WtmApplMapper applMapper;
 	
@@ -189,7 +189,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 
 	@Transactional
 	@Override
-	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
+	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		paramMap.put("applId", applId);
@@ -255,6 +255,11 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			dayResult.setUpdateId(userId);
 			
 			wtmWorkDayResultRepo.save(dayResult);
+			
+			//승인완료 시 해당 대상자의 통계데이터를 갱신하기 위함.
+			rp.put("sabun", dayResult.getSabun());
+			rp.put("symd", dayResult.getYmd());
+			rp.put("eymd", dayResult.getYmd());
 			
 			List<WtmOtSubsAppl> subs = wtmOtSubsApplRepo.findByApplId(applId);
 			if(subs != null && subs.size() >0) {
@@ -342,6 +347,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			}
 		}
 		
+		return rp;
 
 	}
 
@@ -604,13 +610,15 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 
 			//휴일근무의 경우 대체휴일 정보가 같은 주일 경우 퉁친다.	
  			//근데 4시간 일하고 2시간씩 이번주 차주로 나눠쓰면!!!!! 차주꺼는 연장근무 시간으로 본다 써글
+			
 			rMap = wtmOtApplMapper.getTotOtMinuteBySymdAndEymd(paramMap);
 			int totOtMinute = 0;
 			if(rMap != null && rMap.get("totOtMinute") != null && !rMap.get("totOtMinute").equals("")) {
 				totOtMinute = Integer.parseInt(rMap.get("totOtMinute")+"");
 			}
-			Float f = (float) ((totOtMinute + sumOtMinute) / 60);
+			Float f = (float) ((totOtMinute + calcMinute) / 60);
 			if(f > 12) {
+				f = (float) ((12 - totOtMinute) / 60);
 				Float ff = (f - f.intValue()) * 60;
 				rp.setFail("연장근무 신청 가능 시간은 " + f.intValue() + "시간 " + ff.intValue() + "분 입니다.");
 				return rp;
@@ -835,6 +843,5 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		
 		return rp;
 	}
-
 	
 }

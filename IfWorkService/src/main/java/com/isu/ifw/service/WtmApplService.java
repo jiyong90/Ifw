@@ -1,8 +1,13 @@
 package com.isu.ifw.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+
+import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
 
@@ -68,7 +73,7 @@ public interface WtmApplService {
 	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId);
 	
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
-	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
+	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
 	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
 	
 	/**
@@ -96,7 +101,6 @@ public interface WtmApplService {
 	public ReturnParam validate(Long tenantId, String enterCd, String sabun, String workTypeCd, Map<String, Object> paramMap);
 	
 	public void sendPush();
-
 	
 	
 }
