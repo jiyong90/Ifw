@@ -103,13 +103,11 @@
 	// 조회 후 에러 메시지
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
-			if (Msg != "") {
-				alert(Msg);
+			if (StCode == 401) {
+				window.parent.location.href = loginUrl;
 			}
-
-			sheetResize();
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
