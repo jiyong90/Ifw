@@ -184,4 +184,12 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public List<Map<String, Object>> getFlexibleEmpWebList(Map<String, Object> paramMap);
 	
+	/**
+	 * 특정 사원의
+	 * 특정 기간의
+	 * 통계데이터를 (재)생성한다
+	 * @param paramMap { tenantId, enterCd, sabun, symd, eymd, pId }
+	 */
+	public void createWorkTermBySabunAndSymdAndEymd(Map<String, Object> paramMap);
+	
 }

@@ -241,7 +241,7 @@
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (StCode == 401) {
-	       		location.href='${rc.getContextPath()}/hr/${tsId}/view/info';
+	       		location.href='${rc.getContextPath()}/hr/${tsId}/views/info';
 			}
 		} catch (ex) {
 			alert("OnSearchEnd Event Error " + ex);

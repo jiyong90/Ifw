@@ -256,30 +256,107 @@ public class ViewController {
 		String empNo = sessionData.get("empNo").toString();
 		Long userId = Long.valueOf(sessionData.get("userId").toString());
 		
-		mv.addObject("tsId", tsId);
-		mv.addObject("enterCd", enterCd);
-		mv.addObject("empNo", empNo);
-		mv.addObject("pageName", "mgr/"+viewPage);
-		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
+
+		
+		mv.addObject("tsId", tsId);
+		mv.addObject("enterCd", enterCd);
+		mv.addObject("empNo", empNo);
+		mv.addObject("loginId", userId);
+		mv.addObject("pageName", viewPage);
+		
+		if("workCalendar".equals(viewPage)){
+			ObjectMapper mapper = new ObjectMapper();
+			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
+				String workday = request.getParameter("date");
+				mv.addObject("workday", workday); 
+			}
+			String calendarType = "Month";
+			if(request.getParameter("calendarType")!=null) {
+				calendarType = request.getParameter("calendarType").toString();
+			} 
+			mv.addObject("calendar", "work"+ calendarType +"Calendar");
+			
+			if("Time".equals(calendarType)) {
+				//연장근무 또는 휴일근무 신청 시 사유
+				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+				mv.addObject("reasons", mapper.writeValueAsString(reasons));
+			}
+			mv.addObject("pageName", viewPage);
+			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
+		}
+		else if(viewPage.equals("workDayCalendar")
+				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar")) {
+		
+			mv.addObject("pageName", viewPage);
+		}
+		else
+			mv.addObject("pageName", "mgr/"+viewPage);
 		
 		return mv;
 	}
 
 
-	@RequestMapping(value = "/hr/{tsId}/view/{viewPage}", method = RequestMethod.GET)
+	@RequestMapping(value = "/hr/{tsId}/views/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView infoViews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("hrtemplate");
-		mv.addObject("tsId", tsId);
-		mv.addObject("pageName", viewPage);
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
+
+		
+		if(viewPage.equals("info")) {
+			mv.addObject("tsId", tsId);
+			mv.addObject("pageName", viewPage);
+			mv.addObject("pageName", viewPage);
+			return mv;
+		}
+		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+
+		
+		mv.addObject("tsId", tsId);
+		mv.addObject("enterCd", enterCd);
+		mv.addObject("empNo", empNo);
+		mv.addObject("loginId", userId);
+		mv.addObject("pageName", viewPage);
+		
+		if("workCalendar".equals(viewPage)){
+			ObjectMapper mapper = new ObjectMapper();
+			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
+				String workday = request.getParameter("date");
+				mv.addObject("workday", workday); 
+			}
+			String calendarType = "Month";
+			if(request.getParameter("calendarType")!=null) {
+				calendarType = request.getParameter("calendarType").toString();
+			} 
+			mv.addObject("calendar", "work"+ calendarType +"Calendar");
+			
+			if("Time".equals(calendarType)) {
+				//연장근무 또는 휴일근무 신청 시 사유
+				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+				mv.addObject("reasons", mapper.writeValueAsString(reasons));
+			}
+			mv.addObject("pageName", viewPage);
+			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
+		}
+		else if(viewPage.equals("workDayCalendar")
+				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar")) {
+		
+			mv.addObject("pageName", viewPage);
+		}
+		else
+			mv.addObject("pageName", "mgr/"+viewPage);
 		
 		return mv;
 	}
