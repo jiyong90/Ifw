@@ -140,7 +140,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public void apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
+	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		paramMap.put("applId", applId);
@@ -196,9 +196,12 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 			WtmWorkDayResult dayResult = wtmWorkDayResultRepo.findById(otAppl.getWorkDayResultId()).get();
 			wtmWorkDayResultRepo.delete(dayResult);
 			 
+			rp.put("sabun", dayResult.getSabun());
+			rp.put("symd", dayResult.getYmd());
+			rp.put("eymd", dayResult.getYmd());
 		}
 		
-		
+		return rp;
 	}
 
 	@Override

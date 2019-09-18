@@ -19,12 +19,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmAsyncService;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/appl")
 public class WtmApplController {
+	
+
+	@Autowired
+	WtmAsyncService wymAsyncService;
 	
 	@Autowired
 	@Qualifier("wtmFlexibleApplService")
@@ -85,14 +91,16 @@ public class WtmApplController {
 		try {
 			if(applCd!=null && !"".equals(applCd)) {
 				if("OT".equals(applCd)) {
-					wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					rp = wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else if("OT_CAN".equals(applCd)){
-					wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					rp = wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else {
-					flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				}
 			}
-			
+			if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {
+				wymAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

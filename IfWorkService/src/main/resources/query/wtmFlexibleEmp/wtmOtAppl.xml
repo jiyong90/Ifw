@@ -59,6 +59,7 @@
 			  LEFT OUTER JOIN WTM_OT_CAN_APPL C
 			    ON R.WORK_DAY_RESULT_ID = C.WORK_DAY_RESULT_ID
 			 WHERE O.APPL_ID = #{applId}   
+			   AND R.TIME_TYPE_CD = 'OT'
 			 ORDER BY O.OT_SDATE
 	        ]]>
     </select>
@@ -150,6 +151,7 @@
 			   AND S.SUB_YMD BETWEEN #{symd} AND #{eymd}
 			 WHERE A.APPL_STATUS_CD IN ('21','31')
 			   AND O.YMD BETWEEN #{symd} AND #{eymd}
+			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '') 
 			 UNION ALL
 			SELECT F_WTM_NVL(CASE WHEN R.APPR_MINUTE IS NULL THEN R.PLAN_MINUTE ELSE R.APPR_MINUTE END,0) AS OT_MINUTE

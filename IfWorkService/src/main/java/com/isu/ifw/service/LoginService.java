@@ -162,11 +162,11 @@ public class LoginService{
 			token.setUpdateId(emp.get(0).getEmpHisId());
 			//기존 토큰 다 삭제하고 새로 등록(기존에 다른 곳에서 로그인한 상황이면 그쪽은 튕김)
 			tokenRepository.save(token);
-
-			Cookie cookie = null;
-			cookie = new Cookie(PARAM_NAME_USER_TOKEN, token.getAccessToken());
-			cookie.setPath("/");
-			response.addCookie(cookie);
+//
+//			Cookie cookie = null;
+//			cookie = new Cookie(PARAM_NAME_USER_TOKEN, token.getAccessToken());
+//			cookie.setPath("/");
+//			response.addCookie(cookie);
 		} else {
 			System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx	xxxxxxxxx emp his에 없는 사원정보");
 			removeTokenCookie(response, PARAM_NAME_USER_TOKEN);
