@@ -623,7 +623,7 @@
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
-			   AND ((F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) > #{sdate} AND F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) < #{edate} ) OR ( F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE) > #{sdate} AND  F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE) < #{edate} ))
+			   AND ((F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) >= #{sdate} AND F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) <= #{edate} ) OR ( F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE) >= #{sdate} AND  F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE) <= #{edate} ))
 			 UNION ALL
 			SELECT 2 
 			  FROM WTM_APPL A
