@@ -1215,7 +1215,10 @@
          	},
          	viewOvertimeAppl: function(){
          		var $this = this;
-         		timeCalendarVue.viewOvertimeAppl($this.calendar.getDate());
+         		var info = {
+         			date : $this.calendar.getDate()
+         		};
+         		timeCalendarVue.preCheck(info);
          	}
 	    }
    	});
