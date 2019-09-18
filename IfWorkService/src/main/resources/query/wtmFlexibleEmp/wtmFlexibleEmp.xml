@@ -635,6 +635,17 @@
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			   AND ((O.OT_SDATE > #{sdate} AND O.OT_SDATE < #{edate}) OR (O.OT_EDATE > #{sdate} AND O.OT_EDATE < #{edate}))
+			 UNION ALL
+			SELECT 3 
+			  FROM WTM_APPL A
+			  JOIN WTM_OT_SUBS_APPL O
+			    ON A.APPL_ID = O.APPL_ID
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.ENTER_CD = #{enterCd}
+			   AND A.APPL_IN_SABUN = #{sabun}
+			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
+			   AND A.APPL_STATUS_CD IN ('21','31')
+			   AND ((O.SUBS_SDATE > #{sdate} AND O.SUBS_SDATE < #{edate}) OR (O.SUBS_EDATE > #{sdate} AND O.SUBS_EDATE < #{edate}))
 			) X
 		]]>	
   	</select>

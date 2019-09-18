@@ -513,12 +513,6 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		}
 		Map<String, Object> resultMap = wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
 		//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
-		try {
-		System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
-		System.out.println("resultMap : " + mapper.writeValueAsString(resultMap));
-		}catch(Exception e) {
-			
-		}
 		
 		int workCnt = Integer.parseInt(resultMap.get("workCnt").toString());
 		if(workCnt > 0) {
@@ -565,10 +559,11 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 						return rp;
 					}
 					String subYmd = sub.get("subYmd").toString();
+					String subsSdate = sub.get("subsSdate").toString();
+					String subsEdate = sub.get("subsEdate").toString();
 					//같은 주에 있는 대체휴일 시간정보만
 					if(Integer.parseInt(subYmd) >= Integer.parseInt(symd) && Integer.parseInt(subYmd) <= Integer.parseInt(eymd)) {
-						String subsSdate = sub.get("subsSdate").toString();
-						String subsEdate = sub.get("subsEdate").toString();
+						
 						
 						Date subSd = WtmUtil.toDate(subsSdate, "yyyyMMddHHmm");
 						Date subEd = WtmUtil.toDate(subsEdate, "yyyyMMddHHmm");
@@ -584,6 +579,16 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 						if(subMap != null && !resultMap.get("calcMinute").equals("")) {
 							subCalcMinute += Integer.parseInt(resultMap.get("calcMinute").toString());
 						}
+					}
+					paramMap.put("sdate", subsSdate);
+					paramMap.put("edate", subsEdate);
+					Map<String, Object> resultSubsMap = wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
+					//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
+					
+					int workSubsCnt = Integer.parseInt(resultSubsMap.get("workCnt").toString());
+					if(workSubsCnt > 0) {
+						rp.setFail("이미 근무정보(신청중인 근무 포함)가 존재합니다.");
+						return rp;
 					}
 					
 				}

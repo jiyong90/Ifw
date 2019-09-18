@@ -49,8 +49,8 @@ public class IfWorkServiceApplication {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(userTokenFilter);
 		registrationBean.addUrlPatterns("/*");
 		//saas 연동시에는 usertokenfilter안쓰고 아래에 accesstokenfilter사용
-		registrationBean.addInitParameter("freePassPath", "/");
-		//registrationBean.addInitParameter("freePassPath", "/error,/logout,/login,/login/certificate,/v2/api-docs,/api,/resource,/schedule,/we,/certificate,/mobile");
+		//registrationBean.addInitParameter("freePassPath", "/");
+		registrationBean.addInitParameter("freePassPath", "/error,/logout,/login,/login/certificate,/v2/api-docs,/api,/resource,/schedule,/we,/certificate,/mobile");
 		registrationBean.addInitParameter("moduleId", "1");
 		return registrationBean;
 	    
@@ -62,7 +62,7 @@ public class IfWorkServiceApplication {
 		registrationBean.addUrlPatterns("/console/*");
 		registrationBean.addInitParameter("tenantKeyPath", "/console");
 		registrationBean.addInitParameter("moduleId", "1");
-		registrationBean.addInitParameter("freePassPath", "/");
+		//registrationBean.addInitParameter("freePassPath", "/");
 		return registrationBean;
 	    
 	}
@@ -79,7 +79,8 @@ public class IfWorkServiceApplication {
 	public FilterRegistrationBean getAccessTokenFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(accessTokenFilter);
 		registrationBean.addUrlPatterns("/*"); 
-		registrationBean.addInitParameter("freePassPath", "/info,/certificate,/error,/mobile/logout,/login,/login/certificate");
+		registrationBean.addInitParameter("freePassPath", "/");
+		//registrationBean.addInitParameter("freePassPath", "/info,/certificate,/error,/mobile/logout,/login,/login/certificate");
 		registrationBean.addInitParameter("moduleId", "1");
 		return registrationBean;
 	    
