@@ -80,10 +80,31 @@
             </a>
         </li>
         <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleApplyMgr';">
+                <span class="title">근무제도적용</span>
+            </a>
+        </li>
+        <li>
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">
                 <span class="title">개인별 근무제도 조회</span>
             </a>
         </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/applCode';">
+                <span class="title">신청서관리</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compMgr';">
+                <span class="title">보상휴가기준관리</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compCreateList';">
+                <span class="title">보상휴가시간조회</span>
+            </a>
+        </li>
+        
     </ul>
 
     <!-- <ul class="list-unstyled CTAs">

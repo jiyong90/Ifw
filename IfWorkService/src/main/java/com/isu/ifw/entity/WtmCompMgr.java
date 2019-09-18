@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -15,29 +16,33 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="WTM_CODE")
-public class WtmCode {
+@Table(name="WTM_COMP_MGR")
+public class WtmCompMgr {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="CODE_ID")
-	private Long codeId;
+	@Column(name="COMP_MGR_ID")
+	private Long compMgrId;
 	@Column(name="TENANT_ID")
 	private Long tenantId;
 	@Column(name="ENTER_CD")
 	private String enterCd;
-	@Column(name="GRP_CODE_CD")
-	private String grpCodeCd;
-	@Column(name="CODE_CD")
-	private String codeCd;
-	@Column(name="CODE_NM")
-	private String codeNm;
+	@Column(name="BUSINESS_PLACE_CD")
+	private String businessPlaceCd;
 	@Column(name="SYMD")
 	private String symd;
 	@Column(name="EYMD")
 	private String eymd;
-	@Column(name="SEQ")
-	private Integer seq;
+	@Column(name="COMP_TIME_TYPE")
+	private String compTimeType;
+	@Column(name="TIME_TYPE")
+	private String timeType;
+	@Column(name="TIME_LIMIT")
+	private Integer timeLimit;
+	@Column(name="LIMIT_TYPE")
+	private String limitType;
+	@Column(name="USE_TYPE")
+	private String useType;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -47,14 +52,14 @@ public class WtmCode {
 	@Column(name="UPDATE_ID")
 	private Long updateId;
 
-	
-	public Long getCodeId() {
-		return codeId;
+
+	public Long getCompMgrId() {
+		return compMgrId;
 	}
 
 
-	public void setCodeId(Long codeId) {
-		this.codeId = codeId;
+	public void setCompMgrId(Long compMgrId) {
+		this.compMgrId = compMgrId;
 	}
 
 
@@ -78,33 +83,13 @@ public class WtmCode {
 	}
 
 
-	public String getGrpCodeCd() {
-		return grpCodeCd;
+	public String getBusinessPlaceCd() {
+		return businessPlaceCd;
 	}
 
 
-	public void setGrpCodeCd(String grpCodeCd) {
-		this.grpCodeCd = grpCodeCd;
-	}
-
-
-	public String getCodeCd() {
-		return codeCd;
-	}
-
-
-	public void setCodeCd(String codeCd) {
-		this.codeCd = codeCd;
-	}
-
-
-	public String getCodeNm() {
-		return codeNm;
-	}
-
-
-	public void setCodeNm(String codeNm) {
-		this.codeNm = codeNm;
+	public void setBusinessPlaceCd(String businessPlaceCd) {
+		this.businessPlaceCd = businessPlaceCd;
 	}
 
 
@@ -128,13 +113,53 @@ public class WtmCode {
 	}
 
 
-	public Integer getSeq() {
-		return seq;
+	public String getCompTimeType() {
+		return compTimeType;
 	}
 
 
-	public void setSeq(Integer seq) {
-		this.seq = seq;
+	public void setCompTimeType(String compTimeType) {
+		this.compTimeType = compTimeType;
+	}
+
+
+	public String getTimeType() {
+		return timeType;
+	}
+
+
+	public void setTimeType(String timeType) {
+		this.timeType = timeType;
+	}
+
+
+	public Integer getTimeLimit() {
+		return timeLimit;
+	}
+
+
+	public void setTimeLimit(Integer timeLimit) {
+		this.timeLimit = timeLimit;
+	}
+
+
+	public String getLimitType() {
+		return limitType;
+	}
+
+
+	public void setLimitType(String limitType) {
+		this.limitType = limitType;
+	}
+
+
+	public String getUseType() {
+		return useType;
+	}
+
+
+	public void setUseType(String useType) {
+		this.useType = useType;
 	}
 
 
@@ -169,6 +194,11 @@ public class WtmCode {
 
 
 	@PrePersist
+    protected void onCreate() {
+		this.updateDate = new Date();
+    }
+
+	@PreUpdate
     protected void onUpdate() {
 		this.updateDate = new Date();
     }
