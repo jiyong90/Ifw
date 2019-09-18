@@ -32,7 +32,7 @@ import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.repository.WtmTokenRepository;
 import com.isu.ifw.service.LoginService;
 
-//@Component("accessTokenFilter") 
+@Component("accessTokenFilter") 
 public class AccessTokenFilter implements Filter {
 
 	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
