@@ -1,0 +1,344 @@
+<div id="timeCdMgr">
+ 	<div class="container-fluid pt-3 pb-3 bg-white">
+ 	<div class="ibsheet-wrapper">
+ 		<form id="sheetForm" name="sheetForm">
+			<div class="sheet_search outer">
+				<div>
+					<table>
+						<tr>
+							<td>
+								<span class="label">기준일 </span>
+								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+							</td>
+							<td>
+								<a href="javascript:doAction1('Search');" class="button">조회</a>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</form>
+		<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
+			<tr>
+				<td>
+					<div class="inner">
+						<div class="sheet_title_wrap clearfix">
+							<div class="float-left title">근무제 적용</div>
+							<ul class="float-right btn-wrap">
+								<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
+								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
+							</ul>
+						</div>
+					</div>
+					<script type="text/javascript">createIBSheet("sheet1", "100%", "calc(50vh - 140px)","kr"); </script>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="col-7 pt-2">
+						<div class="innertab inner">
+							<div id="tabs" class="tab">
+								<ul class="outer tab_bottom">
+									<li><a href="#tabs-1">그룹별</a></li>
+									<li><a href="#tabs-2">개인별</a></li>
+								</ul>
+								<div id="tabs-1">
+									<div  class="layout_tabs">
+										<div class="inner sheet_title_wrap clearfix">
+											<div class="float-left title" id="searchAppText">그룹별 대상자 관리</div>
+											<ul class="float-right btn-wrap">
+												<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
+												<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
+											</ul>
+										</div>
+										<script type="text/javascript">createIBSheet("sheet2", "100%", "calc(100vh - 270px)","kr"); </script>
+									</div>
+								</div>
+								<div id="tabs-2">
+									<div  class="layout_tabs">
+										<div class="inner sheet_title_wrap clearfix">
+											<div class="float-left title" id="searchAppText">개인별 대상자 관리</div>
+											<ul class="float-right btn-wrap">
+												<li><a href="javascript:doAction3('Insert')" class="basic authA">입력</a></li>
+												<li><a href="javascript:doAction3('Save')" class="basic authA">저장</a></li>
+											</ul>
+										</div>
+										<script type="text/javascript">createIBSheet("sheet3", "100%", "calc(100vh - 270px)","kr"); </script>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+   	$(function() {
+		$('#sYmd').datetimepicker({
+            format: 'YYYY-MM-DD',
+            language: 'ko'
+        });
+        
+		var initdata1 = {};
+		
+		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata1.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+
+		initdata1.Cols = [
+			{Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
+			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+   			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무명칭",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCd",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무제도기준",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무기간",		Type:"Combo",      	Hidden:0, 	Width:70,   Align:"Center",  ColMerge:0, SaveName:"workTime",      	KeyField:0, Format:"",   	PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
+			{Header:"시작일",		Type:"Date",        Hidden:0, 	Width:90,   Align:"Center",  ColMerge:0, SaveName:"sdate",      	KeyField:0, Format:"Ymd",   PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
+			{Header:"종료일",		Type:"Date",      	Hidden:0, 	Width:90,   Align:"Center",  ColMerge:0, SaveName:"edate",      	KeyField:0, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:100 },
+			{Header:"반복여부",		Type:"Check",      	Hidden:0, 	Width:70,   Align:"Center",  ColMerge:0, SaveName:"repeatYn",      	KeyField:0, Format:"",   	PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
+			{Header:"소정근무시간",	Type:"Int",		    Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"workHour",	  	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"연장근무시간",	Type:"Int",			Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"otHour",		KeyField:0,	Format:"",		PointCount:2,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"대상자조회",	Type:"Image", 		Hidden:0,  	Width:70,  	Align:"Center",  ColMerge:0, SaveName:"selectImg",  KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:1    },
+			{Header:"확정여부",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	 ColMerge:0, SaveName:"endYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"확정상태",		Type:"Html", 		Hidden:0,  	Width:60,  	Align:"Center",  ColMerge:0, SaveName:"endImg",  	KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:1    },
+			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+		]; 
+		
+		IBS_InitSheet(sheet1, initdata1);
+		sheet1.SetEditable(true);
+		sheet1.SetVisible(true);
+		sheet1.SetUnicodeByte(3);
+		sheet1.SetUseDefaultTime(0);
+		sheet1.SetCountPosition(8);
+		sheet1.SetColProperty("workTime", {ComboText:"선택|1주|2주|3주|4주", ComboCode:"|1week|2week|3week|4week"} );
+		
+		var initdata2 = {};
+		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata2.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+		
+        initdata2.Cols = [
+            {Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
+			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+   			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeBreakMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"upid",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"소속코드",  Type:"Text",    	Hidden:1, Width:100,  Align:"Center", ColMerge:0, SaveName:"orgCd",     KeyField:0, Format:"",  PointCount:0, UpdateEdit:0, InsertEdit:0, EditLen:100 },
+			{Header:"소속",     Type:"Popup",    	Hidden:0, Width:100,  Align:"Center", ColMerge:0, SaveName:"orgNm",     KeyField:0, Format:"",  PointCount:0, UpdateEdit:1, InsertEdit:1, EditLen:100 },
+			{Header:"직무코드",	Type:"Combo",		Hidden:1, Width:80,	  Align:"Center", ColMerge:0, SaveName:"jobCd",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"직책",	    Type:"Combo",		Hidden:0, Width:80,	  Align:"Center", ColMerge:0, SaveName:"dutyCd",	KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"직위",	    Type:"Combo",		Hidden:0, Width:80,	  Align:"Center", ColMerge:0, SaveName:"posCd",	KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무조",	Type:"Combo",		Hidden:0, Width:80,	  Align:"Center", ColMerge:0, SaveName:"workteamCd",	KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"비고",			Type:"Text",	  Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+			
+        ];
+        IBS_InitSheet(sheet2, initdata2);
+		sheet2.SetEditable(true);
+		sheet2.SetVisible(true);
+		sheet2.SetUseDefaultTime(0);
+		sheet2.SetUnicodeByte(3);
+        
+		//코드
+		var jobCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "JOB_CD"), "전체");
+		sheet2.SetColProperty("jobCd", {ComboText:jobCdList[0], ComboCode:jobCdList[1]} );
+		var dutyCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "DUTY_CD"), "전체");
+		sheet2.SetColProperty("dutyCd", {ComboText:dutyCdList[0], ComboCode:dutyCdList[1]} );
+		var posCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "POS_CD"), "전체");
+		sheet2.SetColProperty("posCd", {ComboText:posCdList[0], ComboCode:posCdList[1]} );
+		var workteamCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/workteamMgr/workteamCd", "",false).DATA, "");
+		sheet2.SetColProperty("workteamCd", {ComboText:workteamCdList[0], ComboCode:workteamCdList[1]} );
+		
+		var initdata3 = {};
+		initdata3.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata3.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+		
+        initdata3.Cols = [
+            {Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
+			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+   			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeBreakMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"upid",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"소속",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"orgNm",		  KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"사번",		Type:"Text",		Hidden:0,	Width:80,	Align:"Center",  ColMerge:0, SaveName:"sabun",		  KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:13 },
+			{Header:"성명",		Type:"Text",		Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"name",		  KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"비고",			Type:"Text",	  Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+			
+        ];
+        IBS_InitSheet(sheet3, initdata3);
+		sheet3.SetEditable(true);
+		sheet3.SetVisible(true);
+		sheet3.SetUseDefaultTime(0);
+		sheet3.SetUnicodeByte(3);
+		
+		//이름
+        setSheetAutocompleteEmp( "sheet3", "name" );
+
+		sheetInit();
+		//doAction1("Search");
+	});
+	
+	var newIframe;
+	var oldIframe;
+	var iframeIdx;
+	
+	$(function() {
+		newIframe = $('#tabs-1 layout_tabs');
+		iframeIdx = 0;
+
+		$( "#tabs" ).tabs({
+			beforeActivate: function(event, ui) {
+				iframeIdx = ui.newTab.index();
+				newIframe = $(ui.newPanel).find('layout_tabs');
+				oldIframe = $(ui.oldPanel).find('layout_tabs');
+				showIframe();
+			}
+		});
+	});
+	
+	function showIframe() {
+		if(iframeIdx == 0) {
+			$("#tabs-1").show();
+			$("#tabs-2").hide();
+		} else if(iframeIdx == 1) {
+			$("#tabs-1").hide();
+			$("#tabs-2").show();
+		}
+	}
+
+   	function doAction1(sAction) {
+		switch (sAction) {
+		case "Search":
+			sheet1.DoSearch( "${rc.getContextPath()}/timeCdMgr/list" , $("#sheetForm").serialize());
+			break;
+		
+		case "Save":
+			if(!dupChk(sheet1,"tenantId|enterCd|timeCd|symd", false, true)){break;}
+			IBS_SaveName(document.sheetForm,sheet1);
+			sheet1.DoSave("${rc.getContextPath()}/timeCdMgr/save", $("#sheetForm").serialize()); break;
+			break;
+			
+		case "Insert":
+			sheet1.DataInsert(0) ;
+			break;
+		}
+	}
+	
+	function doAction2(sAction) {
+		switch (sAction) {
+		case "Search":
+			var param = "timeCdMgrId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
+			sheet2.DoSearch( "${rc.getContextPath()}/timeCdMgr/breakList" , param);
+			break;
+		
+		case "Save":
+			IBS_SaveName(document.sheetForm,sheet2);
+			sheet2.DoSave("${rc.getContextPath()}/timeCdMgr/breakSave", $("#sheetForm").serialize()); break;
+			break;
+			
+		case "Insert":
+			var timeCdMgrId = sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
+			if(timeCdMgrId == ""){
+				alert("근무제도 기준을 저장후 대상자를 입력하셔야 합니다");
+			} else {
+				var row = sheet2.DataInsert(0) ;
+				sheet2.SetCellValue(row, "timeCdMgrId" , timeCdMgrId);
+				// alert(sheet2.GetRowEditable(row));
+				// alert(sheet2.GetColEditable(row, "codeCd") + ", " + sheet2.GetColEditable(row, "codeNm"));
+			}
+			break;
+		}
+	}
+	
+	function doAction3(sAction) {
+		switch (sAction) {
+		case "Search":
+			var param = "timeCdMgrId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
+			sheet2.DoSearch( "${rc.getContextPath()}/timeCdMgr/breakList" , param);
+			break;
+		
+		case "Save":
+			IBS_SaveName(document.sheetForm,sheet2);
+			sheet2.DoSave("${rc.getContextPath()}/timeCdMgr/breakSave", $("#sheetForm").serialize()); break;
+			break;
+			
+		case "Insert":
+			var timeCdMgrId = sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
+			if(timeCdMgrId == ""){
+				alert("근무제도 기준을 저장후 대상자를 입력하셔야 합니다");
+			} else {
+				var row = sheet2.DataInsert(0) ;
+				sheet2.SetCellValue(row, "timeCdMgrId" , timeCdMgrId);
+				// alert(sheet2.GetRowEditable(row));
+				// alert(sheet2.GetColEditable(row, "codeCd") + ", " + sheet2.GetColEditable(row, "codeNm"));
+			}
+			break;
+		}
+	}
+	function getReturnValue(returnValue) {
+		//var rv = $.parseJSON('{' + returnValue+ '}');
+   		sheet3.SetCellValue(gPRow, "sabun",returnValue.sabun);
+		sheet3.SetCellValue(gPRow, "name",returnValue.empNm);
+        sheet3.SetCellValue(gPRow, "orgNm",returnValue.orgNm);
+	}
+
+	// 조회 후 에러 메시지
+	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+			sheet2.RemoveAll();
+			sheetResize();
+		} catch (ex) {
+			alert("OnSearchEnd Event Error : " + ex);
+		}
+	}
+
+	// 저장 후 메시지
+	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+			doAction1("Search");
+		} catch (ex) {
+			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+	
+	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
+		if(OldRow != NewRow){
+			sheet2.RemoveAll();
+			doAction2('Search');
+		}
+	}
+	
+	// 조회 후 에러 메시지
+	function sheet2_OnSearchEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+
+			sheetResize();
+		} catch (ex) {
+			alert("OnSearchEnd Event Error : " + ex);
+		}
+	}
+
+	// 저장 후 메시지
+	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+			doAction2("Search");
+		} catch (ex) {
+			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+</script>

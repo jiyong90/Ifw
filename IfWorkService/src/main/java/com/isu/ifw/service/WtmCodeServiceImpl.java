@@ -43,6 +43,7 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 			code.put("codeNm", l.getCodeNm());
 			code.put("symd", l.getSymd());
 			code.put("eymd", l.getEymd());
+			code.put("seq", l.getSeq());
 			code.put("note", l.getNote());
 			code.put("tenantId", l.getTenantId());
 			code.put("enterCd", l.getEnterCd());
@@ -65,6 +66,7 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 			code.put("codeNm", l.getCodeNm());
 			code.put("symd", l.getSymd());
 			code.put("eymd", l.getEymd());
+			code.put("seq", l.getSeq());
 			code.put("note", l.getNote());
 			code.put("tenantId", l.getTenantId());
 			code.put("enterCd", l.getEnterCd());
@@ -91,6 +93,7 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 						code.setCodeNm(l.get("codeNm").toString());
 						code.setSymd(l.get("symd").toString());
 						code.setEymd(l.get("eymd").toString());
+						code.setSeq(Integer.parseInt(l.get("seq").toString()));
 						code.setNote(l.get("note").toString());
 						code.setUpdateId(userId);
 						saveList.add(code);
