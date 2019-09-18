@@ -35,6 +35,22 @@ public class WtmApplCode {
 	private String applLevelCd;
 	@Column(name="REC_LEVEL_CD")
 	private String recLevelCd;
+	@Column(name="TIME_UNIT")
+	private String timeUnit;
+	@Column(name="USE_MINUTES")
+	private String useMinutes;
+	@Column(name="IN_SHM")
+	private String inShm;
+	@Column(name="IN_EHM")
+	private String inEhm;
+	@Column(name="SUBS_YN")
+	private String subsYn;
+	@Column(name="SUBS_RULE_ID")
+	private Long subsRuleId;
+	@Column(name="SUBS_SDAY")
+	private Integer subsSday;
+	@Column(name="SUBS_EDAY")
+	private Integer subsEday;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -84,6 +100,54 @@ public class WtmApplCode {
 	}
 	public void setRecLevelCd(String recLevelCd) {
 		this.recLevelCd = recLevelCd;
+	}
+	public String getTimeUnit() {
+		return timeUnit;
+	}
+	public void setTimeUnit(String timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+	public String getUseMinutes() {
+		return useMinutes;
+	}
+	public void setUseMinutes(String useMinutes) {
+		this.useMinutes = useMinutes;
+	}
+	public String getInShm() {
+		return inShm;
+	}
+	public void setInShm(String inShm) {
+		this.inShm = inShm;
+	}
+	public String getInEhm() {
+		return inEhm;
+	}
+	public void setInEhm(String inEhm) {
+		this.inEhm = inEhm;
+	}
+	public String getSubsYn() {
+		return subsYn;
+	}
+	public void setSubsYn(String subsYn) {
+		this.subsYn = subsYn;
+	}
+	public Long getSubsRuleId() {
+		return subsRuleId;
+	}
+	public void setSubsRuleId(Long subsRuleId) {
+		this.subsRuleId = subsRuleId;
+	}
+	public Integer getSubsSday() {
+		return subsSday;
+	}
+	public void setSubsSday(Integer subsSday) {
+		this.subsSday = subsSday;
+	}
+	public Integer getSubsEday() {
+		return subsEday;
+	}
+	public void setSubsEday(Integer subsEday) {
+		this.subsEday = subsEday;
 	}
 	public String getNote() {
 		return note;
