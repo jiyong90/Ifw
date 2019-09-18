@@ -81,6 +81,7 @@ public class AccessTokenFilter implements Filter {
 			Cookie[] cookies = ((HttpServletRequest)request).getCookies();
 			
 			if(token == null) {
+				System.out.println("xxxxxxxxxxxxx token...null ");
 				if(cookies != null){
 					for(int i=0 ; i< cookies.length ; i++){
 						String name = cookies[i].getName();
@@ -124,6 +125,7 @@ public class AccessTokenFilter implements Filter {
 					Cookie cookie = null;
 					cookie = new Cookie(PARAM_NAME_USER_TOKEN, wtmToken.getAccessToken());
 					cookie.setPath("/");
+					cookie.setMaxAge(60*60*24);   
 					((HttpServletResponse)response).addCookie(cookie);
 				} 
 				request.setAttribute("tenantId", wtmToken.getTenantId());
