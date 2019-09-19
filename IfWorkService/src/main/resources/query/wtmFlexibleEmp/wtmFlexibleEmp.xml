@@ -634,7 +634,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND ((O.OT_SDATE > #{sdate} AND O.OT_SDATE < #{edate}) OR (O.OT_EDATE > #{sdate} AND O.OT_EDATE < #{edate}))
+			   AND ((O.OT_SDATE >= #{sdate} AND O.OT_SDATE <= #{edate}) OR (O.OT_EDATE >= #{sdate} AND O.OT_EDATE <= #{edate}))
 			 UNION ALL
 			SELECT 3 
 			  FROM WTM_APPL A
@@ -645,7 +645,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND ((O.SUBS_SDATE > #{sdate} AND O.SUBS_SDATE < #{edate}) OR (O.SUBS_EDATE > #{sdate} AND O.SUBS_EDATE < #{edate}))
+			   AND ((O.SUBS_SDATE >= #{sdate} AND O.SUBS_SDATE <= #{edate}) OR (O.SUBS_EDATE >= #{sdate} AND O.SUBS_EDATE <= #{edate}))
 			) X
 		]]>	
   	</select>
