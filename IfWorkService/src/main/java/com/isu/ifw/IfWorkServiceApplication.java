@@ -2,6 +2,7 @@ package com.isu.ifw;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -15,12 +16,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Configuration 
 @ComponentScan(basePackages = {"com.isu"} 
-//		excludeFilters = @Filter(type = FilterType.REGEX, pattern = "com.pb.common.servlet.SessionVaildateFilter")
-	//excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SessionValidateFilter.class)
 	, includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CorsFilter.class)
 )
-//@EnableWebMvc
-//@EnableAutoConfiguration 
 @SpringBootApplication
 public class IfWorkServiceApplication {
 
@@ -44,13 +41,17 @@ public class IfWorkServiceApplication {
 	@Qualifier("accessTokenFilter")
     private javax.servlet.Filter accessTokenFilter;
 
+	@Value("${user.token.filter}")
+	private String userTokenPass;
+	
+	@Value("${access.token.filter}")
+	private String accessTokenPass;
+
 	@Bean 
 	public FilterRegistrationBean getUserTokenFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(userTokenFilter);
 		registrationBean.addUrlPatterns("/*");
-		//saas 연동시에는 usertokenfilter안쓰고 아래에 accesstokenfilter사용
-		//registrationBean.addInitParameter("freePassPath", "/");
-		registrationBean.addInitParameter("freePassPath", "/error,/logout,/login,/login/certificate,/v2/api-docs,/api,/resource,/schedule,/we,/certificate,/mobile");
+		registrationBean.addInitParameter("freePassPath", userTokenPass);
 		registrationBean.addInitParameter("moduleId", "1");
 		return registrationBean;
 	    
@@ -62,7 +63,7 @@ public class IfWorkServiceApplication {
 		registrationBean.addUrlPatterns("/console/*");
 		registrationBean.addInitParameter("tenantKeyPath", "/console");
 		registrationBean.addInitParameter("moduleId", "1");
-		//registrationBean.addInitParameter("freePassPath", "/");
+		registrationBean.addInitParameter("freePassPath", "/");
 		return registrationBean;
 	    
 	}
@@ -79,8 +80,7 @@ public class IfWorkServiceApplication {
 	public FilterRegistrationBean getAccessTokenFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(accessTokenFilter);
 		registrationBean.addUrlPatterns("/*"); 
-		registrationBean.addInitParameter("freePassPath", "/");
-		//registrationBean.addInitParameter("freePassPath", "/info,/certificate,/error,/mobile/logout,/login,/login/certificate");
+		registrationBean.addInitParameter("freePassPath", accessTokenPass);
 		registrationBean.addInitParameter("moduleId", "1");
 		return registrationBean;
 	    
