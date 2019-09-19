@@ -151,8 +151,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	@Override
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception { 
-		/* 
+		
 		ReturnParam rp = new ReturnParam();
+		/*
 		paramMap.put("applId", applId);
 		
 		String applSabun = paramMap.get("applSabun").toString();
@@ -163,7 +164,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			throw new Exception(rp.get("message").toString());
 		}
 		*/
-		ReturnParam rp = imsi(tenantId, enterCd, applId, workTypeCd, paramMap, this.APPL_STATUS_APPLY_ING, sabun, userId);
+		
+		rp = imsi(tenantId, enterCd, applId, workTypeCd, paramMap, this.APPL_STATUS_APPLY_ING, sabun, userId);
 		
 		//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
 		

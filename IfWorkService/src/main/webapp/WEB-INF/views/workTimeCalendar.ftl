@@ -941,6 +941,33 @@
 			   			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
 			         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
 			         	
+			         	var applCode = $this.applCode;
+			       		
+		       			//신청 가능 시간
+		     			var inShm = moment(sDate+' '+applCode.inShm).format('YYYYMMDD HHmm');
+		     			var inEhm = moment(eDate+' '+applCode.inEhm).format('YYYYMMDD HHmm');
+		       			
+		     			if(moment(otSdate).diff(inShm)<0 || moment(otEdate).diff(inEhm)>0) {
+		     				isValid = false;
+		       				var shm =  moment(inShm).format('HH:mm');
+		       				var ehm =  moment(inEhm).format('HH:mm');
+		       				msg = '근무 가능 시간은 '+shm+'~'+ehm+' 입니다.';
+		       				$("#sTime").val('');
+  	  	         			$("#eTime").val('');
+		   				}
+		     				
+		       			//신청 시간 단위
+		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='')
+		       				var timeUnit = Number(applCode.timeUnit);
+		       			
+		       			var time = Number(moment(otEdate).diff(otSdate,'minutes'));
+		       			if(time % timeUnit != 0) {
+		       				isValid = false;
+		       				msg = '근무시간은 '+timeUnit+'분 단위로 신청 가능합니다.';
+		       				$("#sTime").val('');
+  	  	         			$("#eTime").val('');
+		       			} 
+			         	
 			         	if(moment(otEdate).diff(otSdate)<0) {
 			         		isValid = false;
 			         		msg = "종료일이 시작일보다 작습니다.";
@@ -1356,58 +1383,10 @@
    	$('#sDate, #eDate, #sTime, #eTime').on("change.datetimepicker", function(e){
    		
    		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
-   			var sDate = $("#sDate").val().replace(/-/gi,"");
-   			var eDate = $("#eDate").val().replace(/-/gi,"");
    			var sTime = $("#sTime").val().replace(/:/gi,"");
    			var eTime = $("#eTime").val().replace(/:/gi,"");
-   			
-   			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
-         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
-         	var msg = '';
-         	
-       		var applCode = timeCalendarVue.applCode;
-       		var inShm;
-       		var inEhm;
-       		var timeUnit;
-       		var time = Number(moment(otEdate).diff(otSdate,'minutes'));
        		
-       		if(timeCalendarVue.applCode!=null) {
-       			//신청 가능 시간
-     				inShm = moment(sDate+' '+applCode.inShm).format('YYYYMMDD HHmm');
-     				inEhm = moment(eDate+' '+applCode.inEhm).format('YYYYMMDD HHmm');
-       			
-     				if(moment(otSdate).diff(inShm)<0 || moment(otEdate).diff(inEhm)>0) {
-       				var shm =  moment(inShm).format('HH:mm');
-       				var ehm =  moment(inEhm).format('HH:mm');
-       				msg = '근무 가능 시간은 '+shm+'~'+ehm+' 입니다.';
-   				}
-     				
-       			//신청 시간 단위
-       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='')
-       				timeUnit = Number(applCode.timeUnit);
-       			
-       			if(time % timeUnit != 0) {
-       				msg = '근무시간은 '+timeUnit+'분 단위로 신청 가능합니다.';
-       			} 
-       		}
-       		
-       		//연장근무 신청 기간이 1일 이상이어서도 안된다!
-     			if(moment(otEdate).diff(otSdate,'days') > 0) {
-     				msg = '하루 이상 신청할 수 없습니다.';
-     			} 
-         	
-         	if(msg!='') {
-         		$("#alertText").html(msg);
-         		$("#alertModal").on('hidden.bs.modal',function(){
-         			$("#alertModal").off('hidden.bs.modal');
-         			timeCalendarVue.overtime = {};
-         			$("#sTime").val('');
-         			$("#eTime").val('');
-         		});
-         		$("#alertModal").modal("show"); 
-         	} else {
-   				timeCalendarVue.overtime = timeCalendarVue.calcMinute(moment(timeCalendarVue.workday).format('YYYYMMDD'), sTime, eTime);
-   			}
+       		timeCalendarVue.overtime = timeCalendarVue.calcMinute(moment(timeCalendarVue.workday).format('YYYYMMDD'), sTime, eTime);
    		}
     }); 
    	
