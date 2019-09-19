@@ -11,6 +11,8 @@
 	<springProperty name="LOG_PATH" source="logging.path"/>
 	<springProperty name="LOG_FILE" source="logging.file"/>
 	
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+	
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
@@ -52,15 +54,7 @@
         <neverBlock>false</neverBlock><!-- default false, set to true to cause the 
             Appender not block the application and just drop the messages -->
     </appender>
-<!-- 
-	<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
-		<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
-			<driverClass>${spring.datasource.driverClassName}</driverClass>
-			<url>${spring.datasource.jdbcUrl}</url>
-			<user>${spring.datasource.username}</user>
-			<password>${spring.datasource.password}</password>
-		</connectionSource>
-	</appender> -->
+
 	<logger name="ifwDBLog" level="DEBUG">
 		<appender-ref ref="ASYNC" />
 	</logger>
@@ -69,17 +63,16 @@
 		<appender-ref ref="FILE" />
 	</logger>
 	
-  	<logger name="jdbc" level="OFF"/>
+  	<logger name="jdbc" level="DEBUG"/>
 
-    <logger name="jdbc.sqlonly" level="OFF"/>
-    <logger name="jdbc.sqltiming" level="DEBUG"/>
-    <logger name="jdbc.audit" level="OFF"/>
-    <logger name="jdbc.resultset" level="OFF"/>
-    <logger name="jdbc.resultsettable" level="DEBUG"/>
-    <logger name="jdbc.connection" level="OFF"/>
-
-
-	<root level="DEBUG">
+    <logger name="jdbc.sqlonly" level="DEBUG"/>
+    <logger name="jdbc.sqltiming" level="WARN"/>
+    <logger name="jdbc.audit" level="WARN"/>
+    <logger name="jdbc.resultset" level="ERROR"/>
+    <logger name="jdbc.resultsettable" level="WARN"/>
+    <logger name="jdbc.connection" level="WARN"/>
+	
+	<root level="INFO">
         <appender-ref ref="CONSOLE"/> 
     </root>
 
