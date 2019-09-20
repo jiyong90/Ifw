@@ -163,9 +163,9 @@
          			var calendar = this.$refs.fullCalendar.cal;
          			
 	         		var eventSource = calendar.getEventSourceById(id);
-	         		//if(eventSource!=null) {
-	         		//	eventSource.remove();
-	         		//} 
+	         		if(eventSource!=null) {
+	         			eventSource.remove();
+	         		} 
 	         		
 	         		//이벤트 새로 생성
 	         		var eMap = {
@@ -216,10 +216,11 @@
 								});
 								
 								//근무계획
-								if(f.hasOwnProperty('flexibleEmp') && ($this.dayWorks[f.sYmd]==null || $this.dayWorks[f.sYmd]==undefined)) {
+								//if(f.hasOwnProperty('flexibleEmp') && ($this.dayWorks[f.sYmd]==null || $this.dayWorks[f.sYmd]==undefined)) {
+								if(f.hasOwnProperty('flexibleEmp')) {
 									$this.dayWorks[f.sYmd] = f.flexibleEmp;
-									$this.addDayWorks(f.flexibleEmp);
-								}
+									$this.addDayWorks(f.sYmd, f.flexibleEmp);
+								} 
 							});
 							
 						}
@@ -296,9 +297,8 @@
         		}
  	        
  	        },
-	        addDayWorks : function(v){ //근무시간 생성
+	        addDayWorks : function(symd, v){ //근무시간 생성
 	         	var $this = this;
-	         	
 	        	//if(Object.keys($this.dayWorks).length>0) {
 		         	var events = [];
 		         	//$.each($this.dayWorks, function(k, v){
@@ -340,7 +340,7 @@
 			         		//} 
 						});
 		         	//});
-		         	$this.addEventSource('dayWorks', events);
+		         	$this.addEventSource('dayWorks'+symd, events);
 	        	//}
 	        },
 			selectAllow : function(){

@@ -150,8 +150,8 @@
                                  <span class="over-time"></span>
                              </div>
                              <ul class="legend-wrap">
-                                 <li class="work-time">소정 <strong>40:00</strong></li>
-                                 <li class="over-time">연장 <strong>12:00</strong></li>
+                                 <li class="work-time">소정 <strong>{{minuteToHHMM(rangeInfo.totalWorkMinute)}}</strong></li>
+                                 <li class="over-time">연장 <strong>{{minuteToHHMM(rangeInfo.totalOtMinute)}}</strong></li>
                              </ul>
                         </li>
                         <li>
@@ -161,15 +161,15 @@
                                  <span class="over-time"></span>
                              </div>
                              <ul class="legend-wrap">
-                                 <li class="work-time">소정 <strong>10:00</strong></li>
-                                 <li class="over-time">연장 <strong>11:00</strong></li>
+                                 <li class="work-time">소정 <strong>{{minuteToHHMM(rangeInfo.restWorkMinute)}}</strong></li>
+                                 <li class="over-time">연장 <strong>{{minuteToHHMM(rangeInfo.restOtMinute)}}</strong></li>
                              </ul>
                         </li>
                         <li>
                             <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
                             <div class="sub-desc">
-                            	<template v-if="Object.keys(rangeInfo).length>0">
-                            	48시간
+                            	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.avlMinute && rangeInfo.avlMinute!=0">
+                            	{{minuteToHHMM(rangeInfo.avlMinute)}}시간
                             	</template>
                             </div>
                         </li>
@@ -781,27 +781,21 @@
   		watch: {
   			rangeInfo : function(val, oldVal) {
   				//총 계획 근무시간,잔여 근무시간 그래프 표기
-  				if(val.baseWorkYn!=null && val.baseWorkYn!=undefined) {
-  					if(val.baseWorkYn=='Y') {
-		  				$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc(40/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc((40 - 1)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc((12 + 1)/52 * 100%)' });
-		  				
-		  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc((40 - 30)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc((40 - 30 - 1)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc((40 - 30 - 1 + 1)/52 * 100%)' });
-  					} else {
-  						$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc(40/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc((40 - 1)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc((12 + 1)/52 * 100%)' });
-		  				
-		  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc((40 - 30)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc((40 - 30 - 1)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc((40 - 30 - 1 + 1)/52 * 100%)' });
-  					}
-  				} else {
-  					
-  				}
+  				
+  				var tMin = Number(val.totalWorkMinute + val.totalOtMinute) / 60;
+  				var tWorkMin = Number(val.totalWorkMinute) / 60;
+  				var tOtMin = Number(val.totalOtMinute) / 60;
+  				var rMin = Number(val.restWorkMinute + val.restOtMinute) / 60;
+  				var rWorkMin = Number(val.restWorkMinute) / 60;
+  				var rOtMin = Number(val.restOtMinute) / 60;
+  				
+  				$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc('+tWorkMin+'/'+tMin+' * 100%)' });
+  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc(('+tWorkMin+' - 1)/'+tMin+' * 100%)' });
+  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc(('+tOtMin+' + 1)/'+tMin+'* 100%)' });
+  				
+  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc('+rWorkMin+'/'+rMin+' * 100%)' });
+  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc(('+rWorkMin+' - 1)/'+rMin+' * 100%)' });
+  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc(('+rOtMin+' + 1)/'+rMin+'* 100%)' });
   			},
   			flexibleAppl : function(val, oldVal) {
   				//근무시간, 코어시간 그래프 표기

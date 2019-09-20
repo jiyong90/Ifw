@@ -4,9 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.vo.WtmDayWorkVO;
-import com.isu.ifw.vo.WtmWorkTermTimeVO;
 import com.isu.option.vo.ReturnParam;
 
 /**
@@ -133,7 +131,7 @@ public interface WtmFlexibleEmpService {
 	 * @param userId
 	 * @throws Exception
 	 */
-	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
+	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
 	
 	//public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Map<String, Object> paramMap, Long userId);
 	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, Long userId);

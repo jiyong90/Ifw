@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
+import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmDayWorkVO;
@@ -30,6 +31,9 @@ import com.isu.option.vo.ReturnParam;
 @RestController
 @RequestMapping(value="/flexibleEmp")
 public class WtmFlexibleEmpController {
+	
+	@Autowired
+	WtmAsyncService wymAsyncService;
 	
 	@Autowired
 	@Qualifier(value="flexibleEmpService")
@@ -222,16 +226,42 @@ public class WtmFlexibleEmpController {
 		
 		Long flexibleEmpId = Long.valueOf(paramMap.get("flexibleEmpId").toString());
 		Map<String, Object> dayResult = new HashMap<String, Object>();
-		if(paramMap.containsKey("dayResult") && paramMap.get("dayResult")!=null && !"".equals(paramMap.get("dayResult"))) 
+		String symd = "";
+		String eymd = "";
+		
+		if(paramMap.containsKey("dayResult") && paramMap.get("dayResult")!=null && !"".equals(paramMap.get("dayResult"))) {
 			dayResult = (Map<String, Object>)paramMap.get("dayResult");
-				
+			
+			if(dayResult.size()>0) {
+				int i = 0;
+				for(String k : dayResult.keySet()) {
+					String date = k;
+					
+					if(i==0) {
+						symd = date;
+						eymd = date;
+					} else {
+						if(date.compareTo(symd) == -1)
+							symd = date;
+						if(date.compareTo(eymd) == 1)
+							eymd = date;
+					}
+					i++;
+				}
+			}
+		}
+		
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			flexibleEmpService.save(flexibleEmpId, dayResult, userId);
+			rp = flexibleEmpService.save(flexibleEmpId, dayResult, userId);
 			
 			List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
 			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(plans, userId);
 			rp.put("dayWorks", dayWorks);
+			
+			if(rp.containsKey("sabun") && !"".equals(symd) && !"".equals(eymd)) {
+				wymAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", symd, eymd, userId);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

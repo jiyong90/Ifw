@@ -261,8 +261,8 @@
 	  	  		    		}
   	         			});
   	         			
-  	         			console.log($this.empHolidays);
-  	         			console.log(editYn);
+  	         			//console.log($this.empHolidays);
+  	         			//console.log(editYn);
   	         			
   	         			if(editYn) {
   	         				$("#startTime").prop("disabled", false);

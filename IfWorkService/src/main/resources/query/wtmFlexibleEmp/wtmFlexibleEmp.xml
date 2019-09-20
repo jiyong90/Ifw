@@ -126,10 +126,10 @@
 			  , M.BASE_WORK_YN AS baseWorkYn
 			  , E.SYMD AS sYmd
 			  , E.EYMD AS eYmd
-			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS total_work_time
-			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'OT') AS total_ot_time
-			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS rest_work_time
-			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS rest_ot_time
+			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
+			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'OT') AS totalOtMinute
+			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
+			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
 			  , T.AVL_MINUTE AS avlMinute
 		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_FLEXIBLE_STD_MGR M

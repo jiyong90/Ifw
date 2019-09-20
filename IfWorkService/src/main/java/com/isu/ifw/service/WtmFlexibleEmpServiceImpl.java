@@ -27,9 +27,9 @@ import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.repository.WtmWorkteamEmpRepository;
 import com.isu.ifw.repository.WtmWorkteamMgrRepository;
-import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmDayPlanVO;
 import com.isu.ifw.vo.WtmDayWorkVO;
+import com.isu.option.vo.ReturnParam;
 
 @Service("flexibleEmpService")
 public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
@@ -217,9 +217,15 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Transactional
 	@Override
-	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception{
+	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception{
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
 		WtmFlexibleEmp emp =  flexEmpRepo.findById(flexibleEmpId).get();
 		flexEmpMapper.createWorkCalendarOfSeleC(flexibleEmpId, userId);
+
+		rp.put("sabun", emp.getSabun());
+		
 		if(dateMap != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
 			for(String k : dateMap.keySet()) {
@@ -296,7 +302,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		//저장된 데이터를 기반으로 유효성 검사 진행
 		//select CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * 40 / 7) from WTM_FLEXIBLE_EMP E;
 		
-		
+		return rp;
 	}
 
 	@Override
