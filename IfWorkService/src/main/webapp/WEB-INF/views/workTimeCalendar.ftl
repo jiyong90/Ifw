@@ -342,8 +342,10 @@
                             <hr class="bar">
                         </div>
                         <div class="btn-wrap text-center" v-if="overtimeAppl.otCanApplId==null||overtimeAppl.otCanApplId==undefined||overtimeAppl.otCanApplId==''">
-                            <button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
-                            <button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
+                        	<template v-if="overtimeAppl.applStatusCd=='99'">
+                            	<button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
+                            	<button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
+                        	</template>
                         </div>
                     </form>
                 </div>
@@ -563,7 +565,7 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
-							//console.log(data);
+							console.log(data);
 							if(data!=null) {
 								$this.result = data;
 								calendarLeftVue.holidayYn = $this.result.holidayYn;
@@ -623,12 +625,18 @@
 							success: function(data) {
 								if(data!=null) {
 									result = data;
-									
+									console.log(result);
 									if(data.hasOwnProperty('calcMinute')) {
-										result['calcHour'] = calendarLeftVue.minuteToHHMM(data.calcMinute, 'detail');
+										if(data.calcMinute==0)
+											result['calcHour'] = "0시간";
+										else
+											result['calcHour'] = calendarLeftVue.minuteToHHMM(data.calcMinute, 'detail');
 									}
 									if(data.hasOwnProperty('breakMinute')) {
-										result['breakHour'] = calendarLeftVue.minuteToHHMM(data.breakMinute, 'detail');
+										if(data.breakMinute==0)
+											result['breakHour'] = "0시간";
+										else
+											result['breakHour'] = calendarLeftVue.minuteToHHMM(data.breakMinute, 'detail');
 									}
 								} 
 							},
