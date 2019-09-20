@@ -45,6 +45,8 @@ public class WtmApplCode {
 	private String inEhm;
 	@Column(name="SUBS_YN")
 	private String subsYn;
+	@Column(name="SUBS_RULE_ID")
+	private Long subsRuleId;
 	@Column(name="SUBS_SDAY")
 	private Integer subsSday;
 	@Column(name="SUBS_EDAY")
@@ -128,6 +130,12 @@ public class WtmApplCode {
 	}
 	public void setSubsYn(String subsYn) {
 		this.subsYn = subsYn;
+	}
+	public Long getSubsRuleId() {
+		return subsRuleId;
+	}
+	public void setSubsRuleId(Long subsRuleId) {
+		this.subsRuleId = subsRuleId;
 	}
 	public Integer getSubsSday() {
 		return subsSday;

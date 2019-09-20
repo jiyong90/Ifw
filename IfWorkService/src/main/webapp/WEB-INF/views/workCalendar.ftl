@@ -745,7 +745,7 @@
  	         			calendarLeftVue.viewFlexitimeAppl(null);
  	         			
  	         			//선택할 수 있는 근무기간 체크
- 	         			monthCalendarVue.getPrevFlexitime();
+ 	         			//monthCalendarVue.getPrevFlexitime();
   	         		});
   	         		$("#alertModal").modal("show"); 
          		});
@@ -822,8 +822,8 @@
   			}
   		},
 	    mounted: function(){
-	    	this.getFlexibleRangeInfo(this.today);
-	    	this.getFlexibleDayInfo(this.today);
+	    	//this.getFlexibleRangeInfo(this.today);
+	    	//this.getFlexibleDayInfo(this.today);
 	    	//calendarLeftVue.getWorkDayInfo(this.today);
 	    	
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
@@ -885,6 +885,7 @@
 						
 						if(data!=null) {
 							$this.rangeInfo = data;
+							//console.log(data);
 							
 							var now = '';
 							<#if today?? && today!='' && today?exists >
@@ -893,8 +894,7 @@
 							
 							//근무계획작성
 							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y'
-								&& now!='' && (moment(data.sYmd).diff(now)<=0 || moment(now).diff(data.eYmd)<=0)) {
-								
+								&& now!='' && moment(now).diff(data.eYmd)<=0) {
 								$("#workPlanBtn").show();
 							} 
 						}
@@ -1215,7 +1215,10 @@
          	},
          	viewOvertimeAppl: function(){
          		var $this = this;
-         		timeCalendarVue.viewOvertimeAppl($this.calendar.getDate());
+         		var info = {
+         			date : $this.calendar.getDate()
+         		};
+         		timeCalendarVue.preCheck(info);
          	}
 	    }
    	});

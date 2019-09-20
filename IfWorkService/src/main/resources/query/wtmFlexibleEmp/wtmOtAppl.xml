@@ -59,7 +59,7 @@
 			  LEFT OUTER JOIN WTM_OT_CAN_APPL C
 			    ON R.WORK_DAY_RESULT_ID = C.WORK_DAY_RESULT_ID
 			 WHERE O.APPL_ID = #{applId}   
-			   AND R.TIME_TYPE_CD = 'OT'
+			   AND (R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD = 'OT')
 			 ORDER BY O.OT_SDATE
 	        ]]>
     </select>

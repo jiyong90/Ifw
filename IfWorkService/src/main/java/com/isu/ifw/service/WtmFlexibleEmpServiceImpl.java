@@ -62,8 +62,11 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		List<Map<String, Object>> flexibleList = flexEmpMapper.getFlexibleEmpList(paramMap);
 		if(flexibleList!=null && flexibleList.size()>0) {
 			for(Map<String, Object> flex : flexibleList) {
-				if(flex.containsKey("flexibleEmpId") && flex.get("flexibleEmpId")!=null && !"".equals(flex.get("flexibleEmpId")))
-					flex.put("flexibleEmp", getDayWorks(Long.valueOf(flex.get("flexibleEmpId").toString()), userId));
+				if(flex.containsKey("flexibleEmpId") && flex.get("flexibleEmpId")!=null && !"".equals(flex.get("flexibleEmpId"))) {
+					paramMap.put("flexibleEmpId", Long.valueOf(flex.get("flexibleEmpId").toString()));
+					List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlanByYmdBetween(paramMap);
+					flex.put("flexibleEmp", getDayWorks(plans, userId));
+				}
 			}
 		}
 		
@@ -76,13 +79,15 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
-		paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
+		//paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
+		paramMap.put("ymd", paramMap.get("ymd").toString());
 		
 		List<Map<String, Object>> flexibleEmpList = flexEmpMapper.getFlexibleEmpListForPlan(paramMap);
 		if(flexibleEmpList!=null && flexibleEmpList.size()>0) {
 			for(Map<String, Object> flexibleEmp : flexibleEmpList) {
 				if(flexibleEmp.get("flexibleEmpId")!=null && !"".equals(flexibleEmp.get("flexibleEmpId"))) {
-					List<WtmDayWorkVO> dayWorks = getDayWorks(Long.valueOf(flexibleEmp.get("flexibleEmpId").toString()), userId);
+					List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(Long.valueOf(flexibleEmp.get("flexibleEmpId").toString()));
+					List<WtmDayWorkVO> dayWorks = getDayWorks(plans, userId);
 					flexibleEmp.put("dayWorks", dayWorks);
 				}
 			}
@@ -295,8 +300,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 
 	@Override
-	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId) {
-		List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
+	//public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId) {
+	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, Long userId) {
+		//List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
 		
 		Map<String, Object> imsiMap = new HashMap<>();
 		

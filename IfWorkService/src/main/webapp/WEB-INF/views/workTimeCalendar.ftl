@@ -384,13 +384,13 @@
             }
         }); 
         
-		if(calendarLeftVue.rangeInfo!=null && Object.keys(calendarLeftVue.rangeInfo).length>0) {
+		/* if(calendarLeftVue.rangeInfo!=null && Object.keys(calendarLeftVue.rangeInfo).length>0) {
 			var unitMinute = calendarLeftVue.rangeInfo.unitMinute;
 			if(unitMinute!=null && unitMinute!=undefined && unitMinute!='') {
 				$('#sTime').datetimepicker('stepping',Number(unitMinute));
 				$('#eTime').datetimepicker('stepping',Number(unitMinute));
 			}	
-		}
+		} */
         
 	});
 
@@ -412,7 +412,8 @@
   		    	reasons: [], //연장/휴일 근로 사유
   		    	subYmds: [], //대체휴일
   		    	overtime: {}, //연장/휴일 근로시간, 휴게시간
-  		    	overtimeAppl: {}
+  		    	overtimeAppl: {},
+  		    	applCode: {} //신청서 정보
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    },
   		    computed: {
@@ -442,6 +443,9 @@
   		    	renderCallback: function(){
   		    		var calendar = this.$refs.fullCalendar.cal;
   		    		calendarLeftVue.calendar = calendar;
+  		    		
+  		    		//신청서 정보
+  		    		this.getApplCode();
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -450,8 +454,13 @@
   		    		if(info.view.type == 'timeGridDay') { //month change
   		    			var ymd = moment(calendar.getDate()).format('YYYYMMDD');
   		    			
+  		    			//선택한 기간의 근무제 정보(남색 박스)
   		    			calendarLeftVue.getFlexibleRangeInfo(ymd);
+  		    			
+  		    			//선택한 날의 근무일 정보(흰색 박스)
   		    			$this.getFlexibleDayInfo(ymd);
+  		    			
+  		    			//선택한 날의 근무시간 정보
   		    			$this.getDayResults(ymd);
 	   		    		
 	  		    	}
@@ -485,6 +494,37 @@
   	  	         			calendar.addEvent(Obj);
   	  	         		});
   	         		}
+  	         	},
+  	         	getApplCode: function(){ //신청서 정보
+					var $this = this;
+		    		
+  					var param = {
+  	   		    		applCd : 'OT'
+  	   		    	};
+  			    		
+  			    	Util.ajax({
+  						url: "${rc.getContextPath()}/appl/code",
+  						type: "GET",
+  						contentType: 'application/json',
+  						data: param,
+  						dataType: "json",
+  						success: function(data) {
+  							$this.applCode = {};
+  							if(data!=null) {
+  								$this.applCode = data;
+  								
+  								if(data.useMinutes!=null && data.useMinutes!=undefined && data.useMinutes!=''){
+  									var useMinutes = Number(data.useMinutes);
+									$('#sTime').datetimepicker('stepping', useMinutes);
+									$('#eTime').datetimepicker('stepping', useMinutes);
+  								}
+  								
+  							}
+  						},
+  						error: function(e) {
+  							$this.applCode = {};
+  						}
+  					});
   	         	},
   	         	getFlexibleDayInfo: function(ymd){ //근무일 정보
   	         		var $this = this;
@@ -646,7 +686,6 @@
 					  	 				if(idx!=null && idx!='' && idx!=undefined) {
 					  	 					$this.subYmds[idx]['workShm'] = workShm;
 					  	 					$this.subYmds[idx]['workEhm'] = workEhm;
-					  	 					console.log($this.subYmds);
 					  	 				}
 									}
 								}
@@ -667,8 +706,32 @@
   	         		//1시간 값 세팅
 					var sYmd = new Date(date);
 					var eYmd = new Date(date);
-					//eYmd.setHours(eYmd.getHours()+1);
-					eYmd.setMinutes(eYmd.getMinutes()+30);
+					var baseEdate = null;
+					
+  	         		if($this.result!=null && $this.result.dayResults!=null && $this.result.dayResults!=undefined && $this.result.dayResults!='') {
+  	         			var dayResults = JSON.parse($this.result.dayResults);
+  	         		
+  	         			dayResults.map(function(dayResult){
+  	         				if(dayResult.timeTypeCd == 'BASE' || dayResult.timeTypeCd == 'OT') {
+  	         					if(baseEdate==null || baseEdate < dayResult.eDate) {
+  	         						baseEdate = dayResult.eDate;
+  	         					} 
+  	         				}
+  	         			});
+  	         		} 
+  	         		
+  	         		if(baseEdate!=null) {
+  	         			sYmd = new Date(baseEdate);
+  	         			eYmd = new Date(baseEdate);
+  	         		}
+  	         		
+  	         		if($this.applCode!=null && $this.applCode.timeUnit!=null && $this.applCode.timeUnit!=undefined && $this.applCode.timeUnit!='') {
+  	         			var timeUnit = Number($this.applCode.timeUnit);
+  	         			eYmd.setMinutes(sYmd.getMinutes()+timeUnit);
+  	         		} else {
+  	         			eYmd.setHours(sYmd.getHours()+1);
+  	         		}
+					
 					$("#sDate").val(moment(sYmd).format('YYYY-MM-DD'));
 					$("#eDate").val(moment(eYmd).format('YYYY-MM-DD'));
 					$("#sTime").val(moment(sYmd).format('HH:mm'));
@@ -694,7 +757,6 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
-							console.log(data);
 							$("#overtimeAppl").modal("show"); 
 						},
 						error: function(e) {
@@ -878,24 +940,60 @@
 			   			
 			   			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
 			         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
+			         	
+			         	var applCode = $this.applCode;
+			       		
+		       			//신청 가능 시간
+		     			var inShm = moment(sDate+' '+applCode.inShm).format('YYYYMMDD HHmm');
+		     			var inEhm = moment(eDate+' '+applCode.inEhm).format('YYYYMMDD HHmm');
+		       			
+		     			if(moment(otSdate).diff(inShm)<0 || moment(otEdate).diff(inEhm)>0) {
+		     				isValid = false;
+		       				var shm =  moment(inShm).format('HH:mm');
+		       				var ehm =  moment(inEhm).format('HH:mm');
+		       				msg = '근무 가능 시간은 '+shm+'~'+ehm+' 입니다.';
+		       				$("#sTime").val('');
+  	  	         			$("#eTime").val('');
+		   				}
+		     				
+		       			//신청 시간 단위
+		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='')
+		       				var timeUnit = Number(applCode.timeUnit);
+		       			
+		       			var time = Number(moment(otEdate).diff(otSdate,'minutes'));
+		       			if(time % timeUnit != 0) {
+		       				isValid = false;
+		       				msg = '근무시간은 '+timeUnit+'분 단위로 신청 가능합니다.';
+		       				$("#sTime").val('');
+  	  	         			$("#eTime").val('');
+		       			} 
+			         	
+			         	if(moment(otEdate).diff(otSdate)<0) {
+			         		isValid = false;
+			         		msg = "종료일이 시작일보다 작습니다.";
+			         		$("#sTime").val('');
+  	  	         			$("#eTime").val('');
+			         	}
   	  	         		
-  	  	         		if($this.result.hasOwnProperty('dayResults') && $this.result.dayResults!=null && $this.result.dayResults!='') {
-	         				var dayResults = JSON.parse($this.result.dayResults);
-     						dayResults.map(function(dayResult){
-	  	  	         			//if(dayResult.timeTypeCd == 'BASE'){
-		  	  	         			var workSdate = moment(dayResult.sDate).format('YYYY-MM-DD HH:mm');
-			  	         			var workEdate = moment(dayResult.eDate).format('YYYY-MM-DD HH:mm');
-			  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
-			  	         					|| moment(workSdate).diff(otEdate)<0 && moment(otEdate).diff(workEdate)<0 ) {
-			  	         				isValid = false;
-			  	         				msg = '이미 근무정보(신청중인 근무 포함)가 존재합니다.';
-			  	         				$("#sTime").val('');
-			  	  	         			$("#eTime").val('');
-			  	         			}
-			  	         				
-	  	  	         			//}
-	  	  	         		});
-  	  	         		}
+			         	if(isValid) {
+	  	  	         		if($this.result.hasOwnProperty('dayResults') && $this.result.dayResults!=null && $this.result.dayResults!='') {
+		         				var dayResults = JSON.parse($this.result.dayResults);
+	     						dayResults.map(function(dayResult){
+		  	  	         			//if(dayResult.timeTypeCd == 'BASE'){
+			  	  	         			var workSdate = moment(dayResult.sDate).format('YYYY-MM-DD HH:mm');
+				  	         			var workEdate = moment(dayResult.eDate).format('YYYY-MM-DD HH:mm');
+				  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
+				  	         					|| moment(workSdate).diff(otEdate)<0 && moment(otEdate).diff(workEdate)<0 ) {
+				  	         				isValid = false;
+				  	         				msg = '이미 근무정보(신청중인 근무 포함)가 존재합니다.';
+				  	         				$("#sTime").val('');
+				  	  	         			$("#eTime").val('');
+				  	         			}
+				  	         				
+		  	  	         			//}
+		  	  	         		});
+	  	  	         		}
+			         	}
   	  	         		
   	  	         		if(isValid) {
 	  	  	         		//신청하려는 휴일근로시간 = 대체일시 합산 시간
@@ -1172,9 +1270,55 @@
  		
  		$(this).on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
+ 				var subDate = moment(e.date).format('YYYYMMDD');
  				var id = $($this).attr('id');
- 				timeCalendarVue.getWorkHour(id, moment(e.date).format('YYYYMMDD'));
- 				timeCalendarVue.calcSubsTime(id);
+ 				var msg ='';
+ 				if($("#sDate").val()!='' && $("#eDate").val()!='') {
+	 				//대체휴가 사용 가능일인지 판단
+	         		if(timeCalendarVue.applCode!=null) {
+	         			var sDate = $("#sDate").val().replace(/-/gi,"");
+	           			var eDate = $("#eDate").val().replace(/-/gi,"");
+	         			var otSdate = moment(sDate).format('YYYYMMDD');
+	                 	var otEdate = moment(eDate).format('YYYYMMDD');
+	                 	
+	         			var applCode = timeCalendarVue.applCode;
+	         			var dayDiff = Number(moment(subDate).diff(sDate,'days'));
+	         			if(dayDiff<0) {
+         					var subsSday = Number(applCode.subsSday);
+	         				if(Math.abs(dayDiff)>subsSday) {
+	         					msg = '대체휴가는 근무일 '+subsSday+'일 전까지 사용 가능합니다.';
+	         				} else if(subsSday == 0) {
+	         					msg = '대체휴가는 근무일 이후에만 사용 가능합니다.';
+	         				}
+	         			} else {
+         					var subsEday = Number(applCode.subsEday);
+         					if(dayDiff>subsEday) {
+	         					msg = '대체휴가는 근무일 '+subsEday+'일 후까지 사용 가능합니다.';
+	         				} else if(subsEday == 0) {
+	         					msg = '대체휴가는 근무일 이전에만 사용 가능합니다.';
+	         				}
+	         			}
+	         			
+	         		} 
+	 				
+ 				} else {
+ 					msg = '근로시간을 입력하세요.';
+ 				}
+ 				
+				if(msg!='') {
+	         		$("#alertText").html(msg);
+	         		$("#alertModal").on('hidden.bs.modal',function(){
+	         			$("#alertModal").off('hidden.bs.modal');
+	         			$("#"+id).val('');
+	         		});
+	         		$("#alertModal").modal("show"); 
+	         	} else {
+	         		//해당일 근무시간 세팅
+	 				timeCalendarVue.getWorkHour(id, subDate);
+	 				//대체시간 계산
+	 				timeCalendarVue.calcSubsTime(id);
+	         	}
+ 				
  			}
  		});
    	});
@@ -1239,35 +1383,10 @@
    	$('#sDate, #eDate, #sTime, #eTime').on("change.datetimepicker", function(e){
    		
    		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
-   			var sDate = $("#sDate").val().replace(/-/gi,"");
-   			var eDate = $("#eDate").val().replace(/-/gi,"");
    			var sTime = $("#sTime").val().replace(/:/gi,"");
    			var eTime = $("#eTime").val().replace(/:/gi,"");
-   			
-   			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
-         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
-         	var msg = '';
-         	if(moment(otEdate).diff(otSdate)<0) {
-         		msg = "종료일이 시작일보다 작습니다.";
-         	} else {
-         		//연장근무 신청 기간이 1일 이상이어서도 안된다!
-       			if(moment(otEdate).diff(otSdate,'days') > 0) {
-       				msg = '하루 이상 신청할 수 없습니다.';
-       			} else {
-       				timeCalendarVue.overtime = timeCalendarVue.calcMinute(moment(timeCalendarVue.workday).format('YYYYMMDD'), sTime, eTime);
-       			}
-         	}
-         	
-         	if(msg!='') {
-         		$("#alertText").html(msg);
-         		$("#alertModal").on('hidden.bs.modal',function(){
-         			$("#alertModal").off('hidden.bs.modal');
-         			timeCalendarVue.overtime = {};
-         			$("#sTime").val('');
-         			$("#eTime").val('');
-         		});
-         		$("#alertModal").modal("show"); 
-         	}
+       		
+       		timeCalendarVue.overtime = timeCalendarVue.calcMinute(moment(timeCalendarVue.workday).format('YYYYMMDD'), sTime, eTime);
    		}
     }); 
    	

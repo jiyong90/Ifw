@@ -3,6 +3,8 @@
 <head>
 	<#include "/metadata.ftl">
 	<#include "/metaScript.ftl">
+	<!-- 근태 for HR custom  -->
+	<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/layout4HR.css">
 </head>
 <body>
 <script> var loginUrl = "http://smarthrd.servicezone.co.kr/Info.do?code=905"; </script>
