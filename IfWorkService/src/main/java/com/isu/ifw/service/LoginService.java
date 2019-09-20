@@ -50,9 +50,6 @@ public class LoginService{
 	@Value("${path.hr.token}")
 	private String pathHr;
 
-	@Value("${path.hr.redirect}")
-	private String pathRedirect;
-
 	static String PARAM_NAME_USER_TOKEN = "accessToken";
 	
 
