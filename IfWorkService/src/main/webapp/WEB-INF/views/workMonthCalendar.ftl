@@ -52,6 +52,7 @@
 	    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
 	    			calendar.select(moment(calendar.getDate()).format('YYYY-MM-DD'));
 	    			
+	    			$this.markAdditionalInfo();
 	 		    	this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
 	 		    	//console.log(calendar.getEvents());
 		    	}
@@ -83,7 +84,7 @@
 	    	},
 	    	selectCallback : function(info){
 	    		var date = moment(info.start).format('YYYYMMDD');
-	    		calendarLeftVue.selectedDate = date
+	    		calendarLeftVue.selectedDate = date;
 	    		calendarLeftVue.getFlexibleRangeInfo(date);
 	    		calendarLeftVue.getFlexibleDayInfo(date);
 	    	},
@@ -183,8 +184,8 @@
  		    	var calendar = this.$refs.fullCalendar.cal;
 
 				var param = {
-   		    		sYmd : moment(sYmd).format('YYYYMM'),
-   		    		eYmd : moment(eYmd).format('YYYYMM')
+   		    		sYmd : moment(sYmd).format('YYYYMMDD'),
+   		    		eYmd : moment(eYmd).format('YYYYMMDD')
    		    	};
   		    		
 				$this.monthFlexitimeList = [];
@@ -195,7 +196,6 @@
 					data: param,
 					dataType: "json",
 					success: function(data) {
-						//console.log(data);
 						if(data.status=='OK' && data.flexibleList!=null) {
 							$this.monthFlexitimeList = data.flexibleList;
 							$this.monthFlexitimeList.map(function(f){
@@ -222,7 +222,6 @@
 								}
 							});
 							
-							$this.markAdditionalInfo();
 						}
 					},
 					error: function(e) {
@@ -356,7 +355,7 @@
   		    			return true;
          		});
 	    	},
-			getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
+			/* getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
 				var $this = this;
  		    	var calendar = this.$refs.fullCalendar.cal;
  		    		
@@ -373,16 +372,16 @@
 					success: function(data) {
 						console.log(data);
 						$this.workTermTime = {};
-						/* if(data.status=='OK' && data.workTermTime!=null) {
-							$this.workTermTime = data.workTermTime;
+						// if(data.status=='OK' && data.workTermTime!=null) {
+						//	$this.workTermTime = data.workTermTime;
 							
-						} */
+						//} 
 					},
 					error: function(e) {
 						$this.workTermTime = {};
 					}
 				});
- 	        },
+ 	        }, */
          	getPrevFlexitime : function(){ //이전에 시행한 근무제 기간 조회
          		var $this = this;
          		Util.ajax({

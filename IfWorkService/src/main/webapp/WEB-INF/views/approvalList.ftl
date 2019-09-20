@@ -17,14 +17,14 @@
                                 <div class="desc">
                                     <span class="date-wrap">
                                         <span class="start-date">
-                                        	<template v-if="appl.sYmd">
-                                        	{{moment(appl.sYmd).format('YYYY-MM-DD')}}
+                                        	<template v-if="appl.symd">
+                                        	{{moment(appl.symd).format('YYYY-MM-DD')}}
                                         	</template>
                                         </span>
                                         <span class="ml-1 mr-1">~</span>
                                         <span class="end-date">
-                                        	<template v-if="appl.eYmd">
-                                        	{{moment(appl.eYmd).format('YYYY-MM-DD')}}
+                                        	<template v-if="appl.eymd">
+                                        	{{moment(appl.eymd).format('YYYY-MM-DD')}}
                                         	</template>
                                         </span>
                                     </span>

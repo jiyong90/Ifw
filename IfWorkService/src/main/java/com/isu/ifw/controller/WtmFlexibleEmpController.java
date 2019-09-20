@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmDayWorkVO;
@@ -33,6 +34,9 @@ public class WtmFlexibleEmpController {
 	@Autowired
 	@Qualifier(value="flexibleEmpService")
 	private WtmFlexibleEmpService flexibleEmpService;
+	
+	@Autowired
+	private WtmFlexibleEmpMapper flexEmpMapper;
 	
 	/**
 	 * 해당 월의 근무제 정보 조회
@@ -224,7 +228,9 @@ public class WtmFlexibleEmpController {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			flexibleEmpService.save(flexibleEmpId, dayResult, userId);
-			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(flexibleEmpId, userId);
+			
+			List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
+			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(plans, userId);
 			rp.put("dayWorks", dayWorks);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

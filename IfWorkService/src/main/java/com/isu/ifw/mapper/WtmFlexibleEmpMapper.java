@@ -62,6 +62,8 @@ public interface WtmFlexibleEmpMapper {
 	
 	public List<Map<String, Object>> getWorktimePlan(@Param("flexibleEmpId") Long flexibleEmpId);
 	
+	public List<Map<String, Object>> getWorktimePlanByYmdBetween(Map<String, Object> paramMap);
+	
 	/**
 	 * 근무제 기간에서 특정일 포함 이전 근무시간 합(분) - 인정 분 이 없을 경우 계획 분으로   
 	 * @param paramMap - tenantId, enterCd, sabun, ymd
