@@ -1,0 +1,37 @@
+@charset "utf-8";
+#content {
+  width: 100%;
+  min-height: 100vh;
+  transition: all 0.3s;
+  background: #e2e5ed;
+}
+#sub-nav #summary-wrap{
+  padding-bottom:10px;
+  margin:-9px 0px;
+  font-size: 12px;
+  line-height:1.5;
+}
+.white-box-wrap {
+  height: calc(100vh - 456px);
+  padding: 14px;
+  /* margin-bottom: 10px; */
+  background-color: #ffffff;
+  overflow-y: auto;
+  -ms-overflow-y: auto;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.white-box-wrap.collapse-height{
+  height: calc(100vh - 382px);
+}
+/* calendar */
+.calendar-wrap {
+  position: relative;
+  height: calc(100vh - 156px);
+  background-color: #ffffff;
+  border-top: 3px solid #4d84fe;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+.calendar-wrap.collapse-height{
+  height: calc(100vh - 82px);
+}
