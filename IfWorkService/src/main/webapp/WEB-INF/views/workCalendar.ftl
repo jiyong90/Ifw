@@ -861,9 +861,6 @@
 	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보(남색 박스)
 				var $this = this;
 		    	
-	    		//근무계획작성 버튼 숨기기
-				$("#workPlanBtn").hide();
-	    	
 				var param = {
    		    		ymd : moment(ymd).format('YYYYMMDD')
    		    	};
@@ -887,10 +884,14 @@
 							</#if>
 							
 							//근무계획작성
+							$("#workPlanBtn").hide();
 							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y'
 								&& now!='' && moment(now).diff(data.eYmd)<=0) {
 								$("#workPlanBtn").show();
 							} 
+						} else {
+							//근무계획작성 버튼 숨기기
+							$("#workPlanBtn").hide();
 						}
 					},
 					error: function(e) {
