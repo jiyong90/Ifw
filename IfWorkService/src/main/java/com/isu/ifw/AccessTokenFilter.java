@@ -110,7 +110,7 @@ public class AccessTokenFilter implements Filter {
 			if(wtmToken == null) {
 				logger.debug("DB에 토큰 없음 : " +  token);
 				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				((HttpServletResponse) response).sendRedirect(request.getServletContext() + "/hr/info/views/info");
+				((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/hr/info/views/info");
 				return;
 			} else {
 				Date expiresAt = wtmToken.getExpiresAt();
