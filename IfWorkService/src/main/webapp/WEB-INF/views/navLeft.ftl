@@ -95,6 +95,11 @@
             </a>
         </li>
         <li>
+            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/pushMgr';">
+                <span class="title">알림관리</span>
+            </a>
+        </li>
+        <li>
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compMgr';">
                 <span class="title">보상휴가기준관리</span>
             </a>

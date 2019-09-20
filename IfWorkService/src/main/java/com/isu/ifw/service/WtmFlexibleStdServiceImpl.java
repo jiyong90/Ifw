@@ -91,6 +91,22 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 			stdMgr.put("flexibleNm", l.get("FLEXIBLE_NM"));
 			stdMgr.put("useSymd", l.get("USE_SYMD"));
 			stdMgr.put("useEymd", l.get("USE_EYMD"));
+			stdMgr.put("workShm", l.get("WORK_SHM"));
+			stdMgr.put("workEhm", l.get("WORK_EHM"));
+			stdMgr.put("coreShm", l.get("CORE_SHM"));
+			stdMgr.put("coreEhm", l.get("CORE_EHM"));
+			stdMgr.put("defaultWorkMinute", l.get("DEFAULT_WORK_MINUTE"));
+			stdMgr.put("unitMinute", l.get("UNIT_MINUTE"));
+			stdMgr.put("exhaustionYn", l.get("EXHAUSTION_YN"));
+			stdMgr.put("holExceptYn", l.get("HOL_EXCEPT_YN"));
+			stdMgr.put("workDaysOpt", l.get("WORK_DAYS_OPT"));
+			stdMgr.put("usedTermOpt", l.get("USED_TERM_OPT"));
+			stdMgr.put("applTermOpt", l.get("APPL_TERM_OPT"));
+			stdMgr.put("coreChkYn", l.get("CORE_CHK_YN"));
+			stdMgr.put("baseWorkYn", l.get("BASE_WORK_YN"));
+			stdMgr.put("regardTimeCdId", l.get("REGARD_TIME_CD_ID"));
+			stdMgr.put("fixotUseType", l.get("FIXOT_USE_TYPE"));
+			stdMgr.put("fixotUseLimit", l.get("FIXOT_USE_LIMIT"));
 			stdMgr.put("note", l.get("NOTE"));
 			stdList.add(stdMgr);
 		}
