@@ -108,9 +108,9 @@ public class AccessTokenFilter implements Filter {
 
 			WtmToken wtmToken = loginService.getAccessToken(token);
 			if(wtmToken == null) {
-				logger.debug("DB에 토큰 없음 " +  token);
+				logger.debug("DB에 토큰 없음 : " +  token);
 				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				((HttpServletResponse) response).sendRedirect(request.getServletContext() + pathRedirect);
+				((HttpServletResponse) response).sendRedirect(request.getServletContext() + "/hr/info/views/info");
 				return;
 			} else {
 				Date expiresAt = wtmToken.getExpiresAt();
