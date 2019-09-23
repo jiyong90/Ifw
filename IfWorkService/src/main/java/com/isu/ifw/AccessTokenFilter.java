@@ -43,6 +43,10 @@ public class AccessTokenFilter implements Filter {
 	@Autowired
 	LoginService loginService;
 	
+
+	@Value("${path.hr.redirect}")
+	private String pathRedirect;
+
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		freePassPath = filterConfig.getInitParameter("freePassPath");
@@ -104,8 +108,9 @@ public class AccessTokenFilter implements Filter {
 
 			WtmToken wtmToken = loginService.getAccessToken(token);
 			if(wtmToken == null) {
-				logger.debug("DB에 토큰 없음 " +  token);
+				logger.debug("DB에 토큰 없음 : " +  token);
 				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/hr/info/views/info");
 				return;
 			} else {
 				Date expiresAt = wtmToken.getExpiresAt();

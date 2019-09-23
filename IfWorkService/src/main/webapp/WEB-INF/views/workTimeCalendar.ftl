@@ -96,7 +96,7 @@
 			                                    <div class="col-md-12 col-lg-2">
 		                                            <span class="time-wrap">
 		                                                <i class="fas fa-clock"></i>
-		                                                <span class="time" v-if="s.subsMinute">{{calendarLeftVue.minuteToHHMM(s.subsMinute, 'detail')}}</span>
+		                                                <span class="time" v-if="s.subsMinute">{{minuteToHHMM(s.subsMinute, 'detail')}}</span>
 			                                            <span class="time" v-else>0시간</span>
 		                                            </span>
 		                                        </div>
@@ -139,7 +139,7 @@
 	                                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-md-text-right text-center"><a href="#" class="align-middle" @click="delSubYmd(idx)">삭제</a></div>
 		                                            <div class="guide pl-1">
 		                                            	<span v-if="s.workShm && s.workEhm">*해당일 근무시간은 {{s.workShm}}~{{s.workEhm}} 입니다.</span>
-		                                            	<span v-if="s.subsBreakMinute"> 총 휴게시간은 {{calendarLeftVue.minuteToHHMM(s.subsBreakMinute, 'detail')}} 입니다.</span>
+		                                            	<span v-if="s.subsBreakMinute"> 총 휴게시간은 {{minuteToHHMM(s.subsBreakMinute, 'detail')}} 입니다.</span>
 		                                            </div>
 		                                        </div>
 	                                        </div>
@@ -266,7 +266,7 @@
                                         <i class="fas fa-clock"></i>
                                         <span class="time">
                                         	<template v-if="overtimeAppl.otMinute">
-                                        		{{calendarLeftVue.minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
+                                        		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
                                         	</template>
                                         </span>
                                     </span>
@@ -327,7 +327,7 @@
                                         <span class="start-date">{{moment(sub.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
                                         <span class="ml-1 mr-1">~</span>
                                         <span class="day-end-time">{{moment(sub.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
-                                        <span class="sub-time">{{calendarLeftVue.minuteToHHMM(sub.subsMinute,'detail')}}</span>
+                                        <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
                                     </span>
                                 </div>
                                 <div class="sub-desc">*해당일 근무시간은 {{moment(sub.sDate).format('HH:mm')}}~{{moment(sub.eDate).format('HH:mm')}} 입니다.</div>
@@ -342,8 +342,10 @@
                             <hr class="bar">
                         </div>
                         <div class="btn-wrap text-center" v-if="overtimeAppl.otCanApplId==null||overtimeAppl.otCanApplId==undefined||overtimeAppl.otCanApplId==''">
-                            <button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
-                            <button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
+                        	<template v-if="overtimeAppl.applStatusCd=='99'">
+                            	<button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
+                            	<button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
+                        	</template>
                         </div>
                     </form>
                 </div>
@@ -453,6 +455,7 @@
 
   		    		if(info.view.type == 'timeGridDay') { //month change
   		    			var ymd = moment(calendar.getDate()).format('YYYYMMDD');
+  		    			$this.workday = moment(calendar.getDate()).format('YYYY-MM-DD');
   		    			
   		    			//선택한 기간의 근무제 정보(남색 박스)
   		    			calendarLeftVue.getFlexibleRangeInfo(ymd);
@@ -623,12 +626,18 @@
 							success: function(data) {
 								if(data!=null) {
 									result = data;
-									
+									//console.log(result);
 									if(data.hasOwnProperty('calcMinute')) {
-										result['calcHour'] = calendarLeftVue.minuteToHHMM(data.calcMinute, 'detail');
+										if(data.calcMinute==0)
+											result['calcHour'] = "0시간";
+										else
+											result['calcHour'] = minuteToHHMM(data.calcMinute, 'detail');
 									}
 									if(data.hasOwnProperty('breakMinute')) {
-										result['breakHour'] = calendarLeftVue.minuteToHHMM(data.breakMinute, 'detail');
+										if(data.breakMinute==0)
+											result['breakHour'] = "0시간";
+										else
+											result['breakHour'] = minuteToHHMM(data.breakMinute, 'detail');
 									}
 								} 
 							},
@@ -995,9 +1004,9 @@
 	  	  	         		}
 			         	}
   	  	         		
-  	  	         		if(isValid) {
+  	  	         		if(isValid && $("input[name='subYn']:checked").val()=='Y') {
 	  	  	         		//신청하려는 휴일근로시간 = 대체일시 합산 시간
-	  	  	         		if($this.result.hasOwnProperty('holidayYn') && $this.result.holidayYn!=null && $this.result.holidayYn=='Y') {
+	  	  	         		if($this.result.hasOwnProperty('holidayYn') && $this.result.holidayYn!=null && $this.result.holidayYn=='Y') { 
 	  	  	         			
 	  	  	         			if($this.subYmds!=null && $this.subYmds.length>0) {
 	  	  	         				var subsMin = 0;
@@ -1028,7 +1037,7 @@
 		  	  	         			
 		  	  	         			if(isValid && $this.overtime.calcMinute!=null && $this.overtime.calcMinute!='' && $this.overtime.calcMinute!=subsMin) {
 		  	  	         				isValid = false;
-		  	  	         				msg = calendarLeftVue.minuteToHHMM($this.overtime.calcMinute, 'detail')+'의 대체 휴일을 지정하세요.';
+		  	  	         				msg = minuteToHHMM($this.overtime.calcMinute, 'detail')+'의 대체 휴일을 지정하세요.';
 		  	  	         			}
 		  	  	         			
 	  	  	         			} else {
@@ -1070,7 +1079,7 @@
   	         		
   	         		//휴일근로신청
 					if(holidayYn=='Y') {
-						param['subYn'] =  $('input[name="subYn"]').val();
+						param['subYn'] =  $('input[name="subYn"]:checked').val();
 						
 						var subs = [];
 						if($this.subYmds!=null && $this.subYmds.length>0) {
@@ -1101,7 +1110,8 @@
 								$("#alertText").html("확인요청 되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
 									$("#alertModal").off('hidden.bs.modal');
-									location.reload();
+									//location.reload();
+									location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
 								$("#alertText").html(data.message);
@@ -1143,7 +1153,8 @@
 									$("#alertModal").off('hidden.bs.modal');
 									$("#cancelOpinionModal").modal("hide");
 									$("#overtimeApplDetail").modal("hide");
-									location.reload();
+									//location.reload();
+									location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
 								$("#alertText").html(data.message);
@@ -1181,6 +1192,8 @@
   	                else {
   	                    $(".radio-toggle-wrap").hide(500);
   	                }
+  	         		
+  	         		console.log(val);
   	         	},
   	         	calcSubsTime: function(id) { //휴일 대체 근로 시간 계산
   	         		var $this = this;

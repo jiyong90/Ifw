@@ -50,9 +50,17 @@
 										</td>
 										<th>신청 지정 분</th>
 										<td>
-											<input type="checkbox" id="useMinutes0"  name="useMinutes" value="0"/> 00분
-											<input type="checkbox" id="useMinutes10" name="useMinutes" value="10"/> 10분
-											<input type="checkbox" id="useMinutes30" name="useMinutes" value="30"/> 30분
+											<select id="timeUnit">
+			                                    <option value="1">1분</option>
+			                                    <option value="0">00분</option>
+			                                    <option value="10">10분</option>
+			                                    <option value="30">30분</option>
+			                                </select>
+			                                <!--
+											<input type="checkbox" id="useMinutes" name="useMinutes" value="0" title="00분"/> 00분
+											<input type="checkbox" id="useMinutes" name="useMinutes" value="10" title="10분"/> 10분
+											<input type="checkbox" id="useMinutes" name="useMinutes" value="30" title="30분"/> 30분
+											-->
 										</td>
 									</tr>
 									<tr id="trApplTime">
@@ -65,19 +73,27 @@
 									</tr>
 									<tr id="trHol">
 										<th>휴일대체 사용여부</th>
-										<td colspan="3">
+										<td>
 											<select id="subsYn">
 			                                    <option value="Y">사용</option>
 			                                    <option value="N">사용안함</option>
 			                                </select>
 										</td>
+										<th>휴일대체 선택대상</th>
+										<td>
+											<select id="subsRuleId">
+			                                    <option value="">사용안함</option>
+			                                    <option value="1">휴일대체 선택대상</option>
+			                                    <option value="2">근무시간관리 대상자</option>
+			                                </select>
+										</td>
 									</tr>
 									<tr id="trSubs">
-										<th>휴일대체 사용기간(근무일이전)</th>
+										<th>휴일대체 사용기간<br>(근무일이전)</th>
 										<td>
 											<input type="text" id="subsSday" name="subsSday" class="required"/>일
 										</td>
-										<th>휴일대체 사용기간(근무일이후)</th>
+										<th>휴일대체 사용기간<br>(근무일이후)</th>
 										<td>
 											<input type="text" id="subsEday" name="subsEday" class="required"/>일
 										</td>
@@ -85,7 +101,7 @@
 									<tr>
 										<th>비고</th>
 										<td colspan="3">
-											<textarea id="note" cols=50 rows=3>
+											<textarea id="note" cols=80 rows=3>
 											</textarea>
 										</td>
 									</tr>
@@ -163,9 +179,9 @@
 				$('input[name="useMinutes"]').each(function() {
 				    if(this.checked){
 				    	var objUseMinute = new Object();
-						objUseMinute.lable = this.value+"분";
+						objUseMinute.lable = this.title;
 						objUseMinute.value = this.value;
-						useMinutesArr.push(objUseMinute);  // 배열에 Object를 넣을 땐 push 함수를 사용
+						useMinutesArr.push(objUseMinute);
 				    }
 				    
 				});

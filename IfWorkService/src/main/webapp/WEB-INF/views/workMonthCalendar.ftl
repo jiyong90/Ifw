@@ -52,6 +52,7 @@
 	    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
 	    			calendar.select(moment(calendar.getDate()).format('YYYY-MM-DD'));
 	    			
+	    			$this.markAdditionalInfo();
 	 		    	this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
 	 		    	//console.log(calendar.getEvents());
 		    	}
@@ -83,7 +84,7 @@
 	    	},
 	    	selectCallback : function(info){
 	    		var date = moment(info.start).format('YYYYMMDD');
-	    		calendarLeftVue.selectedDate = date
+	    		calendarLeftVue.selectedDate = date;
 	    		calendarLeftVue.getFlexibleRangeInfo(date);
 	    		calendarLeftVue.getFlexibleDayInfo(date);
 	    	},
@@ -162,9 +163,9 @@
          			var calendar = this.$refs.fullCalendar.cal;
          			
 	         		var eventSource = calendar.getEventSourceById(id);
-	         		//if(eventSource!=null) {
-	         		//	eventSource.remove();
-	         		//} 
+	         		if(eventSource!=null) {
+	         			eventSource.remove();
+	         		} 
 	         		
 	         		//이벤트 새로 생성
 	         		var eMap = {
@@ -183,8 +184,8 @@
  		    	var calendar = this.$refs.fullCalendar.cal;
 
 				var param = {
-   		    		sYmd : moment(sYmd).format('YYYYMM'),
-   		    		eYmd : moment(eYmd).format('YYYYMM')
+   		    		sYmd : moment(sYmd).format('YYYYMMDD'),
+   		    		eYmd : moment(eYmd).format('YYYYMMDD')
    		    	};
   		    		
 				$this.monthFlexitimeList = [];
@@ -195,7 +196,6 @@
 					data: param,
 					dataType: "json",
 					success: function(data) {
-						//console.log(data);
 						if(data.status=='OK' && data.flexibleList!=null) {
 							$this.monthFlexitimeList = data.flexibleList;
 							$this.monthFlexitimeList.map(function(f){
@@ -216,13 +216,13 @@
 								});
 								
 								//근무계획
-								if(f.hasOwnProperty('flexibleEmp') && ($this.dayWorks[f.sYmd]==null || $this.dayWorks[f.sYmd]==undefined)) {
+								//if(f.hasOwnProperty('flexibleEmp') && ($this.dayWorks[f.sYmd]==null || $this.dayWorks[f.sYmd]==undefined)) {
+								if(f.hasOwnProperty('flexibleEmp')) {
 									$this.dayWorks[f.sYmd] = f.flexibleEmp;
-									$this.addDayWorks(f.flexibleEmp);
-								}
+									$this.addDayWorks(f.sYmd, f.flexibleEmp);
+								} 
 							});
 							
-							$this.markAdditionalInfo();
 						}
 					},
 					error: function(e) {
@@ -297,9 +297,8 @@
         		}
  	        
  	        },
-	        addDayWorks : function(v){ //근무시간 생성
+	        addDayWorks : function(symd, v){ //근무시간 생성
 	         	var $this = this;
-	         	
 	        	//if(Object.keys($this.dayWorks).length>0) {
 		         	var events = [];
 		         	//$.each($this.dayWorks, function(k, v){
@@ -341,7 +340,7 @@
 			         		//} 
 						});
 		         	//});
-		         	$this.addEventSource('dayWorks', events);
+		         	$this.addEventSource('dayWorks'+symd, events);
 	        	//}
 	        },
 			selectAllow : function(){
@@ -356,7 +355,7 @@
   		    			return true;
          		});
 	    	},
-			getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
+			/* getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
 				var $this = this;
  		    	var calendar = this.$refs.fullCalendar.cal;
  		    		
@@ -373,16 +372,16 @@
 					success: function(data) {
 						console.log(data);
 						$this.workTermTime = {};
-						/* if(data.status=='OK' && data.workTermTime!=null) {
-							$this.workTermTime = data.workTermTime;
+						// if(data.status=='OK' && data.workTermTime!=null) {
+						//	$this.workTermTime = data.workTermTime;
 							
-						} */
+						//} 
 					},
 					error: function(e) {
 						$this.workTermTime = {};
 					}
 				});
- 	        },
+ 	        }, */
          	getPrevFlexitime : function(){ //이전에 시행한 근무제 기간 조회
          		var $this = this;
          		Util.ajax({

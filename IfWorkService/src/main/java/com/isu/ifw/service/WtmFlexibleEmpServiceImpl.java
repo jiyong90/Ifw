@@ -27,9 +27,9 @@ import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.repository.WtmWorkteamEmpRepository;
 import com.isu.ifw.repository.WtmWorkteamMgrRepository;
-import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmDayPlanVO;
 import com.isu.ifw.vo.WtmDayWorkVO;
+import com.isu.option.vo.ReturnParam;
 
 @Service("flexibleEmpService")
 public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
@@ -62,12 +62,23 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		List<Map<String, Object>> flexibleList = flexEmpMapper.getFlexibleEmpList(paramMap);
 		if(flexibleList!=null && flexibleList.size()>0) {
 			for(Map<String, Object> flex : flexibleList) {
-				if(flex.containsKey("flexibleEmpId") && flex.get("flexibleEmpId")!=null && !"".equals(flex.get("flexibleEmpId")))
-					flex.put("flexibleEmp", getDayWorks(Long.valueOf(flex.get("flexibleEmpId").toString()), userId));
+				if(flex.containsKey("flexibleEmpId") && flex.get("flexibleEmpId")!=null && !"".equals(flex.get("flexibleEmpId"))) {
+					paramMap.put("flexibleEmpId", Long.valueOf(flex.get("flexibleEmpId").toString()));
+					List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlanByYmdBetween(paramMap);
+					flex.put("flexibleEmp", getDayWorks(plans, userId));
+				}
 			}
 		}
 		
 		return flexibleList;
+	}
+	
+	public Map<String, Object> getFlexibleEmp(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		return flexEmpMapper.getFlexibleEmp(paramMap);
 	}
 	
 	@Override
@@ -76,13 +87,15 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
-		paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
+		//paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
+		paramMap.put("ymd", paramMap.get("ymd").toString());
 		
 		List<Map<String, Object>> flexibleEmpList = flexEmpMapper.getFlexibleEmpListForPlan(paramMap);
 		if(flexibleEmpList!=null && flexibleEmpList.size()>0) {
 			for(Map<String, Object> flexibleEmp : flexibleEmpList) {
 				if(flexibleEmp.get("flexibleEmpId")!=null && !"".equals(flexibleEmp.get("flexibleEmpId"))) {
-					List<WtmDayWorkVO> dayWorks = getDayWorks(Long.valueOf(flexibleEmp.get("flexibleEmpId").toString()), userId);
+					List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(Long.valueOf(flexibleEmp.get("flexibleEmpId").toString()));
+					List<WtmDayWorkVO> dayWorks = getDayWorks(plans, userId);
 					flexibleEmp.put("dayWorks", dayWorks);
 				}
 			}
@@ -212,9 +225,15 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Transactional
 	@Override
-	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception{
+	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception{
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
 		WtmFlexibleEmp emp =  flexEmpRepo.findById(flexibleEmpId).get();
 		flexEmpMapper.createWorkCalendarOfSeleC(flexibleEmpId, userId);
+
+		rp.put("sabun", emp.getSabun());
+		
 		if(dateMap != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
 			for(String k : dateMap.keySet()) {
@@ -291,12 +310,13 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		//저장된 데이터를 기반으로 유효성 검사 진행
 		//select CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * 40 / 7) from WTM_FLEXIBLE_EMP E;
 		
-		
+		return rp;
 	}
 
 	@Override
-	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId) {
-		List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
+	//public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId) {
+	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, Long userId) {
+		//List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
 		
 		Map<String, Object> imsiMap = new HashMap<>();
 		

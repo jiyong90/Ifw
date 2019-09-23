@@ -57,10 +57,8 @@ public class WtmFlexibleStdMgr {
 	private String exhaustionYn;
 	@Column(name="HOL_EXCEPT_YN")
 	private String holExceptYn;
-	
 	@Column(name="WORK_DAYS_OPT")
 	private String workDaysOpt;
-	
 	@Column(name="USED_TERM_OPT")
 	private String usedTermOpt;
 	@Column(name="APPL_TERM_OPT")
@@ -69,7 +67,12 @@ public class WtmFlexibleStdMgr {
 	private String coreChkYn;
 	@Column(name="BASE_WORK_YN")
 	private String baseWorkYn;
-	
+	@Column(name="REGARD_TIME_CD_ID")
+	private Integer regardTimeCdId;
+	@Column(name="FIXOT_USE_TYPE")
+	private String fixotUseType;
+	@Column(name="FIXOT_USE_LIMIT")
+	private Integer fixotUseLimit;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -264,6 +267,30 @@ public class WtmFlexibleStdMgr {
 
 	public void setBaseWorkYn(String baseWorkYn) {
 		this.baseWorkYn = baseWorkYn;
+	}
+
+	public Integer getRegardTimeCdId() {
+		return regardTimeCdId;
+	}
+
+	public void setRegardTimeCdId(Integer regardTimeCdId) {
+		this.regardTimeCdId = regardTimeCdId;
+	}
+
+	public String getFixotUseType() {
+		return fixotUseType;
+	}
+
+	public void setFixotUseType(String fixotUseType) {
+		this.fixotUseType = fixotUseType;
+	}
+
+	public Integer getFixotUseLimit() {
+		return fixotUseLimit;
+	}
+
+	public void setFixotUseLimit(Integer fixotUseLimit) {
+		this.fixotUseLimit = fixotUseLimit;
 	}
 
 	public String getNote() {

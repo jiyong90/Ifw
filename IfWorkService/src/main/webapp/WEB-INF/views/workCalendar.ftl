@@ -54,15 +54,15 @@
 	            <div class="row no-gutters work-time-wrap">
 	                <div class="col-12 col-sm-2 col-xl-1">
 	                    <div class="title">현재 근무계획</div>
-	                    <div class="desc">기본근무제</div>
+	                    <div class="desc">{{flexibleStd.flexibleNm}}</div>
 	                </div>
 	                <div class="col-12 col-sm-2 col-xl-1">
 	                    <div class="title">잔여소정근로</div>
-	                    <div class="desc">8시간 42분</div>
+	                    <div class="desc">{{minuteToHHMM(flexibleStd.restWorkMinute,'detail')}}</div>
 	                </div>
 	                <div class="col-12 col-sm-2 col-xl-1">
 	                    <div class="title">잔여연장근로</div>
-	                    <div class="desc">4시간</div>
+	                    <div class="desc">{{minuteToHHMM(flexibleStd.restOtMinute,'detail')}}</div>
 	                </div>
 	                <div class="col">
 	                </div>
@@ -118,9 +118,9 @@
 	        </form>
 	        <div id="summary-wrap" style="display:none;">
 			    <ul class="summary-list">
-			        <li><span class="label-title">현재 근무계획</span><span class="desc">기본근무제</span></li>
-			        <li><span class="label-title">잔여소정근로</span><span class="desc">8시간 42분</span></li>
-			        <li><span class="label-title">잔여연장근로</span><span class="desc">4시간</span></li>
+			        <li><span class="label-title">현재 근무계획</span><span class="desc">{{flexibleStd.flexibleNm}}</span></li>
+			        <li><span class="label-title">잔여소정근로</span><span class="desc">{{minuteToHHMM(flexibleStd.restWorkMinute,'detail')}}</span></li>
+			        <li><span class="label-title">잔여연장근로</span><span class="desc">{{minuteToHHMM(flexibleStd.restOtMinute,'detail')}}</span></li>
 			    </ul>
 			</div>
 			<div class="btn-collapse-wrap">
@@ -150,8 +150,8 @@
                                  <span class="over-time"></span>
                              </div>
                              <ul class="legend-wrap">
-                                 <li class="work-time">소정 <strong>40:00</strong></li>
-                                 <li class="over-time">연장 <strong>12:00</strong></li>
+                                 <li class="work-time">소정 <strong>{{minuteToHHMM(rangeInfo.totalWorkMinute)}}</strong></li>
+                                 <li class="over-time">연장 <strong>{{minuteToHHMM(rangeInfo.totalOtMinute)}}</strong></li>
                              </ul>
                         </li>
                         <li>
@@ -161,15 +161,15 @@
                                  <span class="over-time"></span>
                              </div>
                              <ul class="legend-wrap">
-                                 <li class="work-time">소정 <strong>10:00</strong></li>
-                                 <li class="over-time">연장 <strong>11:00</strong></li>
+                                 <li class="work-time">소정 <strong>{{minuteToHHMM(rangeInfo.restWorkMinute)}}</strong></li>
+                                 <li class="over-time">연장 <strong>{{minuteToHHMM(rangeInfo.restOtMinute)}}</strong></li>
                              </ul>
                         </li>
                         <li>
                             <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
                             <div class="sub-desc">
-                            	<template v-if="Object.keys(rangeInfo).length>0">
-                            	48시간
+                            	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.avlMinute && rangeInfo.avlMinute!=0">
+                            	{{minuteToHHMM(rangeInfo.avlMinute)}}시간
                             	</template>
                             </div>
                         </li>
@@ -745,7 +745,7 @@
  	         			calendarLeftVue.viewFlexitimeAppl(null);
  	         			
  	         			//선택할 수 있는 근무기간 체크
- 	         			monthCalendarVue.getPrevFlexitime();
+ 	         			//monthCalendarVue.getPrevFlexitime();
   	         		});
   	         		$("#alertModal").modal("show"); 
          		});
@@ -781,27 +781,21 @@
   		watch: {
   			rangeInfo : function(val, oldVal) {
   				//총 계획 근무시간,잔여 근무시간 그래프 표기
-  				if(val.baseWorkYn!=null && val.baseWorkYn!=undefined) {
-  					if(val.baseWorkYn=='Y') {
-		  				$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc(40/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc((40 - 1)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc((12 + 1)/52 * 100%)' });
-		  				
-		  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc((40 - 30)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc((40 - 30 - 1)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc((40 - 30 - 1 + 1)/52 * 100%)' });
-  					} else {
-  						$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc(40/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc((40 - 1)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc((12 + 1)/52 * 100%)' });
-		  				
-		  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc((40 - 30)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc((40 - 30 - 1)/52 * 100%)' });
-		  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc((40 - 30 - 1 + 1)/52 * 100%)' });
-  					}
-  				} else {
-  					
-  				}
+  				
+  				var tMin = Number(val.totalWorkMinute + val.totalOtMinute) / 60;
+  				var tWorkMin = Number(val.totalWorkMinute) / 60;
+  				var tOtMin = Number(val.totalOtMinute) / 60;
+  				var rMin = Number(val.restWorkMinute + val.restOtMinute) / 60;
+  				var rWorkMin = Number(val.restWorkMinute) / 60;
+  				var rOtMin = Number(val.restOtMinute) / 60;
+  				
+  				$(".work-info-wrap .time-graph.plan .work-time").css({ 'width': 'calc('+tWorkMin+'/'+tMin+' * 100%)' });
+  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc(('+tWorkMin+' - 1)/'+tMin+' * 100%)' });
+  				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc(('+tOtMin+' + 1)/'+tMin+'* 100%)' });
+  				
+  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc('+rWorkMin+'/'+rMin+' * 100%)' });
+  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc(('+rWorkMin+' - 1)/'+rMin+' * 100%)' });
+  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc(('+rOtMin+' + 1)/'+rMin+'* 100%)' });
   			},
   			flexibleAppl : function(val, oldVal) {
   				//근무시간, 코어시간 그래프 표기
@@ -822,8 +816,8 @@
   			}
   		},
 	    mounted: function(){
-	    	this.getFlexibleRangeInfo(this.today);
-	    	this.getFlexibleDayInfo(this.today);
+	    	//this.getFlexibleRangeInfo(this.today);
+	    	//this.getFlexibleDayInfo(this.today);
 	    	//calendarLeftVue.getWorkDayInfo(this.today);
 	    	
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
@@ -835,41 +829,9 @@
     		</#if>
 	    },
 	    methods : {
-	    	minuteToHHMM : function (min, type) {
-	    		if(min!=null && min!=undefined && min!='') {
-		    		if(type==null || type=='')
-			   	    	type='short';
-		    		
-			   	    var min = Number(min);
-			   	    var hours   = Math.floor(min / 60);
-			   	    var minutes = Math.floor(min - (hours * 60));
-		
-			   	 	if(type=='detail') {
-			   	 		var h = hours==0?'':hours+'시간';
-			   	 		var m = minutes==0?'':minutes+'분';
-			   	 		
-			   	 		var s = h;
-			   	 		if(h!=''&&m!='') s+=' ';
-			   	 		s+=m;
-			   	 		
-			   	    	return s;
-			   	 	}
-			   	    	
-			   	    if (hours   < 10) {hours   = "0"+hours;}
-			   	    if (minutes < 10) {minutes = "0"+minutes;}
-			   	    
-			   	    if(type=='short')
-			   	   		return hours+':'+minutes;
-	    		} else {
-	    			return '';
-	    		}
-		   	},
 	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보(남색 박스)
 				var $this = this;
 		    	
-	    		//근무계획작성 버튼 숨기기
-				$("#workPlanBtn").hide();
-	    	
 				var param = {
    		    		ymd : moment(ymd).format('YYYYMMDD')
    		    	};
@@ -885,6 +847,7 @@
 						
 						if(data!=null) {
 							$this.rangeInfo = data;
+							//console.log(data);
 							
 							var now = '';
 							<#if today?? && today!='' && today?exists >
@@ -892,11 +855,14 @@
 							</#if>
 							
 							//근무계획작성
+							$("#workPlanBtn").hide();
 							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y'
-								&& now!='' && (moment(data.sYmd).diff(now)<=0 || moment(now).diff(data.eYmd)<=0)) {
-								
+								&& now!='' && moment(now).diff(data.eYmd)<=0) {
 								$("#workPlanBtn").show();
 							} 
+						} else {
+							//근무계획작성 버튼 숨기기
+							$("#workPlanBtn").hide();
 						}
 					},
 					error: function(e) {
@@ -1237,6 +1203,36 @@
 	   		}
    		}
     }); 
+   	
+   	function minuteToHHMM(min, type) {
+		if(min!=null && min!=undefined && min!='') {
+    		if(type==null || type=='')
+	   	    	type='short';
+    		
+	   	    var min = Number(min);
+	   	    var hours   = Math.floor(min / 60);
+	   	    var minutes = Math.floor(min - (hours * 60));
+
+	   	 	if(type=='detail') {
+	   	 		var h = hours==0?'':hours+'시간';
+	   	 		var m = minutes==0?'':minutes+'분';
+	   	 		
+	   	 		var s = h;
+	   	 		if(h!=''&&m!='') s+=' ';
+	   	 		s+=m;
+	   	 		
+	   	    	return s;
+	   	 	}
+	   	    	
+	   	    if (hours   < 10) {hours   = "0"+hours;}
+	   	    if (minutes < 10) {minutes = "0"+minutes;}
+	   	    
+	   	    if(type=='short')
+	   	   		return hours+':'+minutes;
+		} else {
+			return '';
+		}
+   	}
    	
 </script>
 

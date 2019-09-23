@@ -4,9 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.vo.WtmDayWorkVO;
-import com.isu.ifw.vo.WtmWorkTermTimeVO;
 import com.isu.option.vo.ReturnParam;
 
 /**
@@ -65,6 +63,17 @@ public interface WtmFlexibleEmpService {
 	 */
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
 
+	/**
+	 * 오늘의 근무제 정보 조회
+	 * @param tenantId
+	 * @param enterCd
+	 * @param empNo
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getFlexibleEmp(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+
+	
 	/**
 	 * 계획을 작성 해야 하는 유연근무제 리스트 조회
 	 * @param tenantId
@@ -133,9 +142,10 @@ public interface WtmFlexibleEmpService {
 	 * @param userId
 	 * @throws Exception
 	 */
-	public void save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
+	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
 	
-	public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId);
+	//public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Map<String, Object> paramMap, Long userId);
+	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, Long userId);
 	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId); 
 	
 	/**

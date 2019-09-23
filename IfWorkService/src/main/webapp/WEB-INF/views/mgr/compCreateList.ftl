@@ -65,9 +65,9 @@
 			{Header:"No",		Type:"Seq",	Hidden:Number("0"),	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"소속",		Type:"Text",		Hidden:0,	Width:90,	Align:"Center",	ColMerge:0,	SaveName:"orgNm",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
    			{Header:"사번",		Type:"Text",		Hidden:0,	Width:70,	Align:"Center",	ColMerge:0,	SaveName:"sabun",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:13 },
-   			{Header:"성명",		Type:"Text",		Hidden:0,	Width:70,	Align:"Center",	ColMerge:0,	SaveName:"name",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"발생시간(분)",	Type:"Text",		Hidden:0,	Width:60,	Align:"Center",	ColMerge:0,	SaveName:"totMinute",	KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
-			{Header:"사용시간(분)",	Type:"Text",		Hidden:0,	Width:60,	Align:"Center",	ColMerge:0,	SaveName:"useMinute",	KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 }
+   			{Header:"성명",		Type:"Text",		Hidden:0,	Width:70,	Align:"Center",	ColMerge:0,	SaveName:"empNm",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"발생시간(분)",	Type:"Int",		Hidden:0,	Width:60,	Align:"Center",	ColMerge:0,	SaveName:"totMinute",	KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
+			{Header:"사용시간(분)",	Type:"Int",		Hidden:0,	Width:60,	Align:"Center",	ColMerge:0,	SaveName:"useMinute",	KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -81,12 +81,14 @@
 
 		initdata2.Cols = [
 			{Header:"No",		Type:"Seq",	Hidden:Number("0"),	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
-			{Header:"생성일",		Type:"Date",        Hidden:0, 	Width:90,   Align:"Center",  ColMerge:0, SaveName:"ymd",		KeyField:0, Format:"Ymd",	PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:10 },
-			{Header:"발생시간(분)",	Type:"Text",		Hidden:0,	Width:60,	Align:"Center",	 ColMerge:0, SaveName:"totMinute",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
-			{Header:"잔여시간(분)",	Type:"Text",		Hidden:0,	Width:60,	Align:"Center",	 ColMerge:0, SaveName:"restMinute",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
-			{Header:"보상시간(분)",	Type:"Text",		Hidden:0,	Width:60,	Align:"Center",	 ColMerge:0, SaveName:"allowMinute",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
-   			{Header:"사용시작일",	Type:"Date",        Hidden:0, 	Width:90,   Align:"Center",  ColMerge:0, SaveName:"sdate",		KeyField:0, Format:"Ymd",	PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:10 },
-			{Header:"사용종료일",	Type:"Date",      	Hidden:0, 	Width:90,   Align:"Center",  ColMerge:0, SaveName:"edate",		KeyField:0, Format:"Ymd",	PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:10 }
+			{Header:"근무일",		Type:"Date",        Hidden:0, 	Width:90,   Align:"Center",  ColMerge:0, SaveName:"ymd",		KeyField:0, Format:"Ymd",	PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:10 },
+			{Header:"근무시간(분)",	Type:"Int",		Hidden:0,	Width:60,	Align:"Center",	 ColMerge:0, SaveName:"otMinute",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
+			{Header:"가산시간(분)",	Type:"Int",		Hidden:0,	Width:60,	Align:"Center",	 ColMerge:0, SaveName:"addMinute",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
+			{Header:"발생합산시간(분)",	Type:"Int",		Hidden:0,	Width:60,	Align:"Center",	 ColMerge:0, SaveName:"totMinute",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
+			{Header:"잔여시간(분)",	Type:"Int",		Hidden:0,	Width:60,	Align:"Center",	 ColMerge:0, SaveName:"restMinute",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
+			{Header:"보상시간(분)",	Type:"Int",		Hidden:0,	Width:60,	Align:"Center",	 ColMerge:0, SaveName:"allowMinute",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:10 },
+   			{Header:"사용시작일",	Type:"Date",        Hidden:0, 	Width:90,   Align:"Center",  ColMerge:0, SaveName:"symd",		KeyField:0, Format:"Ymd",	PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:10 },
+			{Header:"사용종료일",	Type:"Date",      	Hidden:0, 	Width:90,   Align:"Center",  ColMerge:0, SaveName:"eymd",		KeyField:0, Format:"Ymd",	PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:10 }
 		]; 
 		
 		IBS_InitSheet(sheet2, initdata2);
@@ -95,13 +97,23 @@
 		sheet2.SetUnicodeByte(3);
 
 		sheetInit();
-		//doAction1("Search");
+		doAction1("Search");
 	});
 
    	function doAction1(sAction) {
 		switch (sAction) {
 		case "Search":
-			sheet1.DoSearch( "${rc.getContextPath()}/taaCode/list" , $("#sheetForm").serialize());
+			sheet1.DoSearch( "${rc.getContextPath()}/compCreate/list" , $("#sheetForm").serialize());
+			break;
+		}
+	}
+	
+	function doAction2(sAction) {
+		switch (sAction) {
+		case "Search":
+			var param = "sabun="+sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun")
+			          + "&sYy="+$("#sYy").val();
+			sheet2.DoSearch( "${rc.getContextPath()}/compCreate/listDet" , param);
 			break;
 		}
 	}
@@ -119,11 +131,11 @@
 		}
 	}
 	
-	function doAction2(sAction) {
-		switch (sAction) {
-		case "Search":
-			sheet2.DoSearch( "${rc.getContextPath()}/taaCode/list" , $("#sheetForm").serialize());
-			break;
+	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
+		
+		if(OldRow != NewRow && sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus") != "I"){
+			sheet2.RemoveAll();
+			doAction2('Search');
 		}
 	}
 

@@ -261,8 +261,8 @@
 	  	  		    		}
   	         			});
   	         			
-  	         			console.log($this.empHolidays);
-  	         			console.log(editYn);
+  	         			//console.log($this.empHolidays);
+  	         			//console.log(editYn);
   	         			
   	         			if(editYn) {
   	         				$("#startTime").prop("disabled", false);
@@ -351,7 +351,16 @@
   		    	getWorkDayResult : function(){ //일근무결과 조회
 	         		var $this = this;
 	  	         	
-         			var param = {};
+	         		var workday = '';
+  	         		<#if workday?? && workday!='' && workday?exists >
+  	         			workday = moment('${workday}').format('YYYY-MM-DD');
+  	         		<#else>
+  	  		    		workday = '${today}';
+  	  		    	</#if>
+  		    	
+         			var param = {
+         				ymd: moment(workday).format('YYYYMMDD')
+         			};
          			
    		    		Util.ajax({
 						url: "${rc.getContextPath()}/flexibleEmp/dayWorks",
@@ -366,13 +375,6 @@
 								
 								$this.data = data;
 								
-								var workday = '';
-			  	         		<#if workday?? && workday!='' && workday?exists >
-			  	         			workday = moment('${workday}').format('YYYY-MM-DD');
-			  	         		<#else>
-			  	  		    		workday = '${today}';
-			  	  		    	</#if>
-			  	  		    	
 			  	  		    	$this.selectedWorkday  = {
 		  	  	    				start: workday,
 		  	  	    				end: workday
@@ -564,7 +566,7 @@
         			
         			$this.addEventSource('dayWorks',result);
   	         	},
-				getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
+				/* getWorkRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보
 					var $this = this;
   		    		var calendar = this.$refs.fullCalendar.cal;
   		    		
@@ -581,16 +583,16 @@
 						success: function(data) {
 							console.log(data);
 							$this.workTermTime = {};
-							/* if(data.status=='OK' && data.workTermTime!=null) {
-								$this.workTermTime = data.workTermTime;
-								
-							} */
+							// if(data.status=='OK' && data.workTermTime!=null) {
+							//	$this.workTermTime = data.workTermTime;
+							//	
+							//}
 						},
 						error: function(e) {
 							$this.workTermTime = {};
 						}
 					});
-  	         	},
+  	         	}, */
 				getWorkDayInfo : function(ymd){ //해당일의 근무 정보
 					
 				},
