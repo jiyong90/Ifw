@@ -24,4 +24,6 @@ public interface WtmTimeCdMgrService{
 	
 	public int setTimeBreakMgrList(Long userId, Map<String, Object> convertMap);
 	
+	public List<Map<String, Object>> getTimeCodeList(Long tenantId, String enterCd, String holYn);
+	
 }

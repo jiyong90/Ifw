@@ -57,9 +57,9 @@
 			                                    <option value="30">30분</option>
 			                                </select>
 			                                <!--
-											<input type="checkbox" id="useMinutes0"  name="useMinutes" value="0"/> 00분
-											<input type="checkbox" id="useMinutes10" name="useMinutes" value="10"/> 10분
-											<input type="checkbox" id="useMinutes30" name="useMinutes" value="30"/> 30분
+											<input type="checkbox" id="useMinutes" name="useMinutes" value="0" title="00분"/> 00분
+											<input type="checkbox" id="useMinutes" name="useMinutes" value="10" title="10분"/> 10분
+											<input type="checkbox" id="useMinutes" name="useMinutes" value="30" title="30분"/> 30분
 											-->
 										</td>
 									</tr>
@@ -179,7 +179,7 @@
 				$('input[name="useMinutes"]').each(function() {
 				    if(this.checked){
 				    	var objUseMinute = new Object();
-						objUseMinute.lable = this.value+"분";
+						objUseMinute.lable = this.title;
 						objUseMinute.value = this.value;
 						useMinutesArr.push(objUseMinute);
 				    }

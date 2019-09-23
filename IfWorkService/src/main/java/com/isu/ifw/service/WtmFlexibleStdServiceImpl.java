@@ -136,6 +136,21 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						} else {
 							saveMap.put("baseWorkYn", "N");
 						}
+						saveMap.put("holExceptYn", l.get("holExceptYn").toString());
+						saveMap.put("fixotUseType", l.get("fixotUseType").toString());
+						saveMap.put("fixotUseLimit", Integer.parseInt(l.get("fixotUseLimit").toString()));
+						saveMap.put("workShm", l.get("workShm").toString());
+						saveMap.put("workEhm", l.get("workEhm").toString());
+						saveMap.put("coreShm", l.get("coreShm").toString());
+						saveMap.put("coreEhm", l.get("coreEhm").toString());
+						saveMap.put("coreChkYn", l.get("coreChkYn").toString());
+						saveMap.put("exhaustionYn", l.get("exhaustionYn").toString());
+						saveMap.put("usedTermOpt", l.get("usedTermOpt").toString());
+						saveMap.put("workDaysOpt", l.get("workDaysOpt").toString());
+						saveMap.put("applTermOpt", l.get("applTermOpt").toString());
+						saveMap.put("regardTimeCdId", Integer.parseInt(l.get("regardTimeCdId").toString()));
+						saveMap.put("defaultWorkMinute", Integer.parseInt(l.get("defaultWorkMinute").toString()));
+						saveMap.put("unitMinute", Integer.parseInt(l.get("unitMinute").toString()));
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
 						insertList.add(saveMap);
@@ -158,6 +173,21 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						Map<String, Object> saveMap = new HashMap();
 						saveMap.put("flexibleStdMgrId", Long.parseLong(l.get("flexibleStdMgrId").toString()));
 						saveMap.put("useEymd", l.get("useEymd").toString());
+						saveMap.put("holExceptYn", l.get("holExceptYn").toString());
+						saveMap.put("fixotUseType", l.get("fixotUseType").toString());
+						saveMap.put("fixotUseLimit", Integer.parseInt(l.get("fixotUseLimit").toString()));
+						saveMap.put("workShm", l.get("workShm").toString());
+						saveMap.put("workEhm", l.get("workEhm").toString());
+						saveMap.put("coreShm", l.get("coreShm").toString());
+						saveMap.put("coreEhm", l.get("coreEhm").toString());
+						saveMap.put("coreChkYn", l.get("coreChkYn").toString());
+						saveMap.put("exhaustionYn", l.get("exhaustionYn").toString());
+						saveMap.put("usedTermOpt", l.get("usedTermOpt").toString());
+						saveMap.put("workDaysOpt", l.get("workDaysOpt").toString());
+						saveMap.put("applTermOpt", l.get("applTermOpt").toString());
+						saveMap.put("regardTimeCdId", Integer.parseInt(l.get("regardTimeCdId").toString()));
+						saveMap.put("defaultWorkMinute", Integer.parseInt(l.get("defaultWorkMinute").toString()));
+						saveMap.put("unitMinute", Integer.parseInt(l.get("unitMinute").toString()));
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
 						updateList.add(saveMap);
