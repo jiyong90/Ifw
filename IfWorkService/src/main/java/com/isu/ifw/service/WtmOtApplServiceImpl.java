@@ -591,7 +591,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					}
 					paramMap.put("sdate", subsSdate);
 					paramMap.put("edate", subsEdate);
-					Map<String, Object> resultSubsMap = wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
+					Map<String, Object> resultSubsMap = wtmFlexibleEmpMapper.checkDuplicateSubsWorktime(paramMap);
 					//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
 					
 					int workSubsCnt = Integer.parseInt(resultSubsMap.get("workCnt").toString());
