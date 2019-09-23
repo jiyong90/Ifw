@@ -455,6 +455,7 @@
 
   		    		if(info.view.type == 'timeGridDay') { //month change
   		    			var ymd = moment(calendar.getDate()).format('YYYYMMDD');
+  		    			$this.workday = moment(calendar.getDate()).format('YYYY-MM-DD');
   		    			
   		    			//선택한 기간의 근무제 정보(남색 박스)
   		    			calendarLeftVue.getFlexibleRangeInfo(ymd);
@@ -565,7 +566,7 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
-							console.log(data);
+							//console.log(data);
 							if(data!=null) {
 								$this.result = data;
 								calendarLeftVue.holidayYn = $this.result.holidayYn;
@@ -625,7 +626,7 @@
 							success: function(data) {
 								if(data!=null) {
 									result = data;
-									console.log(result);
+									//console.log(result);
 									if(data.hasOwnProperty('calcMinute')) {
 										if(data.calcMinute==0)
 											result['calcHour'] = "0시간";
@@ -1003,9 +1004,9 @@
 	  	  	         		}
 			         	}
   	  	         		
-  	  	         		if(isValid) {
+  	  	         		if(isValid && $("input[name='subYn']:checked").val()=='Y') {
 	  	  	         		//신청하려는 휴일근로시간 = 대체일시 합산 시간
-	  	  	         		if($this.result.hasOwnProperty('holidayYn') && $this.result.holidayYn!=null && $this.result.holidayYn=='Y') {
+	  	  	         		if($this.result.hasOwnProperty('holidayYn') && $this.result.holidayYn!=null && $this.result.holidayYn=='Y') { 
 	  	  	         			
 	  	  	         			if($this.subYmds!=null && $this.subYmds.length>0) {
 	  	  	         				var subsMin = 0;
@@ -1078,7 +1079,7 @@
   	         		
   	         		//휴일근로신청
 					if(holidayYn=='Y') {
-						param['subYn'] =  $('input[name="subYn"]').val();
+						param['subYn'] =  $('input[name="subYn"]:checked').val();
 						
 						var subs = [];
 						if($this.subYmds!=null && $this.subYmds.length>0) {
@@ -1109,7 +1110,8 @@
 								$("#alertText").html("확인요청 되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
 									$("#alertModal").off('hidden.bs.modal');
-									location.reload();
+									//location.reload();
+									location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
 								$("#alertText").html(data.message);
@@ -1151,7 +1153,8 @@
 									$("#alertModal").off('hidden.bs.modal');
 									$("#cancelOpinionModal").modal("hide");
 									$("#overtimeApplDetail").modal("hide");
-									location.reload();
+									//location.reload();
+									location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
 								$("#alertText").html(data.message);
@@ -1189,6 +1192,8 @@
   	                else {
   	                    $(".radio-toggle-wrap").hide(500);
   	                }
+  	         		
+  	         		console.log(val);
   	         	},
   	         	calcSubsTime: function(id) { //휴일 대체 근로 시간 계산
   	         		var $this = this;
