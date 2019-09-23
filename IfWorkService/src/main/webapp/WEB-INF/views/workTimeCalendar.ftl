@@ -899,7 +899,7 @@
   	         		
   	         		var param = {
   	         			ymd: moment($this.workday).format('YYYYMMDD'),
-  	         			workTypeCd: ''
+  	         			workTypeCd: 'OT'
   	         		};
   	         		
   	         		//연장근무
