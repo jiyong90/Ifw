@@ -16,7 +16,10 @@ public interface WtmEmpHisRepository extends JpaRepository<WtmEmpHis, Long> {
 	public List<WtmEmpHis> findByTenantIdAndEnterCd(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd, @Param(value="sYmd")String sYmd, @Param(value="searchKeyword")String searchKeyword);
 
     @Query(value="SELECT * FROM WTM_EMP_HIS WHERE TENANT_ID = :tenantId AND ENTER_CD = :enterCd AND SABUN = :sabun AND date_format(now(),'%Y%m%d') BETWEEN SYMD AND EYMD ", nativeQuery = true)
-	public List<WtmEmpHis> findByTenantIdAndEnterCdAndSabun(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd, @Param(value="sabun")String sabun);
+	public WtmEmpHis findByTenantIdAndEnterCdAndSabun(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd, @Param(value="sabun")String sabun);
 
+    @Query(value="SELECT * FROM WTM_EMP_HIS WHERE TENANT_ID = :tenantId AND ENTER_CD = :enterCd AND SABUN = :sabun AND :ymd BETWEEN SYMD AND EYMD ", nativeQuery = true)
+    public WtmEmpHis findByTenantIdAndEnterCdAndSabunAndBetweenSymdAndEymd(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd, @Param(value="sabun")String sabun, @Param(value="ymd") String ymd);
+    
 	public WtmEmpHis findByEmpHisId(Long empHisId);
 }

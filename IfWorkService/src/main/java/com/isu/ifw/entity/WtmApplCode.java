@@ -51,6 +51,8 @@ public class WtmApplCode {
 	private Integer subsSday;
 	@Column(name="SUBS_EDAY")
 	private Integer subsEday;
+	@Column(name="TARGET_RULE_ID")
+	private Long targetRuleId;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -149,6 +151,13 @@ public class WtmApplCode {
 	public void setSubsEday(Integer subsEday) {
 		this.subsEday = subsEday;
 	}
+	
+	public Long getTargetRuleId() {
+		return targetRuleId;
+	}
+	public void setTargetRuleId(Long targetRuleId) {
+		this.targetRuleId = targetRuleId;
+	}
 	public String getNote() {
 		return note;
 	}
@@ -166,8 +175,7 @@ public class WtmApplCode {
 	}
 	public void setUpdateId(Long updateId) {
 		this.updateId = updateId;
-	}
-	
+	} 
 	@PrePersist
     protected void onCreate() {
 		this.updateDate = new Date();

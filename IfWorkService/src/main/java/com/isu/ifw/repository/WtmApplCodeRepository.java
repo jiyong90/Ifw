@@ -15,4 +15,6 @@ public interface WtmApplCodeRepository extends JpaRepository<WtmApplCode, Long> 
 	
 	@Query(value="SELECT * FROM WTM_APPL_CODE WHERE TENANT_ID = :tenantId AND ENTER_CD = :enterCd", nativeQuery = true)
 	public List<WtmApplCode> findByTenantIdAndEnterCd(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd);
+	
+ 
 }
