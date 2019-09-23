@@ -421,10 +421,6 @@
 		                    <div class="inner-wrap">
 		                    	<ul class="main-wrap">
 	                                <li>
-	                                    <div class="main-title">근무시간표</div>
-	                                    <div class="main-desc">기본근무시간표</div>
-	                                </li>
-	                                <li>
 	                                    <div class="main-title">근무시간</div>
 	                                    <div class="main-desc">
 	                                    	<template v-if="flexibleAppl.workShm && flexibleAppl.workEhm">
@@ -453,6 +449,10 @@
                             </div>
 		                    <hr class="bar">
 		                    <ul class="main-wrap">
+	                    		<li>
+                                    <div class="main-title">근무시간표</div>
+                                    <div id="timeNm" class="main-desc"></div>
+                                </li>
 	                            <li>
 	                                <div class="main-title">신청일자</div>
 	                                <div id="selectedRange" class="main-desc"></div>
@@ -473,11 +473,11 @@
 		                    <ul class="time-block-list">
 		                        <li>
 		                            <div class="title">총 소정 근로 시간</div>
-		                            <div class="desc">120시간</div>
+		                            <div class="desc">{{minuteToHHMM(flexibleAppl.totalWorkMinute,'detail')}}</div>
 		                        </li>
 		                        <li>
 		                            <div class="title">계획 시간</div>
-		                            <div class="desc">42시간</div>
+		                            <div class="desc">{{minuteToHHMM(flexibleAppl.planWorkMinute,'detail')}}</div>
 		                        </li>
 		                    </ul>
 		                </div>
