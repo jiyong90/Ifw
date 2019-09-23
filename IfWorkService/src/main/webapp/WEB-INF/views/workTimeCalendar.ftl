@@ -1203,14 +1203,15 @@
   	 					idx = key[1];
   	 				
   	 				if(idx!=null && idx!='' && idx!=undefined) {
-  	 					var subsInfo = this.subYmds[idx];
+  	 					var subsInfo = $this.subYmds[idx];
+  	 					//console.log(subsInfo);
   	 					
   	 					if(subsInfo.subsSymd!=null && subsInfo.subsSymd!=undefined && subsInfo.subsSymd!=''
   	 							&& subsInfo.subsShm!=null && subsInfo.subsShm!=undefined && subsInfo.subsShm!=''
   	 							&& subsInfo.subsEhm!=null && subsInfo.subsEhm!=undefined && subsInfo.subsEhm!='') {
   	 						
-  	 						var sDate = moment(subsInfo.subsSymd+" "+subsInfo.subsShm).format('YYYY-MM-DD HH:mm');
-  	 						var eDate = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYY-MM-DD HH:mm');
+  	 						var sDate = moment(subsInfo.subsSymd+" "+subsInfo.subsShm).format('YYYYMMDD HHmm');
+  	 						var eDate = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYYMMDD HHmm');
   	 						
   	  	           			if(sDate > eDate) {
 	  	  	           			$("#alertText").html("종료시간이 시작시간보다 작습니다.");
