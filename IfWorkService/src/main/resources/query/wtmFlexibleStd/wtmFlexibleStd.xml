@@ -115,7 +115,22 @@
 				FLEXIBLE_NM, 
 				USE_SYMD, 
 				USE_EYMD, 
+				WORK_SHM,
+				WORK_EHM,
+				CORE_SHM,
+				CORE_EHM,
+				DEFAULT_WORK_MINUTE,
+				UNIT_MINUTE,
+				EXHAUSTION_YN,
+				HOL_EXCEPT_YN,
+				WORK_DAYS_OPT,
+				USED_TERM_OPT,
+				APPL_TERM_OPT,
+				CORE_CHK_YN,
 				BASE_WORK_YN,
+				REGARD_TIME_CD_ID,
+				FIXOT_USE_TYPE,
+				FIXOT_USE_LIMIT,
 				NOTE, 
 				UPDATE_DATE,
 				UPDATE_ID)
@@ -127,7 +142,22 @@
 				 #{item.flexibleNm} ,
 				 #{item.useSymd} ,
 				 #{item.useEymd} ,
+				 #{item.workShm} ,
+				 #{item.workEhm} ,
+				 #{item.coreShm} ,
+				 #{item.coreEhm} ,
+				 #{item.defaultWorkMinute} ,
+				 #{item.unitMinute} ,
+				 #{item.exhaustionYn} ,
+				 #{item.holExceptYn} ,
+				 #{item.workDaysOpt} ,
+				 #{item.usedTermOpt} ,
+				 #{item.applTermOpt} ,
+				 #{item.coreChkYn} ,
 				 #{item.baseWorkYn} ,
+				 #{item.regardTimeCdId} ,
+				 #{item.fixotUseType} ,
+				 #{item.fixotUseLimit} ,
 				 #{item.note} ,
 				 now(),
 				 #{item.userId}
@@ -139,6 +169,22 @@
 		<foreach collection="list" item="item" separator=";">
 			UPDATE WTM_FLEXIBLE_STD_MGR SET 
 				USE_EYMD =  #{item.useEymd}
+				, WORK_SHM = #{item.workShm} 
+				, WORK_EHM = #{item.workEhm} 
+				, CORE_SHM = #{item.coreShm} 
+				, CORE_EHM = #{item.coreEhm} 
+				, DEFAULT_WORK_MINUTE = #{item.defaultWorkMinute}
+				, UNIT_MINUTE = #{item.unitMinute} 
+				, UNIT_MINUTE = #{item.unitMinute} 
+				, EXHAUSTION_YN = #{item.exhaustionYn} 
+				, HOL_EXCEPT_YN = #{item.holExceptYn} 
+				, WORK_DAYS_OPT = #{item.workDaysOpt} 
+				, USED_TERM_OPT = #{item.usedTermOpt} 
+				, APPL_TERM_OPT = #{item.applTermOpt} 
+				, CORE_CHK_YN = #{item.coreChkYn} 
+				, REGARD_TIME_CD_ID = #{item.regardTimeCdId} 
+				, FIXOT_USE_TYPE = #{item.fixotUseType} 
+				, FIXOT_USE_LIMIT = #{item.fixotUseLimit} 
 				, NOTE = #{item.note}  
 				, UPDATE_DATE = NOW()
 				, UPDATE_ID = #{item.userId}

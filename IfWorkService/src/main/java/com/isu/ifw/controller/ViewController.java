@@ -27,7 +27,7 @@ import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmCode;
-import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmCodeRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
@@ -219,9 +219,9 @@ public class ViewController {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {		
-			WtmFlexibleStdMgr flexibleStdMgr = null;
 			//근무제 마지막 신청정보
 			flexibleAppl = flexibleApplService.getLastAppl(tenantId, enterCd, empNo, new HashMap<String, Object>(), userId);
+			/*WtmFlexibleStdMgr flexibleStdMgr = null;
 			
 			if(flexibleAppl!=null) {
 				mv.addObject("flexibleAppl", mapper.writeValueAsString(flexibleAppl));
@@ -236,7 +236,18 @@ public class ViewController {
 				
 				//기본근무
 				flexibleStdMgr = flexibleStdMgrRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, empNo, sdf.format(date.getTime()));
-			}
+			}*/
+			
+			if(flexibleAppl!=null)
+				mv.addObject("flexibleAppl", mapper.writeValueAsString(flexibleAppl));
+			
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			Calendar date = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			paramMap.put("ymd", sdf.format(date.getTime()));
+			
+			Map<String, Object> flexibleStdMgr = flexibleEmpService.getFlexibleEmp(tenantId, enterCd, empNo, paramMap, userId);
+			
 			mv.addObject("flexibleStdMgr", mapper.writeValueAsString(flexibleStdMgr));
 			
 		} catch(Exception e) {

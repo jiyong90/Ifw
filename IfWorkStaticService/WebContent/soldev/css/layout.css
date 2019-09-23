@@ -151,11 +151,10 @@ html {
   z-index: 999;
   background: #ffffff;
   color: #272740;
-  transition: all 0.6s;
+  transition: all 0.3s;
   overflow-y: auto;
   box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.16);
 }
-
 
 #alertSidebar.active {
   right: 0;
@@ -544,6 +543,7 @@ a.article:hover {
   margin-bottom:10px;
 }
 #sub-nav .work-time-wrap .title{
+  min-height:18px;
   font-size: 12px;
   font-weight: normal;
   line-height: 1.5;
@@ -552,6 +552,7 @@ a.article:hover {
   color: #6b6b80;
 }
 #sub-nav .work-time-wrap .desc{
+  min-height: 20px;
   font-size: 14px;
   font-weight: bold;
   line-height: 1.43;

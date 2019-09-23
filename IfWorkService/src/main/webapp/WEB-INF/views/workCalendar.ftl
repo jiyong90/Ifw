@@ -54,15 +54,15 @@
 	            <div class="row no-gutters work-time-wrap">
 	                <div class="col-12 col-sm-2 col-xl-1">
 	                    <div class="title">현재 근무계획</div>
-	                    <div class="desc">기본근무제</div>
+	                    <div class="desc">{{flexibleStd.flexibleNm}}</div>
 	                </div>
 	                <div class="col-12 col-sm-2 col-xl-1">
 	                    <div class="title">잔여소정근로</div>
-	                    <div class="desc">8시간 42분</div>
+	                    <div class="desc">{{minuteToHHMM(flexibleStd.restWorkMinute,'detail')}}</div>
 	                </div>
 	                <div class="col-12 col-sm-2 col-xl-1">
 	                    <div class="title">잔여연장근로</div>
-	                    <div class="desc">4시간</div>
+	                    <div class="desc">{{minuteToHHMM(flexibleStd.restOtMinute,'detail')}}</div>
 	                </div>
 	                <div class="col">
 	                </div>
@@ -118,9 +118,9 @@
 	        </form>
 	        <div id="summary-wrap" style="display:none;">
 			    <ul class="summary-list">
-			        <li><span class="label-title">현재 근무계획</span><span class="desc">기본근무제</span></li>
-			        <li><span class="label-title">잔여소정근로</span><span class="desc">8시간 42분</span></li>
-			        <li><span class="label-title">잔여연장근로</span><span class="desc">4시간</span></li>
+			        <li><span class="label-title">현재 근무계획</span><span class="desc">{{flexibleStd.flexibleNm}}</span></li>
+			        <li><span class="label-title">잔여소정근로</span><span class="desc">{{minuteToHHMM(flexibleStd.restWorkMinute,'detail')}}</span></li>
+			        <li><span class="label-title">잔여연장근로</span><span class="desc">{{minuteToHHMM(flexibleStd.restOtMinute,'detail')}}</span></li>
 			    </ul>
 			</div>
 			<div class="btn-collapse-wrap">
@@ -829,35 +829,6 @@
     		</#if>
 	    },
 	    methods : {
-	    	minuteToHHMM : function (min, type) {
-	    		if(min!=null && min!=undefined && min!='') {
-		    		if(type==null || type=='')
-			   	    	type='short';
-		    		
-			   	    var min = Number(min);
-			   	    var hours   = Math.floor(min / 60);
-			   	    var minutes = Math.floor(min - (hours * 60));
-		
-			   	 	if(type=='detail') {
-			   	 		var h = hours==0?'':hours+'시간';
-			   	 		var m = minutes==0?'':minutes+'분';
-			   	 		
-			   	 		var s = h;
-			   	 		if(h!=''&&m!='') s+=' ';
-			   	 		s+=m;
-			   	 		
-			   	    	return s;
-			   	 	}
-			   	    	
-			   	    if (hours   < 10) {hours   = "0"+hours;}
-			   	    if (minutes < 10) {minutes = "0"+minutes;}
-			   	    
-			   	    if(type=='short')
-			   	   		return hours+':'+minutes;
-	    		} else {
-	    			return '';
-	    		}
-		   	},
 	    	getFlexibleRangeInfo : function(ymd){ //오늘 또는 선택한 기간의 근무제 정보(남색 박스)
 				var $this = this;
 		    	
@@ -1232,6 +1203,36 @@
 	   		}
    		}
     }); 
+   	
+   	function minuteToHHMM(min, type) {
+		if(min!=null && min!=undefined && min!='') {
+    		if(type==null || type=='')
+	   	    	type='short';
+    		
+	   	    var min = Number(min);
+	   	    var hours   = Math.floor(min / 60);
+	   	    var minutes = Math.floor(min - (hours * 60));
+
+	   	 	if(type=='detail') {
+	   	 		var h = hours==0?'':hours+'시간';
+	   	 		var m = minutes==0?'':minutes+'분';
+	   	 		
+	   	 		var s = h;
+	   	 		if(h!=''&&m!='') s+=' ';
+	   	 		s+=m;
+	   	 		
+	   	    	return s;
+	   	 	}
+	   	    	
+	   	    if (hours   < 10) {hours   = "0"+hours;}
+	   	    if (minutes < 10) {minutes = "0"+minutes;}
+	   	    
+	   	    if(type=='short')
+	   	   		return hours+':'+minutes;
+		} else {
+			return '';
+		}
+   	}
    	
 </script>
 

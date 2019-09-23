@@ -64,6 +64,17 @@ public interface WtmFlexibleEmpService {
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
 
 	/**
+	 * 오늘의 근무제 정보 조회
+	 * @param tenantId
+	 * @param enterCd
+	 * @param empNo
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getFlexibleEmp(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+
+	
+	/**
 	 * 계획을 작성 해야 하는 유연근무제 리스트 조회
 	 * @param tenantId
 	 * @param enterCd

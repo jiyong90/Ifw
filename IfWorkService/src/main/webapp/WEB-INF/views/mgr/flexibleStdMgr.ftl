@@ -84,36 +84,45 @@
 													<input type="text" id="fixotUseLimit" name="fixotUseLimit"/>
 												</td>
 											</tr>
-											<tr id="trRega">
-												<th>간주근무시간</th>
-												<td>
-													<select id="regardTimeCdId">
-					                                    <option>시차10시</option>
-					                                </select>
-												</td>
+											<tr id="trBase">
 												<th>일 기본근무시간</th>
 												<td>
 													<input type="text" id="defaultWorkMinute" name="defaultWorkMinute"/>
+												</td>
+												<th>인정근무 단위시간</th>
+												<td>
+													<input type="text" id="unitMinute" name="unitMinute"/>
+												</td>
+											</tr>
+											<tr id="trRega">
+												<th>간주근무시간</th>
+												<td colspan="3">
+													<select id="regardTimeCdId" class="required">
+					                                    <option>시차10시</option>
+					                                </select>
 												</td>
 											</tr>
 											<tr id="trWorkTime">
 												<th>근무가능시각</th>
 												<td colspan="3">
-													<input type="text" id="workShm" name="workShm" class="date2 required" data-toggle="datetimepicker" />
+													<input type="text" id="workShm" name="workShm" class="date2" data-toggle="datetimepicker" />
 													~
-													<input type="text" id="workEhm" name="workEhm" class="date2 required" data-toggle="datetimepicker" />
+													<input type="text" id="workEhm" name="workEhm" class="date2" data-toggle="datetimepicker" />
 												</td>
 											</tr>
 											<tr id="trCoreTime">
 												<th>코어근무시각</th>
 												<td>
-													<input type="text" id="coreShm" name="coreShm" class="date2 required" data-toggle="datetimepicker"/>
+													<input type="text" id="coreShm" name="coreShm" class="date2" data-toggle="datetimepicker"/>
 													~
-													<input type="text" id="coreEhm" name="coreEhm" class="date2 required" data-toggle="datetimepicker"/>
+													<input type="text" id="coreEhm" name="coreEhm" class="date2" data-toggle="datetimepicker"/>
 												</td>
 												<th>코어시간체크여부</th>
 												<td>
-													<input type="checkbox" id="coreChkYn" name="coreChkYn"/>
+													<select id="coreChkYn">
+					                                    <option value="Y">사용</option>
+					                                    <option value="N">미사용</option>
+					                                </select>
 												</td>
 											</tr>
 											<tr id="trBaseFirst">
@@ -128,23 +137,23 @@
 											<tr id="trUsedTerm">
 												<th>사용기간지지정</th>
 												<td colspan="3">
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="1_week"/> 1주
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="2_week"/> 2주
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="3_week"/> 3주
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="4_week"/> 4주
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="1_month"/> 1개월
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="2_month"/> 2개월
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="3_month"/> 3개월
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="1_week" title="1주"/> 1주
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="2_week" title="2주"/> 2주
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="3_week" title="3주"/> 3주
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="4_week" title="4주"/> 4주
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="1_month" title="1개월"/> 1개월
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="2_month" title="2개월"/> 2개월
+													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="3_month" title="3개월"/> 3개월
 												</td>
 											</tr>
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
 												<td colspan="3">
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="today"/> 당일 이내
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="1_week"/> 1주일 이내
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="2_week"/> 2주일 이내
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="3_week"/> 3주일 이내
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="4_week"/> 4주일 이내
+													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="today"  title="당일 이내"/> 당일 이내
+													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="1_week" title="1주일 이내"/> 1주일 이내
+													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="2_week" title="2주일 이내"/> 2주일 이내
+													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="3_week" title="3주일 이내"/> 3주일 이내
+													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="4_week" title="4주일 이내"/> 4주일 이내
 												</td>
 											</tr>
 											<tr>
@@ -254,8 +263,9 @@
 			{Header:"근무요일지정",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workDaysOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
 			{Header:"고정OT 소진방법",	Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"고정OT 한계시간",	Type:"Int",			Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseLimit",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
-			{Header:"간주근무시간",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"regardTimeCdId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:20 },
+			{Header:"간주근무시간",		Type:"Int",			Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"regardTimeCdId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:20 },
 			{Header:"일 기본근무시간",	Type:"Int",			Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"defaultWorkMinute", KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
+			{Header:"인정근무 단위시간",	Type:"Int",			Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"unitMinute", 		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
 			{Header:"근무가능시작",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
 			{Header:"근무가능종료",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
 			{Header:"코어근무시작",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
@@ -271,11 +281,14 @@
 		sheet1.SetEditable(true);
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
-		//근무제도코드
 		
+		//근무제도코드
 		var workTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "WORK_TYPE_CD"), "선택");
 		sheet1.SetColProperty("workTypeCd", {ComboText:workTypeCdList[0], ComboCode:workTypeCdList[1]} );
-		 
+		
+		//근무시간
+		var regardTimeCdId = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=N",false).DATA, "");
+		$("#regardTimeCdId").html(regardTimeCdId[2]);
 		
 		var initdata2 = {};
 		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -346,28 +359,73 @@
 			break;
 			
 		case "Save2":
-			console.log("Save2")
+			// 필수값 체크
+	        if ( !checkList() ) {
+	            return false;
+	        }
 			var row = sheet1.GetSelectRow();
-			console.log("row : " + row);
 			if($('#trHoliday').is(':visible')){
 				sheet1.SetCellValue(row, "holExceptYn", $("#holExceptYn").val());
 			}
 			if($('#trWorkDaysOpt').is(':visible')){
-				var workDaysOptArr = new Array();
-				for(var i=1; i<=7; i++) {
-					var j = i-1;
-					var objId = "workDaysOpt" + i;
-					var chk = $("input:checkbox[id="+objId+"]").is(":checked");
-					var objWorkDaysOpt = new Object();
-					objWorkDaysOpt.i = chk;
-					workDaysOptArr.push(objWorkDaysOpt);
-				}
-				var workDaysOpt = JSON.stringify(workDaysOptArr);//json으로 바꿈
-				console.log(workDaysOpt);
-				sheet1.SetCellValue(row, "workDaysOpt", workDaysOpt);
+	            var map = {};
+	            for(var i=1; i<=7; i++) {
+	               var chk = $("input:checkbox[id=workDaysOpt" + i+"]").is(":checked");
+	               map[i] = chk;
+	            }
+	            sheet1.SetCellValue(row, "workDaysOpt", JSON.stringify(map));
+	        }
+	        if($('#trFixOt').is(':visible')){
+	        	sheet1.SetCellValue(row, "fixotUseType", $("#fixotUseType").val());
+	        	sheet1.SetCellValue(row, "fixotUseLimit", $("#fixotUseLimit").val());
+	        }
+	        if($('#trWorkTime').is(':visible')){
+	        	sheet1.SetCellValue(row, "workShm", $("#workShm").val());
+	        	sheet1.SetCellValue(row, "workEhm", $("#workEhm").val());
+	        }
+	        if($('#trCoreTime').is(':visible')){
+	        	sheet1.SetCellValue(row, "coreShm", $("#coreShm").val());
+	        	sheet1.SetCellValue(row, "coreEhm", $("#coreEhm").val());
+	        }
+	        if($('#trBaseFirst').is(':visible')){
+	        	sheet1.SetCellValue(row, "exhaustionYn", $("#exhaustionYn").val());
+	        }
+	        if($('#trUsedTerm').is(':visible')){
+	        	var usedTermArr = new Array();
+				$('input[name="usedTermOpt"]').each(function() {
+				    if(this.checked){
+				    	var objItem = new Object();				    	
+						objItem.lable = this.title;
+						objItem.value = this.value;
+						usedTermArr.push(objItem);
+				    }
+				});
+				var usedTermOpt = JSON.stringify(usedTermArr);
+				sheet1.SetCellValue(row, "usedTermOpt", usedTermOpt);
+	        }
+	        if($('#trApplTerm').is(':visible')){
+	        	var applTermOptArr = new Array();
+				$('input[name="applTermOpt"]').each(function() {
+				    if(this.checked){
+				    	var objItem = new Object();				    	
+						objItem.lable = this.title;
+						objItem.value = this.value;
+						applTermOptArr.push(objItem);
+				    }
+				});
+				var applTermOpt = JSON.stringify(applTermOptArr);
+				sheet1.SetCellValue(row, "applTermOpt", applTermOpt);
+	        }
+	        if($("#regardTimeCdId").val() == "" || $("#regardTimeCdId").val() == "null" || $("#regardTimeCdId").val() === null){
+				alert("간주근무시간을 선택하세요");
+				return;
+			} else {
+				sheet1.SetCellValue(row, "regardTimeCdId", $("#regardTimeCdId").val());
 			}
+			sheet1.SetCellValue(row, "defaultWorkMinute", $("#defaultWorkMinute").val());
+			sheet1.SetCellValue(row, "unitMinute", $("#unitMinute").val());
 			sheet1.SetCellValue(row, "note", $("#note").val());
-			//doAction1("Save");
+			doAction1("Save");
 			break;	
 			
 		case "Insert":
@@ -448,12 +506,15 @@
 			$("input:checkbox[name='usedTermOpt']").prop("checked", false);
 			$("input:checkbox[name='applTermOpt']").prop("checked", false);
 			
-			// 공휴일제외여부, 근무요일지정
-			if(workTypeCd == "ELSE"){
+			// 공휴일제외여부
+			if(workTypeCd == "ELAS"){
 				$("#trHoliday").hide();
 				$("#trWorkDaysOpt").hide();
+				$("#holExceptYn").removeClass("required");
+				$("#holExceptYn").val("N");
 			} else {
 				$("#trHoliday").show();
+				$("#holExceptYn").addClass("required");
 				$("#holExceptYn").val(sheet1.GetCellValue( NewRow, "holExceptYn")).prop("selected", true);
 				
 				$("#trWorkDaysOpt").show();
@@ -471,6 +532,8 @@
 			// 고정OT
 			if(workTypeCd == "ELSE"){
 				$("#trFixOt").hide();
+				$("#fixotUseType").val("");
+				$("#fixotUseLimit").val("");
 			} else {
 				$("#trFixOt").show();
 				$("#fixotUseType").val(sheet1.GetCellValue( NewRow, "fixotUseType")).prop("selected", true);
@@ -484,12 +547,23 @@
 				$("#trCoreTime").show();
 				$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
 				$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
+				$("#coreChkYn").addClass("required");
+				$("#coreChkYn").val(sheet1.GetCellValue( NewRow, "coreChkYn")).prop("selected", true);
 				$("#trBaseFirst").show();
+				$("#exhaustionYn").addClass("required");
 				$("#exhaustionYn").val(sheet1.GetCellValue( NewRow, "exhaustionYn")).prop("selected", true);
 			} else {
 				$("#trWorkTime").hide();
 				$("#trCoreTime").hide();
 				$("#trBaseFirst").hide();
+				$("#coreChkYn").removeClass("required");
+				$("#exhaustionYn").removeClass("required");
+				$("#workShm").val("");
+				$("#workEhm").val("");
+				$("#coreShm").val("");
+				$("#coreEhm").val("");
+				$("#coreChkYn").val("");
+				$("#exhaustionYn").val("");
 			}
 			
 			// 신청기간
@@ -499,8 +573,8 @@
 			} else {
 				$("#trUsedTerm").show();
 				var usedTermOpt = sheet1.GetCellValue( NewRow, "usedTermOpt");
+				if(usedTermOpt != ""){
 				var dataUseTermOpt = JSON.parse(usedTermOpt);
-				if(dataUseTermOpt != ""){
 					for(var i=0; i<dataUseTermOpt.length; i++) {
 						var value = dataUseTermOpt[i].value;
 						$("input:checkbox[id=usedTermOpt][value=" + value + "]").prop("checked", true);
@@ -519,6 +593,7 @@
 			// 간주근무
 			$("#regardTimeCdId").val(sheet1.GetCellValue( NewRow, "regardTimeCdId")).prop("selected", true);
 			$("#defaultWorkMinute").val(sheet1.GetCellValue( NewRow, "defaultWorkMinute"));
+			$("#unitMinute").val(sheet1.GetCellValue( NewRow, "unitMinute"));
 				
 			$("#note").val(sheet1.GetCellValue( NewRow, "note"));
 			
@@ -554,5 +629,19 @@
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);
 		}
+	}
+	
+	function checkList(){
+		var ch = true;
+        // 화면의 개별 입력 부분 필수값 체크
+        $(".required").each(function(index){
+            if($(this).val() == null || $(this).val() == ""){
+                alert($(this).parent().prev().text()+"은 필수값입니다.");
+                $(this).focus();
+                ch =  false;
+                return false;
+            }
+        });
+        return ch;
 	}
 </script>

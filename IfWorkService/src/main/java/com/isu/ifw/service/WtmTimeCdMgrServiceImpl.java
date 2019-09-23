@@ -189,5 +189,31 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 		}
 		return cnt;
 	}
+	
+	@Override
+	public List<Map<String, Object>> getTimeCodeList(Long tenantId, String enterCd, String holYn) {
+		List<Map<String, Object>> timeList = new ArrayList();	
+				List<WtmTimeCdMgr> list = timeCdMgrRepository.findByTenantIdAndEnterCdAndHolYn(tenantId, enterCd,holYn);
+		
+		for(WtmTimeCdMgr l : list) {
+			Map<String, Object> time = new HashMap();
+			time.put("timeCdMgrId", l.getTimeCdMgrId());
+			time.put("code", l.getTimeCdMgrId());
+			time.put("codeNm", l.getTimeNm());
+			time.put("timeNm", l.getTimeNm());
+			time.put("timeCd", l.getTimeCd());
+			time.put("symd", l.getSymd());
+			time.put("eymd", l.getEymd());
+			time.put("workShm", l.getWorkShm());
+			time.put("workEhm", l.getWorkEhm());
+			time.put("holYn", l.getHolYn() != null && l.getHolYn().equals("Y")?"1":"0");
+			time.put("lateChkYn", l.getLateChkYn() != null && l.getLateChkYn().equals("Y")?"1":"0");
+			time.put("leaveChkYn", l.getLeaveChkYn() != null && l.getLeaveChkYn().equals("Y")?"1":"0");
+			time.put("absenceChkYn", l.getAbsenceChkYn() != null && l.getAbsenceChkYn().equals("Y")?"1":"0");
+			time.put("note", l.getNote());
+			timeList.add(time);
+		}
+		return timeList;
+	}
 
 }

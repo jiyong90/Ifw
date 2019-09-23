@@ -171,5 +171,36 @@ public class WtmTimeCdMgrController {
 		
 		return rp;
 	}
+	
+	@RequestMapping(value="/timeCodeList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getTimeCodeList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String holYn = paramMap.get("holYn").toString();
+		
+		MDC.put("sessionId", request.getSession().getId());
+		MDC.put("logId", UUID.randomUUID().toString());
+		MDC.put("type", "C");
+		logger.debug("getTimeCdList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+		
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> timeCdMgtList = null;
+		try {		
+			timeCdMgtList = timeCdMgrService.getTimeCodeList(tenantId, enterCd, holYn);
+			
+			rp.put("DATA", timeCdMgtList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 
 }
