@@ -132,6 +132,7 @@ public interface WtmFlexibleEmpMapper {
 	 * @return { workCnt : 2 }
 	 */
 	public Map<String, Object> checkDuplicateWorktime(Map<String, Object> paramMap);
+	public Map<String, Object> checkDuplicateSubsWorktime(Map<String, Object> paramMap);
 	
 	/**
 	 * 근무조에 등록된 대상자를 WTM_FLEXIBLE_EMP 테이블에 생성한다.

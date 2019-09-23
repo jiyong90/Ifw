@@ -1,7 +1,6 @@
 package com.isu.ifw.service;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,10 +15,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
+import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.entity.WtmOtSubsAppl;
+import com.isu.ifw.entity.WtmRule;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmApplMapper;
@@ -30,12 +31,14 @@ import com.isu.ifw.mapper.WtmOtApplMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
+import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtApplRepository;
 import com.isu.ifw.repository.WtmOtSubsApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
+import com.isu.ifw.repository.WtmRuleRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.util.WtmUtil;
@@ -55,7 +58,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	 */
 	@Autowired
 	WtmPropertieRepository wtmPropertieRepo;
-
+	@Autowired
+	WtmEmpHisRepository wtmEmpHisRepo; 
 	@Autowired
 	WtmApplLineRepository wtmApplLineRepo;
 	@Autowired
@@ -72,6 +76,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	WtmFlexibleStdMgrRepository wtmFlexibleStdMgrRepo;
 	@Autowired
 	WtmWorkDayResultRepository wtmWorkDayResultRepo;
+	
+	@Autowired
+	WtmRuleRepository wtmRuleRepo;
 	
 	@Autowired
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
@@ -584,7 +591,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					}
 					paramMap.put("sdate", subsSdate);
 					paramMap.put("edate", subsEdate);
-					Map<String, Object> resultSubsMap = wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
+					Map<String, Object> resultSubsMap = wtmFlexibleEmpMapper.checkDuplicateSubsWorktime(paramMap);
 					//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
 					
 					int workSubsCnt = Integer.parseInt(resultSubsMap.get("workCnt").toString());
@@ -768,6 +775,113 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
+		
+		//0. 신청 가능한 대상자 인지 확인
+		WtmApplCode applCode = wtmApplCodeRepo.findByTenantIdAndEnterCdAndApplCd(tenantId, enterCd, workTypeCd);
+		
+		Long targetRuleId = applCode.getTargetRuleId();
+		Map<String, Object> ruleMap = null;
+		if(targetRuleId != null) {
+			WtmRule rule = wtmRuleRepo.findByRuleId(targetRuleId);
+			String ruleValue  = rule.getRuleValue();
+			if(ruleValue != null && !ruleValue.equals("")) {
+				ObjectMapper mapper = new ObjectMapper();
+				try {
+					ruleMap = mapper.readValue(ruleValue, new HashMap().getClass());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if(ruleMap != null){ 
+			WtmEmpHis e = wtmEmpHisRepo.findByTenantIdAndEnterCdAndSabunAndBetweenSymdAndEymd(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), null));
+			if(ruleMap.containsKey("INCLUDE")) {
+				//여기에등록되어 있으면 포함이 되었더도 안됨 이놈이 우선 
+				Map<String, Object> exMap = (Map<String, Object>) ruleMap.get("EXCLUDE");
+				if(exMap.containsKey("EMP")) {
+					List<Map<String, Object>> empList = (List<Map<String, Object>>) exMap.get("EMP");
+					if(empList != null && empList.size() > 0) {
+						for(Map<String, Object> empMap : empList) {
+							if(sabun.equals(empMap.get("k"))) {
+								rp.setFail("연장(휴일)근무 신청 대상자가 아닙니다.");
+								return rp;
+							}
+						}
+					}
+				}
+				
+				Map<String, Object> inMap = (Map<String, Object>) ruleMap.get("INCLUDE");
+				boolean isTarget = false;
+				if(inMap.containsKey("EMP")) {
+					List<Map<String, Object>> empList = (List<Map<String, Object>>) exMap.get("EMP");
+					if(empList != null && empList.size() > 0) {
+						for(Map<String, Object> empMap : empList) {
+							if(sabun.equals(empMap.get("k"))) {
+								isTarget = true;
+							}
+						}
+					}
+				}
+				if(inMap.containsKey("ORG")) { 
+					List<Map<String, Object>> orgList = (List<Map<String, Object>>) exMap.get("ORG");
+					if(orgList != null && orgList.size() > 0) {
+						for(Map<String, Object> orgMap : orgList) {
+							if(e.getOrgCd().equals(orgMap.get("k"))) {
+								isTarget = true;
+								break;
+							}
+						}
+					}
+					
+				}
+				/*
+				if(inMap.containsKey("JIKWEE")) {
+					List<Map<String, Object>> jikweeList = (List<Map<String, Object>>) exMap.get("JIKWEE");
+					if(jikweeList != null && jikweeList.size() > 0) {
+						for(Map<String, Object> jikweeMap : jikweeList) {
+							if(e.get().equals(jikweeMap.get("k"))) {
+								isTarget = true;
+								break;
+							}
+						}
+					}
+					
+				}
+				if(inMap.containsKey("JIKGUB")) {
+					
+				}
+				*/
+				if(inMap.containsKey("JIKCHAK")) {
+
+					List<Map<String, Object>> jikchakList = (List<Map<String, Object>>) exMap.get("JIKCHAK");
+					if(jikchakList != null && jikchakList.size() > 0) {
+						for(Map<String, Object> jikchakMap : jikchakList) {
+							if(e.getDutyCd().equals(jikchakMap.get("k"))) {
+								isTarget = true;
+								break;
+							}
+						}
+					}
+				}
+				if(inMap.containsKey("JOB")) {
+
+					List<Map<String, Object>> jobList = (List<Map<String, Object>>) exMap.get("JIKCHAK");
+					if(jobList != null && jobList.size() > 0) {
+						for(Map<String, Object> jobMap : jobList) {
+							if(e.getJobCd().equals(jobMap.get("k"))) {
+								isTarget = true;
+								break;
+							}
+						}
+					}
+				}
+				
+				if(!isTarget) { 
+					rp.setFail("연장(휴일)근무 신청 대상자가 아닙니다.");
+					return rp;
+				}
+			}
+		}
 		
 		if(exhaustionYn!=null && exhaustionYn.equals("Y")) {
 			//선소진시

@@ -153,10 +153,10 @@ public class LoginService{
 	public void creatAccessToken(HttpServletRequest request, HttpServletResponse response, WtmToken token) {
 		tokenRepository.deleteByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
 
-		List<WtmEmpHis> emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
-		if(emp != null && emp.size() > 0) {
-			token.setUserId(emp.get(0).getEmpHisId());
-			token.setUpdateId(emp.get(0).getEmpHisId());
+		WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
+		if(emp != null) {
+			token.setUserId(emp.getEmpHisId());
+			token.setUpdateId(emp.getEmpHisId());
 			//기존 토큰 다 삭제하고 새로 등록(기존에 다른 곳에서 로그인한 상황이면 그쪽은 튕김)
 			tokenRepository.save(token);
 //

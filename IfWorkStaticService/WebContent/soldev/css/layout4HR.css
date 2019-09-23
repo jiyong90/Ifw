@@ -24,6 +24,12 @@
 #calendar_left .white-box-wrap.collapse-height{
   height: calc(100vh - 378px);
 }
+#calendar_left .white-box-wrap.full-height{
+	height: calc(100vh - 156px);
+}
+#calendar_left .white-box-wrap.full-height.collapse-height{
+	height: calc(100vh - 82px);
+}
 /* calendar */
 #monthCalendar.calendar-wrap,
 #timeCalendar.calendar-wrap {
