@@ -363,7 +363,7 @@ public class ViewController {
 		}
 		else if(viewPage.equals("workDayCalendar")
 				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar") 
-				|| viewPage.equals("pprovalList") ) {
+				|| viewPage.equals("approvalList") ) {
 		
 			mv.addObject("pageName", viewPage);
 		}
