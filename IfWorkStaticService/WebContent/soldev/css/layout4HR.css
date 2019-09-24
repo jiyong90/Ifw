@@ -24,14 +24,22 @@
 #calendar_left .white-box-wrap.collapse-height{
   height: calc(100vh - 378px);
 }
+#calendar_left .white-box-wrap.full-height{
+	height: calc(100vh - 156px);
+}
+#calendar_left .white-box-wrap.full-height.collapse-height{
+	height: calc(100vh - 82px);
+}
 /* calendar */
-#monthCalendar.calendar-wrap {
+#monthCalendar.calendar-wrap,
+#timeCalendar.calendar-wrap {
   position: relative;
   height: calc(100vh - 152px);
   background-color: #ffffff;
   border-top: 3px solid #4d84fe;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
-#monthCalendar.calendar-wrap.collapse-height{
+#monthCalendar.calendar-wrap.collapse-height,
+#timeCalendar.calendar-wrap.collapse-height{
   height: calc(100vh - 78px);
 }

@@ -96,7 +96,7 @@
 			                                    <div class="col-md-12 col-lg-2">
 		                                            <span class="time-wrap">
 		                                                <i class="fas fa-clock"></i>
-		                                                <span class="time" v-if="s.subsMinute">{{calendarLeftVue.minuteToHHMM(s.subsMinute, 'detail')}}</span>
+		                                                <span class="time" v-if="s.subsMinute">{{minuteToHHMM(s.subsMinute, 'detail')}}</span>
 			                                            <span class="time" v-else>0시간</span>
 		                                            </span>
 		                                        </div>
@@ -139,7 +139,7 @@
 	                                                <div class="col-1 col-sm-1 col-md-1 col-lg-1 col-md-text-right text-center"><a href="#" class="align-middle" @click="delSubYmd(idx)">삭제</a></div>
 		                                            <div class="guide pl-1">
 		                                            	<span v-if="s.workShm && s.workEhm">*해당일 근무시간은 {{s.workShm}}~{{s.workEhm}} 입니다.</span>
-		                                            	<span v-if="s.subsBreakMinute"> 총 휴게시간은 {{calendarLeftVue.minuteToHHMM(s.subsBreakMinute, 'detail')}} 입니다.</span>
+		                                            	<span v-if="s.subsBreakMinute"> 총 휴게시간은 {{minuteToHHMM(s.subsBreakMinute, 'detail')}} 입니다.</span>
 		                                            </div>
 		                                        </div>
 	                                        </div>
@@ -266,7 +266,7 @@
                                         <i class="fas fa-clock"></i>
                                         <span class="time">
                                         	<template v-if="overtimeAppl.otMinute">
-                                        		{{calendarLeftVue.minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
+                                        		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
                                         	</template>
                                         </span>
                                     </span>
@@ -327,7 +327,7 @@
                                         <span class="start-date">{{moment(sub.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
                                         <span class="ml-1 mr-1">~</span>
                                         <span class="day-end-time">{{moment(sub.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
-                                        <span class="sub-time">{{calendarLeftVue.minuteToHHMM(sub.subsMinute,'detail')}}</span>
+                                        <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
                                     </span>
                                 </div>
                                 <div class="sub-desc">*해당일 근무시간은 {{moment(sub.sDate).format('HH:mm')}}~{{moment(sub.eDate).format('HH:mm')}} 입니다.</div>
@@ -631,13 +631,13 @@
 										if(data.calcMinute==0)
 											result['calcHour'] = "0시간";
 										else
-											result['calcHour'] = calendarLeftVue.minuteToHHMM(data.calcMinute, 'detail');
+											result['calcHour'] = minuteToHHMM(data.calcMinute, 'detail');
 									}
 									if(data.hasOwnProperty('breakMinute')) {
 										if(data.breakMinute==0)
 											result['breakHour'] = "0시간";
 										else
-											result['breakHour'] = calendarLeftVue.minuteToHHMM(data.breakMinute, 'detail');
+											result['breakHour'] = minuteToHHMM(data.breakMinute, 'detail');
 									}
 								} 
 							},
@@ -899,7 +899,7 @@
   	         		
   	         		var param = {
   	         			ymd: moment($this.workday).format('YYYYMMDD'),
-  	         			workTypeCd: ''
+  	         			workTypeCd: 'OT'
   	         		};
   	         		
   	         		//연장근무
@@ -1037,7 +1037,7 @@
 		  	  	         			
 		  	  	         			if(isValid && $this.overtime.calcMinute!=null && $this.overtime.calcMinute!='' && $this.overtime.calcMinute!=subsMin) {
 		  	  	         				isValid = false;
-		  	  	         				msg = calendarLeftVue.minuteToHHMM($this.overtime.calcMinute, 'detail')+'의 대체 휴일을 지정하세요.';
+		  	  	         				msg = minuteToHHMM($this.overtime.calcMinute, 'detail')+'의 대체 휴일을 지정하세요.';
 		  	  	         			}
 		  	  	         			
 	  	  	         			} else {
@@ -1203,14 +1203,15 @@
   	 					idx = key[1];
   	 				
   	 				if(idx!=null && idx!='' && idx!=undefined) {
-  	 					var subsInfo = this.subYmds[idx];
+  	 					var subsInfo = $this.subYmds[idx];
+  	 					//console.log(subsInfo);
   	 					
   	 					if(subsInfo.subsSymd!=null && subsInfo.subsSymd!=undefined && subsInfo.subsSymd!=''
   	 							&& subsInfo.subsShm!=null && subsInfo.subsShm!=undefined && subsInfo.subsShm!=''
   	 							&& subsInfo.subsEhm!=null && subsInfo.subsEhm!=undefined && subsInfo.subsEhm!='') {
   	 						
-  	 						var sDate = moment(subsInfo.subsSymd+" "+subsInfo.subsShm).format('YYYY-MM-DD HH:mm');
-  	 						var eDate = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYY-MM-DD HH:mm');
+  	 						var sDate = moment(subsInfo.subsSymd+" "+subsInfo.subsShm).format('YYYYMMDD HHmm');
+  	 						var eDate = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYYMMDD HHmm');
   	 						
   	  	           			if(sDate > eDate) {
 	  	  	           			$("#alertText").html("종료시간이 시작시간보다 작습니다.");

@@ -570,15 +570,18 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 					Long applId = Long.valueOf(appr.get("applId").toString());
 					String applCd = appr.get("applCd").toString();
 					
-					if("OT".equals(applCd)) { //연장, 휴일연장
-						Map<String, Object> otAppl = otApplMapper.otApplfindByApplId(applId);
+					if("OT".equals(applCd) || "OT_CAN".equals(applCd)) { //연장, 휴일연장, 연장취소, 휴일연장 취소
+						Map<String, Object> otAppl = null;
+						
+						if("OT".equals(applCd))
+							otAppl = otApplMapper.otApplfindByApplId(applId);
+						else if("OT_CAN".equals(applCd))
+							otAppl = otCanMapper.otApplAndOtCanApplfindByApplId(applId);
+						
 						if(otAppl!=null && otAppl.containsKey("subYn") && otAppl.get("subYn")!=null && "Y".equals(otAppl.get("subYn"))) {
 							otAppl.put("subs", otApplMapper.otSubsApplfindByOtApplId(Long.valueOf(otAppl.get("otApplId").toString())));
 						}
 						appr.put("appl", otAppl);
-					} else if("OT_CAN".equals(applCd)) { //연장, 휴일연장 취소
-						Map<String, Object> otCanAppl = otCanMapper.otApplAndOtCanApplfindByApplId(applId);
-						appr.put("appl", otCanAppl);
 					} else if("SUBS_CHG".equals(applCd)) { //대체휴가 취소
 						
 					} else {

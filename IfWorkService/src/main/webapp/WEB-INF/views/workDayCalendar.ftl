@@ -275,6 +275,7 @@
   			  	         		dayWorks.map(function(dayWork){
   			  	         			if(i.startStr==moment(dayWork.day).format('YYYY-MM-DD')) {
   		  	         					var valueMap = dayWork.plans[0].valueMap;
+  		  	         					$("#timeNm").text(dayWork.timeNm);
   		  	         					
   		  		    					if(valueMap!=null && valueMap.hasOwnProperty("shm"))
   		  		    						$("#startTime").val(valueMap.shm);
@@ -288,7 +289,6 @@
   	  		    			$("#endTime").prop("disabled", true);
   	  		    			$("#timeSaveBtn").hide();
   	         			}
-  	         			
   	         			return editYn;
   	         			
   	         		});
@@ -404,6 +404,12 @@
 								
 								//유연근무제 신청 기간 이외의 날짜는 선택하지 못하게 함
 			  		    		$this.selectAllow();
+								
+								//$this.$refs.fullCalendar.cal.select(workday);
+								console.log($this.$refs.fullCalendar.cal.getOption('selectAllow', workday));
+								//console.log($('td').find(".fc-day[data-date='"+workday+"']"));
+			  		    		//$('td').find(".fc-day[data-date='"+workday+"']").trigger("mousedown");
+			  		    		//$('td').find(".fc-day[data-date='"+workday+"']").trigger("mouseup");
 							} 
 						},
 						error: function(e) {
@@ -466,7 +472,7 @@
 	  		  		    		$("#endTime").prop("disabled", true);
 	  	         			}
 	  	         			calendar.gotoDate(workday);
-	  	         			calendar.select(workday);
+	  	         			//calendar.select(workday);
   	         			}
   	         		});
          			

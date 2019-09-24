@@ -120,11 +120,19 @@ public interface WtmFlexibleEmpMapper {
 	public Map<String, Object> getFlexibleWorkTimeInfo(Map<String, Object> paramMap);
 	
 	/**
+	 * 오늘의 근무제 정보
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getFlexibleEmp(Map<String, Object> paramMap);
+	
+	/**
 	 * 이미 신청중이거나 등록된 근무정보가 있는지 확인하자
 	 * @param paramMap { tenantId, sabun, enterCd, sYmd, eYmd, otSdate(DATE), otEdate(DATE)
 	 * @return { workCnt : 2 }
 	 */
 	public Map<String, Object> checkDuplicateWorktime(Map<String, Object> paramMap);
+	public Map<String, Object> checkDuplicateSubsWorktime(Map<String, Object> paramMap);
 	
 	/**
 	 * 근무조에 등록된 대상자를 WTM_FLEXIBLE_EMP 테이블에 생성한다.

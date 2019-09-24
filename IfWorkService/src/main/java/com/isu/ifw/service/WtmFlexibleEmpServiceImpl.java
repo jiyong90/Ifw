@@ -73,6 +73,14 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return flexibleList;
 	}
 	
+	public Map<String, Object> getFlexibleEmp(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		return flexEmpMapper.getFlexibleEmp(paramMap);
+	}
+	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpListForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
 		// TODO Auto-generated method stub
@@ -320,6 +328,11 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				if(plan.containsKey("holidayYn") && plan.get("holidayYn") != null) {
 					holidayYn = plan.get("holidayYn").toString();
 				}
+				String timeNm = "";
+				if(plan.containsKey("timeNm") && plan.get("timeNm") != null) {
+					timeNm = plan.get("timeNm").toString();
+				}
+				
 				String shm = "";
 				if(plan.containsKey("shm") && plan.get("shm") != null) {
 					shm = plan.get("shm").toString();
@@ -370,6 +383,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				planVOs.add(planVO);
 
 				dtMap.put("holidayYn", holidayYn);
+				dtMap.put("timeNm", timeNm);
 				dtMap.put("plan", planVOs);
 				
 				imsiMap.put(ymd, dtMap);
@@ -381,6 +395,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			workVO.setDay(k);
 			Map<String, Object> dtMap = (Map<String, Object>) imsiMap.get(k);
 			workVO.setHolidayYn(dtMap.get("holidayYn").toString());
+			workVO.setTimeNm(dtMap.get("timeNm").toString());
 			workVO.setPlans((List<WtmDayPlanVO>)dtMap.get("plan"));
 			works.add(workVO);
 		}
