@@ -39,13 +39,18 @@
 				beforeSend : function(xhr){  
 		            xhr.setRequestHeader("AJAX", true); //필수
 		        }, 
+		 		complete : function(data) {
+					var text = data.responseText;
+					if(text.indexOf(redirectText) != -1)
+        				window.parent.location.href=loginUrl;
+                },
 				error : this.ajaxError	
 			};
 			var defaultoOption = $.extend(true, defaultoOption, option);
 			
 			$.ajax(defaultoOption);
 		},
-		ajaxError : function(xhr, status, error){ 
+		ajaxError : function(xhr, status, error){
 			if(xhr.status == 401){
 				location.href = "${rc.getContextPath()}/login/${tsId}"; 
 			}else{
