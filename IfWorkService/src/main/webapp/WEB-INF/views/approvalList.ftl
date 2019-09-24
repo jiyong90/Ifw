@@ -282,7 +282,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.apprList = [];
-						console.log(data);
+						//console.log(data);
 						if(data.status=='OK' && data!=null && data.apprList!=null) {
 							$this.apprList = data.apprList;
 						}
