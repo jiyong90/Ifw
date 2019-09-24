@@ -17,7 +17,7 @@ import com.isu.ifw.mapper.WtmInterfaceMapper;
 public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	
 	// 일단 63번서버 KABNAG에 연결하기
-	String IF_URL = "http://localhost:8081/IfWorkInterface"; 
+	String IF_URL = "http://smarthrd.servicezone.co.kr:8282/IfWorkInterface"; 
 	
 	@Autowired
 	WtmInterfaceMapper wtmInterfaceMapper;

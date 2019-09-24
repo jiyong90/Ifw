@@ -47,10 +47,10 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 			time.put("eymd", l.getEymd());
 			time.put("workShm", l.getWorkShm());
 			time.put("workEhm", l.getWorkEhm());
-			time.put("holYn", l.getHolYn() != null && l.getHolYn().equals("Y")?"1":"0");
-			time.put("lateChkYn", l.getLateChkYn() != null && l.getLateChkYn().equals("Y")?"1":"0");
-			time.put("leaveChkYn", l.getLeaveChkYn() != null && l.getLeaveChkYn().equals("Y")?"1":"0");
-			time.put("absenceChkYn", l.getAbsenceChkYn() != null && l.getAbsenceChkYn().equals("Y")?"1":"0");
+			time.put("holYn", l.getHolYn());
+			time.put("lateChkYn", l.getLateChkYn());
+			time.put("leaveChkYn", l.getLeaveChkYn());
+			time.put("absenceChkYn", l.getAbsenceChkYn());
 			time.put("note", l.getNote());
 			timeList.add(time);
 		}
@@ -76,10 +76,10 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 						code.setEymd(l.get("eymd").toString());
 						code.setWorkShm(l.get("workShm").toString());
 						code.setWorkEhm(l.get("workEhm").toString());
-						code.setHolYn(l.get("holYn").toString().equals("1")?"Y":"N");
-						code.setLateChkYn(l.get("lateChkYn").toString().equals("1")?"Y":"N");
-						code.setLeaveChkYn(l.get("leaveChkYn").toString().equals("1")?"Y":"N");
-						code.setAbsenceChkYn(l.get("absenceChkYn").toString().equals("1")?"Y":"N");
+						code.setHolYn(l.get("holYn").toString());
+						code.setLateChkYn(l.get("lateChkYn").toString());
+						code.setLeaveChkYn(l.get("leaveChkYn").toString());
+						code.setAbsenceChkYn(l.get("absenceChkYn").toString());
 						code.setNote(l.get("note").toString());
 						code.setUpdateId(userId);
 						saveList.add(code);
@@ -206,10 +206,10 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 			time.put("eymd", l.getEymd());
 			time.put("workShm", l.getWorkShm());
 			time.put("workEhm", l.getWorkEhm());
-			time.put("holYn", l.getHolYn() != null && l.getHolYn().equals("Y")?"1":"0");
-			time.put("lateChkYn", l.getLateChkYn() != null && l.getLateChkYn().equals("Y")?"1":"0");
-			time.put("leaveChkYn", l.getLeaveChkYn() != null && l.getLeaveChkYn().equals("Y")?"1":"0");
-			time.put("absenceChkYn", l.getAbsenceChkYn() != null && l.getAbsenceChkYn().equals("Y")?"1":"0");
+			time.put("holYn", l.getHolYn());
+			time.put("lateChkYn", l.getLateChkYn());
+			time.put("leaveChkYn", l.getLeaveChkYn());
+			time.put("absenceChkYn", l.getAbsenceChkYn());
 			time.put("note", l.getNote());
 			timeList.add(time);
 		}

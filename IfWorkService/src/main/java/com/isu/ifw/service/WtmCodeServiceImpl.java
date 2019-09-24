@@ -143,8 +143,8 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 			codeGrp.put("enterCd", l.getEnterCd());
 			codeGrp.put("grpCodeCd", l.getGrpCodeCd());
 			codeGrp.put("grpCodeNm", l.getGrpCodeNm());
-			codeGrp.put("editYn", l.getEditYn() != null && l.getEditYn().equals("Y")?"1":"0");
-			codeGrp.put("usedYn", l.getUsedYn() != null && l.getUsedYn().equals("Y")?"1":"0");
+			codeGrp.put("editYn", l.getEditYn());
+			codeGrp.put("usedYn", l.getUsedYn());
 			codeGrp.put("note", l.getNote());
 			codeList.add(codeGrp);
 		}
@@ -166,8 +166,8 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 						codeGrp.setEnterCd(enterCd);
 						codeGrp.setGrpCodeCd(l.get("grpCodeCd").toString());
 						codeGrp.setGrpCodeNm(l.get("grpCodeNm").toString());
-						codeGrp.setEditYn(l.get("editYn").toString().equals("1")?"Y":"N");
-						codeGrp.setUsedYn(l.get("usedYn").toString().equals("1")?"Y":"N");
+						codeGrp.setEditYn(l.get("editYn").toString());
+						codeGrp.setUsedYn(l.get("usedYn").toString());
 						codeGrp.setNote(l.get("note").toString());
 						codeGrp.setUpdateId(userId);
 						saveList.add(codeGrp);
