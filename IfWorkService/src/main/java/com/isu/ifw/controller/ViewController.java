@@ -118,7 +118,8 @@ public class ViewController {
 	@GetMapping(value = "/console/{tsId}")
 	public ModelAndView login(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//return main(tsId, request);
-		return views(tsId, "main", request);
+		//return views(tsId, "main", request);
+		return views(tsId, "workCalendar", request);
 	}
 	
 	@GetMapping(value="/console/{tsId}/main")
@@ -170,16 +171,18 @@ public class ViewController {
 				mv.addObject("workday", workday); 
 			}
 			
+			String calendarType = "Month"; //기본은 월달력
 			if(request.getParameter("calendarType")!=null) {
-				String calendarType = request.getParameter("calendarType").toString();
-				mv.addObject("calendar", "work"+ calendarType +"Calendar");
+				calendarType = request.getParameter("calendarType").toString();
 				
 				if("Time".equals(calendarType)) {
 					//연장근무 또는 휴일근무 신청 시 사유
 					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
 				}
-			}
+			} 
+			
+			mv.addObject("calendar", "work"+ calendarType +"Calendar");
 			
 			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		} else {
