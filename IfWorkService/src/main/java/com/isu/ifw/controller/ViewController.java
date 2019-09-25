@@ -162,8 +162,7 @@ public class ViewController {
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
-		
-		mv.addObject("isEmbedded","false");
+		mv.addObject("isEmbedded",false);
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -221,7 +220,7 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		mv.addObject("isEmbedded","false"); // 단독으로 열린것임을 표시
+		mv.addObject("isEmbedded",false); // 단독으로 열린것임을 표시
 		
 		return mv;
 	}
@@ -327,7 +326,7 @@ public class ViewController {
 		
 		System.out.println("isEmbedded > true");
 		
-		mv.addObject("isEmbedded","true"); // HR 에서 포함되어 열린것임을 표시 (단독으로 사용되지 않는 경우를 화면에서 식별하기 위해 이 속성을 사용함) 
+		mv.addObject("isEmbedded",true); // HR 에서 포함되어 열린것임을 표시 (단독으로 사용되지 않는 경우를 화면에서 식별하기 위해 이 속성을 사용함) 
 		
 		return mv;
 		
