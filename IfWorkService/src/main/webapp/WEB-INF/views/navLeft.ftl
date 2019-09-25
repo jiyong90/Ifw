@@ -74,7 +74,7 @@
                 <span class="title">근무유형관리</span>
             </a>
         </li>
-        <li :class="{active: curPageName=='flexibleStdMg'}">
+        <li :class="{active: curPageName=='flexibleStdMgr'}">
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">
                 <span class="title">근무제도관리</span>
             </a>
