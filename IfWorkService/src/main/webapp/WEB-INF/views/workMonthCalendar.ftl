@@ -429,12 +429,12 @@
 					classNames.push(calendarTopVue.flexibleStd.workTypeCd);
 					
 					//근무 요일이 아닌 경우 제외하고 event 생성
-					var workDaysOpt = [];
+					/* var workDaysOpt = [];
 					$.each(calendarTopVue.flexibleStd.workDaysOpt, function(k, v){
 						if(v==true) {
 							workDaysOpt.push(k-1);
 						}
-					});
+					}); */
 				
 					//임시저장된 건이 있으면 이벤트 삭제하고 재생성
 					if(calendarLeftVue.flexibleAppl.hasOwnProperty("applStatusCd") && calendarLeftVue.flexibleAppl.applStatusCd=='11') {
