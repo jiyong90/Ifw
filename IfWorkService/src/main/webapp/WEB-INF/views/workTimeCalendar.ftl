@@ -1111,7 +1111,7 @@
 								$("#alertModal").on('hidden.bs.modal',function(){
 									$("#alertModal").off('hidden.bs.modal');
 									//location.reload();
-									location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
+									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
 								$("#alertText").html(data.message);
@@ -1154,7 +1154,7 @@
 									$("#cancelOpinionModal").modal("hide");
 									$("#overtimeApplDetail").modal("hide");
 									//location.reload();
-									location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
+									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
 								$("#alertText").html(data.message);

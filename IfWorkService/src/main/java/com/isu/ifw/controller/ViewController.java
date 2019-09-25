@@ -163,6 +163,7 @@ public class ViewController {
 		mv.addObject("pageName", viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		mv.addObject("isEmbedded",false);
+		mv.addObject("type","console");
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -214,7 +215,8 @@ public class ViewController {
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", "mgr/"+viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
-		
+		mv.addObject("type","console");
+
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
@@ -289,7 +291,8 @@ public class ViewController {
 		mv.addObject("empNo", empNo);
 		mv.addObject("loginId", userId);
 		mv.addObject("pageName", viewPage);
-		
+		mv.addObject("type","hr");
+
 		if("workCalendar".equals(viewPage)){
 			ObjectMapper mapper = new ObjectMapper();
 			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {

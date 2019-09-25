@@ -1177,7 +1177,7 @@
          		dayCalendarVue.saveWorkDayResult();
          	},
          	viewWorkDayCalendar: function(){
-         		location.href= locationurl + '${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.selectedDate).format('YYYYMMDD');
+         		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.selectedDate).format('YYYYMMDD');
          	},
          	viewOvertimeAppl: function(){
          		var $this = this;
