@@ -1,13 +1,3 @@
-<!-- <script type="text/javascript">
-    var halfsheetH = "calc(50vh - 140px)";
-    var fullsheetH;
-
-    if("${isEmbedded}" == "true" ){
-    	halfsheetH = "50%";
-		fullsheetH = "100%";
-	}
-		
-</script> -->
 <div id="timeCdMgr">
  	<div class="container-fluid pt-3 pb-3 bg-white">
  	<div class="ibsheet-wrapper">
