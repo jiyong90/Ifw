@@ -29,7 +29,7 @@
 						</ul>
 					</div>
 				</div>
-				<script type="text/javascript">createIBSheet("sheet1", "100%", "calc(100vh - 232px)","kr"); </script>
+				<script type="text/javascript">createIBSheet("sheet1", "100%", fullsheetH,"kr"); </script>
 			</div>
 			<div class="col-7 pt-2">
 				<div class="innertab inner">
@@ -177,7 +177,7 @@
 										<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 									</ul>
 								</div>
-								<script type="text/javascript">createIBSheet("sheet2", "100%", "calc(100vh - 270px)","kr"); </script>
+								<script type="text/javascript">createIBSheet("sheet2", "100%", sheetH90,"kr"); </script>
 							</div>
 						</div>
 					</div>

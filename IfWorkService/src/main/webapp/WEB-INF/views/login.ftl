@@ -7,7 +7,7 @@
 <body class="login text-center" style="background-image:URL('${loginBackgroundImg}');">
     <form class="form-login" action="${rc.getContextPath()}${AUTH_CONFIG.getLoginFormSubmitEndpoint().getUrl()}" method="post">
         <!-- <img class="mb-4 logo" src="soldev/img/bootstrap-solid.svg" alt=""> -->
-        <img class="mb-0 logo" src="${rc.getContextPath()}/soldev/img/gnb_logo_sm.png" alt="기업로고">
+        <img class="mb-0 logo" src="${loginLogoImg}" alt="기업로고">
         <h1 class="h3 mb-3 font-weight-normal">이수시스템</h1>
         <#if companyList?exists && companyList?has_content>
         	<select id="enterCd" name="enterCd" class="form-control" style="margin:0 0 20px;">

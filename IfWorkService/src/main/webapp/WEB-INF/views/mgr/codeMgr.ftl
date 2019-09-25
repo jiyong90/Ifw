@@ -1,11 +1,13 @@
-<script type="text/javascript">
-    var sheetH = "calc(50vh - 140px)";
-    
+<!-- <script type="text/javascript">
+    var halfsheetH = "calc(50vh - 140px)";
+    var fullsheetH;
+
     if("${isEmbedded}" == "true" ){
-		sheetH = "50%";
+    	halfsheetH = "50%";
+		fullsheetH = "100%";
 	}
 		
-</script>
+</script> -->
 <div id="timeCdMgr">
  	<div class="container-fluid pt-3 pb-3 bg-white">
  	<div class="ibsheet-wrapper">
@@ -39,7 +41,7 @@
 						</div>
 					</div>
 					
-					<script type="text/javascript">createIBSheet("sheet1", "100%", sheetH,"kr"); </script>
+					<script type="text/javascript">createIBSheet("sheet1", "100%", halfsheetH,"kr"); </script>
 				</td>
 			</tr>
 			<tr>
@@ -54,7 +56,7 @@
 						</div>
 					</div>
 					<script type="text/javascript">
-						createIBSheet("sheet2", "100%", sheetH,"kr"); 
+						createIBSheet("sheet2", "100%", halfsheetH,"kr"); 
 					</script>
 				</td>
 			</tr>
