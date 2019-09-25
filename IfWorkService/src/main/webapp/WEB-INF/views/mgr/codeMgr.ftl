@@ -1,3 +1,11 @@
+<script type="text/javascript">
+    var sheetH = "calc(50vh - 140px)";
+    
+    if("${isEmbedded}" == "true" ){
+		sheetH = "50%";
+	}
+		
+</script>
 <div id="timeCdMgr">
  	<div class="container-fluid pt-3 pb-3 bg-white">
  	<div class="ibsheet-wrapper">
@@ -30,7 +38,8 @@
 						</ul>
 						</div>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet1", "100%", "calc(50vh - 140px)","kr"); </script>
+					
+					<script type="text/javascript">createIBSheet("sheet1", "100%", sheetH,"kr"); </script>
 				</td>
 			</tr>
 			<tr>
@@ -44,7 +53,9 @@
 							</ul>
 						</div>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet2", "100%", "calc(50vh - 140px)","kr"); </script>
+					<script type="text/javascript">
+						createIBSheet("sheet2", "100%", sheetH,"kr"); 
+					</script>
 				</td>
 			</tr>
 		</table>
@@ -53,7 +64,9 @@
 </div>
 
 <script type="text/javascript">
+	
    	$(function() {
+   	 
    		//resize
    		$(window).smartresize(sheetResize);
    		

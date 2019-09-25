@@ -211,6 +211,8 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
+		mv.addObject("isEmbedded","false"); // 단독으로 열린것임을 표시
+		
 		return mv;
 	}
 	
@@ -257,8 +259,74 @@ public class ViewController {
 		return mv;
 	}
 
+	protected ModelAndView showView(String tsId, String viewPage, HttpServletRequest request) {
+		
+		ModelAndView mv = new ModelAndView("hrtemplate");
+		
+		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		Calendar date = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(date.getTime());
+		mv.addObject("today", today);
+
+		
+		mv.addObject("tsId", tsId);
+		mv.addObject("enterCd", enterCd);
+		mv.addObject("empNo", empNo);
+		mv.addObject("loginId", userId);
+		mv.addObject("pageName", viewPage);
+		
+		if("workCalendar".equals(viewPage)){
+			ObjectMapper mapper = new ObjectMapper();
+			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
+				String workday = request.getParameter("date");
+				mv.addObject("workday", workday); 
+			}
+			String calendarType = "Month";
+			if(request.getParameter("calendarType")!=null) {
+				calendarType = request.getParameter("calendarType").toString();
+			} 
+			mv.addObject("calendar", "work"+ calendarType +"Calendar");
+			
+			if("Time".equals(calendarType)) {
+				//연장근무 또는 휴일근무 신청 시 사유
+				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+				try {
+					mv.addObject("reasons", mapper.writeValueAsString(reasons));
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					mv.addObject("reasons", null);
+				}
+			}
+			mv.addObject("pageName", viewPage);
+			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
+		}
+		else if(viewPage.equals("workDayCalendar")
+				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar")) {
+		
+			mv.addObject("pageName", viewPage);
+		}
+		else
+			mv.addObject("pageName", "mgr/"+viewPage);
+		
+		System.out.println("isEmbedded > true");
+		
+		mv.addObject("isEmbedded","true"); // HR 에서 포함되어 열린것임을 표시 (단독으로 사용되지 않는 경우를 화면에서 식별하기 위해 이 속성을 사용함) 
+		
+		return mv;
+		
+		
+	}
+	
 	@RequestMapping(value = "/hr/{tsId}/views/{viewPage}", method = RequestMethod.POST)
 	public ModelAndView hrViews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
+		/*
 		ModelAndView mv = new ModelAndView("hrtemplate");
 		
 		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
@@ -308,11 +376,16 @@ public class ViewController {
 			mv.addObject("pageName", "mgr/"+viewPage);
 		
 		return mv;
+		*/
+		
+		return showView(tsId, viewPage, request);
 	}
 
 
 	@RequestMapping(value = "/hr/{tsId}/views/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView infoViews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
+		
+		/*
 		ModelAndView mv = new ModelAndView("hrtemplate");
 		
 		Calendar date = Calendar.getInstance();
@@ -371,5 +444,8 @@ public class ViewController {
 			mv.addObject("pageName", "mgr/"+viewPage);
 		
 		return mv;
+		*/
+		
+		return showView(tsId, viewPage, request);
 	}
 }
