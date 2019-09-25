@@ -44,7 +44,7 @@
 	    		calendarLeftVue.calendar = calendar;
 	    	},
 	    	navLinkDayClickCallback: function(info){
-         		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment(info).format('YYYYMMDD');
+         		location.href=locationurl + '${tsId}/views/workCalendar?calendarType=Time&date='+moment(info).format('YYYYMMDD');
 	    	},
 	    	datesRenderCallback: function(info){
 	    		var $this = this;
