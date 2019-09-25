@@ -91,6 +91,8 @@ public class ViewController {
         	companyList = mapper.readValue(company, new ArrayList<Map<String, Object>>().getClass());
         mv.addObject("companyList", companyList);
         
+        mv.addObject("loginBackgroundImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.BACKGROUND_IMG", true, ""));
+        
 		return mv;
 	}
 	
