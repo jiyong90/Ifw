@@ -313,7 +313,7 @@ public class ViewController {
 			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		}
 		else if(viewPage.equals("workDayCalendar")
-				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar")) {
+				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar") || viewPage.equals("approvalList")) {
 		
 			mv.addObject("pageName", viewPage);
 		}
