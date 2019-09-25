@@ -78,10 +78,10 @@
     var fullsheetH = "calc(100vh - 232px)";
     var sheetH90 = "calc(100vh - 270px)";
 
-    if("${isEmbedded}" == "true" ){
+    <#if isEmbedded?? && isEmbedded?exists && isEmbedded >
     	halfsheetH = "50%";
 		fullsheetH = "100%";
 		sheetH90 = "100%";
-	}
+    </#if>
 		
 </script>
