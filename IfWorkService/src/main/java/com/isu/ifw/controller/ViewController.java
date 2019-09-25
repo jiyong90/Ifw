@@ -92,6 +92,7 @@ public class ViewController {
         mv.addObject("companyList", companyList);
         
         mv.addObject("loginBackgroundImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.BACKGROUND_IMG", true, ""));
+        mv.addObject("loginLogoImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.LOGO_IMG", true, ""));
         
 		return mv;
 	}
@@ -160,6 +161,7 @@ public class ViewController {
 		mv.addObject("empNo", empNo);
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", viewPage);
+		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -210,6 +212,7 @@ public class ViewController {
 		mv.addObject("empNo", empNo);
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", "mgr/"+viewPage);
+		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

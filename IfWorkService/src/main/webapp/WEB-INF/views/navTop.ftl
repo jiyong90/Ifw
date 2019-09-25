@@ -7,7 +7,7 @@
 
     <h1 class="logo">
     <a href="${rc.getContextPath()}/console/${tsId}/">
-        <img src="${rc.getContextPath()}/soldev/img/gnb_logo.png" alt="로고">
+        <img src="${mainLogoImg}" alt="로고">
         </a>
     </h1>
     <div id="navTop" class="ml-auto">
