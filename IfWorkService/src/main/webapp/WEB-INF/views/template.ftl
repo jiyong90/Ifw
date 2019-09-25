@@ -35,8 +35,6 @@
         </div>
     </div>
     <script type="text/javascript">
-    	var locationurl = "${rc.getContextPath()}/console/";
-    
 	    $(function () {
 	        $('#sidebarCollapse').on('click', function () {
 	            $('#sidebar').toggleClass('active');
