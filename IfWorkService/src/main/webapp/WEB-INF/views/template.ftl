@@ -7,6 +7,9 @@
     <title>근태관리 시스템</title>
 </head>
 <body>
+	<!-- loading image start -->
+    <!-- loading image end -->
+    <!-- alert modal start -->
 	<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" style="z-index:9999;">
         <div class="modal-dialog " role="document">
             <div class="modal-content">
@@ -25,6 +28,7 @@
             </div>
         </div>
     </div>
+    <!-- alert modal end -->
 	<#include "/navTop.ftl">
     <div class="wrapper">
         <#include "/navLeft.ftl">

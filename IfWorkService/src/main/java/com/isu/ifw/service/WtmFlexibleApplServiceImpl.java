@@ -331,18 +331,15 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("sabun", appl.getApplSabun());
 			
-			wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
-			
-			List<WtmWorkDayResult> days = wtmWorkDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, sabun, "BASE",flexibleAppl.getSymd(), flexibleAppl.getEymd() );
-			
-			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
+			/*List<WtmWorkDayResult> days = wtmWorkDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, sabun, "BASE",flexibleAppl.getSymd(), flexibleAppl.getEymd() );
 			
 			//선근제면 초기화 하자
 			if(stdMgr.getWorkTypeCd().startsWith("SELE")) {
 				//기본근무  정보가 있었기 때문에 지워주자
 				wtmWorkDayResultRepo.deleteAll(days);
-			}
+			}*/
 			
+			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
 			paramMap.putAll(stdMgr.getWorkDaysOpt());
 			paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
 			//근무제 기간의 총 소정근로 시간을 업데이트 한다.

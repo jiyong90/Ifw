@@ -377,7 +377,6 @@
 	    			
 	    			if(saveYn) {
 	    				//$('#apprOpinionModal').modal("hide"); 
-	    				$('#apprOpinionModal .close').click();
 	    				
 		    			var param = appr;
 		    			
@@ -394,6 +393,8 @@
 	    					data: JSON.stringify(param),
 	    					dataType: "json",
 	    					success: function(data) {
+	    						$('#apprOpinionModal .close').click();
+	    						
 	    						if(data!=null && data.status=='OK') {
 									$("#alertText").html("결재되었습니다.");
 								} else {
