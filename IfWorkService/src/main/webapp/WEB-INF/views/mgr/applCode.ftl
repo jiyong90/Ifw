@@ -25,7 +25,7 @@
 							</ul>
 						</div>
 					</div>
-					<script type="text/javascript"> createIBSheet("sheet1", "100%", "calc(100vh - 232px)", "kr"); </script>
+					<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>
 				</div>
 				<div class="col-5 pr-3">
 					<div class="inner">

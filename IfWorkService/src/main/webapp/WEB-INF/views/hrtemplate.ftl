@@ -25,8 +25,10 @@
             </div>
         </div>
     </div>
-<script> var loginUrl = "http://smarthrd.servicezone.co.kr/Info.do?code=905";
-		var redirectText = "401redirectHrPage"; </script>
+	<script> 
+		var loginUrl = "http://smarthrd.servicezone.co.kr/Info.do?code=905";
+		var redirectText = "401redirectHrPage"; 
+	</script>
     <div class="wrapper">
         <div id="content">
             <#include "/${pageName}.ftl">

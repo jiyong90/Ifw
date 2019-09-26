@@ -72,3 +72,16 @@
         }, 0);
     });
 </script>
+<script type="text/javascript">
+    var sheetH40 = "calc(50vh - 180px)";
+    var halfsheetH = "calc(50vh - 140px)";
+    var fullsheetH = "calc(100vh - 232px)";
+    var sheetH90 = "calc(100vh - 270px)";
+
+    <#if isEmbedded?? && isEmbedded?exists && isEmbedded >
+    	halfsheetH = "50%";
+		fullsheetH = "100%";
+		sheetH90 = "100%";
+    </#if>
+		
+</script>

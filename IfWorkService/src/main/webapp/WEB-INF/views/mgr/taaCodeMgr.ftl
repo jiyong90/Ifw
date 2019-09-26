@@ -1,5 +1,5 @@
 <div id="taaCodeMgr">
- 	<div class="container-fluid pt-3 pb-3 bg-white" style="calc(100vh - 72px);">
+ 	<div class="container-fluid pt-3 pb-3 bg-white">
 	 	<div class="ibsheet-wrapper">
 			<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -32,7 +32,7 @@
 								</ul>
 							</div>
 						</div>
-						<script type="text/javascript"> createIBSheet("sheet1", "100%", "calc(100vh - 232px)", "kr"); </script>
+						<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>
 					</td>
 				</tr>
 			</table>

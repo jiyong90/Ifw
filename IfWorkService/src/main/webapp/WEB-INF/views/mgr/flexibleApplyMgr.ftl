@@ -30,7 +30,7 @@
 							</ul>
 						</div>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet1", "100%", "calc(50vh - 140px)","kr"); </script>
+					<script type="text/javascript">createIBSheet("sheet1", "100%", halfsheetH,"kr"); </script>
 				</td>
 			</tr>
 			<tr>
@@ -51,7 +51,7 @@
 												<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 											</ul>
 										</div>
-										<script type="text/javascript">createIBSheet("sheet2", "100%", "calc(100vh - 270px)","kr"); </script>
+										<script type="text/javascript">createIBSheet("sheet2", "100%", sheetH40,"kr"); </script>
 									</div>
 								</div>
 								<div id="tabs-2">
@@ -63,7 +63,7 @@
 												<li><a href="javascript:doAction3('Save')" class="basic authA">저장</a></li>
 											</ul>
 										</div>
-										<script type="text/javascript">createIBSheet("sheet3", "100%", "calc(100vh - 270px)","kr"); </script>
+										<script type="text/javascript">createIBSheet("sheet3", "100%", sheetH40,"kr"); </script>
 									</div>
 								</div>
 							</div>

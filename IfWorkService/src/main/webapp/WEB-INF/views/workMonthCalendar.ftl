@@ -44,7 +44,7 @@
 	    		calendarLeftVue.calendar = calendar;
 	    	},
 	    	navLinkDayClickCallback: function(info){
-         		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment(info).format('YYYYMMDD');
+         		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment(info).format('YYYYMMDD');
 	    	},
 	    	datesRenderCallback: function(info){
 	    		var $this = this;
@@ -426,15 +426,15 @@
 	       			}
 	       			
 	       			var classNames = [];
-					classNames.push(calendarTopVue.flexibleStd.workTypeCd);
+					classNames.push(calendarTopVue.selectedFlexibleStd.workTypeCd);
 					
 					//근무 요일이 아닌 경우 제외하고 event 생성
-					var workDaysOpt = [];
+					/* var workDaysOpt = [];
 					$.each(calendarTopVue.flexibleStd.workDaysOpt, function(k, v){
 						if(v==true) {
 							workDaysOpt.push(k-1);
 						}
-					});
+					}); */
 				
 					//임시저장된 건이 있으면 이벤트 삭제하고 재생성
 					if(calendarLeftVue.flexibleAppl.hasOwnProperty("applStatusCd") && calendarLeftVue.flexibleAppl.applStatusCd=='11') {
@@ -445,7 +445,7 @@
 					}
 					
 	       			$this.addEvent({
-	       				id: 'workRange.'+calendarTopVue.flexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
+	       				id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
 	 		    		start: calendarLeftVue.applInfo.useSymd,
 	 		        	end: moment(eYmd).format('YYYY-MM-DD'),
 	 		        	rendering: 'background'

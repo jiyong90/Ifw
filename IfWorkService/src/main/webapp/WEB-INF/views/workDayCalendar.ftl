@@ -38,6 +38,17 @@
   		    		var calendar = this.$refs.fullCalendar.cal;
   		    		calendarLeftVue.calendar = calendar;
   		    		this.getWorkDayResult();
+  		    		
+  		    		/* var startDate = new Date(moment(calendar.view.activeStart).startOf('month').format('YYYY-MM-DD'));
+  		    		var endDate = new Date(moment(calendar.view.activeEnd).endOf('month').format('YYYY-MM-DD'));
+  		    		
+  		    		var validRange = {
+  		    			start : startDate,
+  		    			end : endDate
+  		    		};
+  		    		
+  		    		calendar.setOption('validRange', validRange); */
+  		    		
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -107,6 +118,7 @@
 		  	         			if(info.startStr==moment(dayWork.day).format('YYYY-MM-DD')) {
 		  	         				existYn = true;
 	  	         					var valueMap = dayWork.plans[0].valueMap;
+	  	         					$("#timeNm").text(dayWork.timeNm);
 	  	         					
 	  		    					if(valueMap!=null && valueMap.hasOwnProperty("shm"))
 	  		    						$("#startTime").val(valueMap.shm);
@@ -116,6 +128,7 @@
 							});
   		    			} 
   	         		} else {
+  	         			$("#timeNm").text("");
   	         			$("#startTime").val("");
   		    			$("#endTime").val("");
   	         		}
@@ -239,22 +252,26 @@
   		  		    		eYmd.setDate(eYmd.getDate()+1);
   		  		    		eYmd = moment(eYmd).format('YYYY-MM-DD');
   		  		    		
-  		  		    		var workDaysOpt = {};
+  		  		    		
   		  		    		var selYmd = new Date(i.start);
   		  		    		
   		  		    		//휴일
+  		  	         		/* 
+  		  	         		var workDaysOpt = {};
   		  	         		if(d.hasOwnProperty("workDaysOpt") && d.workDaysOpt!=null && d.workDaysOpt!=undefined && d.workDaysOpt!=''){
   		  	         			workDaysOpt = JSON.parse(d.workDaysOpt);
-  		  	         		}
+  		  	         		} */
   		  		    		
 	  	  		    		if( moment(sYmd).diff(i.startStr)<=0 && moment(i.startStr).diff(eYmd)<=0
 									&& moment(sYmd).diff(i.endStr)<=0 && moment(i.endStr).diff(eYmd)<=0
 		    						&& moment($this.today).diff(i.startStr)<0 && moment($this.today).diff(i.endStr)<0
 		    						&& $this.empHolidays.indexOf(i.startStr)==-1
-		    						&& (Object.keys(workDaysOpt).length==0 || Object.keys(workDaysOpt).length>0 && workDaysOpt[selYmd.getDay()+1])) {
+		    						//&& (Object.keys(workDaysOpt).length==0 || Object.keys(workDaysOpt).length>0 && workDaysOpt[selYmd.getDay()+1])
+		    					) {
 	  	  		    			editYn = true;
 	  	  		    		} else {
 	  	  		    			if(moment(i.startStr).diff(sYmd)<0 || moment(i.startStr).diff(eYmd)>=0) {
+	  	  		    				$("#timeNm").text("");
 	  	  		    				$("#startTime").val("");
 	  	  		    				$("#endTime").val("");
 	  	  		    			} 
@@ -405,11 +422,6 @@
 								//유연근무제 신청 기간 이외의 날짜는 선택하지 못하게 함
 			  		    		$this.selectAllow();
 								
-								//$this.$refs.fullCalendar.cal.select(workday);
-								console.log($this.$refs.fullCalendar.cal.getOption('selectAllow', workday));
-								//console.log($('td').find(".fc-day[data-date='"+workday+"']"));
-			  		    		//$('td').find(".fc-day[data-date='"+workday+"']").trigger("mousedown");
-			  		    		//$('td').find(".fc-day[data-date='"+workday+"']").trigger("mouseup");
 							} 
 						},
 						error: function(e) {
@@ -421,7 +433,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						}
 					}); 
-
+   		    		
 	         	},
 	         	viewWorkPlan : function(data){
   	         		var $this = this;
@@ -472,7 +484,7 @@
 	  		  		    		$("#endTime").prop("disabled", true);
 	  	         			}
 	  	         			calendar.gotoDate(workday);
-	  	         			//calendar.select(workday);
+	  	         			calendar.select(workday);
   	         			}
   	         		});
          			
@@ -606,7 +618,7 @@
 					var $this = this;
   	         		var selday = $this.selectedWorkday;
   	         		var flexibleAppl = calendarLeftVue.flexibleAppl;
-					var workDaysOpt = calendarTopVue.flexibleStd.workDaysOpt; //근무요일
+					//var workDaysOpt = calendarTopVue.flexibleStd.workDaysOpt; //근무요일
 		    		//var applTermOpt = calendarTopVue.flexibleStd.applTermOpt; //신청기간
 		    		
 		    		
@@ -626,7 +638,10 @@
 		    		  		workEtime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleAppl.workEhm).format('YYYY-MM-DD HH:mm');
 		    		  	
   		    		    //코어시간(근무일 기준)
+  		    		    var coreChkYn = 'N';
   		    		    var coreStime = '';
+  		    		  	if(flexibleAppl.hasOwnProperty('coreChkYn') && flexibleAppl.coreChkYn!='')
+  		    		  		coreChkYn = flexibleAppl.coreChkYn;
   		    		    if(flexibleAppl.hasOwnProperty('coreShm') && flexibleAppl.coreShm!='')
   		    		    	coreStime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleAppl.coreShm).format('YYYY-MM-DD HH:mm');
   		    		  	var coreEtime = '';
@@ -647,11 +662,12 @@
   		    		    
 	    		    	//근무일 기준 근무시간과 코어시간 포함하도록 체크
   		    			if(	(workStime==''&&workEtime=='' || moment(workStime).diff(sTime)<=0 && moment(eTime).diff(workEtime)<=0 )
-  		    					&& (coreStime==''&&coreEtime=='' || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0)) {
+  		    					&& (coreChkYn=='N' || coreChkYn=='Y' && (coreStime==''&&coreEtime=='' || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0))) {
   		    		    
 	  		    			var d = new Date(sDate);
 	  		    			while(moment(d).diff(eDate, 'days')<=0) {
-	  		    				if(workDaysOpt[d.getDay()+1] && $this.empHolidays.indexOf(moment(d).format("YYYY-MM-DD"))==-1) { //근무요일이고, 신청기간이면
+	  		    				if( //workDaysOpt[d.getDay()+1] && 
+	  		    						$this.empHolidays.indexOf(moment(d).format("YYYY-MM-DD"))==-1) { //근무요일이고, 신청기간이면
 		  		    				if($this.dayResult.hasOwnProperty(moment(d).format("YYYYMMDD"))) {
 		  		    					$this.dayResult[moment(d).format("YYYYMMDD")].shm = moment(sDate+' '+$("#startTime").val()).format('HHmm');
 		  		    					$this.dayResult[moment(d).format("YYYYMMDD")].ehm = moment(sDate+' '+$("#endTime").val()).format('HHmm');
@@ -755,7 +771,5 @@
 	         	}
   		    }
    	});
-
-   	
 </script>
 

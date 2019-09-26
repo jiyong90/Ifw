@@ -800,6 +800,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	try {
 	        	String ifUrl = IF_URL + "/empHis" + "?lastDataTime="+lastDataTime;
 	        	getIfMap = getIfRt(ifUrl);
+		   		System.out.println("111111111111111111111" + getIfMap.toString());
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
 		   			String ifMsg = getIfMap.get("message").toString();

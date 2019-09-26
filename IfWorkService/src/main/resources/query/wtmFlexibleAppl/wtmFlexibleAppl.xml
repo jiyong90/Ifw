@@ -22,6 +22,7 @@
 			     , M.WORK_EHM AS workEhm
 			     , M.CORE_SHM AS coreShm
 			     , M.CORE_EHM AS coreEhm
+			     , M.CORE_CHK_YN AS coreChkYn
 			  FROM WTM_APPL A
 			  JOIN WTM_FLEXIBLE_APPL FA
 			    ON A.APPL_ID = FA.APPL_ID 

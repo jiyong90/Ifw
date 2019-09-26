@@ -91,6 +91,9 @@ public class ViewController {
         	companyList = mapper.readValue(company, new ArrayList<Map<String, Object>>().getClass());
         mv.addObject("companyList", companyList);
         
+        mv.addObject("loginBackgroundImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.BACKGROUND_IMG", true, ""));
+        mv.addObject("loginLogoImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.LOGO_IMG", true, ""));
+        
 		return mv;
 	}
 	
@@ -118,7 +121,8 @@ public class ViewController {
 	@GetMapping(value = "/console/{tsId}")
 	public ModelAndView login(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//return main(tsId, request);
-		return views(tsId, "main", request);
+		//return views(tsId, "main", request);
+		return views(tsId, "workCalendar", request);
 	}
 	
 	@GetMapping(value="/console/{tsId}/main")
@@ -157,6 +161,9 @@ public class ViewController {
 		mv.addObject("empNo", empNo);
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", viewPage);
+		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
+		mv.addObject("isEmbedded",false);
+		mv.addObject("type","console");
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -170,16 +177,18 @@ public class ViewController {
 				mv.addObject("workday", workday); 
 			}
 			
+			String calendarType = "Month"; //기본은 월달력
 			if(request.getParameter("calendarType")!=null) {
-				String calendarType = request.getParameter("calendarType").toString();
-				mv.addObject("calendar", "work"+ calendarType +"Calendar");
+				calendarType = request.getParameter("calendarType").toString();
 				
 				if("Time".equals(calendarType)) {
 					//연장근무 또는 휴일근무 신청 시 사유
 					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
 				}
-			}
+			} 
+			
+			mv.addObject("calendar", "work"+ calendarType +"Calendar");
 			
 			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		} else {
@@ -205,13 +214,15 @@ public class ViewController {
 		mv.addObject("empNo", empNo);
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", "mgr/"+viewPage);
-		
+		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
+		mv.addObject("type","console");
+
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		mv.addObject("isEmbedded","false"); // 단독으로 열린것임을 표시
+		mv.addObject("isEmbedded",false); // 단독으로 열린것임을 표시
 		
 		return mv;
 	}
@@ -280,7 +291,8 @@ public class ViewController {
 		mv.addObject("empNo", empNo);
 		mv.addObject("loginId", userId);
 		mv.addObject("pageName", viewPage);
-		
+		mv.addObject("type","hr");
+
 		if("workCalendar".equals(viewPage)){
 			ObjectMapper mapper = new ObjectMapper();
 			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
@@ -308,7 +320,7 @@ public class ViewController {
 			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
 		}
 		else if(viewPage.equals("workDayCalendar")
-				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar")) {
+				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar") || viewPage.equals("approvalList")) {
 		
 			mv.addObject("pageName", viewPage);
 		}
@@ -317,7 +329,7 @@ public class ViewController {
 		
 		System.out.println("isEmbedded > true");
 		
-		mv.addObject("isEmbedded","true"); // HR 에서 포함되어 열린것임을 표시 (단독으로 사용되지 않는 경우를 화면에서 식별하기 위해 이 속성을 사용함) 
+		mv.addObject("isEmbedded",true); // HR 에서 포함되어 열린것임을 표시 (단독으로 사용되지 않는 경우를 화면에서 식별하기 위해 이 속성을 사용함) 
 		
 		return mv;
 		
