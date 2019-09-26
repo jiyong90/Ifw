@@ -638,7 +638,10 @@
 		    		  		workEtime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleAppl.workEhm).format('YYYY-MM-DD HH:mm');
 		    		  	
   		    		    //코어시간(근무일 기준)
+  		    		    var coreChkYn = 'N';
   		    		    var coreStime = '';
+  		    		  	if(flexibleAppl.hasOwnProperty('coreChkYn') && flexibleAppl.coreChkYn!='')
+  		    		  		coreChkYn = flexibleAppl.coreChkYn;
   		    		    if(flexibleAppl.hasOwnProperty('coreShm') && flexibleAppl.coreShm!='')
   		    		    	coreStime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleAppl.coreShm).format('YYYY-MM-DD HH:mm');
   		    		  	var coreEtime = '';
@@ -659,7 +662,7 @@
   		    		    
 	    		    	//근무일 기준 근무시간과 코어시간 포함하도록 체크
   		    			if(	(workStime==''&&workEtime=='' || moment(workStime).diff(sTime)<=0 && moment(eTime).diff(workEtime)<=0 )
-  		    					&& (coreStime==''&&coreEtime=='' || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0)) {
+  		    					&& (coreChkYn=='N' || coreChkYn=='Y' && (coreStime==''&&coreEtime=='' || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0))) {
   		    		    
 	  		    			var d = new Date(sDate);
 	  		    			while(moment(d).diff(eDate, 'days')<=0) {
