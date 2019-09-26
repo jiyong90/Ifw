@@ -202,4 +202,8 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public void createWorkTermBySabunAndSymdAndEymd(Map<String, Object> paramMap);
 	
+	public Map<String, Object> findWorkDayResultMinMaxByYmdAndTimeTypeCdBySabun(Map<String, Object> paramMap);
+	
+	
+	
 }

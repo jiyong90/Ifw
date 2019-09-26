@@ -124,6 +124,8 @@
 			  , M.FLEXIBLE_NM AS flexibleNm
 			  , M.WORK_TYPE_CD AS workTypeCd
 			  , M.BASE_WORK_YN AS baseWorkYn
+			  , M.DEFAULT_WORK_MINUTE AS defaultWorkMinute
+			  , M.UNIT_MINUTE AS unitMinute
 			  , E.SYMD AS sYmd
 			  , E.EYMD AS eYmd
 			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
@@ -374,9 +376,8 @@
 			 , R.APPR_EDATE = F_WTM_CALC_APPR_DATE(C.ENTRY_EDATE, R.PLAN_EDATE, M.UNIT_MINUTE, 'E')
 		 WHERE C.TENANT_ID = #{tenantId}
 		   AND C.ENTER_CD = #{enterCd}
-		   AND C.YMD = #{ymd}
+		   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
 		   AND C.SABUN = #{sabun}
-		   AND R.TIME_TYPE_CD = #{timeTypeCd}
     </update>
     <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
     	UPDATE WTM_WORK_DAY_RESULT X 
@@ -651,48 +652,53 @@
   	
   	<select id="calcMinuteAsBreaktimeOption" parameterType="map" resultType="map">
   		SELECT CASE WHEN P.INFO_VALUE = 'Y' THEN F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','')
-  		     		ELSE F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) END AS calcMinute 
-  		  FROM WTM_FLEXIBLE_EMP E
-		  JOIN WTM_WORK_CALENDAR C
-		    ON E.TENANT_ID = C.TENANT_ID
-		   AND E.ENTER_CD = C.ENTER_CD
-		   AND E.SABUN = C.SABUN
-		   AND C.YMD BETWEEN E.SYMD AND E.EYMD
-		  JOIN WTM_TIME_CD_MGR T
-		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-		  JOIN WTM_TIME_BREAK_MGR B
-		    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
-		  LEFT OUTER JOIN WTM_PROPERTIE P
-		    ON E.TENANT_ID = P.TENANT_ID
-		   AND E.ENTER_CD = P.ENTER_CD
+		     		ELSE F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') - BREAK_MINUTE END AS calcMinute 
+		  FROM ( SELECT E.TENANT_ID
+		              , E.ENTER_CD
+		              , E.SABUN
+		              , CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) IS NULL THEN 0 ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) END AS BREAK_MINUTE
+					  FROM WTM_FLEXIBLE_EMP E
+					  JOIN WTM_WORK_CALENDAR C
+					    ON E.TENANT_ID = C.TENANT_ID
+					   AND E.ENTER_CD = C.ENTER_CD
+					   AND E.SABUN = C.SABUN
+					   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+					  JOIN WTM_TIME_CD_MGR T
+					    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+					  JOIN WTM_TIME_BREAK_MGR B
+					    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+					 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+					   AND E.TENANT_ID = #{tenantId}
+					   AND E.ENTER_CD = #{enterCd}
+					   AND E.SABUN = #{sabun}
+					   AND C.YMD = #{ymd}
+					   AND B.BREAK_TIME_CD = '01' ) S
+			LEFT OUTER JOIN WTM_PROPERTIE P
+		    ON S.TENANT_ID = P.TENANT_ID
+		   AND S.ENTER_CD = P.ENTER_CD
 		   AND P.INFO_KEY = 'OPTION_BREAKTIME_INCLUDED_YN_OF_OT_APPL'
-		 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
-		   AND E.TENANT_ID = #{tenantId}
-		   AND E.ENTER_CD = #{enterCd}
-		   AND E.SABUN = #{sabun}
-		   AND C.YMD = #{ymd}
-		   AND B.BREAK_TIME_CD = '01'
   	</select>
   	
   	<select id="calcMinuteExceptBreaktime" parameterType="map" resultType="map">
-  		SELECT SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) AS breakMinute
-  		     , F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) AS calcMinute 
-  		  FROM WTM_FLEXIBLE_EMP E
-		  JOIN WTM_WORK_CALENDAR C
-		    ON E.TENANT_ID = C.TENANT_ID
-		   AND E.ENTER_CD = C.ENTER_CD
-		   AND E.SABUN = C.SABUN
-		   AND C.YMD BETWEEN E.SYMD AND E.EYMD
-		  JOIN WTM_TIME_CD_MGR T
-		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-		  JOIN WTM_TIME_BREAK_MGR B
-		    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
-		 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
-		   AND E.TENANT_ID = #{tenantId}
-		   AND E.ENTER_CD = #{enterCd}
-		   AND E.SABUN = #{sabun}
-		   AND C.YMD = #{ymd}
-		   AND B.BREAK_TIME_CD = '01'
+  		SELECT S.BREAK_MINUTE AS breakMinute
+		     , F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') - S.BREAK_MINUTE AS calcMinute 
+		  FROM ( SELECT CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) IS NULL THEN 0 ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,#{shm},#{ehm}, '')) END AS BREAK_MINUTE
+				  FROM WTM_FLEXIBLE_EMP E
+				  JOIN WTM_WORK_CALENDAR C
+				    ON E.TENANT_ID = C.TENANT_ID
+				   AND E.ENTER_CD = C.ENTER_CD
+				   AND E.SABUN = C.SABUN
+				   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				  JOIN WTM_TIME_BREAK_MGR B
+				    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+				 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+				   AND E.TENANT_ID = #{tenantId}
+				   AND E.ENTER_CD = #{enterCd}
+				   AND E.SABUN = #{sabun}
+				   AND C.YMD = #{ymd}
+				   AND B.BREAK_TIME_CD = '01' ) S
   	</select>
   	
   	<select id="checkDuplicateWorktime" parameterType="map" resultType="map">
