@@ -904,6 +904,8 @@
          	getFlexitimeAppl : function(applId){ //신청서 조회
          		var $this = this;
          	
+         		$("#loading").show();
+         	
          		var param = {
          			applId: applId
          		};
@@ -915,6 +917,7 @@
 					dataType: "json",
 					data: param,
 					success: function(data) {
+						$("#loading").hide();
 						$this.flexibleAppl = {};
 						if(data!=null) {
 							$this.flexibleAppl = data;
@@ -926,6 +929,7 @@
 						
 					},
 					error: function(e) {
+						$("#loading").hide();
 						$this.flexibleAppl = {};
 					}
 				});
