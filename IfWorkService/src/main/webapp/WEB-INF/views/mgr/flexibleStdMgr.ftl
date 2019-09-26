@@ -52,7 +52,7 @@
 											<tr id="trHoliday">
 												<th>공휴일제외여부</th>
 												<td>
-													<input type="checkbox" id="holExceptYn" name="holExceptYn" />
+													<input type="checkbox" id="holExceptYn" name="holExceptYn" /> 체크시 공휴일 근무제외
 												</td>
 												<th>인정근무 단위시간(분)</th>
 												<td>
@@ -60,14 +60,14 @@
 												</td>
 											</tr>
 											<tr id="trBaseCheck">
-												<th>일 기본근무시간 사용여부</th>
+												<th>고정OT소진 사용여부</th>
 												<td colspan="3">
-													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" />
+													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" /> 체크시 고정OT 소진기준작성 
 												</td>
 											</tr>
 											<tr id="trBase">
 												<th>일 기본근무시간(분)</th>
-												<td>
+												<td colspan="3">
 													<input type="text" id="defaultWorkMinute" name="defaultWorkMinute"/>
 												</td>
 											</tr>
@@ -101,19 +101,18 @@
 													<input type="text" id="workEhm" name="workEhm" class="date2" data-toggle="datetimepicker" />
 												</td>
 											</tr>
+											<tr id="trCoreChk">
+												<th>코어시간체크여부</th>
+												<td colspan="3">
+													<input type="checkbox" id="coreChkYn" name="coreChkYn" /> 체크시 코어시간 기준작성
+												</td>
+											</tr>
 											<tr id="trCoreTime">
 												<th>코어근무시각</th>
-												<td>
+												<td colspan="3">
 													<input type="text" id="coreShm" name="coreShm" class="date2" data-toggle="datetimepicker"/>
 													~
 													<input type="text" id="coreEhm" name="coreEhm" class="date2" data-toggle="datetimepicker"/>
-												</td>
-												<th>코어시간체크여부</th>
-												<td>
-													<select id="coreChkYn">
-					                                    <option value="Y">사용</option>
-					                                    <option value="N">미사용</option>
-					                                </select>
 												</td>
 											</tr>
 											<tr id="trBaseFirst">
@@ -140,11 +139,11 @@
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
 												<td colspan="3">
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="today"  title="당일 이내"/> 당일 이내
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="1_week" title="1주일 이내"/> 1주일 이내
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="2_week" title="2주일 이내"/> 2주일 이내
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="3_week" title="3주일 이내"/> 3주일 이내
-													<input type="checkbox" id="applTermOpt" name="applTermOpt" value="4_week" title="4주일 이내"/> 4주일 이내
+													<input type="radio" id="applTermOpt" name="applTermOpt" value="today"  title="당일 이내"/> 당일 이내
+													<input type="radio" id="applTermOpt" name="applTermOpt" value="1_week" title="1주일 이내"/> 1주일 이내
+													<input type="radio" id="applTermOpt" name="applTermOpt" value="2_week" title="2주일 이내"/> 2주일 이내
+													<input type="radio" id="applTermOpt" name="applTermOpt" value="3_week" title="3주일 이내"/> 3주일 이내
+													<input type="radio" id="applTermOpt" name="applTermOpt" value="4_week" title="4주일 이내"/> 4주일 이내
 												</td>
 											</tr>
 											<tr>
@@ -181,6 +180,7 @@
 </div>
 
 <script type="text/javascript">
+	
    	$(function() {
    		//resize
 		$(window).smartresize(sheetResize);
@@ -357,10 +357,16 @@
 			var row = sheet1.GetSelectRow();
 			
 			if($('#trHoliday').is(':visible')){
-				
-				var chkYn = var chkYn = getCheckYn("holExceptYn");
+				var chkYn = getCheckYn("holExceptYn");
 				sheet1.SetCellValue(row, "holExceptYn", chkYn);
 			}
+			if($('#trBaseCheck').is(':visible')){
+	        	var chkYn = getCheckYn("defaultWorkUseYn");
+				sheet1.SetCellValue(row, "defaultWorkUseYn", chkYn);
+	        }
+	        if($('#trBase').is(':visible')){
+	        	sheet1.SetCellValue(row, "defaultWorkMinute", $("#defaultWorkMinute").val());
+	        }
 	        if($('#trFixOt').is(':visible')){
 	        	sheet1.SetCellValue(row, "fixotUseType", $("#fixotUseType").val());
 	        	sheet1.SetCellValue(row, "fixotUseLimit", $("#fixotUseLimit").val());
@@ -369,13 +375,13 @@
 	        	sheet1.SetCellValue(row, "workShm", $("#workShm").val());
 	        	sheet1.SetCellValue(row, "workEhm", $("#workEhm").val());
 	        }
+	        if($('#trCoreChk').is(':visible')){
+	        	var chkYn = getCheckYn("coreChkYn");
+				sheet1.SetCellValue(row, "coreChkYn", chkYn);
+	        }
 	        if($('#trCoreTime').is(':visible')){
 	        	sheet1.SetCellValue(row, "coreShm", $("#coreShm").val());
 	        	sheet1.SetCellValue(row, "coreEhm", $("#coreEhm").val());
-	        }
-	        if($('#trBaseCheck').is(':visible')){
-	        	var chkYn = getCheckYn("defaultWorkUseYn");
-	        	sheet1.SetCellValue(row, "exhaustionYn", chkYn);
 	        }
 	        if($('#trBaseFirst').is(':visible')){
 	        	sheet1.SetCellValue(row, "exhaustionYn", $("#exhaustionYn").val());
@@ -493,34 +499,52 @@
 			// 옵션마스터용 값을 셋팅해야함.
 			var workTypeCd = sheet1.GetCellValue( NewRow, "workTypeCd");
 			$("input:checkbox[name='holExceptYn']").prop("checked", false);
+			$("input:checkbox[name='defaultWorkUseYn']").prop("checked", false);
+			$("input:checkbox[name='coreChkYn']").prop("checked", false);
 			$("input:checkbox[name='usedTermOpt']").prop("checked", false);
 			$("input:checkbox[name='applTermOpt']").prop("checked", false);
 			
 			// 공휴일제외여부
 			if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
-				$("holExceptYn").prop("checked", true);
+				$("input:checkbox[id='holExceptYn']").prop("checked", true);
 			}
 			
 			// 고정OT
 			if(workTypeCd == "ELSE"){
+				$("#trBase").hide();
 				$("#trFixOt").hide();
 				$("#fixotUseType").val("");
 				$("#fixotUseLimit").val("");
 			} else {
-				$("#trFixOt").show();
-				$("#fixotUseType").val(sheet1.GetCellValue( NewRow, "fixotUseType")).prop("selected", true);
-				$("#fixotUseLimit").val(sheet1.GetCellValue( NewRow, "fixotUseLimit"));
+				// 고정ot소진 사용여부
+				if(sheet1.GetCellValue( NewRow, "defaultWorkUseYn") == "Y"){
+					$("input:checkbox[id='defaultWorkUseYn']").prop("checked", true);
+					setDefaultWorkUseYn(true);
+					$("#trBase").show();
+					$("#defaultWorkMinute").val(sheet1.GetCellValue( NewRow, "defaultWorkMinute"));
+					$("#trFixOt").show();
+					$("#fixotUseType").val(sheet1.GetCellValue( NewRow, "fixotUseType")).prop("selected", true);
+					$("#fixotUseLimit").val(sheet1.GetCellValue( NewRow, "fixotUseLimit"));
+				} else {
+					setDefaultWorkUseYn(false);
+				}
 			}
+			
 			// 근무가능시각
 			if(workTypeCd == "SELE_F" || workTypeCd == "SELE_C"){
 				$("#trWorkTime").show();
 				$("#workShm").val(sheet1.GetCellValue( NewRow, "workShm"));
 				$("#workEhm").val(sheet1.GetCellValue( NewRow, "workEhm"));
+				$("#trCoreChk").show();
 				$("#trCoreTime").show();
 				$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
 				$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
-				$("#coreChkYn").addClass("required");
-				$("#coreChkYn").val(sheet1.GetCellValue( NewRow, "coreChkYn")).prop("selected", true);
+				if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
+					$("input:checkbox[id='coreChkYn']").prop("checked", true);
+					setCoreChkYn(true);
+				} else {
+					setCoreChkYn(false);
+				}
 				$("#trBaseFirst").show();
 				$("#exhaustionYn").addClass("required");
 				$("#exhaustionYn").val(sheet1.GetCellValue( NewRow, "exhaustionYn")).prop("selected", true);
@@ -528,7 +552,7 @@
 				$("#trWorkTime").hide();
 				$("#trCoreTime").hide();
 				$("#trBaseFirst").hide();
-				$("#coreChkYn").removeClass("required");
+				$("#trCoreChk").hide();
 				$("#exhaustionYn").removeClass("required");
 				$("#workShm").val("");
 				$("#workEhm").val("");
@@ -618,9 +642,38 @@
 	}
 	function getCheckYn(objId){
 		var chkYn = "N";
-		if($("input:checkbox[id="+objId+"]").checked){
+		if($("input:checkbox[id="+objId+"]").is(":checked")){
 			 chkYn = "Y";
 		}
 		return chkYn;
 	}
+	
+	function setDefaultWorkUseYn(chk){
+		if(chk){
+			$("#trBase").show();
+        	$("#trFixOt").show();
+		} else {
+			$("#trBase").hide();
+            $("#trFixOt").hide();
+            $("#defaultWorkMinute").val("");
+           	$("#fixotUseType").val("");
+			$("#fixotUseLimit").val("");
+		}
+	}
+	 $("#defaultWorkUseYn").change(function(){
+	 	setDefaultWorkUseYn($("#defaultWorkUseYn").is(":checked"));
+    });
+    
+    function setCoreChkYn(chk){
+		if(chk){
+			$("#trCoreTime").show();
+		} else {
+			$("#trCoreTime").hide();
+            $("#coreShm").val("");
+           	$("#coreEhm").val("");
+		}
+	}
+	 $("#coreChkYn").change(function(){
+	 	setCoreChkYn($("#coreChkYn").is(":checked"));
+    });
 </script>
