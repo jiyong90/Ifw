@@ -807,9 +807,15 @@
   				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc(('+tWorkMin+' - 1)/'+tMin+' * 100%)' });
   				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc(('+tOtMin+' + 1)/'+tMin+'* 100%)' });
   				
-  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc('+rWorkMin+'/'+rMin+' * 100%)' });
-  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc(('+rWorkMin+' - 1)/'+rMin+' * 100%)' });
-  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc(('+rOtMin+' + 1)/'+rMin+'* 100%)' });
+  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc('+rWorkMin+'/'+tMin+' * 100%)' });
+  				
+  				if(rWorkMin==0) {
+  					$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc(('+rWorkMin+')/'+tMin+' * 100%)' });
+  	  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc(('+rOtMin+')/'+tMin+'* 100%)' });
+  				} else {
+  					$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc(('+rWorkMin+' - 1)/'+tMin+' * 100%)' });
+  	  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc(('+rOtMin+' + 1)/'+tMin+'* 100%)' });
+  				}
   			},
   			flexibleAppl : function(val, oldVal) {
   				//근무시간, 코어시간 그래프 표기
