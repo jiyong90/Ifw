@@ -118,8 +118,13 @@ public class WtmApplController {
 				} else {
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
-					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()))
+					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) {
+						paramMap.put("tenantId", tenantId);
+						paramMap.put("enterCd", enterCd);
+						paramMap.put("sabun",  rp.get("sabun")+"");
+						paramMap.put("userId", userId);
 						wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
+					}
 				}
 			}
 			if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {

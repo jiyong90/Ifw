@@ -386,13 +386,14 @@
 		    				param['otEdate'] = moment(appr.appl.otEdate).format('YYYYMMDDHHmm');
 		    			}
 
-	    	    		/* Util.ajax({
+	    	    		Util.ajax({
 	    					url: "${rc.getContextPath()}/appl/"+apprStatus,
 	    					type: "POST",
 	    					contentType: 'application/json',
 	    					data: JSON.stringify(param),
 	    					dataType: "json",
 	    					success: function(data) {
+	    						$("#loading").hide();
 	    						$('#apprOpinionModal .close').click();
 	    						
 	    						if(data!=null && data.status=='OK') {
@@ -406,12 +407,13 @@
 		  	  	         		$("#alertModal").modal("show"); 
 	    					},
 	    					error: function(e) {
+	    						$("#loading").hide();
 	    						console.log(e);
 	    						$("#alertText").html("확인요청 시 오류가 발생했습니다.");
 	      	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
 	      	  	         		$("#alertModal").modal("show"); 
 	    					}
-	    				}); */
+	    				});
 	    			} else {
 	    				$("#alertModal").on('hidden.bs.modal',function(){
 	    					$("#apprOpinion").focus();
