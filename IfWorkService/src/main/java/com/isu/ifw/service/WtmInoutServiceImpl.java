@@ -35,6 +35,9 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 	@Autowired
 	WtmCalendarMapper wtmCalendarMapper;
 	
+	@Autowired
+	WtmFlexibleEmpService empService;
+	
 	@Override
 	public Map<String, Object> getMenuContext(Long tenantId, String enterCd, String sabun) {
 
@@ -108,8 +111,26 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 			return cnt;
 		}
 	
-		cnt += wtmCalendarMapper.updateEntryDate(paramMap);
+		cnt += updateTimeStamp(paramMap);
+		return cnt;
+	}
+	
+	@Override
+	public int updateTimeStamp(Map<String, Object> paramMap) {
+		int cnt = 0;
 		//근무캘린더에 시간만 업데이트
+		try {
+			cnt =  wtmCalendarMapper.updateEntryDate(paramMap);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+		
+		empService.calcApprDayInfo(Long.parseLong(paramMap.get("tenantId").toString()), 
+				paramMap.get("enterCd").toString(), paramMap.get("ymd").toString(),
+				paramMap.get("ymd").toString(), paramMap.get("sabun").toString());
+		
 		return cnt;
 	}
 

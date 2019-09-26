@@ -374,9 +374,8 @@
 			 , R.APPR_EDATE = F_WTM_CALC_APPR_DATE(C.ENTRY_EDATE, R.PLAN_EDATE, M.UNIT_MINUTE, 'E')
 		 WHERE C.TENANT_ID = #{tenantId}
 		   AND C.ENTER_CD = #{enterCd}
-		   AND C.YMD = #{ymd}
+		   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
 		   AND C.SABUN = #{sabun}
-		   AND R.TIME_TYPE_CD = #{timeTypeCd}
     </update>
     <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
     	UPDATE WTM_WORK_DAY_RESULT X 
@@ -402,9 +401,8 @@
 			   AND E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
-			   AND C.YMD = #{ymd}
+			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
 			   AND B.BREAK_TIME_CD = '01'
-			   AND D.TIME_TYPE_CD = #{timeTypeCd}
 			   AND (B.SHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i') 
 			     OR B.EHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i'))
 			 GROUP BY D.WORK_DAY_RESULT_ID
