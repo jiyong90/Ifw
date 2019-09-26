@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -167,8 +168,12 @@ public class WtmCode {
 		this.updateId = updateId;
 	}
 
-
 	@PrePersist
+    protected void onCreate() {
+		this.updateDate = new Date();
+    }
+
+	@PreUpdate
     protected void onUpdate() {
 		this.updateDate = new Date();
     }
