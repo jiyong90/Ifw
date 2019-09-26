@@ -15,7 +15,7 @@
                         <div class="modal-app-wrap">
                             <div class="inner-wrap">
                                 <div class="desc row">
-                                    <div class="col-sm-12 col-md-12 col-lg-2">
+                                    <div class="col-sm-12 col-md-12 col-lg-2 pr-lg-0">
                                         <div class="title" id="overtime" v-if="result.holidayYn!='Y'">연장근로시간</div>
                                         <div class="title" id="overtime" v-else>휴일근로시간</div>
                                         <span class="time-wrap">
@@ -93,7 +93,7 @@
                                     <div class="desc row" v-for="(s, idx) in subYmds">
                                     	<div class="col-12 col-lg-12 mb-sm-2">
                                     		<div class="form-row">
-			                                    <div class="col-md-12 col-lg-2">
+			                                    <div class="col-md-12 col-lg-2 pr-lg-0">
 		                                            <span class="time-wrap">
 		                                                <i class="fas fa-clock"></i>
 		                                                <span class="time" v-if="s.subsMinute">{{minuteToHHMM(s.subsMinute, 'detail')}}</span>
