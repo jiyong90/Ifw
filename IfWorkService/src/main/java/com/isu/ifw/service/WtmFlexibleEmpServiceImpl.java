@@ -428,12 +428,15 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	 * 타각시간 기준으로 인정시간 계산
 	 */
 	@Transactional
-	protected void calcApprDayInfo(Long tenantId, String enterCd, String ymd, String sabun, String timeTypeCd) {
+	@Override
+	public void calcApprDayInfo(Long tenantId, String enterCd, String sYmd, String eYmd, String sabun) {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
-		paramMap.put("timeTypeCd", timeTypeCd);
+		paramMap.put("sYmd", sYmd);
+		paramMap.put("eYmd", eYmd);
+//		paramMap.put("timeTypeCd", timeTypeCd);
 		//소정근로시간의 경우 출퇴근 타각기록으로만 판단
 		flexEmpMapper.updateApprDatetimeByYmdAndSabun(paramMap);
 		flexEmpMapper.updateApprMinuteByYmdAndSabun(paramMap);

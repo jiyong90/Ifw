@@ -181,4 +181,9 @@ public interface WtmFlexibleEmpService {
 	 * @return
 	 */
 	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+	
+	/**
+	 * 타각시간 기준으로 인정시간 계산
+	 */
+	void calcApprDayInfo(Long tenantId, String enterCd, String sYmd, String eYmd, String sabun);
 }

@@ -163,15 +163,17 @@
                                  <span class="over-time"></span>
                              </div>
                              <ul class="legend-wrap">
-                                 <li class="work-time">소정 <strong>{{minuteToHHMM(rangeInfo.restWorkMinute)}}</strong></li>
-                                 <li class="over-time">연장 <strong>{{minuteToHHMM(rangeInfo.restOtMinute)}}</strong></li>
+                                 <li class="work-time" v-if="rangeInfo.restWorkMinute!=0">소정 <strong>{{minuteToHHMM(rangeInfo.restWorkMinute)}}</strong></li>
+                                 <li class="work-time" v-else>소정 <strong>00:00</strong></li>
+                                 <li class="over-time" v-if="rangeInfo.restOtMinute!=0">연장 <strong>{{minuteToHHMM(rangeInfo.restOtMinute)}}</strong></li>
+                                 <li class="over-time" v-else>연장 <strong>00:00</strong></li>
                              </ul>
                         </li>
                         <li>
                             <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
                             <div class="sub-desc">
                             	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.avlMinute && rangeInfo.avlMinute!=0">
-                            	{{minuteToHHMM(rangeInfo.avlMinute)}}시간
+                            	{{minuteToHHMM(rangeInfo.avlMinute,'detail')}}
                             	</template>
                             </div>
                         </li>
@@ -335,11 +337,19 @@
 	                        <ul class="sub-list reset">
 	                            <li>
 	                                <span class="sub-title"><i class="fas fa-clock"></i>소정근로 합산</span>
-	                                <span class="sub-desc">8:00</span>
+	                                <span class="sub-desc">
+	                                	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.workHour">
+	                                	{{workDayInfo.workHour}}
+	                                	</template>
+	                                </span>
 	                            </li>
 	                            <li>
 	                                <span class="sub-title"><i class="fas fa-moon"></i>연장근로 합산</span>
-	                                <span class="sub-desc">2:00</span>
+	                                <span class="sub-desc">
+	                                	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.otHour">
+	                                	{{workDayInfo.otHour}}
+	                                	</template>
+	                                </span>
 	                            </li>
 	                        </ul>
 	                    </div>
@@ -799,9 +809,15 @@
   				$(".work-info-wrap .time-graph.plan .over-time").css({ 'left': 'calc(('+tWorkMin+' - 1)/'+tMin+' * 100%)' });
   				$(".work-info-wrap .time-graph.plan .over-time").css({ 'width': 'calc(('+tOtMin+' + 1)/'+tMin+'* 100%)' });
   				
-  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc('+rWorkMin+'/'+rMin+' * 100%)' });
-  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc(('+rWorkMin+' - 1)/'+rMin+' * 100%)' });
-  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc(('+rOtMin+' + 1)/'+rMin+'* 100%)' });
+  				$(".work-info-wrap .time-graph.rest .work-time").css({ 'width': 'calc('+rWorkMin+'/'+tMin+' * 100%)' });
+  				
+  				if(rWorkMin==0) {
+  					$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc(('+rWorkMin+')/'+tMin+' * 100%)' });
+  	  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc(('+rOtMin+')/'+tMin+'* 100%)' });
+  				} else {
+  					$(".work-info-wrap .time-graph.rest .over-time").css({ 'left': 'calc(('+rWorkMin+' - 1)/'+tMin+' * 100%)' });
+  	  				$(".work-info-wrap .time-graph.rest .over-time").css({ 'width': 'calc(('+rOtMin+' + 1)/'+tMin+'* 100%)' });
+  				}
   			},
   			flexibleAppl : function(val, oldVal) {
   				//근무시간, 코어시간 그래프 표기
