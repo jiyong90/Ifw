@@ -63,8 +63,8 @@
 			  FROM V_IF_WTM_EMPHIS
 			 WHERE ENTER_CD = 'BRS'
 			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
-			   AND SABUN IN ('201601001', '201604004','201611006')
 			 ORDER BY ENTER_CD, SABUN, SYMD
         ]]>
     </select>
+    
 </mapper>
