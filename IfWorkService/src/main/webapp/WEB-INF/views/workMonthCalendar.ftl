@@ -426,7 +426,7 @@
 	       			}
 	       			
 	       			var classNames = [];
-					classNames.push(calendarTopVue.flexibleStd.workTypeCd);
+					classNames.push(calendarTopVue.selectedFlexibleStd.workTypeCd);
 					
 					//근무 요일이 아닌 경우 제외하고 event 생성
 					/* var workDaysOpt = [];
@@ -445,7 +445,7 @@
 					}
 					
 	       			$this.addEvent({
-	       				id: 'workRange.'+calendarTopVue.flexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
+	       				id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
 	 		    		start: calendarLeftVue.applInfo.useSymd,
 	 		        	end: moment(eYmd).format('YYYY-MM-DD'),
 	 		        	rendering: 'background'
