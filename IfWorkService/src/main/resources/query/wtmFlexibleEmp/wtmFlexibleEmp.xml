@@ -184,7 +184,7 @@
     <!--해당 일의 근무시간 정보 -->
   	<select id="getFlexibleWorkTimeInfo" parameterType="map" resultType="map">
   		<![CDATA[
-	    SELECT R.YMD AS ymd
+	    SELECT C.YMD AS ymd
 	         , F_WTM_GET_TAA_NAMES(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 2)  AS taaNames
 		     , MIN(C.ENTRY_SDATE) as entrySdate
 		     , MAX(C.ENTRY_EDATE) as entryEdate
@@ -202,16 +202,16 @@
 		     , F_WTM_NVL(MIN(R.APPR_EDATE), MIN(R.PLAN_EDATE)) AS eDate
 		     , C.HOLIDAY_YN AS holidayYn
 		  FROM WTM_WORK_CALENDAR C
-		  JOIN WTM_WORK_DAY_RESULT R
+		  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
 		    ON C.TENANT_ID = R.TENANT_ID
 		   AND C.ENTER_CD = R.ENTER_CD
 		   AND C.YMD = R.YMD
 		   AND C.SABUN = R.SABUN
-		 WHERE R.YMD = #{ymd}
-		   AND R.SABUN = #{sabun}
-		   AND R.ENTER_CD = #{enterCd}
-		   AND R.TENANT_ID = #{tenantId}
-		   AND R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS')
+		 WHERE C.YMD = #{ymd}
+		   AND C.SABUN = #{sabun}
+		   AND C.ENTER_CD = #{enterCd}
+		   AND C.TENANT_ID = #{tenantId}
+		   AND (R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS'))
 		GROUP BY R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, C.HOLIDAY_YN
 		]]>
   	</select>

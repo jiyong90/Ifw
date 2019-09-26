@@ -495,8 +495,11 @@
 	                        <li>
 	                            <div class="main-title">근태</div>
 	                            <div class="main-desc">
+	                            	<template v-if="workTimeInfo.holidayYn">
+	                            	{{workTimeInfo.holidayYn=='Y'?'휴무일':'근무일'}}
+	                            	</template>
 	                            	<template v-if="workTimeInfo.taaNames">
-	                            	{{workTimeInfo.taaNames}}
+	                            	,{{workTimeInfo.taaNames}}
 	                            	</template>
 	                            </div>
 	                        </li>
@@ -721,7 +724,6 @@
          		$(".list-group-item").eq(idx).addClass("active");
          		
          		//선택한 근무제 적용
-         		//$this.flexibleStd = $this.flexitimeList[idx];
          		$this.selectedFlexibleStd = $this.flexitimeList[idx];
          		$("#applyFlexBtn").show();
          	},
