@@ -163,15 +163,17 @@
                                  <span class="over-time"></span>
                              </div>
                              <ul class="legend-wrap">
-                                 <li class="work-time">소정 <strong>{{minuteToHHMM(rangeInfo.restWorkMinute)}}</strong></li>
-                                 <li class="over-time">연장 <strong>{{minuteToHHMM(rangeInfo.restOtMinute)}}</strong></li>
+                                 <li class="work-time" v-if="rangeInfo.restWorkMinute!=0">소정 <strong>{{minuteToHHMM(rangeInfo.restWorkMinute)}}</strong></li>
+                                 <li class="work-time" v-else>소정 <strong>00:00</strong></li>
+                                 <li class="over-time" v-if="rangeInfo.restOtMinute!=0">연장 <strong>{{minuteToHHMM(rangeInfo.restOtMinute)}}</strong></li>
+                                 <li class="over-time" v-else>연장 <strong>00:00</strong></li>
                              </ul>
                         </li>
                         <li>
                             <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
                             <div class="sub-desc">
                             	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.avlMinute && rangeInfo.avlMinute!=0">
-                            	{{minuteToHHMM(rangeInfo.avlMinute)}}시간
+                            	{{minuteToHHMM(rangeInfo.avlMinute,'detail')}}
                             	</template>
                             </div>
                         </li>
