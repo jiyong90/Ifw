@@ -1222,6 +1222,45 @@ table.default td input[type="checkbox"]:checked {
 table.default td input[type="checkbox"]:checked:first-child{
 	margin-left:0px;
 }
+
+/*---- radio ----*/
+table.default td input[type="radio"] { 
+	display:inline-block; 
+	width:18px; 
+	height:18px; 
+	padding:0; 
+	border-radius:0; 
+	border:0; 
+	margin:0; 
+	margin-left:20px;
+	vertical-align:middle; 
+	cursor:pointer; 
+	appearance:none; 
+	-moz-appearance:none; 
+	-webkit-appearance:none; 
+	background:url("../img/form_radio.png") 0 -40px no-repeat; }
+table.default td input[type="radio"]:first-child{
+	margin-left: 0px;
+}
+table.default td input[type="radio"]:checked { 
+	display:inline-block; 
+	width:18px; 
+	height:18px; 
+	padding:0; 
+	border:0; 
+	border-radius:0;
+	margin:0;
+	margin-left:20px;
+	vertical-align:middle; 
+	cursor:pointer; 
+	-webkit-user-select: none; 
+	-moz-user-select: none; 
+	-ms-user-select: none; 
+	background:url("../img/form_radio.png") 0 0 no-repeat; }
+
+table.default td input[type="radio"]:checked:first-child{
+	margin-left: 0px;
+}
 /* table.default td input.w10 { width:10%; }
 table.default td input.w30 { width:30%; }
 table.default td input.w50 { width:50%; }

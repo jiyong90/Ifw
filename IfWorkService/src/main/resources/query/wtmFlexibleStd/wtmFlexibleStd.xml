@@ -120,6 +120,7 @@
 				CORE_SHM,
 				CORE_EHM,
 				DEFAULT_WORK_MINUTE,
+				DEFAULT_WORK_USE_YN,
 				UNIT_MINUTE,
 				EXHAUSTION_YN,
 				HOL_EXCEPT_YN,
@@ -147,6 +148,7 @@
 				 #{item.coreShm} ,
 				 #{item.coreEhm} ,
 				 #{item.defaultWorkMinute} ,
+				 #{item.defaultWorkUseYn} ,
 				 #{item.unitMinute} ,
 				 #{item.exhaustionYn} ,
 				 #{item.holExceptYn} ,
@@ -174,6 +176,7 @@
 				, CORE_SHM = #{item.coreShm} 
 				, CORE_EHM = #{item.coreEhm} 
 				, DEFAULT_WORK_MINUTE = #{item.defaultWorkMinute}
+				, DEFAULT_WORK_USE_YN = #{item.defaultWorkUseYn}
 				, UNIT_MINUTE = #{item.unitMinute} 
 				, UNIT_MINUTE = #{item.unitMinute} 
 				, EXHAUSTION_YN = #{item.exhaustionYn} 

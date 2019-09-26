@@ -15,7 +15,7 @@
                         <div class="modal-app-wrap">
                             <div class="inner-wrap">
                                 <div class="desc row">
-                                    <div class="col-sm-12 col-md-12 col-lg-2">
+                                    <div class="col-sm-12 col-md-12 col-lg-2 pr-lg-0">
                                         <div class="title" id="overtime" v-if="result.holidayYn!='Y'">연장근로시간</div>
                                         <div class="title" id="overtime" v-else>휴일근로시간</div>
                                         <span class="time-wrap">
@@ -93,7 +93,7 @@
                                     <div class="desc row" v-for="(s, idx) in subYmds">
                                     	<div class="col-12 col-lg-12 mb-sm-2">
                                     		<div class="form-row">
-			                                    <div class="col-md-12 col-lg-2">
+			                                    <div class="col-md-12 col-lg-2 pr-lg-0">
 		                                            <span class="time-wrap">
 		                                                <i class="fas fa-clock"></i>
 		                                                <span class="time" v-if="s.subsMinute">{{minuteToHHMM(s.subsMinute, 'detail')}}</span>
@@ -1062,6 +1062,8 @@
   	         	otAppl : function(otSdate, otEdate){ //연장근무신청
   	         		var $this = this;
   	         	
+  	         		$("loading").show();
+  	         	
   	         		var holidayYn = $this.result.holidayYn;
   	         		var subYn = '';
   	         	
@@ -1106,6 +1108,7 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
+							$("loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("확인요청 되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
@@ -1123,6 +1126,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
+							$("loading").hide();
 							console.log(e);
 							$("#alertText").html("연장근무 확인요청 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
@@ -1132,6 +1136,8 @@
   	         	},
   	         	otCancelAppl: function(){ //연장근무취소신청
   	         		var $this = this;
+  	         	
+  	         		$("loading").show();
   	         		
   	         		var param = {
   	         			workDayResultId: $this.overtimeAppl.workDayResultId,
@@ -1147,6 +1153,7 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
+							$("loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("취소요청 되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
@@ -1166,6 +1173,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
+							$("loading").hide();
 							console.log(e);
 							$("#alertText").html("연장근무 취소 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){

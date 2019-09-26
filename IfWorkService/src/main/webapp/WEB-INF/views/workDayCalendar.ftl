@@ -114,9 +114,10 @@
   		    			} else if(Object.keys($this.dayWorks).length>0 && $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd].length>0) {
   		    				//작성한 근무 계획 조회
   		    				var dayWorks = $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd];
+  		    				var isExist = false;
 		  	         		dayWorks.map(function(dayWork){
 		  	         			if(info.startStr==moment(dayWork.day).format('YYYY-MM-DD')) {
-		  	         				existYn = true;
+		  	         				isExist = true;
 	  	         					var valueMap = dayWork.plans[0].valueMap;
 	  	         					$("#timeNm").text(dayWork.timeNm);
 	  	         					
@@ -124,8 +125,13 @@
 	  		    						$("#startTime").val(valueMap.shm);
 	  		    					if(valueMap!=null && valueMap.hasOwnProperty("ehm"))
 	  		    						$("#endTime").val(valueMap.ehm);
-		  	         			} 
+		  	         			}
 							});
+		  	         		
+		  	         		if(!isExist) {
+		  	         			$("#startTime").val("");
+		  		    			$("#endTime").val("");
+		  	         		}
   		    			} 
   	         		} else {
   	         			$("#timeNm").text("");
@@ -245,13 +251,12 @@
   	  	    				start: selSymd,
   	  	    				end: selEymd
   	  	    			};
-	  		    		
+  	  				
   	         			$this.data.map(function(d){
   		  		    		var sYmd = moment(d.sYmd).format('YYYY-MM-DD');
   		  		    		var eYmd = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
   		  		    		eYmd.setDate(eYmd.getDate()+1);
   		  		    		eYmd = moment(eYmd).format('YYYY-MM-DD');
-  		  		    		
   		  		    		
   		  		    		var selYmd = new Date(i.start);
   		  		    		
@@ -261,7 +266,6 @@
   		  	         		if(d.hasOwnProperty("workDaysOpt") && d.workDaysOpt!=null && d.workDaysOpt!=undefined && d.workDaysOpt!=''){
   		  	         			workDaysOpt = JSON.parse(d.workDaysOpt);
   		  	         		} */
-  		  		    		
 	  	  		    		if( moment(sYmd).diff(i.startStr)<=0 && moment(i.startStr).diff(eYmd)<=0
 									&& moment(sYmd).diff(i.endStr)<=0 && moment(i.endStr).diff(eYmd)<=0
 		    						&& moment($this.today).diff(i.startStr)<0 && moment($this.today).diff(i.endStr)<0
@@ -411,6 +415,7 @@
 			  		    				}
 									}
 								});
+								console.log(dayWorks);
 								$this.dayWorks = dayWorks;
 								
 								//상세 계획 입력 화면 전환
@@ -727,6 +732,8 @@
   	         	},
   	         	saveWorkDayResult : function(){ //일근무결과 저장
 	         		var $this = this;
+  	         	
+  	         		$("#loading").show();
 	  	         	
          			var param = {
          				flexibleEmpId : calendarLeftVue.flexibleAppl.flexibleEmpId,
@@ -741,6 +748,7 @@
 						dataType: "json",
 						success: function(data) {
 							//console.log(data);
+							$("#loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("저장되었습니다.");
 								//$this.dayResult = {};
@@ -759,6 +767,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
+							$("#loading").hide();
 							console.log(e);
 							$("#alertText").html("저장 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
