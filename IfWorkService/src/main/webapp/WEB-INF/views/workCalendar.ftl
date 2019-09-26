@@ -1096,6 +1096,8 @@
          	},
          	flexitimeAppl : function(){ //확인요청
 	         	var $this = this;
+         	
+	         	$("#loading").show();
 	  	         	
 	         	//선택한 근무제
 	         	var flexibleStd = calendarTopVue.selectedFlexibleStd;
@@ -1140,6 +1142,7 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
+							$("#loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("확인요청 되었습니다.");
 							} else {
@@ -1151,6 +1154,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
+							$("#loading").hide();
 							console.log(e);
 							$("#alertText").html("확인요청 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
