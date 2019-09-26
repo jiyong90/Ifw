@@ -335,11 +335,19 @@
 	                        <ul class="sub-list reset">
 	                            <li>
 	                                <span class="sub-title"><i class="fas fa-clock"></i>소정근로 합산</span>
-	                                <span class="sub-desc">8:00</span>
+	                                <span class="sub-desc">
+	                                	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.workHour">
+	                                	{{workDayInfo.workHour}}
+	                                	</template>
+	                                </span>
 	                            </li>
 	                            <li>
 	                                <span class="sub-title"><i class="fas fa-moon"></i>연장근로 합산</span>
-	                                <span class="sub-desc">2:00</span>
+	                                <span class="sub-desc">
+	                                	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.otHour">
+	                                	{{workDayInfo.otHour}}
+	                                	</template>
+	                                </span>
 	                            </li>
 	                        </ul>
 	                    </div>
