@@ -184,7 +184,7 @@
     <!--해당 일의 근무시간 정보 -->
   	<select id="getFlexibleWorkTimeInfo" parameterType="map" resultType="map">
   		<![CDATA[
-	    SELECT R.YMD AS ymd
+	    SELECT C.YMD AS ymd
 	         , F_WTM_GET_TAA_NAMES(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 2)  AS taaNames
 		     , MIN(C.ENTRY_SDATE) as entrySdate
 		     , MAX(C.ENTRY_EDATE) as entryEdate
@@ -202,16 +202,16 @@
 		     , F_WTM_NVL(MIN(R.APPR_EDATE), MIN(R.PLAN_EDATE)) AS eDate
 		     , C.HOLIDAY_YN AS holidayYn
 		  FROM WTM_WORK_CALENDAR C
-		  JOIN WTM_WORK_DAY_RESULT R
+		  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
 		    ON C.TENANT_ID = R.TENANT_ID
 		   AND C.ENTER_CD = R.ENTER_CD
 		   AND C.YMD = R.YMD
 		   AND C.SABUN = R.SABUN
-		 WHERE R.YMD = #{ymd}
-		   AND R.SABUN = #{sabun}
-		   AND R.ENTER_CD = #{enterCd}
-		   AND R.TENANT_ID = #{tenantId}
-		   AND R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS')
+		 WHERE C.YMD = #{ymd}
+		   AND C.SABUN = #{sabun}
+		   AND C.ENTER_CD = #{enterCd}
+		   AND C.TENANT_ID = #{tenantId}
+		   AND (R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS'))
 		GROUP BY R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, C.HOLIDAY_YN
 		]]>
   	</select>
@@ -441,7 +441,9 @@
 		     , 'OT' AS timeTypeCd
 		     , NULL AS taaCd
 		     , NULL AS taaNm
-			  , O.HOLIDAY_YN AS holidayYn
+			 , O.HOLIDAY_YN AS holidayYn
+			 , (SELECT M.TIME_NM FROM WTM_TIME_CD_MGR M JOIN WTM_WORK_CALENDAR C ON M.TIME_CD_MGR_ID = C.TIME_CD_MGR_ID 
+			 	WHERE C.TENANT_ID = E.TENANT_ID AND C.ENTER_CD = E.ENTER_CD AND C.SABUN = E.SABUN AND C.YMD = F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d')) AS timeNm
 		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_OT_APPL O
 		    ON F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN E.SYMD AND E.EYMD
@@ -467,12 +469,15 @@
 		     , R.TAA_CD AS taaCd
 		     , F_WTM_GET_TAA_CODE_NM(C.TENANT_ID, C.ENTER_CD, R.TAA_CD, C.YMD) AS taaNm
            	 , C.HOLIDAY_YN AS holidayYn
+           	 , T.TIME_NM AS timeNm
 		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_WORK_CALENDAR C
 		    ON E.TENANT_ID = C.TENANT_ID
 		   AND E.ENTER_CD = C.ENTER_CD
 		   AND E.SABUN = C.SABUN
 		   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+		  JOIN WTM_TIME_CD_MGR T
+		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 		  LEFT OUTER JOIN  WTM_WORK_DAY_RESULT R
 		    ON C.TENANT_ID = R.TENANT_ID
 		   AND C.ENTER_CD = R.ENTER_CD
@@ -494,6 +499,8 @@
 		     , NULL AS taaCd
 		     , NULL AS taaNm
 			  , O.HOLIDAY_YN AS holidayYn
+			  , (SELECT M.TIME_NM FROM WTM_TIME_CD_MGR M JOIN WTM_WORK_CALENDAR C ON M.TIME_CD_MGR_ID = C.TIME_CD_MGR_ID
+			  	  WHERE C.TENANT_ID = E.TENANT_ID AND C.ENTER_CD = E.ENTER_CD AND C.SABUN = E.SABUN AND C.YMD = F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d')) AS timeNm
 		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_OT_APPL O
 		    ON F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN E.SYMD AND E.EYMD
@@ -520,12 +527,15 @@
 		     , R.TAA_CD AS taaCd
 		     , F_WTM_GET_TAA_CODE_NM(C.TENANT_ID, C.ENTER_CD, R.TAA_CD, C.YMD) AS taaNm
            	 , C.HOLIDAY_YN AS holidayYn
+           	 , T.TIME_NM AS timeNm
 		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_WORK_CALENDAR C
 		    ON E.TENANT_ID = C.TENANT_ID
 		   AND E.ENTER_CD = C.ENTER_CD
 		   AND E.SABUN = C.SABUN
 		   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+		  JOIN WTM_TIME_CD_MGR T
+		    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 		  LEFT OUTER JOIN  WTM_WORK_DAY_RESULT R
 		    ON C.TENANT_ID = R.TENANT_ID
 		   AND C.ENTER_CD = R.ENTER_CD
@@ -850,6 +860,8 @@
 			     , M.USED_TERM_OPT AS usedTermOpt
 			     , M.APPL_TERM_OPT AS applTermOpt
 			     , M.UNIT_MINUTE AS unitMinute
+			     , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
+	 			 , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'P', 'WORK') AS planWorkMinute
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
     		    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
@@ -930,4 +942,16 @@
     <update id="createWorkTermBySabunAndSymdAndEymd" statementType="CALLABLE"  parameterType="map"  >
   		{ call P_WTM_FLEXIBLE_EMP_WORKTERM_CREATE( #{tenantId}, #{enterCd}, #{sabun}, #{symd}, #{eymd}, #{pId} ) }
   	</update>
+  	
+  	<select id="findWorkDayResultMinMaxByYmdAndTimeTypeCdBySabun" parameterType="map" resultType="hashmap">
+  		<![CDATA[
+  			SELECT YMD, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE
+			  FROM WTM_WORK_DAY_RESULT
+			 WHERE TENANT_ID = #{tenantId}
+			   AND ENTER_CD = #{enterCd}
+			   AND SABUN = #{sabun}
+			   AND YMD = #{ymd}
+			   AND TIME_TYPE_CD = #{timeTypeCd}
+  		]]>
+  	</select>
 </mapper>
