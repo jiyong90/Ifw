@@ -124,6 +124,8 @@
 			  , M.FLEXIBLE_NM AS flexibleNm
 			  , M.WORK_TYPE_CD AS workTypeCd
 			  , M.BASE_WORK_YN AS baseWorkYn
+			  , M.DEFAULT_WORK_MINUTE AS defaultWorkMinute
+			  , M.UNIT_MINUTE AS unitMinute
 			  , E.SYMD AS sYmd
 			  , E.EYMD AS eYmd
 			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
