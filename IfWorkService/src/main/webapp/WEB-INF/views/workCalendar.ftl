@@ -1,6 +1,7 @@
 <#include "/calendar.ftl">
 <div>
 	<div id="calendar_top" v-cloak>
+		<!-- 근무제 적용 modal start -->
 	    <div class="modal fade" id="flexitimeModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 	        <div class="modal-dialog modal-lg" role="document">
 	            <div class="modal-content rounded-0">
@@ -49,6 +50,7 @@
 	            </div>
 	        </div>
 	    </div>
+	    <!-- 근무제 적용 modal end -->
 	    <div id="sub-nav" class="container-fluid">
 	        <form id="calendar-top-wrap" action="">
 	            <div class="row no-gutters work-time-wrap">
@@ -345,15 +347,15 @@
                 </div>
                 <div id="flexibleAppl" class="white-box-wrap full-height mb-3" style="display:none;">
                     <div class="work-plan-wrap">
-                        <div class="main-wrap" v-if="calendarTopVue.flexibleStd">
+                        <div class="main-wrap" v-if="calendarTopVue.selectedFlexibleStd">
                             <div class="main-title">해당일의 근무계획 구분</div>
-                            <div class="main-desc">{{calendarTopVue.flexibleStd.flexibleNm}}</div>
+                            <div class="main-desc">{{calendarTopVue.selectedFlexibleStd.flexibleNm}}</div>
                             <ul class="time-list">
                                 <li>
                                     <span class="title">근무가능시간</span>
                                     <span class="desc">
-                                    	<template v-if="calendarTopVue.flexibleStd.workShm && calendarTopVue.flexibleStd.workEhm">
-                                    	{{moment(calendarTopVue.flexibleStd.useSymd+' '+calendarTopVue.flexibleStd.workShm).format('HH:mm')}} ~ {{moment(calendarTopVue.flexibleStd.useSymd+' '+calendarTopVue.flexibleStd.workEhm).format('HH:mm')}}
+                                    	<template v-if="calendarTopVue.selectedFlexibleStd.workShm && calendarTopVue.selectedFlexibleStd.workEhm">
+                                    	{{moment(calendarTopVue.selectedFlexibleStd.useSymd+' '+calendarTopVue.selectedFlexibleStd.workShm).format('HH:mm')}} ~ {{moment(calendarTopVue.selectedFlexibleStd.useSymd+' '+calendarTopVue.selectedFlexibleStd.workEhm).format('HH:mm')}}
                                     	</template>
                                     	<template v-else>
                                     	없음
@@ -363,8 +365,8 @@
                                 <li>
                                     <span class="title">필수근무시간</span>
                                     <span class="desc">
-                                    	<template v-if="calendarTopVue.flexibleStd.coreShm && calendarTopVue.flexibleStd.coreEhm">
-                                    	{{moment(calendarTopVue.flexibleStd.useSymd+' '+calendarTopVue.flexibleStd.coreShm).format('HH:mm')}} ~ {{moment(calendarTopVue.flexibleStd.useSymd+' '+calendarTopVue.flexibleStd.coreEhm).format('HH:mm')}}
+                                    	<template v-if="calendarTopVue.selectedFlexibleStd.coreShm && calendarTopVue.selectedFlexibleStd.coreEhm">
+                                    	{{moment(calendarTopVue.selectedFlexibleStd.useSymd+' '+calendarTopVue.selectedFlexibleStd.coreShm).format('HH:mm')}} ~ {{moment(calendarTopVue.selectedFlexibleStd.useSymd+' '+calendarTopVue.selectedFlexibleStd.coreEhm).format('HH:mm')}}
                                     	</template>
                                     	<template v-else>
                                     	없음
@@ -392,8 +394,8 @@
                                 </div>
                                 <div class="form-group col-12">
                                     <label for="workTime">근무기간</label>
-                                    <select id="workTime" v-if="calendarTopVue.flexibleStd" class="form-control" v-model="applInfo.workRange" :value="applInfo.workRange" @change="changeWorkRange" required>
-                                        <option v-for="term in calendarTopVue.flexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
+                                    <select id="workTime" v-if="calendarTopVue.selectedFlexibleStd" class="form-control" v-model="applInfo.workRange" :value="applInfo.workRange" @change="changeWorkRange" required>
+                                        <option v-for="term in calendarTopVue.selectedFlexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-12">
@@ -403,8 +405,8 @@
                             </div>
                             <div class="btn-wrap mt-5">
                             	<template v-if="calendarTopVue.flexibleStd">
-	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-if="calendarTopVue.flexibleStd.workTypeCd=='ELAS'" @click="validateFlexitimeAppl(calendarTopVue.flexibleStd.workTypeCd)">다음</button>
-	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-else @click="validateFlexitimeAppl(calendarTopVue.flexibleStd.workTypeCd)">확인요청</button>
+	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-if="calendarTopVue.selectedFlexibleStd.workTypeCd=='ELAS'" @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd.workTypeCd)">다음</button>
+	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-else @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd.workTypeCd)">확인요청</button>
                                 </template>
                             </div>
                         </form>
@@ -420,10 +422,6 @@
 		                    </div>
 		                    <div class="inner-wrap">
 		                    	<ul class="main-wrap">
-	                                <li>
-	                                    <div class="main-title">근무시간표</div>
-	                                    <div class="main-desc">기본근무시간표</div>
-	                                </li>
 	                                <li>
 	                                    <div class="main-title">근무시간</div>
 	                                    <div class="main-desc">
@@ -453,6 +451,10 @@
                             </div>
 		                    <hr class="bar">
 		                    <ul class="main-wrap">
+	                    		<li>
+                                    <div class="main-title">근무시간표</div>
+                                    <div id="timeNm" class="main-desc"></div>
+                                </li>
 	                            <li>
 	                                <div class="main-title">신청일자</div>
 	                                <div id="selectedRange" class="main-desc"></div>
@@ -473,11 +475,11 @@
 		                    <ul class="time-block-list">
 		                        <li>
 		                            <div class="title">총 소정 근로 시간</div>
-		                            <div class="desc">120시간</div>
+		                            <div class="desc">{{minuteToHHMM(flexibleAppl.totalWorkMinute,'detail')}}</div>
 		                        </li>
 		                        <li>
 		                            <div class="title">계획 시간</div>
-		                            <div class="desc">42시간</div>
+		                            <div class="desc">{{minuteToHHMM(flexibleAppl.planWorkMinute,'detail')}}</div>
 		                        </li>
 		                    </ul>
 		                </div>
@@ -493,8 +495,11 @@
 	                        <li>
 	                            <div class="main-title">근태</div>
 	                            <div class="main-desc">
+	                            	<template v-if="workTimeInfo.holidayYn">
+	                            	{{workTimeInfo.holidayYn=='Y'?'휴무일':'근무일'}}
+	                            	</template>
 	                            	<template v-if="workTimeInfo.taaNames">
-	                            	{{workTimeInfo.taaNames}}
+	                            	,{{workTimeInfo.taaNames}}
 	                            	</template>
 	                            </div>
 	                        </li>
@@ -652,7 +657,8 @@
 	    data : {
 	    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
 	    	flexitimeList: [], //사용할 유연근무제 리스트
-	    	flexibleStd: {} //적용한 근무제
+	    	flexibleStd: {}, //현재 근무제
+	    	selectedFlexibleStd: {}
   		},
 	    mounted: function(){
 	    	var $this = this;
@@ -718,7 +724,7 @@
          		$(".list-group-item").eq(idx).addClass("active");
          		
          		//선택한 근무제 적용
-         		$this.flexibleStd = $this.flexitimeList[idx];
+         		$this.selectedFlexibleStd = $this.flexitimeList[idx];
          		$("#applyFlexBtn").show();
          	},
          	applyFlexitime : function(){ //근무제 적용
@@ -949,8 +955,8 @@
          		var $this = this;
          	
          		//적용기간은 첫번째 항목으로 기본 세팅
-         		if(calendarTopVue.flexibleStd.hasOwnProperty("usedTermOpt") && calendarTopVue.flexibleStd.usedTermOpt!=null) {
-         			var workDateRangeItem = calendarTopVue.flexibleStd.usedTermOpt[0]; 
+         		if(calendarTopVue.selectedFlexibleStd.hasOwnProperty("usedTermOpt") && calendarTopVue.selectedFlexibleStd.usedTermOpt!=null) {
+         			var workDateRangeItem = calendarTopVue.selectedFlexibleStd.usedTermOpt[0]; 
          			
          			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null)
          				$this.applInfo.workRange = workDateRangeItem.value;
@@ -987,7 +993,7 @@
          		var $this = this;
   	         	
          		//선택한 근무제
-         		var flexibleStd = calendarTopVue.flexibleStd;
+         		var flexibleStd = calendarTopVue.selectedFlexibleStd;
          		
          		if(flexibleStd.workTypeCd.indexOf('SELE')==0) {
         			var param = {
@@ -1090,9 +1096,11 @@
          	},
          	flexitimeAppl : function(){ //확인요청
 	         	var $this = this;
+         	
+	         	$("#loading").show();
 	  	         	
 	         	//선택한 근무제
-	         	var flexibleStd = calendarTopVue.flexibleStd;
+	         	var flexibleStd = calendarTopVue.selectedFlexibleStd;
 	         	
 	         	//임시저장된 신청서
 	         	var flexibleAppl = $this.flexibleAppl;
@@ -1134,6 +1142,7 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
+							$("#loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("확인요청 되었습니다.");
 							} else {
@@ -1145,6 +1154,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
+							$("#loading").hide();
 							console.log(e);
 							$("#alertText").html("확인요청 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
@@ -1177,7 +1187,7 @@
          		dayCalendarVue.saveWorkDayResult();
          	},
          	viewWorkDayCalendar: function(){
-         		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.selectedDate).format('YYYYMMDD');
+         		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.selectedDate).format('YYYYMMDD');
          	},
          	viewOvertimeAppl: function(){
          		var $this = this;

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.entity.WtmApplCode;
+import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
@@ -48,6 +49,9 @@ public class WtmApplController {
 	
 	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
+	
+	@Autowired
+	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(/*@RequestBody Map<String, Object> paramMap,*/ HttpServletRequest request) throws Exception {
@@ -113,6 +117,14 @@ public class WtmApplController {
 					rp = wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else {
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					
+					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) {
+						paramMap.put("tenantId", tenantId);
+						paramMap.put("enterCd", enterCd);
+						paramMap.put("sabun",  rp.get("sabun")+"");
+						paramMap.put("userId", userId);
+						wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
+					}
 				}
 			}
 			if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {

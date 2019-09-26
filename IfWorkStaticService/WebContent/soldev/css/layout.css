@@ -22,6 +22,7 @@ html {
   align-items: stretch;
 }
 
+
 /* ---------------------------------------------------
     GNB BAR STYLE
 ----------------------------------------------------- */
@@ -439,6 +440,25 @@ a.article:hover {
   background: #e2e5ed;
 }
 
+#content .dim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1050;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+#content .dim .fa {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -50px;
+  margin-top: -40px;
+  color: #0178C2;
+}
+
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
@@ -707,6 +727,8 @@ a.article:hover {
 #sub-nav .summary-list .desc{font-weight: bold;color: #292944;}
 
 
+
+
 /* 반응형 */
 /* Extra small devices (portrait phones, less than 576px) 
 No media query for `xs` since this is the default in Bootstrap */
@@ -741,3 +763,4 @@ No media query for `xs` since this is the default in Bootstrap */
     margin-left: 0px;
   }
 }
+

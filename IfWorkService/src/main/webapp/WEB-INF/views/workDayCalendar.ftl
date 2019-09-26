@@ -38,6 +38,17 @@
   		    		var calendar = this.$refs.fullCalendar.cal;
   		    		calendarLeftVue.calendar = calendar;
   		    		this.getWorkDayResult();
+  		    		
+  		    		/* var startDate = new Date(moment(calendar.view.activeStart).startOf('month').format('YYYY-MM-DD'));
+  		    		var endDate = new Date(moment(calendar.view.activeEnd).endOf('month').format('YYYY-MM-DD'));
+  		    		
+  		    		var validRange = {
+  		    			start : startDate,
+  		    			end : endDate
+  		    		};
+  		    		
+  		    		calendar.setOption('validRange', validRange); */
+  		    		
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -103,19 +114,27 @@
   		    			} else if(Object.keys($this.dayWorks).length>0 && $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd].length>0) {
   		    				//작성한 근무 계획 조회
   		    				var dayWorks = $this.dayWorks[calendarLeftVue.flexibleAppl.sYmd];
+  		    				var isExist = false;
 		  	         		dayWorks.map(function(dayWork){
 		  	         			if(info.startStr==moment(dayWork.day).format('YYYY-MM-DD')) {
-		  	         				existYn = true;
+		  	         				isExist = true;
 	  	         					var valueMap = dayWork.plans[0].valueMap;
+	  	         					$("#timeNm").text(dayWork.timeNm);
 	  	         					
 	  		    					if(valueMap!=null && valueMap.hasOwnProperty("shm"))
 	  		    						$("#startTime").val(valueMap.shm);
 	  		    					if(valueMap!=null && valueMap.hasOwnProperty("ehm"))
 	  		    						$("#endTime").val(valueMap.ehm);
-		  	         			} 
+		  	         			}
 							});
+		  	         		
+		  	         		if(!isExist) {
+		  	         			$("#startTime").val("");
+		  		    			$("#endTime").val("");
+		  	         		}
   		    			} 
   	         		} else {
+  	         			$("#timeNm").text("");
   	         			$("#startTime").val("");
   		    			$("#endTime").val("");
   	         		}
@@ -232,29 +251,31 @@
   	  	    				start: selSymd,
   	  	    				end: selEymd
   	  	    			};
-	  		    		
+  	  				
   	         			$this.data.map(function(d){
   		  		    		var sYmd = moment(d.sYmd).format('YYYY-MM-DD');
   		  		    		var eYmd = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
   		  		    		eYmd.setDate(eYmd.getDate()+1);
   		  		    		eYmd = moment(eYmd).format('YYYY-MM-DD');
   		  		    		
-  		  		    		var workDaysOpt = {};
   		  		    		var selYmd = new Date(i.start);
   		  		    		
   		  		    		//휴일
+  		  	         		/* 
+  		  	         		var workDaysOpt = {};
   		  	         		if(d.hasOwnProperty("workDaysOpt") && d.workDaysOpt!=null && d.workDaysOpt!=undefined && d.workDaysOpt!=''){
   		  	         			workDaysOpt = JSON.parse(d.workDaysOpt);
-  		  	         		}
-  		  		    		
+  		  	         		} */
 	  	  		    		if( moment(sYmd).diff(i.startStr)<=0 && moment(i.startStr).diff(eYmd)<=0
 									&& moment(sYmd).diff(i.endStr)<=0 && moment(i.endStr).diff(eYmd)<=0
 		    						&& moment($this.today).diff(i.startStr)<0 && moment($this.today).diff(i.endStr)<0
 		    						&& $this.empHolidays.indexOf(i.startStr)==-1
-		    						&& (Object.keys(workDaysOpt).length==0 || Object.keys(workDaysOpt).length>0 && workDaysOpt[selYmd.getDay()+1])) {
+		    						//&& (Object.keys(workDaysOpt).length==0 || Object.keys(workDaysOpt).length>0 && workDaysOpt[selYmd.getDay()+1])
+		    					) {
 	  	  		    			editYn = true;
 	  	  		    		} else {
 	  	  		    			if(moment(i.startStr).diff(sYmd)<0 || moment(i.startStr).diff(eYmd)>=0) {
+	  	  		    				$("#timeNm").text("");
 	  	  		    				$("#startTime").val("");
 	  	  		    				$("#endTime").val("");
 	  	  		    			} 
@@ -275,6 +296,7 @@
   			  	         		dayWorks.map(function(dayWork){
   			  	         			if(i.startStr==moment(dayWork.day).format('YYYY-MM-DD')) {
   		  	         					var valueMap = dayWork.plans[0].valueMap;
+  		  	         					$("#timeNm").text(dayWork.timeNm);
   		  	         					
   		  		    					if(valueMap!=null && valueMap.hasOwnProperty("shm"))
   		  		    						$("#startTime").val(valueMap.shm);
@@ -288,7 +310,6 @@
   	  		    			$("#endTime").prop("disabled", true);
   	  		    			$("#timeSaveBtn").hide();
   	         			}
-  	         			
   	         			return editYn;
   	         			
   	         		});
@@ -394,6 +415,7 @@
 			  		    				}
 									}
 								});
+								console.log(dayWorks);
 								$this.dayWorks = dayWorks;
 								
 								//상세 계획 입력 화면 전환
@@ -404,6 +426,7 @@
 								
 								//유연근무제 신청 기간 이외의 날짜는 선택하지 못하게 함
 			  		    		$this.selectAllow();
+								
 							} 
 						},
 						error: function(e) {
@@ -415,7 +438,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						}
 					}); 
-
+   		    		
 	         	},
 	         	viewWorkPlan : function(data){
   	         		var $this = this;
@@ -600,7 +623,7 @@
 					var $this = this;
   	         		var selday = $this.selectedWorkday;
   	         		var flexibleAppl = calendarLeftVue.flexibleAppl;
-					var workDaysOpt = calendarTopVue.flexibleStd.workDaysOpt; //근무요일
+					//var workDaysOpt = calendarTopVue.flexibleStd.workDaysOpt; //근무요일
 		    		//var applTermOpt = calendarTopVue.flexibleStd.applTermOpt; //신청기간
 		    		
 		    		
@@ -620,7 +643,10 @@
 		    		  		workEtime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleAppl.workEhm).format('YYYY-MM-DD HH:mm');
 		    		  	
   		    		    //코어시간(근무일 기준)
+  		    		    var coreChkYn = 'N';
   		    		    var coreStime = '';
+  		    		  	if(flexibleAppl.hasOwnProperty('coreChkYn') && flexibleAppl.coreChkYn!='')
+  		    		  		coreChkYn = flexibleAppl.coreChkYn;
   		    		    if(flexibleAppl.hasOwnProperty('coreShm') && flexibleAppl.coreShm!='')
   		    		    	coreStime = moment(moment(sDate).format('YYYYMMDD')+' '+flexibleAppl.coreShm).format('YYYY-MM-DD HH:mm');
   		    		  	var coreEtime = '';
@@ -641,11 +667,12 @@
   		    		    
 	    		    	//근무일 기준 근무시간과 코어시간 포함하도록 체크
   		    			if(	(workStime==''&&workEtime=='' || moment(workStime).diff(sTime)<=0 && moment(eTime).diff(workEtime)<=0 )
-  		    					&& (coreStime==''&&coreEtime=='' || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0)) {
+  		    					&& (coreChkYn=='N' || coreChkYn=='Y' && (coreStime==''&&coreEtime=='' || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0))) {
   		    		    
 	  		    			var d = new Date(sDate);
 	  		    			while(moment(d).diff(eDate, 'days')<=0) {
-	  		    				if(workDaysOpt[d.getDay()+1] && $this.empHolidays.indexOf(moment(d).format("YYYY-MM-DD"))==-1) { //근무요일이고, 신청기간이면
+	  		    				if( //workDaysOpt[d.getDay()+1] && 
+	  		    						$this.empHolidays.indexOf(moment(d).format("YYYY-MM-DD"))==-1) { //근무요일이고, 신청기간이면
 		  		    				if($this.dayResult.hasOwnProperty(moment(d).format("YYYYMMDD"))) {
 		  		    					$this.dayResult[moment(d).format("YYYYMMDD")].shm = moment(sDate+' '+$("#startTime").val()).format('HHmm');
 		  		    					$this.dayResult[moment(d).format("YYYYMMDD")].ehm = moment(sDate+' '+$("#endTime").val()).format('HHmm');
@@ -705,6 +732,8 @@
   	         	},
   	         	saveWorkDayResult : function(){ //일근무결과 저장
 	         		var $this = this;
+  	         	
+  	         		$("#loading").show();
 	  	         	
          			var param = {
          				flexibleEmpId : calendarLeftVue.flexibleAppl.flexibleEmpId,
@@ -719,6 +748,7 @@
 						dataType: "json",
 						success: function(data) {
 							//console.log(data);
+							$("#loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("저장되었습니다.");
 								//$this.dayResult = {};
@@ -737,6 +767,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
+							$("#loading").hide();
 							console.log(e);
 							$("#alertText").html("저장 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
@@ -749,7 +780,5 @@
 	         	}
   		    }
    	});
-
-   	
 </script>
 

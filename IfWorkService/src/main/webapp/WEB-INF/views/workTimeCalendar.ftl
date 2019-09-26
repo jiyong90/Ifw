@@ -899,7 +899,7 @@
   	         		
   	         		var param = {
   	         			ymd: moment($this.workday).format('YYYYMMDD'),
-  	         			workTypeCd: ''
+  	         			workTypeCd: 'OT'
   	         		};
   	         		
   	         		//연장근무
@@ -1062,6 +1062,8 @@
   	         	otAppl : function(otSdate, otEdate){ //연장근무신청
   	         		var $this = this;
   	         	
+  	         		$("loading").show();
+  	         	
   	         		var holidayYn = $this.result.holidayYn;
   	         		var subYn = '';
   	         	
@@ -1106,12 +1108,13 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
+							$("loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("확인요청 되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
 									$("#alertModal").off('hidden.bs.modal');
 									//location.reload();
-									location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
+									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
 								$("#alertText").html(data.message);
@@ -1123,6 +1126,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
+							$("loading").hide();
 							console.log(e);
 							$("#alertText").html("연장근무 확인요청 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
@@ -1132,6 +1136,8 @@
   	         	},
   	         	otCancelAppl: function(){ //연장근무취소신청
   	         		var $this = this;
+  	         	
+  	         		$("loading").show();
   	         		
   	         		var param = {
   	         			workDayResultId: $this.overtimeAppl.workDayResultId,
@@ -1147,6 +1153,7 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
+							$("loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("취소요청 되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
@@ -1154,7 +1161,7 @@
 									$("#cancelOpinionModal").modal("hide");
 									$("#overtimeApplDetail").modal("hide");
 									//location.reload();
-									location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
+									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
 								$("#alertText").html(data.message);
@@ -1166,6 +1173,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
+							$("loading").hide();
 							console.log(e);
 							$("#alertText").html("연장근무 취소 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
@@ -1203,14 +1211,15 @@
   	 					idx = key[1];
   	 				
   	 				if(idx!=null && idx!='' && idx!=undefined) {
-  	 					var subsInfo = this.subYmds[idx];
+  	 					var subsInfo = $this.subYmds[idx];
+  	 					//console.log(subsInfo);
   	 					
   	 					if(subsInfo.subsSymd!=null && subsInfo.subsSymd!=undefined && subsInfo.subsSymd!=''
   	 							&& subsInfo.subsShm!=null && subsInfo.subsShm!=undefined && subsInfo.subsShm!=''
   	 							&& subsInfo.subsEhm!=null && subsInfo.subsEhm!=undefined && subsInfo.subsEhm!='') {
   	 						
-  	 						var sDate = moment(subsInfo.subsSymd+" "+subsInfo.subsShm).format('YYYY-MM-DD HH:mm');
-  	 						var eDate = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYY-MM-DD HH:mm');
+  	 						var sDate = moment(subsInfo.subsSymd+" "+subsInfo.subsShm).format('YYYYMMDD HHmm');
+  	 						var eDate = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYYMMDD HHmm');
   	 						
   	  	           			if(sDate > eDate) {
 	  	  	           			$("#alertText").html("종료시간이 시작시간보다 작습니다.");

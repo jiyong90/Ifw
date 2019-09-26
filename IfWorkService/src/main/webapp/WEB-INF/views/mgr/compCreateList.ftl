@@ -37,7 +37,7 @@
 							<div class="float-left title">보상휴가 시간조회</div>
 						</div>
 					</div>
-					<script type="text/javascript"> createIBSheet("sheet1", "100%", "calc(100vh - 232px)", "kr"); </script>
+					<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>
 				</div>
 				<div class="col-5 pr-3">
 					<div class="inner">
@@ -45,7 +45,7 @@
 							<div class="float-left title">보상휴가 생성 상세내역</div>
 						</div>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet2", "100%", "calc(100vh - 232px)","kr"); </script>
+					<script type="text/javascript">createIBSheet("sheet2", "100%", fullsheetH,"kr"); </script>
 				</div>
 			</div>
 		</div>

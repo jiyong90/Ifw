@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmFlexibleApplyMgrMapper">
+	
+	<select id="getApplyList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT FLEXIBLE_APPLY_ID AS flexibleApplyId
+        		 , FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+        		 , TENANT_ID AS tenantId
+        		 , ENTER_CD AS enterCd
+        		 , APPLY_NM AS applyNm
+        		 , USE_SYMD AS useSymd
+        		 , USE_EYMD AS useEymd
+        		 , REPEAT_YN AS repeatYn
+        		 , WORK_MINUTE AS workMinute
+        		 , OT_MINUTE AS otMinute
+        		 , '0' AS selectImg
+        		 , APPLY_YN as applyYn
+			     , CASE WHEN F_WTM_NVL(APPLY_YN, 'N') = 'Y' THEN '완료'
+					    ELSE CONCAT('<a class="basic" onClick="setEndConfirm(', FLEXIBLE_APPLY_ID, ')">확정</a>') END AS endImg
+        		 , NOTE AS note
+			  FROM WTM_FLEXIBLE_APPLY 
+			 WHERE TENANT_ID = #{tenantId}
+			   AND ENTER_CD = #{enterCd} 
+			   AND REPLACE(#{sYmd}, '-', '') BETWEEN USE_SYMD AND USE_EYMD
+        ]]>
+    </select>
+    
+	<select id="getApplyGrpList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.FLEXIBLE_APPLY_GROUP_ID AS flexibleApplyGroupId
+        		 , A.FLEXIBLE_APPLY_ID AS flexibleApplyId
+        		 , A.ORG_CD AS orgCd
+        		 , F_WTM_GET_CODE_NM(B.TENANT_ID, B.ENTER_CD, 'ORG_CD', A.ORG_CD, B.USE_SYMD)  AS orgNm
+        		 , A.JOB_CD AS jobCd
+        		 , A.DUTY_CD AS dutyCd
+        		 , A.POS_CD AS posCd
+        		 , A.CLASS_CD AS classCd
+        		 , A.WORKTEAM_CD AS workteamCd
+        		 , A.NOTE AS note
+			  FROM WTM_FLEXIBLE_APPLY_GROUP A
+			 INNER JOIN WTM_FLEXIBLE_APPLY B
+			    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+			 WHERE A.FLEXIBLE_APPLY_ID =  #{flexibleApplyId}
+        ]]>
+    </select>
+    
+	<insert id="insertGrp" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_FLEXIBLE_APPLY_GROUP (
+        	  FLEXIBLE_APPLY_ID
+        	, ORG_CD
+        	, JOB_CD
+        	, DUTY_CD
+        	, CLASS_CD
+        	, WORKTEAM_CD
+        	, NOTE
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.flexibleApplyId}
+        	, #{item.orgCd}
+        	, #{item.jobCd}
+        	, #{item.dutyCd}
+        	, #{item.posCd}
+        	, #{item.classCd}
+        	, #{item.workteamCd}
+        	, #{item.note}
+        	, NOW()
+        	, #{userId}
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              ORG_CD = VALUES(ORG_CD)
+            , JOB_CD = VALUES(JOB_CD)
+            , DUTY_CD = VALUES(DUTY_CD)
+            , CLASS_CD = VALUES(CLASS_CD)
+            , WORKTEAM_CD = VALUES(WORKTEAM_CD)
+            , NOTE = VALUES(NOTE)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = #{userId}
+    </insert>
+    
+    <update id="deleteGrp" parameterType="hashmap">
+		DELETE FROM WTM_FLEXIBLE_APPLY_GROUP WHERE FLEXIBLE_APPLY_GROUP_ID = #{flexibleApplyGroupId}
+	</update>
+	
+	<select id="getApplyEmpList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.FLEXIBLE_APPLY_EMP_ID AS flexibleApplyEmpId
+        		 , A.FLEXIBLE_APPLY_ID AS flexibleApplyId
+        		 , A.SABUN AS sabun
+        		 , F_WTM_GET_EMP_NM(B.TENANT_ID, B.ENTER_CD, A.SABUN, B.USE_SYMD ) AS empNm
+        		 , A.NOTE AS note
+			  FROM WTM_FLEXIBLE_APPLY_EMP A
+			 INNER JOIN WTM_FLEXIBLE_APPLY B
+			    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+			 WHERE A.FLEXIBLE_APPLY_ID =  #{flexibleApplyId}
+        ]]>
+    </select>
+    
+	<insert id="insertEmp" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_FLEXIBLE_APPLY_EMP (
+        	  FLEXIBLE_APPLY_ID
+        	, SABUN
+        	, NOTE
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.flexibleApplyId}
+        	, #{item.sabun}
+        	, #{item.note}
+        	, NOW()
+        	, #{userId}
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              SABUN = VALUES(SABUN)
+            , NOTE = VALUES(NOTE)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = #{userId}
+    </insert>
+    
+    <update id="deleteEmp" parameterType="hashmap">
+		DELETE FROM WTM_FLEXIBLE_APPLY_EMP WHERE FLEXIBLE_APPLY_GROUP_ID = #{flexibleApplyEmpId}
+	</update>
+	
+</mapper>

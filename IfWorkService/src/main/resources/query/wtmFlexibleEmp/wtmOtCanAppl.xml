@@ -39,6 +39,7 @@
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS reasonNm
 			     , O.REASON AS reason
 			     , O.SUB_YN as subYn
+			     , O.OT_APPL_ID AS otApplId
 			     , O.OLD_OT_APPL_ID AS oldOtApplId
 			     , O.CANCEL_YN AS cancelYn
 			     , C.REASON AS cancelReason

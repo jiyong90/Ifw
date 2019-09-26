@@ -5,6 +5,7 @@ import java.util.List;
 public class WtmDayWorkVO {
 	private String day;
 	private String holidayYn;
+	private String timeNm;
 	private List<WtmDayPlanVO> plans;
 	public String getDay() {
 		return day;
@@ -23,6 +24,12 @@ public class WtmDayWorkVO {
 	}
 	public void setPlans(List<WtmDayPlanVO> plans) {
 		this.plans = plans;
+	}
+	public String getTimeNm() {
+		return timeNm;
+	}
+	public void setTimeNm(String timeNm) {
+		this.timeNm = timeNm;
 	}
 	
 	

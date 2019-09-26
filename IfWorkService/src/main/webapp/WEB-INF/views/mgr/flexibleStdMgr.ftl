@@ -29,7 +29,7 @@
 						</ul>
 					</div>
 				</div>
-				<script type="text/javascript">createIBSheet("sheet1", "100%", "calc(100vh - 232px)","kr"); </script>
+				<script type="text/javascript">createIBSheet("sheet1", "100%", fullsheetH,"kr"); </script>
 			</div>
 			<div class="col-7 pt-2">
 				<div class="innertab inner">
@@ -51,23 +51,24 @@
 										<tbody>
 											<tr id="trHoliday">
 												<th>공휴일제외여부</th>
-												<td colspan="3">
-													<select id="holExceptYn">
-					                                    <option value="Y">사용</option>
-					                                    <option value="N">미사용</option>
-					                                </select>
+												<td>
+													<input type="checkbox" id="holExceptYn" name="holExceptYn" />
+												</td>
+												<th>인정근무 단위시간(분)</th>
+												<td>
+													<input type="text" id="unitMinute" name="unitMinute"/>
 												</td>
 											</tr>
-											<tr id="trWorkDaysOpt">
-												<th>근무요일지정</th>
+											<tr id="trBaseCheck">
+												<th>일 기본근무시간 사용여부</th>
 												<td colspan="3">
-													<input type="checkbox" id="workDaysOpt2" name="workDaysOpt" value="2"/> 월
-													<input type="checkbox" id="workDaysOpt3" name="workDaysOpt" value="3"/> 화
-													<input type="checkbox" id="workDaysOpt4" name="workDaysOpt" value="4"/> 수
-													<input type="checkbox" id="workDaysOpt5" name="workDaysOpt" value="5"/> 목
-													<input type="checkbox" id="workDaysOpt6" name="workDaysOpt" value="6"/> 금
-													<input type="checkbox" id="workDaysOpt7" name="workDaysOpt" value="7"/> 토
-													<input type="checkbox" id="workDaysOpt1" name="workDaysOpt" value="1"/> 일
+													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" />
+												</td>
+											</tr>
+											<tr id="trBase">
+												<th>일 기본근무시간(분)</th>
+												<td>
+													<input type="text" id="defaultWorkMinute" name="defaultWorkMinute"/>
 												</td>
 											</tr>
 											<tr id="trFixOt">
@@ -79,19 +80,9 @@
 					                                    <option value="ALL">일괄 소진</option>
 					                                </select>
 												</td>
-												<th>고정OT 소진한계시간</th>
+												<th>고정OT 소진한계시간(분)</th>
 												<td>
 													<input type="text" id="fixotUseLimit" name="fixotUseLimit"/>
-												</td>
-											</tr>
-											<tr id="trBase">
-												<th>일 기본근무시간</th>
-												<td>
-													<input type="text" id="defaultWorkMinute" name="defaultWorkMinute"/>
-												</td>
-												<th>인정근무 단위시간</th>
-												<td>
-													<input type="text" id="unitMinute" name="unitMinute"/>
 												</td>
 											</tr>
 											<tr id="trRega">
@@ -177,7 +168,7 @@
 										<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 									</ul>
 								</div>
-								<script type="text/javascript">createIBSheet("sheet2", "100%", "calc(100vh - 270px)","kr"); </script>
+								<script type="text/javascript">createIBSheet("sheet2", "100%", sheetH90,"kr"); </script>
 							</div>
 						</div>
 					</div>
@@ -252,29 +243,29 @@
 			{Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"삭제",			Type:"DelCheck",	Hidden:1,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
    			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
-			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"근무시간",  		Type:"Combo",     	Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"workTypeCd",  	KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:0,  InsertEdit:1,  EditLen:100  },
-			{Header:"근무명칭",		Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"flexibleNm",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"시작일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"useSymd",        	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
-			{Header:"종료일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"useEymd",        	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
+			{Header:"id",				Type:"Text",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"tenantId",			Type:"Text",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"enterCd",			Type:"Text",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무제도유형",  	Type:"Combo",   Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"workTypeCd",  	KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:0,  InsertEdit:1,  EditLen:100  },
+			{Header:"근무명칭",			Type:"Text",	Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"flexibleNm",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"시작일",			Type:"Date",    Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"useSymd",        	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
+			{Header:"종료일",			Type:"Date",    Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"useEymd",        	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
 			{Header:"공휴일제외여부",	Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"holExceptYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
-			{Header:"근무요일지정",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workDaysOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
-			{Header:"고정OT 소진방법",	Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
-			{Header:"고정OT 한계시간",	Type:"Int",			Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseLimit",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
-			{Header:"간주근무시간",		Type:"Int",			Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"regardTimeCdId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:20 },
-			{Header:"일 기본근무시간",	Type:"Int",			Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"defaultWorkMinute", KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
-			{Header:"인정근무 단위시간",	Type:"Int",			Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"unitMinute", 		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
-			{Header:"근무가능시작",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
-			{Header:"근무가능종료",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
-			{Header:"코어근무시작",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
-			{Header:"코어근무종료",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
-			{Header:"코어시간체크여부",	Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreChkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
-			{Header:"선소진여부",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"exhaustionYn",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
-			{Header:"사용기간지정",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"usedTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
-			{Header:"신청기간지정",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
-			{Header:"비고",			Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 }
+			{Header:"인정근무 단위시간",	Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"unitMinute", 		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },			
+			{Header:"기본시간사용여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"defaultWorkUseYn", KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
+			{Header:"일 기본근무시간",	Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"defaultWorkMinute", KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
+			{Header:"고정OT 소진방법",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
+			{Header:"고정OT 한계시간",	Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseLimit",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },			
+			{Header:"간주근무시간",		Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"regardTimeCdId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:20 },
+			{Header:"근무가능시작",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
+			{Header:"근무가능종료",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
+			{Header:"코어시간체크여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreChkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
+			{Header:"코어근무시작",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
+			{Header:"코어근무종료",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
+			{Header:"선소진여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"exhaustionYn",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
+			{Header:"사용기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"usedTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
+			{Header:"신청기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
+			{Header:"비고",				Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -364,17 +355,12 @@
 	            return false;
 	        }
 			var row = sheet1.GetSelectRow();
+			
 			if($('#trHoliday').is(':visible')){
-				sheet1.SetCellValue(row, "holExceptYn", $("#holExceptYn").val());
+				
+				var chkYn = var chkYn = getCheckYn("holExceptYn");
+				sheet1.SetCellValue(row, "holExceptYn", chkYn);
 			}
-			if($('#trWorkDaysOpt').is(':visible')){
-	            var map = {};
-	            for(var i=1; i<=7; i++) {
-	               var chk = $("input:checkbox[id=workDaysOpt" + i+"]").is(":checked");
-	               map[i] = chk;
-	            }
-	            sheet1.SetCellValue(row, "workDaysOpt", JSON.stringify(map));
-	        }
 	        if($('#trFixOt').is(':visible')){
 	        	sheet1.SetCellValue(row, "fixotUseType", $("#fixotUseType").val());
 	        	sheet1.SetCellValue(row, "fixotUseLimit", $("#fixotUseLimit").val());
@@ -386,6 +372,10 @@
 	        if($('#trCoreTime').is(':visible')){
 	        	sheet1.SetCellValue(row, "coreShm", $("#coreShm").val());
 	        	sheet1.SetCellValue(row, "coreEhm", $("#coreEhm").val());
+	        }
+	        if($('#trBaseCheck').is(':visible')){
+	        	var chkYn = getCheckYn("defaultWorkUseYn");
+	        	sheet1.SetCellValue(row, "exhaustionYn", chkYn);
 	        }
 	        if($('#trBaseFirst').is(':visible')){
 	        	sheet1.SetCellValue(row, "exhaustionYn", $("#exhaustionYn").val());
@@ -502,31 +492,13 @@
 			
 			// 옵션마스터용 값을 셋팅해야함.
 			var workTypeCd = sheet1.GetCellValue( NewRow, "workTypeCd");
-			$("input:checkbox[name='workDaysOpt']").prop("checked", false);
+			$("input:checkbox[name='holExceptYn']").prop("checked", false);
 			$("input:checkbox[name='usedTermOpt']").prop("checked", false);
 			$("input:checkbox[name='applTermOpt']").prop("checked", false);
 			
 			// 공휴일제외여부
-			if(workTypeCd == "ELAS"){
-				$("#trHoliday").hide();
-				$("#trWorkDaysOpt").hide();
-				$("#holExceptYn").removeClass("required");
-				$("#holExceptYn").val("N");
-			} else {
-				$("#trHoliday").show();
-				$("#holExceptYn").addClass("required");
-				$("#holExceptYn").val(sheet1.GetCellValue( NewRow, "holExceptYn")).prop("selected", true);
-				
-				$("#trWorkDaysOpt").show();
-				var workDaysOpt = sheet1.GetCellValue( NewRow, "workDaysOpt");
-				if(workDaysOpt != ""){
-					var dataWorkDaysOpt = JSON.parse(workDaysOpt);
-					for(var i=1; i<=7; i++) {
-						var objId = "workDaysOpt" + i;
-						var chk = dataWorkDaysOpt[i];
-						$("input:checkbox[id="+objId+"]").prop("checked", chk);
-					}
-				}
+			if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
+				$("holExceptYn").prop("checked", true);
 			}
 			
 			// 고정OT
@@ -643,5 +615,12 @@
             }
         });
         return ch;
+	}
+	function getCheckYn(objId){
+		var chkYn = "N";
+		if($("input:checkbox[id="+objId+"]").checked){
+			 chkYn = "Y";
+		}
+		return chkYn;
 	}
 </script>

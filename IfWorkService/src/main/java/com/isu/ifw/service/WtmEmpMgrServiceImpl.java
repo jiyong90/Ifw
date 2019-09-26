@@ -50,7 +50,7 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 			emp.put("jobGroupCd", l.getJobGroupCd());
 			emp.put("jobCd", l.getJobCd());
 			emp.put("payTypeCd", l.getPayTypeCd());
-			emp.put("leaderYn", l.getLeaderYn().equals("Y")?"1":"0");
+			emp.put("leaderYn", l.getLeaderYn());
 			emp.put("note", l.getNote());
 			empList.add(emp);
 		}
@@ -76,7 +76,7 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 		emp.put("jobGroupCd", l.getJobGroupCd());
 		emp.put("jobCd", l.getJobCd());
 		emp.put("payTypeCd", l.getPayTypeCd());
-		emp.put("leaderYn", l.getLeaderYn().equals("Y")?"1":"0");
+		emp.put("leaderYn", l.getLeaderYn());
 		emp.put("note", l.getNote());
 		return emp;
 	}

@@ -331,18 +331,15 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("sabun", appl.getApplSabun());
 			
-			wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
-			
-			List<WtmWorkDayResult> days = wtmWorkDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, sabun, "BASE",flexibleAppl.getSymd(), flexibleAppl.getEymd() );
-			
-			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
+			/*List<WtmWorkDayResult> days = wtmWorkDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, sabun, "BASE",flexibleAppl.getSymd(), flexibleAppl.getEymd() );
 			
 			//선근제면 초기화 하자
 			if(stdMgr.getWorkTypeCd().startsWith("SELE")) {
 				//기본근무  정보가 있었기 때문에 지워주자
 				wtmWorkDayResultRepo.deleteAll(days);
-			}
+			}*/
 			
+			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
 			paramMap.putAll(stdMgr.getWorkDaysOpt());
 			paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
 			//근무제 기간의 총 소정근로 시간을 업데이트 한다.
@@ -570,15 +567,18 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 					Long applId = Long.valueOf(appr.get("applId").toString());
 					String applCd = appr.get("applCd").toString();
 					
-					if("OT".equals(applCd)) { //연장, 휴일연장
-						Map<String, Object> otAppl = otApplMapper.otApplfindByApplId(applId);
+					if("OT".equals(applCd) || "OT_CAN".equals(applCd)) { //연장, 휴일연장, 연장취소, 휴일연장 취소
+						Map<String, Object> otAppl = null;
+						
+						if("OT".equals(applCd))
+							otAppl = otApplMapper.otApplfindByApplId(applId);
+						else if("OT_CAN".equals(applCd))
+							otAppl = otCanMapper.otApplAndOtCanApplfindByApplId(applId);
+						
 						if(otAppl!=null && otAppl.containsKey("subYn") && otAppl.get("subYn")!=null && "Y".equals(otAppl.get("subYn"))) {
 							otAppl.put("subs", otApplMapper.otSubsApplfindByOtApplId(Long.valueOf(otAppl.get("otApplId").toString())));
 						}
 						appr.put("appl", otAppl);
-					} else if("OT_CAN".equals(applCd)) { //연장, 휴일연장 취소
-						Map<String, Object> otCanAppl = otCanMapper.otApplAndOtCanApplfindByApplId(applId);
-						appr.put("appl", otCanAppl);
 					} else if("SUBS_CHG".equals(applCd)) { //대체휴가 취소
 						
 					} else {

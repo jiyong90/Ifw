@@ -34,7 +34,7 @@
 								</ul>
 							</div>
 						</div>
-						<script type="text/javascript"> createIBSheet("sheet1", "100%", "calc(100vh - 232px)", "kr"); </script>
+						<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH , "kr"); </script>
 					</td>
 				</tr>
 			</table>

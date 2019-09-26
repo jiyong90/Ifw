@@ -43,8 +43,8 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 				code.put("taaNm", l.getTaaNm());
 				code.put("code", l.getTaaCd());
 				code.put("codeNm", l.getTaaNm());
-				code.put("holInclYn", l.getHolInclYn().equals("Y")?"1":"0");
-				code.put("workYn", l.getWorkYn().equals("Y")?"1":"0");
+				code.put("holInclYn", l.getHolInclYn());
+				code.put("workYn", l.getWorkYn());
 				code.put("workApprHour", l.getWorkApprHour());
 				code.put("note", l.getNote());
 				code.put("taaTypeCd", l.getTaaTypeCd());
@@ -73,7 +73,7 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 						WtmTaaCode code = new WtmTaaCode();
 						code.setEnterCd(enterCd);
 						code.setTaaCodeId(l.get("taaCodeId").toString().equals("") ? null : Long.parseLong(l.get("taaCodeId").toString()));
-						code.setHolInclYn(l.get("holInclYn").toString().toString().equals("1")?"Y":"N");
+						code.setHolInclYn(l.get("holInclYn").toString());
 						code.setRequestTypeCd(l.get("requestTypeCd").toString());
 						code.setTaaCd(l.get("taaCd").toString());
 						code.setTaaNm(l.get("taaNm").toString());
@@ -82,7 +82,7 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 						code.setUpdateId(userId);
 						code.setNote(l.get("note").toString());
 						code.setWorkApprHour(l.get("workApprHour").toString().equals("") ? null : Integer.parseInt(l.get("workApprHour").toString()));
-						code.setWorkYn(l.get("workYn").toString().equals("1")?"Y":"N");
+						code.setWorkYn(l.get("workYn").toString());
 						codes.add(code);
 					}
 					codes = taaCodeRepository.saveAll(codes);

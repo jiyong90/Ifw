@@ -282,7 +282,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.apprList = [];
-						console.log(data);
+						//console.log(data);
 						if(data.status=='OK' && data!=null && data.apprList!=null) {
 							$this.apprList = data.apprList;
 						}
@@ -377,8 +377,7 @@
 	    			
 	    			if(saveYn) {
 	    				//$('#apprOpinionModal').modal("hide"); 
-	    				$('#apprOpinionModal .close').click();
-	    				
+	    				$("#loading").show();
 		    			var param = appr;
 		    			
 		    			if(appr.applCd=='OT') {
@@ -394,6 +393,9 @@
 	    					data: JSON.stringify(param),
 	    					dataType: "json",
 	    					success: function(data) {
+	    						$("#loading").hide();
+	    						$('#apprOpinionModal .close').click();
+	    						
 	    						if(data!=null && data.status=='OK') {
 									$("#alertText").html("결재되었습니다.");
 								} else {
@@ -405,6 +407,7 @@
 		  	  	         		$("#alertModal").modal("show"); 
 	    					},
 	    					error: function(e) {
+	    						$("#loading").hide();
 	    						console.log(e);
 	    						$("#alertText").html("확인요청 시 오류가 발생했습니다.");
 	      	  	         		$("#alertModal").on('hidden.bs.modal',function(){});

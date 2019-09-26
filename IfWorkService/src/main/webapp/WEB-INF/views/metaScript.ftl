@@ -39,13 +39,18 @@
 				beforeSend : function(xhr){  
 		            xhr.setRequestHeader("AJAX", true); //필수
 		        }, 
+		 		complete : function(data) {
+					var text = data.responseText;
+					if(text.indexOf(redirectText) != -1)
+        				window.parent.location.href=loginUrl;
+                },
 				error : this.ajaxError	
 			};
 			var defaultoOption = $.extend(true, defaultoOption, option);
 			
 			$.ajax(defaultoOption);
 		},
-		ajaxError : function(xhr, status, error){ 
+		ajaxError : function(xhr, status, error){
 			if(xhr.status == 401){
 				location.href = "${rc.getContextPath()}/login/${tsId}"; 
 			}else{
@@ -66,4 +71,17 @@
             $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
         }, 0);
     });
+</script>
+<script type="text/javascript">
+    var sheetH40 = "calc(50vh - 180px)";
+    var halfsheetH = "calc(50vh - 140px)";
+    var fullsheetH = "calc(100vh - 232px)";
+    var sheetH90 = "calc(100vh - 270px)";
+
+    <#if isEmbedded?? && isEmbedded?exists && isEmbedded >
+    	halfsheetH = "50%";
+		fullsheetH = "100%";
+		sheetH90 = "100%";
+    </#if>
+		
 </script>
