@@ -285,6 +285,12 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 
+		if(viewPage.equals("info")) {
+			mv.addObject("tsId", tsId);
+			mv.addObject("pageName", viewPage);
+			mv.addObject("pageName", viewPage);
+			return mv;
+		}
 		
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
