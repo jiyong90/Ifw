@@ -377,7 +377,7 @@
 	    			
 	    			if(saveYn) {
 	    				//$('#apprOpinionModal').modal("hide"); 
-	    				
+	    				$("#loading").show();
 		    			var param = appr;
 		    			
 		    			if(appr.applCd=='OT') {
@@ -386,7 +386,7 @@
 		    				param['otEdate'] = moment(appr.appl.otEdate).format('YYYYMMDDHHmm');
 		    			}
 
-	    	    		Util.ajax({
+	    	    		/* Util.ajax({
 	    					url: "${rc.getContextPath()}/appl/"+apprStatus,
 	    					type: "POST",
 	    					contentType: 'application/json',
@@ -411,7 +411,7 @@
 	      	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
 	      	  	         		$("#alertModal").modal("show"); 
 	    					}
-	    				});
+	    				}); */
 	    			} else {
 	    				$("#alertModal").on('hidden.bs.modal',function(){
 	    					$("#apprOpinion").focus();
