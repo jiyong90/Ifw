@@ -138,7 +138,7 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 		
 		for(WtmCodeGrp l : list) {
 			Map<String, Object> codeGrp = new HashMap();
-			codeGrp.put("codeMGrId", l.getCodeGrpId());
+			codeGrp.put("codeGrpId", l.getCodeGrpId());
 			codeGrp.put("tenantId", l.getTenantId());
 			codeGrp.put("enterCd", l.getEnterCd());
 			codeGrp.put("grpCodeCd", l.getGrpCodeCd());
