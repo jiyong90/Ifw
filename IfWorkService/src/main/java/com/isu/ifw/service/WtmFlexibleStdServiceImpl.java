@@ -96,10 +96,10 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 			stdMgr.put("coreShm", l.get("CORE_SHM"));
 			stdMgr.put("coreEhm", l.get("CORE_EHM"));
 			stdMgr.put("defaultWorkMinute", l.get("DEFAULT_WORK_MINUTE"));
+			stdMgr.put("defaultWorkUseYn", l.get("DEFAULT_WORK_USE_YN"));
 			stdMgr.put("unitMinute", l.get("UNIT_MINUTE"));
 			stdMgr.put("exhaustionYn", l.get("EXHAUSTION_YN"));
 			stdMgr.put("holExceptYn", l.get("HOL_EXCEPT_YN"));
-			stdMgr.put("workDaysOpt", l.get("WORK_DAYS_OPT"));
 			stdMgr.put("usedTermOpt", l.get("USED_TERM_OPT"));
 			stdMgr.put("applTermOpt", l.get("APPL_TERM_OPT"));
 			stdMgr.put("coreChkYn", l.get("CORE_CHK_YN"));
@@ -146,10 +146,10 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						saveMap.put("coreChkYn", l.get("coreChkYn").toString());
 						saveMap.put("exhaustionYn", l.get("exhaustionYn").toString());
 						saveMap.put("usedTermOpt", l.get("usedTermOpt").toString());
-						saveMap.put("workDaysOpt", l.get("workDaysOpt").toString());
 						saveMap.put("applTermOpt", l.get("applTermOpt").toString());
 						saveMap.put("regardTimeCdId", Integer.parseInt(l.get("regardTimeCdId").toString()));
 						saveMap.put("defaultWorkMinute", Integer.parseInt(l.get("defaultWorkMinute").toString()));
+						saveMap.put("defaultWorkUseYn", l.get("defaultWorkUseYn").toString());
 						saveMap.put("unitMinute", Integer.parseInt(l.get("unitMinute").toString()));
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
@@ -175,7 +175,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						saveMap.put("useEymd", l.get("useEymd").toString());
 						saveMap.put("holExceptYn", l.get("holExceptYn").toString());
 						saveMap.put("fixotUseType", l.get("fixotUseType").toString());
-						saveMap.put("fixotUseLimit", Integer.parseInt(l.get("fixotUseLimit").toString()));
+						saveMap.put("fixotUseLimit", l.get("fixotUseLimit").toString().equals("") ? null : Integer.parseInt(l.get("fixotUseLimit").toString()));
 						saveMap.put("workShm", l.get("workShm").toString());
 						saveMap.put("workEhm", l.get("workEhm").toString());
 						saveMap.put("coreShm", l.get("coreShm").toString());
@@ -183,10 +183,10 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						saveMap.put("coreChkYn", l.get("coreChkYn").toString());
 						saveMap.put("exhaustionYn", l.get("exhaustionYn").toString());
 						saveMap.put("usedTermOpt", l.get("usedTermOpt").toString());
-						saveMap.put("workDaysOpt", l.get("workDaysOpt").toString());
 						saveMap.put("applTermOpt", l.get("applTermOpt").toString());
 						saveMap.put("regardTimeCdId", Integer.parseInt(l.get("regardTimeCdId").toString()));
 						saveMap.put("defaultWorkMinute", Integer.parseInt(l.get("defaultWorkMinute").toString()));
+						saveMap.put("defaultWorkUseYn", l.get("defaultWorkUseYn").toString());
 						saveMap.put("unitMinute", Integer.parseInt(l.get("unitMinute").toString()));
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
