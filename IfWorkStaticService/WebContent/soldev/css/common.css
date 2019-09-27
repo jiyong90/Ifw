@@ -25,6 +25,18 @@ ul, ol, li{
   border-color: #26978a;
 }
 
+.btn-cancel {
+  font-size: 14px;
+  color: #1f3b78;
+  background-color: #ffffff;
+  border-color: #6b6b80;
+}
+
+.btn-cancel:hover{
+  background-color: #e6e6e6;
+  border-color: #3e3e4c;
+}
+
 .btn-outline{
   color: #c4c4c4;
   border-color: #cfcfcf;
