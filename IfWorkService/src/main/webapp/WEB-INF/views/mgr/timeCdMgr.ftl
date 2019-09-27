@@ -72,12 +72,13 @@
 			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"근무유형코드",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCd",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"근무유형명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무유형명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"시작일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"symd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
 			{Header:"종료일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"eymd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
 			{Header:"휴일여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holYn",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"기본근무\n시작시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workShm",			KeyField:1,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"기본근무\n종료시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workEhm",			KeyField:1,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"공휴시\n근무코드",		Type:"Combo",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holTimeCdMgrId",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"기본근무\n시작시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workShm",			KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"기본근무\n종료시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workEhm",			KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"지각체크\n여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"lateChkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"조퇴체크\n여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"leaveChkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"결근체크\n여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"absenceChkYn",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
@@ -90,6 +91,9 @@
 		sheet1.SetUnicodeByte(3);
 		sheet1.SetUseDefaultTime(0);
 		sheet1.SetCountPosition(8);
+		
+		var timeCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=Y",false).DATA, "");
+		sheet1.SetColProperty("holTimeCdMgrId", 	{ComboText:"|"+timeCdList[0], ComboCode:"|"+timeCdList[1]} );
 		
 		var initdata2 = {};
 		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -175,6 +179,14 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
+			if(sheet1.SearchRows() > 0) {
+				var rowCnt = sheet1.LastRow();
+				for (var i=1; i<=rowCnt; i++) {
+					if (sheet1.GetCellValue(i, "holYn") == "Y" ) {
+						sheet1.SetCellEditable(i, "holTimeCdMgrId", false);
+					}
+				}
+			}
 			sheet2.RemoveAll();
 			sheetResize();
 		} catch (ex) {
@@ -188,10 +200,26 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
+			// 휴일코드가 추가되면 재갱신이 필요함
+			var timeCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=Y",false).DATA, "");
+			sheet1.SetColProperty("holTimeCdMgrId", 	{ComboText:"|"+timeCdList[0], ComboCode:"|"+timeCdList[1]} );
 			doAction1("Search");
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);
 		}
+	}
+	
+	// 값 변경시 발생
+	function sheet1_OnChange(Row, Col, Value) {
+		// 공휴일여부
+		if ( sheet1.ColSaveName(Col) == "holYn"){
+			if (Value == "Y"){
+				sheet1.SetCellValue(Row, "holTimeCdMgrId", "");
+				sheet1.SetCellEditable(Row, "holTimeCdMgrId", false);
+			} else {
+				sheet1.SetCellEditable(Row, "holTimeCdMgrId", true);
+			}
+		}	
 	}
 	
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {

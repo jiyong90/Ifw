@@ -41,6 +41,8 @@ public class WtmTimeCdMgr {
 	private String workEhm;
 	@Column(name="HOL_YN")
 	private String holYn;
+	@Column(name="HOL_TIME_CD_MGR_ID")
+	private Long holTimeCdMgrId;
 	@Column(name="LATE_CHK_YN")
 	private String lateChkYn;
 	@Column(name="LEAVE_CHK_YN")
@@ -154,6 +156,16 @@ public class WtmTimeCdMgr {
 
 	public void setHolYn(String holYn) {
 		this.holYn = holYn;
+	}
+
+	
+	public Long getHolTimeCdMgrId() {
+		return holTimeCdMgrId;
+	}
+
+
+	public void setHolTimeCdMgrId(Long holTimeCdMgrId) {
+		this.holTimeCdMgrId = holTimeCdMgrId;
 	}
 
 
