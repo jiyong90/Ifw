@@ -179,7 +179,7 @@
                         </li>
                     </ul>
                     <div class="btn-wrap">
-                        <button type="submit" id="workPlanBtn" class="btn btn-apply btn-block btn-lg" @click="viewWorkDayCalendar" style="display:none;">근무계획작성</button>
+                        <button type="submit" id="workPlanBtn" class="btn btn-apply btn-block btn-lg" @click="viewWorkDayCalendar(moment(selectedDate).format('YYYYMMDD'))" style="display:none;">근무계획작성</button>
                     </div>
                 </div>
                 <div id="workDayInfo" class="white-box-wrap mb-3" style="display:none;">
@@ -1011,41 +1011,37 @@
          		//선택한 근무제
          		var flexibleStd = calendarTopVue.selectedFlexibleStd;
          		
-         		if(flexibleStd.workTypeCd.indexOf('SELE')==0) {
-        			var param = {
-        				flexibleStdMgrId : flexibleStd.flexibleStdMgrId,
-        				workTypeCd : flexibleStd.workTypeCd,
-        				//empNo : "${empNo}",
-        				applId : $this.applInfo.applId,
-	   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
-	   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD')
-	   		    	};
-	         			
-  		    		Util.ajax({
-						url: "${rc.getContextPath()}/flexibleAppl/imsi",
-						type: "POST",
-						contentType: 'application/json',
-						data: JSON.stringify(param),
-						dataType: "json",
-						success: function(data) {
-							if(data!=null && data.status=='OK') {
-								$this.applInfo.applId = data.applId;
-								$this.applInfo.flexibleApplId = data.flexibleApplId;
-								
-								//신청서 조회
-								$this.getFlexitimeAppl(data.applId);
-							}
-						},
-						error: function(e) {
-							console.log(e);
-							$("#alertText").html("저장 시 오류가 발생했습니다.");
-	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
-	  	  	         		$("#alertModal").modal("show"); 
-						}
-					}); 
-         		} else if(flexibleStd.workTypeCd.indexOf('ELAS')==0){
+       			var param = {
+       				flexibleStdMgrId : flexibleStd.flexibleStdMgrId,
+       				workTypeCd : flexibleStd.workTypeCd,
+       				//empNo : "${empNo}",
+       				applId : $this.applInfo.applId,
+   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
+   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD')
+   		    	};
          			
-         		}
+ 		    		Util.ajax({
+					url: "${rc.getContextPath()}/flexibleAppl/imsi",
+					type: "POST",
+					contentType: 'application/json',
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: function(data) {
+						if(data!=null && data.status=='OK') {
+							$this.applInfo.applId = data.applId;
+							$this.applInfo.flexibleApplId = data.flexibleApplId;
+							
+							//신청서 조회
+							$this.getFlexitimeAppl(data.applId);
+						}
+					},
+					error: function(e) {
+						console.log(e);
+						$("#alertText").html("저장 시 오류가 발생했습니다.");
+  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+  	  	         		$("#alertModal").modal("show"); 
+					}
+				}); 
 
          	},
          	validateFlexitimeAppl : function(workTypeCd){
@@ -1062,7 +1058,14 @@
          		
          		if(applYn) {
          			if(workTypeCd == 'ELAS') { //탄근제
-         				this.elasFlexitimeAppl();
+         				if(this.applInfo==null || this.applInfo.applId==null || this.applInfo.applId==undefined || this.applInfo.applId=='') {
+         					//임시저장
+         					this.flexitimeApplImsi();
+         				}
+         			
+         				//근무계획 작성 화면전환
+         				this.viewWorkDayCalendar(moment(this.applInfo.useSymd).format('YYYYMMDD'));
+         				
          			} else {
          				this.flexitimeAppl();
          			}
@@ -1073,7 +1076,7 @@
          		var $this = this;
   	         	
          		//선택한 근무제
-	         	var flexibleStd = calendarTopVue.flexibleStd;
+	         	var flexibleStd = calendarTopVue.selectedFlexibleStd;
 	         	//임시저장된 신청서
 	         	var flexibleAppl = $this.flexibleAppl;
 	         	//신청서 정보
@@ -1202,8 +1205,8 @@
          	saveWorkDayResult: function(){
          		dayCalendarVue.saveWorkDayResult();
          	},
-         	viewWorkDayCalendar: function(){
-         		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.selectedDate).format('YYYYMMDD');
+         	viewWorkDayCalendar: function(date){
+         		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Day&date='+date;
          	},
          	viewOvertimeAppl: function(){
          		var $this = this;

@@ -415,7 +415,7 @@
 			  		    				}
 									}
 								});
-								console.log(dayWorks);
+								//console.log(dayWorks);
 								$this.dayWorks = dayWorks;
 								
 								//상세 계획 입력 화면 전환
@@ -739,6 +739,9 @@
          				flexibleEmpId : calendarLeftVue.flexibleAppl.flexibleEmpId,
          				dayResult : $this.dayResult
 	   		    	};
+         			
+         			//dayResult는 이런 형식 {ymd : {shm: 0900, ehm: 1800} }
+         			//console.log($this.dayResult);
          			
    		    		Util.ajax({
 						url: "${rc.getContextPath()}/flexibleEmp/save",

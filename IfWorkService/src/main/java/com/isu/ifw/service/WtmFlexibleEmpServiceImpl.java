@@ -14,12 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.entity.WtmFlexibleApplDet;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtCanAppl;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
+import com.isu.ifw.repository.WtmFlexibleApplDetRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtCanApplRepository;
@@ -51,6 +53,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Autowired
 	WtmOtCanApplRepository otCanApplRepo;
+	
+	@Autowired
+	WtmFlexibleApplDetRepository flexApplDetRepo;
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
@@ -222,6 +227,57 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return flexEmpMapper.getPrevFlexible(paramMap);
 	}
 	
+	public void imsi(Long tenantId, Long enterCd, String sabun, Long flexibleApplId, Map<String, Object> dateMap, Long userId) throws Exception{
+		
+		flexEmpMapper.createFlexibleApplDet(flexibleApplId, userId);
+
+		if(dateMap != null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+			for(String k : dateMap.keySet()) {
+				WtmFlexibleApplDet result =  flexApplDetRepo.findByFlexibleApplIdAndYmd(flexibleApplId, k);
+				try {
+					Map<String, String> dayResult = (Map<String, String>) dateMap.get(k);
+					if(dayResult.get("shm") != null && !dayResult.get("shm").equals("")) {
+						String shm = dayResult.get("shm");
+						String ehm = dayResult.get("ehm");
+						Date s = sdf.parse(k+shm);
+						Date e = sdf.parse(k+ehm);
+						
+						if(s.compareTo(e) > 0) {
+							// 날짜 더하기
+					        Calendar cal = Calendar.getInstance();
+					        cal.setTime(e);
+					        cal.add(Calendar.DATE, 1);
+					        e = cal.getTime();
+						}
+						result.setPlanSdate(s);
+						result.setPlanEdate(e);
+						Map<String, Object> paramMap = new HashMap<>();
+						paramMap.put("shm", shm);
+						paramMap.put("ehm", ehm);
+						paramMap.put("tenantId", tenantId);
+						paramMap.put("enterCd", enterCd);
+						paramMap.put("sabun", sabun);
+						paramMap.put("ymd", result.getYmd());
+						
+						Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
+						result.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+""));
+					}else {
+						result.setPlanSdate(null);
+						result.setPlanEdate(null);
+						result.setPlanMinute(0);
+					}
+					flexApplDetRepo.save(result);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			//특정한 주의 근로시간은 52시간을, 특정일의 근로시간은 12시간을 초과할 수 없음(연장 . 휴일근로시간 제외)
+		}
+		
+	}
 	
 	@Transactional
 	@Override
