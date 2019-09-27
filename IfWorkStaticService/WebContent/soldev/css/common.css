@@ -861,6 +861,30 @@ No media query for `xs` since this is the default in Bootstrap */
   }
 }
 
+/* custom ToolTip - jBox */
+.tooltip-st{cursor:pointer;}
+.tooltip-st i.far{color:#008fd5;}
+
+/* tooltip box border color */
+.jBox-TooltipBorder .jBox-container, .jBox-TooltipBorder .jBox-pointer:after{
+	border: 2px solid #d6d6d6;
+}
+/* tooltip box border color */
+.jBox-TooltipBorder.jBox-closeButton-box:before{
+	background: #d6d6d6;
+}
+.jBox-content{
+	padding: 12px 20px;
+	font-size: 12px;
+}
+.jBox-TooltipBorder .jBox-pointer:after{
+	width: 14px;
+	height: 14px;
+}
+.jBox-pointer-bottom:after{
+	bottom:8px;
+}
+
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 1023px) {
 }

@@ -9,13 +9,15 @@
     <link rel="stylesheet" href="${rc.getContextPath()}/bootstrap-4.3.1-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/bootstrap-4.3.1-dist/css/bootstrap-grid.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/jBox-1.0.5/dist/jBox.all.min.css">
+    
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/NotosansKR.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/layout.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/common.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/calendar.css">
-    <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/fontawesome.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/all.min.css">
-    
+    <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/fontawesome.min.css">
+
     <!-- for dateTimepicker -->
     <link rel="stylesheet" href="${rc.getContextPath()}/tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.css">
     

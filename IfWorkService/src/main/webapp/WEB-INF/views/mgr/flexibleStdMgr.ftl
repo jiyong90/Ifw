@@ -125,7 +125,7 @@
 												</td>
 											</tr>
 											<tr id="trUsedTerm">
-												<th>사용기간지지정</th>
+												<th>사용기간지지정 <span id="Tooltip-7" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td colspan="3">
 													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="1_week" title="1주"/> 1주
 													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="2_week" title="2주"/> 2주
@@ -180,8 +180,35 @@
 </div>
 
 <script type="text/javascript">
-	
    	$(function() {
+   		
+   	 new jBox('Tooltip', {
+   	    attach: '#Tooltip-7',
+   	    target: '#Tooltip-7',
+   	    theme: 'TooltipBorder',
+   	    trigger: 'click',
+   	    adjustTracker: true,
+   	    closeOnClick: 'body',
+   	    closeButton: 'box',
+   	    animation: 'move',
+   	    position: {
+   	      x: 'left',
+   	      y: 'top'
+   	    },
+   	    outside: 'y',
+   	    pointer: 'left:20',
+   	    offset: {
+   	      x: 25
+   	    },
+   	    content: '사용자 기간지정은 개인 당 사전에 계획된 근무 기간을 등록하는 것을 뜻합니다.',
+   	    onOpen: function () {
+   	      this.source.addClass('active');
+   	    },
+   	    onClose: function () {
+   	      this.source.removeClass('active');
+   	    }
+   	  });
+   	 
    		//resize
 		$(window).smartresize(sheetResize);
    	
