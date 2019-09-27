@@ -29,7 +29,7 @@
     <select id="getGnt" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT ENTER_CD, GNT_CD, GNT_NM, GNT_GUBUN_CD, HOL_INCL_YN, REQUEST_USE_TYPE, WORK_YN
-			  FROM TTIM014
+			  FROM V_IF_TAA_CODE
 			 WHERE ENTER_CD = 'BRS'
 			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD
