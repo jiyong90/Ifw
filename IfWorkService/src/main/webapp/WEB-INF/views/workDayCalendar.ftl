@@ -1,7 +1,7 @@
 <div id="dayCalendar" class="calendar-wrap" v-cloak>
     <div id='calendar-container'>
 		<!-- <full-calendar ref="fullCalendar" :header="header" :events="events" :eventsources="eventSources" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" ></full-calendar> -->
-		<full-calendar ref="fullCalendar" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @dayrender="dayRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :custombuttons="customButtons" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @dayrender="dayRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">
@@ -11,10 +11,18 @@
   				FullCalendar : fullCalendarComponent
   		    },
   		    data : {
+  		    	customButtons: {
+  		        	month_calendar: {
+  		            	text: '근태달력보기',
+  		              	click: function() {
+  		              		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';
+  		              	}	
+  		          	}
+  		       	},
   		    	header: {
   		    		left: 'prev,next',
 			        center: 'title',
-			        right: ''
+			        right: 'month_calendar'
   		    	},
   		    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
   		    	data: [],
