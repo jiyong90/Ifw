@@ -28,6 +28,7 @@ import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
 import com.isu.ifw.mapper.WtmOtApplMapper;
+import com.isu.ifw.mapper.WtmOtCanApplMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
@@ -97,23 +98,35 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmFlexibleStdMapper wtmFlexibleStdMapper;
-
+	
+	@Autowired
+	WtmOtCanApplMapper wtmOtCanApplMapper;
+	
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
 		try {
 			Map<String, Object> otAppl = wtmOtApplMapper.otApplfindByApplId(applId);
 			
-			if(otAppl!=null && otAppl.get("holidayYn")!=null && "Y".equals(otAppl.get("holidayYn"))) {
+			if(otAppl!=null) {
 				//대체휴일
-				if(otAppl.get("subYn")!=null && "Y".equals(otAppl.get("subYn"))) {
+				if(otAppl.get("holidayYn")!=null && "Y".equals(otAppl.get("holidayYn")) && otAppl.get("subYn")!=null && "Y".equals(otAppl.get("subYn"))) {
 					List<Map<String, Object>> otSubsAppls = wtmOtApplMapper.otSubsApplfindByOtApplId(Long.valueOf(otAppl.get("otApplId").toString()));
 					if(otSubsAppls!=null && otSubsAppls.size()>0)
 						otAppl.put("subs", otSubsAppls);
 				}
+				
+				List<WtmApplLineVO> applLine = applMapper.getWtmApplLineByApplId(applId);
+				
+				//취소신청서
+				if(otAppl.get("otCanApplId")!=null && !"".equals(otAppl.get("otCanApplId"))) {
+					otAppl.put("otCanAppl", wtmOtCanApplMapper.otApplAndOtCanApplfindByApplId(Long.valueOf(otAppl.get("otCanApplId").toString())));
+					applLine = applMapper.getWtmApplLineByApplId(Long.valueOf(otAppl.get("otCanApplId").toString()));
+				}
+				
+				otAppl.put("applLine", applLine);
 			}
 			
-			otAppl.put("applLine", applMapper.getWtmApplLineByApplId(applId));
 			
 			return otAppl;
 			
@@ -963,6 +976,17 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		
 		
 		return rp;
+	}
+
+	@Transactional
+	@Override
+	public void delete(Long applId) {
+		
+		wtmOtSubsApplRepo.deleteByApplId(applId);
+		wtmOtApplRepo.deleteByApplId(applId);
+		wtmApplLineRepo.deleteByApplId(applId);
+		wtmApplRepo.deleteById(applId);
+		
 	}
 	
 }

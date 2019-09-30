@@ -29,7 +29,9 @@
      
     <select id="otApplAndOtCanApplfindByApplId" parameterType="Long" resultType="hashmap">
         <![CDATA[
-			SELECT C.APPL_ID AS applId
+			SELECT A.APPL_ID AS applId
+			     , A.APPL_CD as applCd
+			     , A.APPL_STATUS_CD AS applStatusCd
 			     , O.YMD AS ymd
 			     , O.HOLIDAY_YN AS holidayYn
 			     , O.OT_SDATE AS otSdate

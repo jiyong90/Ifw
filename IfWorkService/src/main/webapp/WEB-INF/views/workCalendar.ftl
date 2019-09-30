@@ -178,8 +178,21 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="btn-wrap">
-                        <button type="submit" id="workPlanBtn" class="btn btn-apply btn-block btn-lg" @click="viewWorkDayCalendar(moment(selectedDate).format('YYYYMMDD'))" style="display:none;">근무계획작성</button>
+                    <div class="btn-wrap row">
+                    	<template v-if="flexCancelBtnYn && workPlanBtnYn">
+                    		<div class="col-6 pr-1">
+                    			<button type="button" class="btn btn-cancel btn-block" @click="calendarLeftVue.cancelFlexitime">근무제적용취소</button>
+                       		</div>
+                       		<div class="col-6 pl-1">
+                       			<button type="button" class="btn btn-apply btn-block" @click="viewWorkDayCalendar(moment(selectedDate).format('YYYYMMDD'))">근무계획작성</button>
+                    		</div>
+                    	</template>
+                    	<template v-else>
+                    		<div class="col-12">
+                    			<button type="button" class="btn btn-cancel btn-block" v-if="flexCancelBtnYn" @click="calendarLeftVue.cancelFlexitime">근무제적용취소</button>
+                       			<button type="button" class="btn btn-apply btn-block" v-if="workPlanBtnYn" @click="viewWorkDayCalendar(moment(selectedDate).format('YYYYMMDD'))">근무계획작성</button>
+                    		</div>
+                    	</template>
                     </div>
                 </div>
                 <div id="workDayInfo" class="white-box-wrap mb-3" style="display:none;">
@@ -792,7 +805,9 @@
 	    	},
 	    	flexibleAppl: {},
 	    	selectedDate: '${today}',
-	    	workPlanYn: false
+	    	workPlanYn: false,
+	    	flexCancelBtnYn: false,
+	    	workPlanBtnYn: false
   		},
   		watch: {
   			rangeInfo : function(val, oldVal) {
@@ -866,29 +881,35 @@
 					dataType: "json",
 					success: function(data) {
 						$this.rangeInfo = {};
-						
 						if(data!=null) {
 							$this.rangeInfo = data;
-							//console.log(data);
 							
 							var now = '';
 							<#if today?? && today!='' && today?exists >
 								now = '${today}';
 							</#if>
 							
+							//근무제적용취소
+							$this.flexCancelBtnYn = false;
+							if(data.sYmd!=null && moment(now).diff(data.sYmd)<0){
+								$this.flexCancelBtnYn = true;
+							}
+							
 							//근무계획작성
-							$("#workPlanBtn").hide();
+							$this.workPlanBtnYn = false;
 							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y'
 								&& now!='' && moment(now).diff(data.eYmd)<=0) {
-								$("#workPlanBtn").show();
+								$this.workPlanBtnYn = true;
 							} 
 						} else {
-							//근무계획작성 버튼 숨기기
-							$("#workPlanBtn").hide();
+							//근무제적용취소,근무계획작성 버튼 숨기기
+							$this.flexCancelBtnYn = false;
+							$this.workPlanBtnYn = false;
 						}
 					},
 					error: function(e) {
-						$("#workPlanBtn").hide();
+						$this.flexCancelBtnYn = false;
+						$this.workPlanBtnYn = false;
 						$this.rangeInfo = {};
 					}
 				});
@@ -1185,6 +1206,50 @@
 	         		$("#flexibleAppl").hide();
 	         	}
 	        },
+	        cancelFlexitime: function(){ //근무제 적용 취소
+	        	
+	        	var $this = this;
+	        
+	        	$("#loading").show();
+				
+	        	var param = $this.rangeInfo;
+	        	param.applCd = $this.rangeInfo.workTypeCd;
+	        
+         		Util.ajax({
+					url: "${rc.getContextPath()}/appl/delete",
+					type: "POST",
+					contentType: 'application/json',
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: function(data) {
+						$("loading").hide();
+						if(data!=null && data.status=='OK') {
+							$("#alertText").html("취소되었습니다.");
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+								location.reload();
+							});
+						} else {
+							$("#alertText").html(data.message);
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+							});
+						}
+						
+	 	  	         	$("#alertModal").modal("show"); 
+					},
+					error: function(e) {
+						$("loading").hide();
+						console.log(e);
+						$("#alertText").html("취소 시 오류가 발생했습니다.");
+	 	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+	 	  	         			$("#alertModal").off('hidden.bs.modal');
+	 	  	         		});
+	 	  	         		$("#alertModal").modal("show"); 
+					}
+				});
+	        	
+			},
 	        validateWorkDayResult : function(){
          		var applYn = true;
          		var forms = document.getElementById('flexibleDayPlan').getElementsByClassName('needs-validation');

@@ -23,6 +23,7 @@ import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtApplRepository;
 import com.isu.ifw.repository.WtmOtCanApplRepository;
+import com.isu.ifw.repository.WtmOtSubsCanApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
@@ -66,6 +67,9 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmOtCanApplMapper wtmOtCanApplMapper;
+	
+	@Autowired
+	WtmOtSubsCanApplRepository wtmOtSubsCanApplRepo;
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -399,6 +403,14 @@ protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long 
 			}
 		}
 		//결재라인 저장 끝
+	}
+
+	@Override
+	public void delete(Long applId) {
+		wtmOtSubsCanApplRepo.deleteByApplId(applId);
+		wtmOtCanApplRepo.deleteByApplId(applId);
+		wtmApplLineRepo.deleteByApplId(applId);
+		wtmApplRepo.deleteById(applId);
 	}
 	
 

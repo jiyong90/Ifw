@@ -14,6 +14,7 @@
 			     , FA.EYMD AS eYmd
 			     , FA.WORK_DAY AS workDay
 			     , FA.REASON AS reason
+			     , A.APPL_SABUN AS sabun
 			     , A.APPL_CD AS applCd
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
