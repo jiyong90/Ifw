@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
@@ -148,6 +149,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		
 	}
 
+	@Transactional
 	@Override
 	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
 			String sabun, Long userId) throws Exception {
@@ -262,6 +264,8 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 									// 삭제하려는 데이터면 이전 데이터가 SUBS 인지를 체크 한다.
 									if(workDayResults.get(cnt-1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS)) {
 										isPrev = false;
+									}else {
+										isPrev = true;
 									}
 									// 삭제하려는 데이터가 마지막인지 확인하자
 									if(workDayResults.size() == (cnt+1)) {

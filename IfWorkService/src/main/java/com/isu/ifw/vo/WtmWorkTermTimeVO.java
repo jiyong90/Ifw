@@ -7,8 +7,8 @@ public class WtmWorkTermTimeVO {
 	private String enterCd;
 	private String sabun;
 	private String workTypeCd;
-	private String flexubleSdate;
-	private String flexubleEdate;
+	private String flexibleSdate;
+	private String flexibleEdate;
 	private String weekSdate;
 	private String weekEdate;
 	private int avlMinute;
@@ -50,17 +50,17 @@ public class WtmWorkTermTimeVO {
 	public void setWorkTypeCd(String workTypeCd) {
 		this.workTypeCd = workTypeCd;
 	}
-	public String getFlexubleSdate() {
-		return flexubleSdate;
+	public String getFlexibleSdate() {
+		return flexibleSdate;
 	}
-	public void setFlexubleSdate(String flexubleSdate) {
-		this.flexubleSdate = flexubleSdate;
+	public void setFlexibleSdate(String flexibleSdate) {
+		this.flexibleSdate = flexibleSdate;
 	}
-	public String getFlexubleEdate() {
-		return flexubleEdate;
+	public String getFlexibleEdate() {
+		return flexibleEdate;
 	}
-	public void setFlexubleEdate(String flexubleEdate) {
-		this.flexubleEdate = flexubleEdate;
+	public void setFlexibleEdate(String flexibleEdate) {
+		this.flexibleEdate = flexibleEdate;
 	}
 	public String getWeekSdate() {
 		return weekSdate;
