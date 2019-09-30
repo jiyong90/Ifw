@@ -26,7 +26,6 @@ import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtApplRepository;
 import com.isu.ifw.repository.WtmOtCanApplRepository;
 import com.isu.ifw.repository.WtmOtSubsApplRepository;
-import com.isu.ifw.repository.WtmOtSubsCanApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
@@ -58,6 +57,9 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmOtCanApplRepository wtmOtCanApplRepo;
+	
+	@Autowired
+	WtmOtSubsApplRepository wtmOtSubsCanApplRepo;
 
 	@Autowired
 	WtmOtSubsApplRepository wtmOtSubsApplRepo;
@@ -233,22 +235,11 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 						 
 						Date sdate = otSubsAppl.getSubsSdate();
 						Date edate = otSubsAppl.getSubsEdate();
-						
-						Date minDate = sdate;
-						Date maxDate = edate;
+						 
 						int cnt = 0;
 						Boolean isPrev = null;
 						for(WtmWorkDayResult res : workDayResults) {
-							
-							//res.getPlanSdate() 이게 작으
-							if(res.getPlanSdate().compareTo(minDate) == -1) {
-								minDate = res.getPlanSdate();
-							}
-							
-							if(res.getPlanEdate().compareTo(maxDate) == 1) {
-								maxDate = res.getPlanEdate();
-							}
-							
+							 
 							if(res.getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS) && res.getPlanSdate().compareTo(sdate) == 0 && res.getPlanEdate().compareTo(edate) == 0) {
 								if(cnt == 0) {
 									//시작시간이 대체휴일이면 다음 데이터 여부를 판단하고 다음데이터가 SUBS BASE로 변경하자
