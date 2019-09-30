@@ -48,6 +48,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 			time.put("workShm", l.getWorkShm());
 			time.put("workEhm", l.getWorkEhm());
 			time.put("holYn", l.getHolYn());
+			time.put("holTimeCdMgrId", l.getHolTimeCdMgrId());
 			time.put("lateChkYn", l.getLateChkYn());
 			time.put("leaveChkYn", l.getLeaveChkYn());
 			time.put("absenceChkYn", l.getAbsenceChkYn());
@@ -77,6 +78,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 						code.setWorkShm(l.get("workShm").toString());
 						code.setWorkEhm(l.get("workEhm").toString());
 						code.setHolYn(l.get("holYn").toString());
+						code.setHolTimeCdMgrId(l.get("holTimeCdMgrId").toString().equals("") ? null : Long.parseLong(l.get("holTimeCdMgrId").toString()));
 						code.setLateChkYn(l.get("lateChkYn").toString());
 						code.setLeaveChkYn(l.get("leaveChkYn").toString());
 						code.setAbsenceChkYn(l.get("absenceChkYn").toString());
