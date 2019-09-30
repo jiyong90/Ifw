@@ -271,6 +271,7 @@
 .fc-time-grid-event.fc-event.taa,
 .fc-time-grid-event.fc-event.TAA {
   background-color: rgba(255, 136, 0, 0.3);
+  cursor: default;
 }
 
 /* 4) BASE */
