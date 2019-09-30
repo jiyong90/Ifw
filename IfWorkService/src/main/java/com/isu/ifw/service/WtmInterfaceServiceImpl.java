@@ -334,7 +334,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		// 인터페이스 결과 저장용
     	String retMsg = null;
     	int resultCnt = 0;
-    	String ifType = "TTIM014";
+    	String ifType = "V_IF_TAA_CODE";
     	Map<String, Object> ifHisMap = new HashMap<>();
     	ifHisMap.put("tenantId", tenantId);
     	ifHisMap.put("ifItem", ifType);

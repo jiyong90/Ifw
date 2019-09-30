@@ -206,4 +206,11 @@ public interface WtmFlexibleEmpMapper {
 	
 	
 	
+	/**
+	 * 탄력근무제의 계획 생성
+	 * @param flexibleEmpId
+	 * @param userId
+	 */
+	public void createFlexibleApplDet(@Param("flexibleApplId")Long flexibleApplId, @Param("userId")Long userId);
+	
 }

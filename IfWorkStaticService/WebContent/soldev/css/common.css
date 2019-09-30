@@ -25,6 +25,18 @@ ul, ol, li{
   border-color: #26978a;
 }
 
+.btn-cancel {
+  font-size: 14px;
+  color: #1f3b78;
+  background-color: #ffffff;
+  border-color: #6b6b80;
+}
+
+.btn-cancel:hover{
+  background-color: #e6e6e6;
+  border-color: #3e3e4c;
+}
+
 .btn-outline{
   color: #c4c4c4;
   border-color: #cfcfcf;
@@ -859,6 +871,30 @@ No media query for `xs` since this is the default in Bootstrap */
     right: 0;
     display:block;
   }
+}
+
+/* custom ToolTip - jBox */
+.tooltip-st{cursor:pointer;}
+.tooltip-st i.far{color:#008fd5;}
+
+/* tooltip box border color */
+.jBox-TooltipBorder .jBox-container, .jBox-TooltipBorder .jBox-pointer:after{
+	border: 2px solid #d6d6d6;
+}
+/* tooltip box border color */
+.jBox-TooltipBorder.jBox-closeButton-box:before{
+	background: #d6d6d6;
+}
+.jBox-content{
+	padding: 12px 20px;
+	font-size: 12px;
+}
+.jBox-TooltipBorder .jBox-pointer:after{
+	width: 14px;
+	height: 14px;
+}
+.jBox-pointer-bottom:after{
+	bottom:8px;
 }
 
 /* Medium devices (tablets, 768px and up) */

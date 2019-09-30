@@ -27,14 +27,14 @@
                                         <div class="form-row">
                                             <div class="d-sm-none d-lg-block ml-md-auto"></div>
                                             <div class="col col-md-3 col-lg-3" data-target-input="nearest">
-                                                <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="sDate" data-toggle="datetimepicker" data-target="#sDate" placeholder="연도-월-일" autocomplete="off" required>
+                                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="sDate" data-toggle="datetimepicker" data-target="#sDate" placeholder="연도-월-일" autocomplete="off" required>
                                             </div>
                                             <div class="col col-md col-lg" data-target-input="nearest">
                                                 <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="sTime" data-toggle="datetimepicker" data-target="#sTime" autocomplete="off" required>
                                             </div>
                                             <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1">~</span>
                                             <div class="col col-md-3 col-lg-3" data-target-input="nearest">
-                                                <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="eDate" data-toggle="datetimepicker" data-target="#eDate" placeholder="연도-월-일" autocomplete="off" required>
+                                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="eDate" data-toggle="datetimepicker" data-target="#eDate" placeholder="연도-월-일" autocomplete="off" required>
                                             </div>
                                             <div class="col col-md col-lg" data-target-input="nearest">
                                                 <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="eTime" data-toggle="datetimepicker" data-target="#eTime" autocomplete="off" required>
@@ -354,7 +354,7 @@
     </div>
     <!-- 연장근무신청 상세보기 modal end -->
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :custombuttons="customButtons" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">
@@ -403,10 +403,18 @@
   		    },
   		    data : {
   		    	t: true,
+  		    	customButtons: {
+  		        	month_calendar: {
+  		            	text: '근태달력보기',
+  		              	click: function() {
+  		              		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';
+  		              	}	
+  		          	}
+  		       	},
   		    	header: {
   		    		left: 'prev,next',
 			        center: 'title',
-			        right: ''
+			        right: 'month_calendar'
   		    	},
   		    	view: 'timeGridDay',
   		    	result: {}, //일근무시간

@@ -60,6 +60,13 @@
 					return 'ko';
 				}
 			},
+			custombuttons : {
+				type: Object,
+				required: false,
+				default : function(){
+					return {};
+				}
+			},
 			header : {
 				type: Object,
 				required: false,
@@ -205,6 +212,10 @@
 			        contentHeight: this.contentHeight,
 			        handleWindowResize: this.handleWindowResize
 				};
+				
+				if(this.custombuttons!='') {
+					option.customButtons = this.custombuttons;
+				}
 				
 				if(this.defaultview!='') {
 					option.defaultView = this.defaultview;

@@ -30,7 +30,9 @@
 <script src="${rc.getContextPath()}/IBLeaders/Sheet/js/ibsheet.js" type="text/javascript"></script>
 <script src="${rc.getContextPath()}/IBLeaders/Sheet/js/ibsheetcalendar.js" type="text/javascript"></script>
 <script src="${rc.getContextPath()}/IBLeaders/common.js" type="text/javascript"></script>
-<script src="${rc.getContextPath()}/IBLeaders/commonIBSheet.js" type="text/javascript"></script> 
+<script src="${rc.getContextPath()}/IBLeaders/commonIBSheet.js" type="text/javascript"></script>
+
+<script src="${rc.getContextPath()}/jBox-1.0.5/dist/jBox.all.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
  	var Util = {

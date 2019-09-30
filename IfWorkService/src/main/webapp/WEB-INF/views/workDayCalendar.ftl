@@ -1,7 +1,7 @@
 <div id="dayCalendar" class="calendar-wrap" v-cloak>
     <div id='calendar-container'>
 		<!-- <full-calendar ref="fullCalendar" :header="header" :events="events" :eventsources="eventSources" @update="renderCallback" @datesrender="datesRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" ></full-calendar> -->
-		<full-calendar ref="fullCalendar" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @dayrender="dayRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :custombuttons="customButtons" :header="header" @update="renderCallback" @datesrender="datesRenderCallback" @dayrender="dayRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">
@@ -11,10 +11,18 @@
   				FullCalendar : fullCalendarComponent
   		    },
   		    data : {
+  		    	customButtons: {
+  		        	month_calendar: {
+  		            	text: '근태달력보기',
+  		              	click: function() {
+  		              		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';
+  		              	}	
+  		          	}
+  		       	},
   		    	header: {
   		    		left: 'prev,next',
 			        center: 'title',
-			        right: ''
+			        right: 'month_calendar'
   		    	},
   		    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
   		    	data: [],
@@ -415,7 +423,7 @@
 			  		    				}
 									}
 								});
-								console.log(dayWorks);
+								//console.log(dayWorks);
 								$this.dayWorks = dayWorks;
 								
 								//상세 계획 입력 화면 전환
@@ -739,6 +747,9 @@
          				flexibleEmpId : calendarLeftVue.flexibleAppl.flexibleEmpId,
          				dayResult : $this.dayResult
 	   		    	};
+         			
+         			//dayResult는 이런 형식 {ymd : {shm: 0900, ehm: 1800} }
+         			//console.log($this.dayResult);
          			
    		    		Util.ajax({
 						url: "${rc.getContextPath()}/flexibleEmp/save",
