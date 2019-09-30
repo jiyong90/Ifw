@@ -38,7 +38,7 @@
 			workPlan: {}
 		},
 		watch: {
-			workPlan : function(val, oldVal) {
+			/* workPlan : function(val, oldVal) {
 				//근무계획작성 버튼 컨트롤
 				if(val.toDoPlanDays && Number(val.toDoPlanDays)!=0) {
 					if($("#workPlanBtn").length || $("#workPlanBtn").length==1)
@@ -48,7 +48,7 @@
 						workPlanYn = false;
 				}
 					
-			}
+			} */
 		},
 		mounted : function() {
 			this.getInboxList();

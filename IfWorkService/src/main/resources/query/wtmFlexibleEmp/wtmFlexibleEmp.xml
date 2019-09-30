@@ -126,6 +126,7 @@
 			  , M.BASE_WORK_YN AS baseWorkYn
 			  , M.DEFAULT_WORK_MINUTE AS defaultWorkMinute
 			  , M.UNIT_MINUTE AS unitMinute
+			  , E.SABUN AS sabun
 			  , E.SYMD AS sYmd
 			  , E.EYMD AS eYmd
 			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
@@ -133,6 +134,16 @@
 			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
 			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
 			  , T.AVL_MINUTE AS avlMinute
+			  , (SELECT A.APPL_ID 
+			       FROM WTM_APPL A 
+					 JOIN WTM_FLEXIBLE_APPL F 
+					   ON A.APPL_ID = F.APPL_ID 
+					WHERE A.TENANT_ID = E.TENANT_ID 
+					  AND A.ENTER_CD = E.ENTER_CD 
+					  AND A.APPL_SABUN = E.SABUN
+					  AND F.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
+					  AND F.SYMD = E.SYMD
+					  AND F.EYMD = E.EYMD) AS applId
 		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_FLEXIBLE_STD_MGR M
 			 ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
@@ -985,4 +996,23 @@
 			 WHERE F.FLEXIBLE_APPL_ID = #{flexibleApplId}
 			   AND C.YMD IS NULL
     </update>
+    
+    <update id="deleteByApplId" parameterType="Long">
+		DELETE E 
+		FROM WTM_FLEXIBLE_EMP E 
+		JOIN ( SELECT A.TENANT_ID
+		            , A.ENTER_CD
+		            , A.APPL_SABUN
+		            , F.*
+			     FROM WTM_APPL A 
+				 JOIN WTM_FLEXIBLE_APPL F 
+				   ON A.APPL_ID = F.APPL_ID 
+				WHERE A.APPL_ID = #{applId}) S
+		  ON S.TENANT_ID = E.TENANT_ID 
+		  AND S.ENTER_CD = E.ENTER_CD 
+		  AND S.APPL_SABUN = E.SABUN
+		  AND S.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
+		  AND S.SYMD = E.SYMD
+		  AND S.EYMD = E.EYMD
+	</update>
 </mapper>

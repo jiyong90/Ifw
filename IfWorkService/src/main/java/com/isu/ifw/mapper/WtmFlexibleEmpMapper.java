@@ -213,4 +213,6 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public void createFlexibleApplDet(@Param("flexibleApplId")Long flexibleApplId, @Param("userId")Long userId);
 	
+	public void deleteByApplId(@Param("applId") Long applId);
+	
 }

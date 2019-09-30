@@ -607,6 +607,14 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void delete(Long applId) {
+		wtmFlexibleEmpMapper.deleteByApplId(applId);
+		wtmFlexibleApplRepo.deleteByApplId(applId);
+		wtmApplLineRepo.deleteByApplId(applId);
+		wtmApplRepo.deleteById(applId);
+	}
  
 
 }

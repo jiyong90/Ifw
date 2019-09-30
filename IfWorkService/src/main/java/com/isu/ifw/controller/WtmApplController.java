@@ -174,6 +174,53 @@ public class WtmApplController {
 		return rp;
 	}
 	
+	@RequestMapping(value="/delete", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam deleteAppl(@RequestBody Map<String, Object> paramMap
+												, HttpServletRequest request) {
+		
+		validateParamMap(paramMap, "applCd", "applId");
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		
+		Long applId = Long.valueOf(paramMap.get("applId").toString());
+		String applCd = paramMap.get("applCd").toString();
+				
+		try {
+			if(applCd!=null && !"".equals(applCd)) {
+				if("OT".equals(applCd)) {
+					wtmOtApplService.delete(applId);
+				} else if("OT_CAN".equals(applCd)) {
+					wtmOtCanApplService.delete(applId);
+				} else {
+					flexibleApplService.delete(applId);
+					
+					if(paramMap.containsKey("sabun") && paramMap.containsKey("sYmd") && paramMap.containsKey("eYmd")) {
+						paramMap.put("tenantId", tenantId);
+						paramMap.put("enterCd", enterCd);
+						paramMap.put("userId", userId);
+						wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
+						
+						wymAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
+					}
+					
+				}
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
+	
 	/**
 	 * 파라미터 맵의 유효성을 검사한다.
 	 * 파라미터가 다음의 두 조건을 만족하지 않으면, InvalidParameterException를 발생한다.

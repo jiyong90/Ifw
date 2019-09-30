@@ -1,4 +1,29 @@
 <div id="timeCalendar" class="calendar-wrap" v-cloak>
+	<!--confirm modal start -->
+    <div class="modal fade show" id="confirmModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <!-- <h5 class="modal-title">모달제목이 들어갑니다.</h5> -->
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap">
+                        	회수 시 신청서 데이터가 모두 삭제됩니다.<br>회수하시겠습니까?
+                        </div>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-default rounded-0" @click="recoveryAppl">확인</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--confirm modal end -->
 	<!-- 연장근무신청 modal start -->
     <div class="modal fade show" id="overtimeAppl" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
@@ -341,10 +366,13 @@
                             </div>
                             <hr class="bar">
                         </div>
-                        <div class="btn-wrap text-center" v-if="overtimeAppl.otCanApplId==null||overtimeAppl.otCanApplId==undefined||overtimeAppl.otCanApplId==''">
-                        	<template v-if="overtimeAppl.applStatusCd=='99'">
+                        <div class="btn-wrap text-center">
+                        	<template v-if="(overtimeAppl.otCanApplId==null||overtimeAppl.otCanApplId==undefined||overtimeAppl.otCanApplId=='') && overtimeAppl.applStatusCd=='99'">
                             	<button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
                             	<button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
+                        	</template>
+                        	<template v-else>
+                            	<button type="button" id="recoveryBtn" class="btn btn-default rounded-0" style="display:none;" data-toggle="modal" data-target="#confirmModal">회수하기</button>
                         	</template>
                         </div>
                     </form>
@@ -798,6 +826,23 @@
 						success: function(data) {
 							if(data!=null) {
 								$this.overtimeAppl = data;
+								
+								//결재요청중일 때 회수 버튼 보여주기
+								if(data.hasOwnProperty("applLine") && data.applLine!=null){
+									var isRecovery = false;
+									data.applLine.map(function(line){
+										if(line.apprSeq==1 && line.apprStatusCd=='10')
+											isRecovery = true;
+									});
+									
+									if(isRecovery) {
+										$("#recoveryBtn").show();
+									} else {
+										$("#recoveryBtn").hide();
+									}
+								}
+								
+								
 								$("#overtimeApplDetail").modal("show"); 
 							}
 						},
@@ -949,6 +994,8 @@
   	         		if(isValid) {
   	         			var msg = '';
   	         			
+  	         			$("loading").show();
+  	         			
   	         			//신청하려는 ot시간이 소정근무시간에 해당되지 않는지 체크
   	         			var sDate = $("#sDate").val().replace(/-/gi,"");
 			   			var eDate = $("#eDate").val().replace(/-/gi,"");
@@ -1070,8 +1117,6 @@
   	         	otAppl : function(otSdate, otEdate){ //연장근무신청
   	         		var $this = this;
   	         	
-  	         		$("loading").show();
-  	         	
   	         		var holidayYn = $this.result.holidayYn;
   	         		var subYn = '';
   	         	
@@ -1192,6 +1237,59 @@
 					});
   	         		
   	         	},
+  	         	recoveryAppl: function(){
+  	         		var $this = this;
+					
+					var param = {
+  	         			applCd : $this.overtimeAppl.applCd,
+  	         			applId : $this.overtimeAppl.applId
+  	         		};
+					
+					if($this.overtimeAppl.hasOwnProperty('otCanAppl') && $this.overtimeAppl.otCanAppl!=null && $this.overtimeAppl.otCanAppl!=undefined) {
+						var otCanAppl = $this.overtimeAppl.otCanAppl;
+						console.log('otCanAppl');
+						console.log(otCanAppl);
+						param = {
+	  	         			applCd : otCanAppl.applCd,
+	  	         			applId : otCanAppl.applId
+	  	         		};
+					}
+					
+  	         		Util.ajax({
+						url: "${rc.getContextPath()}/appl/delete",
+						type: "POST",
+						contentType: 'application/json',
+						data: JSON.stringify(param),
+						dataType: "json",
+						success: function(data) {
+							$("loading").hide();
+							if(data!=null && data.status=='OK') {
+								$("#alertText").html("회수되었습니다.");
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
+								});
+							} else {
+								$("#alertText").html(data.message);
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+								});
+							}
+							
+	  	  	         		$("#alertModal").modal("show"); 
+						},
+						error: function(e) {
+							$("loading").hide();
+							console.log(e);
+							$("#alertText").html("회수 시 오류가 발생했습니다.");
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+	  	  	         			$("#alertModal").off('hidden.bs.modal');
+	  	  	         		});
+	  	  	         		$("#alertModal").modal("show"); 
+						}
+					});
+						
+  	         	},
   	         	changeSubYn: function(val){
   	         		var $this = this;
   	         		
@@ -1209,7 +1307,7 @@
   	                    $(".radio-toggle-wrap").hide(500);
   	                }
   	         		
-  	         		console.log(val);
+  	         		//console.log(val);
   	         	},
   	         	calcSubsTime: function(id) { //휴일 대체 근로 시간 계산
   	         		var $this = this;
