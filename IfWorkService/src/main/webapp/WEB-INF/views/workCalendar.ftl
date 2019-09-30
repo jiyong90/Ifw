@@ -889,17 +889,18 @@
 								now = '${today}';
 							</#if>
 							
-							//근무제적용취소
 							$this.flexCancelBtnYn = false;
-							if(data.sYmd!=null && moment(now).diff(data.sYmd)<0){
-								$this.flexCancelBtnYn = true;
-							}
-							
-							//근무계획작성
 							$this.workPlanBtnYn = false;
-							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y'
-								&& now!='' && moment(now).diff(data.eYmd)<=0) {
-								$this.workPlanBtnYn = true;
+							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
+								
+								//근무제적용취소
+								if(data.sYmd!=null && moment(now).diff(data.sYmd)<0){
+									$this.flexCancelBtnYn = true;
+								}
+								
+								//근무계획작성
+								if(now!='' && moment(now).diff(data.eYmd)<=0)
+									$this.workPlanBtnYn = true;
 							} 
 						} else {
 							//근무제적용취소,근무계획작성 버튼 숨기기
