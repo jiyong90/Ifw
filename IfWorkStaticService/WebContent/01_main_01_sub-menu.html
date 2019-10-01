@@ -387,19 +387,34 @@
                         <span class="title">유연근무관리</span>
                     </a>
                     <ul id="lnb-sub">
-                        <li class="active"><a href="#">기본근무시간관리</a></li>
-                        <li><a href="#">근무유형관리</a></li>
-                        <li><a href="#">유연근무제도관리</a></li>
-                        <li><a href="#submenu-list" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">근태달력관리</a>
+                        <li><a href="#submenu-list" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">근태기본조회</a>
                             <ul class="collapse list-unstyled" id="submenu-list">
-                                <li class="active"><a href="#">[연계]코드관리</a></li>
-                                <li><a href="#">[연계]근태코드관리</a></li>
-                                <li><a href="#">[연계]사원정보</a></li>
-                                <li><a href="#">[연계]사원이력</a></li>
-                                <li><a href="#">[연계]근무조대상자관리</a></li>
+                                <li class="active"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/codeMgr';">[연계]코드관리</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaCodeMgr';">[연계]근태코드관리</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empHisMgr';">[연계]사원정보</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ifEmpMsg';">[연계]사원이력</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamMgr';">[연계]근무조관리</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamEmp';">[연계]근무조대상자관리</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/applCode';">신청서관리</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/pushMgr';">알림관리</a></li>
                             </ul>
                         </li>
-                        <li><a href="#">유연근무제도관리</a></li>
+                        <li class="active"><a href="#submenu-list1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">근무제도관리</a>
+                        	<ul class="collapse list-unstyled" id="submenu-list1">
+                                <li class="active"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">근무시간표관리</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/baseWorkMgr';">기본근무시간관리</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">근무제도관리</a></li>                                
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleApplyMgr';">근무제도적용</a></li>                                
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">개인별 근무제도 조회</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">개인별근무시간관리</a></li>
+                        <li><a href="#submenu-list2" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">보상휴가관리</a>
+                            <ul class="collapse list-unstyled" id="submenu-list2">
+                                <li class="active"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compMgr';">보상휴가기준관리</a></li>
+                                <li><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compCreateList';">보상휴가시간조회</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
             </ul>
