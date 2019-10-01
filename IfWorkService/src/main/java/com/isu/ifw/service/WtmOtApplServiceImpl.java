@@ -278,9 +278,14 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			for(WtmPropertie propertie : properties) {
 				if(propertie.getInfoKey().equals("OPTION_OT_NIGHT_HHMM_S")) {
 					n_shm = propertie.getInfoValue();
-				}else if(propertie.getInfoKey().equals("OPTION_OT_NIGHT_HHMM_S")) {
+				}else if(propertie.getInfoKey().equals("OPTION_OT_NIGHT_HHMM_E")) {
 					n_ehm = propertie.getInfoValue();
 				}
+			}
+			
+			if("".equals(n_shm) || "".equals(n_ehm)) {
+				rp.setFail("야간 근무시간 정보가 없습니다. 담당자에게 문의하시기 바랍니다.");
+				throw new RuntimeException(rp.get("message").toString());
 			}
 			
 			Date otNightSdate = format.parse(otAppl.getYmd()+n_shm);

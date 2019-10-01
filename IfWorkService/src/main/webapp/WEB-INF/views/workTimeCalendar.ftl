@@ -511,7 +511,7 @@
   		    	},
   		    	eventClickCallback : function(info){
   		    		//상세보기
-  		    		if(info.event.extendedProps.timeTypeCd=='OT') {
+  		    		if(info.event.extendedProps.timeTypeCd=='OT' || info.event.extendedProps.timeTypeCd=='NIGHT') {
   		    			this.viewOvertimeApplDetail(info.event.extendedProps.applId);
   		    		}
   		    	},
