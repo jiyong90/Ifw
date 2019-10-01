@@ -48,6 +48,8 @@ public interface WtmApplService {
 	final static String TIME_TYPE_BASE = "BASE";
 	//연장근무
 	final static String TIME_TYPE_OT = "OT";
+	//연장근무
+	final static String TIME_TYPE_NIGHT = "NIGHT";
 	//대체휴가
 	final static String TIME_TYPE_SUBS = "SUBS";
 	//간주근무
