@@ -454,6 +454,7 @@ a.article:hover {
 }
 
 #sidebar #lnb-sub a{
+  padding: 7px 0px;
   text-align:left;
   font-size:12px;
   color:#3e3e4c;
@@ -461,14 +462,16 @@ a.article:hover {
   word-break:keep-all;
 }
 
-#sidebar #lnb-sub li.active a {
+#sidebar #lnb-sub li.active>a {
   font-weight: bold;
   color: #4d84fe;
 }
 
-#sidebar #lnb-sub>li>a{
-  padding:7px 0px;
+#sidebar #lnb-sub li.active li>a {
+  font-weight: 400;
+  color:#3e3e4c;
 }
+
 
 #sidebar #lnb-sub ul{
   border-top:1px solid #dcdcdc;
@@ -822,3 +825,4 @@ No media query for `xs` since this is the default in Bootstrap */
     margin-left: 0px;
   }
 }
+
