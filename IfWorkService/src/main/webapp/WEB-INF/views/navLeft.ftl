@@ -17,7 +17,7 @@
                 </li>
             </ul>
         </li> -->
-        <li :class="{active: curPageName==''||curPageName=='workCalendar'}">
+        <li :class="{active: curMenu!='flexibleMgr'&& (curPageName==''||curPageName=='workCalendar')}">
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';">
                 <i class="fas fa-calendar-alt"></i>
                 <span class="title">근태 캘린더</span>
@@ -29,7 +29,7 @@
                 <span class="title">결재</span>
             </a>
         </li>
-        <li :class="{active: curPageName!=''||curPageName!='workCalendar'||curPageName!='approvalList'}" @click="curMenu='flexibleMgr'">
+        <li :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'">
         	<a href="#" id="lnb-mng">
                 <i class="fas fa-laptop"></i>
                 <span class="title">유연근무관리</span>
