@@ -20,7 +20,7 @@
         <li :class="{active: curPageName==''||curPageName=='workCalendar'}">
             <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';">
                 <i class="fas fa-calendar-alt"></i>
-                <span class="title">나의 정보 </span>
+                <span class="title">근태 캘린더</span>
             </a>
         </li>
         <li :class="{active: curPageName=='approvalList'}">
@@ -29,87 +29,47 @@
                 <span class="title">결재</span>
             </a>
         </li>
-        <li :class="{active: curPageName=='codeMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/codeMgr';">
-                <span class="title">코드관리</span>
+        <li :class="{active: curPageName!=''||curPageName!='workCalendar'||curPageName!='approvalList'}" @click="curMenu='flexibleMgr'">
+        	<a href="#" id="lnb-mng">
+                <i class="fas fa-laptop"></i>
+                <span class="title">유연근무관리</span>
             </a>
+            <ul id="lnb-sub">
+                <li :class="{active: curSubMenu=='sub1'}">
+                	<a href="#submenu-list" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">근태기본조회</a>
+                    <ul class="collapse list-unstyled" id="submenu-list">
+                        <li :class="{active: curPageName=='codeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/codeMgr';">[연계]코드관리</a></li>
+                        <li :class="{active: curPageName=='taaCodeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaCodeMgr';">[연계]근태코드관리</a></li>
+                        <li :class="{active: curPageName=='empHisMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empHisMgr';">[연계]사원정보</a></li>
+                        <li :class="{active: curPageName=='ifEmpMsg'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ifEmpMsg';">[연계]사원이력</a></li>
+                        <li :class="{active: curPageName=='workteamMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamMgr';">[연계]근무조관리</a></li>
+                        <li :class="{active: curPageName=='workteamEmp'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamEmp';">[연계]근무조대상자관리</a></li>
+                        <li :class="{active: curPageName=='applCode'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/applCode';">신청서관리</a></li>
+                        <li :class="{active: curPageName=='pushMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/pushMgr';">알림관리</a></li>
+                    </ul>
+                </li>
+                <li :class="{active: curSubMenu=='sub2'}">
+                	<a href="#submenu-list1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">근무제도관리</a>
+                	<ul class="collapse list-unstyled" id="submenu-list1">
+                        <li :class="{active: curPageName=='timeCdMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">근무시간표관리</a></li>
+                        <li :class="{active: curPageName=='baseWorkMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/baseWorkMgr';">기본근무시간관리</a></li>
+                        <li :class="{active: curPageName=='flexibleStdMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">근무제도관리</a></li>                                
+                        <li :class="{active: curPageName=='flexibleApplyMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleApplyMgr';">근무제도적용</a></li>                                
+                        <li :class="{active: curPageName=='flexibleEmp'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">개인별 근무제도 조회</a></li>
+                    </ul>
+                </li>
+                <li :class="{active: curSubMenu=='sub3'}">
+                	<a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">개인별근무시간관리</a>
+                </li>
+                <li :class="{active: curSubMenu=='sub4'}">
+                	<a href="#submenu-list2" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">보상휴가관리</a>
+                    <ul class="collapse list-unstyled" id="submenu-list2">
+                        <li :class="{active: curPageName=='compMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compMgr';">보상휴가기준관리</a></li>
+                        <li :class="{active: curPageName=='compCreateList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compCreateList';">보상휴가시간조회</a></li>
+                    </ul>
+                </li>
+            </ul>
         </li>
-        <li :class="{active: curPageName=='taaCodeMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaCodeMgr';">
-                <span class="title">근태코드관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='empHisMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empHisMgr';">
-                <span class="title">사원정보</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='ifEmpMsg'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ifEmpMsg';">
-                <span class="title">사원이력</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='baseWorkMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/baseWorkMgr';">
-                <span class="title">기본근무시간관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='workteamMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamMgr';">
-                <span class="title">근무조관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='workteamEmp'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamEmp';">
-                <span class="title">근무조대상자관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='empCalendarMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">
-                <span class="title">개인별근무시간관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='timeCdMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">
-                <span class="title">근무유형관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='flexibleStdMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">
-                <span class="title">근무제도관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='flexibleApplyMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleApplyMgr';">
-                <span class="title">근무제도적용</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='flexibleEmp'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">
-                <span class="title">개인별 근무제도 조회</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='applCode'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/applCode';">
-                <span class="title">신청서관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='pushMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/pushMgr';">
-                <span class="title">알림관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='compMgr'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compMgr';">
-                <span class="title">보상휴가기준관리</span>
-            </a>
-        </li>
-        <li :class="{active: curPageName=='compCreateList'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compCreateList';">
-                <span class="title">보상휴가시간조회</span>
-            </a>
-        </li>
-        
     </ul>
 
     <!-- <ul class="list-unstyled CTAs">
@@ -135,11 +95,34 @@
 	var navLeftVue = new Vue({
 		el: "#sidebar",
 		data : {
+			curMenu: '',
+			curSubMenu: '',
 			curPageName: ''
 		},
 		mounted: function(){
 			var path = $(location).attr('pathname');
-			this.curPageName = path.substring(path.lastIndexOf('/') + 1);
+			var pageName = path.substring(path.lastIndexOf('/') + 1);
+			
+			if(pageName=='codeMgr'||pageName=='taaCodeMgr'||pageName=='empHisMgr'||pageName=='ifEmpMsg'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='applCode'||pageName=='pushMgr')
+				this.curSubMenu = 'sub1';
+			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
+				this.curSubMenu = 'sub2';
+			else if(pageName=='empCalendarMgr')
+				this.curSubMenu = 'sub3';
+			else if(pageName=='compMgr'||pageName=='compCreateList')
+				this.curSubMenu = 'sub4';
+					
+			this.curPageName = pageName;
+			
+			console.log('this.curMenu : ' + this.curMenu);
+			console.log('this.curPageName : ' + this.curPageName);
 		}
+	});
+	
+	$(function(){
+		//lnb-sub-menu
+	    $('#lnb-mng').on('click', function () {
+	        $(this).siblings('#lnb-sub').toggleClass('active');
+	    });
 	});
 </script>
