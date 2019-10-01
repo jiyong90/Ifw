@@ -355,7 +355,7 @@
                                         <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
                                     </span>
                                 </div>
-                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.sDate).format('HH:mm')}}~{{moment(sub.eDate).format('HH:mm')}} 입니다.</div>
+                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
                                 </template>
                             </div>
                             <div class="inner-wrap" v-if="overtimeAppl.cancelReason">
