@@ -36,8 +36,8 @@
             </a>
             <ul id="lnb-sub">
                 <li :class="{active: curSubMenu=='sub1'}">
-                	<a href="#submenu-list" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">근태기본조회</a>
-                    <ul class="collapse list-unstyled" id="submenu-list">
+                	<a href="#submenu-list" data-toggle="collapse" :aria-expanded="curSubMenu=='sub1'?true:false" class="dropdown-toggle">근태기본조회</a>
+                    <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub1'}" id="submenu-list">
                         <li :class="{active: curPageName=='codeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/codeMgr';">[연계]코드관리</a></li>
                         <li :class="{active: curPageName=='taaCodeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaCodeMgr';">[연계]근태코드관리</a></li>
                         <li :class="{active: curPageName=='empHisMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empHisMgr';">[연계]사원정보</a></li>
@@ -49,8 +49,8 @@
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub2'}">
-                	<a href="#submenu-list1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">근무제도관리</a>
-                	<ul class="collapse list-unstyled" id="submenu-list1">
+                	<a href="#submenu-list1" data-toggle="collapse" :aria-expanded="curSubMenu=='sub2'?true:false" class="dropdown-toggle">근무제도관리</a>
+                	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub2'}" id="submenu-list1">
                         <li :class="{active: curPageName=='timeCdMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">근무시간표관리</a></li>
                         <li :class="{active: curPageName=='baseWorkMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/baseWorkMgr';">기본근무시간관리</a></li>
                         <li :class="{active: curPageName=='flexibleStdMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">근무제도관리</a></li>                                
@@ -62,8 +62,8 @@
                 	<a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">개인별근무시간관리</a>
                 </li>
                 <li :class="{active: curSubMenu=='sub4'}">
-                	<a href="#submenu-list2" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">보상휴가관리</a>
-                    <ul class="collapse list-unstyled" id="submenu-list2">
+                	<a href="#submenu-list2" data-toggle="collapse" :aria-expanded="curSubMenu=='sub4'?true:false" class="dropdown-toggle">보상휴가관리</a>
+                    <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub4'}" id="submenu-list2">
                         <li :class="{active: curPageName=='compMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compMgr';">보상휴가기준관리</a></li>
                         <li :class="{active: curPageName=='compCreateList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compCreateList';">보상휴가시간조회</a></li>
                     </ul>
