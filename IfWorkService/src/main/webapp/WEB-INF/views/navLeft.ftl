@@ -113,9 +113,6 @@
 				this.curSubMenu = 'sub4';
 					
 			this.curPageName = pageName;
-			
-			console.log('this.curMenu : ' + this.curMenu);
-			console.log('this.curPageName : ' + this.curPageName);
 		}
 	});
 	
