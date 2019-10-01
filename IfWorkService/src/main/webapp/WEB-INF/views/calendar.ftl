@@ -132,6 +132,13 @@
 					return true;
 				}
 			},
+			unselectAuto : {
+				type: Boolean,
+				required: false,
+				default : function(){
+					return false;
+				}
+			},
 			selectMirror : {
 				type: Boolean,
 				required: false,
@@ -204,6 +211,7 @@
 			        //validRange: this.validRange,
 			        //navLinks: this.navLinks, 
 			        selectable: this.selectable,
+			        unselectAuto: this.unselectAuto,
 			        selectMirror: this.selectMirror,
 			        editable: this.editable,
 			        eventLimit: this.eventLimit, 
