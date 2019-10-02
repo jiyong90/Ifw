@@ -209,7 +209,7 @@ public class WtmEmpHis {
 	}
 
 
-	public String getEmpImg() {
+/*	public String getEmpImg() {
 		return empImg;
 	}
 
@@ -217,7 +217,7 @@ public class WtmEmpHis {
 	public void setEmpImg(String empImg) {
 		this.empImg = empImg;
 	}
-
+*/
 
 	public String getNote() {
 		return note;
@@ -289,8 +289,8 @@ public class WtmEmpHis {
 	private String orgPath;
 	@Column(name="LEADER_YN")
 	private String leaderYn;
-	@Column(name="EMP_IMG")
-	private String empImg;
+	//@Column(name="EMP_IMG")
+	//private String empImg;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
