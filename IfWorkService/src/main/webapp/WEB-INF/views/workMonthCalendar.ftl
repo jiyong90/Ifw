@@ -469,17 +469,17 @@
    	$(document).on("click", "#startDaySelect", function() {
 		$('.popover').remove();
 		
-		var sYmd = null;
-		var eYmd = null;
 		var selectedDay = $("#startDay").val();
 		
-		if(calendarLeftVue.flexibleAppl.hasOwnProperty('sYmd') && calendarLeftVue.flexibleAppl.sYmd!=null && calendarLeftVue.flexibleAppl.sYmd!='')
-			sYmd = calendarLeftVue.flexibleAppl.sYmd;
-		if(calendarLeftVue.flexibleAppl.hasOwnProperty('eYmd') && calendarLeftVue.flexibleAppl.eYmd!=null && calendarLeftVue.flexibleAppl.eYmd!='')
-			eYmd = calendarLeftVue.flexibleAppl.eYmd;
+		//기존에 신청중이거나 적용된 근무정보 있는지 
+		var isExist = false;
+		monthCalendarVue.monthFlexitimeList.map(function(f){
+			if(f.baseWorkYn=='N' && (moment(f.sYmd).diff(selectedDay)<=0 && moment(selectedDay).diff(f.eYmd)<=0)) {
+				isExist = true;
+			}
+		});
 		
-		if((sYmd==null && eYmd==null) || 
-				(sYmd!=null && eYmd!=null && (moment(selectedDay).diff(sYmd)<0 || moment(eYmd).diff(selectedDay)<0)) ) {
+		if(!isExist) {
 			calendarLeftVue.applInfo.useSymd = selectedDay;
 			//신청 화면 전환
 			calendarLeftVue.setUsedTermOpt();

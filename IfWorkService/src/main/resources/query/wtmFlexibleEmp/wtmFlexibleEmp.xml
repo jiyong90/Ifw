@@ -18,6 +18,7 @@
 				 , NULL AS applCd
 				 , NULL AS applStatusCd
 				 , NULL AS applStatusNm
+				 , M.BASE_WORK_YN AS baseWorkYn
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
 			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
@@ -39,6 +40,7 @@
 			     , A.APPL_CD AS applCd
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+				 , 'N' AS baseWorkYn
 			 FROM WTM_APPL A
 			 JOIN WTM_FLEXIBLE_APPL FA
 			   ON A.APPL_ID = FA.APPL_ID

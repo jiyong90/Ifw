@@ -1174,7 +1174,7 @@
 	   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
 	   		    		reason: applInfo.reason
 	   		    	};
- 	         			
+					
    		    		Util.ajax({
 						url: "${rc.getContextPath()}/flexibleAppl/request",
 						type: "POST",
