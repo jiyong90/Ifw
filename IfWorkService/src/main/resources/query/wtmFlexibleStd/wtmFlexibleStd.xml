@@ -36,7 +36,7 @@
 				   AND A.APPL_ID = #{applId}
 			  ) X
 			   ON A.TENANT_ID = X.TENANT_ID AND A.ENTER_CD = X.ENTER_CD AND A.APPL_SABUN = X.APPL_SABUN
-			WHERE A.APPL_STATUS_CD NOT IN ('11','22','44','32') 
+			WHERE A.APPL_STATUS_CD NOT IN ('11','22','44','32','99') 
 			  AND (X.SYMD <= F.EYMD OR X.EYMD <= F.SYMD)
 			  AND A.APPL_ID <> X.APPL_ID
 			UNION
@@ -52,7 +52,7 @@
 				   AND A.APPL_ID = #{applId}
 			  	) X
 			   ON A.TENANT_ID = X.TENANT_ID AND A.ENTER_CD = X.ENTER_CD AND A.SABUN = X.APPL_SABUN
-            WHERE  (X.SYMD <= A.EYMD OR X.EYMD <= A.SYMD)
+            WHERE (X.SYMD BETWEEN A.SYMD AND A.EYMD OR X.EYMD BETWEEN A.SYMD AND A.EYMD)
               AND M.BASE_WORK_YN = 'N' 
             ) XX
         ]]>

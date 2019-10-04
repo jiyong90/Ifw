@@ -892,7 +892,6 @@
 							$this.flexCancelBtnYn = false;
 							$this.workPlanBtnYn = false;
 							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
-								
 								//근무제적용취소
 								if(data.sYmd!=null && moment(now).diff(data.sYmd)<0){
 									$this.flexCancelBtnYn = true;
@@ -1163,7 +1162,7 @@
          			saveYn = false;
 					$("#alertText").html("사유를 입력해 주세요.");
          		}*/
-					
+         		
          		if(flexibleStd.workTypeCd.indexOf('SELE')==0) {
 					var param = {
 						flexibleApplId : flexibleAppl.flexibleApplId,	
@@ -1184,15 +1183,28 @@
 						dataType: "json",
 						success: function(data) {
 							$("#loading").hide();
-							if(data!=null && data.status=='OK') {
-								$("#alertText").html("확인요청 되었습니다.");
-							} else {
-								$("#alertText").html(data.message);
+							
+							if(data!=null) {
+								if(data.status=='OK') {
+									$("#alertText").html("확인요청 되었습니다.");
+									$("#alertModal").on('hidden.bs.modal',function(){
+										location.reload();
+									});
+								} else {
+									$("#alertText").html(data.message);
+									$("#alertModal").on('hidden.bs.modal',function(){
+										$("#alertModal").off('hidden.bs.modal');
+										
+										var eventId = 'workRange.'+flexibleStd.workTypeCd+'.'+$this.applInfo.useSymd;
+										var event = $this.calendar.getEventById(eventId);
+										if(event!=null)
+											event.remove();
+										
+									});
+								}
+								
+		  	  	         		$("#alertModal").modal("show"); 
 							}
-							$("#alertModal").on('hidden.bs.modal',function(){
-								location.reload();
-							});
-	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
 							$("#loading").hide();

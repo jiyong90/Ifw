@@ -468,9 +468,29 @@
    	
    	$(document).on("click", "#startDaySelect", function() {
 		$('.popover').remove();
-		calendarLeftVue.applInfo.useSymd = $("#startDay").val();
-		//신청 화면 전환
-		calendarLeftVue.setUsedTermOpt();
+		
+		var sYmd = null;
+		var eYmd = null;
+		var selectedDay = $("#startDay").val();
+		
+		if(calendarLeftVue.flexibleAppl.hasOwnProperty('sYmd') && calendarLeftVue.flexibleAppl.sYmd!=null && calendarLeftVue.flexibleAppl.sYmd!='')
+			sYmd = calendarLeftVue.flexibleAppl.sYmd;
+		if(calendarLeftVue.flexibleAppl.hasOwnProperty('eYmd') && calendarLeftVue.flexibleAppl.eYmd!=null && calendarLeftVue.flexibleAppl.eYmd!='')
+			eYmd = calendarLeftVue.flexibleAppl.eYmd;
+		
+		if((sYmd==null && eYmd==null) || 
+				(sYmd!=null && eYmd!=null && (moment(selectedDay).diff(sYmd)<0 || moment(eYmd).diff(selectedDay)<0)) ) {
+			calendarLeftVue.applInfo.useSymd = selectedDay;
+			//신청 화면 전환
+			calendarLeftVue.setUsedTermOpt();
+		} else {
+			$("#alertText").html("신청중인 또는 이미 적용된 근무정보가 있습니다.<br>시작일을 다시 지정하세요.");
+       		$("#alertModal").on('hidden.bs.modal',function(){
+       			$("#alertModal").off('hidden.bs.modal');
+       		});
+       		$("#alertModal").modal("show"); 
+		}
+		
    	});
    	
 </script>

@@ -318,6 +318,7 @@
   	  		    			$("#endTime").prop("disabled", true);
   	  		    			$("#timeSaveBtn").hide();
   	         			}
+  	         			
   	         			return editYn;
   	         			
   	         		});
@@ -480,7 +481,7 @@
 	  	         			var calStart = calendar.view.activeStart;
 	  	         			var calEnd = calendar.view.activeEnd;
 	  	         			if(moment(calStart).diff(d.sYmd)<=0 && moment(d.sYmd).diff(calEnd)<=0) {
-	  	         				if(moment(d.sYmd).diff($this.today)<0) {
+	  	         				if(moment(workday).diff($this.today)<0) {
 	  	         					$("#timeSaveBtn").hide();
 	  	         					$("#startTime").prop("disabled", true);
 	  	    	  		    		$("#endTime").prop("disabled", true);
@@ -529,7 +530,7 @@
 				  		    				events.push(taaEvent); */
 				  		    				
 				  		    				//반차가 아닌 근태(연차, 교육, 출장 등)
-				  		    				if(plan.valueMap.taaCd!='11' && plan.valueMap.taaCd!='12') {
+				  		    				if(plan.valueMap.taaCd!='102' && plan.valueMap.taaCd!='103') {
 				  		    					$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
 				  		    				}
 				  		    				
