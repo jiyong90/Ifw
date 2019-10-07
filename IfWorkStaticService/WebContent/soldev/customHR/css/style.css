@@ -1,6 +1,10 @@
 @charset "utf-8";
 body a:hover, body a:active, body a:focus{text-decoration:none;}
 
+input.required { border:1px solid #008fd5 !important; }
+select.required { border:1px solid #008fd5 !important; }
+textarea.required { border:1px solid #008fd5 !important; }
+
 /* search */
 .sheet_search {
     border-top: 2px solid #008fd5;
@@ -1179,8 +1183,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5fafd', end
 
 /* table */
 table.default{ border-top:1px solid #e7edf0; width:100%; }
-table.default th{background-color:#f5fafd; color:#84939d; font-weight:500; font-weight:bold; padding:5px 0 5px 15px; line-height:12px; font-size:12px; border-left:1px solid #e7edf0; border-right:1px solid #e7edf0; border-bottom:1px solid #e7edf0; text-align:left; vertical-align: middle;}
+table.default th{position:relative; background-color:#f5fafd; color:#84939d; font-weight:500; font-weight:bold; padding:5px 0 5px 15px; line-height:12px; font-size:12px; border-left:1px solid #e7edf0; border-right:1px solid #e7edf0; border-bottom:1px solid #e7edf0; text-align:left; vertical-align: middle;}
 table.default th:first-child{ border-left:none; }
+table.default th span.required{
+	position:absolute;
+	top: 10px;
+	left: 8px;
+	display: inline-block;
+    width: 5px;
+    height: 5px;
+    background: #e66965;
+    border-radius: 50%;
+    }
 table.default td{padding:4px 10px; border-bottom:1px solid #e7edf0; font-size:12px;}
 table.default td input{padding:3px 0 3px 5px; border:1px solid #e0e2e5; text-align:left; height:21px; vertical-align:middle;}
 table.default td input[type="checkbox"] {
@@ -1196,6 +1210,7 @@ table.default td input[type="checkbox"] {
     border: 0;
     margin: 0;
     margin-left: 20px;
+    margin-right: 4px;
     padding: 0;
     background: url('../img/form_check.png') 0 -40px no-repeat;
 }
