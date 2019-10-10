@@ -49,7 +49,7 @@
 				A.TENANT_ID as tenantId, 
 				A.ENTER_CD as enterCd, 
 				A.SABUN as sabun, 
-				F_WTM_GET_EMP_CODE_NM(#{tenantId}, #{enterCd}, A.SABUN, 'ORG_CD', date_format(now(),'%Y%m%d')) AS orgNm,
+				F_WTM_GET_EMP_ORG_NM(#{tenantId}, #{enterCd}, A.SABUN, date_format(now(),'%Y%m%d')) AS orgNm,
 				F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, A.SABUN, date_format(now(),'%Y%m%d')) AS empNm,
 				A.YMD as ymd, 
 				A.TIME_CD_MGR_ID as timeCdMgrId,

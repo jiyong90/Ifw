@@ -930,7 +930,7 @@
     <!--해당 기간의 근무 정보 -->
   	<select id="getFlexibleEmpWebList" parameterType="map" resultType="map">
   	<![CDATA[
-  		SELECT F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'ORG_CD', C.ORG_CD, C.SYMD) AS orgNm
+  		SELECT F_WTM_GET_ORG_NM(A.TENANT_ID, A.ENTER_CD, C.ORG_CD, C.SYMD) AS orgNm
 			  , A.SABUN AS sabun
 			  , C.EMP_NM AS empNm 
 			  , B.WORK_TYPE_CD AS workTypeCd
