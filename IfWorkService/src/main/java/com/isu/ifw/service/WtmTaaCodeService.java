@@ -14,5 +14,5 @@ public interface WtmTaaCodeService {
 	
 	public List<Map<String, Object>> getTaaCodeList(Long tenantId, String enterCd, Map<String, Object> paramMap);
 
-	public int setTaaCodeList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
+	public int setTaaCodeList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 }

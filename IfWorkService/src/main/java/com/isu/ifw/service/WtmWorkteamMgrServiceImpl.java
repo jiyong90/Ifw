@@ -52,7 +52,7 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 	}
 	
 	@Override
-	public int setWorkteamMgrList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setWorkteamMgrList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		Map<String, Object> paramMap = new HashMap();
 		try {

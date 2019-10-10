@@ -40,7 +40,7 @@ public class WtmFlexibleApplDet {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
-	private Long updateId;
+	private String updateId;
 	
 	public Long getFlexibleApplDetId() {
 		return flexibleApplDetId;
@@ -84,10 +84,10 @@ public class WtmFlexibleApplDet {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	public Long getUpdateId() {
+	public String getUpdateId() {
 		return updateId;
 	}
-	public void setUpdateId(Long updateId) {
+	public void setUpdateId(String updateId) {
 		this.updateId = updateId;
 	}
 	

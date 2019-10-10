@@ -39,7 +39,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	WtmWorkPattDetRepository workPattDetRepository;
 	
 	@Override
-	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, Long userKey) {
+	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, String userKey) {
 		// TODO Auto-generated method stub
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
@@ -114,7 +114,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	}
 	
 	@Override
-	public int setStdListWeb(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setStdListWeb(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("insertRows") && ((List)convertMap.get("insertRows")).size() > 0) {
@@ -229,7 +229,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	}
 	
 	@Override
-	public int setWorkPattList(Long userId, Map<String, Object> convertMap) {
+	public int setWorkPattList(String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {

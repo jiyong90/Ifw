@@ -16,7 +16,7 @@ public class WtmAsyncService {
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
 		
 		@Async("threadPoolTaskExecutor")
-		public void createWorkTermtimeByEmployee(Long tenantId, String enterCd, String sabun, String symd, String eymd, Long userId) {
+		public void createWorkTermtimeByEmployee(Long tenantId, String enterCd, String sabun, String symd, String eymd, String userId) {
 			Map<String, Object> paramMap = new HashMap<>();
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);

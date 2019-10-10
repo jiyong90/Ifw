@@ -57,7 +57,7 @@ public class WtmCompMgrServiceImpl implements WtmCompMgrService{
 	}
 	
 	@Override
-	public int setCompMgrList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setCompMgrList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {

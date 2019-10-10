@@ -20,7 +20,7 @@ public interface WtmFlexibleStdService {
 	 * @param userId - 대상자의 신청가능한 근무제를 가져온다
 	 * @return 
 	 */
-	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, Long userId);
+	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, String userId);
 	
 	public void saveFlexibleStd(Long tenantId, String enterCd, Map<String, Object> optionMap);
 	
@@ -60,7 +60,7 @@ public interface WtmFlexibleStdService {
 	 * @param convertMap - 저장sheet
 	 * @return 
 	 */
-	public int setStdListWeb(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
+	public int setStdListWeb(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 	
 	/**
 	 * 근무패턴관리 (관리자화면)
@@ -75,6 +75,6 @@ public interface WtmFlexibleStdService {
 	 * @param convertMap - 저장sheet
 	 * @return 
 	 */
-	public int setWorkPattList(Long userId, Map<String, Object> convertMap);
+	public int setWorkPattList(String userId, Map<String, Object> convertMap);
 	
 }

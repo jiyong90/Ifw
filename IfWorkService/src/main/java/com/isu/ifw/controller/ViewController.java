@@ -154,7 +154,7 @@ public class ViewController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String loginId = sessionData.get("loginId").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
@@ -207,7 +207,7 @@ public class ViewController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String loginId = sessionData.get("loginId").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
@@ -227,7 +227,7 @@ public class ViewController {
 		return mv;
 	}
 	
-	protected ModelAndView workCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, Long userId, HttpServletRequest request) {
+	protected ModelAndView workCalendarPage(ModelAndView mv, Long tenantId, String enterCd, String empNo, String userId, HttpServletRequest request) {
 		Map<String, Object> flexibleAppl = null;
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -278,7 +278,7 @@ public class ViewController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

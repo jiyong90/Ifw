@@ -54,7 +54,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 	}
 	
 	@Override
-	public int setApplyList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setApplyList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
@@ -127,7 +127,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 	}
 	
 	@Override
-	public int setApplyGrpList(Long userId, Map<String, Object> convertMap) {
+	public int setApplyGrpList(String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
@@ -191,7 +191,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 	}
 	
 	@Override
-	public int setApplyEmpList(Long userId, Map<String, Object> convertMap) {
+	public int setApplyEmpList(String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {

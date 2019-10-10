@@ -56,7 +56,7 @@ public class WtmFlexibleEmpController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -171,7 +171,7 @@ public class WtmFlexibleEmpController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 
 		return flexibleEmpService.getWorkDayResult(tenantId, enterCd, empNo, paramMap.get("ymd").toString(), userId);
 	}
@@ -184,7 +184,7 @@ public class WtmFlexibleEmpController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		return flexibleEmpService.getFlexibleEmpListForPlan(tenantId, enterCd, sabun, paramMap, userId);
 	}
@@ -204,7 +204,7 @@ public class WtmFlexibleEmpController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		return flexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, paramMap);
 	}
@@ -222,7 +222,7 @@ public class WtmFlexibleEmpController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		Long flexibleEmpId = Long.valueOf(paramMap.get("flexibleEmpId").toString());
 		Map<String, Object> dayResult = new HashMap<String, Object>();
@@ -312,7 +312,7 @@ public class WtmFlexibleEmpController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -348,7 +348,7 @@ public class WtmFlexibleEmpController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
 		convertMap.put("enterCd", enterCd);

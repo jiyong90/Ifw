@@ -94,7 +94,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 
 	@Override
 	public List<WtmApplLineVO> getApplLine(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap,
-			Long userId) {
+			String userId) {
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 		paramMap.put("tenantId", tenantId);
@@ -103,28 +103,28 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 
 	@Override
 	public List<Map<String, Object>> getPrevApplList(Long tenantId, String enterCd, String sabun,
-			Map<String, Object> paramMap, Long userId) {
+			Map<String, Object> paramMap, String userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap,
-			Long userId) {
+			String userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo,
-			Map<String, Object> paramMap, Long userId) {
+			Map<String, Object> paramMap, String userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
-			String sabun, Long userId) throws Exception {
+			String sabun, String userId) throws Exception {
 		ReturnParam rp = imsi(tenantId, enterCd, applId, workTypeCd, paramMap, this.APPL_STATUS_APPLY_ING, sabun, userId);
 		
 		//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
@@ -152,7 +152,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 	@Transactional
 	@Override
 	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
-			String sabun, Long userId) throws Exception {
+			String sabun, String userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		paramMap.put("applId", applId);
 		
@@ -348,7 +348,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 
 	@Override
 	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
-			String sabun, Long userId) throws Exception {
+			String sabun, String userId) throws Exception {
 		if(paramMap == null || !paramMap.containsKey("apprOpinion") && paramMap.get("apprOpinion").equals("")) {
 			throw new Exception("사유를 입력하세요.");
 		}
@@ -381,7 +381,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 
 	@Override
 	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
-			String status, String sabun, Long userId) throws Exception {
+			String status, String sabun, String userId) throws Exception {
 
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -418,7 +418,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		return rp;
 	}
 
-	protected WtmOtCanAppl saveWtmOtCanAppl(Long tenantId, String enterCd, Long applId, Long otApplId, Long workDayResultId, String ymd, String timeTypeCd, Date planSdate, Date planEdate, Integer planMinute, Date apprSdate, Date apprEdate, Integer apprMinute,  String reason, String sabun, Long userId) {
+	protected WtmOtCanAppl saveWtmOtCanAppl(Long tenantId, String enterCd, Long applId, Long otApplId, Long workDayResultId, String ymd, String timeTypeCd, Date planSdate, Date planEdate, Integer planMinute, Date apprSdate, Date apprEdate, Integer apprMinute,  String reason, String sabun, String userId) {
 		 
 		WtmOtCanAppl otAppl = wtmOtCanApplRepo.findByApplId(applId);
 		if(otAppl == null) {
@@ -466,7 +466,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		
 	}
 	
-	protected WtmAppl saveWtmAppl(Long tenantId, String enterCd, Long applId, String workTypeCd, String applStatusCd, String sabun, Long userId) {
+	protected WtmAppl saveWtmAppl(Long tenantId, String enterCd, Long applId, String workTypeCd, String applStatusCd, String sabun, String userId) {
 		WtmAppl appl = null;
 		if(applId != null && !applId.equals("")) {
 			appl = wtmApplRepo.findById(applId).get();
@@ -486,7 +486,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		return wtmApplRepo.save(appl);
 	}
 
-protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun, Long userId) {
+protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun, String userId) {
 		
 		//결재라인 저장
 		Map<String, Object> paramMap = new HashMap<String, Object>();

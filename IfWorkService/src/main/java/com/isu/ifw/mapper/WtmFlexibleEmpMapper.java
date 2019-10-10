@@ -42,7 +42,7 @@ public interface WtmFlexibleEmpMapper {
 	 * @param flexibleEmpId
 	 * @param userId
 	 */
-	public void createWorkCalendarOfSeleC(@Param("flexibleEmpId")Long flexibleEmpId, @Param("userId")Long userId);
+	public void createWorkCalendarOfSeleC(@Param("flexibleEmpId")Long flexibleEmpId, @Param("userId")String userId);
 	
 	public void updateHolidayYnOFWorkCalendar(Map<String, Object> paramMap);
 	
@@ -211,7 +211,7 @@ public interface WtmFlexibleEmpMapper {
 	 * @param flexibleEmpId
 	 * @param userId
 	 */
-	public void createFlexibleApplDet(@Param("flexibleApplId")Long flexibleApplId, @Param("userId")Long userId);
+	public void createFlexibleApplDet(@Param("flexibleApplId")Long flexibleApplId, @Param("userId")String userId);
 	
 	public void deleteByApplId(@Param("applId") Long applId);
 	

@@ -20,7 +20,7 @@ public class WtmOtApplVO {
 	private Long oldOtApplId;
 	private String cancelYn;
 	private String updateDate;
-	private Long updateId;
+	private String updateId;
 	private List<WtmOtSubsAppl> otSubsAppls;
 	
 	public Long getOtApplId() {
@@ -107,10 +107,10 @@ public class WtmOtApplVO {
 	public void setUpdateDate(String updateDate) {
 		this.updateDate = updateDate;
 	}
-	public Long getUpdateId() {
+	public String getUpdateId() {
 		return updateId;
 	}
-	public void setUpdateId(Long updateId) {
+	public void setUpdateId(String updateId) {
 		this.updateId = updateId;
 	}
 	public List<WtmOtSubsAppl> getOtSubsAppls() {

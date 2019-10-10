@@ -11,7 +11,7 @@ public class WtmFlexibleApplVO {
 	private int workDay;
 	private String reason;
 	private String updateDate;
-	private Long updateId;
+	private String updateId;
 	
 	public Long getFlexibleApplId() {
 		return flexibleApplId;
@@ -67,10 +67,10 @@ public class WtmFlexibleApplVO {
 	public void setUpdateDate(String updateDate) {
 		this.updateDate = updateDate;
 	}
-	public Long getUpdateId() {
+	public String getUpdateId() {
 		return updateId;
 	}
-	public void setUpdateId(Long updateId) {
+	public void setUpdateId(String updateId) {
 		this.updateId = updateId;
 	}
 	

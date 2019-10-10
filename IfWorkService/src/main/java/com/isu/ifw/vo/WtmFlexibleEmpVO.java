@@ -15,7 +15,7 @@ public class WtmFlexibleEmpVO {
 	private String flexibleNm;
 	private String note;
 	private String updateDate;
-	private Long updateId;
+	private String updateId;
 	
 	public Long getFlexibleEmpId() {
 		return flexibleEmpId;
@@ -95,10 +95,10 @@ public class WtmFlexibleEmpVO {
 	public void setUpdateDate(String updateDate) {
 		this.updateDate = updateDate;
 	}
-	public Long getUpdateId() {
+	public String getUpdateId() {
 		return updateId;
 	}
-	public void setUpdateId(Long updateId) {
+	public void setUpdateId(String updateId) {
 		this.updateId = updateId;
 	}
 	

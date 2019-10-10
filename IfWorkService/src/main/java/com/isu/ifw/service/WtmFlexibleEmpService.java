@@ -23,7 +23,7 @@ public interface WtmFlexibleEmpService {
 	 * @param sdate
 	 * @param userId
 	 */
-	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date sdate, Long userId);
+	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date sdate, String userId);
 	/**
 	 * 최종퇴근타각 정보
 	 * @param tenantId
@@ -34,7 +34,7 @@ public interface WtmFlexibleEmpService {
 	 * @param sdate
 	 * @param userId
 	 */
-	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date edate, Long userId);
+	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date edate, String userId);
 	/**
 	 * 근무 마감
 	 * @param tenantId
@@ -43,7 +43,7 @@ public interface WtmFlexibleEmpService {
 	 * @param ymd
 	 * @param userId
 	 */
-	public void workClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId);
+	public void workClosed(Long tenantId, String enterCd, String sabun, String ymd, String userId);
 	/**
 	 * 근무 마감 취소
 	 * @param tenantId
@@ -52,7 +52,7 @@ public interface WtmFlexibleEmpService {
 	 * @param ymd
 	 * @param userId
 	 */
-	public void cancelWorkClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId);
+	public void cancelWorkClosed(Long tenantId, String enterCd, String sabun, String ymd, String userId);
 	/**
 	 * 해당 월의 근무제 정보 조회
 	 * @param tenantId
@@ -61,7 +61,7 @@ public interface WtmFlexibleEmpService {
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
 
 	/**
 	 * 오늘의 근무제 정보 조회
@@ -71,7 +71,7 @@ public interface WtmFlexibleEmpService {
 	 * @param paramMap
 	 * @return
 	 */
-	public Map<String, Object> getFlexibleEmp(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+	public Map<String, Object> getFlexibleEmp(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
 
 	
 	/**
@@ -83,7 +83,7 @@ public interface WtmFlexibleEmpService {
 	 * @param userId
 	 * @return
 	 */
-	public List<Map<String, Object>> getFlexibleEmpListForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+	public List<Map<String, Object>> getFlexibleEmpListForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
 	
 	/**
 	 * 해당 일의 근무 시간 조회
@@ -94,7 +94,7 @@ public interface WtmFlexibleEmpService {
 	 * @param userId
 	 * @return
 	 */
-	public Map<String, Object> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, Long userId);
+	public Map<String, Object> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, String userId);
 	
 	/**
 	 * 근무제 기간에 대한 정보
@@ -142,11 +142,11 @@ public interface WtmFlexibleEmpService {
 	 * @param userId
 	 * @throws Exception
 	 */
-	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception;
+	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, String userId) throws Exception;
 	
 	//public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Map<String, Object> paramMap, Long userId);
-	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, Long userId);
-	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId); 
+	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, String userId);
+	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, String userId); 
 	
 	/**
 	 * calendar id로 일근무표 조회(관리자용)
@@ -164,7 +164,7 @@ public interface WtmFlexibleEmpService {
 	 * @param userId
 	 * @throws Exception
 	 */
-	public void saveEmpDayResults(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) throws Exception;
+	public void saveEmpDayResults(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) throws Exception;
 
 	/**
 	 * 휴게시간을 제외한 시간 계산

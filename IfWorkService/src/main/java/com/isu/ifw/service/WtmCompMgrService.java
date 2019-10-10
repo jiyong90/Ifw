@@ -14,5 +14,5 @@ public interface WtmCompMgrService {
 	
 	public List<Map<String, Object>> getCompMgrList(Long tenantId, String enterCd);
 
-	public int setCompMgrList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
+	public int setCompMgrList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 }
