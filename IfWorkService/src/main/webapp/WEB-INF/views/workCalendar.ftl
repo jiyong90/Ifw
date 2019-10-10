@@ -1163,7 +1163,7 @@
 					$("#alertText").html("사유를 입력해 주세요.");
          		}*/
          		
-         		if(flexibleStd.workTypeCd.indexOf('SELE')==0) {
+         		if(flexibleStd.workTypeCd.indexOf('SELE')==0 || flexibleStd.workTypeCd.indexOf('DIFF')==0) {
 					var param = {
 						flexibleApplId : flexibleAppl.flexibleApplId,	
 						applId : flexibleAppl.applId,
