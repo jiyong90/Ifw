@@ -67,7 +67,7 @@ public class WtmWorkteamEmpServiceImpl implements WtmWorkteamEmpService{
 	}
 	
 	@Override
-	public ReturnParam setWorkteamList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public ReturnParam setWorkteamList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		ReturnParam rp = new ReturnParam();
 		Map<String, Object> paramMap = new HashMap();
  

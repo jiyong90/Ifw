@@ -18,7 +18,7 @@ public class WtmWorkTermTimeVO {
 	private int apprOtMinute;
 	private String note;
 	private String updateDate;
-	private Long updateId;
+	private String updateId;
 	
 	public Long getTermWorkTimeId() {
 		return termWorkTimeId;
@@ -116,10 +116,10 @@ public class WtmWorkTermTimeVO {
 	public void setUpdateDate(String updateDate) {
 		this.updateDate = updateDate;
 	}
-	public Long getUpdateId() {
+	public String getUpdateId() {
 		return updateId;
 	}
-	public void setUpdateId(Long updateId) {
+	public void setUpdateId(String updateId) {
 		this.updateId = updateId;
 	}
 	

@@ -43,7 +43,7 @@ public class WtmOtApplController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		return otApplService.getAppl(applId);
 	}
@@ -55,7 +55,7 @@ public class WtmOtApplController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		return otApplService.getApplLine(tenantId, enterCd, empNo, paramMap, userId);
 	}
@@ -85,7 +85,7 @@ public class WtmOtApplController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		String workTypeCd = null;
 		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
@@ -107,7 +107,7 @@ public class WtmOtApplController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		Long applId = null;
 		if(paramMap.get("applId")!=null && !"".equals(paramMap.get("applId")))

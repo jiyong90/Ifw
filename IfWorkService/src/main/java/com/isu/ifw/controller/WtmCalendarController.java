@@ -37,7 +37,7 @@ public class WtmCalendarController {
 													   		 , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		String enterCd = null;
 		String bisinessPlaceCd = null;
 		if(sessionData.get("enterCd")!=null)
@@ -65,7 +65,7 @@ public class WtmCalendarController {
 													   				 , HttpServletRequest request) throws Exception {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		paramMap.put("tenantId", tenantId);
 		
@@ -92,7 +92,7 @@ public class WtmCalendarController {
 		
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		String enterCd = sessionData.get("enterCd").toString();
 		String sYmd = paramMap.get("sYmd").toString();
 		String eYmd = paramMap.get("eYmd").toString();

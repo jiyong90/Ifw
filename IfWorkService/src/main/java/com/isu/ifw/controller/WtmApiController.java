@@ -31,7 +31,7 @@ public class WtmApiController {
 	public ReturnParam test(HttpServletRequest request ) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
-		flexibleEmpService.createWorkteamEmpData(new Long("1"), "ISU", new Long("5"), new Long("112313"));	
+		flexibleEmpService.createWorkteamEmpData(new Long("1"), "ISU", new Long("5"), "112313");	
 		
 		return rp;
 	}

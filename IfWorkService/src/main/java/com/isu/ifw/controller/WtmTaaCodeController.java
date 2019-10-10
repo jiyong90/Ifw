@@ -44,7 +44,7 @@ public class WtmTaaCodeController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -77,7 +77,7 @@ public class WtmTaaCodeController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());

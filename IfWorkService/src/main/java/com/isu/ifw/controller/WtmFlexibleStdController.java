@@ -38,7 +38,7 @@ public class WtmFlexibleStdController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		ObjectMapper mapper = new ObjectMapper();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		String enterCd = null;
 		String bisinessPlaceCd = null;
 		if(sessionData.get("enterCd")!=null)
@@ -141,7 +141,7 @@ public class WtmFlexibleStdController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		ObjectMapper mapper = new ObjectMapper();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		return flexibleStdMgrRepo.findById(flexibleStdMgrId).get();
 	}
@@ -166,7 +166,7 @@ public class WtmFlexibleStdController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		ObjectMapper mapper = new ObjectMapper();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		String enterCd = sessionData.get("enterCd").toString();
 		String bisinessPlaceCd = null;
 		
@@ -192,7 +192,7 @@ public class WtmFlexibleStdController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		ObjectMapper mapper = new ObjectMapper();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		String enterCd = sessionData.get("enterCd").toString();
 		String workTypeCd = paramMap.get("workTypeCd").toString();
 		String bisinessPlaceCd = null;
@@ -248,7 +248,7 @@ public class WtmFlexibleStdController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
 		convertMap.put("userId", userId);
@@ -300,7 +300,7 @@ public class WtmFlexibleStdController {
 		rp.setFail("저장 시 오류가 발생했습니다.");
 		
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
 		convertMap.put("userId", userId);

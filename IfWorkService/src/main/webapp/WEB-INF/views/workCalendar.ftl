@@ -443,7 +443,7 @@
 		                    	{{moment(flexibleAppl.sYmd).format("YYYY년 M월 D일")}} ~ {{moment(flexibleAppl.eYmd).format("YYYY년 M월 D일")}}({{moment(flexibleAppl.eYmd).diff(flexibleAppl.sYmd, 'days')+1}}일)
 		                    	</template>
 		                    </div>
-		                    <div class="inner-wrap">
+		                    <div class="inner-wrap" v-if="flexibleAppl.workShm && flexibleAppl.workEhm || flexibleAppl.coreShm && flexibleAppl.coreEhm">
 		                    	<ul class="main-wrap">
 	                                <li>
 	                                    <div class="main-title">근무시간</div>
@@ -463,7 +463,7 @@
 	                                </li>
 	                            </ul>
 		                    </div>
-		                    <div class="inner-wrap graph-wrap">
+		                    <div class="inner-wrap graph-wrap" v-if="flexibleAppl.workShm && flexibleAppl.workEhm || flexibleAppl.coreShm && flexibleAppl.coreEhm">
                                 <div class="time-graph">
                                     <span class="core-time"></span>
                                 </div>

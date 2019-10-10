@@ -47,7 +47,7 @@ public class WtmOtCanApplController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		Long applId = null;
 		if(paramMap.get("applId")!=null && !"".equals(paramMap.get("applId")))

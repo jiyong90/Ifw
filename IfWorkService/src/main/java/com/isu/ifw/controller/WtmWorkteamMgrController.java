@@ -44,7 +44,7 @@ public class WtmWorkteamMgrController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		rp.setSuccess("");
 		
@@ -71,7 +71,7 @@ public class WtmWorkteamMgrController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -107,7 +107,7 @@ public class WtmWorkteamMgrController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		ObjectMapper mapper = new ObjectMapper();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
 		String enterCd = sessionData.get("enterCd").toString();
 		
 		ReturnParam rp = new ReturnParam();

@@ -59,7 +59,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	}
 	
 	@Override
-	public int setTimeCodeMgrList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setTimeCodeMgrList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
@@ -140,7 +140,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	}
 	
 	@Override
-	public int setTimeBreakMgrList(Long userId, Map<String, Object> convertMap) {
+	public int setTimeBreakMgrList(String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {

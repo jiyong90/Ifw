@@ -58,7 +58,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	WtmFlexibleApplDetRepository flexApplDetRepo;
 	
 	@Override
-	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
@@ -78,7 +78,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return flexibleList;
 	}
 	
-	public Map<String, Object> getFlexibleEmp(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+	public Map<String, Object> getFlexibleEmp(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
@@ -87,7 +87,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> getFlexibleEmpListForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+	public List<Map<String, Object>> getFlexibleEmpListForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
@@ -110,7 +110,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 	
 	@Override
-	public Map<String, Object> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
+	public Map<String, Object> getWorkDayResult(Long tenantId, String enterCd, String sabun, String ymd, String userId) {
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		
@@ -227,7 +227,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return flexEmpMapper.getPrevFlexible(paramMap);
 	}
 	
-	public void imsi(Long tenantId, Long enterCd, String sabun, Long flexibleApplId, Map<String, Object> dateMap, Long userId) throws Exception{
+	public void imsi(Long tenantId, Long enterCd, String sabun, Long flexibleApplId, Map<String, Object> dateMap, String userId) throws Exception{
 		
 		flexEmpMapper.createFlexibleApplDet(flexibleApplId, userId);
 
@@ -281,7 +281,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Transactional
 	@Override
-	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, Long userId) throws Exception{
+	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, String userId) throws Exception{
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
@@ -371,7 +371,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 
 	@Override
 	//public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId) {
-	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, Long userId) {
+	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, String userId) {
 		//List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
 		
 		Map<String, Object> imsiMap = new HashMap<>();
@@ -459,7 +459,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 
 	@Override
-	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date sdate, Long userId) {
+	public void updEntrySdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date sdate, String userId) {
 		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 		calendar.setEntryStypeCd(entryTypeCd);
 		calendar.setEntrySdate(sdate); 
@@ -468,7 +468,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 
 	@Override
-	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date edate, Long userId) {
+	public void updEntryEdate(Long tenantId, String enterCd, String sabun, String ymd, String entryTypeCd, Date edate, String userId) {
 		
 		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 		calendar.setEntryEtypeCd(entryTypeCd);
@@ -500,13 +500,13 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 
 	@Override
-	public void workClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
+	public void workClosed(Long tenantId, String enterCd, String sabun, String ymd, String userId) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void cancelWorkClosed(Long tenantId, String enterCd, String sabun, String ymd, Long userId) {
+	public void cancelWorkClosed(Long tenantId, String enterCd, String sabun, String ymd, String userId) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -520,7 +520,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Transactional
 	@Override
-	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, Long userId) {
+	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, String userId) {
 		//ID 채번 때문에 프로시저로 못했다..
 		/*
 		 * 중복된 근무 체크
@@ -610,7 +610,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	 * @return
 	 */
 	@Override
-	public void saveEmpDayResults(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) throws Exception {
+	public void saveEmpDayResults(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) throws Exception {
 		if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
 			List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("mergeRows");
 			List<Map<String, Object>> day = new ArrayList();

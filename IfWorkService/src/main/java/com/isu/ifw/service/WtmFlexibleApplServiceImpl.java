@@ -100,7 +100,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 	
 	@Override
-	public List<WtmApplLineVO> getApplLine(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+	public List<WtmApplLineVO> getApplLine(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 		paramMap.put("tenantId", tenantId);
@@ -108,7 +108,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 	
 	@Override
-	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId) {
+	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
@@ -118,7 +118,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Transactional
 	@Override
-	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String status, String sabun, Long userId) throws Exception {
+	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String status, String sabun, String userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
@@ -151,7 +151,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Transactional
 	@Override
-	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
+	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, String userId) throws Exception {
 		WtmApplCode applCode = getApplInfo(tenantId, enterCd, workTypeCd);
 		
 		
@@ -196,7 +196,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		 
 	}
 
-	protected WtmAppl saveWtmAppl(Long tenantId, String enterCd, Long applId, String workTypeCd, String applStatusCd, String sabun, Long userId) {
+	protected WtmAppl saveWtmAppl(Long tenantId, String enterCd, Long applId, String workTypeCd, String applStatusCd, String sabun, String userId) {
 		WtmAppl appl = null;
 		if(applId != null && !applId.equals("")) {
 			appl = wtmApplRepo.findById(applId).get();
@@ -223,7 +223,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	 */
 	@Transactional
 	@Override
-	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception {
+	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, String userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
 		rp = checkRequestDate(applId);
 		if(rp.getStatus().equals("FAIL")) {
@@ -354,7 +354,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Transactional
 	@Override
-	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId)  throws Exception {
+	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, String userId)  throws Exception {
 		if(paramMap == null || !paramMap.containsKey("apprOpinion") && paramMap.get("apprOpinion").equals("")) {
 			throw new Exception("사유를 입력하세요.");
 		}
@@ -453,7 +453,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return wtmApplCodeRepo.findByTenantIdAndEnterCdAndApplCd(tenantId, enterCd, applCd);
 	}
 
-	protected WtmFlexibleAppl saveWtmFlexibleAppl(Long tenantId, String enterCd, Long applId, Long flexibleStdMgrId, String sYmd, String eYmd, String reason, String sabun, Long userId) {
+	protected WtmFlexibleAppl saveWtmFlexibleAppl(Long tenantId, String enterCd, Long applId, Long flexibleStdMgrId, String sYmd, String eYmd, String reason, String sabun, String userId) {
 		 
 		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
 		if(flexibleAppl == null) {
@@ -496,7 +496,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return rp;
 	}
 	
-	protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun, Long userId) {
+	protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun, String userId) {
 		
 		//결재라인 저장
 		Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -553,7 +553,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId) {
+	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, String userId) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
@@ -603,7 +603,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 
 	@Override
 	public List<Map<String, Object>> getPrevApplList(Long tenantId, String enterCd, String sabun,
-			Map<String, Object> paramMap, Long userId) {
+			Map<String, Object> paramMap, String userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

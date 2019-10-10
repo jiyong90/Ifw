@@ -18,11 +18,11 @@ public interface WtmTimeCdMgrService{
 	
 	public List<Map<String, Object>> getTimeCdMgrList(Long tenantId, String enterCd, Map<String, Object> paramMap);
 	
-	public int setTimeCodeMgrList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
+	public int setTimeCodeMgrList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 	
 	public List<Map<String, Object>> getTimeBreakMgrList(Long tenantId, String enterCd, Map<String, Object> paramMap);
 	
-	public int setTimeBreakMgrList(Long userId, Map<String, Object> convertMap);
+	public int setTimeBreakMgrList(String userId, Map<String, Object> convertMap);
 	
 	public List<Map<String, Object>> getTimeCodeList(Long tenantId, String enterCd, String holYn);
 	

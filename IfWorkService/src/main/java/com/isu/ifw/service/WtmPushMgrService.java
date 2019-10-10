@@ -14,5 +14,5 @@ public interface WtmPushMgrService {
 	
 	public List<Map<String, Object>> getPushMgrList(Long tenantId, String enterCd);
 
-	public int setPushMgrList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
+	public int setPushMgrList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 }

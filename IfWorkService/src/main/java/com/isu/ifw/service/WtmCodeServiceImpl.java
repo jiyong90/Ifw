@@ -76,7 +76,7 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 	}
 	
 	@Override
-	public int setCodeList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setCodeList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
@@ -152,7 +152,7 @@ public class WtmCodeServiceImpl implements WtmCodeService{
 	}
 	
 	@Override
-	public int setCodeGrpList(Long tenantId, String enterCd,Long userId, Map<String, Object> convertMap) {
+	public int setCodeGrpList(Long tenantId, String enterCd,String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {

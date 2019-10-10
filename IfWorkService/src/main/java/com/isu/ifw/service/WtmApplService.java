@@ -59,11 +59,11 @@ public interface WtmApplService {
 	
 	public Map<String, Object> getAppl(Long applId);
 	
-	public List<WtmApplLineVO> getApplLine(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+	public List<WtmApplLineVO> getApplLine(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
 	
-	public List<Map<String, Object>> getPrevApplList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+	public List<Map<String, Object>> getPrevApplList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
 	
-	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, Long userId);
+	public Map<String, Object> getLastAppl(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
 	/**
 	 * 승인/반려 신청서 리스트(결재함)
 	 * @param tenantId
@@ -72,11 +72,11 @@ public interface WtmApplService {
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, Long userId);
+	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, String userId);
 	
-	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
-	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
-	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, Long userId) throws Exception;
+	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String sabun, String userId) throws Exception;
+	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, String userId) throws Exception;
+	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, String userId) throws Exception;
 	public void delete(Long applId);
 	
 	/**
@@ -89,7 +89,7 @@ public interface WtmApplService {
 	 * @param paramMap - 신청서별 필요한 추가 파라메터들을 담는다.
 	 * @param sabun
 	 */
-	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String status, String sabun, Long userId) throws Exception;
+	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap, String status, String sabun, String userId) throws Exception;
 	
 	/**
 	 * 사전점검

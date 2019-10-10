@@ -17,6 +17,6 @@ import com.isu.option.vo.ReturnParam;
 public interface WtmWorkteamEmpService{
 	
 	public List<Map<String, Object>> getWorkteamList(Long tenantId, String enterCd, Map<String, Object> paramMap);
-	public ReturnParam setWorkteamList(Long tenantId, String enterCd, Long userId, Map<String, Object> paramMap);
+	public ReturnParam setWorkteamList(Long tenantId, String enterCd, String userId, Map<String, Object> paramMap);
 	
 }

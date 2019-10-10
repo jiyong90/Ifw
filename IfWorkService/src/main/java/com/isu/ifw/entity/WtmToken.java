@@ -30,7 +30,7 @@ public class WtmToken {
 	@Column(name="SABUN")
 	private String sabun;
 	@Column(name="USER_ID")
-	private Long userId;
+	private String userId;
 	@Column(name="ACCESS_TOKEN")
 	private String accessToken;
 	@Column(name="REFRESH_TOKEN")
@@ -43,7 +43,7 @@ public class WtmToken {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
-	private Long updateId;
+	private String updateId;
 
 	public Long getId() {
 		return id;
@@ -53,11 +53,11 @@ public class WtmToken {
 		this.id = id;
 	}
 
-	public Long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 	
@@ -117,11 +117,10 @@ public class WtmToken {
 		this.updateDate = updateDate;
 	}
 
-	public Long getUpdateId() {
+	public String getUpdateId() {
 		return updateId;
 	}
-
-	public void setUpdateId(Long updateId) {
+	public void setUpdateId(String updateId) {
 		this.updateId = updateId;
 	}
 

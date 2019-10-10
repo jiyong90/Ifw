@@ -56,7 +56,7 @@ public class WtmTimeCdMgr {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
-	private Long updateId;
+	private String updateId;
 
 	
 	public Long getTimeCdMgrId() {
@@ -219,12 +219,10 @@ public class WtmTimeCdMgr {
 	}
 
 
-	public Long getUpdateId() {
+	public String getUpdateId() {
 		return updateId;
 	}
-
-
-	public void setUpdateId(Long updateId) {
+	public void setUpdateId(String updateId) {
 		this.updateId = updateId;
 	}
 

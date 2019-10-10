@@ -132,7 +132,7 @@ public class LoginService{
 				
 	 	       token.setExpiresAt(date);
 //				newToken.setRefreshToken(responseData.get("refreshToken").toString());
-	 	       token.setUpdateId(Long.valueOf(token.getUserId()));
+	 	       token.setUpdateId(token.getUserId().toString());
 				
 	 	      token = tokenRepository.save(token);
 			} else if (responseEntity.getStatusCode() != HttpStatus.UNAUTHORIZED) {
@@ -155,8 +155,8 @@ public class LoginService{
 
 		WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
 		if(emp != null) {
-			token.setUserId(emp.getEmpHisId());
-			token.setUpdateId(emp.getEmpHisId());
+			token.setUserId(emp.getEmpHisId().toString());
+			token.setUpdateId(emp.getEmpHisId().toString());
 			//기존 토큰 다 삭제하고 새로 등록(기존에 다른 곳에서 로그인한 상황이면 그쪽은 튕김)
 			tokenRepository.save(token);
 //
