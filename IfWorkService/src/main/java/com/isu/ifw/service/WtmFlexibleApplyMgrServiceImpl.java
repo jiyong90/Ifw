@@ -54,7 +54,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 	}
 	
 	@Override
-	public int setApplyList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setApplyList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
@@ -127,7 +127,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 	}
 	
 	@Override
-	public int setApplyGrpList(Long userId, Map<String, Object> convertMap) {
+	public int setApplyGrpList(String userId, Long flexibleApplyId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
@@ -165,6 +165,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 				cnt += iList.size();
 			}
 			// 프로시저 호출해서 데이터 재생성하자.
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 			logger.warn(e.toString(), e);
@@ -191,7 +192,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 	}
 	
 	@Override
-	public int setApplyEmpList(Long userId, Map<String, Object> convertMap) {
+	public int setApplyEmpList(String userId, Long flexibleApplyId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
@@ -201,6 +202,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 					for(Map<String, Object> l : iList) {
 						Map<String, Object> saveMap = new HashMap();
 						saveMap.put("flexibleApplyEmpId", l.get("flexibleApplyEmpId").toString().equals("") ? null : Long.parseLong(l.get("flexibleApplyEmpId").toString()));
+						flexibleApplyId = Long.parseLong(l.get("flexibleApplyId").toString());
 						saveMap.put("flexibleApplyId", Long.parseLong(l.get("flexibleApplyId").toString()));
 						saveMap.put("sabun", l.get("sabun").toString());
 						saveMap.put("note", l.get("note").toString());
@@ -210,7 +212,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 				}
 				
 				if(saveList != null && saveList.size() > 0) {
-					cnt += wtmFlexibleApplyMgrMapper.insertGrp(saveList);
+					cnt += wtmFlexibleApplyMgrMapper.insertEmp(saveList, userId);
 				}
 				MDC.put("insert cnt", "" + cnt);
 			}

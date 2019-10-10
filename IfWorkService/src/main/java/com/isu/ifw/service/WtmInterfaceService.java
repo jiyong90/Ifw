@@ -76,4 +76,12 @@ public interface WtmInterfaceService {
 	 * @throws Exception 
 	 */
 	public void getEmpHisIfResult(Long tenantId) throws Exception;
+	
+	/**
+	 * 근태정보 이관
+	 * @param reqMap - 파라메터 맵
+	 * @return 
+	 * @throws Exception 
+	 */
+	public void setTaaApplIf(HashMap reqMap) throws Exception;
 }

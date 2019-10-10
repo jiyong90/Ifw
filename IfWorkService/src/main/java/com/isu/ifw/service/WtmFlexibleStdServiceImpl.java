@@ -39,7 +39,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	WtmWorkPattDetRepository workPattDetRepository;
 	
 	@Override
-	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, Long userKey) {
+	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, String userKey) {
 		// TODO Auto-generated method stub
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
@@ -114,7 +114,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	}
 	
 	@Override
-	public int setStdListWeb(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setStdListWeb(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("insertRows") && ((List)convertMap.get("insertRows")).size() > 0) {
@@ -185,9 +185,9 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						saveMap.put("usedTermOpt", l.get("usedTermOpt").toString());
 						saveMap.put("applTermOpt", l.get("applTermOpt").toString());
 						saveMap.put("regardTimeCdId", Integer.parseInt(l.get("regardTimeCdId").toString()));
-						saveMap.put("defaultWorkMinute", Integer.parseInt(l.get("defaultWorkMinute").toString()));
+						saveMap.put("defaultWorkMinute", l.get("defaultWorkMinute").toString().equals("") ? null : Integer.parseInt(l.get("defaultWorkMinute").toString()));
 						saveMap.put("defaultWorkUseYn", l.get("defaultWorkUseYn").toString());
-						saveMap.put("unitMinute", Integer.parseInt(l.get("unitMinute").toString()));
+						saveMap.put("unitMinute", l.get("unitMinute").toString().equals("") ? null : Integer.parseInt(l.get("unitMinute").toString()));
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
 						updateList.add(saveMap);
@@ -229,7 +229,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	}
 	
 	@Override
-	public int setWorkPattList(Long userId, Map<String, Object> convertMap) {
+	public int setWorkPattList(String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		try {
 			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {

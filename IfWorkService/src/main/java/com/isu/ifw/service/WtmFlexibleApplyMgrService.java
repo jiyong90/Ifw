@@ -14,13 +14,13 @@ public interface WtmFlexibleApplyMgrService {
 	
 	public List<Map<String, Object>> getApplyList(Long tenantId, String enterCd, String sYmd);
 
-	public int setApplyList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
+	public int setApplyList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 	
 	public List<Map<String, Object>> getApplyGrpList(Map<String, Object> paramMap);
 
-	public int setApplyGrpList(Long userId, Map<String, Object> convertMap);
+	public int setApplyGrpList(String userId, Long flexibleApplyId, Map<String, Object> convertMap);
 	
 	public List<Map<String, Object>> getApplyEmpList(Map<String, Object> paramMap);
 
-	public int setApplyEmpList(Long userId, Map<String, Object> convertMap);
+	public int setApplyEmpList(String userId,Long flexibleApplyId, Map<String, Object> convertMap);
 }

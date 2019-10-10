@@ -64,7 +64,8 @@ public class WtmFlexibleApplyMgrController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
+		
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -128,7 +129,8 @@ public class WtmFlexibleApplyMgrController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
+		Long flexibleApplyId = Long.valueOf(paramMap.get("flexibleApplyId").toString());
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -147,7 +149,7 @@ public class WtmFlexibleApplyMgrController {
 		rp.setSuccess("");
 		int cnt = 0;
 		try {		
-			cnt = flexibleApplyService.setApplyGrpList(userId, convertMap);
+			cnt = flexibleApplyService.setApplyGrpList(userId, flexibleApplyId, convertMap);
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;
@@ -192,7 +194,8 @@ public class WtmFlexibleApplyMgrController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
+		String userId = sessionData.get("userId").toString();
+		Long flexibleApplyId = Long.valueOf(paramMap.get("flexibleApplyId").toString());
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -211,7 +214,7 @@ public class WtmFlexibleApplyMgrController {
 		rp.setSuccess("");
 		int cnt = 0;
 		try {		
-			cnt = flexibleApplyService.setApplyEmpList(userId, convertMap);
+			cnt = flexibleApplyService.setApplyEmpList(userId, flexibleApplyId, convertMap);
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;

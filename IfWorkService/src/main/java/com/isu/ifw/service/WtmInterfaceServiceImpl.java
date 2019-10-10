@@ -17,7 +17,9 @@ import com.isu.ifw.mapper.WtmInterfaceMapper;
 public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	
 	// 일단 63번서버 KABNAG에 연결하기
-	String IF_URL = "http://smarthrd.servicezone.co.kr:8282/IfWorkInterface"; 
+	String IF_URL = "http://10.30.30.180:8081/IfWorkInterface";
+	//브로제코리아 개발서버
+	//String IF_URL = "http://smarthrd.servicezone.co.kr:8282/IfWorkInterface"; 
 	
 	@Autowired
 	WtmInterfaceMapper wtmInterfaceMapper;
@@ -128,8 +130,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	// 조회된 자료가 있으면...
    			if(retMsg == null && getIfList != null && getIfList.size() > 0) {
    	        	
-   	        	String[] hrGrpCode = {"H20010", "H20020", "H20030", "H10050", "H10110", "T10003"};
-   	        	String[] wtmGrpCode = {"CLASS_CD", "DUTY_CD", "POS_CD", "JOB_CD", "PAY_TYPE_CD", "TAA_TYPE_CD"};
+   	        	String[] hrGrpCode = {"H20010", "H20020", "H20030", "H10050", "H10110", "T10003", "W20010"};
+   	        	String[] wtmGrpCode = {"CLASS_CD", "DUTY_CD", "POS_CD", "JOB_CD", "PAY_TYPE_CD", "TAA_TYPE_CD", "ORG_TYPE"};
    	        	List<Map<String, Object>> ifList = new ArrayList();
    	        	List<Map<String, Object>> ifUpdateList = new ArrayList();
    	        	for(int i=0; i<getIfList.size(); i++) {
@@ -513,7 +515,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 			System.out.println("data loop ");
 	        try {
 	        	List<Map<String, Object>> ifList = new ArrayList();
-   	        	List<Map<String, Object>> ifUpdateList = new ArrayList();
    	        	for(int i=0; i<getIfList.size(); i++) {
 	        		Map<String, Object> ifMap = new HashMap<>();
 	        		ifMap.put("tenantId", tenantId);
@@ -523,78 +524,44 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		ifMap.put("codeNm", getIfList.get(i).get("ORG_NM"));
 	        		ifMap.put("symd", getIfList.get(i).get("SDATE"));
 	        		ifMap.put("eymd", getIfList.get(i).get("EDATE"));
+	        		ifMap.put("orgtype", getIfList.get(i).get("ORG_TYPE"));
 	        		ifMap.put("note", getIfList.get(i).get("MEMO"));
-	        		
-	        		// 2. 건별 data 저장용 만들기
-	        		try {
-	        			// DATA KEY기준으로 SELECT 
-	        			Map<String, Object> result = wtmInterfaceMapper.getWtmCodeId(ifMap);
-	        			
-	        			if(result != null) {
-	        				try {
-		            			String codeId = result.get("CODE_ID").toString();
-		            			System.out.println(codeId);
-		            			if(codeId != null && codeId.equals("")) {
-		            				ifMap.put("codeId", codeId);
-		            				ifUpdateList.add(ifMap);
-		            			}
-	        				} catch(Exception e){
-	        					retMsg = "org set : code_id 조회오류";
-	        		            e.printStackTrace();
-	        		            // 에러걸리면 그냥 아웃시키기
-	        		            break;
-	        		        }
-	        			} else {
-	        				ifList.add(ifMap);
-	        			}
-	    			} catch (Exception e) {
-	    				retMsg = "org set : org 검증 오류";
-			            e.printStackTrace();
-			            // 에러걸리면 그냥 아웃시키기
-			            break;
-	    			}
+	        		ifList.add(ifMap);
    	        	}
-   	        	if(retMsg == null || "".equals(retMsg) ) {
-	        		try {
-		        		//수정건이 있으면....
-		        		if (ifUpdateList.size() > 0) {
-		        			System.out.println("update size : " + ifUpdateList.size());
-		        			resultCnt += wtmInterfaceMapper.updateWtmCode(ifUpdateList);
-		        		}
-		        		// 추가건이 있으면
-		        		if (ifList.size() > 0) {
-		        			System.out.println("insert size : " + ifList.size());
-		        			resultCnt += wtmInterfaceMapper.insertWtmCode(ifList);
-		        		}
-		        		if(resultCnt > 0) {
-		        			retMsg = resultCnt + "건 반영완료";
-		        		} else {
-		        			retMsg = "갱신자료없음";
-		        		}
-		        		ifHisMap.put("ifStatus", "OK");
-		        		
-		        		// 이력데이터 수정은 건별로
-		        		for(int i=0; i< ifList.size(); i++) {
-		        			Map<String, Object> ifCodeHisMap = new HashMap<>();
-		        			ifCodeHisMap = ifList.get(i);
-		        			try {
-			    				int resultCnt2 = 0 ;
-			    				resultCnt2 = wtmInterfaceMapper.updateWtmCodeHisEymd(ifCodeHisMap);
-			    				resultCnt2 = wtmInterfaceMapper.updateWtmCodeHisSymd(ifCodeHisMap);
-		        			} catch (Exception e) {
-		            			// 이력수정의 오류는 어쩌나?
-		        				retMsg = "org set : 이력 갱신 오류";
-		    		            e.printStackTrace();
-		        			}
-		        		}
-	        		} catch (Exception e) {
-	        			ifHisMap.put("ifStatus", "ERR");
-	        			retMsg = e.getMessage();
-			            e.printStackTrace();
-	    			}
-	        	} else {
-	        		ifHisMap.put("ifStatus", "ERR");
-	        	}
+   	        	
+        		try {
+	        		// 추가건이 있으면
+	        		if (ifList.size() > 0) {
+	        			System.out.println("insert size : " + ifList.size());
+	        			resultCnt += wtmInterfaceMapper.insertWtmCode(ifList);
+	        		}
+	        		if(resultCnt > 0) {
+	        			retMsg = resultCnt + "건 반영완료";
+	        		} else {
+	        			retMsg = "갱신자료없음";
+	        		}
+	        		ifHisMap.put("ifStatus", "OK");
+	        		
+	        		// 이력데이터 수정은 건별로
+	        		for(int i=0; i< ifList.size(); i++) {
+	        			Map<String, Object> ifCodeHisMap = new HashMap<>();
+	        			ifCodeHisMap = ifList.get(i);
+	        			try {
+		    				int resultCnt2 = 0 ;
+		    				resultCnt2 = wtmInterfaceMapper.updateWtmOrgCodeHisEymd(ifCodeHisMap);
+		    				resultCnt2 = wtmInterfaceMapper.updateWtmOrgCodeHisSymd(ifCodeHisMap);
+	        			} catch (Exception e) {
+	            			// 이력수정의 오류는 어쩌나?
+	        				retMsg = "org set : 이력 갱신 오류";
+	    		            e.printStackTrace();
+	        			}
+	        		}
+        		} catch (Exception e) {
+        			ifHisMap.put("ifStatus", "ERR");
+        			retMsg = e.getMessage();
+		            e.printStackTrace();
+    			}
+	        	
 	        } catch(Exception e){
 	            e.printStackTrace();
 	        }
@@ -907,6 +874,64 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		}
     	
 	    return;
+	}
+	
+	@Override
+	public void setTaaApplIf(HashMap reqMap) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl setTaaApplIf");
+		// 인터페이스 결과 저장용
+    	String retMsg = null;
+    	int resultCnt = 0;
+    	String ifType = "TAA_RESULT";
+    	Map<String, Object> ifHisMap = new HashMap<>();
+    	ifHisMap.put("tenantId", (Long)reqMap.get("tenantId"));
+    	ifHisMap.put("ifItem", ifType);
+    	
+    	// 인터페이스용 변수
+    	String lastDataTime = null;
+    	String nowDataTime = null;
+    	HashMap<String, Object> getDateMap = null;
+    	HashMap<String, Object> getIfMap = null;
+    	List<Map<String, Object>> getIfList = null;
+    	
+    	// 최종 자료 if 시간 조회
+    	try {
+    		getDateMap = (HashMap<String, Object>) getIfLastDate((Long) reqMap.get("tenantId"), ifType);
+    		lastDataTime = getDateMap.get("nowDate").toString();
+    		nowDataTime = getDateMap.get("nowDate").toString();
+        	
+    	} catch(Exception e) {
+    		retMsg = "TAA_RESULT get : 최종갱신일 조회오류";
+    	}
+    	
+		// 2. 인터페이스 data 처리(프로시저로 해결하자)
+		try {
+			reqMap.put("retCode", "");
+			wtmInterfaceMapper.setTaaApplIf(reqMap);
+			
+			String retCode = reqMap.get("retCode").toString();
+			ifHisMap.put("ifStatus", retCode);
+			if("ERR".equals(retCode)) {
+				retMsg = "근태정보 이관중 오류. 오류로그 확인";
+			}
+		} catch(Exception e){
+			retMsg = "TAA_RESULT set : 근태 이관오류";
+            e.printStackTrace();
+        }
+		
+    	// 3. 처리결과 저장
+		try {
+			// WTM_IF_HIS 테이블에 결과저장
+			ifHisMap.put("updateDate", nowDataTime);
+   			ifHisMap.put("ifEndDate", lastDataTime);
+			ifHisMap.put("ifMsg", retMsg);
+			wtmInterfaceMapper.insertIfHis(ifHisMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        System.out.println("WtmInterfaceServiceImpl setTaaApplIf end");
+		return;
 	}
 
 }
