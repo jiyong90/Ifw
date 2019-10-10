@@ -1291,7 +1291,7 @@
          		var info = {
          			date : $this.calendar.getDate()
          		};
-         		timeCalendarVue.preCheck(info);
+         		timeCalendarVue.preCheck(info, true);
          	}
 	    }
    	});
