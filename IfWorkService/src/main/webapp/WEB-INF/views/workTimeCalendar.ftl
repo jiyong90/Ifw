@@ -83,14 +83,14 @@
                                         placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && subsYn">
                                 <div class="title mb-2">휴일대체방법</div>
                                 <div class="desc">
                                     <div class="custom-control custom-radio custom-control-inline">
                                         <input type="radio" id="subYnY" name="subYn" class="custom-control-input" value="Y" @change="changeSubYn($event.target.value)" :required="subsRequired">
                                         <label class="custom-control-label" for="subYnY">휴일대체</label>
                                     </div>
-                                    <div class="custom-control custom-radio custom-control-inline">
+                                    <div class="custom-control custom-radio custom-control-inline" v-show="payTargetYn">
                                         <input type="radio" id="subYnN" name="subYn" class="custom-control-input" value="N" @change="changeSubYn($event.target.value)" :required="subsRequired">
                                         <label class="custom-control-label" for="subYnN">위로금/시급지급</label>
                                     </div>
@@ -382,7 +382,7 @@
     </div>
     <!-- 연장근무신청 상세보기 modal end -->
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :custombuttons="customButtons" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :unselectauto="t" :custombuttons="customButtons" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">
@@ -451,7 +451,9 @@
   		    	subYmds: [], //대체휴일
   		    	overtime: {}, //연장/휴일 근로시간, 휴게시간
   		    	overtimeAppl: {},
-  		    	applCode: {} //신청서 정보
+  		    	applCode: {}, //신청서 정보
+  		    	subsYn: false, //대체휴가 사용 여부
+  		    	payTargetYn: false //수당 지급 대상자
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    },
   		    computed: {
@@ -517,7 +519,7 @@
   		    	},
   		    	dateClickCallback : function(info){
   		    		if(!info.allDay)
-  		    			this.preCheck(info);
+  		    			this.preCheck(info, false);
   		    	},
   	         	addEvent : function(Obj){
   	         		if(Obj!=null) {
@@ -745,7 +747,7 @@
 						}
 					});
   	         	},
-  	         	viewOvertimeAppl: function(date){
+  	         	viewOvertimeAppl: function(date, btnYn){
   	         		var $this = this;
   	         		
   	         		//1시간 값 세팅
@@ -753,7 +755,8 @@
 					var eYmd = new Date(date);
 					var baseEdate = null;
 					
-  	         		if($this.result!=null && $this.result.dayResults!=null && $this.result.dayResults!=undefined && $this.result.dayResults!='') {
+  	         		//기본근무 시간 이후로 자동으로 세팅
+  	         		if(btnYn && $this.result!=null && $this.result.dayResults!=null && $this.result.dayResults!=undefined && $this.result.dayResults!='') {
   	         			var dayResults = JSON.parse($this.result.dayResults);
   	         		
   	         			dayResults.map(function(dayResult){
@@ -947,7 +950,7 @@
   	         			}
   	         		}
   	         	},
-  	         	preCheck : function(info){ //소정근로 선 소진 여부, 연장근무 가능한지 체크
+  	         	preCheck : function(info, btnYn){ //소정근로 선 소진 여부, 연장근무 가능한지 체크
   	         		var $this = this;
   	         		
   	         		var param = {
@@ -964,7 +967,14 @@
 						dataType: "json",
 						success: function(data) {
 							if(data!=null && data.status=='OK') {
-								$this.viewOvertimeAppl(info.date);
+								$this.viewOvertimeAppl(info.date, btnYn);
+								
+								//대체 휴가 사용여부
+								if(data.hasOwnProperty('subsYn')) 
+									$this.subsYn = data.subsYn;
+								//수당지급대상자인지
+								if(data.hasOwnProperty('payTargetYn')) 
+									$this.payTargetYn = data.payTargetYn;
 							} else {
 								$("#alertText").html(data.message);
 			  	         		$("#alertModal").on('hidden.bs.modal',function(){
@@ -1526,7 +1536,6 @@
 	  	$(target).find("input[name='subYn']:checked").prop("checked", "").end();
 	  	$(".radio-toggle-wrap").hide();
 	  	$(target).find(".needs-validation").removeClass('was-validated');
-	  	
 	});
 	
 </script>

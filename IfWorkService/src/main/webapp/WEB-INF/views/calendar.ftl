@@ -132,7 +132,7 @@
 					return true;
 				}
 			},
-			unselectAuto : {
+			unselectauto : {
 				type: Boolean,
 				required: false,
 				default : function(){
@@ -211,7 +211,7 @@
 			        //validRange: this.validRange,
 			        //navLinks: this.navLinks, 
 			        selectable: this.selectable,
-			        unselectAuto: this.unselectAuto,
+			        unselectAuto: this.unselectauto,
 			        selectMirror: this.selectMirror,
 			        editable: this.editable,
 			        eventLimit: this.eventLimit, 
@@ -243,6 +243,10 @@
 				
 				if(this.scrolltime) {
 					option.scrollTime = this.scrolltime;
+				}
+				
+				if(this.unselectauto) {
+					option.unselectAuto = this.unselectauto;
 				}
 				
 				return option;

@@ -1,6 +1,7 @@
 package com.isu.ifw.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -942,106 +943,50 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		//0. 신청 가능한 대상자 인지 확인
 		WtmApplCode applCode = wtmApplCodeRepo.findByTenantIdAndEnterCdAndApplCd(tenantId, enterCd, workTypeCd);
 		
-		Long targetRuleId = applCode.getTargetRuleId();
+		List<Long> ruleIds = new ArrayList<Long>();
 		Map<String, Object> ruleMap = null;
-		if(targetRuleId != null) {
-			WtmRule rule = wtmRuleRepo.findByRuleId(targetRuleId);
-			String ruleValue  = rule.getRuleValue();
-			if(ruleValue != null && !ruleValue.equals("")) {
-				ObjectMapper mapper = new ObjectMapper();
-				try {
-					ruleMap = mapper.readValue(ruleValue, new HashMap().getClass());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		if(ruleMap != null){ 
-			WtmEmpHis e = wtmEmpHisRepo.findByTenantIdAndEnterCdAndSabunAndBetweenSymdAndEymd(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), null));
-			if(ruleMap.containsKey("INCLUDE")) {
-				//여기에등록되어 있으면 포함이 되었더도 안됨 이놈이 우선 
-				Map<String, Object> exMap = (Map<String, Object>) ruleMap.get("EXCLUDE");
-				if(exMap.containsKey("EMP")) {
-					List<Map<String, Object>> empList = (List<Map<String, Object>>) exMap.get("EMP");
-					if(empList != null && empList.size() > 0) {
-						for(Map<String, Object> empMap : empList) {
-							if(sabun.equals(empMap.get("k"))) {
-								rp.setFail("연장(휴일)근무 신청 대상자가 아닙니다.");
-								return rp;
+		
+		Long targetRuleId = applCode.getTargetRuleId();
+		if(targetRuleId != null) 
+			ruleIds.add(targetRuleId);
+		
+		// 대체휴가 사용여부 체크
+		// 대체휴가 사용 시 수당지급 대상자 인지 확인
+		Long subsRuleId = null;
+		rp.put("payTargetYn", true);
+		if(applCode.getSubsYn()!=null && "Y".equals(applCode.getSubsYn())) {
+			rp.put("subsYn", applCode.getSubsYn());
+			subsRuleId = applCode.getSubsRuleId();
+			if(subsRuleId != null) 
+				ruleIds.add(subsRuleId);
+		}	
+		
+		if(ruleIds.size()>0) {
+			//WtmRule rule = wtmRuleRepo.findByRuleId(targetRuleId);
+			List<WtmRule> rules = wtmRuleRepo.findByRuleIdsIn(ruleIds);
+			
+			if(rules!=null && rules.size()>0) {
+				for(WtmRule rule : rules) {
+					String ruleValue  = rule.getRuleValue();
+					if(ruleValue != null && !ruleValue.equals("")) {
+						ObjectMapper mapper = new ObjectMapper();
+						try {
+							ruleMap = mapper.readValue(ruleValue, new HashMap().getClass());
+							
+							if(ruleMap != null){ 
+								boolean isTarget = isRuleTarget(tenantId, enterCd, sabun, ruleMap);
+								
+								if(targetRuleId==rule.getRuleId() && !isTarget) { 
+									rp.setFail("연장(휴일)근무 신청 대상자가 아닙니다.");
+									return rp;
+								} else if(subsRuleId==rule.getRuleId()) {
+									rp.put("payTargetYn", isTarget);
+								}
 							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
-				}
-				
-				Map<String, Object> inMap = (Map<String, Object>) ruleMap.get("INCLUDE");
-				boolean isTarget = false;
-				if(inMap.containsKey("EMP")) {
-					List<Map<String, Object>> empList = (List<Map<String, Object>>) exMap.get("EMP");
-					if(empList != null && empList.size() > 0) {
-						for(Map<String, Object> empMap : empList) {
-							if(sabun.equals(empMap.get("k"))) {
-								isTarget = true;
-							}
-						}
-					}
-				}
-				if(inMap.containsKey("ORG")) { 
-					List<Map<String, Object>> orgList = (List<Map<String, Object>>) exMap.get("ORG");
-					if(orgList != null && orgList.size() > 0) {
-						for(Map<String, Object> orgMap : orgList) {
-							if(e.getOrgCd().equals(orgMap.get("k"))) {
-								isTarget = true;
-								break;
-							}
-						}
-					}
-					
-				}
-				/*
-				if(inMap.containsKey("JIKWEE")) {
-					List<Map<String, Object>> jikweeList = (List<Map<String, Object>>) exMap.get("JIKWEE");
-					if(jikweeList != null && jikweeList.size() > 0) {
-						for(Map<String, Object> jikweeMap : jikweeList) {
-							if(e.get().equals(jikweeMap.get("k"))) {
-								isTarget = true;
-								break;
-							}
-						}
-					}
-					
-				}
-				if(inMap.containsKey("JIKGUB")) {
-					
-				}
-				*/
-				if(inMap.containsKey("JIKCHAK")) {
-
-					List<Map<String, Object>> jikchakList = (List<Map<String, Object>>) exMap.get("JIKCHAK");
-					if(jikchakList != null && jikchakList.size() > 0) {
-						for(Map<String, Object> jikchakMap : jikchakList) {
-							if(e.getDutyCd().equals(jikchakMap.get("k"))) {
-								isTarget = true;
-								break;
-							}
-						}
-					}
-				}
-				if(inMap.containsKey("JOB")) {
-
-					List<Map<String, Object>> jobList = (List<Map<String, Object>>) exMap.get("JIKCHAK");
-					if(jobList != null && jobList.size() > 0) {
-						for(Map<String, Object> jobMap : jobList) {
-							if(e.getJobCd().equals(jobMap.get("k"))) {
-								isTarget = true;
-								break;
-							}
-						}
-					}
-				}
-				
-				if(!isTarget) { 
-					rp.setFail("연장(휴일)근무 신청 대상자가 아닙니다.");
-					return rp;
 				}
 			}
 		}
@@ -1137,6 +1082,101 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		wtmApplLineRepo.deleteByApplId(applId);
 		wtmApplRepo.deleteById(applId);
 		
+	}
+	
+	protected boolean isRuleTarget(Long tenantId, String enterCd, String sabun, Map<String, Object> ruleMap) {
+		
+		boolean isTarget = false;
+		
+		if(ruleMap != null){ 
+			WtmEmpHis e = wtmEmpHisRepo.findByTenantIdAndEnterCdAndSabunAndBetweenSymdAndEymd(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), null));
+			if(ruleMap.containsKey("INCLUDE")) {
+				//여기에등록되어 있으면 포함이 되었더도 안됨 이놈이 우선 
+				isTarget = true;
+				Map<String, Object> exMap = (Map<String, Object>) ruleMap.get("EXCLUDE");
+				if(exMap.containsKey("EMP")) {
+					List<Map<String, Object>> empList = (List<Map<String, Object>>) exMap.get("EMP");
+					if(empList != null && empList.size() > 0) {
+						for(Map<String, Object> empMap : empList) {
+							if(sabun.equals(empMap.get("k"))) {
+								isTarget = false;
+								return isTarget;
+							}
+						}
+					}
+				}
+				
+				System.out.println(">>>>>>>>>exclude end!!!");
+				
+				Map<String, Object> inMap = (Map<String, Object>) ruleMap.get("INCLUDE");
+				if(inMap.containsKey("EMP")) {
+					List<Map<String, Object>> empList = (List<Map<String, Object>>) exMap.get("EMP");
+					if(empList != null && empList.size() > 0) {
+						for(Map<String, Object> empMap : empList) {
+							if(sabun.equals(empMap.get("k"))) {
+								isTarget = true;
+							}
+						}
+					}
+				}
+				if(inMap.containsKey("ORG")) { 
+					List<Map<String, Object>> orgList = (List<Map<String, Object>>) exMap.get("ORG");
+					if(orgList != null && orgList.size() > 0) {
+						for(Map<String, Object> orgMap : orgList) {
+							if(e.getOrgCd().equals(orgMap.get("k"))) {
+								isTarget = true;
+								break;
+							}
+						}
+					}
+					
+				}
+				/*
+				if(inMap.containsKey("JIKWEE")) {
+					List<Map<String, Object>> jikweeList = (List<Map<String, Object>>) exMap.get("JIKWEE");
+					if(jikweeList != null && jikweeList.size() > 0) {
+						for(Map<String, Object> jikweeMap : jikweeList) {
+							if(e.get().equals(jikweeMap.get("k"))) {
+								isTarget = true;
+								break;
+							}
+						}
+					}
+					
+				}
+				if(inMap.containsKey("JIKGUB")) {
+					
+				}
+				*/
+				if(inMap.containsKey("JIKCHAK")) {
+
+					List<Map<String, Object>> jikchakList = (List<Map<String, Object>>) exMap.get("JIKCHAK");
+					if(jikchakList != null && jikchakList.size() > 0) {
+						for(Map<String, Object> jikchakMap : jikchakList) {
+							if(e.getDutyCd().equals(jikchakMap.get("k"))) {
+								isTarget = true;
+								break;
+							}
+						}
+					}
+				}
+				if(inMap.containsKey("JOB")) {
+
+					List<Map<String, Object>> jobList = (List<Map<String, Object>>) exMap.get("JIKCHAK");
+					if(jobList != null && jobList.size() > 0) {
+						for(Map<String, Object> jobMap : jobList) {
+							if(e.getJobCd().equals(jobMap.get("k"))) {
+								isTarget = true;
+								break;
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		
+		return isTarget;
 	}
 	
 }
