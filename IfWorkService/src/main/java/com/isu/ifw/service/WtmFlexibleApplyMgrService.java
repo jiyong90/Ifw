@@ -18,9 +18,9 @@ public interface WtmFlexibleApplyMgrService {
 	
 	public List<Map<String, Object>> getApplyGrpList(Map<String, Object> paramMap);
 
-	public int setApplyGrpList(String userId, Long flexibleApplyId, Map<String, Object> convertMap);
+	public int setApplyGrpList(String userId, Map<String, Object> convertMap);
 	
 	public List<Map<String, Object>> getApplyEmpList(Map<String, Object> paramMap);
 
-	public int setApplyEmpList(String userId,Long flexibleApplyId, Map<String, Object> convertMap);
+	public int setApplyEmpList(String userId, Map<String, Object> convertMap);
 }
