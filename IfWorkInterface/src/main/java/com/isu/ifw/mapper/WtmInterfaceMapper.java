@@ -28,6 +28,16 @@ public interface WtmInterfaceMapper {
 	public List<Map<String, Object>> getOrg(String lastDataTime);
 	
 	/**
+	 * 조직코드 조회
+	 **/
+	public List<Map<String, Object>> getOrgChart(String lastDataTime);
+	
+	/**
+	 * 조직코드 조회
+	 **/
+	public List<Map<String, Object>> getOrgChartDtl(String lastDataTime, String enterCd, String sdate);
+	
+	/**
 	 * 조직코드설정(근무조,사업장) 조회
 	 **/
 	public List<Map<String, Object>> getOrgMap(String lastDataTime);

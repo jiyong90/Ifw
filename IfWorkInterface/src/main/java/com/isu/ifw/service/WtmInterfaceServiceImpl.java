@@ -72,6 +72,34 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	}
 	
 	@Override
+	public List<Map<String, Object>> getOrgChartMgrIfResult(String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getOrgChartMgrIfResult");
+		List<Map<String, Object>> ifList = null;
+        try {
+        	// if 데이터 조회
+        	ifList = wtmInterfaceMapper.getOrgChart(lastDataTime);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return ifList;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getOrgChartDetIfResult(String lastDataTime, String enterCd, String sdate) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getOrgChartDetIfResult");
+		List<Map<String, Object>> ifList = null;
+        try {
+        	// if 데이터 조회
+        	ifList = wtmInterfaceMapper.getOrgChartDtl(lastDataTime, enterCd, sdate);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return ifList;
+	}
+	
+	@Override
 	public List<Map<String, Object>> getOrgMapCodeIfResult(String lastDataTime) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("WtmInterfaceServiceImpl getOrgMapCodeIfResult");

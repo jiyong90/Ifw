@@ -17,16 +17,15 @@ import com.isu.ifw.mapper.WtmInterfaceMapper;
 public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	
 	// 일단 63번서버 KABNAG에 연결하기
-	String IF_URL = "http://10.30.30.180:8081/IfWorkInterface";
+	//String IF_URL = "http://10.30.30.180:8081/IfWorkInterface";
 	//브로제코리아 개발서버
-	//String IF_URL = "http://smarthrd.servicezone.co.kr:8282/IfWorkInterface"; 
+	String IF_URL = "http://smarthrd.servicezone.co.kr:8282/IfWorkInterface"; 
 	
 	@Autowired
 	WtmInterfaceMapper wtmInterfaceMapper;
 	
 	@Autowired
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
-	
 		
 	@Override
 	public Map<String, Object> getIfLastDate(Long tenantId, String ifType) throws Exception {
@@ -519,7 +518,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		Map<String, Object> ifMap = new HashMap<>();
 	        		ifMap.put("tenantId", tenantId);
 	        		ifMap.put("enterCd", getIfList.get(i).get("ENTER_CD"));
-	        		ifMap.put("grpCodeCd", "ORG_CD");
 	        		ifMap.put("codeCd", getIfList.get(i).get("ORG_CD"));
 	        		ifMap.put("codeNm", getIfList.get(i).get("ORG_NM"));
 	        		ifMap.put("symd", getIfList.get(i).get("SDATE"));
@@ -533,7 +531,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		// 추가건이 있으면
 	        		if (ifList.size() > 0) {
 	        			System.out.println("insert size : " + ifList.size());
-	        			resultCnt += wtmInterfaceMapper.insertWtmCode(ifList);
+	        			resultCnt += wtmInterfaceMapper.insertWtmOrgCode(ifList);
 	        		}
 	        		if(resultCnt > 0) {
 	        			retMsg = resultCnt + "건 반영완료";
@@ -556,6 +554,173 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	    		            e.printStackTrace();
 	        			}
 	        		}
+        		} catch (Exception e) {
+        			ifHisMap.put("ifStatus", "ERR");
+        			retMsg = e.getMessage();
+		            e.printStackTrace();
+    			}
+	        	
+	        } catch(Exception e){
+	            e.printStackTrace();
+	        }
+		} else {
+			ifHisMap.put("ifStatus", "ERR");
+		}
+        // 3. 처리결과 저장
+		try {
+			// 최종갱신된 일시조회
+			ifHisMap.put("updateDate", nowDataTime);
+   			ifHisMap.put("ifEndDate", lastDataTime);
+			// WTM_IF_HIS 테이블에 결과저장
+			ifHisMap.put("ifMsg", retMsg);
+			wtmInterfaceMapper.insertIfHis(ifHisMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+	
+	@Override
+	public void getOrgChartIfResult(Long tenantId) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getOrgChartIfResult");
+		// 인터페이스 결과 저장용
+    	String retMsg = null;
+    	int resultCnt = 0;
+    	String ifType = "V_IF_ORG_CHART";
+    	Map<String, Object> ifHisMap = new HashMap<>();
+    	ifHisMap.put("tenantId", tenantId);
+    	ifHisMap.put("ifItem", ifType);
+    	
+    	// 인터페이스용 변수
+    	String lastDataTime = null;
+    	String nowDataTime = null;
+    	HashMap<String, Object> getDateMap = null;
+    	HashMap<String, Object> getIfMap = null;
+    	HashMap<String, Object> getIfDetMap = null;
+    	List<Map<String, Object>> getIfList = null;
+    	List<Map<String, Object>> getIfDetList = null;
+    	
+    	// 최종 자료 if 시간 조회
+    	try {
+    		getDateMap = (HashMap<String, Object>) getIfLastDate(tenantId, ifType);
+    		lastDataTime = getDateMap.get("lastDate").toString();
+    		nowDataTime = getDateMap.get("nowDate").toString();
+        	try {
+	        	String ifUrl = IF_URL + "/orgChartMgr" + "?lastDataTime="+lastDataTime;
+	        	getIfMap = getIfRt(ifUrl);
+		   		
+		   		if (getIfMap != null && getIfMap.size() > 0) {
+		   			String ifMsg = getIfMap.get("message").toString();
+		   			System.out.println("ifMsg : " + ifMsg);
+		   			System.out.println("getIfMap.size() : " + getIfMap.size());
+		   			if(!"OK".equals(ifMsg)) {
+		   				retMsg = "orgChart get : " + ifMsg;
+		   			} else {
+		   				getIfList = (List<Map<String, Object>>) getIfMap.get("ifData");
+		   				System.out.println("getIfList.size() : " + getIfList.size());
+		   			}
+		   		} else {
+		   			retMsg = "org get : If 데이터 없음";
+		   		}
+        	} catch(Exception e) {
+        		retMsg = "org get : 서버통신 오류";
+        	}
+    	} catch(Exception e) {
+    		retMsg = "org get : 최종갱신일 조회오류";
+    	}
+    	// 조회된 자료가 있으면...
+		if(retMsg == null && getIfList != null && getIfList.size() > 0) {
+			System.out.println("data loop ");
+	        try {
+   	        	for(int i=0; i<getIfList.size(); i++) {
+	        		Map<String, Object> ifMap = new HashMap<>();
+	        		ifMap.put("tenantId", tenantId);
+	        		ifMap.put("enterCd", getIfList.get(i).get("ENTER_CD"));
+	        		ifMap.put("orgChartNm", getIfList.get(i).get("ORG_CHART_NM"));
+	        		ifMap.put("symd", getIfList.get(i).get("SDATE"));
+	        		ifMap.put("eymd", getIfList.get(i).get("EDATE"));
+	        		ifMap.put("note", getIfList.get(i).get("MEMO"));
+	        		Long orgChartId = null;
+	        		
+	        		Map<String, Object> result = wtmInterfaceMapper.getWtmOgrChartId(ifMap);
+        			if(result != null) {
+        				try {
+        					orgChartId = Long.parseLong(result.get("ORG_CHART_ID").toString());
+        					if(orgChartId != null) {
+        						// 기존
+	            				ifMap.put("orgChartId", orgChartId);
+	            				resultCnt += wtmInterfaceMapper.updateWtmOrgChart(ifMap);
+	            			} 
+        				} catch(Exception e){
+        					retMsg = "ORG_CHART_ID set : ORG_CHART_ID 조회오류";
+        		            e.printStackTrace();
+        		            // 에러걸리면 그냥 아웃시키기
+        		            break;
+        		        }
+        			} else {
+        				// 신규
+        				resultCnt += wtmInterfaceMapper.insertWtmOrgChart(ifMap);
+        				// 저장후 id 조회
+        				orgChartId = Long.parseLong(result.get("ORG_CHART_ID").toString());
+        				ifMap.put("orgChartId", orgChartId);
+        			}
+        			
+        			
+        			// chart detail 시작
+        			getIfDetList = null;
+        			try {
+        	        	String ifUrl = IF_URL + "/orgChartDtl" 
+        			                 + "?lastDataTime="+lastDataTime
+        			                 + "&enterCd="+getIfList.get(i).get("ENTER_CD")
+        			                 + "&symd="+getIfList.get(i).get("SDATE")
+        	        			;
+        	        	getIfDetMap = getIfRt(ifUrl);
+        		   		
+        		   		if (getIfDetMap != null && getIfDetMap.size() > 0) {
+        		   			String ifMsg = getIfDetMap.get("message").toString();
+        		   			System.out.println("ifMsg : " + ifMsg);
+        		   			System.out.println("getIfDetMap.size() : " + getIfDetMap.size());
+        		   			if(!"OK".equals(ifMsg)) {
+        		   				retMsg = "orgChartDtl get : " + ifMsg;
+        		   			} else {
+        		   				getIfDetList = (List<Map<String, Object>>) getIfDetMap.get("ifData");
+        		   				System.out.println("getIfDetList.size() : " + getIfDetList.size());
+        		   			}
+        		   		} else {
+        		   			retMsg = "orgDet get : If 데이터 없음";
+        		   		}
+                	} catch(Exception e) {
+                		retMsg = "orgDet get : 서버통신 오류";
+                	}
+        			
+        			if(retMsg == null && getIfDetList != null && getIfDetList.size() > 0) {
+        				try {
+        					List<Map<String, Object>> ifList = new ArrayList();
+        	   	        	for(int j=0; i<getIfList.size(); j++) {
+        		        		Map<String, Object> ifDetMap = new HashMap<>();
+        		        		ifDetMap.put("orgChartId", orgChartId);
+        		        		ifDetMap.put("orgCd", getIfDetList.get(j).get("ORG_CD"));
+        		        		ifDetMap.put("priorOrgCd", getIfDetList.get(j).get("PRIOR_ORG_CD"));
+        		        		ifDetMap.put("seq", getIfDetList.get(j).get("SEQ"));
+        		        		ifDetMap.put("orgLevel", getIfDetList.get(j).get("ORG_LEVEL"));
+        		        		ifDetMap.put("orderSeq", getIfDetList.get(j).get("ORGER_SEQ"));
+        		        		ifList.add(ifMap);
+        	   	        	}
+        	   	        	resultCnt += wtmInterfaceMapper.insertWtmOrgChartDet(ifList);
+		            	} catch(Exception e) {
+		            		retMsg = "orgDet get : 서버통신 오류";
+		            	}
+        			}
+   	        	}
+   	        	
+        		try {
+	        		if(resultCnt > 0) {
+	        			retMsg = resultCnt + "건 반영완료";
+	        		} else {
+	        			retMsg = "갱신자료없음";
+	        		}
+	        		ifHisMap.put("ifStatus", "OK");
         		} catch (Exception e) {
         			ifHisMap.put("ifStatus", "ERR");
         			retMsg = e.getMessage();
@@ -883,7 +1048,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		// 인터페이스 결과 저장용
     	String retMsg = null;
     	int resultCnt = 0;
-    	String ifType = "TAA_RESULT";
+    	String ifType = "TAA_APPL";
     	Map<String, Object> ifHisMap = new HashMap<>();
     	ifHisMap.put("tenantId", (Long)reqMap.get("tenantId"));
     	ifHisMap.put("ifItem", ifType);
@@ -905,10 +1070,24 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     		retMsg = "TAA_RESULT get : 최종갱신일 조회오류";
     	}
     	
-		// 2. 인터페이스 data 처리(프로시저로 해결하자)
+		// 2. 인터페이스 data 처리
 		try {
-			reqMap.put("retCode", "");
-			wtmInterfaceMapper.setTaaApplIf(reqMap);
+			
+			// 신청서 유무 확인하기(AK는 TENANT_ID, ENTER_CD, IF_APPL_NO)
+			Map<String, Object> result = wtmInterfaceMapper.getWtmTaaApplId(reqMap);
+			if(result != null) {
+				// 기존데이터가 있으면 신청서 상태코드 갱신
+				Long taaApplIdtaaApplId = Long.parseLong(result.get("TAA_APPL_ID").toString());
+			} else {
+				// 근태신청데이터 생성하기(WTM_APPL, WTM_TAA_APPL) - 결재라인은 생략함. 
+				wtmInterfaceMapper.setTaaApplIf(reqMap);
+				
+			}
+			
+			// 상태가 결재완료이면 근무시간 쪼개기가 필요함 - 근무시간의 기준은?
+			// 대상자 상태 옵션에 따라서 근무계획시간 변동없이 가산시간만 체크 또는 계획시간 짜르기가 필요함.
+			
+			
 			
 			String retCode = reqMap.get("retCode").toString();
 			ifHisMap.put("ifStatus", retCode);

@@ -45,6 +45,22 @@ public interface WtmInterfaceService {
 	public List<Map<String, Object>> getOrgCodeIfResult(String lastDataTime) throws Exception;
 	
 	/**
+	 * 조직도 기준정보 이관
+	 * @param tenantId - 테넌트 아이디
+	 * @return 
+	 * @throws Exception 
+	 */
+	public List<Map<String, Object>> getOrgChartMgrIfResult(String lastDataTime) throws Exception;
+	
+	/**
+	 * 조직도 상세정보 이관
+	 * @param tenantId - 테넌트 아이디
+	 * @return 
+	 * @throws Exception 
+	 */
+	public List<Map<String, Object>> getOrgChartDetIfResult(String lastDataTime, String enterCd, String sdate) throws Exception;
+	
+	/**
 	 * 사업장, 근무조 정보 이관
 	 * @param tenantId - 테넌트 아이디
 	 * @return 

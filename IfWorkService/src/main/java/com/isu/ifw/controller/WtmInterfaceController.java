@@ -29,12 +29,13 @@ public class WtmInterfaceController {
 	public void setRestTemplate(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}
+	public Long tenantId = (long) 38;
 	
 	@RequestMapping(value = "/code",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getcodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공통코드
 		// Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Long tenantId = (long) 38;
+		//Long tenantId = (long) 38;
 		WtmInterfaceService.getCodeIfResult(tenantId);
 		
 		return;
@@ -44,7 +45,7 @@ public class WtmInterfaceController {
 	public void holidayIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공휴일정보
 		// Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Long tenantId = (long) 38;
+		//Long tenantId = (long) 38;
 		WtmInterfaceService.getHolidayIfResult(tenantId); //Servie 호출
 		return;
 	}
@@ -53,7 +54,7 @@ public class WtmInterfaceController {
 	public void taaCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 근태코드정보
 		// Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Long tenantId = (long) 38;
+		//Long tenantId = (long) 38;
 		WtmInterfaceService.getTaaCodeIfResult(tenantId); //Servie 호출
 		return;
 	}
@@ -62,8 +63,9 @@ public class WtmInterfaceController {
 	public void orgCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 조직코드정보
 		// Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Long tenantId = (long) 38;
+		//Long tenantId = (long) 38;
 		WtmInterfaceService.getOrgCodeIfResult(tenantId); //Servie 호출
+		WtmInterfaceService.getOrgChartIfResult(tenantId); //Servie 호출
 		return;
 	}
 	
@@ -71,7 +73,7 @@ public class WtmInterfaceController {
 	public void orgMapCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사업장, 근무조 정보
 		// Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Long tenantId = (long) 38;
+		//Long tenantId = (long) 38;
 		WtmInterfaceService.getOrgMapCodeIfResult(tenantId); //Servie 호출
 		return;
 	}
@@ -80,8 +82,24 @@ public class WtmInterfaceController {
 	public void empHisIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
 		// Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Long tenantId = (long) 38;
+		//Long tenantId = (long) 38;
 		WtmInterfaceService.getEmpHisIfResult(tenantId); //사원 변경정보 저장 Servie 호출
+		return ;
+	}
+	
+	@RequestMapping(value = "/workTimeIf",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void setTaaApplIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		HashMap<String, Object> reqMap = new HashMap<>();
+		reqMap.put("tenantId", Long.valueOf(request.getAttribute("tenantId").toString()));
+		reqMap.put("enterCd", request.getAttribute("enterCd").toString());
+		reqMap.put("sabun", request.getAttribute("sabun").toString());
+		reqMap.put("taaCd", request.getAttribute("taaCd").toString());
+		reqMap.put("sYmd", request.getAttribute("sYmd").toString());
+		reqMap.put("eYmd", request.getAttribute("eYmd").toString());
+		reqMap.put("status", request.getAttribute("status").toString());
+		
+		WtmInterfaceService.setTaaApplIf(reqMap); //근태정보 인터페이스
 		return ;
 	}
 }

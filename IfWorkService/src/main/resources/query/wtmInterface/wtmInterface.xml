@@ -77,7 +77,7 @@
 	        	, #{item.eymd}
 	        	, #{item.note}
 	        	, NOW()
-	        	, 0
+	        	, '0'
 	        )
 			</foreach>
 	</insert>
@@ -90,7 +90,7 @@
 		    </foreach>
     		END
 		  , UPDATE_DATE = NOW()
-		  , UPDATE_ID = 0
+		  , UPDATE_ID = '0'
 		WHERE CODE_ID IN
 		<foreach collection="list" item="item" open="(" close=")" separator=", ">
 			#{item.codeId}
@@ -102,7 +102,7 @@
 			UPDATE WTM_CODE
 			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
 			  , UPDATE_DATE = NOW()
-			  , UPDATE_ID = 0
+			  , UPDATE_ID = '0'
 			WHERE 1=1
 			  AND TENANT_ID = #{tenantId}
 			  AND ENTER_CD = #{enterCd}
@@ -117,7 +117,7 @@
 			UPDATE WTM_CODE
 			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
 			  , UPDATE_DATE = NOW()
-			  , UPDATE_ID = 0
+			  , UPDATE_ID = '0'
 			WHERE 1=1
 			  AND TENANT_ID = #{tenantId}
 			  AND ENTER_CD = #{enterCd}
@@ -150,7 +150,7 @@
         	, #{item.festiveYn}
         	, #{item.payYn}
         	, NOW()
-        	, 0
+        	, '0'
         )
 		</foreach>
         ON DUPLICATE KEY UPDATE
@@ -159,7 +159,7 @@
             , FESTIVE_YN = VALUES(FESTIVE_YN)
             , PAY_YN = VALUES(PAY_YN)
             , UPDATE_DATE = NOW()
-            , UPDATE_ID = 0
+            , UPDATE_ID = '0'
     </insert>
     
     <select id="getWtmTaaCodeId" parameterType="map" resultType="hashmap">
@@ -195,7 +195,7 @@
 			, #{item.requestTypeCd}
 			, #{item.workYn}
 			, NOW()
-			, 0
+			, '0'
 			)
 		</foreach>
 	</insert>
@@ -223,12 +223,147 @@
 		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.workYn}
 		    </foreach> END
 		  , UPDATE_DATE = NOW()
-		  , UPDATE_ID = 0
+		  , UPDATE_ID = '0'
 		WHERE TAA_CODE_ID IN 
 		<foreach collection="list" item="item" open="(" close=")" separator=", ">
 			#{item.taaCodeId}
 		</foreach>
 	</update>
+	
+	<insert id="insertWtmOrgCode" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_ORG_CODE (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, ORG_CD
+        	, SYMD
+        	, ORG_NM
+        	, EYMD
+        	, ORG_TYPE
+        	, NOTE
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.tenantId}
+        	, #{item.enterCd}
+        	, #{item.orgCd}
+        	, #{item.symd}
+        	, #{item.orgNm}
+        	, #{item.eymd}
+        	, #{item.orgType}
+        	, #{item.note}
+        	, NOW()
+        	, '0'
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              ORG_NM = VALUES(ORG_NM)
+            , ORG_TYPE = VALUES(ORG_TYPE)
+            , EYMD = VALUES(EYMD)
+            , NOTE = VALUES(NOTE)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = '0'
+    </insert>
+    
+    <update id="updateWtmOrgCodeHisEymd" parameterType="hashmap">
+		<![CDATA[
+			UPDATE WTM_ORG_CODE
+			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			  , UPDATE_DATE = NOW()
+			  , UPDATE_ID = '0'
+			WHERE 1=1
+			  AND TENANT_ID = #{tenantId}
+			  AND ENTER_CD = #{enterCd}
+			  AND ORG_CD = #{orgCd}
+			  AND #{symd} > SYMD
+		]]>
+	</update>
+	
+	<update id="updateWtmOgrCodeHisSymd" parameterType="hashmap" >
+        <![CDATA[
+			UPDATE WTM_ORG_CODE
+			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			  , UPDATE_DATE = NOW()
+			  , UPDATE_ID = '0'
+			WHERE 1=1
+			  AND TENANT_ID = #{tenantId}
+			  AND ENTER_CD = #{enterCd}
+			  AND ORG_CD = #{orgCd}
+			  AND #{symd} < SYMD
+        ]]>
+    </update>
+    
+    <select id="getWtmOgrChartId" parameterType="map" resultType="hashmap">
+		SELECT ORG_CHART_ID
+		  FROM WTM_ORG_CHART
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SYMD = #{symd}
+    </select>
+    
+    <insert id="insertWtmOrgChart" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_ORG_CHART (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, ORG_CHART_NM
+        	, SYMD
+        	, EYMD
+        	, NOTE
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       
+		(     #{tenantId}
+        	, #{enterCd}
+        	, #{orgChartNm}
+        	, #{symd}
+        	, #{eymd}
+        	, #{note}
+        	, NOW()
+        	, '0'
+        )
+    </insert>
+    
+    <update id="updateWtmOrgChart" parameterType="hashmap">
+		UPDATE WTM_ORG_CHART SET
+		    ORG_CHART_NM = #{orgChartNm}
+		  , EYMD = #{eymd}
+		  , NOTE = #{note}
+		  , UPDATE_DATE = NOW()
+		  , UPDATE_ID = '0'
+		WHERE ORG_CHART_ID = #{orgChartId}
+	</update>
+	
+    <insert id="insertWtmOrgChartDet" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_ORG_CHART_DET (
+        	  ORG_CHART_ID
+        	, ORG_CD
+        	, PRIOR_ORG_CD
+        	, SEQ
+        	, ORG_LEVEL
+        	, ORDER_SEQ
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.orgChartId}
+        	, #{item.orgCd}
+        	, #{item.priorOrgCd}
+        	, #{item.seq}
+        	, #{item.orgLevel}
+        	, #{item.orderSeq}
+        	, NOW()
+        	, '0'
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              PRIOR_ORG_CD = VALUES(PRIOR_ORG_CD)
+            , SEQ = VALUES(SEQ)
+            , ORG_LEVEL = VALUES(ORG_LEVEL)
+            , ORDER_SEQ = VALUES(ORDER_SEQ)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = '0'
+    </insert>
 	
 	<insert id="insertEmpHisTemp" parameterType="hashmap">
 		INSERT INTO WTM_IF_EMP_TEMP
@@ -286,7 +421,7 @@
   	</select>
   	
   	<select id="getEmpBaseList" parameterType="map" resultType="hashmap">
-		SELECT TENANT_ID AS tenantId, ENTER_CD AS enterCd, SABUN AS sabun, 0 as userId 
+		SELECT TENANT_ID AS tenantId, ENTER_CD AS enterCd, SABUN AS sabun, '0' as userId 
 		  FROM WTM_IF_EMP_MSG
 		 WHERE TENANT_ID = #{tenantId}
 		   AND DATE_FORMAT(UPDATE_DATE, '%Y%m%d%H%i%s') BETWEEN #{ifEndDate} AND #{updateDate}
@@ -294,4 +429,27 @@
 		   AND NEW_VALUE IS NOT NULL
 		 ORDER BY ENTER_CD, SABUN
     </select>
+    
+    <select id="setTaaApplIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_IF_TAA_APPL( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{taaCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{ifApplNo, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{status, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}) }
+  	</select>
+  	
+  	<select id="getWtmTaaApplId" parameterType="map" resultType="hashmap">
+		SELECT TAA_APPL_ID
+		  FROM WTM_TAA_APPL
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND IF_APPL_NO = #{ifApplNo}
+	</select>
 </mapper>

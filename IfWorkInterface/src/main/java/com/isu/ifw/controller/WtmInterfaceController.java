@@ -102,6 +102,48 @@ public class WtmInterfaceController {
 		return rp;
 	}
 	
+	@RequestMapping(value = "/orgChartMgr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam orgChartMgrIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
+		System.out.println("WtmInterfaceController orgChartMgrIf start");
+		ReturnParam rp = new ReturnParam();
+		
+		// 공통코드
+		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
+		System.out.println("lastDataTime : " + lastDataTime);
+		List<Map<String, Object>> ifList = null;
+		rp.setSuccess("OK");
+		try {
+			ifList = WtmInterfaceService.getOrgChartMgrIfResult(lastDataTime); //Servie 호출
+			rp.put("ifData", ifList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		return rp;
+	}
+	
+	@RequestMapping(value = "/orgChartDet", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam orgChartDetIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
+		System.out.println("WtmInterfaceController orgChartDetIf start");
+		ReturnParam rp = new ReturnParam();
+		
+		// 공통코드
+		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
+		String enterCd = paramMap.get("enterCd").toString(); // 회사
+		String sdate = paramMap.get("synd").toString(); // 기준일
+		System.out.println("lastDataTime : " + lastDataTime);
+		List<Map<String, Object>> ifList = null;
+		rp.setSuccess("OK");
+		try {
+			ifList = WtmInterfaceService.getOrgChartDetIfResult(lastDataTime, enterCd, sdate); //Servie 호출
+			rp.put("ifData", ifList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		return rp;
+	}
+	
 	@RequestMapping(value = "/orgMapCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam orgMapCodeIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
 		System.out.println("WtmInterfaceController orgMapCodeIf start");

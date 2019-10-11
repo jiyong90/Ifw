@@ -93,6 +93,54 @@ public interface WtmInterfaceMapper {
 	public int insertTaaCode(List<Map<String, Object>> paramList);
 	
 	/**
+	 * 조직코드 저장
+	 * @param paramMap
+	 * @return
+	 */
+	public int insertWtmOrgCode(List<Map<String, Object>> paramList);
+	
+	/**
+	 * 조직도 ID조회
+	 **/
+	public Map<String, Object> getWtmOgrChartId(Map<String, Object> paramMap);
+	
+	/**
+	 * 조직도 기준 저장
+	 * @param paramMap
+	 * @return
+	 */
+	public int insertWtmOrgChart(Map<String, Object> paramList);
+	
+	/**
+	 * 조직도 기준 저장
+	 * @param paramMap
+	 * @return
+	 */
+	public int updateWtmOrgChart(Map<String, Object> paramList);
+	
+	/**
+	 * 조직도 내용 저장
+	 * @param paramMap
+	 * @return
+	 */
+	public int insertWtmOrgChartDet(List<Map<String, Object>> paramList);
+	
+	/**
+	 * 조직코드 저장 종료일 갱신
+	 * @param paramMap
+	 * @return
+	 */
+	public int updateWtmOrgCodeHisEymd(Map<String, Object> paramMap);
+	
+	/**
+	 * 조직코드 저장 시작일 갱신
+	 * @param paramMap
+	 * @return
+	 */
+	public int updateWtmOrgCodeHisSymd(Map<String, Object> paramMap);
+	
+	
+	/**
 	 * 사원이력 입력
 	 * @param paramMap
 	 * @return
@@ -105,5 +153,12 @@ public interface WtmInterfaceMapper {
 	 * 사원 기본근무 생성
 	 */
 	public List<Map<String, Object>> getEmpBaseList(Map<String, Object> paramMap);
+	
+	public void setTaaApplIf(Map<String, Object> paramMap);
+	
+	/**
+	 * 신청서유무 ID조회
+	 **/
+	public Map<String, Object> getWtmTaaApplId(Map<String, Object> paramMap);
 	
 }
