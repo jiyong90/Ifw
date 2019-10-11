@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.type.TimeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import com.isu.ifw.entity.WtmFlexibleApplDet;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtCanAppl;
+import com.isu.ifw.entity.WtmOtSubsAppl;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
@@ -672,6 +674,227 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		List<Map<String, Object>> flexibleList = flexEmpMapper.getFlexibleEmpWebList(paramMap);
 		
 		return flexibleList;
+	}
+
+	@Transactional
+	@Override
+	public void addWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String addTimeTypeCd,
+			Date addSdate, Date addEdate, Long applId, String userId) {
+	 
+		List<WtmWorkDayResult> base = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_BASE, ymd, ymd);
+		
+		//List<WtmWorkDayResult> days = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+		 
+		Map<String, Object> pMap = new HashMap<>();
+		pMap.put("tenantId", tenantId);
+		pMap.put("enterCd", enterCd);
+		pMap.put("sabun", sabun);
+		pMap.put("ymd", ymd);
+		
+		for(WtmWorkDayResult r : base) {
+			//근무 계획 시작시간과 종료시간의 범위를 절대 벗어날수 없다. 그렇다 한다. ㅋ
+			boolean isDelete = false;
+			//시종시간이 동일하면 기본근무 계획시간을 지운다.
+			if(r.getPlanSdate().compareTo(addSdate) == 0 && r.getPlanEdate().compareTo(addEdate) == 0) {
+				isDelete = true;
+			//시작시간은 같지만 계획 종료 시간 보다 대체휴일종료 시간이 작을 경우
+			}else if(r.getPlanSdate().compareTo(addSdate) == 0 && r.getPlanEdate().compareTo(addEdate) > 0) {
+				r.setPlanSdate(addEdate); // 계획의 시작일은 휴일대체 종료로 변경한다
+				 
+			//종료시간은 같지만 계획 시작시간 보다 대체휴일시작시간이 클경우
+			}else if(r.getPlanSdate().compareTo(addSdate) < 0 && r.getPlanEdate().compareTo(addEdate) == 0) {
+				r.setPlanEdate(addSdate); // 계획의 종료일을 휴일대체 시작일로 변경한다
+				
+			//계회의 시종 시간 중간에!! 대체휴일 시종시간이 있을 경우! 거지같넹.. 앞에데이터는 수정하고 뒤에 데이터는 만들어줘야한다.. 
+			}else if(r.getPlanSdate().compareTo(addSdate) < 0 && r.getPlanEdate().compareTo(addEdate) > 0) {
+				Date oriEdate = r.getPlanEdate();
+				r.setPlanEdate(addSdate);
+				
+				WtmWorkDayResult addR = new WtmWorkDayResult();
+				addR.setApplId(r.getApplId());
+				addR.setTenantId(r.getTenantId());
+				addR.setEnterCd(enterCd);
+				addR.setYmd(r.getYmd());
+				addR.setSabun(r.getSabun());
+				addR.setPlanSdate(addEdate);
+				addR.setPlanEdate(oriEdate);
+
+				Map<String, Object> addMap = new HashMap<>();
+				addMap.putAll(pMap);
+				
+				String shm = sdf.format(addEdate);
+				String ehm = sdf.format(oriEdate); 
+				addMap.put("shm", shm);
+				addMap.put("ehm", ehm);
+				Map<String, Object> addPlanMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(addMap);
+				addR.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
+				addR.setTimeTypeCd(WtmApplService.TIME_TYPE_BASE);
+				addR.setUpdateId(userId);
+				
+				workDayResultRepo.save(addR);
+				
+			}
+			if(!isDelete) {
+				String shm = sdf.format(r.getPlanSdate());
+				String ehm = sdf.format(r.getPlanEdate()); 
+				pMap.put("shm", shm);
+				pMap.put("ehm", ehm);
+				Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(pMap);
+				r.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+"")); 
+				workDayResultRepo.save(r);
+			}else {
+				workDayResultRepo.delete(r);
+			}
+		}
+		
+
+		WtmWorkDayResult addDayResult = new WtmWorkDayResult();
+		addDayResult.setApplId(applId);
+		addDayResult.setTenantId(tenantId);
+		addDayResult.setEnterCd(enterCd);
+		addDayResult.setYmd(ymd);
+		addDayResult.setSabun(sabun);
+		addDayResult.setPlanSdate(addSdate);
+		addDayResult.setPlanEdate(addEdate);
+		Map<String, Object> addMap = new HashMap<>();
+		addMap.putAll(pMap);
+		
+		String shm = sdf.format(addEdate);
+		String ehm = sdf.format(addEdate); 
+		addMap.put("shm", shm);
+		addMap.put("ehm", ehm);
+		Map<String, Object> addPlanMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(addMap);
+		addDayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
+		addDayResult.setTimeTypeCd(addTimeTypeCd);
+		addDayResult.setUpdateId(userId);
+		
+		workDayResultRepo.save(addDayResult); 
+	}
+
+	@Override
+	public void removeWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun,
+			String addTimeTypeCd, Date addSdate, Date addEdate, Long applId, String userId) {
+		
+		//if(otSubsAppls != null && otSubsAppls.size() > 0) {
+			String currYmd = null;
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			Map<String, Map<String, Date>> resetBaseTime = new HashMap<String, Map<String, Date>>();
+			//for(WtmOtSubsAppl otSubsAppl : otSubsAppls) {
+				List<String> timeTypeCd = new ArrayList<>();
+				timeTypeCd.add(WtmApplService.TIME_TYPE_BASE);
+				timeTypeCd.add(WtmApplService.TIME_TYPE_SUBS); 
+				timeTypeCd.add(WtmApplService.TIME_TYPE_TAA); 
+				
+				List<WtmWorkDayResult> workDayResults = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdInAndYmdBetweenOrderByPlanSdateAsc(tenantId, enterCd, sabun, timeTypeCd, ymd, ymd);
+				 
+				//Date sdate = otSubsAppl.getSubsSdate();
+				//Date edate = otSubsAppl.getSubsEdate();
+				 
+				int cnt = 0;
+				Boolean isPrev = null;
+				for(WtmWorkDayResult res : workDayResults) {
+					 
+					if(( res.getTimeTypeCd().equals(WtmApplService.TIME_TYPE_TAA) || res.getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS) ) && res.getPlanSdate().compareTo(addSdate) == 0 && res.getPlanEdate().compareTo(addEdate) == 0) {
+						if(cnt == 0) {
+							//시작시간이 대체휴일이면 다음 데이터 여부를 판단하고 다음데이터가 SUBS BASE로 변경하자
+							if(workDayResults.size() == (cnt+1) || workDayResults.get(cnt+1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS) || workDayResults.get(cnt+1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_TAA) ) {
+								//뒤에 데이터가 없으면
+								res.setTimeTypeCd(WtmApplService.TIME_TYPE_BASE);
+								res.setApplId(applId);
+								workDayResultRepo.save(res);
+								break;
+							}else { 
+								WtmWorkDayResult modiResult = workDayResults.get(cnt+1);
+								modiResult.setPlanSdate(addSdate);
+								modiResult.setApplId(applId);
+								
+								workDayResultRepo.deleteById(res.getWorkDayResultId());
+								workDayResultRepo.save(modiResult);
+								break;
+							}
+						}else {
+							// 삭제하려는 데이터면 이전 데이터가 SUBS 인지를 체크 한다.
+							if(workDayResults.get(cnt-1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS) || workDayResults.get(cnt-1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_TAA)) {
+								isPrev = false;
+							}else {
+								isPrev = true;
+							}
+							// 삭제하려는 데이터가 마지막인지 확인하자
+							if(workDayResults.size() == (cnt+1)) {
+								if(isPrev) {
+									//이전 데이터로 지우려는 데이터의 종료일로 바꿔주면 땡
+									WtmWorkDayResult modiResult = workDayResults.get(cnt-1);
+									modiResult.setPlanEdate(addEdate);
+									
+									workDayResultRepo.deleteById(res.getWorkDayResultId());
+									workDayResultRepo.save(modiResult);
+									break;
+								}else {
+									// SUBS or TAA
+									// SUBS(지우려는 데이터) -> BASE 로 변
+									res.setTimeTypeCd(WtmApplService.TIME_TYPE_BASE);
+									res.setApplId(applId);
+
+									workDayResultRepo.save(res);
+									break;
+								}
+							}else {
+								//마지막 데이터가 아니면 다음 데이터의 timeTypeCd를 확인하자
+								if(workDayResults.get(cnt+1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS) || workDayResults.get(cnt+1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_TAA)) {
+									if(isPrev) { 
+										//이전 데이터로 지우려는 데이터의 종료일로 바꿔주면 땡
+										WtmWorkDayResult modiResult = workDayResults.get(cnt-1);
+										modiResult.setPlanEdate(addEdate);
+										
+										workDayResultRepo.deleteById(res.getWorkDayResultId());
+										workDayResultRepo.save(modiResult);
+										break;
+									}else { 
+										//SUBS or TAA
+										// SUBS(지우려는 데이터) -> BASE 로 변
+										//SUBS or TAA
+										res.setTimeTypeCd(WtmApplService.TIME_TYPE_BASE);
+										res.setApplId(applId); 
+										workDayResultRepo.save(res);
+										break;
+									}
+								}else { 
+									if(isPrev) { 
+										//1. BASE
+										//2. SUBS TAA
+										//3. BASE 인 상황  1,2번을 보내드리고 3번으로 통합하자
+										workDayResultRepo.deleteById(workDayResults.get(cnt-1).getWorkDayResultId());
+										workDayResultRepo.deleteById(res.getWorkDayResultId());
+
+										WtmWorkDayResult modiResult = workDayResults.get(cnt+1); 
+										modiResult.setPlanSdate(workDayResults.get(cnt-1).getPlanSdate());  
+										workDayResultRepo.save(modiResult);
+										break;
+									}else {
+										//이후 데이터로 지우려는 데이터의 시작일로 바꿔주면 땡
+										WtmWorkDayResult modiResult = workDayResults.get(cnt+1);
+										modiResult.setPlanSdate(addSdate); 
+										workDayResultRepo.deleteById(res.getWorkDayResultId());
+										workDayResultRepo.save(modiResult);
+										break;
+									}
+									
+								} 
+							}
+							
+						}
+						
+						
+					}
+					cnt++;
+				}
+				 
+			//} 
+		
 	}
 	
 }
