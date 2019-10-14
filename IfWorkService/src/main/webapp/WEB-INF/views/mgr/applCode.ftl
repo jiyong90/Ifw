@@ -83,8 +83,6 @@
 										<td>
 											<select id="subsRuleId">
 			                                    <option value="">사용안함</option>
-			                                    <option value="1">휴일대체 선택대상</option>
-			                                    <option value="2">근무시간관리 대상자</option>
 			                                </select>
 										</td>
 									</tr>
@@ -144,6 +142,7 @@
    			{Header:"입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inShm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
    			{Header:"입력종료시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inEhm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
    			{Header:"대휴사용여부",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsYn",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:1  },
+   			{Header:"대휴선택대상",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsRuleId",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:20  },
    			{Header:"대휴사용시작",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsSday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
    			{Header:"대휴사용종료",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsEday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
    			{Header:"비고",  			Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"note",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:2000  }
@@ -195,6 +194,7 @@
 			}
 			if($('#trHol').is(':visible')){
 				sheet1.SetCellValue(row, "subsYn", $("#subsYn").val());
+				sheet1.SetCellValue(row, "subsRuleId", $("#subsRuleId").val());
 			}
 			if($('#trSubs').is(':visible')){
 				sheet1.SetCellValue(row, "subsSday", $("#subsSday").val());
@@ -259,6 +259,7 @@
 			}
 			if($('#trHol').is(':visible')){
 				$("#subsYn").val(sheet1.GetCellValue( NewRow, "subsYn")).prop("selected", true);
+				getRuleList(NewRow, "subsRuleId");
 			}
 			if($('#trSubs').is(':visible')){
 				$("#subsSday").val(sheet1.GetCellValue( NewRow, "subsSday"));
@@ -277,5 +278,37 @@
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);
 		}
+	}
+	
+	function getRuleList(NewRow, id){
+		
+		if($('#'+id+' > option').length<=1) {
+			Util.ajax({
+				url: "${rc.getContextPath()}/rule/list",
+				type: "GET",
+				contentType: 'application/json',
+				dataType: "json",
+				success: function(data) {
+					if(data!=null && data.status=='OK') {
+						var rules = data.DATA;
+						var selectOptions="";
+						
+						$('#'+id).find("option:not(:first)").remove();
+						rules.map(function(rule){
+							selectOptions += "<option value='"+rule.ruleId+"'>"+rule.ruleNm+"</option>";
+						});
+						
+						$('#'+id).append( selectOptions );
+						$("#"+id).val(sheet1.GetCellValue( NewRow, id));
+					}
+				},
+				error: function(e) {
+					console.log(e);
+				}
+			});
+		} else{
+			$("#"+id).val(sheet1.GetCellValue( NewRow, id));
+		}
+		
 	}
 </script>
