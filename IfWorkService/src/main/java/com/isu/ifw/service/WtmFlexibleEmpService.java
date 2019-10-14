@@ -187,6 +187,6 @@ public interface WtmFlexibleEmpService {
 	 */
 	void calcApprDayInfo(Long tenantId, String enterCd, String sYmd, String eYmd, String sabun);
 	
-	void addWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String addTimeTypeCd, Date addSdate, Date addEdate, Long applId, String userId);
-	void removeWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String addTimeTypeCd, Date addSdate, Date addEdate, Long applId, String userId);
+	void addWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String addTimeTypeCd, String addTaaCd, Date addSdate, Date addEdate, Long applId, String userId);
+	void removeWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String removeTimeTypeCd, String removeTaaCd, Date removeSdate, Date removeEdate, Long applId, String userId);
 }

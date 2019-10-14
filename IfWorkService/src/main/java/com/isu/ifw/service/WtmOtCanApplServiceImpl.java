@@ -232,7 +232,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 					paramMap.put("enterCd", enterCd);
 					Map<String, Map<String, Date>> resetBaseTime = new HashMap<String, Map<String, Date>>();
 					for(WtmOtSubsAppl otSubsAppl : otSubsAppls) {
-						wtmFlexibleEmpService.removeWtmDayResultInBaseTimeType(tenantId, enterCd, otSubsAppl.getSubYmd(), applSabun, WtmApplService.TIME_TYPE_SUBS, otSubsAppl.getSubsSdate(), otSubsAppl.getSubsEdate(), deletedApplId, userId);
+						wtmFlexibleEmpService.removeWtmDayResultInBaseTimeType(tenantId, enterCd, otSubsAppl.getSubYmd(), applSabun, WtmApplService.TIME_TYPE_SUBS, "", otSubsAppl.getSubsSdate(), otSubsAppl.getSubsEdate(), deletedApplId, userId);
 					}
 				
 				}

@@ -440,7 +440,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			List<WtmOtSubsAppl> subs = wtmOtSubsApplRepo.findByApplId(applId);
 			if(subs != null && subs.size() >0) {
 				for(WtmOtSubsAppl sub : subs) { 
-					wtmFlexibleEmpService.addWtmDayResultInBaseTimeType(tenantId, enterCd, sub.getSubYmd(), applSabun, WtmApplService.TIME_TYPE_SUBS, sub.getSubsSdate(), sub.getSubsEdate(), applId, userId);
+					wtmFlexibleEmpService.addWtmDayResultInBaseTimeType(tenantId, enterCd, sub.getSubYmd(), applSabun, WtmApplService.TIME_TYPE_SUBS, "", sub.getSubsSdate(), sub.getSubsEdate(), applId, userId);
 				}
 			}
 		}

@@ -678,7 +678,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 
 	@Transactional
 	@Override
-	public void addWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String addTimeTypeCd,
+	public void addWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String addTimeTypeCd, String addTaaCd,
 			Date addSdate, Date addEdate, Long applId, String userId) {
 	 
 		List<WtmWorkDayResult> base = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_BASE, ymd, ymd);
@@ -768,6 +768,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		Map<String, Object> addPlanMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(addMap);
 		addDayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
 		addDayResult.setTimeTypeCd(addTimeTypeCd);
+		addDayResult.setTaaCd(addTaaCd);
 		addDayResult.setUpdateId(userId);
 		
 		workDayResultRepo.save(addDayResult); 
@@ -775,7 +776,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 
 	@Override
 	public void removeWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun,
-			String addTimeTypeCd, Date addSdate, Date addEdate, Long applId, String userId) {
+			String removeTimeTypeCd, String removeTaaCd, Date removeSdate, Date removeEdate, Long applId, String userId) {
 		
 		//if(otSubsAppls != null && otSubsAppls.size() > 0) {
 			String currYmd = null;
@@ -798,7 +799,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				Boolean isPrev = null;
 				for(WtmWorkDayResult res : workDayResults) {
 					 
-					if(( res.getTimeTypeCd().equals(WtmApplService.TIME_TYPE_TAA) || res.getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS) ) && res.getPlanSdate().compareTo(addSdate) == 0 && res.getPlanEdate().compareTo(addEdate) == 0) {
+					if(( res.getTimeTypeCd().equals(WtmApplService.TIME_TYPE_TAA) || res.getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS) ) && res.getPlanSdate().compareTo(removeSdate) == 0 && res.getPlanEdate().compareTo(removeEdate) == 0) {
 						if(cnt == 0) {
 							//시작시간이 대체휴일이면 다음 데이터 여부를 판단하고 다음데이터가 SUBS BASE로 변경하자
 							if(workDayResults.size() == (cnt+1) || workDayResults.get(cnt+1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_SUBS) || workDayResults.get(cnt+1).getTimeTypeCd().equals(WtmApplService.TIME_TYPE_TAA) ) {
@@ -809,7 +810,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 								break;
 							}else { 
 								WtmWorkDayResult modiResult = workDayResults.get(cnt+1);
-								modiResult.setPlanSdate(addSdate);
+								modiResult.setPlanSdate(removeSdate);
 								modiResult.setApplId(applId);
 								
 								workDayResultRepo.deleteById(res.getWorkDayResultId());
@@ -828,7 +829,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 								if(isPrev) {
 									//이전 데이터로 지우려는 데이터의 종료일로 바꿔주면 땡
 									WtmWorkDayResult modiResult = workDayResults.get(cnt-1);
-									modiResult.setPlanEdate(addEdate);
+									modiResult.setPlanEdate(removeEdate);
 									
 									workDayResultRepo.deleteById(res.getWorkDayResultId());
 									workDayResultRepo.save(modiResult);
@@ -848,7 +849,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 									if(isPrev) { 
 										//이전 데이터로 지우려는 데이터의 종료일로 바꿔주면 땡
 										WtmWorkDayResult modiResult = workDayResults.get(cnt-1);
-										modiResult.setPlanEdate(addEdate);
+										modiResult.setPlanEdate(removeEdate);
 										
 										workDayResultRepo.deleteById(res.getWorkDayResultId());
 										workDayResultRepo.save(modiResult);
@@ -877,7 +878,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 									}else {
 										//이후 데이터로 지우려는 데이터의 시작일로 바꿔주면 땡
 										WtmWorkDayResult modiResult = workDayResults.get(cnt+1);
-										modiResult.setPlanSdate(addSdate); 
+										modiResult.setPlanSdate(removeSdate); 
 										workDayResultRepo.deleteById(res.getWorkDayResultId());
 										workDayResultRepo.save(modiResult);
 										break;
