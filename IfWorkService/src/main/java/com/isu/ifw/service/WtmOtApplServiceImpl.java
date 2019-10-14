@@ -104,6 +104,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	@Autowired
 	WtmOtCanApplMapper wtmOtCanApplMapper;
 	
+	@Autowired
+	WtmFlexibleEmpService wtmFlexibleEmpService;
+	
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -436,86 +439,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			
 			List<WtmOtSubsAppl> subs = wtmOtSubsApplRepo.findByApplId(applId);
 			if(subs != null && subs.size() >0) {
-				for(WtmOtSubsAppl sub : subs) {
-					List<WtmWorkDayResult> base = wtmWorkDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, applSabun, WtmApplService.TIME_TYPE_BASE, sub.getSubYmd(), sub.getSubYmd());
-					
-					
-					 
-					Map<String, Object> pMap = new HashMap<>();
-					pMap.put("tenantId", tenantId);
-					pMap.put("enterCd", enterCd);
-					pMap.put("sabun", appl.getApplSabun());
-					pMap.put("ymd", sub.getSubYmd());
-					
-					for(WtmWorkDayResult r : base) {
-						//근무 계획 시작시간과 종료시간의 범위를 절대 벗어날수 없다. 그렇다 한다. ㅋ
-						
-						//시종시간이 동일하면 기본근무 계획시간을 지운다.
-						if(r.getPlanSdate().compareTo(sub.getSubsSdate()) == 0 && r.getPlanEdate().compareTo(sub.getSubsEdate()) == 0) {
-							
-						//시작시간은 같지만 계획 종료 시간 보다 대체휴일종료 시간이 작을 경우
-						}else if(r.getPlanSdate().compareTo(sub.getSubsSdate()) == 0 && r.getPlanEdate().compareTo(sub.getSubsEdate()) > 0) {
-							r.setPlanSdate(sub.getSubsEdate()); // 계획의 시작일은 휴일대체 종료로 변경한다
-							
-						
-						//종료시간은 같지만 계획 시작시간 보다 대체휴일시작시간이 클경우
-						}else if(r.getPlanSdate().compareTo(sub.getSubsSdate()) < 0 && r.getPlanEdate().compareTo(sub.getSubsEdate()) == 0) {
-							r.setPlanEdate(sub.getSubsSdate()); // 계획의 종료일을 휴일대체 시작일로 변경한다
-							
-						//계회의 시종 시간 중간에!! 대체휴일 시종시간이 있을 경우! 거지같넹.. 앞에데이터는 수정하고 뒤에 데이터는 만들어줘야한다.. 
-						}else if(r.getPlanSdate().compareTo(sub.getSubsSdate()) < 0 && r.getPlanEdate().compareTo(sub.getSubsEdate()) > 0) {
-							Date oriEdate = r.getPlanEdate();
-							r.setPlanEdate(sub.getSubsSdate());
-							
-							WtmWorkDayResult addR = new WtmWorkDayResult();
-							addR.setApplId(r.getApplId());
-							addR.setTenantId(r.getTenantId());
-							addR.setEnterCd(enterCd);
-							addR.setYmd(r.getYmd());
-							addR.setSabun(r.getSabun());
-							addR.setPlanSdate(sub.getSubsEdate());
-							addR.setPlanEdate(oriEdate);
-
-							Map<String, Object> addMap = new HashMap<>();
-							addMap.putAll(pMap);
-							
-							String shm = sdf.format(sub.getSubsEdate());
-							String ehm = sdf.format(oriEdate); 
-							addMap.put("shm", shm);
-							addMap.put("ehm", ehm);
-							Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(addMap);
-							addR.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
-							addR.setTimeTypeCd(WtmApplService.TIME_TYPE_BASE);
-							addR.setUpdateId(userId);
-							
-							wtmWorkDayResultRepo.save(addR);
-							
-						}
-						
-						String shm = sdf.format(r.getPlanSdate());
-						String ehm = sdf.format(r.getPlanEdate()); 
-						pMap.put("shm", shm);
-						pMap.put("ehm", ehm);
-						Map<String, Object> planMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(pMap);
-						r.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+""));
-						
-						wtmWorkDayResultRepo.save(r);
-					}
-					WtmWorkDayResult subDayResult = new WtmWorkDayResult();
-					subDayResult.setApplId(applId);
-					subDayResult.setTenantId(tenantId);
-					subDayResult.setEnterCd(enterCd);
-					subDayResult.setYmd(sub.getSubYmd());
-					subDayResult.setSabun(appl.getApplSabun());
-					subDayResult.setPlanSdate(sub.getSubsSdate());
-					subDayResult.setPlanEdate(sub.getSubsEdate());
-					subDayResult.setPlanMinute(Integer.parseInt(sub.getSubsMinute()));
-					subDayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_SUBS);
-					subDayResult.setUpdateId(userId);
-					
-					wtmWorkDayResultRepo.save(subDayResult);
-					
-					
+				for(WtmOtSubsAppl sub : subs) { 
+					wtmFlexibleEmpService.addWtmDayResultInBaseTimeType(tenantId, enterCd, sub.getSubYmd(), applSabun, WtmApplService.TIME_TYPE_SUBS, "", sub.getSubsSdate(), sub.getSubsEdate(), applId, userId);
 				}
 			}
 		}

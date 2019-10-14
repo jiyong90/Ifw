@@ -43,6 +43,7 @@ public class WtmApplCodeServiceImpl implements WtmApplCodeService{
 				code.put("inShm", l.getInShm());
 				code.put("inEhm", l.getInEhm());
 				code.put("subsYn", l.getSubsYn());
+				code.put("subsRuleId", l.getSubsRuleId());
 				code.put("subsSday", l.getSubsSday());
 				code.put("subsEday", l.getSubsEday());
 				code.put("note", l.getNote());
@@ -81,6 +82,7 @@ public class WtmApplCodeServiceImpl implements WtmApplCodeService{
 						code.setInShm(l.get("inShm").toString());
 						code.setInEhm(l.get("inEhm").toString());
 						code.setSubsYn(l.get("subsYn").toString());
+						code.setSubsRuleId(Long.valueOf(l.get("subsRuleId").toString()));
 						code.setSubsSday(Integer.parseInt(l.get("subsSday").toString()));
 						code.setSubsEday(Integer.parseInt(l.get("subsEday").toString()));
 						code.setNote(l.get("note").toString());
