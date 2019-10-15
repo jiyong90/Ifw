@@ -287,9 +287,13 @@
                                     <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <span class="sub-desc"></span>
                                     <ul class="sub-desc-list">
-                                        <li v-for="(taa, idx) in workDayInfo.taaNames.split(',')">
+                                        <li v-if="workDayInfo.taaNames.indexOf(',')!=-1" v-for="(taa, idx) in workDayInfo.taaNames.split(',')">
                                             <span class="sub-title">{{taa}}</span>
                                             <span class="sub-desc">{{workDayInfo.taaHour.split(',')[idx]}}</span>
+                                        </li>
+                                        <li v-else>
+                                            <span class="sub-title">{{workDayInfo.taaNames}}</span>
+                                            <span class="sub-desc">{{workDayInfo.taaHour}}</span>
                                         </li>
                                     </ul>
                                 </li>

@@ -255,6 +255,8 @@
 			     , M.BASE_WORK_YN AS baseWorkYn
 			     , M.FIXOT_USE_TYPE AS fixotUseType
 			     , M.FIXOT_USE_LIMIT AS fixotUseLimit
+			     , M.TAA_TIME_YN AS taaTimeYn
+			     , M.TAA_WORK_YN AS taaWorkYn
 			     , E.SABUN AS sabun
 			     , E.SYMD AS sYmd
 			     , E.EYMD AS eYmd

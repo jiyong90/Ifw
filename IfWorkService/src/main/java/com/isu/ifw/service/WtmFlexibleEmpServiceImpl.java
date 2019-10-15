@@ -208,6 +208,16 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
+		paramMap.put("taaTimeYn", "");
+		paramMap.put("taaWorkYn", "");
+		
+		Map<String, Object> flexEmp = flexEmpMapper.getFlexibleEmp(paramMap);
+		if(flexEmp!=null) {
+			if(flexEmp.get("taaTimeYn")!=null) //근태시간포함여부
+				paramMap.put("taaTimeYn", flexEmp.get("taaTimeYn").toString());
+			if(flexEmp.get("taaWorkYn")!=null) //근태일 근무여부
+				paramMap.put("taaWorkYn", flexEmp.get("taaWorkYn").toString());
+		}
 		
 		return flexEmpMapper.getFlexibleDayInfo(paramMap);
 	}
