@@ -73,6 +73,10 @@ public class WtmFlexibleStdMgr {
 	private String fixotUseType;
 	@Column(name="FIXOT_USE_LIMIT")
 	private Integer fixotUseLimit;
+	@Column(name="TAA_TIME_YN")
+	private String taaTimeYn;
+	@Column(name="TAA_WORK_YN")
+	private String taaWorkYn;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -291,6 +295,22 @@ public class WtmFlexibleStdMgr {
 
 	public void setFixotUseLimit(Integer fixotUseLimit) {
 		this.fixotUseLimit = fixotUseLimit;
+	}
+
+	public String getTaaTimeYn() {
+		return taaTimeYn;
+	}
+
+	public void setTaaTimeYn(String taaTimeYn) {
+		this.taaTimeYn = taaTimeYn;
+	}
+
+	public String getTaaWorkYn() {
+		return taaWorkYn;
+	}
+
+	public void setTaaWorkYn(String taaWorkYn) {
+		this.taaWorkYn = taaWorkYn;
 	}
 
 	public String getNote() {
