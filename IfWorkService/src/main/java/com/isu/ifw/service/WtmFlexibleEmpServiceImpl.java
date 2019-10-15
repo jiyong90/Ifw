@@ -229,7 +229,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				paramMap.put("taaWorkYn", flexEmp.get("taaWorkYn").toString());
 		}
 		
-		return flexEmpMapper.getFlexibleWorkTimeInfo(paramMap);
+		return flexEmpMapper.getFlexibleWorkTimeInfo(paramMap); 
 	}
 	
 	@Override
