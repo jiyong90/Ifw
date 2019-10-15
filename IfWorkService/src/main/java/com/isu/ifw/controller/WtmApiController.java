@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.auth.control.TenantSecuredControl;
 import com.isu.ifw.service.WtmFlexibleEmpService;
+import com.isu.ifw.service.WtmValidatorService;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
@@ -26,6 +27,9 @@ public class WtmApiController extends TenantSecuredControl {
 	@Autowired
 	@Qualifier(value="flexibleEmpService")
 	private WtmFlexibleEmpService flexibleEmpService;
+	
+	@Autowired
+	private WtmValidatorService validatorService;
 
 	@RequestMapping(value="/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam test(HttpServletRequest request ) throws Exception {
@@ -85,7 +89,7 @@ public class WtmApiController extends TenantSecuredControl {
 		}
 		
 		
-		rp = flexibleEmpService.checkDuplicateWorktime(tenantId, enterCd, sabun, sd, ed, Long.parseLong(applId));
+		rp = validatorService.checkDuplicateWorktime(tenantId, enterCd, sabun, sd, ed, Long.parseLong(applId));
 		
 		return rp;
 	}
@@ -134,7 +138,7 @@ public class WtmApiController extends TenantSecuredControl {
 			rp.setFail("시작일자가 종료일자보다 큽니다.");
 			return rp;
 		}
-		rp = flexibleEmpService.checkDuplicateFlexibleWork(tenantId, enterCd, sabun, symd, eymd, Long.parseLong(applId));
+		rp = validatorService.checkDuplicateFlexibleWork(tenantId, enterCd, sabun, symd, eymd, Long.parseLong(applId));
 		
 		return rp;
 	}
