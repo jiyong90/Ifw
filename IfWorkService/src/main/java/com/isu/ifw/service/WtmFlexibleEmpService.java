@@ -189,4 +189,27 @@ public interface WtmFlexibleEmpService {
 	
 	void addWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String addTimeTypeCd, String addTaaCd, Date addSdate, Date addEdate, Long applId, String userId);
 	void removeWtmDayResultInBaseTimeType(Long tenantId, String enterCd, String ymd, String sabun, String removeTimeTypeCd, String removeTaaCd, Date removeSdate, Date removeEdate, Long applId, String userId);
+	
+	/**
+	 * 근무제 유효성 검사기
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param symd
+	 * @param eymd
+	 * @param applId null 또는 빈값이어도 됨.
+	 * @return
+	 */
+	public ReturnParam checkDuplicateFlexibleWork(Long tenantId, String enterCd, String sabun, String symd, String eymd, Long applId);
+	/**
+	 * 일별 유효성 검사기
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param sdate
+	 * @param edate
+	 * @param applId null 또는 빈값이어도 됨.
+	 * @return
+	 */
+	public ReturnParam checkDuplicateWorktime(Long tenantId, String enterCd, String sabun, Date sdate, Date edate, Long applId);
 }

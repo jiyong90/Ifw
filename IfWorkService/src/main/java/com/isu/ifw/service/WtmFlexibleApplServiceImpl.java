@@ -51,6 +51,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	WtmFlexibleStdMapper flexStdMapper;
 
 	@Autowired
+	WtmFlexibleEmpService flexEmpService;
+	
+	@Autowired
 	WtmApplRepository wtmApplRepo;
 	
 	@Autowired
@@ -225,9 +228,12 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	@Override
 	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, String userId) throws Exception {
 		ReturnParam rp = new ReturnParam();
-		rp = checkRequestDate(applId);
+
+		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
+		rp = flexEmpService.checkDuplicateFlexibleWork(tenantId, enterCd, sabun, flexibleAppl.getSymd(), flexibleAppl.getEymd(), applId);
+		//rp = checkRequestDate(applId);
 		if(rp.getStatus().equals("FAIL")) {
-			throw new Exception("신청중인 또는 이미 적용된 근무정보가 있습니다.");
+			throw new Exception(rp.get("message")+"");
 		}
 		
 		//결재라인 상태값 업데이트
@@ -269,7 +275,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		if(lastAppr) {
 			//대상자의 실제 근무 정보를 반영한다.
-			WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
 			WtmFlexibleEmp emp = new WtmFlexibleEmp();
 			
 			//사전 체크에서 유연근무끼리의 중복은 이미 막힌다.
@@ -391,7 +396,13 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		rp.setSuccess("");
 		Long applId = Long.parseLong(paramMap.get("applId").toString());
 		//신청 시 날짜 중복되지 않도록 체크 한다.
-		rp = checkRequestDate(applId);
+		//rp = checkRequestDate(applId);
+
+		String sYmd = paramMap.get("sYmd").toString();
+		String eYmd = paramMap.get("eYmd").toString();
+		
+		rp = flexEmpService.checkDuplicateFlexibleWork(tenantId, enterCd, sabun, sYmd, eYmd, applId);
+		
 		if(rp.getStatus().equals("FAIL")) {
 			return rp;
 		}
@@ -483,18 +494,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		
 		return wtmFlexibleApplRepo.save(flexibleAppl);
 	}
-	
-	protected ReturnParam checkRequestDate(Long applId) {
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-		Map<String, Object> m = flexStdMapper.checkRequestDate(applId);
-		int cnt = Integer.parseInt(m.get("CNT").toString());
-		if(cnt > 0) {
-			rp.setFail("신청중인 또는 이미 적용된 근무정보가 있습니다.");
-			return rp;
-		}
-		return rp;
-	}
+	 
 	
 	protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun, String userId) {
 		

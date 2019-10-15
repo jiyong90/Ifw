@@ -609,7 +609,12 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		Map<String, Object> resultMap = wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
+		Long applId = null;
+		if(paramMap.containsKey("applId") && paramMap.get("applId") != null && !paramMap.get("applId").equals("")) {
+			applId = Long.parseLong(paramMap.get("applId")+"");
+		}
+		Map<String, Object> resultMap = wtmFlexibleEmpService.checkDuplicateWorktime(tenantId, enterCd, sabun, sd, ed, applId); 
+				//wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
 		//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
 		
 		int workCnt = Integer.parseInt(resultMap.get("workCnt").toString());
