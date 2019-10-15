@@ -1,7 +1,10 @@
 package com.isu.ifw.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,11 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	
 	@Autowired
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
+	
+	@Autowired
+	private WtmFlexibleEmpService WtmFlexibleEmpService;
+	
+	
 		
 	@Override
 	public Map<String, Object> getIfLastDate(Long tenantId, String ifType) throws Exception {
@@ -178,12 +186,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
    	        		try {
    		        		//수정건이 있으면....
    		        		if (ifUpdateList.size() > 0) {
-   		        			System.out.println("update size : " + ifUpdateList.size());
+   		        			//System.out.println("update size : " + ifUpdateList.size());
    		        			resultCnt += wtmInterfaceMapper.updateWtmCode(ifUpdateList);
    		        		}
    		        		// 추가건이 있으면
    		        		if (ifList.size() > 0) {
-   		        			System.out.println("insert size : " + ifList.size());
+   		        			//System.out.println("insert size : " + ifList.size());
    		        			resultCnt += wtmInterfaceMapper.insertWtmCode(ifList);
    		        		}
    		        		if(resultCnt > 0) {
@@ -417,12 +425,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		try {
 		        		//수정건이 있으면....
 		        		if (ifUpdateList.size() > 0) {
-		        			System.out.println("update size : " + ifUpdateList.size());
+		        			//System.out.println("update size : " + ifUpdateList.size());
 		        			resultCnt += wtmInterfaceMapper.updateTaaCode(ifUpdateList);
 		        		}
 		        		// 추가건이 있으면
 		        		if (ifList.size() > 0) {
-		        			System.out.println("insert size : " + ifList.size());
+		        			//System.out.println("insert size : " + ifList.size());
 		        			resultCnt += wtmInterfaceMapper.insertTaaCode(ifList);
 		        		}
 		        		if(resultCnt > 0) {
@@ -450,8 +458,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	// 3. 처리결과 저장
 		try {
 			// WTM_IF_HIS 테이블에 결과저장
-			System.out.println("nowDataTime : " + nowDataTime );
-			ifHisMap.put("updateDate", nowDataTime);
    			ifHisMap.put("ifEndDate", lastDataTime);
 			ifHisMap.put("ifMsg", retMsg);
 			wtmInterfaceMapper.insertIfHis(ifHisMap);
@@ -492,13 +498,10 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
 		   			String ifMsg = getIfMap.get("message").toString();
-		   			System.out.println("ifMsg : " + ifMsg);
-		   			System.out.println("getIfMap.size() : " + getIfMap.size());
 		   			if(!"OK".equals(ifMsg)) {
 		   				retMsg = "org get : " + ifMsg;
 		   			} else {
 		   				getIfList = (List<Map<String, Object>>) getIfMap.get("ifData");
-		   				System.out.println("getIfList.size() : " + getIfList.size());
 		   			}
 		   		} else {
 		   			retMsg = "org get : If 데이터 없음";
@@ -511,7 +514,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	}
     	// 조회된 자료가 있으면...
 		if(retMsg == null && getIfList != null && getIfList.size() > 0) {
-			System.out.println("data loop ");
 	        try {
 	        	List<Map<String, Object>> ifList = new ArrayList();
    	        	for(int i=0; i<getIfList.size(); i++) {
@@ -530,7 +532,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         		try {
 	        		// 추가건이 있으면
 	        		if (ifList.size() > 0) {
-	        			System.out.println("insert size : " + ifList.size());
+	        			//System.out.println("insert size : " + ifList.size());
 	        			resultCnt += wtmInterfaceMapper.insertWtmOrgCode(ifList);
 	        		}
 	        		if(resultCnt > 0) {
@@ -612,13 +614,10 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
 		   			String ifMsg = getIfMap.get("message").toString();
-		   			System.out.println("ifMsg : " + ifMsg);
-		   			System.out.println("getIfMap.size() : " + getIfMap.size());
 		   			if(!"OK".equals(ifMsg)) {
 		   				retMsg = "orgChart get : " + ifMsg;
 		   			} else {
 		   				getIfList = (List<Map<String, Object>>) getIfMap.get("ifData");
-		   				System.out.println("getIfList.size() : " + getIfList.size());
 		   			}
 		   		} else {
 		   			retMsg = "org get : If 데이터 없음";
@@ -631,7 +630,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	}
     	// 조회된 자료가 있으면...
 		if(retMsg == null && getIfList != null && getIfList.size() > 0) {
-			System.out.println("data loop ");
 	        try {
    	        	for(int i=0; i<getIfList.size(); i++) {
 	        		Map<String, Object> ifMap = new HashMap<>();
@@ -679,13 +677,10 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         		   		
         		   		if (getIfDetMap != null && getIfDetMap.size() > 0) {
         		   			String ifMsg = getIfDetMap.get("message").toString();
-        		   			System.out.println("ifMsg : " + ifMsg);
-        		   			System.out.println("getIfDetMap.size() : " + getIfDetMap.size());
         		   			if(!"OK".equals(ifMsg)) {
         		   				retMsg = "orgChartDtl get : " + ifMsg;
         		   			} else {
         		   				getIfDetList = (List<Map<String, Object>>) getIfDetMap.get("ifData");
-        		   				System.out.println("getIfDetList.size() : " + getIfDetList.size());
         		   			}
         		   		} else {
         		   			retMsg = "orgDet get : If 데이터 없음";
@@ -771,16 +766,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     		getDateMap = (HashMap<String, Object>) getIfLastDate(tenantId, ifType);
     		lastDataTime = getDateMap.get("lastDate").toString();
     		nowDataTime = getDateMap.get("nowDate").toString();
-    		System.out.println("lastDataTime : " + lastDataTime);
-    		System.out.println("nowDataTime : " + nowDataTime);
         	try {
 	        	String ifUrl = IF_URL + "/orgMapCode" + "?lastDataTime="+lastDataTime;
 	        	getIfMap = getIfRt(ifUrl);
-	        	System.out.println("getIfMap.size() : " + getIfMap.size());
 		   		if (getIfMap != null && getIfMap.size() > 0) {
 		   			String ifMsg = getIfMap.get("message").toString();
 		   			getIfList = (List<Map<String, Object>>) getIfMap.get("ifData");
-		   			System.out.println("getIfList.size() : " + getIfList.size());
 		   		} else {
 		   			retMsg = "orgMap get : If 데이터 없음";
 		   		}
@@ -825,7 +816,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        			if(result != null) {
 	        				try {
 		            			String codeId = result.get("CODE_ID").toString();
-		            			System.out.println(codeId);
 		            			if(codeId != null && codeId.equals("")) {
 		            				ifMap.put("codeId", codeId);
 		            				ifUpdateList.add(ifMap);
@@ -850,12 +840,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		try {
 		        		//수정건이 있으면....
 		        		if (ifUpdateList.size() > 0) {
-		        			System.out.println("update size : " + ifUpdateList.size());
+		        			//System.out.println("update size : " + ifUpdateList.size());
 		        			resultCnt += wtmInterfaceMapper.updateWtmCode(ifUpdateList);
 		        		}
 		        		// 추가건이 있으면
 		        		if (ifList.size() > 0) {
-		        			System.out.println("insert size : " + ifList.size());
+		        			//System.out.println("insert size : " + ifList.size());
 		        			resultCnt += wtmInterfaceMapper.insertWtmCode(ifList);
 		        		}
 		        		if(resultCnt > 0) {
@@ -932,7 +922,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	try {
 	        	String ifUrl = IF_URL + "/empHis" + "?lastDataTime="+lastDataTime;
 	        	getIfMap = getIfRt(ifUrl);
-		   		System.out.println("111111111111111111111" + getIfMap.toString());
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
 		   			String ifMsg = getIfMap.get("message").toString();
@@ -978,7 +967,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        	try {
 	        	// 추가건이 있으면
 	    		if (ifList.size() > 0) {
-	    			System.out.println("insert size : " + ifList.size());
+	    			//System.out.println("insert size : " + ifList.size());
 	    			resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifList);
 	    			if(resultCnt > 0) {
 	        			retMsg = resultCnt + "건 반영완료";
@@ -1072,26 +1061,93 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	
 		// 2. 인터페이스 data 처리
 		try {
-			
-			// 신청서 유무 확인하기(AK는 TENANT_ID, ENTER_CD, IF_APPL_NO)
-			Map<String, Object> result = wtmInterfaceMapper.getWtmTaaApplId(reqMap);
-			if(result != null) {
-				// 기존데이터가 있으면 신청서 상태코드 갱신
-				Long taaApplIdtaaApplId = Long.parseLong(result.get("TAA_APPL_ID").toString());
-			} else {
-				// 근태신청데이터 생성하기(WTM_APPL, WTM_TAA_APPL) - 결재라인은 생략함. 
-				wtmInterfaceMapper.setTaaApplIf(reqMap);
-				
-			}
-			
-			// 상태가 결재완료이면 근무시간 쪼개기가 필요함 - 근무시간의 기준은?
-			// 대상자 상태 옵션에 따라서 근무계획시간 변동없이 가산시간만 체크 또는 계획시간 짜르기가 필요함.
-			
-			
+			//String applStatusCd = reqMap.get("status").toString();
+			// 호출이되면 근태신청 데이터를 저장하거나 결재상태를 갱신한다
+			reqMap.put("retCode", "");
+			reqMap.put("retMsg", "");
+			reqMap.put("taaApplId", "");
+			reqMap.put("applId", "");
+			reqMap.put("oldStatus", "");
+			wtmInterfaceMapper.setTaaApplIf(reqMap);
 			
 			String retCode = reqMap.get("retCode").toString();
-			ifHisMap.put("ifStatus", retCode);
-			if("ERR".equals(retCode)) {
+			String oldStatusCd = "";
+			if(reqMap.get("oldStatus") != null) { oldStatusCd = reqMap.get("oldStatus").toString();}
+			
+			if("OK".equals(retCode)) {
+				//기간 루프
+				String sYmd = reqMap.get("sYmd").toString();
+				String eYmd = reqMap.get("eYmd").toString();
+				
+				SimpleDateFormat dt = new SimpleDateFormat("yyyyMMddHHmmss");
+				
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		        Date sDate = formatter.parse(sYmd);
+		        Date eDate = formatter.parse(eYmd);
+		         
+		        // 시간차이를 시간,분,초를 곱한 값으로 나누면 하루 단위가 나옴
+		        long diff = eDate.getTime() - sDate.getTime();
+		        long diffDays = (diff / (24 * 60 * 60 * 1000)) +1;
+				for(int i=0; i<diffDays; i++) {
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(sDate);
+					cal.add(Calendar.DATE, i);
+					String ymd = formatter.format(cal.getTime());
+					HashMap<String, Object> reqDayMap = reqMap;
+					reqDayMap.put("ymd", ymd);
+					reqDayMap.put("oldStatus", oldStatusCd);
+					reqDayMap.put("retCode", "");
+					reqDayMap.put("retMsg", "");
+					reqDayMap.put("timeTypeCd", "");
+					reqDayMap.put("taaSetYn", "");
+					reqDayMap.put("taaSdate", "");
+					reqDayMap.put("taaEdate", "");
+					System.out.println("oldStatusCd : " + oldStatusCd);
+					System.out.println("statusCd : " + reqDayMap.get("status"));
+					wtmInterfaceMapper.setTaaApplDayIf(reqDayMap);
+					String retDayCode = reqDayMap.get("retCode").toString();
+					if("FAIL".equals(retCode)) {
+						// 오류다 ㅠㅠ
+						ifHisMap.put("ifStatus", "ERR");
+						retMsg = "근태정보 이관중 오류. 오류로그 확인";
+						break;
+					} else {
+						// 오류가 아니면.. 근태시간을 생성체크하자
+						String taaSetYn = reqDayMap.get("taaSetYn").toString();
+						if("I".equals(taaSetYn)) {
+							// 근태생성
+							WtmFlexibleEmpService.addWtmDayResultInBaseTimeType(
+									  Long.parseLong(reqDayMap.get("tenantId").toString())
+									, reqDayMap.get("enterCd").toString()
+									, ymd
+									, reqDayMap.get("sabun").toString()
+									, reqDayMap.get("timeTypeCd").toString()
+									, reqDayMap.get("taaCd").toString()
+									, dt.parse(reqDayMap.get("taaSdate").toString())
+									, dt.parse(reqDayMap.get("taaEdate").toString())
+									, Long.parseLong(reqDayMap.get("applId").toString())
+									, "0");
+						} else if ("D".equals(taaSetYn)) {
+							// 근태삭제
+							WtmFlexibleEmpService.removeWtmDayResultInBaseTimeType(
+									  Long.parseLong(reqDayMap.get("tenantId").toString())
+									, reqDayMap.get("enterCd").toString()
+									, ymd
+									, reqDayMap.get("sabun").toString()
+									, reqDayMap.get("timeTypeCd").toString()
+									, reqDayMap.get("taaCd").toString()
+									, dt.parse(reqDayMap.get("taaSdate").toString())
+									, dt.parse(reqDayMap.get("taaEdate").toString())
+									, Long.parseLong(reqDayMap.get("applId").toString())
+									, "0");
+						}
+					}
+				}
+				
+				ifHisMap.put("ifStatus", "OK");
+				retMsg = "근태신청서 처리완료";
+			} else {
+				ifHisMap.put("ifStatus", "ERR");
 				retMsg = "근태정보 이관중 오류. 오류로그 확인";
 			}
 		} catch(Exception e){
