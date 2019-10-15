@@ -41,7 +41,7 @@ public class WtmCalendarService {
 		result.put("companyCalendar", wtmCalendarMapper.getCalendar(paramMap));
 		
 		//개인 근태 달력
-		result.put("workCalendar", wtmCalendarMapper.getWorkCalendar(paramMap));
+		//result.put("workCalendar", wtmCalendarMapper.getWorkCalendar(paramMap));
 		
 		//지난 날은 실적, 아직 도래하지 않은 날은 계획을 보여줌
 		//계획

@@ -562,19 +562,19 @@
 	                            <div class="main-title">근무 인정시간</div>
 	                            <div class="main-desc">
 	                            	<template v-if="workTimeInfo.apprSdate||workTimeInfo.apprEdate">
-	                             	<template v-if="workTimeInfo.apprSdate">
-	                             		{{moment(workTimeInfo.apprSdate).format('HH:mm')}}
-	                             	</template>
-	                             	<template v-else>
-	                             		미타각
-	                             	</template>
-	                             	~
-	                             	<template v-if="workTimeInfo.apprEdate">
-	                             		{{moment(workTimeInfo.apprEdate).format('HH:mm')}}
-	                             	</template>
-	                             	<template v-else>
-	                             		미타각
-	                             	</template>
+		                             	<template v-if="workTimeInfo.apprSdate">
+		                             		{{moment(workTimeInfo.apprSdate).format('HH:mm')}}
+		                             	</template>
+		                             	<template v-else>
+		                             		미타각
+		                             	</template>
+		                             	~
+		                             	<template v-if="workTimeInfo.apprEdate">
+		                             		{{moment(workTimeInfo.apprEdate).format('HH:mm')}}
+		                             	</template>
+		                             	<template v-else>
+		                             		미타각
+		                             	</template>
 	                            	</template>
 	                            </div>
 	                        </li>
