@@ -342,8 +342,9 @@
 								data.companyCalendar.map(function(cal){
 									//if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
 										//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
+										if($(".fc-day-top[data-date='"+cal.sunYmd+"'] span[name='companyHoliday']").text().indexOf(cal.holidayNm)==-1)
+											$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span class='fc-holiday'>"+cal.holidayNm+"</span>");
 										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
-										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span class='fc-holiday'>"+cal.holidayNm+"</span>");
 									//}
 								});
 							}

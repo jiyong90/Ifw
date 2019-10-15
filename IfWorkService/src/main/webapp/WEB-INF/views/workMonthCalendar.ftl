@@ -223,6 +223,39 @@
 								} 
 							});
 							
+							if(Object.keys($this.dayWorks).length>0) {
+				         		$.each($this.dayWorks, function(k, v){
+						         	v.map(function(dayWork){
+						         		//근무일
+						         		if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+											dayWork.plans.map(function(plan){
+												var day = moment(plan.key).format('YYYY-MM-DD');
+											
+					 		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
+					 		    					//개인 근태
+					  		    					/* var taaEvent = {
+														id: day,
+							    						title: "<div class='dot work-type'><span>" + plan.label + "</span></div>",
+							    						start: day,
+							    						end: day
+							    					};
+						  		    				events.push(taaEvent); */
+						  		    				
+						  		    				if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0) {
+					 		    						$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
+						  		    				}else {
+						  		    					if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").text().indexOf(plan.label)==-1)
+						  		    						$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").append(' '+plan.label);
+						  		    				}
+						  		    				$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").css({"color":"#4d84fe"});
+					  		    				
+					 		    				} 
+											});
+						         		} 
+									});
+				         		});
+			        		}
+							
 						}
 					},
 					error: function(e) {
@@ -231,7 +264,7 @@
 				});
   		    	
  	        },
- 	        markAdditionalInfo : function(){ //회사 휴일과 근태 정보 달력에 표기
+ 	        markAdditionalInfo : function(){ //회사 휴일 달력에 표기
  	        	var $this = this;
  	        	var calendar = this.$refs.fullCalendar.cal;
  	        
@@ -251,8 +284,9 @@
 							data.companyCalendar.map(function(cal){
 								//if(cal.hasOwnProperty("holidayYmd") && cal.holidayYmd!='') {
 									//$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"'] span.fc-holiday").remove();
+									if($(".fc-day-top[data-date='"+cal.sunYmd+"'] span[name='companyHoliday']").text().indexOf(cal.holidayNm)==-1)
+										$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday' class='fc-holiday'>"+cal.holidayNm+"</span>");
 									$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").css({"color":"#FF0000"});
-									$('td').find(".fc-day-top[data-date='"+cal.sunYmd+"']").prepend("<span name='companyHoliday' class='fc-holiday'>"+cal.holidayNm+"</span>");
 								//}
 							});
 						}
@@ -263,39 +297,6 @@
 					}
 				});
  		    	
- 		    	if(Object.keys($this.dayWorks).length>0) {
-	         		$.each($this.dayWorks, function(k, v){
-			         	v.map(function(dayWork){
-			         		//근무일
-			         		if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
-								dayWork.plans.map(function(plan){
-									var day = moment(plan.key).format('YYYY-MM-DD');
-								
-		 		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
-		 		    					//개인 근태
-		  		    					/* var taaEvent = {
-											id: day,
-				    						title: "<div class='dot work-type'><span>" + plan.label + "</span></div>",
-				    						start: day,
-				    						end: day
-				    					};
-			  		    				events.push(taaEvent); */
-			  		    				
-			  		    				if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").length==0) {
-		 		    						$('td').find(".fc-day-top[data-date='"+day+"']").prepend("<span class='fc-holiday'>"+plan.label+"</span>");
-			  		    				}else {
-			  		    					if($(".fc-day-top[data-date='"+day+"'] span.fc-holiday").text().indexOf(plan.label)==-1)
-			  		    						$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").append(' '+plan.label);
-			  		    				}
-			  		    				$('td').find(".fc-day-top[data-date='"+day+"'] span.fc-holiday").css({"color":"#4d84fe"});
-		  		    				
-		 		    				} 
-								});
-			         		} 
-						});
-	         		});
-        		}
- 	        
  	        },
 	        addDayWorks : function(symd, v){ //근무시간 생성
 	         	var $this = this;

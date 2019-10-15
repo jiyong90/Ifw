@@ -208,6 +208,16 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
+		
+		return flexEmpMapper.getFlexibleDayInfo(paramMap);
+	}
+	
+	@Override
+	public Map<String, Object> getFlexibleWorkTimeInfo(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
 		paramMap.put("taaTimeYn", "");
 		paramMap.put("taaWorkYn", "");
 		
@@ -218,15 +228,6 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			if(flexEmp.get("taaWorkYn")!=null) //근태일 근무여부
 				paramMap.put("taaWorkYn", flexEmp.get("taaWorkYn").toString());
 		}
-		
-		return flexEmpMapper.getFlexibleDayInfo(paramMap);
-	}
-	
-	@Override
-	public Map<String, Object> getFlexibleWorkTimeInfo(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
-		paramMap.put("tenantId", tenantId);
-		paramMap.put("enterCd", enterCd);
-		paramMap.put("sabun", sabun);
 		
 		return flexEmpMapper.getFlexibleWorkTimeInfo(paramMap);
 	}
@@ -912,7 +913,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				
 	}
 	
-	
+	@Override
 	public ReturnParam checkDuplicateFlexibleWork(Long tenantId, String enterCd, String sabun, String symd, String eymd, Long applId) {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -933,6 +934,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return rp;
 	}
 
+	@Override
 	public ReturnParam checkDuplicateWorktime(Long tenantId, String enterCd, String sabun, Date sdate, Date edate, Long applId){
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
