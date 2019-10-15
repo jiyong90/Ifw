@@ -91,13 +91,16 @@ public class WtmInterfaceController {
 	public void setTaaApplIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
 		HashMap<String, Object> reqMap = new HashMap<>();
-		reqMap.put("tenantId", Long.valueOf(request.getAttribute("tenantId").toString()));
-		reqMap.put("enterCd", request.getAttribute("enterCd").toString());
-		reqMap.put("sabun", request.getAttribute("sabun").toString());
-		reqMap.put("taaCd", request.getAttribute("taaCd").toString());
-		reqMap.put("sYmd", request.getAttribute("sYmd").toString());
-		reqMap.put("eYmd", request.getAttribute("eYmd").toString());
-		reqMap.put("status", request.getAttribute("status").toString());
+		reqMap.put("tenantId", Long.parseLong(request.getParameter("tenantId").toString()));
+		reqMap.put("enterCd", request.getParameter("enterCd").toString());
+		reqMap.put("sabun", request.getParameter("sabun").toString());
+		reqMap.put("taaCd", request.getParameter("taaCd").toString());
+		reqMap.put("sYmd", request.getParameter("sYmd").toString());
+		reqMap.put("eYmd", request.getParameter("eYmd").toString());
+		reqMap.put("sHm", request.getParameter("sHm").toString());
+		reqMap.put("eHm", request.getParameter("eHm").toString());
+		reqMap.put("ifApplNo", Long.parseLong(request.getParameter("ifApplNo").toString()));
+		reqMap.put("status", request.getParameter("status").toString());
 		
 		WtmInterfaceService.setTaaApplIf(reqMap); //근태정보 인터페이스
 		return ;

@@ -161,4 +161,11 @@ public interface WtmInterfaceMapper {
 	 **/
 	public Map<String, Object> getWtmTaaApplId(Map<String, Object> paramMap);
 	
+	/**
+	 * 신청서유무 ID조회
+	 **/
+	public void setTaaApplDayIf(Map<String, Object> paramMap);
+	
+	
+	
 }

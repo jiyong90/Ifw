@@ -442,7 +442,33 @@
   			  , #{eHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{ifApplNo, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
   			  , #{status, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
-  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}) }
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{taaApplId,jdbcType=BIGINT, javaType=java.lang.Long, mode=OUT}
+  			  , #{applId,jdbcType=BIGINT, javaType=java.lang.Long, mode=OUT}
+  			  , #{oldStatus,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
+  	<select id="setTaaApplDayIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_IF_TAA_APPL_DAY( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{taaCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{taaApplId,jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{applId,jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{status,jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{oldStatus,jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{timeTypeCd,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{taaSetYn,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{taaSdate,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{taaEdate,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
   	</select>
   	
   	<select id="getWtmTaaApplId" parameterType="map" resultType="hashmap">
