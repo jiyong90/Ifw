@@ -10,7 +10,7 @@
 			SELECT ENTER_CD, GRCODE_CD, CODE, CODE_NM, SYMD, NOTE
 			  FROM V_IF_WTM_CODE
 			 WHERE ENTER_CD = 'BRS'
-			   AND GRCODE_CD IN ('H20010', 'H20020', 'H20030', 'H10050', 'H10110', 'T10003')
+			   AND GRCODE_CD IN ('H20010', 'H20020', 'H20030', 'H10050', 'H10110', 'T10003', 'W20010')
 			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD, GRCODE_CD
         ]]>
@@ -43,6 +43,26 @@
 			 WHERE ENTER_CD = 'BRS'
 			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getOrgChart" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT DISTINCT ENTER_CD, ORG_CHART_NM, SDATE, EDATE, MEMO
+			  FROM V_IF_ORG_CHART
+			 WHERE ENTER_CD = 'BRS'
+			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
+			 ORDER BY SDATE
+        ]]>
+    </select>
+    
+    <select id="getOrgChartDtl" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT ORG_CD, PRIOR_ORG_CD, SEQ, ORG_LEVEL, ORDER_SEQ
+			  FROM V_IF_ORG_CHART
+			 WHERE ENTER_CD = #{enterCd}
+			    AND sdate = #{sdate}
+			 ORDER BY ORDER_SEQ
         ]]>
     </select>
     
