@@ -19,6 +19,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name="WTM_TAA_CODE")
 public class WtmTaaCode {
 	
+	public final static String REQUEST_TYPE_D = "D"; //종일
+	public final static String REQUEST_TYPE_A = "A"; //오전
+	public final static String REQUEST_TYPE_P = "P"; //오후
+	public final static String REQUEST_TYPE_H = "H"; //시간단위
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="TAA_CODE_ID")
