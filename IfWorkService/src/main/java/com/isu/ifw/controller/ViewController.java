@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -75,6 +76,12 @@ public class ViewController {
 	@RequestMapping(value="/login/{tsId}", method= {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView viewLogin(@PathVariable String tsId, HttpServletRequest request) throws Exception {
 		Long tenantId = tenantDao.findTenantId(tsId);
+		if(tenantId == null) {
+			ModelAndView mv = new ModelAndView("info");
+			mv.addObject("status", "100");
+			return mv;
+		}
+		
 		System.out.println("call for forward /login/"+tsId);
 		ModelAndView mv = new ModelAndView("login");
 		
@@ -197,6 +204,13 @@ public class ViewController {
 		
 	}
 	
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public ModelAndView viewInfo(HttpServletRequest request) throws Exception {
+		ModelAndView mv = new ModelAndView("info");
+		mv.addObject("status", request.getParameter("status"));
+		return mv;
+	}
+	
 	//관리자페이지는 주소 분리
 	@RequestMapping(value = "/console/{tsId}/views/mgr/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView mgrviews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
@@ -291,13 +305,14 @@ public class ViewController {
 			mv.addObject("pageName", viewPage);
 			return mv;
 		}
-		
+
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
 		mv.addObject("loginId", userId);
 		mv.addObject("pageName", viewPage);
 		mv.addObject("type","hr");
+		mv.addObject("tenant", tenantId);
 
 		if("workCalendar".equals(viewPage)){
 			ObjectMapper mapper = new ObjectMapper();
@@ -344,126 +359,14 @@ public class ViewController {
 	
 	@RequestMapping(value = "/hr/{tsId}/views/{viewPage}", method = RequestMethod.POST)
 	public ModelAndView hrViews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
-		/*
-		ModelAndView mv = new ModelAndView("hrtemplate");
-		
-		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
-		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
-		
-		Calendar date = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String today = sdf.format(date.getTime());
-		mv.addObject("today", today);
-
-		
-		mv.addObject("tsId", tsId);
-		mv.addObject("enterCd", enterCd);
-		mv.addObject("empNo", empNo);
-		mv.addObject("loginId", userId);
-		mv.addObject("pageName", viewPage);
-		
-		if("workCalendar".equals(viewPage)){
-			ObjectMapper mapper = new ObjectMapper();
-			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
-				String workday = request.getParameter("date");
-				mv.addObject("workday", workday); 
-			}
-			String calendarType = "Month";
-			if(request.getParameter("calendarType")!=null) {
-				calendarType = request.getParameter("calendarType").toString();
-			} 
-			mv.addObject("calendar", "work"+ calendarType +"Calendar");
-			
-			if("Time".equals(calendarType)) {
-				//연장근무 또는 휴일근무 신청 시 사유
-				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
-				mv.addObject("reasons", mapper.writeValueAsString(reasons));
-			}
-			mv.addObject("pageName", viewPage);
-			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
-		}
-		else if(viewPage.equals("workDayCalendar")
-				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar")) {
-		
-			mv.addObject("pageName", viewPage);
-		}
-		else
-			mv.addObject("pageName", "mgr/"+viewPage);
-		
-		return mv;
-		*/
-		
+	
 		return showView(tsId, viewPage, request);
 	}
 
 
 	@RequestMapping(value = "/hr/{tsId}/views/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView infoViews(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
-		
-		/*
-		ModelAndView mv = new ModelAndView("hrtemplate");
-		
-		Calendar date = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String today = sdf.format(date.getTime());
-		mv.addObject("today", today);
-
-		
-		if(viewPage.equals("info")) {
-			mv.addObject("tsId", tsId);
-			mv.addObject("pageName", viewPage);
-			mv.addObject("pageName", viewPage);
-			return mv;
-		}
-		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
-		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
-		Long userId = Long.valueOf(sessionData.get("userId").toString());
-		
-
-		
-		mv.addObject("tsId", tsId);
-		mv.addObject("enterCd", enterCd);
-		mv.addObject("empNo", empNo);
-		mv.addObject("loginId", userId);
-		mv.addObject("pageName", viewPage);
-		
-		if("workCalendar".equals(viewPage)){
-			ObjectMapper mapper = new ObjectMapper();
-			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
-				String workday = request.getParameter("date");
-				mv.addObject("workday", workday); 
-			}
-			String calendarType = "Month";
-			if(request.getParameter("calendarType")!=null) {
-				calendarType = request.getParameter("calendarType").toString();
-			} 
-			mv.addObject("calendar", "work"+ calendarType +"Calendar");
-			
-			if("Time".equals(calendarType)) {
-				//연장근무 또는 휴일근무 신청 시 사유
-				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
-				mv.addObject("reasons", mapper.writeValueAsString(reasons));
-			}
-			mv.addObject("pageName", viewPage);
-			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);
-		}
-		else if(viewPage.equals("workDayCalendar")
-				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar") 
-				|| viewPage.equals("approvalList") ) {
-		
-			mv.addObject("pageName", viewPage);
-		}
-		else
-			mv.addObject("pageName", "mgr/"+viewPage);
-		
-		return mv;
-		*/
-		
+	
 		return showView(tsId, viewPage, request);
 	}
 }

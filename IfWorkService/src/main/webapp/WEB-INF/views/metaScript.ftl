@@ -35,15 +35,16 @@
 <script src="${rc.getContextPath()}/jBox-1.0.5/dist/jBox.all.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
- 	var Util = {
+    
+    var Util = {
 		ajax : function(option){ 
 			var defaultoOption = { 
 				beforeSend : function(xhr){  
 		            xhr.setRequestHeader("AJAX", true); //필수
-		        }, 
+				}, 
 		 		complete : function(data) {
 					var text = data.responseText;
-					if(text.indexOf(redirectText) != -1)
+					if( typeof(redirectText) != 'undefined' && text.indexOf(redirectText) != -1)
         				window.parent.location.href=loginUrl;
                 },
 				error : this.ajaxError	

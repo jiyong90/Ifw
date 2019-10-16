@@ -110,12 +110,16 @@ public class IfwLoginController {
 			HttpSession session = ((HttpServletRequest) request).getSession();
 			ObjectMapper mapper = new ObjectMapper();
 			CommTenantModule tm = null;
-
+			
 			if (session.getAttribute("moduleId") != null) {
 				String moduleId = session.getAttribute("moduleId").toString();
 				tm = tenantModuleRepo.findByModuleIdAndtenantKey(Long.valueOf(moduleId), tsId);
 			} else {
 				tm = tenantModuleRepo.findByTenantKey(tsId);
+			}
+			
+			if(tm == null) {
+				response.sendRedirect("/info?status=100");
 			}
 
 			tenantId = tm.getTenantId();
@@ -363,6 +367,11 @@ public class IfwLoginController {
 //				endPointUrl = endPointUrl.replace("http://", "https://");
 //			}
 			
+			//cookie에 테넌트 추가
+			Cookie c = null;
+			c = new Cookie("tenant", String.valueOf(tenantId));
+			c.setPath("/");
+			((HttpServletResponse)response).addCookie(c);
 			response.sendRedirect(endPointUrl);
 			return;
 			
@@ -413,6 +422,7 @@ public class IfwLoginController {
  	        token.setExpiresAt(date);
  	       
  	        loginService.creatAccessToken(request, response, token);
+ 	        
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -426,7 +436,7 @@ public class IfwLoginController {
 			token.setEnterCd(body.get("enterCd"));
 			token.setSabun(body.get("sabun"));
 			token.setTenantId(Long.valueOf(body.get("tenantId")));
- 	        
+			
  	        loginService.deleteAccessToken(response, token);
 		} catch(Exception e) {
 			e.printStackTrace();

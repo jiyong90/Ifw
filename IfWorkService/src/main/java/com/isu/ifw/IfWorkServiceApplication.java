@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -28,10 +29,6 @@ public class IfWorkServiceApplication {
 	@Autowired
 	@Qualifier("authSessionFilter")
     private javax.servlet.Filter authSessionFilter;
-
-	@Autowired
-	@Qualifier("userTokenFilter")
-    private javax.servlet.Filter userTokenFilter;
 	
 	@Autowired
 	@Qualifier("httpStatusFilter")
@@ -41,22 +38,10 @@ public class IfWorkServiceApplication {
 	@Qualifier("accessTokenFilter")
     private javax.servlet.Filter accessTokenFilter;
 
-	@Value("${user.token.filter}")
-	private String userTokenPass;
-	
-	@Value("${access.token.filter}")
-	private String accessTokenPass;
+	@Autowired
+	@Qualifier("userTokenFilter")
+    private javax.servlet.Filter userTokenFilter;
 
-	@Bean 
-	public FilterRegistrationBean getUserTokenFilterRegistrationBean() {
-		FilterRegistrationBean registrationBean = new FilterRegistrationBean(userTokenFilter);
-		registrationBean.addUrlPatterns("/*");
-		registrationBean.addInitParameter("freePassPath", userTokenPass);
-		registrationBean.addInitParameter("moduleId", "1");
-		return registrationBean;
-	    
-	}
-	  
 	@Bean 
 	public FilterRegistrationBean getFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(authSessionFilter);
@@ -77,16 +62,6 @@ public class IfWorkServiceApplication {
 	}
 	
 	@Bean 
-	public FilterRegistrationBean getAccessTokenFilterRegistrationBean() {
-		FilterRegistrationBean registrationBean = new FilterRegistrationBean(accessTokenFilter);
-		registrationBean.addUrlPatterns("/*"); 
-		registrationBean.addInitParameter("freePassPath", accessTokenPass);
-		registrationBean.addInitParameter("moduleId", "1");
-		return registrationBean;
-	    
-	}
-	
-	@Bean 
 	public FilterRegistrationBean getHttpStatusFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(httpStatusFilter);
 		registrationBean.addUrlPatterns("/*"); 
@@ -98,5 +73,23 @@ public class IfWorkServiceApplication {
 		SpringApplication.run(IfWorkServiceApplication.class, args);
 	}
 
+	@Bean 
+	public FilterRegistrationBean getAccessTokenFilterRegistrationBean() {
+		FilterRegistrationBean registrationBean = new FilterRegistrationBean(accessTokenFilter);
+		registrationBean.addUrlPatterns("/*"); 
+		registrationBean.addInitParameter("freePassPath", "/info,/certificate,/error,/mobile/logout,/login,/login/certificate,/interface");
+		registrationBean.addInitParameter("moduleId", "1");
+		return registrationBean;
+	    
+	}
+	
+	@Bean 
+	public FilterRegistrationBean getUserTokenFilterRegistrationBean() {
+		FilterRegistrationBean registrationBean = new FilterRegistrationBean(userTokenFilter);
+		registrationBean.addUrlPatterns("/*");
+		registrationBean.addInitParameter("freePassPath", "/error,/logout,/login,/login/certificate,/v2/api-docs,/api,/resource,/schedule,/we,/certificate,/mobile,/interface");
+		registrationBean.addInitParameter("moduleId", "1");
+		return registrationBean;
+	}
 }
 
