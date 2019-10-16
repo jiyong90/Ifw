@@ -435,7 +435,7 @@
   		        	month_calendar: {
   		            	text: '근태달력보기',
   		              	click: function() {
-  		              		location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';
+  		              		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Month';
   		              	}	
   		          	}
   		       	},
