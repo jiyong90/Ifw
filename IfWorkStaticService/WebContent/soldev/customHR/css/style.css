@@ -1284,3 +1284,34 @@ table.default td input.w100 { width:100%; } */
 table.default td select{ padding:3px 0 3px 5px; border:1px solid #e0e2e5; }
 table.default td textarea{ padding:3px 0 3px 5px; border:1px solid #e0e2e5; }
 table.default td img.ui-datepicker-trigger{ margin:0 0 0 -4px; }
+
+
+/* autocomplete */
+.ui-autocomplete.ui-menu.ui-widget {
+	position: absolute;
+	height: 115px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	font-size: 12px;
+	border: 1px solid #aaaaaa;
+	color: #222222;
+	background: #ffffff/*{bgColorContent}*/;
+	cursor: default;
+}
+
+
+.ui-autocomplete.ui-menu.ui-widget a {height:22px; color: #222222; line-height:22px;}
+.ui-autocomplete.ui-menu.ui-widget a.ui-state-focus{background-color:#f5fafd;}
+
+/* .ui-autocomplete {position: absolute;top: 0;left: 0;cursor: default; font-size: 12px;} */
+.ui-helper-hidden-accessible {border: 0;clip: rect(0 0 0 0);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}
+
+
+
+.autocomplete {display:block;width:400px;border-bottom:1px dashed #b8c6cc;}
+.autocomplete span {white-space:nowrap; text-overflow:ellipsis; overflow:hidden; display:inline-block;color:#666;padding-left:8px}
+.autocomplete span.list_txt0 {width:56px;}
+.autocomplete span.list_txt1 {width:58px;color:#999}
+.autocomplete span.list_txt2 {width:117px;}
+.autocomplete span.list_txt3 {width:80px;}
+.autocomplete span.list_txt4 {width:36px;color:#999}
