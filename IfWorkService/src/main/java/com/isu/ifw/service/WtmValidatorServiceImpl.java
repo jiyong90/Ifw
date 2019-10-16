@@ -64,7 +64,12 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 			paramMap.put("applId", applId);
 			paramMap.put("sabun", sabun); 
 			Map<String, Object> m = validatorMapper.checkDuplicateTaa(paramMap);
-			int cnt = Integer.parseInt(m.get("workCnt").toString());
+			int cnt = Integer.parseInt(m.get("cnt").toString());
+			
+			if(cnt > 0) {
+				rp.setFail("이미 해당일에 중복된 근태 정보가 존재합니다.");
+				return rp;
+			}
 		}
 		
 		List<WtmFlexibleEmp> empList = flexEmpRepo.findByTenantIdAndEnterCdAndSabunAndBetweenSymdAndEymd(tenantId, enterCd, sabun, symd, eymd);
