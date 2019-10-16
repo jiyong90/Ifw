@@ -436,7 +436,7 @@ public class IfwLoginController {
 			token.setSabun(body.get("sabun"));
 			token.setTenantId(Long.valueOf(body.get("tenantId")));
 			
- 	        loginService.deleteAccessToken(response, token);
+ 	        loginService.deleteAccessToken(request, response, token);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

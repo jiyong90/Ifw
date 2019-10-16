@@ -83,10 +83,9 @@ public class AccessTokenFilter implements Filter {
 		
 		System.out.println("AccessTokenFilter");
 
-		String tenantId = request.getParameter("tenantId");
-		String tokenUrl = loginService.getHrTokenUrl(Long.parseLong(tenantId));
-		String infoUrl = loginService.getHrInfoUrl(Long.parseLong(tenantId));
-		String tokenName = loginService.getHrTokenName(Long.parseLong(tenantId));
+		String tokenUrl = loginService.getHrTokenUrl(Long.parseLong(tenant));
+		String infoUrl = loginService.getHrInfoUrl(Long.parseLong(tenant));
+		String tokenName = loginService.getHrTokenName(Long.parseLong(tenant));
 
 		System.out.println("tokenUrl : " + tokenUrl +" , "+ "tokenName : " + tokenName);
 		
@@ -114,7 +113,9 @@ public class AccessTokenFilter implements Filter {
 			
 			if(token == null) {
 				System.out.println("xxxxxxxxxxxxx param token...null ");
-				if(!cookie.containsKey(tokenName)) {
+				System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxx cookie value : " + cookie.toString());
+				
+				if(cookie.containsKey(tokenName)) {
 					token = cookie.get(tokenName).toString();
 				} else {
 					System.out.println("xxxxxxxxxxxxx token이 아무데도 없음!!!!!!!");
@@ -124,10 +125,12 @@ public class AccessTokenFilter implements Filter {
 				}
 			} else {
 				System.out.println("xxxxxxxxxxxxx add cookie : ");
-				Cookie c = null;
-				c = new Cookie(tokenName, token);
+				Cookie c = new Cookie(tokenName, token);
 				c.setPath("/");
+				Cookie c2 = new Cookie("tenant", tenant);
+				c2.setPath("/");
 				((HttpServletResponse)response).addCookie(c);
+				((HttpServletResponse)response).addCookie(c2);
 			}
 
 			WtmToken wtmToken = loginService.getAccessToken(token);
@@ -145,18 +148,19 @@ public class AccessTokenFilter implements Filter {
 	 	        int compare = date.compareTo(expiresAt);
 				if(compare >= 0) {
 					System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxx 토큰만료");
-					wtmToken = loginService.refreshAccessToken(response, wtmToken, tokenUrl, tokenName);
+					wtmToken = loginService.refreshAccessToken(request, response, wtmToken, tokenUrl, tokenName);
 					if(wtmToken == null) {
 						//hr세선 만료일 경우 토큰 갱신 불가
 						((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 						((HttpServletResponse) response).sendRedirect(infoUrl);
 						return;
 					}
-					Cookie c = null;
-					c = new Cookie(tokenName, wtmToken.getAccessToken());
+					Cookie c = new Cookie(tokenName, wtmToken.getAccessToken());
 					c.setPath("/");
-					c.setMaxAge(60*60*24);   
+					Cookie c2 = new Cookie("tenant", tenant);
+					c2.setPath("/");					
 					((HttpServletResponse)response).addCookie(c);
+					((HttpServletResponse)response).addCookie(c2);
 				} 
 				request.setAttribute("tenantId", wtmToken.getTenantId());
 				Map<String, Object> sessionData = new HashMap();
