@@ -115,7 +115,7 @@ public class AccessTokenFilter implements Filter {
 				System.out.println("xxxxxxxxxxxxx param token...null ");
 				System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxx cookie value : " + cookie.toString());
 				
-				if(!cookie.containsKey(tokenName)) {
+				if(cookie.containsKey(tokenName)) {
 					token = cookie.get(tokenName).toString();
 				} else {
 					System.out.println("xxxxxxxxxxxxx token이 아무데도 없음!!!!!!!");
