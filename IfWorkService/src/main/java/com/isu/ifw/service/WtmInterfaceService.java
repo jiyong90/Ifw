@@ -26,6 +26,13 @@ public interface WtmInterfaceService {
 	 */
 	public HashMap getIfRt(String url) throws Exception;
 	
+	/**
+	 * 인터페이스 서버정보 조회 
+	 * @param url - 호출경로
+	 * @return 
+	 * @throws Exception 
+	 */
+	public String setIfUrl(Long tenantId, String ifaddUrl, String lastDataTime) throws Exception;
 	
 	
 	/**
