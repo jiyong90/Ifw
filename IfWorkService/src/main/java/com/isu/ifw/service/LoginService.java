@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.security.auth.message.callback.PrivateKeyCallback.Request;
+import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -76,14 +77,18 @@ public class LoginService{
 		return null;
 	}
 	
-	public void removeTokenCookie(ServletResponse response, String name) {
-		Cookie cookie = new Cookie(name, null);
-		cookie.setMaxAge(0);
-		cookie.setPath("/");
-		((HttpServletResponse)response).addCookie(cookie);
+	public void removeTokenCookie(ServletRequest request, ServletResponse response) {
+		Cookie[] cookies = ((HttpServletRequest)request).getCookies();
+
+		if(cookies != null){
+			for(int i=0; i< cookies.length; i++){
+				cookies[i].setMaxAge(0); // 유효시간을 0으로 설정
+				((HttpServletResponse)response).addCookie(cookies[i]); 
+			}
+		}
 	}
 	
-	public WtmToken refreshAccessToken(ServletResponse response, WtmToken token, String url, String tokenName) {
+	public WtmToken refreshAccessToken(ServletRequest request, ServletResponse response, WtmToken token, String url, String tokenName) {
 		//WtmToken newToken = null;
 		
 		try {
@@ -136,10 +141,10 @@ public class LoginService{
 	 	      token = tokenRepository.save(token);
 			} else if (responseEntity.getStatusCode() != HttpStatus.UNAUTHORIZED) {
 				System.out.println("xxxx hr session 만료");
-				removeTokenCookie(response, "ACCESS_TOKEN");
+				removeTokenCookie(request, response);
 			} else {
 				System.out.println("xxxx" + responseEntity.getStatusCode() + " : " + responseEntity.getBody());
-				removeTokenCookie(response, "ACCESS_TOKEN");
+				removeTokenCookie(request, response);
 			} 
 
 		} catch (Exception e) {
@@ -167,7 +172,7 @@ public class LoginService{
 //			response.addCookie(cookie);
 		} else {
 			System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx	xxxxxxxxx emp his에 없는 사원정보");
-			removeTokenCookie(response, tokenName);
+			removeTokenCookie(request, response);
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			//hr을 로그아웃시킬 필요는 없겠지
 		}
@@ -186,8 +191,8 @@ public class LoginService{
 		return tcms.getConfigValue(tenantId, "HR.TOKEN_NAME", true, "");	
 	}
 	
-	public void deleteAccessToken(ServletResponse response, WtmToken token) {
+	public void deleteAccessToken(ServletRequest request, ServletResponse response, WtmToken token) {
 		tokenRepository.deleteByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
-		removeTokenCookie(response, getHrTokenName(token.getTenantId()));
+		removeTokenCookie(request, response);
 	}
 }
