@@ -49,7 +49,7 @@
 										<li><a href="javascript:doAction1('SaveIncludeTarget')" class="basic authA">저장</a></li>
 									</ul>
 								</div>
-								<script type="text/javascript">createIBSheet("sheet2", "100%", sheetH90,"kr"); </script>
+								<script type="text/javascript">createIBSheet("sheet2", "100%", sheetH80,"kr"); </script>
 							</div>
 						</div>
 					</div>
@@ -72,7 +72,7 @@
 										<li><a href="javascript:doAction1('SaveExcludeTarget')" class="basic authA">저장</a></li>
 									</ul>
 								</div>
-								<script type="text/javascript">createIBSheet("sheet3", "100%", sheetH90,"kr"); </script>
+								<script type="text/javascript">createIBSheet("sheet3", "100%", sheetH80,"kr"); </script>
 							</div>
 						</div>
 					</div>

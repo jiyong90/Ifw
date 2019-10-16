@@ -41,6 +41,10 @@ public class WtmPushMgr {
 	private String stdType;
 	@Column(name="PUSH_MSG")
 	private String pushMsg;
+	@Column(name="MOBILE_YN")
+	private String mobileYn;
+	@Column(name="EMAIL_YN")
+	private String emailYn;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -110,6 +114,19 @@ public class WtmPushMgr {
 	}
 	public void setPushMsg(String pushMsg) {
 		this.pushMsg = pushMsg;
+	}
+	
+	public String getMobileYn() {
+		return mobileYn;
+	}
+	public void setMobileYn(String mobileYn) {
+		this.mobileYn = mobileYn;
+	}
+	public String getEmailYn() {
+		return emailYn;
+	}
+	public void setEmailYn(String emailYn) {
+		this.emailYn = emailYn;
 	}
 	public String getNote() {
 		return note;

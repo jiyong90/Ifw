@@ -41,6 +41,8 @@ public class WtmPushMgrServiceImpl implements WtmPushMgrService{
 				code.put("stdMinute", l.getStdMinute());
 				code.put("stdType", l.getStdType());
 				code.put("pushMsg", l.getPushMsg());
+				code.put("mobileYn", l.getMobileYn());
+				code.put("emailYn", l.getEmailYn());
 				code.put("note", l.getNote());
 				codeList.add(code);
 			}
@@ -75,6 +77,8 @@ public class WtmPushMgrServiceImpl implements WtmPushMgrService{
 						code.setStdMinute(Integer.parseInt(l.get("stdMinute").toString()));
 						code.setStdType(l.get("stdType").toString());
 						code.setPushMsg(l.get("pushMsg").toString());
+						code.setMobileYn(l.get("mobileYn").toString());
+						code.setEmailYn(l.get("emailYn").toString());
 						code.setNote(l.get("note").toString());
 						code.setUpdateId(userId);
 						codes.add(code);

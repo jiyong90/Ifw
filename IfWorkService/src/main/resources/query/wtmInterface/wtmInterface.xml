@@ -21,6 +21,15 @@
         ]]>
     </select>
     
+    <select id="getIfUrl" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT info_data
+			  FROM comm_management_infomation
+			 WHERE tenant_id = #{tenantId}
+			   AND info_key = 'HR.IT_URL'
+        ]]>
+    </select>
+    
 	<insert id="insertIfHis" parameterType="hashmap">
 		INSERT INTO WTM_IF_HIS
 		(
