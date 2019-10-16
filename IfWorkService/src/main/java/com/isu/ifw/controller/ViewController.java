@@ -32,6 +32,7 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmCodeRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.option.service.TenantConfigManagerService;
@@ -68,6 +69,9 @@ public class ViewController {
 	@Resource
 	WtmFlexibleEmpRepository flexibleEmpRepo;
 	
+	@Autowired
+	LoginService loginService;
+
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
 	 * @param tsId
@@ -312,7 +316,8 @@ public class ViewController {
 		mv.addObject("loginId", userId);
 		mv.addObject("pageName", viewPage);
 		mv.addObject("type","hr");
-		mv.addObject("tenant", tenantId);
+		mv.addObject("redirectUrl", loginService.getHrInfoUrl(tenantId));
+//		mv.addObject("tenant", tenantId);
 
 		if("workCalendar".equals(viewPage)){
 			ObjectMapper mapper = new ObjectMapper();
