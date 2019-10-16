@@ -1170,4 +1170,10 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		return;
 	}
 
+	@Override
+	public String setIfUrl(Long tenantId, String ifaddUrl, String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
