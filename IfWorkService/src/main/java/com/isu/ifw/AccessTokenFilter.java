@@ -83,10 +83,9 @@ public class AccessTokenFilter implements Filter {
 		
 		System.out.println("AccessTokenFilter");
 
-		String tenantId = request.getParameter("tenantId");
-		String tokenUrl = loginService.getHrTokenUrl(Long.parseLong(tenantId));
-		String infoUrl = loginService.getHrInfoUrl(Long.parseLong(tenantId));
-		String tokenName = loginService.getHrTokenName(Long.parseLong(tenantId));
+		String tokenUrl = loginService.getHrTokenUrl(Long.parseLong(tenant));
+		String infoUrl = loginService.getHrInfoUrl(Long.parseLong(tenant));
+		String tokenName = loginService.getHrTokenName(Long.parseLong(tenant));
 
 		System.out.println("tokenUrl : " + tokenUrl +" , "+ "tokenName : " + tokenName);
 		
