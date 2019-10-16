@@ -94,12 +94,12 @@ public class WtmInterfaceController {
 		reqMap.put("tenantId", Long.parseLong(request.getParameter("tenantId").toString()));
 		reqMap.put("enterCd", request.getParameter("enterCd").toString());
 		reqMap.put("sabun", request.getParameter("sabun").toString());
-		reqMap.put("taaCd", request.getParameter("taaCd").toString());
-		reqMap.put("sYmd", request.getParameter("sYmd").toString());
-		reqMap.put("eYmd", request.getParameter("eYmd").toString());
-		reqMap.put("sHm", request.getParameter("sHm").toString());
-		reqMap.put("eHm", request.getParameter("eHm").toString());
-		reqMap.put("ifApplNo", Long.parseLong(request.getParameter("ifApplNo").toString()));
+		reqMap.put("taaCd", request.getParameter("workTimeCode").toString());
+		reqMap.put("sYmd", request.getParameter("startYmd").toString());
+		reqMap.put("eYmd", request.getParameter("endYmd").toString());
+		reqMap.put("sHm", request.getParameter("startHm").toString());
+		reqMap.put("eHm", request.getParameter("endHm").toString());
+		reqMap.put("ifApplNo", Long.parseLong(request.getParameter("applNo").toString()));
 		reqMap.put("status", request.getParameter("status").toString());
 		
 		WtmInterfaceService.setTaaApplIf(reqMap); //근태정보 인터페이스

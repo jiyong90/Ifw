@@ -23,6 +23,13 @@ public interface WtmInterfaceMapper {
 	public Map<String, Object> getIfNowDate(Map<String, Object> paramMap);
 	
 	/**
+	 * 인터페이스 url 조회
+	 * @param paramMap
+	 * @return 
+	 */
+	public Map<String, Object> getIfUrl(Map<String, Object> paramMap);
+	
+	/**
 	 * 인터페이스 이력저장
 	 * @param paramMap
 	 * @return

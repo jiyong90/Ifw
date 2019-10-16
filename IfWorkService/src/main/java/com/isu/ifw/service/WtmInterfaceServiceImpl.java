@@ -458,6 +458,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	// 3. 처리결과 저장
 		try {
 			// WTM_IF_HIS 테이블에 결과저장
+			ifHisMap.put("updateDate", nowDataTime);
    			ifHisMap.put("ifEndDate", lastDataTime);
 			ifHisMap.put("ifMsg", retMsg);
 			wtmInterfaceMapper.insertIfHis(ifHisMap);
