@@ -1,7 +1,5 @@
 package com.isu.ifw.service;
 
-import static org.mockito.Mockito.lenient;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +12,7 @@ import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmTaaCode;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
+import com.isu.ifw.mapper.WtmValidatorMapper;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmTaaCodeRepository;
@@ -26,6 +25,9 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 	
 	@Autowired
 	WtmFlexibleEmpMapper flexEmpMapper;
+	
+	@Autowired
+	WtmValidatorMapper validatorMapper;
 	
 	@Autowired
 	WtmFlexibleEmpRepository flexEmpRepo;
@@ -50,8 +52,21 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 				rp.setFail("시간단위 근태의 경우 시간 정보가 필요합니다.");
 				return rp;
 			}
+		}else {
+			//신청하려는근태 코드와 타입 종일 반일(오전/오후) 등 해당 건은 같은날 중복해서 들어갈 수 없다 체케럽
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("timeTypeCd", timeTypeCd);
+			paramMap.put("requestTypeCd", taaCode.getRequestTypeCd());
+			paramMap.put("symd", symd);
+			paramMap.put("eymd", eymd);
+			paramMap.put("applId", applId);
+			paramMap.put("sabun", sabun); 
+			Map<String, Object> m = validatorMapper.checkDuplicateTaa(paramMap);
+			int cnt = Integer.parseInt(m.get("workCnt").toString());
 		}
-		taaCode.getRequestTypeCd();
+		
 		List<WtmFlexibleEmp> empList = flexEmpRepo.findByTenantIdAndEnterCdAndSabunAndBetweenSymdAndEymd(tenantId, enterCd, sabun, symd, eymd);
 		
 		if(empList != null && empList.size() > 0) {
