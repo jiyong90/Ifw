@@ -51,6 +51,10 @@ import com.isu.option.vo.ReturnParam;
 @Service("wtmOtApplService")
 public class WtmOtApplServiceImpl implements WtmApplService {
 	
+
+	@Autowired
+	private WtmValidatorService validatorService;
+	
 	@Autowired
 	WtmApplMapper applMapper;
 	
@@ -613,7 +617,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		if(paramMap.containsKey("applId") && paramMap.get("applId") != null && !paramMap.get("applId").equals("")) {
 			applId = Long.parseLong(paramMap.get("applId")+"");
 		}
-		Map<String, Object> resultMap = wtmFlexibleEmpService.checkDuplicateWorktime(tenantId, enterCd, sabun, sd, ed, applId); 
+		Map<String, Object> resultMap = validatorService.checkDuplicateWorktime(tenantId, enterCd, sabun, sd, ed, applId); 
 				//wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
 		//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
 		

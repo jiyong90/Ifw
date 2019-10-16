@@ -42,6 +42,9 @@ import com.isu.option.vo.ReturnParam;
 public class WtmFlexibleApplServiceImpl implements WtmApplService {
 
 	@Autowired
+	private WtmValidatorService validatorService;
+	
+	@Autowired
 	WtmApplMapper applMapper;
 	
 	@Autowired
@@ -230,7 +233,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		ReturnParam rp = new ReturnParam();
 
 		WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
-		rp = flexEmpService.checkDuplicateFlexibleWork(tenantId, enterCd, sabun, flexibleAppl.getSymd(), flexibleAppl.getEymd(), applId);
+		rp = validatorService.checkDuplicateFlexibleWork(tenantId, enterCd, sabun, flexibleAppl.getSymd(), flexibleAppl.getEymd(), applId);
 		//rp = checkRequestDate(applId);
 		if(rp.getStatus().equals("FAIL")) {
 			throw new Exception(rp.get("message")+"");
@@ -401,7 +404,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		String sYmd = paramMap.get("sYmd").toString();
 		String eYmd = paramMap.get("eYmd").toString();
 		
-		rp = flexEmpService.checkDuplicateFlexibleWork(tenantId, enterCd, sabun, sYmd, eYmd, applId);
+		rp = validatorService.checkDuplicateFlexibleWork(tenantId, enterCd, sabun, sYmd, eYmd, applId);
 		
 		if(rp.getStatus().equals("FAIL")) {
 			return rp;
