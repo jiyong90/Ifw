@@ -80,11 +80,13 @@
     var halfsheetH = "calc(50vh - 140px)";
     var fullsheetH = "calc(100vh - 232px)";
     var sheetH90 = "calc(100vh - 270px)";
+    var sheetH80 = "calc(100vh - 308px)";
 
     <#if isEmbedded?? && isEmbedded?exists && isEmbedded >
     	halfsheetH = "50%";
 		fullsheetH = "100%";
 		sheetH90 = "100%";
+		sheetH80 = "100%";
     </#if>
 		
 </script>
