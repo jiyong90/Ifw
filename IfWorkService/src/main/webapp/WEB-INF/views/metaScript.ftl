@@ -35,15 +35,16 @@
 <script src="${rc.getContextPath()}/jBox-1.0.5/dist/jBox.all.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
- 	var Util = {
+    
+    var Util = {
 		ajax : function(option){ 
 			var defaultoOption = { 
 				beforeSend : function(xhr){  
 		            xhr.setRequestHeader("AJAX", true); //필수
-		        }, 
+				}, 
 		 		complete : function(data) {
 					var text = data.responseText;
-					if(text.indexOf(redirectText) != -1)
+					if( typeof(redirectText) != 'undefined' && text.indexOf(redirectText) != -1)
         				window.parent.location.href=loginUrl;
                 },
 				error : this.ajaxError	
@@ -79,11 +80,13 @@
     var halfsheetH = "calc(50vh - 140px)";
     var fullsheetH = "calc(100vh - 232px)";
     var sheetH90 = "calc(100vh - 270px)";
+    var sheetH80 = "calc(100vh - 308px)";
 
     <#if isEmbedded?? && isEmbedded?exists && isEmbedded >
     	halfsheetH = "50%";
 		fullsheetH = "100%";
 		sheetH90 = "100%";
+		sheetH80 = "100%";
     </#if>
 		
 </script>

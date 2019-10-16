@@ -26,7 +26,7 @@
         </div>
     </div>
 	<script> 
-		var loginUrl = "http://smarthrd.servicezone.co.kr/Info.do?code=905";
+		var loginUrl = ${redirectUrl};
 		var redirectText = "401redirectHrPage"; 
 	</script>
     <div class="wrapper">

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.security.auth.message.callback.PrivateKeyCallback.Request;
+import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +29,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.auth.repository.CommTenantModuleRepository;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.mapper.LoginMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmTokenRepository;
 import com.isu.ifw.vo.Login;
+import com.isu.option.service.TenantConfigManagerService;
 
 /**
  * 로그인 서비스
@@ -47,14 +50,11 @@ public class LoginService{
 	@Autowired
 	LoginMapper loginMapper;
 	
-	@Value("${path.hr.token}")
-	private String pathHr;
-
-	static String PARAM_NAME_USER_TOKEN = "accessToken";
-	
-
 	@Resource
 	WtmTokenRepository tokenRepository;
+	
+	@Autowired
+	TenantConfigManagerService tcms;
 	
 	@Resource
 	WtmEmpHisRepository empHisRepository;
@@ -77,14 +77,18 @@ public class LoginService{
 		return null;
 	}
 	
-	public void removeTokenCookie(ServletResponse response, String name) {
-		Cookie cookie = new Cookie(name, null);
-		cookie.setMaxAge(0);
-		cookie.setPath("/");
-		((HttpServletResponse)response).addCookie(cookie);
+	public void removeTokenCookie(ServletRequest request, ServletResponse response) {
+		Cookie[] cookies = ((HttpServletRequest)request).getCookies();
+
+		if(cookies != null){
+			for(int i=0; i< cookies.length; i++){
+				cookies[i].setMaxAge(0); // 유효시간을 0으로 설정
+				((HttpServletResponse)response).addCookie(cookies[i]); 
+			}
+		}
 	}
 	
-	public WtmToken refreshAccessToken(ServletResponse response, WtmToken token) {
+	public WtmToken refreshAccessToken(ServletRequest request, ServletResponse response, WtmToken token, String url, String tokenName) {
 		//WtmToken newToken = null;
 		
 		try {
@@ -96,7 +100,7 @@ public class LoginService{
 			ResponseEntity<String> responseEntity = null;
 			
 			
-			URI uri = UriComponentsBuilder.fromUriString(pathHr)
+			URI uri = UriComponentsBuilder.fromUriString(url)
 			        .queryParam("cmd", "tokenRefresh")
 			        .queryParam("accessToken", token.getAccessToken())
 			        .queryParam("refreshToken", token.getRefreshToken())
@@ -137,10 +141,10 @@ public class LoginService{
 	 	      token = tokenRepository.save(token);
 			} else if (responseEntity.getStatusCode() != HttpStatus.UNAUTHORIZED) {
 				System.out.println("xxxx hr session 만료");
-				removeTokenCookie(response, "ACCESS_TOKEN");
+				removeTokenCookie(request, response);
 			} else {
 				System.out.println("xxxx" + responseEntity.getStatusCode() + " : " + responseEntity.getBody());
-				removeTokenCookie(response, "ACCESS_TOKEN");
+				removeTokenCookie(request, response);
 			} 
 
 		} catch (Exception e) {
@@ -154,27 +158,41 @@ public class LoginService{
 		tokenRepository.deleteByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
 
 		WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
+		String tokenName = getHrTokenName(token.getTenantId());
+
 		if(emp != null) {
 			token.setUserId(emp.getEmpHisId().toString());
 			token.setUpdateId(emp.getEmpHisId().toString());
 			//기존 토큰 다 삭제하고 새로 등록(기존에 다른 곳에서 로그인한 상황이면 그쪽은 튕김)
 			tokenRepository.save(token);
-//
+
 //			Cookie cookie = null;
 //			cookie = new Cookie(PARAM_NAME_USER_TOKEN, token.getAccessToken());
 //			cookie.setPath("/");
 //			response.addCookie(cookie);
 		} else {
 			System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx	xxxxxxxxx emp his에 없는 사원정보");
-			removeTokenCookie(response, PARAM_NAME_USER_TOKEN);
+			removeTokenCookie(request, response);
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			//hr을 로그아웃시킬 필요는 없겠지
 		}
 		//emp his에 업으면 안됨...
 	}
 	
-	public void deleteAccessToken(ServletResponse response, WtmToken token) {
+	public String getHrTokenUrl(Long tenantId) {
+		return tcms.getConfigValue(tenantId, "HR.TOKEN_URL", true, "");	
+	}
+
+	public String getHrInfoUrl(Long tenantId) {
+		return tcms.getConfigValue(tenantId, "HR.INFO_URL", true, "");	
+	}
+
+	public String getHrTokenName(Long tenantId) {
+		return tcms.getConfigValue(tenantId, "HR.TOKEN_NAME", true, "");	
+	}
+	
+	public void deleteAccessToken(ServletRequest request, ServletResponse response, WtmToken token) {
 		tokenRepository.deleteByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
-		removeTokenCookie(response, PARAM_NAME_USER_TOKEN);
+		removeTokenCookie(request, response);
 	}
 }

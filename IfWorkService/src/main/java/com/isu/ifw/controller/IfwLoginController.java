@@ -110,12 +110,16 @@ public class IfwLoginController {
 			HttpSession session = ((HttpServletRequest) request).getSession();
 			ObjectMapper mapper = new ObjectMapper();
 			CommTenantModule tm = null;
-
+			
 			if (session.getAttribute("moduleId") != null) {
 				String moduleId = session.getAttribute("moduleId").toString();
 				tm = tenantModuleRepo.findByModuleIdAndtenantKey(Long.valueOf(moduleId), tsId);
 			} else {
 				tm = tenantModuleRepo.findByTenantKey(tsId);
+			}
+			
+			if(tm == null) {
+				response.sendRedirect("/info?status=100");
 			}
 
 			tenantId = tm.getTenantId();
@@ -142,7 +146,6 @@ public class IfwLoginController {
 			// 입력된 로그인 아이디를 받아온다.
 			String loginId = "";
 			String requestedPassword = request.getParameter(passwordParamName);
-
 			// 인증 방법을 가져온다.
 			//String certificateMethod = authConfig.getCertificateMethod();
 			String certificateMethod = tcms.getConfigValue(tenantId, "WTMS.LOGIN.CERTIFICATE_METHOD", true, "");			
@@ -363,6 +366,11 @@ public class IfwLoginController {
 //				endPointUrl = endPointUrl.replace("http://", "https://");
 //			}
 			
+			//cookie에 테넌트 추가
+			Cookie c = null;
+			c = new Cookie("tenant", String.valueOf(tenantId));
+			c.setPath("/");
+			((HttpServletResponse)response).addCookie(c);
 			response.sendRedirect(endPointUrl);
 			return;
 			
@@ -386,7 +394,7 @@ public class IfwLoginController {
 				e1.printStackTrace();
 			}
 		} finally {
-			logger.info("loginController End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			//logger.info("loginController End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 			MDC.clear();
 		}	
 		
@@ -413,6 +421,7 @@ public class IfwLoginController {
  	        token.setExpiresAt(date);
  	       
  	        loginService.creatAccessToken(request, response, token);
+ 	        
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -426,8 +435,8 @@ public class IfwLoginController {
 			token.setEnterCd(body.get("enterCd"));
 			token.setSabun(body.get("sabun"));
 			token.setTenantId(Long.valueOf(body.get("tenantId")));
- 	        
- 	        loginService.deleteAccessToken(response, token);
+			
+ 	        loginService.deleteAccessToken(request, response, token);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

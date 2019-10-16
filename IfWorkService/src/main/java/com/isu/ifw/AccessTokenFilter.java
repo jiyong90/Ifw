@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,18 +36,15 @@ import com.isu.ifw.service.LoginService;
 
 @Component("accessTokenFilter") 
 public class AccessTokenFilter implements Filter {
-
 	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
-
-	static String PARAM_NAME_USER_TOKEN = "accessToken";
-	String freePassPath = null;
 	
 	@Autowired
 	LoginService loginService;
-	
 
-	@Value("${path.hr.redirect}")
-	private String pathRedirect;
+	String freePassPath = null;
+
+	@Value("${tenants}")
+	private List<String> tenants;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -55,9 +54,40 @@ public class AccessTokenFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		// TODO Auto-generated method stub
+		
+		Cookie[] cookies = ((HttpServletRequest)request).getCookies();
+		Map<String, Object> cookie = new HashMap();
+		
+		String token = null;
+		String tenant = null;
+		
+		if(cookies != null){
+			for(int i=0 ; i< cookies.length ; i++){
+				String name = cookies[i].getName();
+				String value = cookies[i].getValue();
+				cookie.put(name,  value);
+			}
+		}
+		
+		if(cookie.containsKey("tenant")) tenant = cookie.get("tenant").toString();
+		//param, cookie에서 테넌트 id 가져오기
+		if(request.getParameter("tenant") != null) tenant = request.getParameter("tenant");
+		
+
+		System.out.println("111111111111111111111111111111111111111111111111111111111111111 : " + tenant);
+	
+		if(tenant == null || !tenants.contains(tenant)) {
+			chain.doFilter(request, response);
+			return;
+		}
 		
 		System.out.println("AccessTokenFilter");
+
+		String tokenUrl = loginService.getHrTokenUrl(Long.parseLong(tenant));
+		String infoUrl = loginService.getHrInfoUrl(Long.parseLong(tenant));
+		String tokenName = loginService.getHrTokenName(Long.parseLong(tenant));
+
+		System.out.println("tokenUrl : " + tokenUrl +" , "+ "tokenName : " + tokenName);
 		
 		try {
 			if(freePassPath != null && freePassPath.trim().length() != 0){
@@ -77,40 +107,37 @@ public class AccessTokenFilter implements Filter {
 					
 				}
 			}
-			
-			String token = null;
-			token = request.getParameter(PARAM_NAME_USER_TOKEN);
+
+			token = request.getParameter(tokenName);
 			System.out.println("xxxxxxxxxxxxx token : " + token);
 			
-			Cookie[] cookies = ((HttpServletRequest)request).getCookies();
-			
 			if(token == null) {
-				System.out.println("xxxxxxxxxxxxx token...null ");
-				if(cookies != null){
-					for(int i=0 ; i< cookies.length ; i++){
-						String name = cookies[i].getName();
-						String value = cookies[i].getValue();
-						System.out.println("xxxxxxxxxxxxx name : " + name + " value : " + value);
-						if(PARAM_NAME_USER_TOKEN.equalsIgnoreCase(name)){
-							System.out.println("session validate filter access token : "+value);
-							token = value;
-							break;
-						}
-					}
+				System.out.println("xxxxxxxxxxxxx param token...null ");
+				System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxx cookie value : " + cookie.toString());
+				
+				if(cookie.containsKey(tokenName)) {
+					token = cookie.get(tokenName).toString();
+				} else {
+					System.out.println("xxxxxxxxxxxxx token이 아무데도 없음!!!!!!!");
+					((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					((HttpServletResponse) response).sendRedirect(infoUrl);
+					return;
 				}
 			} else {
 				System.out.println("xxxxxxxxxxxxx add cookie : ");
-				Cookie cookie = null;
-				cookie = new Cookie(PARAM_NAME_USER_TOKEN, token);
-				cookie.setPath("/");
-				((HttpServletResponse)response).addCookie(cookie);
+				Cookie c = new Cookie(tokenName, token);
+				c.setPath("/");
+				Cookie c2 = new Cookie("tenant", tenant);
+				c2.setPath("/");
+				((HttpServletResponse)response).addCookie(c);
+				((HttpServletResponse)response).addCookie(c2);
 			}
 
 			WtmToken wtmToken = loginService.getAccessToken(token);
 			if(wtmToken == null) {
 				logger.debug("DB에 토큰 없음 : " +  token);
 				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/hr/info/views/info");
+				((HttpServletResponse) response).sendRedirect(infoUrl);
 				return;
 			} else {
 				Date expiresAt = wtmToken.getExpiresAt();
@@ -121,17 +148,19 @@ public class AccessTokenFilter implements Filter {
 	 	        int compare = date.compareTo(expiresAt);
 				if(compare >= 0) {
 					System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxx 토큰만료");
-					wtmToken = loginService.refreshAccessToken(response, wtmToken);
+					wtmToken = loginService.refreshAccessToken(request, response, wtmToken, tokenUrl, tokenName);
 					if(wtmToken == null) {
 						//hr세선 만료일 경우 토큰 갱신 불가
 						((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+						((HttpServletResponse) response).sendRedirect(infoUrl);
 						return;
 					}
-					Cookie cookie = null;
-					cookie = new Cookie(PARAM_NAME_USER_TOKEN, wtmToken.getAccessToken());
-					cookie.setPath("/");
-					cookie.setMaxAge(60*60*24);   
-					((HttpServletResponse)response).addCookie(cookie);
+					Cookie c = new Cookie(tokenName, wtmToken.getAccessToken());
+					c.setPath("/");
+					Cookie c2 = new Cookie("tenant", tenant);
+					c2.setPath("/");					
+					((HttpServletResponse)response).addCookie(c);
+					((HttpServletResponse)response).addCookie(c2);
 				} 
 				request.setAttribute("tenantId", wtmToken.getTenantId());
 				Map<String, Object> sessionData = new HashMap();
@@ -145,7 +174,8 @@ public class AccessTokenFilter implements Filter {
 			e.printStackTrace();
 			return;
 		}
-		chain.doFilter(request, response);
+		request.getRequestDispatcher(((HttpServletRequest) request).getServletPath()).forward(request, response);
+		//chain.doFilter(request, response);
 	}
 
 	@Override

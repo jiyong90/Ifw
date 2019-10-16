@@ -458,6 +458,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	// 3. 처리결과 저장
 		try {
 			// WTM_IF_HIS 테이블에 결과저장
+			ifHisMap.put("updateDate", nowDataTime);
    			ifHisMap.put("ifEndDate", lastDataTime);
 			ifHisMap.put("ifMsg", retMsg);
 			wtmInterfaceMapper.insertIfHis(ifHisMap);
@@ -1167,6 +1168,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		}
         System.out.println("WtmInterfaceServiceImpl setTaaApplIf end");
 		return;
+	}
+
+	@Override
+	public String setIfUrl(Long tenantId, String ifaddUrl, String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
