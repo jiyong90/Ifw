@@ -69,7 +69,7 @@ public class AccessTokenFilter implements Filter {
 			}
 		}
 		
-		if(cookie.containsKey("tenant"+tenant)) tenant = cookie.get("tenant"+tenant).toString();
+		if(cookie.containsKey("tenant")) tenant = cookie.get("tenant").toString();
 		//param, cookie에서 테넌트 id 가져오기
 		if(request.getParameter("tenant") != null) tenant = request.getParameter("tenant");
 		
@@ -127,7 +127,7 @@ public class AccessTokenFilter implements Filter {
 				System.out.println("xxxxxxxxxxxxx add cookie : ");
 				Cookie c = new Cookie(tokenName, token);
 				c.setPath("/");
-				Cookie c2 = new Cookie("tenant"+tenant, tenant);
+				Cookie c2 = new Cookie("tenant", tenant);
 				c2.setPath("/");
 				((HttpServletResponse)response).addCookie(c);
 				((HttpServletResponse)response).addCookie(c2);
@@ -157,7 +157,7 @@ public class AccessTokenFilter implements Filter {
 					}
 					Cookie c = new Cookie(tokenName, wtmToken.getAccessToken());
 					c.setPath("/");
-					Cookie c2 = new Cookie("tenant"+tenant, tenant);
+					Cookie c2 = new Cookie("tenant", tenant);
 					c2.setPath("/");					
 					((HttpServletResponse)response).addCookie(c);
 					((HttpServletResponse)response).addCookie(c2);
