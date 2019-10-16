@@ -69,9 +69,10 @@ public class AccessTokenFilter implements Filter {
 			}
 		}
 		
+		if(cookie.containsKey("tenant")) tenant = cookie.get("tenant").toString();
 		//param, cookie에서 테넌트 id 가져오기
 		if(request.getParameter("tenant") != null) tenant = request.getParameter("tenant");
-		if(cookie.containsKey("tenant")) tenant = cookie.get("tenant").toString();
+		
 
 		System.out.println("111111111111111111111111111111111111111111111111111111111111111 : " + tenant);
 	
