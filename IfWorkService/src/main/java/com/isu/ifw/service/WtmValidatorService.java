@@ -5,8 +5,7 @@ import java.util.Date;
 import org.springframework.stereotype.Service;
 
 import com.isu.option.vo.ReturnParam;
-
-@Service("WtmValidatorService")
+ 
 public interface WtmValidatorService {
 
 	/**
@@ -31,4 +30,11 @@ public interface WtmValidatorService {
 	 * @return
 	 */
 	public ReturnParam checkDuplicateWorktime(Long tenantId, String enterCd, String sabun, Date sdate, Date edate, Long applId);
+	
+	public ReturnParam validTaa(Long tenantId, String enterCd, String sabun,
+			String timeTypeCd, String taaCd,
+			String symd, String shm, String eymd, String ehm, Long applId, String locale);
+	
+	
+	
 }

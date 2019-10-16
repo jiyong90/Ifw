@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
@@ -18,6 +19,7 @@ import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmTaaCodeRepository;
 import com.isu.option.vo.ReturnParam;
 
+@Service
 public class WtmValidatorServiceImpl implements WtmValidatorService  {
 
 	@Autowired
@@ -38,6 +40,7 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 	@Autowired
 	WtmTaaCodeRepository taaCodeRepo;
 	
+	@Override
 	public ReturnParam validTaa(Long tenantId, String enterCd, String sabun,
 			String timeTypeCd, String taaCd,
 			String symd, String shm, String eymd, String ehm, Long applId, String locale) {
