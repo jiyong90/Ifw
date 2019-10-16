@@ -76,7 +76,7 @@ public class AccessTokenFilter implements Filter {
 
 		System.out.println("111111111111111111111111111111111111111111111111111111111111111 : " + tenant);
 	
-		if(tenant == null || !tenants.contains("|"+tenant+"|")) {
+		if(tenant == null || !tenants.contains(tenant)) {
 			chain.doFilter(request, response);
 			return;
 		}
