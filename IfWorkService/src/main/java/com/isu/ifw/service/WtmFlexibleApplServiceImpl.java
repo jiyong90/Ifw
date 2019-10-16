@@ -42,7 +42,7 @@ import com.isu.option.vo.ReturnParam;
 public class WtmFlexibleApplServiceImpl implements WtmApplService {
 
 	@Autowired
-	private WtmValidatorService validatorService;
+	WtmValidatorService validatorService;
 	
 	@Autowired
 	WtmApplMapper applMapper;
