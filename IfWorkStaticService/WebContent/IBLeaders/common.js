@@ -2395,6 +2395,7 @@ function autoCompleteInit(opt, sheet, Row, Col, renderItem , callBackFunc) {
         }).html("<input id='searchKeyword1' name='searchKeyword' type='text' />").appendTo('#empForm1');
 
         var inputId = "searchKeyword1";
+        
         $("#searchKeyword1").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -2486,7 +2487,7 @@ function autoCompleteInit(opt, sheet, Row, Col, renderItem , callBackFunc) {
     var point = fGetXY(document.getElementById("DIV_" + sheet.id));
 
     var left = point.x + pleft;
-    var top = point.y + ptop - 17;
+    var top = point.y + ptop - 30;
 
     var cWidth = 520;
     var cHeight = 104;
