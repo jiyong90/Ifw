@@ -52,6 +52,11 @@ public interface WtmFlexibleEmpMapper {
 	 * @param paramMap
 	 */
 	public void updateApprDatetimeByYmdAndSabun(Map<String, Object> paramMap);
+	
+	public void updateEntrySdateByTenantIdAndEnterCdAndYmdBetweenAndSabun(Map<String, Object> paramMap);
+	public void updateEntryEdateByTenantIdAndEnterCdAndYmdBetweenAndSabun(Map<String, Object> paramMap);
+	public void updateTimeTypePlanToEntryTimeByTenantIdAndEnterCdAndYmdBetweenAndSabun(Map<String, Object> paramMap);
+	
 	/**
 	 * 인정시간의 분 계산 - 휴게시간 제외
 	 * @param paramMap

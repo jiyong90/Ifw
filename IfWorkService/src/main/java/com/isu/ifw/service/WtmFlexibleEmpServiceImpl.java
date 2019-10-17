@@ -509,9 +509,60 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("sabun", sabun);
 		paramMap.put("sYmd", sYmd);
 		paramMap.put("eYmd", eYmd);
+
+		List<String> timeTypeCd = new ArrayList<>();
+		timeTypeCd.add(WtmApplService.TIME_TYPE_LLA);
+		
+		//지각 조퇴 무단결근 데이터 삭제
+		if(sabun != null && !sabun.equals("")) {
+			List<WtmWorkDayResult> result = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdInAndYmdBetweenOrderByPlanSdateAsc(tenantId, enterCd, sabun, timeTypeCd, sYmd, eYmd);
+			if(result != null && result.size() > 0) {
+				workDayResultRepo.deleteAll(result);
+			}
+		}else {
+			List<WtmWorkDayResult> result = workDayResultRepo.findByTenantIdAndEnterCdAndTimeTypeCdInAndYmdBetween(tenantId, enterCd, timeTypeCd, sYmd, eYmd);
+			if(result != null && result.size() > 0) {
+				workDayResultRepo.deleteAll(result);
+			}
+			
+		}
+
+		paramMap.put("timeTypeCd", WtmApplService.TIME_TYPE_REGA);
+		// 간주근무의 경우 출/퇴근 타각데이터를 계획 데이터로 생성해 준다.
+		flexEmpMapper.updateTimeTypePlanToEntryTimeByTenantIdAndEnterCdAndYmdBetweenAndSabun(paramMap);
+		
+		// 출근시간 자동 여부 -- 출근이 자유인 경운 지각이 없다고 본다?? 일단 ㅋ
+		// 출근시간 자동에 대해 일괄 업데이트 한다.
+		// 어디까지인가? 조출 / 기본근무
+		// 출근 타각데이터가 있는건 갱신하지 않는다.
+		flexEmpMapper.updateEntrySdateByTenantIdAndEnterCdAndYmdBetweenAndSabun(paramMap);
+		
+		// 퇴근 시간 자동 여부 (계획시간으로 )
+		// 어디까지인가? 기본근무 / 연장
+		// 퇴근 타각데이터가 있는건 갱신하지 않는다.
+		flexEmpMapper.updateEntryEdateByTenantIdAndEnterCdAndYmdBetweenAndSabun(paramMap);
+		
+		
+		
+		// 출근 타각이 없을 경우
+		// 출근 또는 출/퇴근 타각이 모두 없을 경우 무단결근
+		
+		// 출근 데이터는 있고 퇴근 타각이 없을 경우 조퇴 (시/종 정보 없이 생성)
+			
+		
 //		paramMap.put("timeTypeCd", timeTypeCd);
 		//소정근로시간의 경우 출퇴근 타각기록으로만 판단
 		flexEmpMapper.updateApprDatetimeByYmdAndSabun(paramMap);
+		
+		// 이곳은 출/퇴근 타각데이터가 있는 사람에 한한다.. 
+		
+		// 계획 시작 시간보다 인정시작시간이 늦을 경우 BASE중에 
+		// 지각 데이터 생성
+		
+		// 계획 종료 시간 보다 인정종료시간이 빠를 경우 BASE중에 
+		// 조퇴 데이터 생성
+		
+		
 		flexEmpMapper.updateApprMinuteByYmdAndSabun(paramMap);
 		//연장근로의 경우 히스토리 타각기록을 통해 계산이 필요함
 	}

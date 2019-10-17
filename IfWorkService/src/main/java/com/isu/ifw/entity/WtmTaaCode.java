@@ -24,6 +24,10 @@ public class WtmTaaCode {
 	public final static String REQUEST_TYPE_P = "P"; //오후
 	public final static String REQUEST_TYPE_H = "H"; //시간단위
 	
+	public final static String TAA_INFO_LATE = "LATE";
+	public final static String TAA_INFO_LEAVE = "LEAVE";
+	public final static String TAA_INFO_ABSENCE = "ABSENCE";
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="TAA_CODE_ID")
