@@ -20,6 +20,7 @@ import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtCanAppl;
 import com.isu.ifw.entity.WtmOtSubsAppl;
+import com.isu.ifw.entity.WtmTaaCode;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
@@ -28,6 +29,7 @@ import com.isu.ifw.repository.WtmFlexibleApplDetRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtCanApplRepository;
+import com.isu.ifw.repository.WtmTaaCodeRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.repository.WtmWorkteamEmpRepository;
@@ -62,6 +64,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Autowired
 	WtmFlexibleApplDetRepository flexApplDetRepo;
+	
+	@Autowired
+	WtmTaaCodeRepository taaCodeRepo;
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
@@ -546,9 +551,19 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		// 출근 타각이 없을 경우
 		// 출근 또는 출/퇴근 타각이 모두 없을 경우 무단결근
+		WtmTaaCode taaCode = taaCodeRepo.findByTenantIdAndEnterCdAndTaaInfoCd(tenantId, enterCd, WtmTaaCode.TAA_INFO_ABSENCE);
+		paramMap.put("timeTypeCd", WtmApplService.TIME_TYPE_LLA);
+		paramMap.put("taaCd", taaCode.getTaaCd());
+		paramMap.put("userId", "SYSTEM");
+		flexEmpMapper.createDayResultByTimeTypeAndEntryDateIsNull(paramMap);
+		 
+		taaCode = taaCodeRepo.findByTenantIdAndEnterCdAndTaaInfoCd(tenantId, enterCd, WtmTaaCode.TAA_INFO_LEAVE);
+		paramMap.put("timeTypeCd", WtmApplService.TIME_TYPE_LLA);
+		paramMap.put("taaCd", taaCode.getTaaCd());
 		
 		// 출근 데이터는 있고 퇴근 타각이 없을 경우 조퇴 (시/종 정보 없이 생성)
-			
+		flexEmpMapper.createDayResultByTimeTypeAndEntrtEdateIsNull(paramMap);
+		
 		
 //		paramMap.put("timeTypeCd", timeTypeCd);
 		//소정근로시간의 경우 출퇴근 타각기록으로만 판단

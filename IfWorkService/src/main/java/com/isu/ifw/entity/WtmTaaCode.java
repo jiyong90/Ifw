@@ -42,6 +42,8 @@ public class WtmTaaCode {
 	private String taaNm;
 	@Column(name="TAA_TYPE_CD")
 	private String taaTypeCd;
+	@Column(name="TAA_INFO_CD")
+	private String taaInfoCd;
 	@Column(name="HOL_INCL_YN")
 	private String holInclYn;
 	@Column(name="REQUEST_TYPE_CD")
@@ -163,6 +165,16 @@ public class WtmTaaCode {
 
 	public void setWorkApprHour(Integer workApprHour) {
 		this.workApprHour = workApprHour;
+	}
+ 
+		
+	public String getTaaInfoCd() {
+		return taaInfoCd;
+	}
+
+
+	public void setTaaInfoCd(String taaInfoCd) {
+		this.taaInfoCd = taaInfoCd;
 	}
 
 
