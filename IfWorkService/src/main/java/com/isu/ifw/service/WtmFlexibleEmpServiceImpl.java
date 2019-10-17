@@ -556,7 +556,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("taaCd", taaCode.getTaaCd());
 		paramMap.put("userId", "SYSTEM");
 		flexEmpMapper.createDayResultByTimeTypeAndEntryDateIsNull(paramMap);
-		 
+		
+
 		taaCode = taaCodeRepo.findByTenantIdAndEnterCdAndTaaInfoCd(tenantId, enterCd, WtmTaaCode.TAA_INFO_LEAVE);
 		paramMap.put("timeTypeCd", WtmApplService.TIME_TYPE_LLA);
 		paramMap.put("taaCd", taaCode.getTaaCd());
@@ -570,12 +571,18 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		flexEmpMapper.updateApprDatetimeByYmdAndSabun(paramMap);
 		
 		// 이곳은 출/퇴근 타각데이터가 있는 사람에 한한다.. 
+
+		// 계획 종료 시간 보다 인정종료시간이 빠를 경우 BASE중에 
+		// 조퇴 데이터 생성
+		flexEmpMapper.createDayResultByTimeTypeAndApprEdateLessThanPlanEdate(paramMap);
 		
 		// 계획 시작 시간보다 인정시작시간이 늦을 경우 BASE중에 
 		// 지각 데이터 생성
+		taaCode = taaCodeRepo.findByTenantIdAndEnterCdAndTaaInfoCd(tenantId, enterCd, WtmTaaCode.TAA_INFO_LATE);
+		paramMap.put("timeTypeCd", WtmApplService.TIME_TYPE_LLA);
+		paramMap.put("taaCd", taaCode.getTaaCd());
+		flexEmpMapper.createDayResultByTimeTypeAndApprEdateLessThanPlanEdate(paramMap);
 		
-		// 계획 종료 시간 보다 인정종료시간이 빠를 경우 BASE중에 
-		// 조퇴 데이터 생성
 		
 		
 		flexEmpMapper.updateApprMinuteByYmdAndSabun(paramMap);
