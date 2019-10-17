@@ -35,7 +35,7 @@
 			</tr>
 			<tr>
 				<td>
-					<div class="col-7 pt-2">
+					<div class="pt-2">
 						<div class="innertab inner">
 							<div id="tabs" class="tab">
 								<ul class="outer tab_bottom">

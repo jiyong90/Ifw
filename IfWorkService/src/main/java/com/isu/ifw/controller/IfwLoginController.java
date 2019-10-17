@@ -146,7 +146,6 @@ public class IfwLoginController {
 			// 입력된 로그인 아이디를 받아온다.
 			String loginId = "";
 			String requestedPassword = request.getParameter(passwordParamName);
-
 			// 인증 방법을 가져온다.
 			//String certificateMethod = authConfig.getCertificateMethod();
 			String certificateMethod = tcms.getConfigValue(tenantId, "WTMS.LOGIN.CERTIFICATE_METHOD", true, "");			
@@ -395,7 +394,7 @@ public class IfwLoginController {
 				e1.printStackTrace();
 			}
 		} finally {
-			logger.info("loginController End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			//logger.info("loginController End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 			MDC.clear();
 		}	
 		
@@ -437,7 +436,7 @@ public class IfwLoginController {
 			token.setSabun(body.get("sabun"));
 			token.setTenantId(Long.valueOf(body.get("tenantId")));
 			
- 	        loginService.deleteAccessToken(response, token);
+ 	        loginService.deleteAccessToken(request, response, token);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
