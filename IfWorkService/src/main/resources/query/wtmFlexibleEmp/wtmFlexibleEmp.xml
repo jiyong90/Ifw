@@ -560,8 +560,8 @@
 				 WHERE C.TENANT_ID = #{tenantId}
 				   AND C.ENTER_CD = #{enterCd}
 				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
-				   AND (C.ENTRY_SDATE IS NULL OR C.ENTRY_SDATE = '')
-				   AND (C.ENTRY_EDATE IS NULL OR C.ENTRY_EDATE = '')  
+				   AND C.ENTRY_SDATE IS NULL
+				   AND C.ENTRY_EDATE IS NULL  
 				   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL) 
     	]]>
     </insert>
@@ -582,7 +582,7 @@
 				 WHERE C.TENANT_ID = #{tenantId}
 				   AND C.ENTER_CD = #{enterCd}
 				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}  
-				   AND (C.ENTRY_EDATE IS NULL OR C.ENTRY_EDATE = '')  
+				   AND C.ENTRY_EDATE IS NULL  
 				   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL) 
     	]]>
     </insert>
