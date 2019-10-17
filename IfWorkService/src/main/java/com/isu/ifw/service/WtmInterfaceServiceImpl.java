@@ -18,12 +18,7 @@ import com.isu.ifw.mapper.WtmInterfaceMapper;
 
 @Service
 public class WtmInterfaceServiceImpl implements WtmInterfaceService {
-	
-	// 일단 63번서버 KABNAG에 연결하기
-	//String IF_URL = "http://10.30.30.180:8081/IfWorkInterface";
-	//브로제코리아 개발서버
-	String IF_URL = "http://smarthrd.servicezone.co.kr:8282/IfWorkInterface"; 
-	
+		
 	@Autowired
 	WtmInterfaceMapper wtmInterfaceMapper;
 	
@@ -93,6 +88,29 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	}
 	
 	@Override
+	public String setIfUrl(Long tenantId, String ifaddUrl, String param) throws Exception {
+		// TODO Auto-generated method stub
+		String ifUrl = "";
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		Map<String, Object> result = wtmInterfaceMapper.getIfUrl(paramMap);
+		
+		if(result != null && result.size() > 0) {
+			try {
+				ifUrl = result.get("info_data").toString() + "/IfWorkInterface" + ifaddUrl + param;
+				System.out.println("ifUrl : " + ifUrl);
+			} catch(Exception e){
+	            e.printStackTrace();
+	        }
+		}
+		try {
+		} catch (Exception e) {
+            e.printStackTrace();
+		}
+		return ifUrl;
+	}
+	
+	@Override
 	public void getCodeIfResult(Long tenantId) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("WtmInterfaceServiceImpl getCodeIfResult");
@@ -118,7 +136,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         		lastDataTime = getDateMap.get("lastDate").toString();
         		nowDataTime = getDateMap.get("nowDate").toString();
 	        	try {
-		        	String ifUrl = IF_URL + "/code" + "?lastDataTime="+lastDataTime;
+	        		String param = "?lastDataTime="+lastDataTime;
+		        	String ifUrl = setIfUrl(tenantId, "/code", param);
 			   		getIfMap = getIfRt(ifUrl);
 			   		
 			   		if (getIfMap != null && getIfMap.size() > 0) {
@@ -267,7 +286,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     		lastDataTime = getDateMap.get("lastDate").toString();
     		nowDataTime = getDateMap.get("nowDate").toString();
         	try {
-	        	String ifUrl = IF_URL + "/holiday" + "?lastDataTime="+lastDataTime;
+        		String param = "?lastDataTime="+lastDataTime;
+	        	String ifUrl = setIfUrl(tenantId, "/holiday", param); 
 	        	getIfMap = getIfRt(ifUrl);
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
@@ -361,7 +381,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     		lastDataTime = getDateMap.get("lastDate").toString();
     		nowDataTime = getDateMap.get("nowDate").toString();
         	try {
-	        	String ifUrl = IF_URL + "/gntCode" + "?lastDataTime="+lastDataTime;
+        		String param = "?lastDataTime="+lastDataTime;
+	        	String ifUrl = setIfUrl(tenantId, "/gntCode", param);  
 	        	getIfMap = getIfRt(ifUrl);
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
@@ -494,7 +515,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     		lastDataTime = getDateMap.get("lastDate").toString();
     		nowDataTime = getDateMap.get("nowDate").toString();
         	try {
-	        	String ifUrl = IF_URL + "/orgCode" + "?lastDataTime="+lastDataTime;
+        		String param = "?lastDataTime="+lastDataTime;
+	        	String ifUrl = setIfUrl(tenantId, "/orgCode", param); 
 	        	getIfMap = getIfRt(ifUrl);
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
@@ -610,7 +632,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     		lastDataTime = getDateMap.get("lastDate").toString();
     		nowDataTime = getDateMap.get("nowDate").toString();
         	try {
-	        	String ifUrl = IF_URL + "/orgChartMgr" + "?lastDataTime="+lastDataTime;
+        		String param = "?lastDataTime="+lastDataTime;
+	        	String ifUrl = setIfUrl(tenantId, "/orgChartMgr", param); 
 	        	getIfMap = getIfRt(ifUrl);
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
@@ -669,11 +692,10 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         			// chart detail 시작
         			getIfDetList = null;
         			try {
-        	        	String ifUrl = IF_URL + "/orgChartDtl" 
-        			                 + "?lastDataTime="+lastDataTime
-        			                 + "&enterCd="+getIfList.get(i).get("ENTER_CD")
-        			                 + "&symd="+getIfList.get(i).get("SDATE")
-        	        			;
+        				String param = "?lastDataTime="+lastDataTime
+   			                 + "&enterCd="+getIfList.get(i).get("ENTER_CD")
+   			                 + "&symd="+getIfList.get(i).get("SDATE");
+        	        	String ifUrl = setIfUrl(tenantId, "/holiday", param);
         	        	getIfDetMap = getIfRt(ifUrl);
         		   		
         		   		if (getIfDetMap != null && getIfDetMap.size() > 0) {
@@ -768,7 +790,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     		lastDataTime = getDateMap.get("lastDate").toString();
     		nowDataTime = getDateMap.get("nowDate").toString();
         	try {
-	        	String ifUrl = IF_URL + "/orgMapCode" + "?lastDataTime="+lastDataTime;
+        		String param = "?lastDataTime="+lastDataTime;
+	        	String ifUrl = setIfUrl(tenantId, "/orgMapCode", param); 
 	        	getIfMap = getIfRt(ifUrl);
 		   		if (getIfMap != null && getIfMap.size() > 0) {
 		   			String ifMsg = getIfMap.get("message").toString();
@@ -921,7 +944,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     		lastDataTime = getDateMap.get("lastDate").toString();
     		nowDataTime = getDateMap.get("nowDate").toString();
         	try {
-	        	String ifUrl = IF_URL + "/empHis" + "?lastDataTime="+lastDataTime;
+        		String param = "?lastDataTime="+lastDataTime;
+	        	String ifUrl = setIfUrl(tenantId, "/empHis", param); 
 	        	getIfMap = getIfRt(ifUrl);
 		   		
 		   		if (getIfMap != null && getIfMap.size() > 0) {
@@ -1128,6 +1152,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 									, dt.parse(reqDayMap.get("taaEdate").toString())
 									, Long.parseLong(reqDayMap.get("applId").toString())
 									, "0");
+							// timeTypeCd = "REGA" & ymd <= 오늘 그러면 타각갱신해야함.
 						} else if ("D".equals(taaSetYn)) {
 							// 근태삭제
 							WtmFlexibleEmpService.removeWtmDayResultInBaseTimeType(
@@ -1168,6 +1193,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		}
         System.out.println("WtmInterfaceServiceImpl setTaaApplIf end");
 		return;
+	}
+
+	@Override
+	public String setIfUrl(Long tenantId, String ifaddUrl, String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
