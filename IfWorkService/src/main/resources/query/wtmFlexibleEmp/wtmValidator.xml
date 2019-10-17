@@ -79,4 +79,22 @@
 				) X
 		]]>	
   	</select>
+  	
+  	
+  	<select id="getWorkCnt" parameterType="map" resultType="int">
+  		<![CDATA[ 
+			SELECT COUNT(*) AS work_day
+			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_WORK_CALENDAR C
+			    ON E.TENANT_ID = C.TENANT_ID
+			   AND E.ENTER_CD = C.ENTER_CD
+			   AND E.SABUN = C.SABUN
+			   AND C.YMD BETWEEN E.SYMD AND E.EYMD 
+			 WHERE E.TENANT_ID = #{tenantId}
+			   AND E.ENTER_CD = #{enterCd}
+			   AND E.SABUN = #{sabun}
+			   AND C.HOLIDAY_YN != 'Y'
+			   AND C.YMD BETWEEN {symd} AND {eymd}
+		]]>	
+  	</select>
 </mapper>

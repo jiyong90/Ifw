@@ -2,14 +2,11 @@ package com.isu.ifw.service;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.isu.ifw.entity.WtmFlexibleEmp;
-import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmTaaCode;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
@@ -48,24 +45,38 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 		rp.setSuccess("");
 		
 		WtmTaaCode taaCode = taaCodeRepo.findByTenantIdAndEnterCdAndTaaCd(tenantId, enterCd, taaCd);
+
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
 		
+		paramMap.put("applId", applId);
+		paramMap.put("sabun", sabun); 
 		if(taaCode.getRequestTypeCd().equals(WtmTaaCode.REQUEST_TYPE_H)) {
 			//근태가 시간단위 일때 시분 정보가 누락되지 않았는지 체크한다.
 			if(shm.equals("") || ehm.equals("")) {
 				rp.setFail("시간단위 근태의 경우 시간 정보가 필요합니다.");
 				return rp;
 			}
+			paramMap.put("timeTypeCd", timeTypeCd);
+			paramMap.put("requestTypeCd", taaCode.getRequestTypeCd());
+			paramMap.put("sdate", symd + shm);
+			paramMap.put("edate", eymd + ehm);
+			Map<String, Object> m = validatorMapper.checkDuplicateTaaByTaaTypeH(paramMap);
+			int cnt = Integer.parseInt(m.get("cnt").toString());
+			
+			if(cnt > 0) {
+				rp.setFail("이미 해당일에 중복된 근태 정보가 존재합니다.");
+				return rp;
+			}
+			
+			
 		}else {
 			//신청하려는근태 코드와 타입 종일 반일(오전/오후) 등 해당 건은 같은날 중복해서 들어갈 수 없다 체케럽
-			Map<String, Object> paramMap = new HashMap<>();
-			paramMap.put("tenantId", tenantId);
-			paramMap.put("enterCd", enterCd);
 			paramMap.put("timeTypeCd", timeTypeCd);
 			paramMap.put("requestTypeCd", taaCode.getRequestTypeCd());
 			paramMap.put("symd", symd);
 			paramMap.put("eymd", eymd);
-			paramMap.put("applId", applId);
-			paramMap.put("sabun", sabun); 
 			Map<String, Object> m = validatorMapper.checkDuplicateTaa(paramMap);
 			int cnt = Integer.parseInt(m.get("cnt").toString());
 			
@@ -73,47 +84,17 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 				rp.setFail("이미 해당일에 중복된 근태 정보가 존재합니다.");
 				return rp;
 			}
-		}
-		
-		List<WtmFlexibleEmp> empList = flexEmpRepo.findByTenantIdAndEnterCdAndSabunAndBetweenSymdAndEymd(tenantId, enterCd, sabun, symd, eymd);
-		
-		if(empList != null && empList.size() > 0) {
-			for(WtmFlexibleEmp emp : empList) {
-				//일별 근무제 옵션을 가지고 오자
-				WtmFlexibleStdMgr flexStdMgr = flexStdMgrRepo.findById(emp.getFlexibleStdMgrId()).get();
-				
-				String workYn = flexStdMgr.getTaaWorkYn();
-				
-				 
-				if(shm.equals("") || ehm.equals("")) {
-					//없을 경우 근태에 해당하는 것만 체크 한다.
-					
-				}else {
-					//근태 정보에 시간이 있으면 겹치는근태 시간이 있는지 확인하자
-					
-				}
-				 
-				
-				//flexStdMgr.getTaaTimeYn() //가산여부 Y면 인정근무시간에 합산 / N이면 노합
-				//flexStdMgr.getTaaWorkYn() //4시간 + 8시간을 할수 있다.
-				
-				//N이면4시간의 근무계획이 있을 경우 연차가 들어왔을 때는 안됨. 근무계획 변경 후 연차신청해야함.
-			}
-		}
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("tenantId", tenantId);
-		paramMap.put("enterCd", enterCd);
-		paramMap.put("sabun", sabun);
+		} 
 		paramMap.put("symd", symd);
 		paramMap.put("eymd", eymd);
-		paramMap.put("applId", applId);
+		paramMap.put("sabun", sabun); 
+		int workCnt = validatorMapper.getWorkCnt(paramMap);
 		
-		Map<String, Object> m = flexStdMapper.checkRequestDate(paramMap);
-		int cnt = Integer.parseInt(m.get("CNT").toString());
-		if(cnt > 0) {
-			rp.setFail("신청중인 또는 이미 적용된 근무정보가 있습니다.");
-			return rp;
-		}
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("workdayCnt", workCnt);
+		rp.put("result", resultMap);
+		
 		return rp;
 	}	
 	
