@@ -34,7 +34,7 @@
         	SELECT A.FLEXIBLE_APPLY_GROUP_ID AS flexibleApplyGroupId
         		 , A.FLEXIBLE_APPLY_ID AS flexibleApplyId
         		 , A.ORG_CD AS orgCd
-        		 , F_WTM_GET_CODE_NM(B.TENANT_ID, B.ENTER_CD, 'ORG_CD', A.ORG_CD, B.USE_SYMD)  AS orgNm
+        		 , F_WTM_GET_ORG_NM(B.TENANT_ID, B.ENTER_CD, A.ORG_CD, B.USE_SYMD)  AS orgNm
         		 , A.JOB_CD AS jobCd
         		 , A.DUTY_CD AS dutyCd
         		 , A.POS_CD AS posCd
@@ -48,12 +48,12 @@
         ]]>
     </select>
     
-	<insert id="insertGrp" parameterType="java.util.HashMap" >
+	<insert id="insertGrp" parameterType="java.util.List" >
         INSERT INTO WTM_FLEXIBLE_APPLY_GROUP (
         	  FLEXIBLE_APPLY_ID
         	, ORG_CD
-        	, JOB_CD
         	, DUTY_CD
+        	, POS_CD
         	, CLASS_CD
         	, WORKTEAM_CD
         	, NOTE
@@ -63,25 +63,23 @@
        <foreach collection="list" item="item" separator=", ">
 		(     #{item.flexibleApplyId}
         	, #{item.orgCd}
-        	, #{item.jobCd}
         	, #{item.dutyCd}
         	, #{item.posCd}
         	, #{item.classCd}
         	, #{item.workteamCd}
         	, #{item.note}
         	, NOW()
-        	, #{userId}
+        	, #{item.userId}
         )
 		</foreach>
         ON DUPLICATE KEY UPDATE
               ORG_CD = VALUES(ORG_CD)
-            , JOB_CD = VALUES(JOB_CD)
             , DUTY_CD = VALUES(DUTY_CD)
+            , POS_CD = VALUES(POS_CD)
             , CLASS_CD = VALUES(CLASS_CD)
             , WORKTEAM_CD = VALUES(WORKTEAM_CD)
             , NOTE = VALUES(NOTE)
             , UPDATE_DATE = NOW()
-            , UPDATE_ID = #{userId}
     </insert>
     
     <update id="deleteGrp" parameterType="hashmap">
@@ -102,7 +100,7 @@
         ]]>
     </select>
     
-	<insert id="insertEmp" parameterType="java.util.HashMap" >
+	<insert id="insertEmp" parameterType="java.util.List" >
         INSERT INTO WTM_FLEXIBLE_APPLY_EMP (
         	  FLEXIBLE_APPLY_ID
         	, SABUN
@@ -115,7 +113,7 @@
         	, #{item.sabun}
         	, #{item.note}
         	, NOW()
-        	, #{userId}
+        	, #{item.userId}
         )
 		</foreach>
         ON DUPLICATE KEY UPDATE

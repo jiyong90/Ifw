@@ -66,6 +66,7 @@ public class WtmFlexibleApplyMgrController {
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
+		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
 		MDC.put("type", "C");
@@ -129,6 +130,7 @@ public class WtmFlexibleApplyMgrController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
+		Long flexibleApplyId = Long.valueOf(paramMap.get("flexibleApplyId").toString());
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -147,7 +149,7 @@ public class WtmFlexibleApplyMgrController {
 		rp.setSuccess("");
 		int cnt = 0;
 		try {		
-			cnt = flexibleApplyService.setApplyGrpList(userId, convertMap);
+			cnt = flexibleApplyService.setApplyGrpList(userId, flexibleApplyId, convertMap);
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;
@@ -193,6 +195,7 @@ public class WtmFlexibleApplyMgrController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
+		Long flexibleApplyId = Long.valueOf(paramMap.get("flexibleApplyId").toString());
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -211,7 +214,7 @@ public class WtmFlexibleApplyMgrController {
 		rp.setSuccess("");
 		int cnt = 0;
 		try {		
-			cnt = flexibleApplyService.setApplyEmpList(userId, convertMap);
+			cnt = flexibleApplyService.setApplyEmpList(userId, flexibleApplyId, convertMap);
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;

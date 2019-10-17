@@ -59,6 +59,8 @@
 			{Header:"알림기준",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"stdType",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"기준시간(분)",	Type:"Int",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"stdMinute",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"알림메시지",	Type:"Text",		Hidden:0,	Width:500,	Align:"Left",	ColMerge:0,	SaveName:"pushMsg",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"푸시여부",	Type:"CheckBox",	Hidden:0,	Width:70,	Align:"Left",	ColMerge:0,	SaveName:"mobileYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"이메일여부",	Type:"CheckBox",	Hidden:0,	Width:80,	Align:"Left",	ColMerge:0,	SaveName:"emailYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"시작일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"symd",			KeyField:1,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"종료일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"eymd",			KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
@@ -72,7 +74,7 @@
 		//사업장
 		var businessPlaceCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "BUSINESS_PLACE_CD"), "선택");
 		sheet1.SetColProperty("businessPlaceCd", {ComboText:businessPlaceCdList[0], ComboCode:businessPlaceCdList[1]} );
-		sheet1.SetColProperty("pushObj", {ComboText:"선택|개인|팀장", ComboCode:"|EMP|LEADER"} );
+		sheet1.SetColProperty("pushObj", {ComboText:"선택|개인|팀장|근태담당자", ComboCode:"|EMP|LEADER|MANAGER"} );
 		sheet1.SetColProperty("stdType", {ComboText:"선택|출근시간 이전|출근시간 이후|퇴근시간 이전|퇴근시간 이후|연장근무 잔여시간(분)|기본근무 잔여시간(분)", ComboCode:"|B_IN|A_IN|B_OUT|A_OUT|R_OT|R_WORK"} );
 
 		sheetInit();
