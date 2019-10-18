@@ -1297,7 +1297,7 @@ function employeeRenderItem(ul, item) {
 		+"<span style='display:inline-block;width:100px;'>"+item.enterNm+"</span>"
 		+"<span style='display:inline-block;width:50px;'>"+item.empSabun+"</span>"
 		+"<span style='display:inline-block;width:120px;'>"+item.orgNm+"</span>"
-		+"<span style='display:inline-block;width:50px;'>"+item.jikweeNm+"</span>"
+		+"<span style='display:inline-block;width:50px;'>"+item.posNm+"</span>"
 		+"<span style='display:inline-block;width:50px;'>"+item.statusNm+"</span>"
 		+"</a>").appendTo(ul);
 }
@@ -2415,13 +2415,13 @@ function autoCompleteInit(opt, sheet, Row, Col, renderItem , callBackFunc) {
                                 sabun: item.sabun, // 사번
                                 //empYmd: item.empYmd, // 입사일
                                 orgCd: item.orgCd, // 조직코드
-                                //orgNm: item.orgNm, // 조직명
-                                //jikchakCd: item.jikchakCd, // 직책코드
-                                //jikchakNm: item.jikchakNm, // 직책명
-                                //jikgubCd: item.jikgubCd, // 직급코드
-                                //jikgubNm: item.jikgubNm, // 직급명
-                                //jikweeCd: item.jikweeCd, // PAYBAND
-                                //jikweeNm: item.jikweeNm, // PAYBAND
+                                orgNm: item.orgNm, // 조직명
+                                dutyCd: item.dutyCd, // 직책코드
+                                dutyNm: item.dutyNm, // 직책명
+                                classCd: item.classCd, // 직급코드
+                                classNm: item.classNm, // 직급명
+                                posCd: item.posCd, // 직위코드
+                                posNm: item.posNm, // 직위명
                                 //resNo: item.resNo, // 주민번호
                                 //resNoStr: item.resNoStr, // 주민번호 앞자리
                                 statusCd: item.statusCd, // 재직/퇴직
@@ -2550,7 +2550,7 @@ function employeeRenderItem1(ul, item) {
         .append("<a class='autocomplete' style='width:240px;'>" +
             "<span style='width:40px;'>" + String(item.name).split(item.searchNm).join('<b>' + item.searchNm + '</b>') + "</span>" +
             "<span style='width:90px;'>" + item.sabun + "</span>" +
-            //"<span style='width:80px;'>" + item.orgNm + "</span>" +
+            "<span style='width:80px;'>" + item.orgNm + "</span>" +
             "</a>").appendTo(ul);
 }
 
@@ -2585,4 +2585,59 @@ function paramMapToJson(args) {
 	}
 
 	return json;
+}
+
+/**
+ * IBsheet의 orgList auto_complete
+ *
+ * setSheetAutocompleteOrg 함수로 초기화.
+ * 선택된 조직 data는 getOrgReturnValue 함수에서 처리 (pGubun = sheetAutocompleteOrg)
+ *
+ * @param sheet (string) : 자동완성을 사용할 sheet명
+ * @param colSaveName (string) : 자동완성을 사용할 컬럼 saveName
+ * @param renderItem (function) : 자동완성시 출력될 박스 포맷. Undefined일 경우 orgRenderItem function 사용.
+ * @returns
+ *
+ * by sjkim
+ */
+
+function setSheetAutocompleteOrg(sheet, colSaveName, renderItem , callBackFunc ) {
+	
+	var col = eval(sheet).SaveNameCol(colSaveName);
+
+    var scriptTxt = "";
+    scriptTxt += "<script>";
+    scriptTxt += "function " + sheet + "_OnBeforeEdit(Row, Col) {";
+    scriptTxt += "	try{";
+    scriptTxt += "		autoCompleteOrgInit(" + col + "," + sheet + ",Row,Col,"+ renderItem +"," + callBackFunc + ");";
+    scriptTxt += "	}catch(e){";
+    scriptTxt += "	 	alert(e.message);";
+    scriptTxt += "	}";
+    scriptTxt += "}";
+    scriptTxt += "";
+    scriptTxt += "function " + sheet + "_OnAfterEdit(Row, Col) {";
+    scriptTxt += "	try{";
+    scriptTxt += "		autoCompleteOrgDestroy(" + sheet + ");";
+    scriptTxt += "	}catch(e){";
+    scriptTxt += "		alert(e.message);";
+    scriptTxt += "	}";
+    scriptTxt += "}";
+    scriptTxt += "";
+    scriptTxt += "function " + sheet + "_OnKeyUp(Row, Col, KeyCode, Shift) {";
+    scriptTxt += "	try{";
+    scriptTxt += "		autoCompleteOrgPress(" + col + ",Row,Col,KeyCode);";
+    scriptTxt += "	}catch(e){";
+    scriptTxt += "		alert(e.message);";
+    scriptTxt += "	}";
+    scriptTxt += "}";
+    scriptTxt += "</script>";
+    
+    $(document).ready(function() {
+        eval(sheet).SetEditArrowBehavior(2);
+        $("<form></form>", {
+            id: "orgForm1",
+            name: "orgForm1"
+        }).html('<input type="hidden" name="searchStatusCd" value="AA" /> <input type="hidden" id="searchOrgType" name="searchOrgType" value="I"/>').appendTo('body')
+        .append(scriptTxt);
+    });
 }
