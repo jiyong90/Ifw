@@ -112,6 +112,8 @@
 			var path = $(location).attr('pathname');
 			var pageName = path.substring(path.lastIndexOf('/') + 1);
 			
+			this.curSubMenu = '';
+						
 			if(pageName=='codeMgr'||pageName=='taaCodeMgr'||pageName=='empHisMgr'||pageName=='ifEmpMsg'||pageName=='ruleMgr'||pageName=='applCode'||pageName=='pushMgr')
 				this.curSubMenu = 'sub1';
 			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
@@ -124,6 +126,9 @@
 				this.curSubMenu = 'sub5';
 					
 			this.curPageName = pageName;
+			
+			if(this.curSubMenu!='') 
+				this.curMenu='flexibleMgr';
 		}
 	});
 	

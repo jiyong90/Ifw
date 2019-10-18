@@ -1,5 +1,7 @@
 package com.isu.ifw.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.isu.ifw.mapper.WtmWorktimeMapper;
+import com.isu.ifw.util.WtmUtil;
 
 @Service
 public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
@@ -25,6 +28,13 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 		try {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
+			
+			if(paramMap.get("sYmd")!=null && !"".equals("sYmd")) {
+				String sYmd = paramMap.get("sYmd").toString();
+				Date s = WtmUtil.toDate(sYmd, "yyyy-MM-dd");
+				paramMap.put("sYmd", WtmUtil.parseDateStr(s, "yyyyMMdd"));
+			}
+			
 			WorktimeCheckList = worktimeMapper.getWorktimeCheckList(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -44,6 +54,7 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 		try {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
+			
 			WorktimeDetailList = worktimeMapper.getWorktimeDetail(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -63,6 +74,19 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 		try {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
+			
+			if(paramMap.get("sYmd")!=null && !"".equals("sYmd")) {
+				String sYmd = paramMap.get("sYmd").toString();
+				Date s = WtmUtil.toDate(sYmd, "yyyy-MM-dd");
+				paramMap.put("sYmd", WtmUtil.parseDateStr(s, "yyyyMMdd"));
+			}
+			
+			if(paramMap.get("eYmd")!=null && !"".equals("eYmd")) {
+				String eYmd = paramMap.get("eYmd").toString();
+				Date e = WtmUtil.toDate(eYmd, "yyyy-MM-dd");
+				paramMap.put("eYmd", WtmUtil.parseDateStr(e, "yyyyMMdd"));
+			}
+			
 			entryCheckList = worktimeMapper.getEntryCheckList(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
