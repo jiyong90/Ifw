@@ -40,6 +40,7 @@
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub1'}" id="submenu-list">
                         <li :class="{active: curPageName=='codeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/codeMgr';">[연계]코드관리</a></li>
                         <li :class="{active: curPageName=='taaCodeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaCodeMgr';">[연계]근태코드관리</a></li>
+                        <li :class="{active: curPageName=='orgCode'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/orgCode';">[연계]조직정보</a></li>
                         <li :class="{active: curPageName=='empHisMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empHisMgr';">[연계]사원정보</a></li>
                         <li :class="{active: curPageName=='ifEmpMsg'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ifEmpMsg';">[연계]사원이력</a></li>
                         <li :class="{active: curPageName=='ruleMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ruleMgr';">규칙관리</a></li>
@@ -63,6 +64,7 @@
                 	<a href="#submenu-list2" data-toggle="collapse" :aria-expanded="curSubMenu=='sub3'?true:false" class="dropdown-toggle" @click="curSubMenu='sub3'">근태이상자조회</a>
                 	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub3'}" id="submenu-list2">
                         <li :class="{active: curPageName=='worktimeCheckList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeCheckList';">근무시간 초과자 조회</a></li>
+                        <li :class="{active: curPageName=='entryCheckList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/entryCheckList';">출/퇴근 미타각자 조회</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub4'}">
@@ -114,7 +116,7 @@
 				this.curSubMenu = 'sub1';
 			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
 				this.curSubMenu = 'sub2';
-			else if(pageName=='worktimeCheckList')
+			else if(pageName=='worktimeCheckList'||pageName=='entryCheckList')
 				this.curSubMenu = 'sub3';
 			else if(pageName=='empCalendarMgr')
 				this.curSubMenu = 'sub4';
