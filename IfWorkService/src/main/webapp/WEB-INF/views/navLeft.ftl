@@ -40,6 +40,7 @@
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub1'}" id="submenu-list">
                         <li :class="{active: curPageName=='codeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/codeMgr';">[연계]코드관리</a></li>
                         <li :class="{active: curPageName=='taaCodeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaCodeMgr';">[연계]근태코드관리</a></li>
+                        <li :class="{active: curPageName=='orgCode'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/orgCode';">[연계]조직정보</a></li>
                         <li :class="{active: curPageName=='empHisMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empHisMgr';">[연계]사원정보</a></li>
                         <li :class="{active: curPageName=='ifEmpMsg'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ifEmpMsg';">[연계]사원이력</a></li>
                         <li :class="{active: curPageName=='ruleMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ruleMgr';">규칙관리</a></li>

@@ -83,13 +83,19 @@
     </insert>
     
     <update id="deleteGrp" parameterType="hashmap">
-		DELETE FROM WTM_FLEXIBLE_APPLY_GROUP WHERE FLEXIBLE_APPLY_GROUP_ID = #{flexibleApplyGroupId}
+		DELETE FROM WTM_FLEXIBLE_APPLY_GROUP 
+		WHERE FLEXIBLE_APPLY_GROUP_ID IN (
+		<foreach collection="list" item="item" separator="," index="index">
+	        ${item}
+	    </foreach> 
+    		)
 	</update>
 	
 	<select id="getApplyEmpList" parameterType="map" resultType="hashmap">
         <![CDATA[
         	SELECT A.FLEXIBLE_APPLY_EMP_ID AS flexibleApplyEmpId
         		 , A.FLEXIBLE_APPLY_ID AS flexibleApplyId
+        		 , F_WTM_GET_EMP_ORG_NM(B.TENANT_ID, B.ENTER_CD, A.SABUN, B.USE_SYMD)  AS orgNm
         		 , A.SABUN AS sabun
         		 , F_WTM_GET_EMP_NM(B.TENANT_ID, B.ENTER_CD, A.SABUN, B.USE_SYMD ) AS empNm
         		 , A.NOTE AS note
@@ -124,7 +130,12 @@
     </insert>
     
     <update id="deleteEmp" parameterType="hashmap">
-		DELETE FROM WTM_FLEXIBLE_APPLY_EMP WHERE FLEXIBLE_APPLY_GROUP_ID = #{flexibleApplyEmpId}
+		DELETE FROM WTM_FLEXIBLE_APPLY_EMP 
+		 WHERE FLEXIBLE_APPLY_GROUP_ID IN (
+			<foreach collection="list" item="item" separator="," index="index">
+		        ${item}
+		    </foreach> 
+    		)
 	</update>
 	
 </mapper>
