@@ -101,14 +101,15 @@ a.button7 img {
     outline: none;
     padding: 0;
     text-decoration: none;
-    ;
 }
 
 /* selectbox_new */
 .sheet_search select {
-    padding: 5px;
+	height:28px;
+    padding: 0 5px;
     border: 1px solid #e0e2e5;
     font-size: 12px;
+    vertical-align:middle;
 }
 
 .sheet_search select:not(.readonly):hover {
@@ -120,12 +121,13 @@ a.button7 img {
 .sheet_search input[type="text"] {
     border: 1px solid #e0e2e5;
     padding: 0 5px;
-    height: 27px;
+    height: 28px;
     line-height: 27px;
     font-size: 12px;
     text-align: left;
     position: relative;
     z-index: 20;
+    vertical-align:middle;
 }
 
 
@@ -139,6 +141,7 @@ a.button7 img {
     font-size: 12px;
     /*margin-left: 10px;*/
     position: relative;
+    vertical-align:middle;
 }
 .sheet_search span.label:after {
     font-family: "Font Awesome 5 Free";
