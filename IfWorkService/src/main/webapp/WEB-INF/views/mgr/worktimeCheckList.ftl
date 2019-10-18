@@ -80,6 +80,12 @@
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
 								<div class="float-left title">근무시간 초과자 조회</div>
+								<div class="legend-wrap">
+									<ul class="legend-list">
+										<li><span class="flag excess"></span><span>초과</span></li>
+										<li><span class="flag under"></span><span>미만</span></li>
+									</ul>
+								</div>
 							</div>
 						</div>
 						<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>

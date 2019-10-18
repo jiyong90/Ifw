@@ -244,7 +244,34 @@ a.button7 img {
     position: absolute;
     left: 0;
     top: 2px;
-} 
+}
+
+.sheet_title_wrap .legend-list{
+	overflow : hidden;
+}
+.sheet_title_wrap .legend-wrap{
+	position: absolute;
+	top:12px;
+	left: 190px;
+}
+.sheet_title_wrap .legend-list li{
+	float:left;
+	font-size: 12px;
+	margin-right: 14px;
+	line-height: 1.6;
+}
+.sheet_title_wrap .legend-list .flag{
+	display:inline-block; width: 20px; height:14px; margin-right:4px; vertical-align:middle;
+}
+
+.sheet_title_wrap .legend-list .flag.excess{
+	background-color:#da9694;
+}
+.sheet_title_wrap .legend-list .flag.under{
+	background-color:#fabf8f;
+}
+
+.sheet_title_wrap span{vertical-algin:middle;}
 
 /* btn 추가 */
 .sheet_title_wrap .btn-wrap{}
