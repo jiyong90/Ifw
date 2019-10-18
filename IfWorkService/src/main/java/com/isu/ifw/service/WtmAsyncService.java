@@ -1,19 +1,14 @@
 package com.isu.ifw.service;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.isu.ifw.entity.WtmWorkCalendar;
-import com.isu.ifw.mapper.WtmDayCloseMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 
@@ -22,10 +17,7 @@ public class WtmAsyncService {
 	
 	@Autowired
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
-	
-	@Autowired
-	WtmDayCloseMapper wtmDayCloseMapper;
-	
+		
 	@Autowired
 	WtmWorkCalendarRepository wtmWorkCalendarRepo;
 	
