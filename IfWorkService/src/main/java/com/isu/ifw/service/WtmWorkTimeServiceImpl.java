@@ -40,11 +40,11 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 	
 	@Override
 	public List<Map<String, Object>> getWorktimeDetail(Long tenantId, String enterCd, Map<String, Object> paramMap) {
-		List<Map<String, Object>> WorktimeCheckList = null;
+		List<Map<String, Object>> WorktimeDetailList = null;
 		try {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
-			WorktimeCheckList = worktimeMapper.getWorktimeDetail(paramMap);
+			WorktimeDetailList = worktimeMapper.getWorktimeDetail(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
 			logger.debug(e.toString(), e);
@@ -54,8 +54,27 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 
 		}
 		
-		return WorktimeCheckList;
+		return WorktimeDetailList;
 	}
 
+	@Override
+	public List<Map<String, Object>> getEntryCheckList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+		List<Map<String, Object>> entryCheckList = null;
+		try {
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			entryCheckList = worktimeMapper.getEntryCheckList(paramMap);
+		} catch(Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString(), e);
+		} finally {
+			MDC.clear();
+			logger.debug("getEntryCheckList End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 
+		}
+		
+		return entryCheckList;
+	}
+
+	
 }
