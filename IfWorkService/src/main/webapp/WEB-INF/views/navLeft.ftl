@@ -64,6 +64,7 @@
                 	<a href="#submenu-list2" data-toggle="collapse" :aria-expanded="curSubMenu=='sub3'?true:false" class="dropdown-toggle" @click="curSubMenu='sub3'">근태이상자조회</a>
                 	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub3'}" id="submenu-list2">
                         <li :class="{active: curPageName=='worktimeCheckList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeCheckList';">근무시간 초과자 조회</a></li>
+                        <li :class="{active: curPageName=='entryCheckList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/entryCheckList';">출/퇴근 미타각자 조회</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub4'}">
@@ -115,7 +116,7 @@
 				this.curSubMenu = 'sub1';
 			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
 				this.curSubMenu = 'sub2';
-			else if(pageName=='worktimeCheckList')
+			else if(pageName=='worktimeCheckList'||pageName=='entryCheckList')
 				this.curSubMenu = 'sub3';
 			else if(pageName=='empCalendarMgr')
 				this.curSubMenu = 'sub4';

@@ -18,4 +18,6 @@ public interface WtmWorktimeService{
 	
 	public List<Map<String, Object>> getWorktimeDetail(Long tenantId, String enterCd, Map<String, Object> paramMap);
 	
+	public List<Map<String, Object>> getEntryCheckList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+	
 }
