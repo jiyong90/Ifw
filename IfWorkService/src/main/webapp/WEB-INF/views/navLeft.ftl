@@ -60,11 +60,17 @@
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub3'}">
-                	<a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">개인별근무시간관리</a>
+                	<a href="#submenu-list2" data-toggle="collapse" :aria-expanded="curSubMenu=='sub3'?true:false" class="dropdown-toggle" @click="curSubMenu='sub3'">근태이상자조회</a>
+                	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub3'}" id="submenu-list2">
+                        <li :class="{active: curPageName=='worktimeCheckList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeCheckList';">근무시간 초과자 조회</a></li>
+                    </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub4'}">
-                	<a href="#submenu-list2" data-toggle="collapse" :aria-expanded="curSubMenu=='sub4'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub4'">보상휴가관리</a>
-                    <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub4'}" id="submenu-list2">
+                	<a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">개인별근무시간관리</a>
+                </li>
+                <li :class="{active: curSubMenu=='sub5'}">
+                	<a href="#submenu-list3" data-toggle="collapse" :aria-expanded="curSubMenu=='sub5'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub5'">보상휴가관리</a>
+                    <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub5'}" id="submenu-list3">
                         <li :class="{active: curPageName=='compMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compMgr';">보상휴가기준관리</a></li>
                         <li :class="{active: curPageName=='compCreateList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compCreateList';">보상휴가시간조회</a></li>
                     </ul>
@@ -108,10 +114,12 @@
 				this.curSubMenu = 'sub1';
 			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
 				this.curSubMenu = 'sub2';
-			else if(pageName=='empCalendarMgr')
+			else if(pageName=='worktimeCheckList')
 				this.curSubMenu = 'sub3';
-			else if(pageName=='compMgr'||pageName=='compCreateList')
+			else if(pageName=='empCalendarMgr')
 				this.curSubMenu = 'sub4';
+			else if(pageName=='compMgr'||pageName=='compCreateList')
+				this.curSubMenu = 'sub5';
 					
 			this.curPageName = pageName;
 		}
