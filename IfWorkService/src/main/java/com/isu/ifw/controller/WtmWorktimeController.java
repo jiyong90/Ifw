@@ -48,16 +48,38 @@ public class WtmWorktimeController {
 		
 		List<Map<String, Object>> workTimeCheckList = null;
 		try {		
-			
-			System.out.println("tenantID : " + tenantId);
-			System.out.println("enterCd : " + enterCd);
-			
-			ObjectMapper mapper = new ObjectMapper();
-			System.out.println(">>>>paramMap:" + mapper.writeValueAsString(paramMap));
-			
 			workTimeCheckList = worktimeService.getWorktimeCheckList(tenantId, enterCd, paramMap);
 			
 			rp.put("DATA", workTimeCheckList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/detail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getWorkTimeDetail(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		
+		MDC.put("sessionId", request.getSession().getId());
+		MDC.put("logId", UUID.randomUUID().toString());
+		MDC.put("type", "C");
+		logger.debug("getWorkTimeDetail Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+	
+		MDC.put("paramMap", paramMap.toString());
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> getWorkTimeDetail = null;
+		try {		
+			getWorkTimeDetail = worktimeService.getWorktimeDetail(tenantId, enterCd, paramMap);
+			
+			rp.put("DATA", getWorkTimeDetail);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;

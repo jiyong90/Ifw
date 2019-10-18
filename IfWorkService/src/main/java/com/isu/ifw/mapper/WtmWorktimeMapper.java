@@ -7,4 +7,7 @@ public interface WtmWorktimeMapper {
 	
 	//근무 이상자 조회(근무시간 초과자)
 	public List<Map<String, Object>> getWorktimeCheckList(Map<String, Object> paramMap);
+	
+	//근무 상세
+	public List<Map<String, Object>> getWorktimeDetail(Map<String, Object> paramMap);
 }

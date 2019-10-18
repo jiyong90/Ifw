@@ -34,6 +34,7 @@
 	     		, T.APPR_OT_MINUTE - STD_OT_MINUTE AS diffMinute
 	     		</when>
 	     	</choose>
+	     	, 0 AS worktimeDetail
 	     	, T.NOTE AS note
   		  FROM (
 	  		SELECT T.TENANT_ID
@@ -107,5 +108,41 @@
 			   	</when>
 			</choose>
 		</if>
+  	</select>
+  	
+  	<select id="getWorktimeDetail" parameterType="map" resultType="map">
+  		SELECT C.YMD AS ymd
+		     , M.FLEXIBLE_NM AS flexibleNm
+		     , C.ENTRY_SDATE AS entrySdate
+			  , C.ENTRY_EDATE AS entryEdate
+			  , R.TIME_TYPE_CD AS timeTypeCd
+			  , R.TAA_CD AS taaCd
+			  , R.PLAN_SDATE AS planSdate
+			  , R.PLAN_EDATE AS planEdate
+			  , CONCAT(FLOOR(R.PLAN_MINUTE/60),':',LPAD(MOD(R.PLAN_MINUTE,60),2,'0')) AS planMinute
+			  , R.APPR_SDATE AS apprSdate
+			  , R.APPR_EDATE AS apprEdate
+			  , CONCAT(FLOOR(R.APPR_MINUTE/60),':',LPAD(MOD(R.APPR_MINUTE,60),2,'0')) AS apprMinute
+			FROM WTM_WORK_CALENDAR C
+			JOIN WTM_FLEXIBLE_EMP E
+			  ON C.TENANT_ID = E.TENANT_ID
+			 AND C.ENTER_CD = E.ENTER_CD
+			 AND C.SABUN = E.SABUN
+			 AND C.YMD BETWEEN E.SYMD AND E.EYMD
+			JOIN WTM_FLEXIBLE_STD_MGR M
+			  ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			 AND E.TENANT_ID = M.TENANT_ID
+			 AND E.ENTER_CD = M.ENTER_CD
+			LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+			  ON C.TENANT_ID = R.TENANT_ID
+			 AND C.ENTER_CD = R.ENTER_CD 
+			 AND C.SABUN = R.SABUN 
+			 AND C.YMD = R.YMD
+			WHERE C.YMD BETWEEN #{sYmd} AND #{eYmd}
+			  AND C.YMD = R.YMD
+			  AND C.TENANT_ID = #{tenantId}
+			  AND C.ENTER_CD = #{enterCd}
+			  AND C.SABUN = #{sabun}
+		ORDER BY F_WTM_TO_DATE(C.YMD,'%Y%m%d'), apprSdate, planSdate
   	</select>
 </mapper>
