@@ -89,6 +89,31 @@
         ]]>
     </select>
     
+        <select id="getEmpWorkCalendarDayInfo" parameterType="map" resultType="hashmap">
+        <![CDATA[
+		      SELECT A.YMD as ymd, 
+		      	F_WTM_DATE_FORMAT(A.ENTRY_SDATE, '%Y%m%d%H%i') as entrySdate, 
+		      	A.ENTRY_STYPE_CD as entryStypeCd, 
+		      	F_WTM_DATE_FORMAT(A.ENTRY_EDATE, '%Y%m%d%H%i') as entryEdate, 
+		      	A.ENTRY_ETYPE_CD as entryEtypeCd, 
+		      	F_WTM_DATE_FORMAT(MIN(B.PLAN_SDATE), '%Y%m%d%H%i') as planSdate, 
+		      	F_WTM_DATE_FORMAT(MAX(B.PLAN_EDATE), '%Y%m%d%H%i') as planEdate,
+		      	F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) as flexibleNm,
+		      	F_WTM_GET_TIME_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) as timeNm
+			FROM WTM_WORK_CALENDAR A 
+			INNER JOIN WTM_WORK_DAY_RESULT B
+				ON A.YMD = B.YMD 
+					AND A.TENANT_ID = B.TENANT_ID 
+					AND A.ENTER_CD = B.ENTER_CD 
+					AND A.SABUN = B.SABUN
+			WHERE A.YMD = #{ymd} 
+				AND A.SABUN = #{sabun} 
+				AND A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+			GROUP BY A.YMD
+        ]]>
+    </select>
+    
    	<update id="updateEntryDate" parameterType="map">
         <![CDATA[ 
 			UPDATE WTM_WORK_CALENDAR
@@ -106,6 +131,38 @@
 			 	</when>
 			</choose>
 			<![CDATA[ 
+			WHERE TENANT_ID = #{tenantId} 
+				AND ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun}
+				AND YMD = #{ymd}
+        ]]>
+    </update>
+    
+    <update id="updateEntryDateByAdm" parameterType="map">
+        <![CDATA[ 
+			UPDATE WTM_WORK_CALENDAR
+			SET 
+				ENTRY_SDATE=F_WTM_TO_DATE(#{chgSdate}, '%Y%m%d%H%i%s'), 
+				ENTRY_EDATE=F_WTM_TO_DATE(#{chgEdate}, '%Y%m%d%H%i%s'), 
+				ENTRY_STYPE_CD = #{typeCd},
+				ENTRY_ETYPE_CD = #{typeCd},
+				UPDATE_DATE = now(),
+				UPDATE_ID = #{userId}  
+			WHERE TENANT_ID = #{tenantId} 
+				AND ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun}
+				AND YMD = #{ymd}
+        ]]>
+    </update>
+    
+        <update id="updateEntryDateByAdmTest" parameterType="map">
+        <![CDATA[ 
+			UPDATE WTM_WORK_CALENDAR
+			SET 
+				ENTRY_SDATE=F_WTM_TO_DATE(#{chgSdate}, '%Y%m%d%H%i%s'), 
+				ENTRY_EDATE=F_WTM_TO_DATE(#{chgEdate}, '%Y%m%d%H%i%s'), 
+				ENTRY_STYPE_CD = #{typeCd},
+				ENTRY_ETYPE_CD = #{typeCd},
 			WHERE TENANT_ID = #{tenantId} 
 				AND ENTER_CD = #{enterCd}
 				AND SABUN = #{sabun}

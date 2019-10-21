@@ -74,4 +74,14 @@ public class WtmCalendarService {
 	public List<Map<String, Object>> getEmpWorkCalendar(Map<String, Object> paramMap) throws Exception {
 		return wtmCalendarMapper.getEmpWorkCalendar(paramMap);
 	}
+	
+	/**
+	 * 근태 달력 조회(특정일)
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> getEmpWorkCalendarDayInfo(Map<String, Object> paramMap) throws Exception {
+		return wtmCalendarMapper.getEmpWorkCalendarDayInfo(paramMap);
+	}
 }

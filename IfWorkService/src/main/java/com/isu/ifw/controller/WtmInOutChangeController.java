@@ -1,5 +1,6 @@
 package com.isu.ifw.controller;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmInOutChangeService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.option.vo.ReturnParam;
@@ -30,7 +32,7 @@ public class WtmInOutChangeController {
 	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
 	
 	@RequestMapping(value="/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam setInOutChangeList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+	public @ResponseBody ReturnParam setInOutChangeList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) {
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setFail("저장 시 오류가 발생했습니다.");
@@ -53,20 +55,56 @@ public class WtmInOutChangeController {
 		convertMap.put("userId", userId);
 
 		MDC.put("convertMap", convertMap);
-
-		
-		rp.setSuccess("");
 		int cnt = 0;
-		try {		
-			cnt = inOutChangeService.setInOutChangeList(tenantId, enterCd, userId);
-			if(cnt > 0) {
-				rp.setSuccess("저장이 성공하였습니다.");
-				return rp;
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
+		cnt = inOutChangeService.setInOutChangeList(tenantId, enterCd, userId, convertMap);
+		if(cnt > 0) {
+			rp.setSuccess("저장이 성공하였습니다.");
+			return rp;
 		}
-		
+
 		return rp;
 	}
+	
+	/**
+	 * 관리자_타각 변경 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getEmpWorkCalendar(@RequestParam Map<String, Object> paramMap
+													   				 , HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String userId = sessionData.get("userId").toString();
+		String enterCd = sessionData.get("enterCd").toString();
+		String sYmd = paramMap.get("sYmd").toString();
+		String eYmd = paramMap.get("eYmd").toString();
+		String searchKeyword = paramMap.get("searchKeyword").toString();
+		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sYmd", sYmd);
+		paramMap.put("eYmd", eYmd);
+		paramMap.put("searchKeyword", searchKeyword);
+		
+		rp.setSuccess("");
+	
+		List<Map<String, Object>> inoutList = null;
+		try {		
+			inoutList =  inOutChangeService.getInpoutChangeHis(paramMap);
+			
+			rp.put("DATA", inoutList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+
+		return rp;
+	}
+
 }

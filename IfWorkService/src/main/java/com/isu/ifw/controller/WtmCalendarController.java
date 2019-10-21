@@ -119,4 +119,42 @@ public class WtmCalendarController {
 		return rp;
 	}
 
+	/**
+	 * 관리자_근태 달력 하루 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/dayInfo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getEmpWorkCalendarDayInfo(@RequestParam Map<String, Object> paramMap
+													   				 , HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String userId = sessionData.get("userId").toString();
+		String enterCd = sessionData.get("enterCd").toString();
+		String ymd = paramMap.get("ymd").toString();
+		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("ymd", ymd);
+		
+		rp.setSuccess("");
+	
+		Map<String, Object> dayInfo = null;
+		try {		
+			dayInfo =  wtmCalendarService.getEmpWorkCalendarDayInfo(paramMap);
+			
+			rp.put("DATA", dayInfo);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+
+		return rp;
+	}
+
 }
