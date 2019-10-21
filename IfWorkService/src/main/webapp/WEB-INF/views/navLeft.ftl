@@ -58,6 +58,7 @@
                         <li :class="{active: curPageName=='flexibleStdMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">근무제도관리</a></li>                                
                         <li :class="{active: curPageName=='flexibleApplyMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleApplyMgr';">근무제도적용</a></li>                                
                         <li :class="{active: curPageName=='flexibleEmp'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">개인별 근무제도 조회</a></li>
+                        <li :class="{active: curPageName=='inoutMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutMgr';">근무시간수정</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub3'}">
@@ -65,6 +66,7 @@
                 	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub3'}" id="submenu-list2">
                         <li :class="{active: curPageName=='worktimeCheckList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeCheckList';">근무시간 초과자 조회</a></li>
                         <li :class="{active: curPageName=='entryCheckList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/entryCheckList';">출/퇴근 미타각자 조회</a></li>
+                        <li :class="{active: curPageName=='entryDiffList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/entryDiffList';">출/퇴근 차이자 조회</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub4'}">
@@ -118,7 +120,7 @@
 				this.curSubMenu = 'sub1';
 			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
 				this.curSubMenu = 'sub2';
-			else if(pageName=='worktimeCheckList'||pageName=='entryCheckList')
+			else if(pageName=='worktimeCheckList'||pageName=='entryCheckList'||pageName=='entryDiffList')
 				this.curSubMenu = 'sub3';
 			else if(pageName=='empCalendarMgr')
 				this.curSubMenu = 'sub4';
