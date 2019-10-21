@@ -397,7 +397,10 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	public ReturnParam validate(Long tenantId, String enterCd, String sabun, String workTypeCd, Map<String, Object> paramMap) {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
-		Long applId = Long.parseLong(paramMap.get("applId").toString());
+		Long applId = null;
+		if(paramMap != null && paramMap.containsKey("applId") && !paramMap.equals("")) {
+			applId = Long.parseLong(paramMap.get("applId").toString());
+		}
 		//신청 시 날짜 중복되지 않도록 체크 한다.
 		//rp = checkRequestDate(applId);
 
