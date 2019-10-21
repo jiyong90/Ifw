@@ -101,6 +101,7 @@
 			   	</when>
 			</choose>
 		</if>
+		order by flexibleSdate desc
   	</select>
   	
   	<select id="getWorktimeDetail" parameterType="map" resultType="map">
@@ -110,11 +111,11 @@
 			  , C.ENTRY_EDATE AS entryEdate
 			  , R.TIME_TYPE_CD AS timeTypeCd
 			  , R.TAA_CD AS taaCd
-			  , R.PLAN_SDATE AS planSdate
-			  , R.PLAN_EDATE AS planEdate
+			  , F_WTM_DATE_FORMAT(R.PLAN_SDATE, '%Y%m%d%H%i') AS planSdate
+			  , F_WTM_DATE_FORMAT(R.PLAN_EDATE, '%Y%m%d%H%i') AS planEdate
 			  , CONCAT(FLOOR(R.PLAN_MINUTE/60),':',LPAD(MOD(R.PLAN_MINUTE,60),2,'0')) AS planMinute
-			  , R.APPR_SDATE AS apprSdate
-			  , R.APPR_EDATE AS apprEdate
+			  , F_WTM_DATE_FORMAT(R.APPR_SDATE, '%Y%m%d%H%i') AS apprSdate
+			  , F_WTM_DATE_FORMAT(R.APPR_EDATE, '%Y%m%d%H%i') AS apprEdate
 			  , CONCAT(FLOOR(R.APPR_MINUTE/60),':',LPAD(MOD(R.APPR_MINUTE,60),2,'0')) AS apprMinute
 			FROM WTM_WORK_CALENDAR C
 			LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
@@ -127,7 +128,7 @@
 			  AND C.TENANT_ID = #{tenantId}
 			  AND C.ENTER_CD = #{enterCd}
 			  AND C.SABUN = #{sabun}
-		ORDER BY F_WTM_TO_DATE(C.YMD,'%Y%m%d'), apprSdate, planSdate
+		ORDER BY ymd desc, apprSdate, planSdate
   	</select>
   	
   	<select id="getEntryCheckList" parameterType="map" resultType="map">
@@ -139,9 +140,9 @@
 			 , C.YMD as ymd
 			 , F_WTM_GET_FLEXIBLE_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS flexibleNm
 			 , C.TIME_CD_MGR_ID as timeCdMgrId
-			 , C.ENTRY_SDATE as entrySdate
+			 , F_WTM_DATE_FORMAT(C.ENTRY_SDATE, '%Y%m%d%H%i') as entrySdate
 			 , C.ENTRY_STYPE_CD as entryStypeCd
-			 , C.ENTRY_EDATE as entryEdate
+			 , F_WTM_DATE_FORMAT(C.ENTRY_EDATE, '%Y%m%d%H%i') as entryEdate
 			 , C.ENTRY_ETYPE_CD as enteryEtypeCd
 			 , C.WORK_CLOSE_YN as workCloseYn
 			 , C.HOLIDAY_YN as holidayYn
@@ -168,6 +169,91 @@
 		  AND C.TENANT_ID = #{tenantId}
 		  AND C.ENTER_CD = #{enterCd}
 		  AND ((R.PLAN_SDATE IS NOT NULL AND C.ENTRY_SDATE IS NULL) OR (R.PLAN_EDATE IS NOT NULL AND C.ENTRY_EDATE IS NULL))
-	ORDER BY entrySdate
+	ORDER BY entrySdate desc
+  	</select>
+  	
+  	<select id="getEntryDiffList" parameterType="map" resultType="map">
+  		SELECT tenantId
+		     , enterCd
+		     , sabun
+		     , orgNm
+		     , empNm
+		     , ymd
+		     , flexibleNm
+		     , timeCdMgrId
+		     , F_WTM_DATE_FORMAT(planSdate, '%Y%m%d%H%i') AS planSdate
+		     , F_WTM_DATE_FORMAT(entrySdate, '%Y%m%d%H%i') AS entrySdate
+		     , CASE WHEN diffSsecond is not null THEN 
+			  					CASE WHEN diffSsecond&lt;0 THEN CONCAT('-',FLOOR(ABS(diffSsecond)/60),':',LPAD(MOD(ABS(diffSsecond),60),2,'0')) 
+			  						  WHEN diffSsecond=0 THEN NULL
+			  						  ELSE CONCAT(FLOOR(diffSsecond/60),':',LPAD(MOD(diffSsecond,60),2,'0')) END
+						ELSE diffSsecond END AS diffSminute
+		     , F_WTM_DATE_FORMAT(planEdate, '%Y%m%d%H%i') AS planEdate
+		     , F_WTM_DATE_FORMAT(entryEdate, '%Y%m%d%H%i') AS entryEdate
+		     , CASE WHEN diffEsecond is not null THEN 
+			  					CASE WHEN diffEsecond&lt;0 THEN CONCAT(FLOOR(ABS(diffEsecond)/60),':',LPAD(MOD(ABS(diffEsecond),60),2,'0')) 
+			  						  WHEN diffEsecond=0 THEN NULL
+			  						  ELSE CONCAT('-',FLOOR(diffEsecond/60),':',LPAD(MOD(diffEsecond,60),2,'0')) END
+						ELSE diffEsecond END AS diffEminute
+		     , note
+		  FROM ( SELECT C.TENANT_ID as tenantId
+							 , C.ENTER_CD as enterCd
+							 , C.SABUN as sabun 
+							 , F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS orgNm
+							 , F_WTM_GET_EMP_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS empNm
+							 , C.YMD as ymd
+							 , F_WTM_GET_FLEXIBLE_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS flexibleNm
+							 , C.TIME_CD_MGR_ID as timeCdMgrId
+							 , MIN(R.PLAN_SDATE) as planSdate
+							 , C.ENTRY_SDATE as entrySdate
+							 , TIMESTAMPDIFF(SECOND, MIN(R.PLAN_SDATE), C.ENTRY_SDATE)/60 AS diffSminute
+							 , TIMESTAMPDIFF(SECOND, MIN(R.PLAN_SDATE), C.ENTRY_SDATE) AS diffSsecond
+							 , MAX(R.PLAN_EDATE) as planEdate
+							 , C.ENTRY_EDATE as entryEdate
+							 , TIMESTAMPDIFF(SECOND, MAX(R.PLAN_EDATE), C.ENTRY_EDATE)/60 AS diffEminute
+							 , TIMESTAMPDIFF(SECOND, MAX(R.PLAN_EDATE), C.ENTRY_EDATE) AS diffEsecond
+							 , C.NOTE as note
+						FROM WTM_WORK_CALENDAR C
+						JOIN WTM_WORK_DAY_RESULT R
+						  ON C.TENANT_ID = R.TENANT_ID
+						 AND C.ENTER_CD = R.ENTER_CD 
+						 AND C.SABUN = R.SABUN 
+						 AND C.YMD = R.YMD
+						WHERE C.YMD BETWEEN #{sYmd} AND #{eYmd}
+						  AND C.TENANT_ID = #{tenantId}
+						  AND C.ENTER_CD = #{enterCd}
+						  AND R.TIME_TYPE_CD IN ('BASE', 'OT')
+					GROUP BY C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD
+		  ) T
+		 WHERE 1=1
+		<if test="searchValue!='' and searchMinute!='' and searchCondition!=''">
+			<choose>
+			    <when test="searchValue=='ALL'">
+			   		<if test="searchCondition=='more'">
+			   			and (diffSminute &gt;= CAST(#{searchMinute} AS SIGNED) OR diffEminute &gt;= CAST(#{searchMinute} AS SIGNED))
+			   		</if>
+			   		<if test="searchCondition=='under'">
+			   			and (diffSminute &lt; CAST(#{searchMinute} AS SIGNED) OR diffSminute &lt; CAST(#{searchMinute} AS SIGNED))
+			   		</if>
+			   	</when>
+			   	<when test="searchValue=='IN'">
+			   		<if test="searchCondition=='more'">
+			   			and diffSminute &gt;= CAST(#{searchMinute} AS SIGNED)
+			   		</if>
+			   		<if test="searchCondition=='under'">
+			   			and diffSminute &lt; CAST(#{searchMinute} AS SIGNED)
+			   		</if>
+			   	</when>
+			   	<when test="searchValue=='OUT'">
+			   		<if test="searchCondition=='more'">
+			   			and diffEminute &gt;= CAST(#{searchMinute} AS SIGNED)
+			   		</if>
+			   		<if test="searchCondition=='under'">
+			   			and diffEminute &lt; CAST(#{searchMinute} AS SIGNED)
+			   		</if>
+			   	</when>
+			</choose>
+		</if>
+		ORDER BY ymd desc, sabun, planSdate
   	</select>
 </mapper>

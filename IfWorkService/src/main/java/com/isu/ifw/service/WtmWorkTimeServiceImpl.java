@@ -100,5 +100,36 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 		return entryCheckList;
 	}
 
+	@Override
+	public List<Map<String, Object>> getEntryDiffList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+		List<Map<String, Object>> entryDiffList = null;
+		try {
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			
+			if(paramMap.get("sYmd")!=null && !"".equals("sYmd")) {
+				String sYmd = paramMap.get("sYmd").toString();
+				Date s = WtmUtil.toDate(sYmd, "yyyy-MM-dd");
+				paramMap.put("sYmd", WtmUtil.parseDateStr(s, "yyyyMMdd"));
+			}
+			
+			if(paramMap.get("eYmd")!=null && !"".equals("eYmd")) {
+				String eYmd = paramMap.get("eYmd").toString();
+				Date e = WtmUtil.toDate(eYmd, "yyyy-MM-dd");
+				paramMap.put("eYmd", WtmUtil.parseDateStr(e, "yyyyMMdd"));
+			}
+			
+			entryDiffList = worktimeMapper.getEntryDiffList(paramMap);
+		} catch(Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString(), e);
+		} finally {
+			MDC.clear();
+			logger.debug("entryDiffList End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+
+		}
+		
+		return entryDiffList;
+	}
 	
 }

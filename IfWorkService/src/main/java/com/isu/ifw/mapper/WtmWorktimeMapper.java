@@ -13,4 +13,7 @@ public interface WtmWorktimeMapper {
 	
 	//근무 이상자 조회 : 출퇴근 미타각자
 	public List<Map<String, Object>> getEntryCheckList(Map<String, Object> paramMap);
+	
+	//근무 이상자 조회 : 출퇴근 차이자
+	public List<Map<String, Object>> getEntryDiffList(Map<String, Object> paramMap);
 }
