@@ -1345,3 +1345,7 @@ table.default td img.ui-datepicker-trigger{ margin:0 0 0 -4px; }
 .autocomplete span.list_txt2 {width:117px;}
 .autocomplete span.list_txt3 {width:80px;}
 .autocomplete span.list_txt4 {width:36px;color:#999}
+
+
+/* cell selector */
+.GMFocusRowBackground, .GMCursorBackground 	{opacity:0.15;filter:alpha(opacity=15);background:#008fd5 !important;}
