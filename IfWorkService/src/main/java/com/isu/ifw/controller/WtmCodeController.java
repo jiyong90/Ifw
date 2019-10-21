@@ -107,8 +107,6 @@ public class WtmCodeController {
 
 		MDC.put("convertMap", convertMap);
 
-		
-		rp.setSuccess("");
 		int cnt = 0;
 		try {		
 			cnt = codeService.setCodeList(tenantId, enterCd, userId, convertMap);

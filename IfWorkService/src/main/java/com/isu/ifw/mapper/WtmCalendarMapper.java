@@ -33,10 +33,28 @@ public interface WtmCalendarMapper {
 	public List<Map<String, Object>> getEmpWorkCalendar(Map<String, Object> paramMap) throws Exception;
 
 	/**
+	 * 관리자요_근태 달력 하루 조회
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> getEmpWorkCalendarDayInfo(Map<String, Object> paramMap) throws Exception;
+	
+	/**
 	 * 달력에서 출퇴근 시간만 업데이트
 	 * @param paramMap
 	 * @return
 	 * @throws Exception
 	 */
 	public int updateEntryDate(Map<String, Object> paramMap) throws Exception;
+
+	/**
+	 * 관리자가 강제로 타각정보 업데이트
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public int updateEntryDateByAdm(Map<String, Object> paramMap);
+
+	public int updateEntryDateByAdmTest(Map<String, Object> paramMap);
 }
