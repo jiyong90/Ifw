@@ -59,7 +59,7 @@ public class WtmWorktimeCloseController {
 						for(Map<String, Object> company : companyList) {
 							for(String enterCd : company.keySet()) {
 								if(enterCd.equals("ISU"))
-									wymAsyncService.workdayClose(tenantId, enterCd, "DAYCLOSE_N");
+									wymAsyncService.workdayClose(tenantId, enterCd, "99999");
 							}
 						}
 					}
