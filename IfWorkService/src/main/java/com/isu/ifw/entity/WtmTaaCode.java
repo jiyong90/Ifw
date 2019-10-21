@@ -24,6 +24,10 @@ public class WtmTaaCode {
 	public final static String REQUEST_TYPE_P = "P"; //오후
 	public final static String REQUEST_TYPE_H = "H"; //시간단위
 	
+	public final static String TAA_INFO_LATE = "LATE";
+	public final static String TAA_INFO_LEAVE = "LEAVE";
+	public final static String TAA_INFO_ABSENCE = "ABSENCE";
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="TAA_CODE_ID")
@@ -38,6 +42,8 @@ public class WtmTaaCode {
 	private String taaNm;
 	@Column(name="TAA_TYPE_CD")
 	private String taaTypeCd;
+	@Column(name="TAA_INFO_CD")
+	private String taaInfoCd;
 	@Column(name="HOL_INCL_YN")
 	private String holInclYn;
 	@Column(name="REQUEST_TYPE_CD")
@@ -159,6 +165,16 @@ public class WtmTaaCode {
 
 	public void setWorkApprHour(Integer workApprHour) {
 		this.workApprHour = workApprHour;
+	}
+ 
+		
+	public String getTaaInfoCd() {
+		return taaInfoCd;
+	}
+
+
+	public void setTaaInfoCd(String taaInfoCd) {
+		this.taaInfoCd = taaInfoCd;
 	}
 
 

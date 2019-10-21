@@ -9,10 +9,12 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmIfEmpMsg;
+import com.isu.ifw.mapper.WtmEmpHisMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmIfEmpMsgRepository;
 
@@ -28,56 +30,68 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 	@Resource
 	WtmIfEmpMsgRepository empMsgRepository;
 	
+	@Autowired
+	WtmEmpHisMapper wtmEmpHisMapper;
+	
 	@Override
 	public List<Map<String, Object>> getEmpHisList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
-		List<Map<String, Object>> empList = new ArrayList();	
-		List<WtmEmpHis> list = empHisRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.containsKey("sYmd")?paramMap.get("sYmd").toString():"", paramMap.get("searchKeyword").toString());
-		
-		for(WtmEmpHis l : list) {
-			Map<String, Object> emp = new HashMap();
-			emp.put("empHisId", l.getEmpHisId());
-			emp.put("sabun", l.getSabun());
-			emp.put("empNm", l.getEmpNm());
-			emp.put("empEngNm", l.getEmpEngNm());
-			emp.put("symd", l.getSymd());
-			emp.put("eymd", l.getEymd());
-			emp.put("statusCd", l.getStatusCd());
-			emp.put("orgCd", l.getOrgCd());
-			emp.put("businessPlaceCd", l.getBusinessPlaceCd());
-			emp.put("dutyCd", l.getDutyCd());
-			emp.put("posCd", l.getPosCd());
-			emp.put("classCd", l.getClassCd());
-			emp.put("jobGroupCd", l.getJobGroupCd());
-			emp.put("jobCd", l.getJobCd());
-			emp.put("payTypeCd", l.getPayTypeCd());
-			emp.put("leaderYn", l.getLeaderYn());
-			emp.put("note", l.getNote());
-			empList.add(emp);
+		List<Map<String, Object>> empList = new ArrayList();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		if(!paramMap.containsKey("sYmd")) {
+			paramMap.put("sYmd", "");
 		}
+		
+		empList =  wtmEmpHisMapper.getEmpHisList(paramMap);
+		
+//		List<WtmEmpHis> list = empHisRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.containsKey("sYmd")?paramMap.get("sYmd").toString():"", paramMap.get("searchKeyword").toString());
+//		
+//		for(WtmEmpHis l : list) {
+//			Map<String, Object> emp = new HashMap();
+//			emp.put("empHisId", l.getEmpHisId());
+//			emp.put("sabun", l.getSabun());
+//			emp.put("empNm", l.getEmpNm());
+//			emp.put("empEngNm", l.getEmpEngNm());
+//			emp.put("symd", l.getSymd());
+//			emp.put("eymd", l.getEymd());
+//			emp.put("statusCd", l.getStatusCd());
+//			emp.put("orgCd", l.getOrgCd());
+//			emp.put("businessPlaceCd", l.getBusinessPlaceCd());
+//			emp.put("dutyCd", l.getDutyCd());
+//			emp.put("posCd", l.getPosCd());
+//			emp.put("classCd", l.getClassCd());
+//			emp.put("jobGroupCd", l.getJobGroupCd());
+//			emp.put("jobCd", l.getJobCd());
+//			emp.put("payTypeCd", l.getPayTypeCd());
+//			emp.put("leaderYn", l.getLeaderYn());
+//			emp.put("note", l.getNote());
+//			empList.add(emp);
+//		}
 		return empList;
 	}
 
 	@Override
 	public Map<String, Object> getEmpHis(Long tenantId, String enterCd, Map<String, Object> paramMap) {
-		WtmEmpHis l = empHisRepository.findByEmpHisId(Long.parseLong(paramMap.get("empHisId").toString()));
 		
 		Map<String, Object> emp = new HashMap();
-		emp.put("sabun", l.getSabun());
-		emp.put("empNm", l.getEmpNm());
-		emp.put("empEngNm", l.getEmpEngNm());
-		emp.put("symd", l.getSymd());
-		emp.put("eymd", l.getEymd());
-		emp.put("statusCd", l.getStatusCd());
-		emp.put("orgCd", l.getOrgCd());
-		emp.put("businessPlaceCd", l.getBusinessPlaceCd());
-		emp.put("dutyCd", l.getDutyCd());
-		emp.put("posCd", l.getPosCd());
-		emp.put("classCd", l.getClassCd());
-		emp.put("jobGroupCd", l.getJobGroupCd());
-		emp.put("jobCd", l.getJobCd());
-		emp.put("payTypeCd", l.getPayTypeCd());
-		emp.put("leaderYn", l.getLeaderYn());
-		emp.put("note", l.getNote());
+		emp = wtmEmpHisMapper.getEmpHis(paramMap);
+//		WtmEmpHis l = empHisRepository.findByEmpHisId(Long.parseLong(paramMap.get("empHisId").toString()));
+//		emp.put("sabun", l.getSabun());
+//		emp.put("empNm", l.getEmpNm());
+//		emp.put("empEngNm", l.getEmpEngNm());
+//		emp.put("symd", l.getSymd());
+//		emp.put("eymd", l.getEymd());
+//		emp.put("statusCd", l.getStatusCd());
+//		emp.put("orgCd", l.getOrgCd());
+//		emp.put("businessPlaceCd", l.getBusinessPlaceCd());
+//		emp.put("dutyCd", l.getDutyCd());
+//		emp.put("posCd", l.getPosCd());
+//		emp.put("classCd", l.getClassCd());
+//		emp.put("jobGroupCd", l.getJobGroupCd());
+//		emp.put("jobCd", l.getJobCd());
+//		emp.put("payTypeCd", l.getPayTypeCd());
+//		emp.put("leaderYn", l.getLeaderYn());
+//		emp.put("note", l.getNote());
 		return emp;
 	}
 	

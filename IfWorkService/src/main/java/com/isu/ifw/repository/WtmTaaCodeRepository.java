@@ -16,4 +16,6 @@ public interface WtmTaaCodeRepository extends JpaRepository<WtmTaaCode, Long> {
 	public List<WtmTaaCode> findByTenantIdAndEnterCd(@Param(value="tenantId")Long tenantId, @Param(value="enterCd")String enterCd, @Param(value="searchKeyword")String searchKeyword);
 	
 	public WtmTaaCode findByTenantIdAndEnterCdAndTaaCd(Long tenantId, String enterCd, String taaCd);
+	
+	public WtmTaaCode findByTenantIdAndEnterCdAndTaaInfoCd(Long tenantId, String enterCd, String taaInfoCd);
 }

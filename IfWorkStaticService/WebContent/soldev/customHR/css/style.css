@@ -101,14 +101,15 @@ a.button7 img {
     outline: none;
     padding: 0;
     text-decoration: none;
-    ;
 }
 
 /* selectbox_new */
 .sheet_search select {
-    padding: 5px;
+	height:28px;
+    padding: 0 5px;
     border: 1px solid #e0e2e5;
     font-size: 12px;
+    vertical-align:middle;
 }
 
 .sheet_search select:not(.readonly):hover {
@@ -120,12 +121,13 @@ a.button7 img {
 .sheet_search input[type="text"] {
     border: 1px solid #e0e2e5;
     padding: 0 5px;
-    height: 27px;
+    height: 28px;
     line-height: 27px;
     font-size: 12px;
     text-align: left;
     position: relative;
     z-index: 20;
+    vertical-align:middle;
 }
 
 
@@ -139,6 +141,7 @@ a.button7 img {
     font-size: 12px;
     /*margin-left: 10px;*/
     position: relative;
+    vertical-align:middle;
 }
 .sheet_search span.label:after {
     font-family: "Font Awesome 5 Free";
@@ -241,7 +244,34 @@ a.button7 img {
     position: absolute;
     left: 0;
     top: 2px;
-} 
+}
+
+.sheet_title_wrap .legend-list{
+	overflow : hidden;
+}
+.sheet_title_wrap .legend-wrap{
+	position: absolute;
+	top:12px;
+	left: 190px;
+}
+.sheet_title_wrap .legend-list li{
+	float:left;
+	font-size: 12px;
+	margin-right: 14px;
+	line-height: 1.6;
+}
+.sheet_title_wrap .legend-list .flag{
+	display:inline-block; width: 20px; height:14px; margin-right:4px; vertical-align:middle;
+}
+
+.sheet_title_wrap .legend-list .flag.excess{
+	background-color:#da9694;
+}
+.sheet_title_wrap .legend-list .flag.under{
+	background-color:#fabf8f;
+}
+
+.sheet_title_wrap span{vertical-algin:middle;}
 
 /* btn 추가 */
 .sheet_title_wrap .btn-wrap{}
@@ -1315,3 +1345,7 @@ table.default td img.ui-datepicker-trigger{ margin:0 0 0 -4px; }
 .autocomplete span.list_txt2 {width:117px;}
 .autocomplete span.list_txt3 {width:80px;}
 .autocomplete span.list_txt4 {width:36px;color:#999}
+
+
+/* cell selector */
+.GMFocusRowBackground, .GMCursorBackground 	{opacity:0.15;filter:alpha(opacity=15);background:#008fd5 !important;}

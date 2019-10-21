@@ -56,6 +56,9 @@ public interface WtmApplService {
 	final static String TIME_TYPE_REGA = "REGA";
 	//휴가
 	final static String TIME_TYPE_TAA = "TAA";
+	// 지각/조퇴
+	final static String TIME_TYPE_LLA = "LLA";
+	
 	
 	public Map<String, Object> getAppl(Long applId);
 	

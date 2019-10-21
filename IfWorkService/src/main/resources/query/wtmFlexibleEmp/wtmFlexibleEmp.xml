@@ -393,8 +393,8 @@
 		 WHERE C.TENANT_ID = #{tenantId}
 		   AND C.ENTER_CD = #{enterCd}
 		   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
-		   AND (C.ENTRY_SDATE IS NOT NULL AND C.ENTRY_SDATE != '')
-		   AND (C.ENTRY_EDATE IS NOT NULL AND C.ENTRY_EDATE != '')
+		   AND C.ENTRY_SDATE IS NOT NULL
+		   AND C.ENTRY_EDATE IS NOT NULL
 		   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
     </update>
     <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
@@ -430,6 +430,230 @@
 			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
 		   SET X.APPR_MINUTE = XX.CM
     </update>
+    
+    <update id="updateEntrySdateByTenantIdAndEnterCdAndYmdBetweenAndSabun" parameterType="map">
+    	<![CDATA[ 
+			UPDATE WTM_WORK_CALENDAR A
+			 JOIN (
+				SELECT C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, T.LATE_CHK_YN, T.LEAVE_CHK_YN 
+				     , MIN(CASE WHEN M.DAY_OPEN_TYPE = 'BASE' AND R.TIME_TYPE_CD NOT IN ('OT') THEN R.PLAN_SDATE
+				     	    ELSE R.PLAN_SDATE END)  PLAN_SDATE
+				  FROM WTM_FLEXIBLE_STD_MGR M
+				  JOIN WTM_FLEXIBLE_EMP E
+				    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+				  JOIN WTM_WORK_CALENDAR C
+				    ON E.TENANT_ID = C.TENANT_ID
+				   AND E.ENTER_CD = C.ENTER_CD
+				   AND E.SABUN = C.SABUN
+				   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+				  JOIN WTM_WORK_DAY_RESULT R
+				    ON C.TENANT_ID = R.TENANT_ID
+				   AND C.ENTER_CD = R.ENTER_CD
+				   AND C.YMD = R.YMD
+				   AND C.SABUN = R.SABUN
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				 WHERE C.TENANT_ID = #{tenantId}
+				   AND C.ENTER_CD = #{enterCd}
+				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+				   AND M.DAY_OPEN_TYPE != 'N' 
+				   AND R.TIME_TYPE_CD NOT IN ('TAA')
+				   AND C.ENTRY_SDATE IS NULL
+				   AND (C.SABUN = #{sabun} OR  #{sabun} = '' OR  #{sabun} IS NULL) 
+				 GROUP BY C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, T.LATE_CHK_YN, T.LEAVE_CHK_YN 
+				) B
+				ON A.TENANT_ID = B.TENANT_ID AND A.ENTER_CD = B.ENTER_CD AND A.YMD = B.YMD AND A.SABUN = B.SABUN 
+			   SET A.ENTRY_SDATE = B.PLAN_SDATE 
+			     , A.ENTRY_STYPE_CD = 'AUTO'
+    	]]>
+    </update>
+    
+    <update id="updateEntryEdateByTenantIdAndEnterCdAndYmdBetweenAndSabun" parameterType="map">
+    	<![CDATA[ 
+			UPDATE WTM_WORK_CALENDAR A
+			 JOIN (
+				SELECT C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, T.LATE_CHK_YN, T.LEAVE_CHK_YN 
+				     , MAX(CASE WHEN M.DAY_CLOSE_TYPE = 'BASE' AND R.TIME_TYPE_CD NOT IN ('OT') THEN R.PLAN_EDATE
+				     	    ELSE R.PLAN_EDATE END)  PLAN_EDATE
+				  FROM WTM_FLEXIBLE_STD_MGR M
+				  JOIN WTM_FLEXIBLE_EMP E
+				    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+				  JOIN WTM_WORK_CALENDAR C
+				    ON E.TENANT_ID = C.TENANT_ID
+				   AND E.ENTER_CD = C.ENTER_CD
+				   AND E.SABUN = C.SABUN
+				   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+				  JOIN WTM_WORK_DAY_RESULT R
+				    ON C.TENANT_ID = R.TENANT_ID
+				   AND C.ENTER_CD = R.ENTER_CD
+				   AND C.YMD = R.YMD
+				   AND C.SABUN = R.SABUN
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				 WHERE C.TENANT_ID = #{tenantId}
+				   AND C.ENTER_CD = #{enterCd}
+				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+				   AND M.DAY_CLOSE_TYPE != 'N' 
+				   AND R.TIME_TYPE_CD NOT IN ('TAA')
+				   AND C.ENTRY_EDATE IS NULL
+				   AND (C.SABUN = #{sabun} OR  #{sabun} = '' OR  #{sabun} IS NULL) 
+				 GROUP BY C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, T.LATE_CHK_YN, T.LEAVE_CHK_YN 
+				) B
+				ON A.TENANT_ID = B.TENANT_ID AND A.ENTER_CD = B.ENTER_CD AND A.YMD = B.YMD AND A.SABUN = B.SABUN 
+			   SET A.ENTRY_EDATE = B.PLAN_EDATE 
+			     , A.ENTRY_ETYPE_CD = 'AUTO'
+    	]]>
+    </update>
+    
+    
+    <update id="updateTimeTypePlanToEntryTimeByTenantIdAndEnterCdAndYmdBetweenAndSabun" parameterType="map">
+    	<![CDATA[ 
+			UPDATE WTM_WORK_CALENDAR A
+			 JOIN (
+				SELECT C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, T.LATE_CHK_YN, T.LEAVE_CHK_YN
+					 , MIN(R.PLAN_SDATE) AS PLAN_SDATE 
+				     , MAX(R.PLAN_EDATE) AS PLAN_EDATE
+				  FROM WTM_FLEXIBLE_STD_MGR M
+				  JOIN WTM_FLEXIBLE_EMP E
+				    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+				  JOIN WTM_WORK_CALENDAR C
+				    ON E.TENANT_ID = C.TENANT_ID
+				   AND E.ENTER_CD = C.ENTER_CD
+				   AND E.SABUN = C.SABUN
+				   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+				  JOIN WTM_WORK_DAY_RESULT R
+				    ON C.TENANT_ID = R.TENANT_ID
+				   AND C.ENTER_CD = R.ENTER_CD
+				   AND C.YMD = R.YMD
+				   AND C.SABUN = R.SABUN
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				 WHERE C.TENANT_ID = #{tenantId}
+				   AND C.ENTER_CD = #{enterCd}
+				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+				   AND R.TIME_TYPE_CD = #{timeTypeCd}
+				   AND (C.SABUN = #{sabun} OR  #{sabun} = '' OR  #{sabun} IS NULL) 
+				 GROUP BY C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, T.LATE_CHK_YN, T.LEAVE_CHK_YN, R.TIME_TYPE_CD 
+				) B
+				ON A.TENANT_ID = B.TENANT_ID AND A.ENTER_CD = B.ENTER_CD AND A.YMD = B.YMD AND A.SABUN = B.SABUN 
+			   SET A.ENTRY_SDATE = B.PLAN_SDATE 
+			     , A.ENTRY_STYPE_CD = #{timeTypeCd}
+			     , A.ENTRY_EDATE = B.PLAN_EDATE 
+			     , A.ENTRY_ETYPE_CD = #{timeTypeCd}
+    	]]>
+    </update>
+    
+    <insert id="createDayResultByTimeTypeAndEntryDateIsNull" parameterType="map">
+    	<![CDATA[
+    		INSERT INTO WTM_WORK_DAY_RESULT(TENANT_ID, ENTER_CD, YMD, SABUN, APPL_ID, TIME_TYPE_CD, TAA_CD, UPDATE_DATE, UPDATE_ID)
+			SELECT C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, NULL, #{timeTypeCd}, #{taaCd}, now(), #{userId}
+				  FROM WTM_FLEXIBLE_STD_MGR M
+				  JOIN WTM_FLEXIBLE_EMP E
+				    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+				  JOIN WTM_WORK_CALENDAR C
+				    ON E.TENANT_ID = C.TENANT_ID
+				   AND E.ENTER_CD = C.ENTER_CD
+				   AND E.SABUN = C.SABUN
+				   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				 WHERE C.TENANT_ID = #{tenantId}
+				   AND C.ENTER_CD = #{enterCd}
+				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
+				   AND C.ENTRY_SDATE IS NULL
+				   AND C.ENTRY_EDATE IS NULL  
+				   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL) 
+    	]]>
+    </insert>
+    <insert id="createDayResultByTimeTypeAndEntrtEdateIsNull" parameterType="map">
+    	<![CDATA[
+    		INSERT INTO WTM_WORK_DAY_RESULT(TENANT_ID, ENTER_CD, YMD, SABUN, APPL_ID, TIME_TYPE_CD, TAA_CD, UPDATE_DATE, UPDATE_ID)
+			SELECT C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, NULL, #{timeTypeCd}, #{taaCd}, now(), #{userId}
+				  FROM WTM_FLEXIBLE_STD_MGR M
+				  JOIN WTM_FLEXIBLE_EMP E
+				    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+				  JOIN WTM_WORK_CALENDAR C
+				    ON E.TENANT_ID = C.TENANT_ID
+				   AND E.ENTER_CD = C.ENTER_CD
+				   AND E.SABUN = C.SABUN
+				   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				 WHERE C.TENANT_ID = #{tenantId}
+				   AND C.ENTER_CD = #{enterCd}
+				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}   
+				   AND C.ENTRY_SDATE IS NOT NULL  
+				   AND C.ENTRY_EDATE IS NULL  
+				   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL) 
+    	]]>
+    </insert>
+    
+    <insert id="createDayResultByTimeTypeAndPlanSdateLessThanApprSdate" parameterType="map">
+    	<![CDATA[
+    		INSERT INTO WTM_WORK_DAY_RESULT(TENANT_ID, ENTER_CD, YMD, SABUN, APPL_ID, TIME_TYPE_CD,  TAA_CD, APPR_SDATE, APPR_EDATE, UPDATE_DATE, UPDATE_ID)
+			SELECT C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, NULL, #{timeTypeCd}, #{taaCd} , MIN(R.PLAN_SDATE), MIN(R.APPR_SDATE), now(), #{userId}
+			  FROM WTM_FLEXIBLE_STD_MGR M
+			  JOIN WTM_FLEXIBLE_EMP E
+			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			  JOIN WTM_WORK_CALENDAR C
+			    ON E.TENANT_ID = C.TENANT_ID
+			   AND E.ENTER_CD = C.ENTER_CD
+			   AND E.SABUN = C.SABUN
+			   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+			  JOIN WTM_WORK_DAY_RESULT R
+			    ON C.TENANT_ID = R.TENANT_ID
+			   AND C.ENTER_CD = R.ENTER_CD
+			   AND C.YMD = R.YMD
+			   AND C.SABUN = R.SABUN
+			  JOIN WTM_TIME_CD_MGR T
+			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			 WHERE C.TENANT_ID = #{tenantId}
+			   AND C.ENTER_CD = #{enterCd}
+			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+			   AND R.TIME_TYPE_CD = 'BASE'
+			   AND T.LATE_CHK_YN = 'Y'
+			   AND C.ENTRY_SDATE IS NOT NULL
+			   AND C.ENTRY_EDATE IS NOT NULL
+			   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL) 
+			 GROUP BY C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, T.LATE_CHK_YN, T.LEAVE_CHK_YN
+				 , C.ENTRY_SDATE, C.ENTRY_EDATE
+			 HAVING MIN(R.PLAN_SDATE) < MIN(R.APPR_SDATE)
+    	]]>
+    </insert>
+    
+    
+    <insert id="createDayResultByTimeTypeAndApprEdateLessThanPlanEdate" parameterType="map">
+    	<![CDATA[
+    		INSERT INTO WTM_WORK_DAY_RESULT(TENANT_ID, ENTER_CD, YMD, SABUN, APPL_ID, TIME_TYPE_CD,  TAA_CD, APPR_SDATE, APPR_EDATE, UPDATE_DATE, UPDATE_ID)
+			SELECT C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, NULL, #{timeTypeCd}, #{taaCd}, MAX(R.APPR_EDATE), MAX(R.PLAN_EDATE), now(), #{userId}
+			  FROM WTM_FLEXIBLE_STD_MGR M
+			  JOIN WTM_FLEXIBLE_EMP E
+			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			  JOIN WTM_WORK_CALENDAR C
+			    ON E.TENANT_ID = C.TENANT_ID
+			   AND E.ENTER_CD = C.ENTER_CD
+			   AND E.SABUN = C.SABUN
+			   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+			  JOIN WTM_WORK_DAY_RESULT R
+			    ON C.TENANT_ID = R.TENANT_ID
+			   AND C.ENTER_CD = R.ENTER_CD
+			   AND C.YMD = R.YMD
+			   AND C.SABUN = R.SABUN
+			  JOIN WTM_TIME_CD_MGR T
+			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			 WHERE C.TENANT_ID = #{tenantId}
+			   AND C.ENTER_CD = #{enterCd}
+			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+			   AND R.TIME_TYPE_CD = 'BASE'
+			   AND T.LEAVE_CHK_YN = 'Y'
+			   AND C.ENTRY_SDATE IS NOT NULL
+			   AND C.ENTRY_EDATE IS NOT NULL
+			   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL) 
+			 GROUP BY C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, T.LATE_CHK_YN, T.LEAVE_CHK_YN
+				 , C.ENTRY_SDATE, C.ENTRY_EDATE
+			 HAVING MAX(R.PLAN_EDATE) > MAX(R.APPR_EDATE)
+    	]]>
+    </insert>
     
     <select id="checkBaseWorktime" parameterType="Long" resultType="map">
     	SELECT ( CEIL( F_WTM_TO_DAYS(E.SYMD, E.EYMD) * P.INFO_VALUE / 7) * 60  >=  SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END)) AS isValid
@@ -1022,4 +1246,6 @@
 		  AND S.SYMD = E.SYMD
 		  AND S.EYMD = E.EYMD
 	</update>
+	
+	<update id=""></update>
 </mapper>

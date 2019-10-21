@@ -132,7 +132,8 @@
    			{Header:"상태",		Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"id",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleApplyGroupId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"upid",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleApplyId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"소속",     	Type:"Combo",    	Hidden:0, 	Width:100,  Align:"Center", ColMerge:0, SaveName:"orgCd",     			KeyField:0, Format:"",  PointCount:0, UpdateEdit:0, InsertEdit:1, EditLen:100 },
+			{Header:"소속코드",  Type:"Text",    	Hidden:0, 	Width:100,  Align:"Center", ColMerge:0, SaveName:"orgCd",     			KeyField:0, Format:"",  PointCount:0, UpdateEdit:0, InsertEdit:0, EditLen:100 },
+			{Header:"소속명",    Type:"Text",    	Hidden:0, 	Width:100,  Align:"Center", ColMerge:0, SaveName:"orgNm",     			KeyField:0, Format:"",  PointCount:0, UpdateEdit:0, InsertEdit:1, EditLen:100 },
 			{Header:"직무코드",	Type:"Combo",		Hidden:1, 	Width:80,	Align:"Center", ColMerge:0, SaveName:"jobCd",				KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"직책",	    Type:"Combo",		Hidden:0, 	Width:80,	Align:"Center", ColMerge:0, SaveName:"dutyCd",				KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"직위",	    Type:"Combo",		Hidden:0, 	Width:80,	Align:"Center", ColMerge:0, SaveName:"posCd",				KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
@@ -147,8 +148,6 @@
 		sheet2.SetUnicodeByte(3);
         
 		//코드
-		var orgCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "ORG_CD"), "");
-		sheet2.SetColProperty("orgCd", {ComboText:"전체|"+orgCdList[0], ComboCode:"|"+orgCdList[1]} );
 		var jobCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "JOB_CD"), "전체");
 		sheet2.SetColProperty("jobCd", {ComboText:"전체|"+jobCdList[0], ComboCode:"|"+jobCdList[1]} );
 		var dutyCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "DUTY_CD"), "전체");
@@ -159,6 +158,9 @@
 		sheet2.SetColProperty("classCd", {ComboText:"전체|"+classCdList[0], ComboCode:"|"+classCdList[1]} );
 		var workteamCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/workteamMgr/workteamCd", "",false).DATA, "");
 		sheet2.SetColProperty("workteamCd", {ComboText:"전체|"+workteamCdList[0], ComboCode:"|"+workteamCdList[1]} );
+		
+		//조직
+        // setSheetAutocompleteOrg("sheet2", "orgNm");
 		
 		var initdata3 = {};
 		initdata3.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -184,6 +186,7 @@
 		
 		//이름
         setSheetAutocompleteEmp( "sheet3", "name" );
+        
 
 		sheetInit();
 		doAction1("Search");
@@ -206,6 +209,203 @@
 			}
 		});
 	});
+	
+// 조직코드 조회용
+
+function sheet2_OnBeforeEdit(Row, Col) {	
+	try{		
+		autoCompleteOrgInit(6,sheet2,Row,Col,undefined,undefined);	
+	}catch(e){	 	
+		alert(e.message);	
+	}
+}
+function sheet2_OnAfterEdit(Row, Col) {	
+	try{		
+		autoCompleteOrgDestroy(sheet2);	
+	}catch(e){		
+		alert(e.message);	
+		}
+}
+function sheet2_OnKeyUp(Row, Col, KeyCode, Shift) {	
+	try{		
+		autoCompleteOrgPress(6,Row,Col,KeyCode);	
+	}catch(e){		
+		alert(e.message);	
+	}
+}
+
+var intervalOrgDestory;
+// autocomplete 생성
+function autoCompleteOrgInit(opt, sheet, Row, Col, renderItem , callBackFunc) {
+    if (Col != opt) return;
+
+    //자동완성 List form
+    var autocompRenderItem
+    var callBackFunctionItem;
+    if(renderItem != undefined && renderItem != null ) {
+    	autocompRenderItem = new Function ( "return "+ renderItem )();
+    } else {
+    	autocompRenderItem = orgRenderItem1;
+    }
+
+    if ( callBackFunc != undefined ){
+
+    	callBackFunctionItem = callBackFunc
+    } else {
+    	callBackFunctionItem = "getOrgReturnValue";
+    }
+
+    if ($("#autoCompleteOrgDiv").length == 0) {
+        $('<div></div>', {
+            id: "autoCompleteOrgDiv"
+        }).html("<input id='searchKeyword2' name='searchKeyword' type='text' />").appendTo('#orgForm1');
+
+        var inputId = "searchKeyword2";
+        
+        $("#searchKeyword2").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "/ifw/orgCode/list",
+                    dateType: "json",
+                    type: "post",
+                    data: $("#orgForm1").serialize(),
+                    success: function(data) {
+                        response($.map(data.DATA, function(item) {
+                            return {
+                                label: item.orgNm + ",  " + item.enterCd,
+                                searchNm: $("#searchKeyword2").val(),
+                                orgCd: item.orgCd, // 조직코드
+                                orgNm: item.orgNm, // 조직명
+                                value: item.orgNm,
+                                callBackFunc : callBackFunctionItem
+                            };
+                        }));
+                    }
+                });
+            },
+    		autoFocus: true,
+            minLength: 1,
+            focus: function() {
+                return false;
+            },
+            open: function() {
+                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+            },
+            close: function() {
+                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+            }
+        }).data("uiAutocomplete")._renderItem = autocompRenderItem;
+    };
+
+    //autocomplete 선택되었을 때 Event Handler
+    $("#autoCompleteOrgDiv").off("autocompleteselect");
+    $("#autoCompleteOrgDiv").on("autocompleteselect", function(event, ui) {
+    	var row = Row;
+        sheet.SetCellText(Row, Col, ui.item.value);
+
+        $("#autoCompleteOrgInput").val("");
+        autoCompleteOrgDestroy(sheet);
+
+        //상세 데이터 가져오기
+        var orgInfo = new Object();
+        orgInfo.orgCd = ui.item.orgCd;
+        orgInfo.orgNm = ui.item.orgNm;
+        
+        var data = JSON.stringify(orgInfo);
+
+        //직원을 선택시 Data Return
+
+        var returnFunc1 = new Function ( "return "+ ui.item.callBackFunc )()
+
+        if(typeof returnFunc1 != "undefined") {
+        	gPRow = row;
+        	pGubun = "sheetAutocompleteOrg";
+        	returnFunc1( data );
+        }
+
+    });
+
+    $(".GMVScroll>div").scroll(function() {
+        destroyAutoOrgComplete(sheet);
+    });
+    $(".GMHScrollMid>div").scroll(function() {
+        destroyAutoOrgComplete(sheet);
+    });
+
+    var pleft = sheet.ColLeft(sheet.GetSelectCol());
+    var ptop = sheet.RowTop(sheet.GetSelectRow()) + sheet.GetRowHeight(sheet.GetSelectRow());
+    //건수정보 표시줄의 높이 만큼.
+    if (sheet.GetCountPosition() == 1 || sheet.GetCountPosition() == 2) ptop += 13;
+
+    var point = fGetXY(document.getElementById("DIV_" + sheet.id));
+
+    var left = point.x + pleft;
+    var top = point.y + ptop - 30;
+
+    var cWidth = 520;
+    var cHeight = 104;
+    var dWidth = $(window).width();
+    var dHeight = $(window).height();
+
+    if (dWidth < left + cWidth) left = dWidth - cWidth;
+    if (dHeight < top + cHeight) top = top - cHeight - 28;
+    if (top < 0) top = 0;
+
+    $("#autoCompleteOrgDiv").css("left", left + "px");
+    $("#autoCompleteOrgDiv").css("top", top + "px");
+    clearTimeout(intervalOrgDestory);
+    sheet.$beforeEditEnterBehavior = sheet.GetEditEnterBehavior();
+    sheet.SetEditEnterBehavior("none");
+}
+
+//autocomplete 키보드 이벤트
+function autoCompleteOrgPress(opt, Row, Col, code) {
+    if (Col != opt) return;
+
+    //IBsheet에서 입력된 값을 가져와 자동완성에 넘김
+    var e = jQuery.Event("keydown");
+    e.keyCode = code;
+    $("#searchKeyword2").trigger(e);
+    
+    //IBsheet input tag의 속성 - id:_editInput0 class:GMEditInput
+    if( $("#_editInput0").length != 0 ) {
+    	$("#searchKeyword2").val($("#_editInput0").val());
+    } else {
+    	//id:_editInput0 가 없는 경우도 있다. 그럴 경우 class:GMEditInput 로 검색
+    	$("#searchKeyword2").val($(".GMEditInput").val());
+    }
+}
+
+// autocomplete 제거
+function autoCompleteOrgDestroy(sheet) {
+	clearTimeout(intervalOrgDestory);
+    intervalOrgDestory = setTimeout(function() {
+        destroyAutoCompleteOrg(sheet);
+    }, 200);
+}
+
+//autocomplete 제거
+function destroyAutoCompleteOrg(sheet) {
+    $(".GMVScroll>div").unbind("scroll");
+    $(".GMHScrollMid>div").unbind("scroll");
+
+    $("#autoCompleteOrgInput").autocomplete("destroy");
+    $("#autoCompleteOrgDiv").remove();
+
+    //sheet.SetEditEnterBehavior("tab");
+    sheet.SetEditEnterBehavior(sheet.$beforeEditEnterBehavior);
+}
+
+//autocomplete 리스트 포맷
+function orgRenderItem1(ul, item) {
+    return $("<li />")
+        .data("item.autocomplete", item)
+        .append("<a class='autocomplete' style='width:240px;'>" +
+            "<span style='width:40px;'>" + String(item.orgNm).split(item.searchNm).join('<b>' + item.searchNm + '</b>') + "</span>" +
+            "<span style='width:90px;'>" + item.orgCd + "</span>" +
+            "</a>").appendTo(ul);
+}
+	
 	
 	function showIframe() {
 		if(iframeIdx == 0) {
@@ -267,7 +467,7 @@
 		switch (sAction) {
 		case "Search":
 			var param = "flexibleApplyId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleApplyId");
-			sheet2.DoSearch( "${rc.getContextPath()}/flexibleApply/empList" , param);
+			sheet3.DoSearch( "${rc.getContextPath()}/flexibleApply/empList" , param);
 			break;
 			
 		case "Insert":
@@ -275,16 +475,16 @@
 			if(flexibleApplyId == ""){
 				alert("근무제도 기준을 저장후 대상자를 입력하셔야 합니다");
 			} else {
-				var row = sheet2.DataInsert(0) ;
-				sheet2.SetCellValue(row, "flexibleApplyId" , flexibleApplyId);
+				var row = sheet3.DataInsert(0) ;
+				sheet3.SetCellValue(row, "flexibleApplyId" , flexibleApplyId);
 				// alert(sheet2.GetRowEditable(row));
 				// alert(sheet2.GetColEditable(row, "codeCd") + ", " + sheet2.GetColEditable(row, "codeNm"));
 			}
 			break;
 		
 		case "Save":
-			IBS_SaveName(document.sheetForm,sheet2);
-			sheet2.DoSave("${rc.getContextPath()}/flexibleApply/empSave", $("#sheetForm").serialize()); break;
+			IBS_SaveName(document.sheetForm,sheet3);
+			sheet3.DoSave("${rc.getContextPath()}/flexibleApply/empSave", $("#sheetForm").serialize()); break;
 			break;
 		}
 	}
@@ -293,6 +493,12 @@
    		sheet3.SetCellValue(gPRow, "sabun",returnValue.sabun);
 		sheet3.SetCellValue(gPRow, "name",returnValue.empNm);
         sheet3.SetCellValue(gPRow, "orgNm",returnValue.orgNm);
+	}
+	
+	function getOrgReturnValue(returnValue) {
+		//var rv = $.parseJSON('{' + returnValue+ '}');
+		sheet2.SetCellValue(gPRow, "orgCd",returnValue.orgCd);
+        sheet2.SetCellValue(gPRow, "orgNm",returnValue.orgNm);
 	}
 
 	// 조회 후 에러 메시지
