@@ -581,7 +581,8 @@
 				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 				 WHERE C.TENANT_ID = #{tenantId}
 				   AND C.ENTER_CD = #{enterCd}
-				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}  
+				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}   
+				   AND C.ENTRY_SDATE IS NOT NULL  
 				   AND C.ENTRY_EDATE IS NULL  
 				   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL) 
     	]]>
