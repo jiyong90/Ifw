@@ -93,7 +93,7 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 			String dOut = "-";
 			String dGoback = "-";
 			String type = "GO";
-			List<Map<String, Object>> list = inoutHisMapper.getGobackStatus(paramMap);
+			List<Map<String, Object>> list = inoutHisMapper.getContext(paramMap);
 			for(Map<String, Object> data : list) {
 				if(data.get("inoutTypeCd").equals("IN")) {
 					dIn = data.get("inout_date").toString();

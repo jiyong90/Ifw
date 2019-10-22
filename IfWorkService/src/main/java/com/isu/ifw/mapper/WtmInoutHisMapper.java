@@ -13,11 +13,11 @@ public interface WtmInoutHisMapper {
 	public List<Map<String, Object>> getInoutStatus(Map<String, Object> paramMap) throws Exception;
 
 	/**
-	 * 외출/복귀 상태 가져오기
+	 * 메뉴 상태 가져오기
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getGobackStatus(Map<String, Object> paramMap) throws Exception;
+	public List<Map<String, Object>> getContext(Map<String, Object> paramMap) throws Exception;
 
 	
 	/**
