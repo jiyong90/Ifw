@@ -256,17 +256,4 @@
 			alert("OnClick Event Error : " + ex);
 		}
 	}
-	
-	// 날짜 포맷을 적용한다..
-	function formatDate(strDate, saper) {
-		if(strDate == "" || strDate == null) {
-			return "";
-		}
-
-		if(strDate.length == 10) {
-			return strDate.substring(0,4)+saper+strDate.substring(5,7)+saper+strDate.substring(8,10);
-		} else if(strDate.length == 8) {
-			return strDate.substring(0,4)+saper+strDate.substring(4,6)+saper+strDate.substring(6,8);
-		}
-	}
 </script>

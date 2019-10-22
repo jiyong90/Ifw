@@ -26,6 +26,9 @@ public class WtmOrgCodeServiceImpl implements WtmOrgCodeService{
 		try {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
+			if(!paramMap.containsKey("sYmd")) {
+				paramMap.put("sYmd", "");
+			}
 			searchList =  wtmOrgCodeMapper.getOrgCodeList(paramMap);
 			
 		} catch(Exception e) {

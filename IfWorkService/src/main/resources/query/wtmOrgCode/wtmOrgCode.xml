@@ -18,8 +18,8 @@
 			  FROM WTM_ORG_CODE
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd} 
-			   AND (ORG_CD LIKE CONCAT('%', #{searchKeyword}, '%')
-					  OR ORG_NM LIKE CONCAT('%', #{searchKeyword}, '%')) 
+			   AND (ORG_CD LIKE CONCAT('%', #{orgKeyword}, '%')
+					  OR ORG_NM LIKE CONCAT('%', #{orgKeyword}, '%')) 
 				AND CASE WHEN #{sYmd} = '' THEN date_format(now(),'%Y%m%d')
 				         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
         ]]>

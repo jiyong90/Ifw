@@ -33,6 +33,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	@Override
 	public Map<String, Object> getIfLastDate(Long tenantId, String ifType) throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("getIfLastDate tenantId : " + tenantId + ", ifType : " + ifType);
 		String lastDataTime = null;
 		String nowDataTime = null;
 		Map<String, Object> retMap = new HashMap<>();
@@ -65,7 +66,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 			} else {
 				nowDataTime = "19000101000000";
 			}
-			
+			System.out.println("getIfLastDate Ret lastDate : " + lastDataTime + ", nowDate : " + nowDataTime);
 			retMap.put("lastDate", lastDataTime);
 			retMap.put("nowDate", nowDataTime);
 		} catch (Exception e) {
@@ -90,6 +91,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	@Override
 	public String setIfUrl(Long tenantId, String ifaddUrl, String param) throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("setIfUrl tenantId : " + tenantId + ", ifaddUrl : " + ifaddUrl + ", param : " + param);
 		String ifUrl = "";
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
@@ -103,10 +105,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 	        }
 		}
-		try {
-		} catch (Exception e) {
-            e.printStackTrace();
-		}
+		System.out.println("setIfUrl Rtn ifUrl : " + ifUrl);
 		return ifUrl;
 	}
 	

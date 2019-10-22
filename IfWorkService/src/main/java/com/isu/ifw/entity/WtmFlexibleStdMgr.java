@@ -77,6 +77,10 @@ public class WtmFlexibleStdMgr {
 	private String taaTimeYn;
 	@Column(name="TAA_WORK_YN")
 	private String taaWorkYn;
+	@Column(name="DAY_OPEN_TYPE")
+	private String dayOpenType;
+	@Column(name="DAY_CLOSE_TYPE")
+	private String dayCloseType;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -311,6 +315,22 @@ public class WtmFlexibleStdMgr {
 
 	public void setTaaWorkYn(String taaWorkYn) {
 		this.taaWorkYn = taaWorkYn;
+	}
+
+	public String getDayOpenType() {
+		return dayOpenType;
+	}
+
+	public void setDayOpenType(String dayOpenType) {
+		this.dayOpenType = dayOpenType;
+	}
+
+	public String getDayCloseType() {
+		return dayCloseType;
+	}
+
+	public void setDayCloseType(String dayCloseType) {
+		this.dayCloseType = dayCloseType;
 	}
 
 	public String getNote() {
