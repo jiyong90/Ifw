@@ -57,6 +57,18 @@
 												<th>인정근무 단위시간(분)</th>
 												<td>
 													<input type="text" id="unitMinute" name="unitMinute"/>
+													<input type="hidden" id="taaTimeYn" name="taaTimeYn"/>
+												</td>
+											</tr>
+											<tr id="trDayType">
+												<th>출근자동처리기준</th>
+												<td>
+													<select id="dayOpenType"></select>
+													
+												</td>
+												<th>출근퇴근처리기준</th>
+												<td>
+													<select id="dayCloseType"></select>
 												</td>
 											</tr>
 											<tr id="trBaseCheck">
@@ -66,7 +78,7 @@
 												</td>
 											</tr>
 											<tr id="trBase">
-												<th>일 기본근무시간(분)</th>
+												<th id="defaultWorkMinuteTit">일 기본근무시간(분)</th>
 												<td colspan="3">
 													<input type="text" id="defaultWorkMinute" name="defaultWorkMinute"/>
 												</td>
@@ -88,17 +100,21 @@
 											<tr id="trRega">
 												<th>간주근무시간</th>
 												<td colspan="3">
-													<select id="regardTimeCdId" class="required">
+													<select id="regardTimeCdId">
 					                                    <option>시차10시</option>
 					                                </select>
 												</td>
 											</tr>
 											<tr id="trWorkTime">
 												<th>근무가능시각</th>
-												<td colspan="3">
+												<td>
 													<input type="text" id="workShm" name="workShm" class="date2" data-toggle="datetimepicker" />
 													~
 													<input type="text" id="workEhm" name="workEhm" class="date2" data-toggle="datetimepicker" />
+												</td>
+												<th>근태일 근무가능여부</th>
+												<td>
+													<input type="checkbox" id="taaWorkYn" name="taaWorkYn" /> 체크시 근태일 근무가능
 												</td>
 											</tr>
 											<tr id="trCoreChk">
@@ -292,7 +308,12 @@
 			{Header:"선소진여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"exhaustionYn",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"사용기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"usedTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
 			{Header:"신청기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
-			{Header:"비고",				Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 }
+			{Header:"신청기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
+			{Header:"근태시간포함여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"taaTimeYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
+			{Header:"근태일근무여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"taaWorkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
+			{Header:"출근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayOpenType",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
+			{Header:"퇴근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayCloseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
+			{Header:"비고",				Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -307,6 +328,11 @@
 		//근무시간
 		var regardTimeCdId = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=N",false).DATA, "");
 		$("#regardTimeCdId").html(regardTimeCdId[2]);
+		
+		//출퇴근자동처리기준
+		var dayType = stfConvCode(codeList("${rc.getContextPath()}/code/list", "DAY_ENTRY_TYPE"), "선택");
+		$("#dayOpenType").html(dayType[2]);
+		$("#dayCloseType").html(dayType[2]);
 		
 		var initdata2 = {};
 		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -401,6 +427,8 @@
 	        if($('#trWorkTime').is(':visible')){
 	        	sheet1.SetCellValue(row, "workShm", $("#workShm").val());
 	        	sheet1.SetCellValue(row, "workEhm", $("#workEhm").val());
+	        	var chkYn = getCheckYn("taaWorkYn");
+	        	sheet1.SetCellValue(row, "taaWorkYn", chkYn);
 	        }
 	        if($('#trCoreChk').is(':visible')){
 	        	var chkYn = getCheckYn("coreChkYn");
@@ -439,6 +467,18 @@
 				var applTermOpt = JSON.stringify(applTermOptArr);
 				sheet1.SetCellValue(row, "applTermOpt", applTermOpt);
 	        }
+	        if($("#dayOpenType").val() == "" || $("#dayOpenType").val() == "null" || $("#dayOpenType").val() === null){
+				alert("출근자동처리기준을 선택하세요");
+				return;
+			} else {
+				sheet1.SetCellValue(row, "dayOpenType", $("#dayOpenType").val());
+			}
+			if($("#dayCloseType").val() == "" || $("#dayCloseType").val() == "null" || $("#dayCloseType").val() === null){
+				alert("퇴근자동처리기준을 선택하세요");
+				return;
+			} else {
+				sheet1.SetCellValue(row, "dayCloseType", $("#dayCloseType").val());
+			}
 	        if($("#regardTimeCdId").val() == "" || $("#regardTimeCdId").val() == "null" || $("#regardTimeCdId").val() === null){
 				alert("간주근무시간을 선택하세요");
 				return;
@@ -447,6 +487,7 @@
 			}
 			sheet1.SetCellValue(row, "defaultWorkMinute", $("#defaultWorkMinute").val());
 			sheet1.SetCellValue(row, "unitMinute", $("#unitMinute").val());
+			sheet1.SetCellValue(row, "taaTimeYn", $("#taaTimeYn").val());
 			sheet1.SetCellValue(row, "note", $("#note").val());
 			doAction1("Save");
 			break;	
@@ -534,7 +575,10 @@
 			// 공휴일제외여부
 			if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
 				$("input:checkbox[id='holExceptYn']").prop("checked", true);
+				
 			}
+			$("#dayOpenType").val(sheet1.GetCellValue( NewRow, "dayOpenType")).prop("selected", true);
+			$("#dayCloseType").val(sheet1.GetCellValue( NewRow, "dayCloseType")).prop("selected", true);
 			
 			// 고정OT
 			if(workTypeCd == "ELSE"){
@@ -559,6 +603,7 @@
 			
 			// 근무가능시각
 			if(workTypeCd == "SELE_F" || workTypeCd == "SELE_C"){
+				$("#taaTimeYn").val("Y");
 				$("#trWorkTime").show();
 				$("#workShm").val(sheet1.GetCellValue( NewRow, "workShm"));
 				$("#workEhm").val(sheet1.GetCellValue( NewRow, "workEhm"));
@@ -566,6 +611,11 @@
 				$("#trCoreTime").show();
 				$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
 				$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
+				if(sheet1.GetCellValue( NewRow, "taaWorkYn") == "Y"){
+					$("input:checkbox[id='taaWorkYn']").prop("checked", true);
+				} else {
+					$("input:checkbox[id='taaWorkYn']").prop("checked", false);
+				}
 				if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
 					$("input:checkbox[id='coreChkYn']").prop("checked", true);
 					setCoreChkYn(true);
@@ -576,6 +626,7 @@
 				$("#exhaustionYn").addClass("required");
 				$("#exhaustionYn").val(sheet1.GetCellValue( NewRow, "exhaustionYn")).prop("selected", true);
 			} else {
+				$("#taaTimeYn").val("N");
 				$("#trWorkTime").hide();
 				$("#trCoreTime").hide();
 				$("#trBaseFirst").hide();
@@ -587,6 +638,7 @@
 				$("#coreEhm").val("");
 				$("#coreChkYn").val("");
 				$("#exhaustionYn").val("");
+				$("#taaWorkYn").val("");
 			}
 			
 			// 신청기간
@@ -679,12 +731,18 @@
 		if(chk){
 			$("#trBase").show();
         	$("#trFixOt").show();
+        	$("#defaultWorkMinute").addClass("required");
+        	$("#fixotUseType").addClass("required");
+        	$("#fixotUseLimit").addClass("required");
 		} else {
 			$("#trBase").hide();
             $("#trFixOt").hide();
             $("#defaultWorkMinute").val("");
            	$("#fixotUseType").val("");
 			$("#fixotUseLimit").val("");
+			$("#defaultWorkMinute").removeClass("required");
+        	$("#fixotUseType").removeClass("required");
+        	$("#fixotUseLimit").removeClass("required");
 		}
 	}
 	 $("#defaultWorkUseYn").change(function(){
