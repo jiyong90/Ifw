@@ -107,6 +107,10 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 			stdMgr.put("regardTimeCdId", l.get("REGARD_TIME_CD_ID"));
 			stdMgr.put("fixotUseType", l.get("FIXOT_USE_TYPE"));
 			stdMgr.put("fixotUseLimit", l.get("FIXOT_USE_LIMIT"));
+			stdMgr.put("taaTimeYn", l.get("TAA_TIME_YN"));
+			stdMgr.put("taaWorkYn", l.get("TAA_WORK_YN"));
+			stdMgr.put("dayOpenType", l.get("DAY_OPEN_TYPE"));
+			stdMgr.put("dayCloseType", l.get("DAY_CLOSE_TYPE"));
 			stdMgr.put("note", l.get("NOTE"));
 			stdList.add(stdMgr);
 		}
@@ -151,6 +155,10 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						saveMap.put("defaultWorkMinute", Integer.parseInt(l.get("defaultWorkMinute").toString()));
 						saveMap.put("defaultWorkUseYn", l.get("defaultWorkUseYn").toString());
 						saveMap.put("unitMinute", Integer.parseInt(l.get("unitMinute").toString()));
+						saveMap.put("taaTimeYn", l.get("taaTimeYn").toString());
+						saveMap.put("taaWorkYn", l.get("taaWorkYn").toString());
+						saveMap.put("dayOpenType", l.get("dayOpenType").toString());
+						saveMap.put("dayCloseType", l.get("dayCloseType").toString());
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
 						insertList.add(saveMap);
@@ -188,6 +196,10 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						saveMap.put("defaultWorkMinute", l.get("defaultWorkMinute").toString().equals("") ? null : Integer.parseInt(l.get("defaultWorkMinute").toString()));
 						saveMap.put("defaultWorkUseYn", l.get("defaultWorkUseYn").toString());
 						saveMap.put("unitMinute", l.get("unitMinute").toString().equals("") ? null : Integer.parseInt(l.get("unitMinute").toString()));
+						saveMap.put("taaTimeYn", l.get("taaTimeYn").toString());
+						saveMap.put("taaWorkYn", l.get("taaWorkYn").toString());
+						saveMap.put("dayOpenType", l.get("dayOpenType").toString());
+						saveMap.put("dayCloseType", l.get("dayCloseType").toString());
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
 						updateList.add(saveMap);

@@ -56,12 +56,26 @@ public class WtmInoutController {
 		
 		Map <String,Object> resultMap = new HashMap<String,Object>();
 		Map <String,Object> returnMap = new HashMap<String,Object>();
+		//Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
+//		Map<String,Object> menuIn = new HashMap();
+//		menuIn.put("inoutType", "IN");
+	
+//		Map<String,Object> menuOut = new HashMap();
+//		menuOut.put("inoutType", "OUT");
+		
+		
+		//Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
+
 		Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
 		
-		returnMap.put("D01", menus);
-		resultMap.put("menus", returnMap);
+//		returnMap.put("D01", menuIn);
+//		returnMap.put("D02", menuOut);
+//		returnMap.put("D02", menus);
+		
+		resultMap.put("menus", menus);
 		rp.put("result", resultMap);
 		
+		System.out.println("status : " + rp.toString());
 		return rp;
 	}
 	

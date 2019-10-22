@@ -41,20 +41,31 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 	@Override
 	public Map<String, Object> getMenuContext(Long tenantId, String enterCd, String sabun) {
 
-		Map <String,Object> menuAttributeMap = new HashMap<String,Object>();
 		Map <String,Object> paramMap = new HashMap<String, Object>();
+
+		Map <String,Object> menuIn = new HashMap();
+		Map <String,Object> menuOut = new HashMap();
+		Map <String,Object> menuGoback = new HashMap();
+		
+		Map <String,Object> returnMap = new HashMap();
+		returnMap.put("D01", menuIn);
+		returnMap.put("D02", menuOut);
+		returnMap.put("D03", menuGoback);
+		
 		//tenant 어디서 가져올지
-		paramMap.put("tenantId", "1");
+		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 			
-		String ymd = null; //기준일 
-		String md = null; // 기준일에서 월/일만 뺀 값  
-		String inoutType = "NONE";
-		String label = "근무계획없음";
-		String description = "출근체크 필요시 인사팀에 문의 바랍니다";
+//		String ymd = null; //기준일 
+//		String md = null; // 기준일에서 월/일만 뺀 값  
+//		String inoutType = "NONE";
+//		String label = "근무계획없음";
+//		String description = "출근체크 필요시 인사팀에 문의 바랍니다";
 		
 		try {
+			//근무계획으로 출퇴근 활성화
+			/*
 			List<Map<String, Object>> list = inoutHisMapper.getInoutStatus(paramMap);
 			System.out.println("inoutStatus : " + list.toString());
 			
@@ -76,17 +87,46 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 					label =  md +" 퇴근하기";
 					description = "출입 비콘 근처에서 버튼이 활성화됩니다";
 				}
+			}*/
+			
+			String dIn = "-";
+			String dOut = "-";
+			String dGoback = "-";
+			String type = "GO";
+			List<Map<String, Object>> list = inoutHisMapper.getContext(paramMap);
+			for(Map<String, Object> data : list) {
+				if(data.get("inoutTypeCd").equals("IN")) {
+					dIn = data.get("inout_date").toString();
+				} else if(data.get("inoutTypeCd").equals("OUT")){
+					dOut = data.get("inout_date").toString();
+				} else if(data.get("inoutTypeCd").equals("GO") || data.get("inoutTypeCd").equals("BACK")) {
+					if(data.get("inoutTypeCd").equals("GO")) {
+						type = "BACK";
+						dGoback = "외출 " + data.get("inout_date").toString();
+					}
+					else {
+						type = "GO";
+						dGoback = "복귀 " + data.get("inout_date").toString();
+					} 
+				}
 			}
+			
+			menuIn.put("description", dIn);
+			menuIn.put("inoutType", "IN");
+			
+			menuOut.put("description", dOut);
+			menuOut.put("inoutType", "OUT");
+
+			menuGoback.put("description", dGoback);
+			menuGoback.put("actionType", "ACTIVE");
+			menuGoback.put("label", type.equals("GO")?"외출하기":"복귀하기");
+			menuGoback.put("backgroundColor", type.equals("GO")?"#93DaFF":"#FFF56E");
+
 		}catch(Exception e) {
 			e.printStackTrace();
-		} finally {
-			menuAttributeMap.put("ymd", ymd);
-			menuAttributeMap.put("inoutType", inoutType);
-			menuAttributeMap.put("label", label);
-			menuAttributeMap.put("description", description);
-		}
-		System.out.println("getMenuContext " + enterCd +"@" +sabun+"@"+menuAttributeMap.toString());
-		return menuAttributeMap;
+		} 
+		
+		return returnMap;
 	}
 
 	@Override

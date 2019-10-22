@@ -12,7 +12,7 @@
 						</td>
 						<td>
 							<span class="label">조직코드/조직명</span>
-							<input id="searchKeyword"  name="searchKeyword"  type="text" class="text" />
+							<input id="orgKeyword"  name="orgKeyword"  type="text" class="text" />
 						</td>
 						<td>
 							<a href="javascript:doAction1('Search');" class="button">조회</a>
