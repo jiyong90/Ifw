@@ -61,13 +61,14 @@ public class WtmInoutController {
 		menuIn.put("inoutType", "IN");
 	
 		Map<String,Object> menuOut = new HashMap();
-		menuOut.put("inoutType", "Out");
+		menuOut.put("inoutType", "OUT");
 		
 		returnMap.put("D01", menuIn);
 		returnMap.put("D02", menuOut);
 		resultMap.put("menus", returnMap);
 		rp.put("result", resultMap);
 		
+		System.out.println("status : " + rp.toString());
 		return rp;
 	}
 	
