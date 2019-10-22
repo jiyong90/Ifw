@@ -31,6 +31,14 @@ public interface WtmCalendarMapper {
 	 * @throws Exception
 	 */
 	public List<Map<String, Object>> getEmpWorkCalendar(Map<String, Object> paramMap) throws Exception;
+	
+	/**
+	 * 부서장용_근태 달력 조회
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getOrgEmpWorkCalendar(Map<String, Object> paramMap) throws Exception;
 
 	/**
 	 * 관리자요_근태 달력 하루 조회
