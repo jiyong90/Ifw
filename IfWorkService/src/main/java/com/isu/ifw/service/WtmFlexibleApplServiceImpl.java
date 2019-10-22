@@ -412,8 +412,10 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		if(rp.getStatus().equals("FAIL")) {
 			return rp;
 		}
-		
-		Long flexibleApplId = Long.parseLong(paramMap.get("flexibleApplId").toString());
+		Long flexibleApplId = null;
+		if(paramMap != null && paramMap.containsKey("flexibleApplId") && !paramMap.equals("")) {
+			flexibleApplId = Long.parseLong(paramMap.get("flexibleApplId").toString());
+		}
 		List<WtmFlexibleDayPlan> days = wtmFlexibleDayPlanRepo.findByFlexibleApplId(flexibleApplId);
 		//근무 상세에 대한 소정근로시간 체크 (탄근제)
 		//근무제로 판단하지 않고 신청 시 신청에 딸린 계획데이터가 있을경우 체크하즈아.

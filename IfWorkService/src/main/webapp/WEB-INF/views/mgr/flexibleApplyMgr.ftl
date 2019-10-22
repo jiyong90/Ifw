@@ -1,4 +1,35 @@
 <div id="timeCdMgr">
+	<!-- 유연근무대상자 보기 modal start -->
+	<div class="modal fade" id="ApplyEmpPopModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">유연근무 대상자</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
+						<tr>
+							<td>
+								<div class="inner">
+									<div class="sheet_title_wrap clearfix">
+										<div id="popupTitle" class="float-left title"></div>
+									</div>
+								</div>
+								<script type="text/javascript"> createIBSheet("sheet4", "100%", fullsheetH, "kr"); </script>
+							</td>
+						</tr>
+					</table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 유연근무대상자 보기 modal end -->
  	<div class="container-fluid pt-3 pb-3 bg-white">
  	<div class="ibsheet-wrapper">
  		<form id="sheetForm" name="sheetForm">
@@ -46,7 +77,7 @@
 									<div  class="layout_tabs">
 										<div class="inner sheet_title_wrap clearfix">
 											<div class="float-left title" id="searchAppText">그룹별 대상자 관리</div>
-											<ul class="float-right btn-wrap">
+											<ul class="float-right btn-wrap" id="sheet2_btn">
 												<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 												<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 											</ul>
@@ -58,12 +89,12 @@
 									<div  class="layout_tabs">
 										<div class="inner sheet_title_wrap clearfix">
 											<div class="float-left title" id="searchAppText">개인별 대상자 관리</div>
-											<ul class="float-right btn-wrap">
+											<ul class="float-right btn-wrap" id="sheet3_btn">
 												<li><a href="javascript:doAction3('Insert')" class="basic authA">입력</a></li>
 												<li><a href="javascript:doAction3('Save')" class="basic authA">저장</a></li>
 											</ul>
 										</div>
-										<script type="text/javascript">createIBSheet("sheet3", "100%", sheetH40,"kr"); </script>
+										<script type="text/javascript">createIBSheet("sheet3", "100%", sheetH40, "kr"); </script>
 									</div>
 								</div>
 							</div>
@@ -105,6 +136,7 @@
 			{Header:"대상자조회",		Type:"Image", 	Hidden:0,  	Width:70,  	Align:"Center", ColMerge:0, SaveName:"selectImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:1    },
 			{Header:"확정여부",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"applyYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
 			{Header:"확정상태",		Type:"Html", 		Hidden:0,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"endImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:1    },
+			{Header:"확정상태",		Type:"Int", 		Hidden:1,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"cnt",  			KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:1    },
 			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 		]; 
 		
@@ -160,7 +192,7 @@
 		sheet2.SetColProperty("workteamCd", {ComboText:"전체|"+workteamCdList[0], ComboCode:"|"+workteamCdList[1]} );
 		
 		//조직
-        // setSheetAutocompleteOrg("sheet2", "orgNm");
+        setSheetAutocompleteOrg("sheet2", "orgNm");
 		
 		var initdata3 = {};
 		initdata3.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -187,6 +219,24 @@
 		//이름
         setSheetAutocompleteEmp( "sheet3", "name" );
         
+        var initdata4 = {};
+		
+		initdata4.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata4.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+
+		initdata4.Cols = [
+			{Header:"No",		Type:"Seq",		Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
+			{Header:"소속",		Type:"Text",	Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"orgNm",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"사번",		Type:"Text",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sabun",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"성명",		Type:"Text",    Hidden:0, 	Width:90,   Align:"Center", ColMerge:0, SaveName:"empNm",      	KeyField:0, Format:"",  PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
+			{Header:"직책",		Type:"Text",    Hidden:0, 	Width:90,   Align:"Center", ColMerge:0, SaveName:"dutyNm",      KeyField:0, Format:"",  PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
+			{Header:"직급",		Type:"Text",    Hidden:0, 	Width:70,   Align:"Center", ColMerge:0, SaveName:"classNm",     KeyField:0, Format:"",  PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
+			{Header:"직위",		Type:"Text",    Hidden:0, 	Width:70,   Align:"Center", ColMerge:0, SaveName:"posNm",      	KeyField:0, Format:"",  PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 }
+		]; 
+		
+		IBS_InitSheet(sheet4, initdata4);
+		sheet4.SetEditable(false);
+		sheet4.SetVisible(true);
 
 		sheetInit();
 		doAction1("Search");
@@ -209,203 +259,6 @@
 			}
 		});
 	});
-	
-// 조직코드 조회용
-
-function sheet2_OnBeforeEdit(Row, Col) {	
-	try{		
-		autoCompleteOrgInit(6,sheet2,Row,Col,undefined,undefined);	
-	}catch(e){	 	
-		alert(e.message);	
-	}
-}
-function sheet2_OnAfterEdit(Row, Col) {	
-	try{		
-		autoCompleteOrgDestroy(sheet2);	
-	}catch(e){		
-		alert(e.message);	
-		}
-}
-function sheet2_OnKeyUp(Row, Col, KeyCode, Shift) {	
-	try{		
-		autoCompleteOrgPress(6,Row,Col,KeyCode);	
-	}catch(e){		
-		alert(e.message);	
-	}
-}
-
-var intervalOrgDestory;
-// autocomplete 생성
-function autoCompleteOrgInit(opt, sheet, Row, Col, renderItem , callBackFunc) {
-    if (Col != opt) return;
-
-    //자동완성 List form
-    var autocompRenderItem
-    var callBackFunctionItem;
-    if(renderItem != undefined && renderItem != null ) {
-    	autocompRenderItem = new Function ( "return "+ renderItem )();
-    } else {
-    	autocompRenderItem = orgRenderItem1;
-    }
-
-    if ( callBackFunc != undefined ){
-
-    	callBackFunctionItem = callBackFunc
-    } else {
-    	callBackFunctionItem = "getOrgReturnValue";
-    }
-
-    if ($("#autoCompleteOrgDiv").length == 0) {
-        $('<div></div>', {
-            id: "autoCompleteOrgDiv"
-        }).html("<input id='searchKeyword2' name='searchKeyword' type='text' />").appendTo('#orgForm1');
-
-        var inputId = "searchKeyword2";
-        
-        $("#searchKeyword2").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "/ifw/orgCode/list",
-                    dateType: "json",
-                    type: "post",
-                    data: $("#orgForm1").serialize(),
-                    success: function(data) {
-                        response($.map(data.DATA, function(item) {
-                            return {
-                                label: item.orgNm + ",  " + item.enterCd,
-                                searchNm: $("#searchKeyword2").val(),
-                                orgCd: item.orgCd, // 조직코드
-                                orgNm: item.orgNm, // 조직명
-                                value: item.orgNm,
-                                callBackFunc : callBackFunctionItem
-                            };
-                        }));
-                    }
-                });
-            },
-    		autoFocus: true,
-            minLength: 1,
-            focus: function() {
-                return false;
-            },
-            open: function() {
-                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-            },
-            close: function() {
-                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-            }
-        }).data("uiAutocomplete")._renderItem = autocompRenderItem;
-    };
-
-    //autocomplete 선택되었을 때 Event Handler
-    $("#autoCompleteOrgDiv").off("autocompleteselect");
-    $("#autoCompleteOrgDiv").on("autocompleteselect", function(event, ui) {
-    	var row = Row;
-        sheet.SetCellText(Row, Col, ui.item.value);
-
-        $("#autoCompleteOrgInput").val("");
-        autoCompleteOrgDestroy(sheet);
-
-        //상세 데이터 가져오기
-        var orgInfo = new Object();
-        orgInfo.orgCd = ui.item.orgCd;
-        orgInfo.orgNm = ui.item.orgNm;
-        
-        var data = JSON.stringify(orgInfo);
-
-        //직원을 선택시 Data Return
-
-        var returnFunc1 = new Function ( "return "+ ui.item.callBackFunc )()
-
-        if(typeof returnFunc1 != "undefined") {
-        	gPRow = row;
-        	pGubun = "sheetAutocompleteOrg";
-        	returnFunc1( data );
-        }
-
-    });
-
-    $(".GMVScroll>div").scroll(function() {
-        destroyAutoOrgComplete(sheet);
-    });
-    $(".GMHScrollMid>div").scroll(function() {
-        destroyAutoOrgComplete(sheet);
-    });
-
-    var pleft = sheet.ColLeft(sheet.GetSelectCol());
-    var ptop = sheet.RowTop(sheet.GetSelectRow()) + sheet.GetRowHeight(sheet.GetSelectRow());
-    //건수정보 표시줄의 높이 만큼.
-    if (sheet.GetCountPosition() == 1 || sheet.GetCountPosition() == 2) ptop += 13;
-
-    var point = fGetXY(document.getElementById("DIV_" + sheet.id));
-
-    var left = point.x + pleft;
-    var top = point.y + ptop - 30;
-
-    var cWidth = 520;
-    var cHeight = 104;
-    var dWidth = $(window).width();
-    var dHeight = $(window).height();
-
-    if (dWidth < left + cWidth) left = dWidth - cWidth;
-    if (dHeight < top + cHeight) top = top - cHeight - 28;
-    if (top < 0) top = 0;
-
-    $("#autoCompleteOrgDiv").css("left", left + "px");
-    $("#autoCompleteOrgDiv").css("top", top + "px");
-    clearTimeout(intervalOrgDestory);
-    sheet.$beforeEditEnterBehavior = sheet.GetEditEnterBehavior();
-    sheet.SetEditEnterBehavior("none");
-}
-
-//autocomplete 키보드 이벤트
-function autoCompleteOrgPress(opt, Row, Col, code) {
-    if (Col != opt) return;
-
-    //IBsheet에서 입력된 값을 가져와 자동완성에 넘김
-    var e = jQuery.Event("keydown");
-    e.keyCode = code;
-    $("#searchKeyword2").trigger(e);
-    
-    //IBsheet input tag의 속성 - id:_editInput0 class:GMEditInput
-    if( $("#_editInput0").length != 0 ) {
-    	$("#searchKeyword2").val($("#_editInput0").val());
-    } else {
-    	//id:_editInput0 가 없는 경우도 있다. 그럴 경우 class:GMEditInput 로 검색
-    	$("#searchKeyword2").val($(".GMEditInput").val());
-    }
-}
-
-// autocomplete 제거
-function autoCompleteOrgDestroy(sheet) {
-	clearTimeout(intervalOrgDestory);
-    intervalOrgDestory = setTimeout(function() {
-        destroyAutoCompleteOrg(sheet);
-    }, 200);
-}
-
-//autocomplete 제거
-function destroyAutoCompleteOrg(sheet) {
-    $(".GMVScroll>div").unbind("scroll");
-    $(".GMHScrollMid>div").unbind("scroll");
-
-    $("#autoCompleteOrgInput").autocomplete("destroy");
-    $("#autoCompleteOrgDiv").remove();
-
-    //sheet.SetEditEnterBehavior("tab");
-    sheet.SetEditEnterBehavior(sheet.$beforeEditEnterBehavior);
-}
-
-//autocomplete 리스트 포맷
-function orgRenderItem1(ul, item) {
-    return $("<li />")
-        .data("item.autocomplete", item)
-        .append("<a class='autocomplete' style='width:240px;'>" +
-            "<span style='width:40px;'>" + String(item.orgNm).split(item.searchNm).join('<b>' + item.searchNm + '</b>') + "</span>" +
-            "<span style='width:90px;'>" + item.orgCd + "</span>" +
-            "</a>").appendTo(ul);
-}
-	
 	
 	function showIframe() {
 		if(iframeIdx == 0) {
@@ -488,6 +341,41 @@ function orgRenderItem1(ul, item) {
 			break;
 		}
 	}
+	
+	function doAction4(sAction) {
+		switch (sAction) {
+		case "Search":
+			var param = "flexibleApplyId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleApplyId");
+			sheet4.DoSearch( "${rc.getContextPath()}/flexibleApply/empPopuplist" , param);
+			break;
+		}
+	}
+	
+	function setEndConfirm(flexibleApplyId){
+		var row = sheet1.FindText("flexibleApplyId", flexibleApplyId, 0);
+		var param = "flexibleApplyId=" + flexibleApplyId;
+		if(!confirm("확정하시겠습니까?")) {
+			return;
+		}
+		$("#loading").show();
+		var rtn = ajaxCall("${rc.getContextPath()}/flexibleApply/apply", param ,false);
+		if(rtn != null && rtn != "") {
+			$("#loading").hide();
+			if(rtn.status == "FAIL"){
+				alert(rtn.message);
+			} else {
+				
+				alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
+				doAction1("Search");
+			}			
+		} else {
+			$("#loading").hide();
+			alert("확정할 내용이 없습니다.");
+			
+		}
+		
+	}
+	
 	function getReturnValue(returnValue) {
 		//var rv = $.parseJSON('{' + returnValue+ '}');
    		sheet3.SetCellValue(gPRow, "sabun",returnValue.sabun);
@@ -500,12 +388,31 @@ function orgRenderItem1(ul, item) {
 		sheet2.SetCellValue(gPRow, "orgCd",returnValue.orgCd);
         sheet2.SetCellValue(gPRow, "orgNm",returnValue.orgNm);
 	}
+	
+	function setButten(applyYn){
+		// 적용완료되엇으면 수정불가
+		if(applyYn == "Y"){
+			sheet2.SetEditable(0);
+			$("#sheet2_btn").hide();
+			sheet3.SetEditable(0);
+			$("#sheet3_btn").hide();
+		} else {
+			sheet2.SetEditable(1);
+			$("#sheet2_btn").show();
+			sheet3.SetEditable(1);
+			$("#sheet3_btn").show();
+		}
+	}
 
 	// 조회 후 에러 메시지
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
 				alert(Msg);
+			}
+			if(sheet1.RowCount() > 0){
+				var applyYn = sheet1.GetCellValue( 1, "applyYn");
+				setButten(applyYn);
 			}
 			sheetResize();
 		} catch (ex) {
@@ -531,6 +438,30 @@ function orgRenderItem1(ul, item) {
 			sheet3.RemoveAll();
 			doAction2('Search');
 			doAction3('Search');
+			var applyYn = sheet1.GetCellValue( NewRow, "applyYn");
+			setButten(applyYn);
+		}
+	}
+	
+	//셀 클릭시 이벤트
+	function sheet1_OnClick(Row, Col, Value) {
+		
+		try{
+			if(Row > 0 && sheet1.ColSaveName(Col) == "selectImg" ){
+				
+				var applyNm = sheet1.GetCellValue( Row, "applyNm");
+				var useSymd = sheet1.GetCellValue( Row, "useSymd");
+				var useEymd = sheet1.GetCellValue( Row, "useEymd");
+				
+				$("#popupTitle").text(applyNm + " " + formatDate(useSymd,'-') + "~" + formatDate(useEymd,'-'));
+				
+				sheet4.RemoveAll();
+				doAction4('Search');
+				$("#ApplyEmpPopModal").modal("show");
+				
+			}
+		}catch(ex){
+			alert("OnClick Event Error : " + ex);
 		}
 	}
 	
@@ -579,6 +510,18 @@ function orgRenderItem1(ul, item) {
 			doAction3("Search");
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+	// 조회 후 에러 메시지
+	function sheet4_OnSearchEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+
+			sheetResize();
+		} catch (ex) {
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 </script>

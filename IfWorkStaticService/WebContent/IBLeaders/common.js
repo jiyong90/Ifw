@@ -1140,6 +1140,19 @@ function makeNumber(obj,type) {
 	return(true);
 }
 
+//날짜 포맷을 적용한다..
+function formatDate(strDate, saper) {
+	if(strDate == "" || strDate == null) {
+		return "";
+	}
+
+	if(strDate.length == 10) {
+		return strDate.substring(0,4)+saper+strDate.substring(5,7)+saper+strDate.substring(8,10);
+	} else if(strDate.length == 8) {
+		return strDate.substring(0,4)+saper+strDate.substring(4,6)+saper+strDate.substring(6,8);
+	}
+}
+
 // autocomplete 셋팅
 function setSheetAutocomplete(sheet,col,sabun) {
 	var scriptTxt = "";
@@ -1175,133 +1188,6 @@ function setSheetAutocomplete(sheet,col,sabun) {
 		$("<form></form>",{id:"empForm", name:"empForm"}).html('<input type="hidden" name="searchStatusCd" value="A" /><input type="hidden" name="searchUserId" id="searchUserId" value="'+sabun+'" />').appendTo('body');
 	});
 }
-
-var intervalDestory;
-// autocomplete 생성
-function autoCompleteInit(opt,sheet,Row,Col) {
-	if( Col != opt ) return;
-	
-	if( $("#autoCompleteDiv").length == 0 ) {
-		$('<div></div>',{
-			id:"autoCompleteDiv"
-		}).html("<input id='searchKeyword' name='searchKeyword' type='text' />").appendTo('#empForm');
-
-		var inputId = "searchKeyword";
-		$("#searchKeyword").autocomplete({
-			source: function( request, response ) {
-				$.ajax({
-					url :"/Employee.do?cmd=employeeList",
-					dateType : "json",
-					type:"post",
-					data: $("#empForm").serialize(),
-					success: function( data ) {
-						response( $.map( data.DATA, function( item ) {
-							return {
-								label: item.empSabun + ", " + item.enterCd  + ", " + item.enterNm,
-								searchNm : $("#searchKeyword").val(),
-								enterNm :	item.enterNm,	// 회사명
-								enterCd :	item.enterCd,	// 회사코드
-								empName :	item.empName,	// 사원명
-								empSabun :	item.empSabun,	// 사번
-								orgNm :		item.orgNm,		// 조직명
-								jikweeNm :	item.jikweeNm,	// 직위
-								resNo : 	item.resNo,		// 주민번호
-								resNoStr:	item.resNoStr,	// 주민번호 앞자리
-								statusNm :	item.statusNm,	// 재직/퇴직
-								value :		item.empName
-							};
-						}));
-					}
-				});
-			},
-			minLength: 1,
-			focus: function() {
-				return false;
-			},
-			open: function() {
-				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-			},
-			close: function() {
-				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-			}
-		}).data("uiAutocomplete")._renderItem = employeeRenderItem;
-	};
-
-	$( "#autoCompleteDiv" ).off( "autocompleteselect" );
-	$( "#autoCompleteDiv" ).on( "autocompleteselect", function( event, ui ) {
-		sheet.SetCellText(Row,Col,ui.item.value);
-		$( "#autoCompleteInput" ).val("");
-		autoCompleteDestroy(sheet);
-	} );
-
-	$(".GMVScroll>div").scroll(function () {destroyAutoComplete(sheet);});
-	$(".GMHScrollMid>div").scroll(function () {destroyAutoComplete(sheet);});
-
-	var pleft = sheet.ColLeft(sheet.GetSelectCol());
-	var ptop =  sheet.RowTop(sheet.GetSelectRow()) + sheet.GetRowHeight(sheet.GetSelectRow()) ;
-	//건수정보 표시줄의 높이 만큼.
-	if (sheet.GetCountPosition() == 1 || sheet.GetCountPosition() == 2) ptop +=  13;
-
-	var point = fGetXY( document.getElementById("DIV_"+sheet.id));
-
-	var left = point.x + pleft;
-	var top = point.y + ptop - 16;
-
-	var cWidth = 520;
-	var cHeight = 104;
-	var dWidth = $(window).width();
-	var dHeight = $(window).height();
-
-	if( dWidth < left + cWidth) left = dWidth - cWidth;
-	if( dHeight < top + cHeight) top = top-cHeight-28;
-	if( top < 0 ) top = 0;
-
-	$( "#autoCompleteDiv" ).css("left",left+"px");
-	$( "#autoCompleteDiv" ).css("top",top+"px");
-	clearTimeout(intervalDestory);
-	sheet.SetEditEnterBehavior("none");
-}
-
-//autocomplete 키보드 이벤트
-function autoCompletePress(opt,Row,Col,code) {
-	if( Col != opt ) return;
-
-	var e = jQuery.Event("keydown");
-	e.keyCode = code;
-	$("#searchKeyword").trigger(e);
-	$("#searchKeyword").val( $(".GMEditInput").val() );
-}
-
-// autocomplete 제거
-function autoCompleteDestroy(sheet) {
-	clearInterval(intervalDestory);
-	intervalDestory = setTimeout(function() { destroyAutoComplete(sheet); },200);
-}
-
-//autocomplete 제거
-function destroyAutoComplete(sheet) {
-	$(".GMVScroll>div").unbind("scroll");
-	$(".GMHScrollMid>div").unbind("scroll");
-
-	$( "#autoCompleteInput" ).autocomplete( "destroy" );
-	$( "#autoCompleteDiv").remove();
-	sheet.SetEditEnterBehavior("tab");
-}
-
-function employeeRenderItem(ul, item) {
-	return $("<li />")
-		.data("item.autocomplete", item)
-		.append("<a style='display:block;width:500px'>"
-		+"<span style='display:inline-block;width:50px;'>"+String(item.empName).split(item.searchNm).join('<b>'+item.searchNm+'</b>')+"</span>"
-		+"<span style='display:inline-block;width:50px;'>"+item.resNoStr+"</span>"
-		+"<span style='display:inline-block;width:100px;'>"+item.enterNm+"</span>"
-		+"<span style='display:inline-block;width:50px;'>"+item.empSabun+"</span>"
-		+"<span style='display:inline-block;width:120px;'>"+item.orgNm+"</span>"
-		+"<span style='display:inline-block;width:50px;'>"+item.posNm+"</span>"
-		+"<span style='display:inline-block;width:50px;'>"+item.statusNm+"</span>"
-		+"</a>").appendTo(ul);
-}
-
 
 function getMultiSelect(val) {
 	if(val == null || val == "" ) return "";
@@ -2637,7 +2523,178 @@ function setSheetAutocompleteOrg(sheet, colSaveName, renderItem , callBackFunc )
         $("<form></form>", {
             id: "orgForm1",
             name: "orgForm1"
-        }).html('<input type="hidden" name="searchStatusCd" value="AA" /> <input type="hidden" id="searchOrgType" name="searchOrgType" value="I"/>').appendTo('body')
+        }).html('<input type="hidden" id="searchOrgType" name="searchOrgType" value="I"/>').appendTo('body')
         .append(scriptTxt);
     });
+}
+var intervalOrgDestory;
+//autocomplete 생성
+function autoCompleteOrgInit(opt, sheet, Row, Col, renderItem , callBackFunc) {
+ if (Col != opt) return;
+
+ //자동완성 List form
+ var autocompRenderItem;
+ var callBackFunctionItem;
+ if(renderItem != undefined && renderItem != null ) {
+ 	autocompRenderItem = new Function ( "return "+ renderItem )();
+ } else {
+ 	autocompRenderItem = orgRenderItem1;
+ }
+ if ( callBackFunc != undefined ){
+
+ 	callBackFunctionItem = callBackFunc
+ } else {
+ 	callBackFunctionItem = "getOrgReturnValue";
+ }
+ if ($("#autoCompleteOrgDiv").length == 0) {
+     $('<div></div>', {
+         id: "autoCompleteOrgDiv"
+     }).html("<input id='orgKeyword' name='orgKeyword' type='text' />").appendTo('#orgForm1');
+
+     var inputId = "orgKeyword";
+     $("#orgKeyword").autocomplete({
+         source: function(request, response) {
+             $.ajax({
+                 url: "/ifw/orgCode/list",
+                 dateType: "json",
+                 type: "post",
+                 data: $("#orgForm1").serialize(),
+                 success: function(data) {
+                	 console.log(data.DATA);
+                     response($.map(data.DATA, function(item) {
+                         return {
+                             label: item.orgNm + ",  " + item.enterCd,
+                             searchNm: $("#orgKeyword").val(),
+                             orgCd: item.orgCd, // 조직코드
+                             orgNm: item.orgNm, // 조직명
+                             value: item.orgNm,
+                             callBackFunc : callBackFunctionItem
+                         };
+                     }));
+                 }
+             });
+         },
+ 		autoFocus: true,
+         minLength: 1,
+         focus: function() {
+             return false;
+         },
+         open: function() {
+        	 console.log("orgopen");
+        	 console.log($(this));
+             $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+         },
+         close: function() {
+             $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+         }
+         
+     }).data("uiAutocomplete")._renderItem = autocompRenderItem;
+ };
+ //autocomplete 선택되었을 때 Event Handler
+ $("#autoCompleteOrgDiv").off("autocompleteselect");
+ $("#autoCompleteOrgDiv").on("autocompleteselect", function(event, ui) {
+ 	var row = Row;
+     sheet.SetCellText(Row, Col, ui.item.value);
+
+     $("#autoCompleteOrgInput").val("");
+     autoCompleteOrgDestroy(sheet);
+
+     //상세 데이터 가져오기
+     var orgInfo = new Object();
+     orgInfo.orgCd = ui.item.orgCd;
+     orgInfo.orgNm = ui.item.orgNm;
+     
+     var data = JSON.stringify(orgInfo);
+
+     //직원을 선택시 Data Return
+
+     var returnFunc1 = new Function ( "return "+ ui.item.callBackFunc )()
+
+     if(typeof returnFunc1 != "undefined") {
+     	gPRow = row;
+     	pGubun = "sheetAutocompleteOrg";
+     	returnFunc1( data );
+     }
+
+ });
+	 $(".GMVScroll>div").scroll(function() {
+	     destroyAutoOrgComplete(sheet);
+	 });
+	 $(".GMHScrollMid>div").scroll(function() {
+	     destroyAutoOrgComplete(sheet);
+	 });
+	 var pleft = sheet.ColLeft(sheet.GetSelectCol());
+	 var ptop = sheet.RowTop(sheet.GetSelectRow()) + sheet.GetRowHeight(sheet.GetSelectRow());
+	 //건수정보 표시줄의 높이 만큼.
+	 if (sheet.GetCountPosition() == 1 || sheet.GetCountPosition() == 2) ptop += 13;
+	
+	 var point = fGetXY(document.getElementById("DIV_" + sheet.id));
+	
+	 var left = point.x + pleft;
+	 var top = point.y + ptop - 30;
+	
+	 var cWidth = 520;
+	 var cHeight = 104;
+	 var dWidth = $(window).width();
+	 var dHeight = $(window).height();
+	
+	 if (dWidth < left + cWidth) left = dWidth - cWidth;
+	 if (dHeight < top + cHeight) top = top - cHeight - 28;
+	 if (top < 0) top = 0;
+	 $("#autoCompleteOrgDiv").css("left", left + "px");
+	 $("#autoCompleteOrgDiv").css("top", top + "px");
+	 clearTimeout(intervalOrgDestory);
+	 sheet.$beforeEditEnterBehavior = sheet.GetEditEnterBehavior();
+	 sheet.SetEditEnterBehavior("none");
+}
+
+//autocomplete 키보드 이벤트
+function autoCompleteOrgPress(opt, Row, Col, code) {
+ if (Col != opt) return;
+
+ //IBsheet에서 입력된 값을 가져와 자동완성에 넘김
+ var e = jQuery.Event("keydown");
+ e.keyCode = code;
+ $("#orgKeyword").trigger(e);
+ alert($("#_editInput0").val());
+ alert($(".GMEditInput").val());
+ //IBsheet input tag의 속성 - id:_editInput0 class:GMEditInput
+ if( $("#_editInput0").length != 0 ) {
+ 	$("#orgKeyword").val($("#_editInput0").val());
+ } else {
+ 	//id:_editInput0 가 없는 경우도 있다. 그럴 경우 class:GMEditInput 로 검색
+ 	$("#orgKeyword").val($(".GMEditInput").val());
+ }
+ alert($("#orgKeyword").val());
+}
+
+//autocomplete 제거
+function autoCompleteOrgDestroy(sheet) {
+	clearTimeout(intervalOrgDestory);
+	
+ intervalOrgDestory = setTimeout(function() {
+     destroyAutoCompleteOrg(sheet);
+ }, 200);
+}
+
+//autocomplete 제거
+function destroyAutoCompleteOrg(sheet) {
+ $(".GMVScroll>div").unbind("scroll");
+ $(".GMHScrollMid>div").unbind("scroll");
+
+ $("#autoCompleteOrgInput").autocomplete("destroy");
+ $("#autoCompleteOrgDiv").remove();
+
+ //sheet.SetEditEnterBehavior("tab");
+ sheet.SetEditEnterBehavior(sheet.$beforeEditEnterBehavior);
+}
+
+//autocomplete 리스트 포맷
+function orgRenderItem1(ul, item) {
+ return $("<li />")
+     .data("item.autocomplete", item)
+     .append("<a class='autocomplete' style='width:240px;'>" +
+         "<span style='width:40px;'>" + String(item.orgNm).split(item.searchNm).join('<b>' + item.searchNm + '</b>') + "</span>" +
+         "<span style='width:90px;'>" + item.orgCd + "</span>" +
+         "</a>").appendTo(ul);
 }
