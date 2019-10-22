@@ -34,7 +34,7 @@ public class WtmInterfaceController {
 	public void getcodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공통코드
 		System.out.println("getcodeIf start");
-		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString()); 
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString()); 
 		//Long tenantId = (long) 38;
 		WtmInterfaceService.getCodeIfResult(tenantId);
 		System.out.println("getcodeIf end");
@@ -45,7 +45,7 @@ public class WtmInterfaceController {
 	@RequestMapping(value = "/holiday",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void holidayIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공휴일정보
-		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
 		WtmInterfaceService.getHolidayIfResult(tenantId); //Servie 호출
 		return;
@@ -54,7 +54,7 @@ public class WtmInterfaceController {
 	@RequestMapping(value = "/taaCode",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void taaCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 근태코드정보
-		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
 		WtmInterfaceService.getTaaCodeIfResult(tenantId); //Servie 호출
 		return;
@@ -63,7 +63,7 @@ public class WtmInterfaceController {
 	@RequestMapping(value = "/orgCode",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void orgCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 조직코드정보
-		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
 		WtmInterfaceService.getOrgCodeIfResult(tenantId); //Servie 호출
 		WtmInterfaceService.getOrgChartIfResult(tenantId); //Servie 호출
@@ -73,7 +73,7 @@ public class WtmInterfaceController {
 	@RequestMapping(value = "/orgMapCode",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void orgMapCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사업장, 근무조 정보
-		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
 		WtmInterfaceService.getOrgMapCodeIfResult(tenantId); //Servie 호출
 		return;
@@ -82,7 +82,7 @@ public class WtmInterfaceController {
 	@RequestMapping(value = "/empHis",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void empHisIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
-		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
 		WtmInterfaceService.getEmpHisIfResult(tenantId); //사원 변경정보 저장 Servie 호출
 		return ;
