@@ -44,7 +44,7 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 		Map <String,Object> menuAttributeMap = new HashMap<String,Object>();
 		Map <String,Object> paramMap = new HashMap<String, Object>();
 		//tenant 어디서 가져올지
-		paramMap.put("tenantId", "1");
+		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 			
