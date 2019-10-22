@@ -89,6 +89,63 @@
         ]]>
     </select>
     
+    <select id="getOrgEmpWorkCalendar" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT *
+        	  FROM (
+			        SELECT C.WORK_CALENDAR_ID as workCalendarId, 
+							C.TENANT_ID as tenantId, 
+							C.ENTER_CD as enterCd, 
+							C.SABUN as sabun, 
+							F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS orgNm,
+							F_WTM_GET_EMP_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS empNm,
+							C.YMD as ymd, 
+							C.TIME_CD_MGR_ID as timeCdMgrId,
+							C.ENTRY_SDATE as entrySdate,
+							C.ENTRY_STYPE_CD as entryStypeCd,
+							C.ENTRY_EDATE as entryEdate,
+							C.ENTRY_ETYPE_CD as enteryEtypeCd,
+							C.WORK_CLOSE_YN as workCloseYn,
+							C.HOLIDAY_YN as holidayYn,
+							C.NOTE as note,
+							E.FLEXIBLE_STD_MGR_ID as flexibleStdMgrId,
+							CASE WHEN C.YMD > date_format(now(),'%Y%m%d') THEN SUM(PLAN_MINUTE)
+								 WHEN C.YMD < date_format(now(),'%Y%m%d') THEN SUM(APPR_MINUTE)
+								 WHEN (C.YMD = date_format(now(),'%Y%m%d') && C.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
+								 ELSE SUM(PLAN_MINUTE) END AS totTime
+					  FROM WTM_WORK_CALENDAR C
+					  JOIN WTM_FLEXIBLE_EMP E
+					    ON E.TENANT_ID = C.TENANT_ID
+					   AND E.ENTER_CD = C.ENTER_CD
+					   AND E.SABUN = C.SABUN
+					   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+					  LEFT JOIN WTM_WORK_DAY_RESULT R
+						 ON C.TENANT_ID = R.TENANT_ID 
+						AND C.ENTER_CD = R.ENTER_CD 
+						AND C.SABUN=R.SABUN 
+						AND C.YMD = R.YMD 
+					  JOIN WTM_EMP_HIS H
+						 ON C.TENANT_ID = H.TENANT_ID 
+						AND C.ENTER_CD = H.ENTER_CD 
+						AND C.SABUN = H.SABUN
+					   AND C.YMD BETWEEN H.SYMD AND H.EYMD
+					 WHERE C.TENANT_ID = #{tenantId}
+					   AND C.ENTER_CD = #{enterCd}
+					   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+					   AND H.ORG_CD IN (NULL, 
+		]]>
+					   <foreach collection="orgList" item="org" separator=", ">
+					   #{org}
+					   </foreach>
+					   )
+					GROUP BY C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD
+			) T
+			<if test="searchKeyword!=null and !searchKeyword.equals('')">
+				WHERE (T.sabun LIKE CONCAT('%', #{searchKeyword}, '%') OR T.empNm LIKE CONCAT('%', #{searchKeyword}, '%'))
+			</if>
+			ORDER BY YMD DESC, SABUN
+    </select>
+    
         <select id="getEmpWorkCalendarDayInfo" parameterType="map" resultType="hashmap">
         <![CDATA[
 		      SELECT A.YMD as ymd, 

@@ -111,13 +111,13 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 				}
 			}
 			
-			menuIn.put("descriptionIn", dIn);
+			menuIn.put("description", dIn);
 			menuIn.put("inoutType", "IN");
 			
-			menuOut.put("descriptionIn", dOut);
+			menuOut.put("description", dOut);
 			menuOut.put("inoutType", "OUT");
 
-			menuGoback.put("descriptionIn", dGoback);
+			menuGoback.put("description", dGoback);
 			menuGoback.put("actionType", "ACTIVE");
 			menuGoback.put("label", type.equals("GO")?"외출하기":"복귀하기");
 			menuGoback.put("backgroundColor", type.equals("GO")?"#93DaFF":"#FFF56E");

@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +27,9 @@ import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmCode;
-import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
+import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.repository.WtmCodeRepository;
+import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.LoginService;
@@ -71,6 +71,9 @@ public class ViewController {
 	
 	@Autowired
 	LoginService loginService;
+	
+	@Resource
+	WtmEmpHisRepository empHisRepo;
 
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
@@ -181,6 +184,11 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
+		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabun(tenantId, enterCd, empNo);
+		if(empHis!=null) {
+			mv.addObject("leaderYn", empHis.getLeaderYn());
+		}
+		
 		ObjectMapper mapper = new ObjectMapper();
 		if("workCalendar".equals(viewPage)){
 			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
@@ -239,6 +247,11 @@ public class ViewController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
+		
+		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabun(tenantId, enterCd, empNo);
+		if(empHis!=null) {
+			mv.addObject("leaderYn", empHis.getLeaderYn());
+		}
 		
 		mv.addObject("isEmbedded",false); // 단독으로 열린것임을 표시
 		
