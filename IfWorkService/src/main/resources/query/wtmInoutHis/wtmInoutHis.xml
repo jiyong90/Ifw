@@ -28,6 +28,28 @@
         ]]>
     </select>
     
+    <select id="getContext" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	(SELECT INOUT_DATE as inoutDate, INOUT_TYPE as inoutTypeCd
+        	FROM WTM_INOUT_HIS
+        	WHERE INOUT_TYPE_CD IN ('GO', 'BACK')
+        		AND TENANT_ID = #{tenantId} AND ENTER_CD #{enterCd} AND SABUN = #{sabun}
+        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        	UNION ALL 
+        	(SELECT INOUT_DATE as inoutDate, INOUT_TYPE as inoutTypeCd
+        	FROM WTM_INOUT_HIS
+        	WHERE INOUT_TYPE_CD IN ('IN')
+        		AND TENANT_ID = #{tenantId} AND ENTER_CD #{enterCd} AND SABUN = #{sabun}
+        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        	UNION ALL 
+        	(SELECT INOUT_DATE as inoutDate, INOUT_TYPE as inoutTypeCd
+        	FROM WTM_INOUT_HIS
+        		WHERE INOUT_TYPE_CD IN ('OUT')
+        		AND TENANT_ID = #{tenantId} AND ENTER_CD #{enterCd} AND SABUN = #{sabun}
+        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        ]]>
+    </select>
+    
 	<update id="saveWtmInoutHis" parameterType="map">
         <![CDATA[ 
 			INSERT INTO WTM_INOUT_HIS
