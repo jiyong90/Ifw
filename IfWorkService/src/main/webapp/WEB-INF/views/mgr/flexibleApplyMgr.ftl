@@ -77,7 +77,7 @@
 									<div  class="layout_tabs">
 										<div class="inner sheet_title_wrap clearfix">
 											<div class="float-left title" id="searchAppText">그룹별 대상자 관리</div>
-											<ul class="float-right btn-wrap" id="sheet2_btn">
+											<ul class="float-right btn-wrap" id="sheet2Btn">
 												<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 												<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 											</ul>
@@ -89,7 +89,7 @@
 									<div  class="layout_tabs">
 										<div class="inner sheet_title_wrap clearfix">
 											<div class="float-left title" id="searchAppText">개인별 대상자 관리</div>
-											<ul class="float-right btn-wrap" id="sheet3_btn">
+											<ul class="float-right btn-wrap" id="sheet3Btn">
 												<li><a href="javascript:doAction3('Insert')" class="basic authA">입력</a></li>
 												<li><a href="javascript:doAction3('Save')" class="basic authA">저장</a></li>
 											</ul>
@@ -389,18 +389,24 @@
         sheet2.SetCellValue(gPRow, "orgNm",returnValue.orgNm);
 	}
 	
-	function setButten(applyYn){
+	function setButten(applyYn, sheetNm){
 		// 적용완료되엇으면 수정불가
 		if(applyYn == "Y"){
-			sheet2.SetEditable(0);
-			$("#sheet2_btn").hide();
-			sheet3.SetEditable(0);
-			$("#sheet3_btn").hide();
+			if(sheetNm == "sheet2"){
+				sheet2.SetEditable(0);
+				$("#sheet2Btn").hide();
+			} else {
+				sheet3.SetEditable(0);
+				$("#sheet3Btn").hide();
+			}
 		} else {
-			sheet2.SetEditable(1);
-			$("#sheet2_btn").show();
-			sheet3.SetEditable(1);
-			$("#sheet3_btn").show();
+			if(sheetNm == "sheet2"){
+				sheet2.SetEditable(1);
+				$("#sheet2Btn").show();
+			} else {
+				sheet3.SetEditable(1);
+				$("#sheet3Btn").show();
+			}
 		}
 	}
 
@@ -409,10 +415,6 @@
 		try {
 			if (Msg != "") {
 				alert(Msg);
-			}
-			if(sheet1.RowCount() > 0){
-				var applyYn = sheet1.GetCellValue( 1, "applyYn");
-				setButten(applyYn);
 			}
 			sheetResize();
 		} catch (ex) {
@@ -438,8 +440,6 @@
 			sheet3.RemoveAll();
 			doAction2('Search');
 			doAction3('Search');
-			var applyYn = sheet1.GetCellValue( NewRow, "applyYn");
-			setButten(applyYn);
 		}
 	}
 	
@@ -471,6 +471,8 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
+			var applyYn = sheet1.GetCellValue( sheet1.GetSelectRow(), "applyYn");
+			setButten(applyYn, "sheet2");
 			sheetResize();
 		} catch (ex) {
 			alert("OnSearchEnd Event Error : " + ex);
@@ -494,7 +496,8 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
-
+			var applyYn = sheet1.GetCellValue( sheet1.GetSelectRow(), "applyYn");
+			setButten(applyYn, "sheet3");
 			sheetResize();
 		} catch (ex) {
 			alert("OnSearchEnd Event Error : " + ex);

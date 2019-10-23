@@ -1,6 +1,5 @@
 package com.isu.ifw.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmCalendarService;
 import com.isu.option.vo.ReturnParam;
 
@@ -109,6 +107,39 @@ public class WtmCalendarController {
 		List<Map<String, Object>> workteamList = null;
 		try {		
 			workteamList =  wtmCalendarService.getEmpWorkCalendar(paramMap);
+			
+			rp.put("DATA", workteamList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+
+		return rp;
+	}
+	
+	/**
+	 * 조직장_조직원 근태 달력 전체 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/org", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getOrgEmpWorkCalendar(@RequestParam Map<String, Object> paramMap
+													   				 , HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		
+		rp.setSuccess("");
+	
+		List<Map<String, Object>> workteamList = null;
+		try {		
+			workteamList =  wtmCalendarService.getOrgEmpWorkCalendar(tenantId, enterCd, empNo, paramMap);
 			
 			rp.put("DATA", workteamList);
 		} catch(Exception e) {

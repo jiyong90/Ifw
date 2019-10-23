@@ -130,7 +130,7 @@ public class WtmInterfaceController {
 		// 공통코드
 		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
 		String enterCd = paramMap.get("enterCd").toString(); // 회사
-		String sdate = paramMap.get("synd").toString(); // 기준일
+		String sdate = paramMap.get("symd").toString(); // 기준일
 		System.out.println("lastDataTime : " + lastDataTime);
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
