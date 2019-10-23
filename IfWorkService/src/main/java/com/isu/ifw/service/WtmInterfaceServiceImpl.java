@@ -726,7 +726,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		        		ifDetMap.put("seq", getIfDetList.get(j).get("SEQ"));
 	        		        		ifDetMap.put("orgLevel", getIfDetList.get(j).get("ORG_LEVEL"));
 	        		        		ifDetMap.put("orderSeq", getIfDetList.get(j).get("ORGER_SEQ"));
-	        		        		ifList.add(ifMap);
+	        		        		ifList.add(ifDetMap);
 	        	   	        	}
 	        	   	        	resultCnt += wtmInterfaceMapper.insertWtmOrgChartDet(ifList);
 			            	} catch(Exception e) {
