@@ -718,7 +718,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        				try {
 	        					
 	        					List<Map<String, Object>> ifList = new ArrayList();
-	        	   	        	for(int j=0; i<getIfList.size(); j++) {
+	        	   	        	for(int j=0; i<getIfDetList.size(); j++) {
 	        		        		Map<String, Object> ifDetMap = new HashMap<>();
 	        		        		ifDetMap.put("orgChartId", orgChartId);
 	        		        		ifDetMap.put("orgCd", getIfDetList.get(j).get("ORG_CD"));
