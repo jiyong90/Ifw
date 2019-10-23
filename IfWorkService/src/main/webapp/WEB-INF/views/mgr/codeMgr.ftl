@@ -39,7 +39,7 @@
 					<div class="inner">
 					<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">공통코드관리</div>
-							<ul class="float-right btn-wrap">
+							<ul class="float-right btn-wrap" id="sheet2Btn">
 								<li><a href="javascript:doAction2('Insert')" class="basic button">입력</a></li>
 								<li><a href="javascript:doAction2('Save')" class="basic">저장</a></li>
 							</ul>
@@ -172,13 +172,19 @@
           if (StCode == 401) {
         	  window.parent.location.href = loginUrl;
 	   	  } 
+	   	  for(i=1;i<=sheet1.RowCount();i++){
+	   	  	var editYn = sheet1.GetCellValue(i, "editYn");
+	   	  	console.log("i : " + i + ", editYn : " + editYn);
+	   	  	if(editYn == "Y"){
+	   	  		sheet1.SetRowEditable(i, 1);
+	   	  	} else {
+	   	  		sheet1.SetRowEditable(i, 0);
+	   	  	}
+	   	  }
        } catch (ex) {
 			alert(ex);
        }
 	}
-
-	
-
 	// 저장 후 메시지
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
@@ -195,7 +201,15 @@
 	}
 	
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
+		console.log("sheet1_OnSelectCell !!");
 		if(OldRow != NewRow){
+			if(sheet1.GetCellValue(NewRow, "editYn") == "Y"){
+				sheet2.SetEditable(1);
+				$("#sheet2Btn").show();
+			} else {
+				sheet2.SetEditable(0);
+				$("#sheet2Btn").hide();
+			}
 			doAction2('Search');
 		}
 	}

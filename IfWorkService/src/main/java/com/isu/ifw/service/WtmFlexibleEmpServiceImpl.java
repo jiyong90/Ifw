@@ -385,6 +385,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 			}
 
 			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(emp.getFlexibleStdMgrId()).get();
