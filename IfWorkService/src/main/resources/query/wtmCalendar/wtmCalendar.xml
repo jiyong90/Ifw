@@ -13,15 +13,14 @@
 			     , F_WTM_DATE_FORMAT(h.HOLIDAY_YMD,'%Y-%m-%d') as holidayYmd
 			     , h.HOLIDAY_NM as holidayNm
 			  FROM WTM_DAY_MGR d
-			  LEFT OUTER JOIN WTM_HOLIDAY_MGR h
+			  JOIN WTM_HOLIDAY_MGR h
 			    ON 'Y' = ( CASE WHEN h.SUN_YN = 'Y' AND d.SUN_YMD = h.HOLIDAY_YMD THEN 'Y'
 			                    WHEN h.SUN_YN = 'N' AND d.MOON_YMD = h.HOLIDAY_YMD THEN 'Y'
 			                    ELSE 'N' END ) 
 			 WHERE (h.TENANT_ID IS NULL OR h.TENANT_ID = #{tenantId})
 			   AND (#{enterCd, jdbcType=VARCHAR} IS NULL OR h.ENTER_CD IS NULL OR h.ENTER_CD = #{enterCd, jdbcType=VARCHAR})
 			   AND (#{bisinessPlaceCd, jdbcType=VARCHAR} IS NULL OR h.BISINESS_PLACE_CD IS NULL OR h.BISINESS_PLACE_CD = #{bisinessPlaceCd, jdbcType=VARCHAR})
-			   AND F_WTM_DATE_FORMAT(F_WTM_TO_DATE(SUN_YMD,'%Y%m%d'),'%Y%m') = #{ym}
-			   AND h.HOLIDAY_YMD IS NOT NULL AND h.HOLIDAY_YMD <> ''
+			   AND SUBSTR(SUN_YMD,1,6) = #{ym}
 			ORDER BY d.SUN_YMD
         ]]>
     </select>
