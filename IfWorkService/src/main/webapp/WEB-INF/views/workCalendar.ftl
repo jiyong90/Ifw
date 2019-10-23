@@ -688,30 +688,6 @@
 	        language: 'ko'
 	    });
 
-		//출퇴근시간
-		$('#startTime').datetimepicker({
-            //format: 'LT',
-            format: 'HH:mm',
-            use24hours: true,
-            language: 'ko',
-            widgetPositioning: {
-                horizontal: 'left',
-                vertical: 'bottom'
-            },
- 		    useCurrent: false
-        });
-		
-		$('#endTime').datetimepicker({
-            //format: 'LT',
-            format: 'HH:mm',
-            use24hours: true,
-            language: 'ko',
-            widgetPositioning: {
-                horizontal: 'right',
-                vertical: 'bottom'
-            },
- 		    useCurrent: false
-        });
 	});
 	
    	var calendarTopVue = new Vue({
