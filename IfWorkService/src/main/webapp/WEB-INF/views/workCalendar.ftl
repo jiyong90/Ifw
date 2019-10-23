@@ -910,7 +910,7 @@
 	    	selectedDate: '${today}',
 	    	workPlanYn: false,
 	    	flexCancelBtnYn: false,
-	    	workPlanBtnYn: false
+	    	//,workPlanBtnYn: false
   		},
   		watch: {
   			rangeInfo : function(val, oldVal) {
@@ -1001,8 +1001,8 @@
 								}
 								
 								//근무계획작성
-								if(now!='' && moment(now).diff(data.eYmd)<=0)
-									$this.workPlanBtnYn = true;
+								//if(now!='' && moment(now).diff(data.eYmd)<=0)
+								//	$this.workPlanBtnYn = true;
 							} 
 						} else {
 							//근무제적용취소,근무계획작성 버튼 숨기기
