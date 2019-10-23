@@ -15,7 +15,7 @@
 				</div>
 			</form>
 			<div class="row no-gutters">
-				<div class="col-5 pr-3">
+				<div class="col-6 pr-3">
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">신청서코드관리</div>
@@ -27,7 +27,7 @@
 					</div>
 					<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>
 				</div>
-				<div class="col-5 pr-3">
+				<div class="col-6 pr-3">
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">신청서별 기준</div>
@@ -37,6 +37,12 @@
 						</div>
 						<div id="view_appl">
 							<table class="default">
+								<colgroup>
+									<col width="20%">
+									<col width="30%">
+									<col width="20%">
+									<col width="30%">
+								</colgroup>
 								<tbody>
 									<tr id="trApplMinute">
 										<th>신청 시간 단위</th>
