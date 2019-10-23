@@ -191,8 +191,9 @@ public class ViewController {
 		
 		ObjectMapper mapper = new ObjectMapper();
 		if("workCalendar".equals(viewPage)){
+			String workday = null;
 			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
-				String workday = request.getParameter("date");
+				workday = request.getParameter("date");
 				mv.addObject("workday", workday); 
 			}
 			
@@ -204,6 +205,25 @@ public class ViewController {
 					//연장근무 또는 휴일근무 신청 시 사유
 					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
+				} else if("Day".equals(calendarType)) {
+					//근무 계획을 작성한 근무제 정보
+					if(request.getParameter("flexibleEmpId")!=null && !"".equals(request.getParameter("flexibleEmpId"))) {
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("flexibleEmpId", Long.valueOf(request.getParameter("flexibleEmpId")));
+						Map<String, Object> flexibleEmp = flexibleEmpService.getFlexibleEmpForPlan(tenantId, enterCd, empNo, paramMap, userId);
+						if(flexibleEmp!=null) {
+							try {
+								System.out.println("flexibleEmp::::::"+mapper.writeValueAsString(flexibleEmp));
+								mv.addObject("flexibleEmp", mapper.writeValueAsString(flexibleEmp));
+							} catch (JsonProcessingException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								mv.addObject("flexibleEmp", null);
+							}
+						}
+						
+					}
+						
 				}
 			} 
 			
@@ -334,8 +354,9 @@ public class ViewController {
 
 		if("workCalendar".equals(viewPage)){
 			ObjectMapper mapper = new ObjectMapper();
+			String workday = null;
 			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
-				String workday = request.getParameter("date");
+				workday = request.getParameter("date");
 				mv.addObject("workday", workday); 
 			}
 			String calendarType = "Month";
@@ -354,6 +375,24 @@ public class ViewController {
 					e.printStackTrace();
 					mv.addObject("reasons", null);
 				}
+			} else if("Day".equals(calendarType)) {
+				//근무 계획을 작성한 근무제 정보
+				if(request.getParameter("flexibleEmpId")!=null && !"".equals(request.getParameter("flexibleEmpId"))) {
+					Map<String, Object> paramMap = new HashMap<String, Object>();
+					paramMap.put("flexibleEmpId", Long.valueOf(request.getParameter("flexibleEmpId")));
+					Map<String, Object> flexibleEmp = flexibleEmpService.getFlexibleEmpForPlan(tenantId, enterCd, empNo, paramMap, userId);
+					if(flexibleEmp!=null) {
+						try {
+							mv.addObject("flexibleEmp", mapper.writeValueAsString(flexibleEmp));
+						} catch (JsonProcessingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							mv.addObject("flexibleEmp", null);
+						}
+					}
+					
+				}
+					
 			}
 			mv.addObject("pageName", viewPage);
 			return workCalendarPage(mv, tenantId, enterCd, empNo, userId, request);

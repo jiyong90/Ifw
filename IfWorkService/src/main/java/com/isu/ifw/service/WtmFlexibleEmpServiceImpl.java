@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleApplDet;
 import com.isu.ifw.entity.WtmFlexibleEmp;
@@ -110,7 +111,11 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		if(flexibleEmpList!=null && flexibleEmpList.size()>0) {
 			for(Map<String, Object> flexibleEmp : flexibleEmpList) {
 				if(flexibleEmp.get("flexibleEmpId")!=null && !"".equals(flexibleEmp.get("flexibleEmpId"))) {
-					List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(Long.valueOf(flexibleEmp.get("flexibleEmpId").toString()));
+					//List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(Long.valueOf(flexibleEmp.get("flexibleEmpId").toString()));
+					//List<WtmDayWorkVO> dayWorks = getDayWorks(plans, userId);
+					//flexibleEmp.put("dayWorks", dayWorks);
+					
+					List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlanByYmdBetween(paramMap);
 					List<WtmDayWorkVO> dayWorks = getDayWorks(plans, userId);
 					flexibleEmp.put("dayWorks", dayWorks);
 				}
@@ -314,10 +319,26 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		if(dateMap != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+			
+			
 			for(String k : dateMap.keySet()) {
+//				
+//				Map<String, String> dayResult = (Map<String, String>) dateMap.get(k);
+//				if(dayResult.get("shm") != null && !dayResult.get("shm").equals("")) {
+//					String shm = dayResult.get("shm");
+//					String ehm = dayResult.get("ehm");
+//					Date s = sdf.parse(k+shm);
+//					Date e = sdf.parse(k+ehm);
+//					
+//					this.addWtmDayResultInBaseTimeType(emp.getTenantId(), emp.getEnterCd(), k, emp.getSabun(), WtmApplService.TIME_TYPE_BASE, null, s, e, null, userId);
+//				}
+//				
+					
+				
 				WtmWorkDayResult result =  workDayResultRepo.findByTimeTypeCdAndTenantIdAndEnterCdAndSabunAndYmd(WtmApplService.TIME_TYPE_BASE, emp.getTenantId(), emp.getEnterCd(), emp.getSabun(), k);
 				if(result == null) {
 					result = new WtmWorkDayResult();
+					
 					//부모키 가져오기
 					WtmWorkCalendar c = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd( emp.getTenantId(), emp.getEnterCd(), emp.getSabun(), k);
 					result.setTenantId(c.getTenantId());
@@ -986,5 +1007,37 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				
 	}
 	
+	@Override
+	public List<Map<String, Object>> getFlexibleListForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
+		// TODO Auto-generated method stub
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		return flexEmpMapper.getFlexibleListForPlan(paramMap);
+	}
 	
+	@Override
+	public Map<String, Object> getFlexibleEmpForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
+		// TODO Auto-generated method stub
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		Map<String, Object> flexibleEmp = null;
+		List<Map<String, Object>> flexibleEmpList = flexEmpMapper.getFlexibleListForPlan(paramMap);
+		if(flexibleEmpList!=null && flexibleEmpList.size()>0) {
+			for(Map<String, Object> emp : flexibleEmpList) {
+				if(emp.get("flexibleEmpId")!=null && !"".equals(emp.get("flexibleEmpId"))) {
+					flexibleEmp = new HashMap<String, Object>();
+					flexibleEmp.putAll(emp);
+					List<Map<String, Object>> plans = flexEmpMapper.getPlanByFlexibleEmpId(paramMap);
+					List<WtmDayWorkVO> dayWorks = getDayWorks(plans, userId);
+					flexibleEmp.put("dayWorks", dayWorks);
+				}
+			}
+		}
+		
+		return flexibleEmp;
+	}
 }

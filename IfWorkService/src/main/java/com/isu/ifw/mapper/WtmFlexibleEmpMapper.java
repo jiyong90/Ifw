@@ -228,4 +228,12 @@ public interface WtmFlexibleEmpMapper {
 	
 	public void deleteByApplId(@Param("applId") Long applId);
 	
+	/**
+	 * 계획을 작성 해야 하는 유연근무제 리스트
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getFlexibleListForPlan(Map<String, Object> paramMap);
+	
+	public List<Map<String, Object>> getPlanByFlexibleEmpId(Map<String, Object> paramMap);
 }

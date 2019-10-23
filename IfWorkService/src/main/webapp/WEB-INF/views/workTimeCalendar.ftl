@@ -255,6 +255,77 @@
         </div>
     </div>
     <!-- 연장근무취소사유 modal end -->
+    <!-- 근무시간 정정요청 modal start -->
+    <div class="modal fade show" id="inOutChangeModal" tabindex="-1" role="dialog"  data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">근무시간 정정요청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap">
+                        	<div class="form-row no-gutters">
+		                        <div class="form-group col-12">
+	                                <label for="planDate">계획 근무시간</label>
+	                                <div id="planDate" v-if="inOutChangeAppl.planSdate||inOutChangeAppl.planEdate">
+		                             	<template v-if="inOutChangeAppl.planSdate">{{inOutChangeAppl.planSdate}}</template>
+		                             	<template v-if="inOutChangeAppl.planEdate">~ {{inOutChangeAppl.planEdate}}</template>
+	                            	</div>
+	                            </div>
+	                        </div>
+	                        <div class="form-row no-gutters">
+	                            <div class="form-group col-12">
+	                                <label for="inOutDate">출/퇴근 시각</label>
+	                                <div id="inOutDate" v-if="inOutChangeAppl.inoutSdate||inOutChangeAppl.inoutEdate">
+		                             	<template v-if="inOutChangeAppl.inoutSdate">
+		                             		{{inOutChangeAppl.inoutSdate}}
+		                             	</template>
+		                             	<template v-else>
+		                             		미타각
+		                             	</template>
+		                             	~
+		                             	<template v-if="inOutChangeAppl.inoutEdate">
+		                             		{{inOutChangeAppl.inoutEdate}}
+		                             	</template>
+		                             	<template v-else>
+		                             		미타각
+		                             	</template>
+	                            	</div>
+	                            </div>
+	                        </div>
+                           	<div class="time-input-form form-row no-gutters">
+	                            <div class="form-group col-6 pr-1">
+	                                <label for="chgSdate" data-target-input="nearest">변경 출근시간</label>
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="chgSdate" value="" data-toggle="datetimepicker" data-target="#chgSdate" autocomplete="off" required>
+	                            </div>
+	                            <div class="form-group col-6 pl-1">
+	                                <label for="chgEdate" data-target-input="nearest">변경 퇴근시간</label>
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="chgEdate" value="" data-toggle="datetimepicker" data-target="#chgEdate" autocomplete="off" required>
+	                            </div>
+	                        </div>
+                            <div class="form-row no-gutters">
+                                <div class="form-group col-12">
+                                    <label for="reason">사유</label>
+                                    <textarea class="form-control" id="chgReason" rows="3" placeholder="사유를 반드시 입력해 주시기 바랍니다."
+                                        required=""></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-secondary rounded-0"
+                                data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-default rounded-0" @click="inOutChangeAppl">확인요청</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 근무시간 정정요청 modal end -->
     <!-- 연장근무신청 상세보기 modal start -->
     <div class="modal fade show" id="overtimeApplDetail" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-md" role="document">
@@ -392,7 +463,7 @@
             language: 'ko'
         });
 		
-        $('#sTime').datetimepicker({
+        $('#sTime, #chgSdate').datetimepicker({
             //format: 'LT',
             format: 'HH:mm',
             use24hours: true,
@@ -403,7 +474,7 @@
             }
         });
         
-        $('#eTime').datetimepicker({
+        $('#eTime, #chgEdate').datetimepicker({
             //format: 'LT',
             format: 'HH:mm',
             use24hours: true,
@@ -453,7 +524,8 @@
   		    	overtimeAppl: {},
   		    	applCode: {}, //신청서 정보
   		    	subsYn: false, //대체휴가 사용 여부
-  		    	payTargetYn: false //수당 지급 대상자
+  		    	payTargetYn: false, //수당 지급 대상자
+  		    	inOutChangeAppl: {}
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    },
   		    computed: {
@@ -584,6 +656,19 @@
   							calendarLeftVue.workTimeInfo = {};
   							if(data!=null) {
   								calendarLeftVue.workTimeInfo = data;
+  								
+  								//근태 사유서
+  								if(data.hasOwnProperty('planSdate') && data.planSdate!=null && data.planSdate!='')
+  									$this.inOutChangeAppl['planSdate']=moment(data.planSdate).format('YYYY-MM-DD HH:mm');
+  								
+  								if(data.hasOwnProperty('planEdate') && data.planEdate!=null && data.planEdate!='')
+  									$this.inOutChangeAppl['planEdate']=moment(data.planEdate).format('YYYY-MM-DD HH:mm');
+  								
+  								if(data.hasOwnProperty('entrySdate') && data.entrySdate!=null && data.entrySdate!='')
+  									$this.inOutChangeAppl['inoutSdate']=moment(data.entrySdate).format('YYYY-MM-DD HH:mm');
+  								
+  								if(data.hasOwnProperty('entryEdate') && data.entryEdate!=null && data.entryEdate!='')
+  									$this.inOutChangeAppl['inoutEdate']=moment(data.entryEdate).format('YYYY-MM-DD HH:mm');
   							}
   						},
   						error: function(e) {
@@ -1378,6 +1463,66 @@
   	         	},
   	         	delSubYmd: function(idx){
   	         		this.subYmds.splice(idx,1);
+  	         	},
+  	         	inOutChangeAppl: function() {
+  	         		var $this = this;
+  	         		var applYn = true;
+  	         		var forms = document.getElementById('inOutChangeModal').getElementsByClassName('needs-validation');
+  	         		var validation = Array.prototype.filter.call(forms, function(form) {
+  	         			if (form.checkValidity() === false) {
+  	         				applYn = false;
+  	         				event.preventDefault();
+  	         		        event.stopPropagation();
+  	         			}
+  	         			form.classList.add('was-validated');
+  	         		});
+  	         		
+  	         		if(applYn) {
+  	         			var inOutChgAppl = $this.inOutChangeAppl;
+  	         			var param = {};
+  	         			param['workTypeCd'] = 'ENTRY_CHG';
+  	         			param['ymd'] = moment($this.workday).format('YYYYMMDD');
+  	         			
+  	         			if(inOutChgAppl.planSdate!=null && inOutChgAppl.planSdate!=undefined && inOutChgAppl.planSdate!='')
+  	         				param['planSdate'] = moment(inOutChgAppl.planSdate).format('YYYYMMDDHHmm');
+  	         			if(inOutChgAppl.planEdate!=null && inOutChgAppl.planEdate!=undefined && inOutChgAppl.planEdate!='')
+  	         				param['planEdate'] = moment(inOutChgAppl.planEdate).format('YYYYMMDDHHmm');
+  	         			if(inOutChgAppl.entrySdate!=null && inOutChgAppl.entrySdate!=undefined && inOutChgAppl.entrySdate!='')
+  	         				param['entrySdate'] = moment(inOutChgAppl.entrySdate).format('YYYYMMDDHHmm');
+  	         			if(inOutChgAppl.entryEdate!=null && inOutChgAppl.entryEdate!=undefined && inOutChgAppl.entryEdate!='')
+  	         				param['entryEdate'] = moment(inOutChgAppl.entryEdate).format('YYYYMMDDHHmm');
+  	         			if(inOutChgAppl.chgSdate!=null && inOutChgAppl.chgSdate!=undefined && inOutChgAppl.chgSdate!='')
+  	         				param['chgSdate'] = moment(inOutChgAppl.chgSdate).format('YYYYMMDDHHmm');
+  	         			if(inOutChgAppl.chgEdate!=null && inOutChgAppl.chgEdate!=undefined && inOutChgAppl.chgEdate!='')
+  	         				param['chgEdate'] = moment(inOutChgAppl.chgEdate).format('YYYYMMDDHHmm');
+  	         			
+  	         			param['reason'] = $("#chgReason").val();
+  	         			
+  	         			Util.ajax({
+	  	  					url: "${rc.getContextPath()}/inOutChangeAppl/request",
+	  	  					type: "POST",
+	  	  					contentType: 'application/json',
+	  	  					data: JSON.stringify(param),
+	  	  					dataType: "json",
+	  	  					success: function(data) {
+	  	  						if(data!=null && data.status=='OK') {
+		  	  						$("#alertText").html("확인요청 되었습니다.");
+			  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+			  	  	         			$("#alertModal").off('hidden.bs.modal');
+			  	  	         		$("#inOutChangeModal").modal("show"); 
+			  	  	         		});
+			  	  	         		$("#alertModal").modal("show"); 
+	  	  						}
+	  	  					},
+	  	  					error: function(e) {
+	  	  						console.log(e);
+	  	  						$("#alertText").html("저장 시 오류가 발생했습니다.");
+	  	    	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+	  	    	  	         		$("#alertModal").modal("show"); 
+	  	  					}
+	  	  				}); 
+  	         		}
+  	         		
   	         	}
   		    }
    	});

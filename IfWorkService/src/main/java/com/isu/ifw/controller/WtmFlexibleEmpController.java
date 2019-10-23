@@ -397,4 +397,37 @@ public class WtmFlexibleEmpController {
 		
 		return rp;
 	}
+	
+	/**
+	 * 근무 계획을 작성할 근무제 정보 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/plan/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getFlexibleListForPlan(@RequestParam Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> flexibleList = null;
+		
+		try {
+			flexibleList = flexibleEmpService.getFlexibleListForPlan(tenantId, enterCd, sabun, paramMap, userId);
+			rp.put("flexibleList", flexibleList);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 }
