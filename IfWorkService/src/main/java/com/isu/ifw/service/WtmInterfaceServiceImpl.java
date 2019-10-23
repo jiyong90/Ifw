@@ -714,7 +714,9 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	                	}
 	        			System.out.println("getIfDetList.size() : " + getIfDetList.size());
 	        			if(retMsg == null && getIfDetList != null && getIfDetList.size() > 0) {
+	        				System.out.println("orgchardet insert :c ");
 	        				try {
+	        					
 	        					List<Map<String, Object>> ifList = new ArrayList();
 	        	   	        	for(int j=0; i<getIfList.size(); j++) {
 	        		        		Map<String, Object> ifDetMap = new HashMap<>();
@@ -725,7 +727,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		        		ifDetMap.put("orgLevel", getIfDetList.get(j).get("ORG_LEVEL"));
 	        		        		ifDetMap.put("orderSeq", getIfDetList.get(j).get("ORGER_SEQ"));
 	        		        		ifList.add(ifMap);
-	        		        		
 	        	   	        	}
 	        	   	        	resultCnt += wtmInterfaceMapper.insertWtmOrgChartDet(ifList);
 			            	} catch(Exception e) {
