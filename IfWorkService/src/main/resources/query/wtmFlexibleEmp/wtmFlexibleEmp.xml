@@ -14,7 +14,7 @@
 			     , E.EYMD AS eYmd
 			     , E.WORK_TYPE_CD AS workTypeCd
 			     , E.FLEXIBLE_NM AS flexibleNm
-			     , NULL AS applId
+			     , NULL AS applId 
 				 , NULL AS applCd
 				 , NULL AS applStatusCd
 				 , NULL AS applStatusNm

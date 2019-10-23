@@ -82,10 +82,38 @@
   		    			var $this = this;
 	    				var unitMinute = this.flexibleEmp.unitMinute;
 	    				
-		    		/* 	if(unitMinute!=null && unitMinute!='' && unitMinute!=undefined) {
-	    					$('#startTime').datetimepicker('stepping',Number(unitMinute));
-	    					$('#endTime').datetimepicker('stepping',Number(unitMinute));
-	    				} */
+		    		    if(unitMinute!=null && unitMinute!='' && unitMinute!=undefined) {
+	    					//$('#startTime').datetimepicker('stepping',Number(unitMinute));
+	    					//$('#endTime').datetimepicker('stepping',Number(unitMinute));
+	    					
+	    					//출퇴근시간
+	    					$('#startTime').datetimepicker({
+	    			            //format: 'LT',
+	    			            format: 'HH:mm',
+	    			            use24hours: true,
+	    			            language: 'ko',
+	    			            widgetPositioning: {
+	    			                horizontal: 'left',
+	    			                vertical: 'bottom'
+	    			            },
+	    			 		    useCurrent: false,
+	    			 		   	stepping: Number(unitMinute)
+	    			        });
+	    					
+	    					$('#endTime').datetimepicker({
+	    			            //format: 'LT',
+	    			            format: 'HH:mm',
+	    			            use24hours: true,
+	    			            language: 'ko',
+	    			            widgetPositioning: {
+	    			                horizontal: 'right',
+	    			                vertical: 'bottom'
+	    			            },
+	    			 		    useCurrent: false,
+	    			 		    stepping: Number(unitMinute)
+	    			        });
+	    					
+	    				}
 		    			
 		    			//상세 계획 입력 화면 전환
 		         		$this.viewWorkPlan(this.flexibleEmp);
@@ -622,7 +650,7 @@
   	         		$("#loading").show();
 	  	         	
          			var param = {
-         				flexibleEmpId : calendarLeftVue.flexibleAppl.flexibleEmpId,
+         				flexibleEmpId : $this.flexibleEmp.flexibleEmpId,
          				dayResult : $this.dayResult
 	   		    	};
          			
@@ -642,7 +670,7 @@
 								$("#alertText").html("저장되었습니다.");
 								//$this.dayResult = {};
 								if(data.dayWorks!=null && data.dayWorks.length>0) {
-									$this.dayWorks[calendarLeftVue.flexibleAppl.sYmd] = data.dayWorks;
+									$this.flexibleEmp.dayWorks = data.dayWorks;
 									$this.addDayWorks();
 								}
 								
