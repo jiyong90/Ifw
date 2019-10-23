@@ -683,7 +683,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         				// 신규
         				resultCnt += wtmInterfaceMapper.insertWtmOrgChart(ifMap);
         				// 저장후 id 조회
-        				orgChartId = Long.parseLong(result.get("ORG_CHART_ID").toString());
+        				Map<String, Object> resultId = wtmInterfaceMapper.getWtmOgrChartId(ifMap);
+        				orgChartId = Long.parseLong(resultId.get("ORG_CHART_ID").toString());
         				ifMap.put("orgChartId", orgChartId);
         			}
         			
@@ -694,13 +695,13 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         				String param = "?lastDataTime="+lastDataTime
    			                 + "&enterCd="+getIfList.get(i).get("ENTER_CD")
    			                 + "&symd="+getIfList.get(i).get("SDATE");
-        	        	String ifUrl = setIfUrl(tenantId, "/holiday", param);
+        	        	String ifUrl = setIfUrl(tenantId, "/orgChartDet", param);
         	        	getIfDetMap = getIfRt(ifUrl);
         		   		
         		   		if (getIfDetMap != null && getIfDetMap.size() > 0) {
         		   			String ifMsg = getIfDetMap.get("message").toString();
         		   			if(!"OK".equals(ifMsg)) {
-        		   				retMsg = "orgChartDtl get : " + ifMsg;
+        		   				retMsg = "getIfDetMap get : " + ifMsg;
         		   			} else {
         		   				getIfDetList = (List<Map<String, Object>>) getIfDetMap.get("ifData");
         		   			}
@@ -723,6 +724,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         		        		ifDetMap.put("orgLevel", getIfDetList.get(j).get("ORG_LEVEL"));
         		        		ifDetMap.put("orderSeq", getIfDetList.get(j).get("ORGER_SEQ"));
         		        		ifList.add(ifMap);
+        		        		
         	   	        	}
         	   	        	resultCnt += wtmInterfaceMapper.insertWtmOrgChartDet(ifList);
 		            	} catch(Exception e) {
