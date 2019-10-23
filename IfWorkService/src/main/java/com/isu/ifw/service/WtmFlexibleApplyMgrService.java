@@ -3,7 +3,7 @@ package com.isu.ifw.service;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Service;
+import com.isu.option.vo.ReturnParam;
 
 /**
  * 
@@ -16,6 +16,8 @@ public interface WtmFlexibleApplyMgrService {
 
 	public int setApplyList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 	
+	public ReturnParam setApply(Long tenantId, String enterCd, String userId, Long flexibleApplyId);
+	
 	public List<Map<String, Object>> getApplyGrpList(Map<String, Object> paramMap);
 
 	public int setApplyGrpList(String userId, Long flexibleApplyId, Map<String, Object> convertMap);
@@ -23,4 +25,6 @@ public interface WtmFlexibleApplyMgrService {
 	public List<Map<String, Object>> getApplyEmpList(Map<String, Object> paramMap);
 
 	public int setApplyEmpList(String userId,Long flexibleApplyId, Map<String, Object> convertMap);
+	
+	public List<Map<String, Object>> getApplyEmpPopList(Map<String, Object> paramMap);
 }

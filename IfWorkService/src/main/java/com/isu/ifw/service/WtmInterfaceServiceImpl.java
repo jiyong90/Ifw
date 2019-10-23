@@ -33,6 +33,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	@Override
 	public Map<String, Object> getIfLastDate(Long tenantId, String ifType) throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("getIfLastDate tenantId : " + tenantId + ", ifType : " + ifType);
 		String lastDataTime = null;
 		String nowDataTime = null;
 		Map<String, Object> retMap = new HashMap<>();
@@ -65,7 +66,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 			} else {
 				nowDataTime = "19000101000000";
 			}
-			
+			System.out.println("getIfLastDate Ret lastDate : " + lastDataTime + ", nowDate : " + nowDataTime);
 			retMap.put("lastDate", lastDataTime);
 			retMap.put("nowDate", nowDataTime);
 		} catch (Exception e) {
@@ -90,6 +91,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	@Override
 	public String setIfUrl(Long tenantId, String ifaddUrl, String param) throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("setIfUrl tenantId : " + tenantId + ", ifaddUrl : " + ifaddUrl + ", param : " + param);
 		String ifUrl = "";
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
@@ -103,10 +105,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 	        }
 		}
-		try {
-		} catch (Exception e) {
-            e.printStackTrace();
-		}
+		System.out.println("setIfUrl Rtn ifUrl : " + ifUrl);
 		return ifUrl;
 	}
 	
@@ -543,11 +542,11 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		Map<String, Object> ifMap = new HashMap<>();
 	        		ifMap.put("tenantId", tenantId);
 	        		ifMap.put("enterCd", getIfList.get(i).get("ENTER_CD"));
-	        		ifMap.put("codeCd", getIfList.get(i).get("ORG_CD"));
-	        		ifMap.put("codeNm", getIfList.get(i).get("ORG_NM"));
+	        		ifMap.put("orgCd", getIfList.get(i).get("ORG_CD"));
+	        		ifMap.put("orgNm", getIfList.get(i).get("ORG_NM"));
 	        		ifMap.put("symd", getIfList.get(i).get("SDATE"));
 	        		ifMap.put("eymd", getIfList.get(i).get("EDATE"));
-	        		ifMap.put("orgtype", getIfList.get(i).get("ORG_TYPE"));
+	        		ifMap.put("orgType", getIfList.get(i).get("ORG_TYPE"));
 	        		ifMap.put("note", getIfList.get(i).get("MEMO"));
 	        		ifList.add(ifMap);
    	        	}
@@ -684,51 +683,56 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         				// 신규
         				resultCnt += wtmInterfaceMapper.insertWtmOrgChart(ifMap);
         				// 저장후 id 조회
-        				orgChartId = Long.parseLong(result.get("ORG_CHART_ID").toString());
+        				Map<String, Object> resultId = wtmInterfaceMapper.getWtmOgrChartId(ifMap);
+        				orgChartId = Long.parseLong(resultId.get("ORG_CHART_ID").toString());
+        				System.out.println("insert orgChartId : " + orgChartId);
         				ifMap.put("orgChartId", orgChartId);
         			}
         			
-        			
-        			// chart detail 시작
-        			getIfDetList = null;
-        			try {
-        				String param = "?lastDataTime="+lastDataTime
-   			                 + "&enterCd="+getIfList.get(i).get("ENTER_CD")
-   			                 + "&symd="+getIfList.get(i).get("SDATE");
-        	        	String ifUrl = setIfUrl(tenantId, "/holiday", param);
-        	        	getIfDetMap = getIfRt(ifUrl);
-        		   		
-        		   		if (getIfDetMap != null && getIfDetMap.size() > 0) {
-        		   			String ifMsg = getIfDetMap.get("message").toString();
-        		   			if(!"OK".equals(ifMsg)) {
-        		   				retMsg = "orgChartDtl get : " + ifMsg;
-        		   			} else {
-        		   				getIfDetList = (List<Map<String, Object>>) getIfDetMap.get("ifData");
-        		   			}
-        		   		} else {
-        		   			retMsg = "orgDet get : If 데이터 없음";
-        		   		}
-                	} catch(Exception e) {
-                		retMsg = "orgDet get : 서버통신 오류";
-                	}
-        			
-        			if(retMsg == null && getIfDetList != null && getIfDetList.size() > 0) {
-        				try {
-        					List<Map<String, Object>> ifList = new ArrayList();
-        	   	        	for(int j=0; i<getIfList.size(); j++) {
-        		        		Map<String, Object> ifDetMap = new HashMap<>();
-        		        		ifDetMap.put("orgChartId", orgChartId);
-        		        		ifDetMap.put("orgCd", getIfDetList.get(j).get("ORG_CD"));
-        		        		ifDetMap.put("priorOrgCd", getIfDetList.get(j).get("PRIOR_ORG_CD"));
-        		        		ifDetMap.put("seq", getIfDetList.get(j).get("SEQ"));
-        		        		ifDetMap.put("orgLevel", getIfDetList.get(j).get("ORG_LEVEL"));
-        		        		ifDetMap.put("orderSeq", getIfDetList.get(j).get("ORGER_SEQ"));
-        		        		ifList.add(ifMap);
-        	   	        	}
-        	   	        	resultCnt += wtmInterfaceMapper.insertWtmOrgChartDet(ifList);
-		            	} catch(Exception e) {
-		            		retMsg = "orgDet get : 서버통신 오류";
-		            	}
+        			if(retMsg == null) {
+	        			// chart detail 시작
+	        			getIfDetList = null;
+	        			try {
+	        				String param = "?lastDataTime="+lastDataTime
+	   			                 + "&enterCd="+getIfList.get(i).get("ENTER_CD")
+	   			                 + "&symd="+getIfList.get(i).get("SDATE");
+	        	        	String ifUrl = setIfUrl(tenantId, "/orgChartDet", param);
+	        	        	getIfDetMap = getIfRt(ifUrl);
+	        		   		
+	        		   		if (getIfDetMap != null && getIfDetMap.size() > 0) {
+	        		   			String ifMsg = getIfDetMap.get("message").toString();
+	        		   			if(!"OK".equals(ifMsg)) {
+	        		   				retMsg = "getIfDetMap get : " + ifMsg;
+	        		   			} else {
+	        		   				getIfDetList = (List<Map<String, Object>>) getIfDetMap.get("ifData");
+	        		   			}
+	        		   		} else {
+	        		   			retMsg = "orgDet get : If 데이터 없음";
+	        		   		}
+	                	} catch(Exception e) {
+	                		retMsg = "orgDet get : 서버통신 오류";
+	                	}
+	        			System.out.println("getIfDetList.size() : " + getIfDetList.size());
+	        			if(retMsg == null && getIfDetList != null && getIfDetList.size() > 0) {
+	        				System.out.println("orgchardet insert :c ");
+	        				try {
+	        					
+	        					List<Map<String, Object>> ifList = new ArrayList();
+	        	   	        	for(int j=0; j<getIfDetList.size(); j++) {
+	        		        		Map<String, Object> ifDetMap = new HashMap<>();
+	        		        		ifDetMap.put("orgChartId", orgChartId);
+	        		        		ifDetMap.put("orgCd", getIfDetList.get(j).get("ORG_CD"));
+	        		        		ifDetMap.put("priorOrgCd", getIfDetList.get(j).get("PRIOR_ORG_CD"));
+	        		        		ifDetMap.put("seq", getIfDetList.get(j).get("SEQ"));
+	        		        		ifDetMap.put("orgLevel", getIfDetList.get(j).get("ORG_LEVEL"));
+	        		        		ifDetMap.put("orderSeq", getIfDetList.get(j).get("ORGER_SEQ"));
+	        		        		ifList.add(ifDetMap);
+	        	   	        	}
+	        	   	        	resultCnt += wtmInterfaceMapper.insertWtmOrgChartDet(ifList);
+			            	} catch(Exception e) {
+			            		retMsg = "orgDet get : 서버통신 오류";
+			            	}
+	        			}
         			}
    	        	}
    	        	

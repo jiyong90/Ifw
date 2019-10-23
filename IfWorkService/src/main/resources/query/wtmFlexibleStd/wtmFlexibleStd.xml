@@ -125,6 +125,10 @@
 				REGARD_TIME_CD_ID,
 				FIXOT_USE_TYPE,
 				FIXOT_USE_LIMIT,
+				TAA_TIME_YN,
+				TAA_WORK_YN,
+				DAY_OPEN_TYPE,
+				DAY_CLOSE_TYPE, 
 				NOTE, 
 				UPDATE_DATE,
 				UPDATE_ID)
@@ -153,6 +157,10 @@
 				 #{item.regardTimeCdId} ,
 				 #{item.fixotUseType} ,
 				 #{item.fixotUseLimit} ,
+				 #{item.taaTimeYn},
+				 #{item.taaWorkYn},
+				 #{item.dayOpenType},
+				 #{item.dayCloseType}, 
 				 #{item.note} ,
 				 now(),
 				 #{item.userId}
@@ -180,7 +188,11 @@
 				, CORE_CHK_YN = #{item.coreChkYn} 
 				, REGARD_TIME_CD_ID = #{item.regardTimeCdId} 
 				, FIXOT_USE_TYPE = #{item.fixotUseType} 
-				, FIXOT_USE_LIMIT = #{item.fixotUseLimit} 
+				, FIXOT_USE_LIMIT = #{item.fixotUseLimit}
+				, TAA_TIME_YN = #{item.taaTimeYn}
+				, TAA_WORK_YN = #{item.taaWorkYn}
+				, DAY_OPEN_TYPE = #{item.dayOpenType}
+				, DAY_CLOSE_TYPE = #{item.dayCloseType} 
 				, NOTE = #{item.note}  
 				, UPDATE_DATE = NOW()
 				, UPDATE_ID = #{item.userId}
