@@ -314,10 +314,26 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		if(dateMap != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+			
+			
 			for(String k : dateMap.keySet()) {
+//				
+//				Map<String, String> dayResult = (Map<String, String>) dateMap.get(k);
+//				if(dayResult.get("shm") != null && !dayResult.get("shm").equals("")) {
+//					String shm = dayResult.get("shm");
+//					String ehm = dayResult.get("ehm");
+//					Date s = sdf.parse(k+shm);
+//					Date e = sdf.parse(k+ehm);
+//					
+//					this.addWtmDayResultInBaseTimeType(emp.getTenantId(), emp.getEnterCd(), k, emp.getSabun(), WtmApplService.TIME_TYPE_BASE, null, s, e, null, userId);
+//				}
+//				
+					
+				
 				WtmWorkDayResult result =  workDayResultRepo.findByTimeTypeCdAndTenantIdAndEnterCdAndSabunAndYmd(WtmApplService.TIME_TYPE_BASE, emp.getTenantId(), emp.getEnterCd(), emp.getSabun(), k);
 				if(result == null) {
 					result = new WtmWorkDayResult();
+					
 					//부모키 가져오기
 					WtmWorkCalendar c = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd( emp.getTenantId(), emp.getEnterCd(), emp.getSabun(), k);
 					result.setTenantId(c.getTenantId());
@@ -364,6 +380,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 			}
 
 			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(emp.getFlexibleStdMgrId()).get();
