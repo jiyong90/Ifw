@@ -1,5 +1,7 @@
 package com.isu.ifw.controller;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
@@ -109,6 +112,7 @@ public class WtmApplController {
 		String applCd = paramMap.get("applCd").toString();
 		int apprSeq = Integer.valueOf(paramMap.get("apprSeq").toString());
 				
+		ObjectMapper mapper = new ObjectMapper();
 		try {
 			if(applCd!=null && !"".equals(applCd)) {
 				if("OT".equals(applCd)) {
@@ -123,6 +127,9 @@ public class WtmApplController {
 						paramMap.put("enterCd", enterCd);
 						paramMap.put("sabun",  rp.get("sabun")+"");
 						paramMap.put("userId", userId);
+						paramMap.put("symd",  rp.get("symd")+"");
+						paramMap.put("eymd",  rp.get("eymd")+"");
+						
 						wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
 					}
 				}

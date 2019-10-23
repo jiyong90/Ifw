@@ -330,6 +330,7 @@
 			     	   AND C.SABUN = E.SABUN
 				)
     </update>
+    <!-- 
     <update id="updateHolidayYnOFWorkCalendar" parameterType="map">
     	UPDATE WTM_WORK_CALENDAR C
     	  JOIN WTM_FLEXIBLE_EMP E
@@ -341,7 +342,7 @@
     	     , C.UPDATE_ID = #{userId}
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId} 
     </update>
-    
+     -->
      
     <update id="updatePlanMinute" parameterType="Long">
     	UPDATE WTM_WORK_DAY_RESULT X 
@@ -1086,7 +1087,7 @@
   	</update>
   	
   	<update id="initWtmFlexibleEmpOfWtmWorkDayResult" statementType="CALLABLE"  parameterType="map"  >
-  		{ call P_WTM_FLEXIBLE_EMP_RESET( #{tenantId}, #{enterCd}, #{sabun} , #{userId} ) }
+  		{ call P_WTM_FLEXIBLE_EMP_RESET( #{tenantId}, #{enterCd}, #{symd}, #{eymd}, #{sabun} , #{userId} ) }
   	</update>
   	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->
