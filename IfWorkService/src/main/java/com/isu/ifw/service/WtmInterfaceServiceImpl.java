@@ -542,11 +542,11 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		Map<String, Object> ifMap = new HashMap<>();
 	        		ifMap.put("tenantId", tenantId);
 	        		ifMap.put("enterCd", getIfList.get(i).get("ENTER_CD"));
-	        		ifMap.put("codeCd", getIfList.get(i).get("ORG_CD"));
-	        		ifMap.put("codeNm", getIfList.get(i).get("ORG_NM"));
+	        		ifMap.put("orgCd", getIfList.get(i).get("ORG_CD"));
+	        		ifMap.put("orgNm", getIfList.get(i).get("ORG_NM"));
 	        		ifMap.put("symd", getIfList.get(i).get("SDATE"));
 	        		ifMap.put("eymd", getIfList.get(i).get("EDATE"));
-	        		ifMap.put("orgtype", getIfList.get(i).get("ORG_TYPE"));
+	        		ifMap.put("orgType", getIfList.get(i).get("ORG_TYPE"));
 	        		ifMap.put("note", getIfList.get(i).get("MEMO"));
 	        		ifList.add(ifMap);
    	        	}
