@@ -129,8 +129,8 @@
 			  , M.DEFAULT_WORK_MINUTE AS defaultWorkMinute
 			  , M.UNIT_MINUTE AS unitMinute
 			  , E.SABUN AS sabun
-			  , E.SYMD AS sYmd
-			  , E.EYMD AS eYmd
+			  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END AS sYmd
+			  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END AS eYmd
 			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
 			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'OT') AS totalOtMinute
 			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
@@ -734,35 +734,38 @@
     <!-- 달력에 표시되는 날짜에 해당하는 plan만 가져옴  -->
     <select id="getWorktimePlanByYmdBetween" parameterType="map" resultType="map" >
     	<![CDATA[
-    	SELECT F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') AS ymd
-		     , F_WTM_DATE_FORMAT(O.OT_SDATE, '%H:%i') AS shm
-		     , F_WTM_DATE_FORMAT(O.OT_EDATE, '%H:%i') AS ehm
-		     , O.OT_MINUTE AS minute
-		     , 'OT' AS timeTypeCd
-		     , NULL AS taaCd
-		     , NULL AS taaNm
-			  , O.HOLIDAY_YN AS holidayYn
-			  , (SELECT M.TIME_NM FROM WTM_TIME_CD_MGR M JOIN WTM_WORK_CALENDAR C ON M.TIME_CD_MGR_ID = C.TIME_CD_MGR_ID
-			  	  WHERE C.TENANT_ID = E.TENANT_ID AND C.ENTER_CD = E.ENTER_CD AND C.SABUN = E.SABUN AND C.YMD = F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d')) AS timeNm
-		  FROM WTM_FLEXIBLE_EMP E
-		  JOIN WTM_OT_APPL O
-		    ON F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN E.SYMD AND E.EYMD
-		  JOIN WTM_APPL A
-		    ON O.APPL_ID = A.APPL_ID
-			AND E.TENANT_ID = A.TENANT_ID
-		   AND E.ENTER_CD = A.ENTER_CD
-		   AND E.SABUN = A.APPL_SABUN
-		  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
-		    ON A.TENANT_ID = R.TENANT_ID
-			AND A.ENTER_CD = R.ENTER_CD
-			AND A.APPL_SABUN = R.SABUN
-			AND A.APPL_ID = R.APPL_ID
-		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
-		   AND A.APPL_STATUS_CD <> '99'
-		   AND (R.APPL_ID IS NULL OR R.APPL_ID='')
-		   AND F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN #{sYmd} AND #{eYmd}
+    	SELECT T.*
+		     , (SELECT M.TIME_NM FROM WTM_TIME_CD_MGR M JOIN WTM_WORK_CALENDAR C ON M.TIME_CD_MGR_ID = C.TIME_CD_MGR_ID
+			  	  WHERE C.TENANT_ID = T.tenantId AND C.ENTER_CD = T.enterCd AND C.SABUN = T.sabun AND C.YMD = T.ymd) AS timeNm
+    	FROM (
+		    	SELECT  E.TENANT_ID AS tenantId
+				     , E.ENTER_CD AS enterCd
+				     , E.SABUN AS sabun
+		    	     , F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') AS ymd
+				     , F_WTM_DATE_FORMAT(O.OT_SDATE, '%H:%i') AS shm
+				     , F_WTM_DATE_FORMAT(O.OT_EDATE, '%H:%i') AS ehm
+				     , O.OT_MINUTE AS minute
+				     , 'OT' AS timeTypeCd
+				     , NULL AS taaCd
+				     , NULL AS taaNm
+					  , O.HOLIDAY_YN AS holidayYn
+				  FROM WTM_FLEXIBLE_EMP E
+				  JOIN WTM_OT_APPL O
+				    ON F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN E.SYMD AND E.EYMD
+				  JOIN WTM_APPL A
+				    ON O.APPL_ID = A.APPL_ID
+					AND E.TENANT_ID = A.TENANT_ID
+				   AND E.ENTER_CD = A.ENTER_CD
+				   AND E.SABUN = A.APPL_SABUN
+				 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+				   AND A.APPL_STATUS_CD <> '99'
+				   AND F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN #{sYmd} AND #{eYmd}
+		) T
 		UNION ALL
-    	SELECT C.YMD AS ymd
+    	SELECT E.TENANT_ID AS tenantId
+		     , E.ENTER_CD AS enterCd
+		     , E.SABUN AS sabun
+    	     , C.YMD AS ymd
     	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, '%H:%i') AS shm
 		     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_EDATE IS NOT NULL AND R.APPR_EDATE != '' THEN R.APPR_EDATE ELSE R.PLAN_EDATE END, '%H:%i') AS ehm
 		     , CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END AS minute
