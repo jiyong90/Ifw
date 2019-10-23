@@ -56,7 +56,7 @@
 				A.ENTRY_SDATE as entrySdate,
 				A.ENTRY_STYPE_CD as entryStypeCd,
 				A.ENTRY_EDATE as entryEdate,
-				A.ENTRY_ETYPE_CD as enteryEtypeCd,
+				A.ENTRY_ETYPE_CD as entryEtypeCd,
 				A.WORK_CLOSE_YN as workCloseYn,
 				A.HOLIDAY_YN as holidayYn,
 				A.NOTE as note,

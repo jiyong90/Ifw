@@ -621,7 +621,11 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				//wtmFlexibleEmpMapper.checkDuplicateWorktime(paramMap);
 		//Long timeCdMgrId = Long.parseLong(paramMap.get("timeCdMgrId").toString());
 		
-		int workCnt = Integer.parseInt(resultMap.get("workCnt").toString());
+		int workCnt = 0;
+		System.out.println("resultMap.containsKey(workCnt)" + resultMap.containsKey("workCnt"));
+		if(resultMap != null && resultMap.size() > 0 && resultMap.containsKey("workCnt")) {
+			workCnt = Integer.parseInt(resultMap.get("workCnt").toString());
+		}
 		if(workCnt > 0) {
 			rp.setFail("이미 근무정보(신청중인 근무 포함)가 존재합니다.");
 			return rp;

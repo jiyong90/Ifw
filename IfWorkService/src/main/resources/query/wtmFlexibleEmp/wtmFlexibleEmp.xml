@@ -1181,8 +1181,8 @@
 		   AND A.SYMD BETWEEN C.SYMD AND C.EYMD
 		 WHERE A.TENANT_ID = #{tenantId}
 		   AND A.ENTER_CD = #{enterCd}
-		   AND A.SYMD <= REPLACE(#{sYmd}, '-', '') 
-		   AND A.EYMD >= REPLACE(#{eYmd}, '-', '') 
+		   AND A.SYMD <= REPLACE(#{eYmd}, '-', '') 
+		   AND A.EYMD >= REPLACE(#{sYmd}, '-', '') 
 		   AND IF(#{searchKeyword}='',1=1,(C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')))
 		   AND IF(#{searchWorkTypeCd}='',1=1,(B.WORK_TYPE_CD = #{searchWorkTypeCd}))
   		]]>

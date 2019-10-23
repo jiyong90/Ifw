@@ -43,6 +43,7 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 				code.put("taaNm", l.getTaaNm());
 				code.put("code", l.getTaaCd());
 				code.put("codeNm", l.getTaaNm());
+				code.put("requestTypeCd", l.getRequestTypeCd());
 				code.put("holInclYn", l.getHolInclYn());
 				code.put("workYn", l.getWorkYn());
 				code.put("workApprHour", l.getWorkApprHour());
@@ -78,6 +79,7 @@ public class WtmTaaCodeServiceImpl implements WtmTaaCodeService{
 						code.setTaaCd(l.get("taaCd").toString());
 						code.setTaaNm(l.get("taaNm").toString());
 						code.setTaaTypeCd(l.get("taaTypeCd").toString());
+						code.setRequestTypeCd(l.get("requestTypeCd").toString());
 						code.setTenantId(tenantId);
 						code.setUpdateId(userId);
 						code.setNote(l.get("note").toString());
