@@ -910,7 +910,7 @@
 	    	selectedDate: '${today}',
 	    	workPlanYn: false,
 	    	flexCancelBtnYn: false,
-	    	//,workPlanBtnYn: false
+	    	workPlanBtnYn: false
   		},
   		watch: {
   			rangeInfo : function(val, oldVal) {
