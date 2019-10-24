@@ -42,7 +42,7 @@
 							<div  class="layout_tabs">
 								<div class="inner sheet_title_wrap clearfix">
 									<div class="float-left title" id="searchAppText">근무제기준</div>
-									<ul class="float-right btn-wrap">
+									<ul class="float-right btn-wrap" id="optionBtn">
 										<li><a href="javascript:doAction1('Save2')" class="basic authA">저장</a></li>
 									</ul>
 								</div>
@@ -101,7 +101,6 @@
 												<th>간주근무시간</th>
 												<td colspan="3">
 													<select id="regardTimeCdId">
-					                                    <option>시차10시</option>
 					                                </select>
 												</td>
 											</tr>
@@ -133,11 +132,17 @@
 											</tr>
 											<tr id="trBaseFirst">
 												<th>기본근무선소진여부</th>
-												<td colspan="3">
+												<td>
 													<select id="exhaustionYn">
 					                                    <option value="Y">사용</option>
 					                                    <option value="N">미사용</option>
 					                                </select>
+												</td>
+											</tr>
+											<tr id="trUnplan">
+												<th>계획없이 타각가능여부</th>
+												<td>
+													<input type="checkbox" id="unplannedYn" name="unplannedYn" /> 계획이 없는날 타각수정신청 가능
 												</td>
 											</tr>
 											<tr id="trUsedTerm">
@@ -177,8 +182,8 @@
 						<div id="tabs-2">
 							<div  class="layout_tabs">
 								<div class="inner sheet_title_wrap clearfix">
-									<div class="float-left title" id="searchAppText">반복패턴</div>
-									<ul class="float-right btn-wrap">
+									<div class="float-left title" id="pattText">반복패턴</div>
+									<ul class="float-right btn-wrap" id="pattBtn">
 										<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 										<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 									</ul>
@@ -313,6 +318,8 @@
 			{Header:"근태일근무여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"taaWorkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"출근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayOpenType",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"퇴근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayCloseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
+			{Header:"기준요일",			Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"baseDay",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
+			{Header:"계획없음여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"unplannedYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"비고",				Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 }
 		]; 
 		
@@ -326,7 +333,7 @@
 		sheet1.SetColProperty("workTypeCd", {ComboText:workTypeCdList[0], ComboCode:workTypeCdList[1]} );
 		
 		//근무시간
-		var regardTimeCdId = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=N",false).DATA, "");
+		var regardTimeCdId = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=N",false).DATA, "선택");
 		$("#regardTimeCdId").html(regardTimeCdId[2]);
 		
 		//출퇴근자동처리기준
@@ -441,6 +448,10 @@
 	        if($('#trBaseFirst').is(':visible')){
 	        	sheet1.SetCellValue(row, "exhaustionYn", $("#exhaustionYn").val());
 	        }
+	        if($('#trUnplan').is(':visible')){
+	        	var chkYn = getCheckYn("unplannedYn");
+	        	sheet1.SetCellValue(row, "unplannedYn", chkYn);
+	        }
 	        if($('#trUsedTerm').is(':visible')){
 	        	var usedTermArr = new Array();
 				$('input[name="usedTermOpt"]').each(function() {
@@ -502,6 +513,8 @@
 	function doAction2(sAction) {
 		switch (sAction) {
 		case "Search":
+			var title = "반복패턴  (순서 1에 해당하는 요일은  <font color='red'>"+sheet1.GetCellValue( sheet1.GetSelectRow(), "baseDay")+"</font>입니다)";
+			$("#pattText").html(title);
 			var param = "flexibleStdMgrId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleStdMgrId");
 			sheet2.DoSearch( "${rc.getContextPath()}/flexibleStd/listPatt" , param);
 			break;
@@ -561,120 +574,138 @@
 	}
 	
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
-		
-		if(OldRow != NewRow && sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus") != "I"){
-			
-			// 옵션마스터용 값을 셋팅해야함.
-			var workTypeCd = sheet1.GetCellValue( NewRow, "workTypeCd");
-			$("input:checkbox[name='holExceptYn']").prop("checked", false);
-			$("input:checkbox[name='defaultWorkUseYn']").prop("checked", false);
-			$("input:checkbox[name='coreChkYn']").prop("checked", false);
-			$("input:checkbox[name='usedTermOpt']").prop("checked", false);
-			$("input:checkbox[name='applTermOpt']").prop("checked", false);
-			
-			// 공휴일제외여부
-			if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
-				$("input:checkbox[id='holExceptYn']").prop("checked", true);
+		if(sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus") != "I"){
+			$("#pattBtn").show();	// 패턴저장 버튼 숨김
+			$("#optionBtn").show(); //옵션저장 버튼 숨김
+			if(OldRow != NewRow){
 				
-			}
-			$("#dayOpenType").val(sheet1.GetCellValue( NewRow, "dayOpenType")).prop("selected", true);
-			$("#dayCloseType").val(sheet1.GetCellValue( NewRow, "dayCloseType")).prop("selected", true);
-			
-			// 고정OT
-			if(workTypeCd == "ELSE"){
-				$("#trBase").hide();
-				$("#trFixOt").hide();
-				$("#fixotUseType").val("");
-				$("#fixotUseLimit").val("");
-			} else {
-				// 고정ot소진 사용여부
-				if(sheet1.GetCellValue( NewRow, "defaultWorkUseYn") == "Y"){
-					$("input:checkbox[id='defaultWorkUseYn']").prop("checked", true);
-					setDefaultWorkUseYn(true);
-					$("#trBase").show();
-					$("#defaultWorkMinute").val(sheet1.GetCellValue( NewRow, "defaultWorkMinute"));
-					$("#trFixOt").show();
-					$("#fixotUseType").val(sheet1.GetCellValue( NewRow, "fixotUseType")).prop("selected", true);
-					$("#fixotUseLimit").val(sheet1.GetCellValue( NewRow, "fixotUseLimit"));
-				} else {
-					setDefaultWorkUseYn(false);
+				// 옵션마스터용 값을 셋팅해야함.
+				var workTypeCd = sheet1.GetCellValue( NewRow, "workTypeCd");
+				$("input:checkbox[name='holExceptYn']").prop("checked", false);
+				$("input:checkbox[name='defaultWorkUseYn']").prop("checked", false);
+				$("input:checkbox[name='coreChkYn']").prop("checked", false);
+				$("input:checkbox[name='usedTermOpt']").prop("checked", false);
+				$("input:checkbox[name='applTermOpt']").prop("checked", false);
+				
+				// 공휴일제외여부
+				if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
+					$("input:checkbox[id='holExceptYn']").prop("checked", true);
+					
 				}
-			}
-			
-			// 근무가능시각
-			if(workTypeCd == "SELE_F" || workTypeCd == "SELE_C"){
-				$("#taaTimeYn").val("Y");
-				$("#trWorkTime").show();
-				$("#workShm").val(sheet1.GetCellValue( NewRow, "workShm"));
-				$("#workEhm").val(sheet1.GetCellValue( NewRow, "workEhm"));
-				$("#trCoreChk").show();
-				$("#trCoreTime").show();
-				$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
-				$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
-				if(sheet1.GetCellValue( NewRow, "taaWorkYn") == "Y"){
-					$("input:checkbox[id='taaWorkYn']").prop("checked", true);
+				$("#dayOpenType").val(sheet1.GetCellValue( NewRow, "dayOpenType")).prop("selected", true);
+				$("#dayCloseType").val(sheet1.GetCellValue( NewRow, "dayCloseType")).prop("selected", true);
+				
+				// 고정OT
+				if(workTypeCd == "ELSE"){
+					$("#trBase").hide();
+					$("#trFixOt").hide();
+					$("#fixotUseType").val("");
+					$("#fixotUseLimit").val("");
 				} else {
-					$("input:checkbox[id='taaWorkYn']").prop("checked", false);
-				}
-				if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
-					$("input:checkbox[id='coreChkYn']").prop("checked", true);
-					setCoreChkYn(true);
-				} else {
-					setCoreChkYn(false);
-				}
-				$("#trBaseFirst").show();
-				$("#exhaustionYn").addClass("required");
-				$("#exhaustionYn").val(sheet1.GetCellValue( NewRow, "exhaustionYn")).prop("selected", true);
-			} else {
-				$("#taaTimeYn").val("N");
-				$("#trWorkTime").hide();
-				$("#trCoreTime").hide();
-				$("#trBaseFirst").hide();
-				$("#trCoreChk").hide();
-				$("#exhaustionYn").removeClass("required");
-				$("#workShm").val("");
-				$("#workEhm").val("");
-				$("#coreShm").val("");
-				$("#coreEhm").val("");
-				$("#coreChkYn").val("");
-				$("#exhaustionYn").val("");
-				$("#taaWorkYn").val("");
-			}
-			
-			// 신청기간
-			if(workTypeCd == "BASE" || workTypeCd == "WORKTEAM"){
-				$("#trUsedTerm").hide();
-				$("#trApplTerm").hide();
-			} else {
-				$("#trUsedTerm").show();
-				var usedTermOpt = sheet1.GetCellValue( NewRow, "usedTermOpt");
-				if(usedTermOpt != ""){
-				var dataUseTermOpt = JSON.parse(usedTermOpt);
-					for(var i=0; i<dataUseTermOpt.length; i++) {
-						var value = dataUseTermOpt[i].value;
-						$("input:checkbox[id=usedTermOpt][value=" + value + "]").prop("checked", true);
+					// 고정ot소진 사용여부
+					if(sheet1.GetCellValue( NewRow, "defaultWorkUseYn") == "Y"){
+						$("input:checkbox[id='defaultWorkUseYn']").prop("checked", true);
+						setDefaultWorkUseYn(true);
+						$("#trBase").show();
+						$("#defaultWorkMinute").val(sheet1.GetCellValue( NewRow, "defaultWorkMinute"));
+						$("#trFixOt").show();
+						$("#fixotUseType").val(sheet1.GetCellValue( NewRow, "fixotUseType")).prop("selected", true);
+						$("#fixotUseLimit").val(sheet1.GetCellValue( NewRow, "fixotUseLimit"));
+					} else {
+						setDefaultWorkUseYn(false);
 					}
 				}
-				$("#trApplTerm").show();
-				var applTermOpt = sheet1.GetCellValue( NewRow, "applTermOpt");
-				if(applTermOpt != ""){
-					var dataApplTermOpt = JSON.parse(applTermOpt);
-					for(var i=0; i<dataApplTermOpt.length; i++) {
-						var value = dataApplTermOpt[i].value;
-						$("input:checkbox[id=applTermOpt][value=" + value + "]").prop("checked", true);
+				
+				// 근무가능시각
+				if(workTypeCd == "SELE_F" || workTypeCd == "SELE_C"){
+					$("#taaTimeYn").val("Y");
+					$("#trWorkTime").show();
+					$("#workShm").val(sheet1.GetCellValue( NewRow, "workShm"));
+					$("#workEhm").val(sheet1.GetCellValue( NewRow, "workEhm"));
+					$("#trCoreChk").show();
+					$("#trCoreTime").show();
+					$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
+					$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
+					if(sheet1.GetCellValue( NewRow, "taaWorkYn") == "Y"){
+						$("input:checkbox[id='taaWorkYn']").prop("checked", true);
+					} else {
+						$("input:checkbox[id='taaWorkYn']").prop("checked", false);
+					}
+					if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
+						$("input:checkbox[id='coreChkYn']").prop("checked", true);
+						setCoreChkYn(true);
+					} else {
+						setCoreChkYn(false);
+					}
+					$("#trBaseFirst").show();
+					$("#exhaustionYn").addClass("required");
+					$("#exhaustionYn").val(sheet1.GetCellValue( NewRow, "exhaustionYn")).prop("selected", true);
+					$("#trUnplan").show();
+					if(sheet1.GetCellValue( NewRow, "unplannedYn") == "Y"){
+						$("input:checkbox[id='unplannedYn']").prop("checked", true);
+					} else {
+						$("input:checkbox[id='unplannedYn']").prop("checked", false);
+					}
+				} else {
+					$("#taaTimeYn").val("N");
+					$("#trWorkTime").hide();
+					$("#trCoreTime").hide();
+					$("#trBaseFirst").hide();
+					$("#trUnplan").hide();
+					$("#trCoreChk").hide();
+					$("#exhaustionYn").removeClass("required");
+					$("#workShm").val("");
+					$("#workEhm").val("");
+					$("#coreShm").val("");
+					$("#coreEhm").val("");
+					$("#coreChkYn").val("");
+					$("#exhaustionYn").val("");
+					$("#unplannedYn").val("");
+					$("#taaWorkYn").val("");
+				}
+				
+				// 신청기간
+				if(workTypeCd == "BASE" || workTypeCd == "WORKTEAM"){
+					$("#trUsedTerm").hide();
+					$("#trApplTerm").hide();
+				} else {
+					$("#trUsedTerm").show();
+					var usedTermOpt = sheet1.GetCellValue( NewRow, "usedTermOpt");
+					if(usedTermOpt != ""){
+					var dataUseTermOpt = JSON.parse(usedTermOpt);
+						for(var i=0; i<dataUseTermOpt.length; i++) {
+							var value = dataUseTermOpt[i].value;
+							$("input:checkbox[id=usedTermOpt][value=" + value + "]").prop("checked", true);
+						}
+					}
+					$("#trApplTerm").show();
+					var applTermOpt = sheet1.GetCellValue( NewRow, "applTermOpt");
+					if(applTermOpt != ""){
+						var dataApplTermOpt = JSON.parse(applTermOpt);
+						for(var i=0; i<dataApplTermOpt.length; i++) {
+							var value = dataApplTermOpt[i].value;
+							$("input:checkbox[id=applTermOpt][value=" + value + "]").prop("checked", true);
+						}
 					}
 				}
-			}
-			// 간주근무
-			$("#regardTimeCdId").val(sheet1.GetCellValue( NewRow, "regardTimeCdId")).prop("selected", true);
-			$("#defaultWorkMinute").val(sheet1.GetCellValue( NewRow, "defaultWorkMinute"));
-			$("#unitMinute").val(sheet1.GetCellValue( NewRow, "unitMinute"));
+				// 간주근무
+				$("#regardTimeCdId").val(sheet1.GetCellValue( NewRow, "regardTimeCdId")).prop("selected", true);
+				$("#defaultWorkMinute").val(sheet1.GetCellValue( NewRow, "defaultWorkMinute"));
+				$("#unitMinute").val(sheet1.GetCellValue( NewRow, "unitMinute"));
+					
+				$("#note").val(sheet1.GetCellValue( NewRow, "note"));
 				
-			$("#note").val(sheet1.GetCellValue( NewRow, "note"));
+				// 근무패턴 조회
+				sheet2.RemoveAll();
+				doAction2('Search');
+			}
+		} else {
+			// 신규일때는 속성을 입력할수 없음 
+			sheet2.RemoveAll();	// 패턴 클리어
+			$("#pattBtn").hide();	// 패턴저장 버튼 숨김
 			
-			// 근무패턴 조회
-			sheet2.RemoveAll();
-			doAction2('Search');
+			$("#optionBtn").hide(); //옵션저장 버튼 숨김
+			setOptionClear();	// 옵션항목 data 클리어
 		}
 	}
 	
@@ -758,6 +789,25 @@
            	$("#coreEhm").val("");
 		}
 	}
+	function setOptionClear(){
+		$("#pattText").html("반복패턴");
+		// input Text 클리어
+		var $inputTextList = $("#view_sele").find("input[type='text']");
+		$inputTextList.each(function(){
+		    $(this).val("");
+		});
+		// input checkbox 클리어
+		var $inputcheckList = $("#view_sele").find("input[type='checkbox']");
+		$inputcheckList.each(function(){
+		    $(this).prop("checked", false);
+		});
+		var $inputselectList = $("#view_sele").find("select");
+		$inputselectList.each(function(){
+		    $(this).val("").prop("selected", true);
+		});
+		$("#note").val("");
+	}
+	
 	 $("#coreChkYn").change(function(){
 	 	setCoreChkYn($("#coreChkYn").is(":checked"));
     });

@@ -436,17 +436,18 @@
 							workDaysOpt.push(k-1);
 						}
 					}); */
-				
+					
 					//임시저장된 건이 있으면 이벤트 삭제하고 재생성
-					if(calendarLeftVue.flexibleAppl.hasOwnProperty("applStatusCd") && calendarLeftVue.flexibleAppl.applStatusCd=='11') {
+					/* if(calendarLeftVue.flexibleAppl.hasOwnProperty("applStatusCd") && calendarLeftVue.flexibleAppl.applStatusCd=='11') {
 						var eventId = 'workRange.'+ calendarLeftVue.flexibleAppl.applCd + '.' + moment(calendarLeftVue.flexibleAppl.sYmd).format('YYYY-MM-DD');
 						var event = calendar.getEventById(eventId);
 						if(event!=null)
 							event.remove();
-					}
+					} */
 					
 	       			$this.addEvent({
-	       				id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
+	       				//id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
+	       				id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd,
 	 		    		start: calendarLeftVue.applInfo.useSymd,
 	 		        	end: moment(eYmd).format('YYYY-MM-DD'),
 	 		        	rendering: 'background'

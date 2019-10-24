@@ -45,4 +45,7 @@ public interface WtmFlexibleStdMapper {
 	 * @return
 	 */
 	public int updateFlexibleStd(List<Map<String, Object>> list);
+	
+	// 근무제도 관리자 화면 조회
+	public List<Map<String, Object>> getStdListWeb(Map<String, Object> paramMap);
 }
