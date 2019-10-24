@@ -730,7 +730,7 @@
 				});
 	    	</#if>
 	    	
-	    	if('${calendar}' != 'workDayCalendar') {
+	    	if('${calendar}'=='workMonthCalendar') {
 	    		$this.getPlanFlexitimeList();
 	    	}
 	    },
@@ -970,7 +970,7 @@
 							
 							$this.flexCancelBtnYn = false;
 							$this.workPlanBtnYn = false;
-							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
+							if('${calendar}'=='workMonthCalendar' && data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
 								//근무제적용취소
 								if(data.sYmd!=null && moment(now).diff(data.sYmd)<0){
 									$this.flexCancelBtnYn = true;
