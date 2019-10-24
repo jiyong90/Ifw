@@ -748,6 +748,9 @@
 				 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 				   AND A.APPL_STATUS_CD <> '99'
 				   AND F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN #{sYmd} AND #{eYmd}
+				   AND E.TENANT_ID = #{tenantId}
+				   AND E.ENTER_CD = #{enterCd}
+				   AND E.SABUN = #{sabun}
 		) T
 		UNION ALL
     	SELECT E.TENANT_ID AS tenantId
@@ -777,6 +780,9 @@
 		   AND C.SABUN = R.SABUN
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 		   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+		   AND C.TENANT_ID = #{tenantId}
+		   AND C.ENTER_CD = #{enterCd}
+		   AND C.SABUN = #{sabun}
 		 ORDER BY ymd
 		 ]]>
     </select>

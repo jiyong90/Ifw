@@ -960,6 +960,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.rangeInfo = {};
+						console.log(data);
 						if(data!=null) {
 							$this.rangeInfo = data;
 							
@@ -1388,6 +1389,7 @@
    		if(e.date!=null && e.date!='undefined' && e.date!='') {
 	   		if(e.oldDate!=null && e.oldDate!='undefined' && e.date!=e.oldDate) {
 	   			calendarLeftVue.applInfo.useSymd = moment(e.date).format('YYYY-MM-DD');
+	   			console.log('여기 오긴 하지?');
 	   	    	calendarLeftVue.changeUseSymd();
 	   		}
    		}
