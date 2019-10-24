@@ -164,9 +164,9 @@
 		     , MIN(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS') THEN R.PLAN_SDATE ELSE NULL END) AS planSdate
 		     , MAX(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS') THEN R.PLAN_EDATE ELSE NULL END) AS planEdate
 		     , SUM(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS') THEN R.PLAN_MINUTE ELSE 0 END) AS planMinute
-		     , MIN(APPR_SDATE) AS apprSdate
-		     , MAX(APPR_EDATE) AS apprEdate
-		     , SUM(APPR_MINUTE) AS apprMinute
+		     , MIN(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('LLA') THEN R.APPR_SDATE ELSE NULL END) AS apprSdate
+		     , MAX(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('LLA') THEN R.APPR_EDATE ELSE NULL END) AS apprEdate
+		     , SUM(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('LLA') THEN R.APPR_MINUTE ELSE 0 END) AS apprMinute
 		     , F_WTM_GET_TAA_NAMES(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD, 2) AS taaNames
 		     , F_WTM_WORK_DAY_HOUR(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD, 'TAA', '') AS taaHour
 		     , F_WTM_WORK_DAY_HOUR(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD, 'BASE', 'BASE') AS workHour
@@ -203,9 +203,9 @@
 		     , MIN(R.PLAN_SDATE) AS workSDate
 		     , MAX(R.PLAN_EDATE) AS workEDate
 		     , SUM(R.PLAN_MINUTE) AS workMinute
-		     , MIN(R.APPR_SDATE) AS apprSdate
-		     , MAX(R.APPR_EDATE) AS apprEdate
-		     , SUM(R.APPR_MINUTE) AS apprMinute
+		     , MIN(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('LLA') THEN R.APPR_SDATE ELSE NULL END) AS apprSdate
+		     , MAX(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('LLA') THEN R.APPR_EDATE ELSE NULL END) AS apprEdate
+		     , SUM(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('LLA') THEN R.APPR_MINUTE ELSE NULL END) AS apprMinute
 		     , SUM(CASE WHEN R.TIME_TYPE_CD='BASE' THEN CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE <> 0 THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END 
 		     		    ELSE 0 END)
 		     	+ SUM(CASE WHEN #{taaTimeYn}='Y' AND #{taaWorkYn}='Y' AND R.TIME_TYPE_CD='TAA' AND APPR_MINUTE IS NOT NULL THEN APPR_MINUTE ELSE 0 END) AS apprBaseMinute
@@ -322,6 +322,8 @@
 					SELECT * FROM WTM_WORK_CALENDAR C
 			    	 WHERE C.YMD = D.SUN_YMD
 			     	   AND C.SABUN = E.SABUN
+			     	   AND C.ENTER_CD = E.ENTER_CD
+			     	   AND C.TENANT_ID = E.TENANT_ID
 				)
     </update>
     <!-- 
@@ -687,14 +689,8 @@
 			AND E.TENANT_ID = A.TENANT_ID
 		   AND E.ENTER_CD = A.ENTER_CD
 		   AND E.SABUN = A.APPL_SABUN
-		  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
-		    ON A.TENANT_ID = R.TENANT_ID
-			AND A.ENTER_CD = R.ENTER_CD
-			AND A.APPL_SABUN = R.SABUN
-			AND A.APPL_ID = R.APPL_ID
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 		   AND A.APPL_STATUS_CD <> '99'
-		   AND (R.APPL_ID IS NULL OR R.APPL_ID='')
 		UNION ALL
     	SELECT C.YMD AS ymd
     	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, '%H:%i') AS shm
@@ -752,6 +748,9 @@
 				 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 				   AND A.APPL_STATUS_CD <> '99'
 				   AND F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN #{sYmd} AND #{eYmd}
+				   AND E.TENANT_ID = #{tenantId}
+				   AND E.ENTER_CD = #{enterCd}
+				   AND E.SABUN = #{sabun}
 		) T
 		UNION ALL
     	SELECT E.TENANT_ID AS tenantId
@@ -781,6 +780,9 @@
 		   AND C.SABUN = R.SABUN
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 		   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+		   AND C.TENANT_ID = #{tenantId}
+		   AND C.ENTER_CD = #{enterCd}
+		   AND C.SABUN = #{sabun}
 		 ORDER BY ymd
 		 ]]>
     </select>
@@ -1310,6 +1312,37 @@
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 		 ORDER BY ymd
 		 ]]>
+    </select>
+    
+    <select id="getMaxPlanEdate" parameterType="map" resultType="Date" >
+    	<![CDATA[
+    		SELECT MAX(PLAN_EDATE) AS maxEdate
+		      FROM WTM_WORK_DAY_RESULT
+		     WHERE TENANT_ID = #{tenantId}
+		       AND ENTER_CD = #{enterCd}
+		       AND SABUN = #{sabun}
+		       AND YMD = #{ymd}
+		       AND TIME_TYPE_CD = #{timeTypeCd}
+			   AND C.YMD = #{ymd}
+    	]]>
+    </select>
+    
+    <select id="getIntervalDateTime" parameterType="map" resultType="Date" >
+    	<![CDATA[
+    		SELECT DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} + SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.SDATE, '%H%i') ,  date_format(D.EDATE, '%H%i'), '' ))
+				MINUTE ) AS EDATE
+				  FROM WTM_WORK_CALENDAR C
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				  JOIN WTM_TIME_BREAK_MGR B
+				    ON T.TIME_CD_MGR_ID = B.TIME_BREAK_MGR_ID
+				  JOIN (SELECT STR_TO_DATE(#{yyyyMMddHHmmss}, '%Y%m%d%H%i%s') AS SDATE, DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} MINUTE) AS EDATE ) D
+				    ON 1=1
+				 WHERE C.TENANT_ID = #{tenantId}
+				   AND C.ENTER_CD = #{enterCd}
+				   AND C.SABUN = #{sabun}
+				   AND C.YMD = #{ymd}
+    	]]>
     </select>
     
 </mapper>

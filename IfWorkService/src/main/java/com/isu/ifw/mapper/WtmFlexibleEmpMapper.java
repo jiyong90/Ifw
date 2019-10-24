@@ -1,5 +1,6 @@
 package com.isu.ifw.mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -236,4 +237,8 @@ public interface WtmFlexibleEmpMapper {
 	public List<Map<String, Object>> getFlexibleListForPlan(Map<String, Object> paramMap);
 	
 	public List<Map<String, Object>> getPlanByFlexibleEmpId(Map<String, Object> paramMap);
+	
+	public Date getMaxPlanEdate(Map<String, Object> paramMap);
+	public Date getIntervalDateTime(Map<String, Object> paramMap);
+	
 }
