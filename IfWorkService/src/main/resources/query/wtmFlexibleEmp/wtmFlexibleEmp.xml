@@ -361,7 +361,6 @@
 			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 			   AND E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 			   AND D.TIME_TYPE_CD = 'BASE'
-			   AND B.BREAK_TIME_CD = '01'
 			   AND (B.SHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i') 
 			     OR B.EHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i'))
 			 GROUP BY D.WORK_DAY_RESULT_ID
@@ -417,7 +416,6 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
-			   AND B.BREAK_TIME_CD = '01'
 			   AND (B.SHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i') 
 			     OR B.EHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i'))
 			 GROUP BY D.WORK_DAY_RESULT_ID
@@ -839,8 +837,7 @@
  		  	   AND #{ymd}  BETWEEN E.SYMD AND E.EYMD
  			   AND E.SABUN = #{sabun}
  			   AND E.TENANT_ID = #{tenantId}
- 			   AND E.ENTER_CD = #{enterCd}
- 			   AND B.BREAK_TIME_CD = '01'
+ 			   AND E.ENTER_CD = #{enterCd} 
    			   AND (B.SHM BETWEEN M.CORE_SHM  AND M.CORE_EHM 
 	 				OR B.EHM BETWEEN M.CORE_SHM  AND M.CORE_EHM)
  			 GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN, C.YMD
@@ -911,7 +908,7 @@
 					   AND E.ENTER_CD = #{enterCd}
 					   AND E.SABUN = #{sabun}
 					   AND C.YMD = #{ymd}
-					   AND B.BREAK_TIME_CD = '01' ) S
+					    ) S
 			LEFT OUTER JOIN WTM_PROPERTIE P
 		    ON S.TENANT_ID = P.TENANT_ID
 		   AND S.ENTER_CD = P.ENTER_CD
@@ -937,7 +934,7 @@
 				   AND E.ENTER_CD = #{enterCd}
 				   AND E.SABUN = #{sabun}
 				   AND C.YMD = #{ymd}
-				   AND B.BREAK_TIME_CD = '01' ) S
+				   ) S
   	</select>
   	
   	<select id="checkDuplicateWorktime" parameterType="map" resultType="map">
