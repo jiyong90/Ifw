@@ -25,6 +25,19 @@ ul, ol, li{
   border-color: #26978a;
 }
 
+.btn-write{
+  font-size: 14px;
+  color: #fff;
+  background-color: #4D84FE ;
+  border-color: #3a70e8;
+}
+
+.btn-write:hover{
+  color: #fff;
+  background-color: #5780da ;
+  border-color: #2d57b5;
+}
+
 .btn-cancel {
   font-size: 14px;
   color: #1f3b78;

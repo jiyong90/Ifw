@@ -38,6 +38,13 @@
   font-size: 18px;
 }
 
+/* 버튼 커스텀 : 근태달력보기 */
+#calendar-container .fc-toolbar .fc-month_calendar-button {
+	border-color:#333333;
+	background-color:#3E3E4C;
+}
+
+
 /* 이전,이후,오늘 */
 .fc-prev-button,
 .fc-next-button,
