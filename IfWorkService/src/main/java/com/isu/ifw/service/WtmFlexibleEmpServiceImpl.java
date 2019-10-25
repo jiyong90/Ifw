@@ -338,7 +338,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				Date flxotEdate = flexEmpMapper.getIntervalDateTime(pMap);
 				//데이터는 같아야 한다. 설정의 변경으로 인해 데이터가 망가지는건 설정화면에서 변경하지 못하도록 제어한다. 비슷하다는걸로 판단하면 안됨.
 				WtmWorkDayResult otDayResult = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndPlanSdateAndPlanEdate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_OT, maxEdate, flxotEdate);
-				workDayResultRepo.delete(otDayResult);
+				if(otDayResult!=null)
+					workDayResultRepo.delete(otDayResult);
 			}
 			
 			//기본근무 정보는 삭제 하고 다시 만들자 그게 속편하다
@@ -570,7 +571,6 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			}
 
 			Map<String, Object> paramMap = new HashMap<>();
-			paramMap.putAll(stdMgr.getWorkDaysOpt());
 			paramMap.put("flexibleEmpId", flexibleEmpId);
 			paramMap.put("userId", userId);
 			

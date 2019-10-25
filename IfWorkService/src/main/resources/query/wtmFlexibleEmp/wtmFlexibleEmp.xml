@@ -1323,7 +1323,6 @@
 		       AND SABUN = #{sabun}
 		       AND YMD = #{ymd}
 		       AND TIME_TYPE_CD = #{timeTypeCd}
-			   AND C.YMD = #{ymd}
     	]]>
     </select>
     

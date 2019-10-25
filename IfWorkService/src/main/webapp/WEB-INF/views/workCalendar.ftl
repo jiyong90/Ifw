@@ -67,7 +67,7 @@
 		                    <div class="mt-3">
 		                       	<div>
 		                            <ul class="list-group select-work-list">
-		                                <li class="list-group-item" v-for="(p, pIdx) in planFlexitimeList" @click="selectedPlanFlexitime(fIdx)">
+		                                <li class="list-group-item" v-for="(p, pIdx) in planFlexitimeList" @click="selectedPlanFlexitime(pIdx)">
 		                                    <div class="title">{{p.flexibleNm}}</div>
 		                                    <div class="desc">
 		                                    	
