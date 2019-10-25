@@ -347,7 +347,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			}*/
 			
 			WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleAppl.getFlexibleStdMgrId()).get();
-			paramMap.putAll(stdMgr.getWorkDaysOpt());
 			paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
 			paramMap.put("flexibleStdMgrId", stdMgr.getFlexibleStdMgrId());
 			
