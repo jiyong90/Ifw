@@ -175,7 +175,6 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 					Map<String, Object> searchMap = new HashMap<>();
 					searchMap = wtmFlexibleApplyMgrMapper.setApplyEmpId(saveMap);
 					saveMap.put("flexibleEmpId", Long.parseLong(searchMap.get("flexibleEmpId").toString()));
-					
 //					Long flexibleStdMgrId = Long.parseLong(saveMap.get("flexibleStdMgrId").toString());
 //					System.out.println("flexibleStdMgrId : " + flexibleStdMgrId);
 //					WtmFlexibleStdMgr stdMgr = flexStdMgrRepo.findById(flexibleStdMgrId).get();

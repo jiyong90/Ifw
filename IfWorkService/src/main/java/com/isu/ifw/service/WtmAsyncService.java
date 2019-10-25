@@ -27,6 +27,8 @@ public class WtmAsyncService {
 	@Autowired
 	WtmFlexibleEmpRepository wtmFlexibleEmpRepo;
 		
+	
+	
 		@Async("threadPoolTaskExecutor")
 		public void createWorkTermtimeByEmployee(Long tenantId, String enterCd, String sabun, String symd, String eymd, String userId) {
 			Map<String, Object> paramMap = new HashMap<>();
@@ -39,6 +41,19 @@ public class WtmAsyncService {
 			wtmFlexibleEmpMapper.createWorkTermBySabunAndSymdAndEymd(paramMap);
 		}
 		
+		@Async("threadPoolTaskExecutor")
+		public void initWtmFlexibleEmpOfWtmWorkDayResult(Long tenantId, String enterCd, String sabun, String symd, String eymd, String userId) {
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("symd", symd);
+			paramMap.put("eymd", eymd);
+			paramMap.put("userId", userId);
+			paramMap.put("pId", userId); 
+			
+			wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
+		}
 		/**
 		 * 일 마감
 		 * @param tenantId

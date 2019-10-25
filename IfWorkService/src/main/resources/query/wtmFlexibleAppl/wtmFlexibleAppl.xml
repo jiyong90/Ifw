@@ -104,6 +104,7 @@
 									JOIN (SELECT @ROWNUM := 0) R
 									ON 1=1
 									WHERE M.FLEXIBLE_STD_MGR_ID = #{flexibleStdMgrId}
+									AND D.SUN_YMD BETWEEN #{symd} AND #{eymd}
 									ORDER BY D.SUN_YMD
 								) X 
 							) D
@@ -140,6 +141,7 @@
 									JOIN (SELECT @ROWNUM := 0) R
 									ON 1=1
 									WHERE M.FLEXIBLE_STD_MGR_ID = #{flexibleStdMgrId}
+									AND D.SUN_YMD BETWEEN #{symd} AND #{eymd}
 									ORDER BY D.SUN_YMD
 								) X 
 							) D

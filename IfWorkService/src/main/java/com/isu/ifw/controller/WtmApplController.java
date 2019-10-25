@@ -34,7 +34,7 @@ public class WtmApplController {
 	
 
 	@Autowired
-	WtmAsyncService wymAsyncService;
+	WtmAsyncService wtmAsyncService;
 	
 	@Autowired
 	@Qualifier("wtmFlexibleApplService")
@@ -120,20 +120,13 @@ public class WtmApplController {
 				} else {
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
-					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) {
-						paramMap.put("tenantId", tenantId);
-						paramMap.put("enterCd", enterCd);
-						paramMap.put("sabun",  rp.get("sabun")+"");
-						paramMap.put("userId", userId);
-						paramMap.put("symd",  rp.get("symd")+"");
-						paramMap.put("eymd",  rp.get("eymd")+"");
-						
-						wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
+					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) { 
+						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, sabun, rp.get("symd")+"", rp.get("eymd")+"", userId);
 					}
 				}
 			}
 			if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {
-				wymAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId);
+				wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -212,7 +205,7 @@ public class WtmApplController {
 						paramMap.put("userId", userId);
 						wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
 						
-						wymAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
+						wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
 					}
 					
 				}

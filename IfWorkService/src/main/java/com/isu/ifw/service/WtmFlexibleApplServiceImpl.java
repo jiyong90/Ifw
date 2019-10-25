@@ -148,6 +148,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
 		
 		} catch(Exception e) {
+			e.printStackTrace();
 			throw new Exception("저장 시 오류가 발생했습니다.");
 		}
 		
@@ -242,7 +243,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		//결재라인 상태값 업데이트
 		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
 		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
-
 		//마지막 결재자인지 확인하자
 		boolean lastAppr = false;
 		if(lines != null && lines.size() > 0) {
@@ -266,7 +266,6 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 				}
 			}
 		}
-		
 		
 		//신청서 메인 상태값 업데이트
 		WtmAppl appl = wtmApplRepo.findById(applId).get();
@@ -351,8 +350,12 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			paramMap.putAll(stdMgr.getWorkDaysOpt());
 			paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
 			paramMap.put("flexibleStdMgrId", stdMgr.getFlexibleStdMgrId());
+			
+			paramMap.put("symd", emp.getSymd());
+			paramMap.put("eymd", emp.getEymd());
 			//근무제 기간의 총 소정근로 시간을 업데이트 한다.
 			flexApplMapper.updateWorkMinuteOfWtmFlexibleEmp(paramMap);
+
 		}
 		
 		return rp;
