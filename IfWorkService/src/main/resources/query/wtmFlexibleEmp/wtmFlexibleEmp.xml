@@ -957,6 +957,7 @@
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
+			   AND C.YMD BETWEEN SUBSTR(#{sdate},1,6) AND SUBSTR(#{edate},1,6)
 			   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') <= #{edate} ))
 			 UNION ALL
 			SELECT 2 
@@ -1339,7 +1340,7 @@
 				  JOIN WTM_TIME_CD_MGR T
 				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 				  JOIN WTM_TIME_BREAK_MGR B
-				    ON T.TIME_CD_MGR_ID = B.TIME_BREAK_MGR_ID
+				    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
 				  JOIN (SELECT STR_TO_DATE(#{yyyyMMddHHmmss}, '%Y%m%d%H%i%s') AS SDATE, DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} MINUTE) AS EDATE ) D
 				    ON 1=1
 				 WHERE C.TENANT_ID = #{tenantId}
