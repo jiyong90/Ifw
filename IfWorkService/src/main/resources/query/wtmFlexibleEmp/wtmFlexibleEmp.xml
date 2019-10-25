@@ -1256,6 +1256,7 @@
 			     , E.SYMD AS sYmd
 			     , E.EYMD AS eYmd
 			     , E.WORK_TYPE_CD AS workTypeCd
+			     , C.APPL_NM AS workTypeNm
 			     , M.WORK_SHM AS workShm
 			     , M.WORK_EHM AS workEhm
 			     , M.CORE_SHM AS coreShm
@@ -1269,6 +1270,10 @@
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
     		    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+    		  JOIN WTM_APPL_CODE C
+			    ON C.ENTER_CD = M.ENTER_CD
+			   AND C.TENANT_ID = M.TENANT_ID
+			   AND M.WORK_TYPE_CD = C.APPL_CD
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
