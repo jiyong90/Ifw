@@ -68,9 +68,10 @@
 		                       	<div>
 		                            <ul class="list-group select-work-list">
 		                                <li class="list-group-item" v-for="(p, pIdx) in planFlexitimeList" @click="selectedPlanFlexitime(pIdx)">
+		                                    <span :class="['tag ' + p.workTypeCd]">{{p.workTypeNm}}</span>
 		                                    <div class="title">{{p.flexibleNm}}</div>
-		                                    <div class="desc">
-		                                    	
+		                                    <div class="desc" v-if="p.sYmd && p.eYmd">
+		                                    	근무기간: {{moment(p.sYmd).format('YYYY-MM-DD')}} ~ {{moment(p.eYmd).format('YYYY-MM-DD')}}
 		                                    </div>
 		                                </li>
 		                            </ul>
