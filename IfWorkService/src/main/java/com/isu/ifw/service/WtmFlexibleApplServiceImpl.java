@@ -148,6 +148,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
 		
 		} catch(Exception e) {
+			e.printStackTrace();
 			throw new Exception("저장 시 오류가 발생했습니다.");
 		}
 		
@@ -494,6 +495,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sYmd", sYmd);
 		paramMap.put("eYmd", eYmd);
+		paramMap.put("flexibleStdMgrId", flexibleStdMgrId);
 		if(sYmd != null && !sYmd.equals("") && eYmd != null && !eYmd.equals("")) {
 			Map<String, Object> m = applMapper.calcWorkDay(paramMap);
 			if(m != null) {

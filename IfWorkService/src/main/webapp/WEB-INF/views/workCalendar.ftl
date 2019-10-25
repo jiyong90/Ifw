@@ -960,7 +960,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.rangeInfo = {};
-						//console.log(data);
+						console.log(data);
 						if(data!=null) {
 							$this.rangeInfo = data;
 							
@@ -1032,13 +1032,10 @@
 					dataType: "json",
 					data: param,
 					success: function(data) {
+						$("#loading").hide();
 						$this.flexibleAppl = {};
 						if(data!=null) {
-							console.log('신청서 조회');
 							$this.flexibleAppl = data;
-							
-							//임시저장 후 sYmd 조회하기 전에 시작일 지정 다시 하면 바로 직전 이벤트 못 찾아서...
-							console.log('임시저장후:'+$this.flexibleAppl.sYmd);
 							
 							//if('${calendar}' == 'workDayCalendar') {
 							//	dayCalendarVue.getWorkDayResult();
@@ -1047,6 +1044,7 @@
 						
 					},
 					error: function(e) {
+						$("#loading").hide();
 						$this.flexibleAppl = {};
 					}
 				});
@@ -1099,6 +1097,8 @@
          	},
          	flexitimeApplImsi : function(){ //임시저장
          		var $this = this;
+         	
+         		$("#loading").show();
   	         	
          		//선택한 근무제
          		var flexibleStd = calendarTopVue.selectedFlexibleStd;
@@ -1120,16 +1120,18 @@
 					dataType: "json",
 					success: function(data) {
 						if(data!=null && data.status=='OK') {
-							console.log('저장했어~!!!');
 							$this.applInfo.applId = data.applId;
 							$this.applInfo.flexibleApplId = data.flexibleApplId;
 							
 							//신청서 조회
 							$this.getFlexitimeAppl(data.applId);
+						} else {
+							$("#loading").hide();
 						}
 					},
 					error: function(e) {
 						console.log(e);
+						$("#loading").hide();
 						$("#alertText").html("저장 시 오류가 발생했습니다.");
   	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
   	  	         		$("#alertModal").modal("show"); 
