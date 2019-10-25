@@ -170,29 +170,18 @@
         ]]>
     </select>
     
-   	<update id="updateEntryDate" parameterType="map">
-        <![CDATA[ 
-			UPDATE WTM_WORK_CALENDAR
-			SET 
-			]]>
-			<choose>
-				<when test="inoutTypeCd.equals('IN')">
-					ENTRY_SDATE=#{now}
-			 	</when>
-				<when test="inoutTypeCd.equals('OUT')">
-					ENTRY_EDATE=#{now}
-			 	</when>
-				<when test="inoutTypeCd.equals('OUTC')">
-					ENTRY_EDATE=null
-			 	</when>
-			</choose>
-			<![CDATA[ 
-			WHERE TENANT_ID = #{tenantId} 
-				AND ENTER_CD = #{enterCd}
-				AND SABUN = #{sabun}
-				AND YMD = #{ymd}
-        ]]>
-    </update>
+   	<select id="updateEntryDate" statementType="CALLABLE" parameterType="java.util.HashMap">
+        { call P_WTM_UPDATE_TIMECARD( 
+        	#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}, 
+        	#{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{inoutType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{entryType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{rtnYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT},
+        	#{sqlErrm, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT} 
+        ) }
+    </select>
     
     <update id="updateEntryDateByAdm" parameterType="map">
         <![CDATA[ 

@@ -23,6 +23,7 @@ import com.isu.ifw.mapper.WtmCalendarMapper;
 import com.isu.ifw.mapper.WtmInoutHisMapper;
 import com.isu.ifw.repository.WtmCodeGrpRepository;
 import com.isu.ifw.repository.WtmCodeRepository;
+import com.isu.option.vo.ReturnParam;
 
 @Service("inoutService")
 public class WtmInoutServiceImpl implements WtmInoutService{
@@ -96,24 +97,26 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 			List<Map<String, Object>> list = inoutHisMapper.getContext(paramMap);
 			for(Map<String, Object> data : list) {
 				if(data.get("inoutTypeCd").equals("IN")) {
-					dIn = data.get("inout_date").toString();
+					dIn = data.get("inoutDate").toString();
 				} else if(data.get("inoutTypeCd").equals("OUT")){
-					dOut = data.get("inout_date").toString();
+					dOut = data.get("inoutDate").toString();
 				} else if(data.get("inoutTypeCd").equals("GO") || data.get("inoutTypeCd").equals("BACK")) {
 					if(data.get("inoutTypeCd").equals("GO")) {
 						type = "BACK";
-						dGoback = "외출 " + data.get("inout_date").toString();
+						dGoback = "외출 " + data.get("inoutDate").toString();
 					}
 					else {
 						type = "GO";
-						dGoback = "복귀 " + data.get("inout_date").toString();
+						dGoback = "복귀 " + data.get("inoutDate").toString();
 					} 
 				}
 			}
 			
+			menuIn.put("label", "출근하기");
 			menuIn.put("description", dIn);
 			menuIn.put("inoutType", "IN");
 			
+			menuOut.put("label", "퇴근하기");
 			menuOut.put("description", dOut);
 			menuOut.put("inoutType", "OUT");
 
@@ -130,7 +133,7 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 	}
 
 	@Override
-	public int checkInoutHis(Long tenantId, String enterCd, String sabun, String inoutType, String ymd) throws Exception {
+	public ReturnParam updateTimecard(Long tenantId, String enterCd, String sabun, String ymd, String inoutType, String entryType) throws Exception {
 		
 		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
@@ -138,40 +141,52 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 		int cnt = 0;
 		
 		Map<String, Object> paramMap = new HashMap();
-		paramMap.put("tenantId", "1");
+		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
-		paramMap.put("inoutTypeCd", inoutType);
+		paramMap.put("inoutType", inoutType);
 		paramMap.put("ymd", ymd);
 		paramMap.put("now", today);
-		paramMap.put("entryTypeCd", "MO");
+		paramMap.put("entryType", "MO");
 		
-		cnt = inoutHisMapper.saveWtmInoutHis(paramMap);
-		if(cnt <= 0) {
-			return cnt;
-		}
-	
-		cnt += updateTimeStamp(paramMap);
-		return cnt;
+//		cnt = inoutHisMapper.saveWtmInoutHis(paramMap);
+//		if(cnt <= 0) {
+//			return cnt;
+//		}
+//	
+		System.out.println("1111111111111111111111111 " + paramMap.toString());
+		Map<String, Object> rt = updateTimeStamp(paramMap);
+		System.out.println("1111111111111111111111111 " + rt.toString());
+
+		ReturnParam rp = new ReturnParam();
+		if(rt == null || !rt.get("sqlErrm").equals("OK"))
+			rp.setFail(rt.get("sqlErrm").toString());
+		else 
+			rp.setSuccess("타각에 성공하였습니다.");
+		
+		logger.debug("타각 : " + tenantId + "," + enterCd + "," + sabun + "," + rt.toString());
+		
+		System.out.println("111111111111111111111111111111111111111111111 " + paramMap.get("rtnYmd").toString());
+		if(paramMap.containsKey("rtnYmd") && paramMap.get("rtnYmd") != null && !paramMap.get("inoutType").equals("REST"))
+			empService.calcApprDayInfo(Long.parseLong(paramMap.get("tenantId").toString()), 
+				paramMap.get("enterCd").toString(), paramMap.get("rtnYmd").toString(),
+				paramMap.get("rtnYmd").toString(), paramMap.get("sabun").toString());
+		
+		return rp;
 	}
 	
 	@Override
-	public int updateTimeStamp(Map<String, Object> paramMap) {
-		int cnt = 0;
+	public Map<String, Object> updateTimeStamp(Map<String, Object> paramMap) {
 		//근무캘린더에 시간만 업데이트
 		try {
-			cnt =  wtmCalendarMapper.updateEntryDate(paramMap);
+			wtmCalendarMapper.updateEntryDate(paramMap);
 			
 		} catch(Exception e) {
 			e.printStackTrace();
-			return 0;
+			return null;
 		}
 		
-		empService.calcApprDayInfo(Long.parseLong(paramMap.get("tenantId").toString()), 
-				paramMap.get("enterCd").toString(), paramMap.get("ymd").toString(),
-				paramMap.get("ymd").toString(), paramMap.get("sabun").toString());
-		
-		return cnt;
+		return paramMap;
 	}
 
 	@Override
@@ -197,4 +212,50 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 		
 		return inoutHisMapper.getMyInoutDetail(paramMap);
 	}
+	/*
+	@Override
+	public int checkGoback(Long tenantId, String enterCd, String sabun) {
+		int cnt = 0;
+		String type = "GO";
+		
+		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+		Date now = new Date();
+		String today = format1.format(now);
+
+		Map<String, Object> paramMap = new HashMap();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("entryTypeCd", "MO");
+		paramMap.put("now", today);
+		
+		String entrySdate = null;
+		try {
+			List<Map<String, Object>> list = inoutHisMapper.getContext(paramMap);
+			for(Map<String, Object> data : list) {
+				if(data.get("inoutTypeCd").equals("GO")) {
+					entrySdate = data.get("inoutDate").toString();
+					type = "BACK";
+				}
+			}
+			
+			paramMap.put("inoutTypeCd", type);
+			
+			cnt = inoutHisMapper.saveWtmInoutHis(paramMap);
+			if(cnt <= 0) {
+				return cnt;
+			}
+
+			if(type.equals("BACK")) {
+				
+			}
+		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		//* 퇴근만 계획봐서 전일/당일 퇴근으로 넣기 야간근무신청해씅ㄹ때만 체크해서 
+		//* 외출하기 /복귀하기는 집계는 안돌리고 복귀했을때 day results에 넣기
+		return cnt;
+	}*/
 }

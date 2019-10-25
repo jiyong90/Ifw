@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -27,9 +29,12 @@ import com.isu.ifw.service.WtmInoutService;
 import com.isu.option.util.Aes256;
 import com.isu.option.vo.ReturnParam;
 
+
 @RestController
 public class WtmInoutController {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
+	
 	@Autowired
 	WtmInoutService inoutService;
 
@@ -75,7 +80,7 @@ public class WtmInoutController {
 		resultMap.put("menus", menus);
 		rp.put("result", resultMap);
 		
-		System.out.println("status : " + rp.toString());
+		logger.debug("menuContext : " + tenantId + "," + enterCd + "," + sabun + "," + menus.toString());
 		return rp;
 	}
 	
@@ -115,16 +120,19 @@ public class WtmInoutController {
 		}
 		try {
 			//현재 시간으로 다시 데이터 가져와서 비교??
-			Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
-			if(menus == null || menus.get("ymd") == null) {
-				rp.setFail("현재 출퇴근 가능한 상태가 없습니다.");
-			} else if (!menus.get("ymd").equals(ymd) || !menus.get("inoutType").equals("IN")) {
-				rp.setFail("근태 정보가 일치하지 않습니다. 앱을 재실행 해주세요.");
-			} 
-			int cnt = inoutService.checkInoutHis(tenantId, enterCd, sabun, "IN", ymd);
-			if(cnt == 2) {
-				rp.setSuccess("출근 체크 하였습니다.");
-			}
+//			Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
+//			if(menus == null || menus.get("ymd") == null) {
+//				rp.setFail("현재 출퇴근 가능한 상태가 없습니다.");
+//			} else if (!menus.get("ymd").equals(ymd) || !menus.get("inoutType").equals("IN")) {
+//				rp.setFail("근태 정보가 일치하지 않습니다. 앱을 재실행 해주세요.");
+//			} 
+			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "IN", "MO");
+			
+			logger.debug("in : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
+
+//			if(cnt == 2) {
+//				rp.setSuccess("출근 체크 하였습니다.");
+//			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("출퇴근 정보 기록 중 오류가 발생했습니다.");
@@ -168,16 +176,19 @@ public class WtmInoutController {
 		}
 		try {
 			//현재 시간으로 다시 데이터 가져와서 비교??
-			Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
-			if(menus == null || menus.get("ymd") == null) {
-				rp.setFail("현재 출퇴근 가능한 상태가 없습니다.");
-			} else if (!menus.get("ymd").equals(ymd) || !menus.get("inoutType").equals("OUT")) {
-				rp.setFail("근태 정보가 일치하지 않습니다. 앱을 재실행 해주세요.");
-			} 
-			int cnt = inoutService.checkInoutHis(tenantId, enterCd, sabun, "OUT", ymd);
-			if(cnt == 2) {
-				rp.setSuccess("퇴근 체크 하였습니다.");
-			}
+//			Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
+//			if(menus == null || menus.get("ymd") == null) {
+//				rp.setFail("현재 출퇴근 가능한 상태가 없습니다.");
+//			} else if (!menus.get("ymd").equals(ymd) || !menus.get("inoutType").equals("OUT")) {
+//				rp.setFail("근태 정보가 일치하지 않습니다. 앱을 재실행 해주세요.");
+//			} 
+			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "OUT", "MO");
+			
+			logger.debug("out : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
+
+//			if(cnt == 2) {
+//				rp.setSuccess("퇴근 체크 하였습니다.");
+//			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("출퇴근 정보 기록 중 오류가 발생했습니다.");
@@ -294,10 +305,12 @@ public class WtmInoutController {
 		String ymd = data.get("ymd").toString().replaceAll("-", "");
 		
 		try {
-			int cnt = inoutService.checkInoutHis(tenantId, enterCd, sabun, "OUTC", ymd);
-			if(cnt <= 0) {
-				rp.setFail("퇴근 취소가 실패하였습니다.");
-			}
+			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "OUTC", "MO");
+			logger.debug("outC : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
+
+//			if(cnt <= 0) {
+//				rp.setFail("퇴근 취소가 실패하였습니다.");
+//			}
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -306,6 +319,61 @@ public class WtmInoutController {
 		
 		return rp;
 	}
+	
+	/**
+	 * 외출 복귀
+	 * @param params
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping (value="/mobile/{tenantId}/inout/goback", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String,Object> requestGoback(@PathVariable Long tenantId, 
+			@RequestBody Map<String,Object> params,HttpServletRequest request)throws Exception{
+		
+		System.out.println("#########################/goback" + params.toString());
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("체크에 실패하였습니다.");
+		
+		String userToken = (String)params.get("userToken");
+		String empKey = (String)params.get("empKey");
+		String ymd = (String)params.get("ymd");
+		String enterCd = null;
+		String sabun = null;
+		
+		Aes256 aes = new Aes256(userToken);
+		empKey = aes.decrypt(empKey);
+		
+		if(empKey != null && empKey.indexOf("@") >=0 ){
+			String separator = "@";
+			String[] arrEmpKey = empKey.split(separator);
+			if(arrEmpKey.length == 2) {
+				enterCd = arrEmpKey[0];
+				sabun = arrEmpKey[1];
+			}
+		}
+		try {
+			//현재 시간으로 다시 데이터 가져와서 비교??
+//			Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
+//			if(menus == null || menus.get("ymd") == null) {
+//				rp.setFail("현재 출퇴근 가능한 상태가 없습니다.");skeh 
+//			} else if (!menus.get("ymd").equals(ymd) || !menus.get("inoutType").equals("OUT")) {
+//				rp.setFail("근태 정보가 일치하지 않습니다. 앱을 재실행 해주세요.");
+//			} 
+			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "REST", "MO");
+			logger.debug("REST : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
+
+//			if(cnt > 0) {
+//				rp.setSuccess("체크 하였습니다.");
+//			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("외출/복귀 기록 중 오류가 발생했습니다.");
+		}
+		return rp;
+	}
+	
 }
 
 //출근, 퇴근 정보 전부 있으면 > calcApprDayInfo
