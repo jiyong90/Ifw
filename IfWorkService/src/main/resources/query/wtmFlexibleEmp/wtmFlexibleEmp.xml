@@ -1334,7 +1334,7 @@
 				  JOIN WTM_TIME_CD_MGR T
 				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 				  JOIN WTM_TIME_BREAK_MGR B
-				    ON T.TIME_CD_MGR_ID = B.TIME_BREAK_MGR_ID
+				    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
 				  JOIN (SELECT STR_TO_DATE(#{yyyyMMddHHmmss}, '%Y%m%d%H%i%s') AS SDATE, DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} MINUTE) AS EDATE ) D
 				    ON 1=1
 				 WHERE C.TENANT_ID = #{tenantId}
