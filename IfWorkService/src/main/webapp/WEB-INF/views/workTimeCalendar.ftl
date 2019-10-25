@@ -1037,7 +1037,9 @@
   	         	},
   	         	preCheck : function(info, btnYn){ //소정근로 선 소진 여부, 연장근무 가능한지 체크
   	         		var $this = this;
-  	         		
+  	         	
+  	         		$("#loading").show();
+  	         	
   	         		var param = {
   	         			ymd: moment($this.workday).format('YYYYMMDD'),
   	         			workTypeCd: 'OT'
@@ -1051,6 +1053,7 @@
 						data: param,
 						dataType: "json",
 						success: function(data) {
+							$("#loading").hide();
 							if(data!=null && data.status=='OK') {
 								$this.viewOvertimeAppl(info.date, btnYn);
 								
@@ -1069,6 +1072,7 @@
 							}
 						},
 						error: function(e) {
+							$("#loading").hide();
 							console.log(e);
 						}
 					});
@@ -1089,7 +1093,7 @@
   	         		if(isValid) {
   	         			var msg = '';
   	         			
-  	         			$("loading").show();
+  	         			$("#loading").show();
   	         			
   	         			//신청하려는 ot시간이 소정근무시간에 해당되지 않는지 체크
   	         			var sDate = $("#sDate").val().replace(/-/gi,"");
@@ -1214,7 +1218,7 @@
   	         	
   	         		var holidayYn = $this.result.holidayYn;
   	         		var subYn = '';
-  	         	
+  	         		
   	         		var param = {
         				flexibleStdMgrId : calendarTopVue.flexibleStd.flexibleStdMgrId,
         				workTypeCd : 'OT',
@@ -1256,7 +1260,7 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
-							$("loading").hide();
+							$("#loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("확인요청 되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
@@ -1274,7 +1278,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
-							$("loading").hide();
+							$("#loading").hide();
 							console.log(e);
 							$("#alertText").html("연장근무 확인요청 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
@@ -1285,7 +1289,7 @@
   	         	otCancelAppl: function(){ //연장근무취소신청
   	         		var $this = this;
   	         	
-  	         		$("loading").show();
+  	         		$("#loading").show();
   	         		
   	         		var param = {
   	         			workDayResultId: $this.overtimeAppl.workDayResultId,
@@ -1301,7 +1305,7 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
-							$("loading").hide();
+							$("#loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("취소요청 되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
@@ -1321,7 +1325,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
-							$("loading").hide();
+							$("#loading").hide();
 							console.log(e);
 							$("#alertText").html("연장근무 취소 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
@@ -1334,6 +1338,8 @@
   	         	},
   	         	recoveryAppl: function(){
   	         		var $this = this;
+  	         		
+  	         		$("#loading").show();
 					
 					var param = {
   	         			applCd : $this.overtimeAppl.applCd,
@@ -1357,11 +1363,13 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
-							$("loading").hide();
+							$("#loading").hide();
 							if(data!=null && data.status=='OK') {
 								$("#alertText").html("회수되었습니다.");
 								$("#alertModal").on('hidden.bs.modal',function(){
 									$("#alertModal").off('hidden.bs.modal');
+									$("#confirmModal").modal("hide");
+									$("#overtimeApplDetail").modal("hide");
 									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
@@ -1374,7 +1382,7 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						},
 						error: function(e) {
-							$("loading").hide();
+							$("#loading").hide();
 							console.log(e);
 							$("#alertText").html("회수 시 오류가 발생했습니다.");
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){

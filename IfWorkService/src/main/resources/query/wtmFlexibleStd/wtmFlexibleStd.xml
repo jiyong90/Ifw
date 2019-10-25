@@ -96,6 +96,7 @@
 		   AND P.TENANT_ID = #{tenantId}
 		   AND P.ENTER_CD = #{enterCd}
 		   AND P.INFO_KEY = 'OPTION_FIRSTDAY_OF_WEEK'
+		   AND D.SUN_YMD BETWEEN #{sYmd} AND #{eYmd}
 		 ) X
 		 ]]>
     </select>

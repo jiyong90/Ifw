@@ -2,6 +2,7 @@ package com.isu.ifw.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -646,6 +647,21 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		
 		//회사의 주 시작요일을 가지고 온다.
 		paramMap.put("d", ymd);
+		
+		//7일전 ~ 7일 후 범위 지정
+		Date date = WtmUtil.toDate(ymd, "yyyyMMdd");
+        
+        Calendar sYmd = Calendar.getInstance();
+        sYmd.setTime(date);
+        sYmd.add(Calendar.DATE, -7);
+       
+        Calendar eYmd = Calendar.getInstance();
+        eYmd.setTime(date);
+        eYmd.add(Calendar.DATE, 7);
+
+		paramMap.put("sYmd", WtmUtil.parseDateStr(sYmd.getTime(), "yyyyMMdd"));
+		paramMap.put("eYmd", WtmUtil.parseDateStr(eYmd.getTime(), "yyyyMMdd"));
+		
 		Map<String, Object> rMap = wtmFlexibleStdMapper.getRangeWeekDay(paramMap);
 		if(rMap == null) {
 			rp.setFail("기준 일자 정보가 없습니다. 관리자에게 문의하세요.");
@@ -958,7 +974,23 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		//2.연장근무 가능시간 초과 체크
 		
 		//회사의 주 시작요일을 가지고 온다.
+		ObjectMapper mapper = new ObjectMapper();
 		paramMap.put("d", ymd);
+		
+		//7일전 ~ 7일 후 범위 지정
+		Date date = WtmUtil.toDate(ymd, "yyyyMMdd");
+        
+        Calendar sYmd = Calendar.getInstance();
+        sYmd.setTime(date);
+        sYmd.add(Calendar.DATE, -7);
+       
+        Calendar eYmd = Calendar.getInstance();
+        eYmd.setTime(date);
+        eYmd.add(Calendar.DATE, 7);
+
+		paramMap.put("sYmd", WtmUtil.parseDateStr(sYmd.getTime(), "yyyyMMdd"));
+		paramMap.put("eYmd", WtmUtil.parseDateStr(eYmd.getTime(), "yyyyMMdd"));
+		
 		Map<String, Object> rMap = wtmFlexibleStdMapper.getRangeWeekDay(paramMap);
 		
 		String symd = rMap.get("symd").toString();
