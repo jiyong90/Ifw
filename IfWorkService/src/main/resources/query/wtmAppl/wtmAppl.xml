@@ -6,42 +6,38 @@
 <mapper namespace="com.isu.ifw.mapper.WtmApplMapper">
 	<select id="getWtmApplLine" parameterType="map" resultType="wtmApplLine">
         <![CDATA[
-			SELECT X.APPR_SEQ, X.SABUN, F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, X.SABUN, #{d}) AS EMP_NM
-			  FROM (
-				SELECT 1 AS APPR_SEQ, E1.SABUN
-				  FROM WTM_EMP_HIS E
-				  JOIN WTM_EMP_HIS E1
-				    ON E.TENANT_ID = E1.TENANT_ID
-				   AND E.ENTER_CD = E1.ENTER_CD
-				   AND E1.LEADER_YN = 'Y'
-			  	 WHERE E.ENTER_CD = #{enterCd}
-				   AND E.TENANT_ID = #{tenantId}
-				   AND E.SABUN = #{sabun}
-				   AND E1.ORG_PATH = F_WTM_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 1)
-				 UNION
-				SELECT 2 AS APPR_SEQ, E1.SABUN
-				  FROM WTM_EMP_HIS E
-				  JOIN WTM_EMP_HIS E1
-				    ON E.TENANT_ID = E1.TENANT_ID
-				   AND E.ENTER_CD = E1.ENTER_CD
-				   AND E1.LEADER_YN = 'Y'
-				 WHERE E.ENTER_CD = #{enterCd}
-				   AND E.TENANT_ID = #{tenantId}
-				   AND E.SABUN = #{sabun}
-				   AND E1.ORG_PATH = F_WTM_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 2)
-				 UNION
-				SELECT 3 AS APPR_SEQ, E1.SABUN
-				  FROM WTM_EMP_HIS E
-				  JOIN WTM_EMP_HIS E1
-				    ON E.TENANT_ID = E1.TENANT_ID
-				   AND E.ENTER_CD = E1.ENTER_CD
-				   AND E1.LEADER_YN = 'Y'
-				 WHERE E.ENTER_CD = #{enterCd}
-				   AND E.TENANT_ID = #{tenantId}
-				   AND E.SABUN = #{sabun}
-				   AND E1.ORG_PATH = F_WTM_GET_ORG_PATH_BY_LVL(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{d}, 3) 
-				) X 
-				ORDER BY X.APPR_SEQ 
+			SELECT X.APPR_SEQ, E.SABUN, E.EMP_NM
+			  FROM WTM_EMP_HIS E
+			  JOIN (
+						SELECT @r AS ORG_CD
+						     , (SELECT @r := PRIOR_ORG_CD 
+							       FROM ( SELECT D.*
+												  FROM WTM_ORG_CHART C
+												  JOIN WTM_ORG_CHART_DET D
+												    ON C.ORG_CHART_ID = D.ORG_CHART_ID
+												 WHERE C.TENANT_ID = #{tenantId}
+												   AND C.ENTER_CD = #{enterCd}
+												   AND #{d} BETWEEN C.SYMD AND C.EYMD
+											) S
+									WHERE ORG_CD = @r limit 1) AS _PARENT_ID
+						     , (@L := @L + 1) AS APPR_SEQ
+						  FROM ( SELECT @r := (SELECT ORG_CD FROM WTM_EMP_HIS H WHERE H.TENANT_ID=#{tenantId} AND H.ENTER_CD=#{enterCd} AND H.SABUN=#{sabun} AND #{d} BETWEEN H.SYMD AND H.EYMD)
+						              , @L := 0) AS vars,
+						       ( SELECT D.*
+									  FROM WTM_ORG_CHART C
+									  JOIN WTM_ORG_CHART_DET D
+									    ON C.ORG_CHART_ID = D.ORG_CHART_ID
+									 WHERE C.TENANT_ID = #{tenantId}
+									   AND C.ENTER_CD = #{enterCd}
+									   AND #{d} BETWEEN C.SYMD AND C.EYMD
+								 ) org
+						 WHERE @r IS NOT NULL 
+					 ) X
+			    ON E.ORG_CD = X.ORG_CD
+			 WHERE E.ENTER_CD = #{enterCd}
+			   AND E.TENANT_ID = #{tenantId}
+			   AND E.LEADER_YN = 'Y'
+			   AND #{d} BETWEEN E.SYMD AND E.EYMD
         ]]>
     </select>
     

@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.isu.ifw.entity.WtmWorkDayResult;
@@ -30,4 +32,10 @@ public interface WtmWorkDayResultRepository extends JpaRepository<WtmWorkDayResu
 	
 	public WtmWorkDayResult findByWorkDayResultId(Long workDayResultId);
 	 
+	@Modifying
+	@Query("DELETE FROM WtmWorkDayResult D WHERE D.tenantId = :tenantId AND D.enterCd = :enterCd AND D.ymd = :ymd AND D.timeTypeCd = :timeTypeCd AND D.sabun = :sabun ")
+	public int deleteByTenantIdAndEnterCdAndYmdAndTimeTypeCdAndSabun(@Param(value="tenantId") Long tenantId, @Param(value="enterCd") String enterCd, @Param(value="ymd") String ymd, @Param(value="timeTypeCd") String timeTypeCd, @Param(value="sabun") String sabun );
+	
+	public List<WtmWorkDayResult> findByTenantIdAndEnterCdAndYmdAndSabunAndPlanSdateLessThanEqualAndPlanEdateGreaterThanEqualOrderByPlanSdateAsc(Long tenantId, String enterCd, String ymd, String sabun, Date planSdate, Date planEdate );
+	
 }

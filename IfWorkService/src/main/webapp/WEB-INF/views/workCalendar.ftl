@@ -106,7 +106,7 @@
 	                <div v-if="'${calendar}'!='workTimeCalendar'" class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
 	                    <div class="btn-wrap text-right">
 	                        <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal">근무제 적용하기</button>
-	                    	<button type="button" id="planBtn" class="btn btn-apply" style="display:none;">근무계획작성</button>
+	                    	<button type="button" id="planBtn" class="btn btn-write" style="display:none;">근무계획작성</button>
 	                    </div>
 	                </div>
 	            </div>
@@ -730,7 +730,7 @@
 				});
 	    	</#if>
 	    	
-	    	if('${calendar}' != 'workDayCalendar') {
+	    	if('${calendar}'=='workMonthCalendar') {
 	    		$this.getPlanFlexitimeList();
 	    	}
 	    },
@@ -960,6 +960,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.rangeInfo = {};
+						//console.log(data);
 						if(data!=null) {
 							$this.rangeInfo = data;
 							
@@ -970,7 +971,7 @@
 							
 							$this.flexCancelBtnYn = false;
 							$this.workPlanBtnYn = false;
-							if(data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
+							if('${calendar}'=='workMonthCalendar' && data.baseWorkYn!=null && data.baseWorkYn!=undefined && data.baseWorkYn!='Y') {
 								//근무제적용취소
 								if(data.sYmd!=null && moment(now).diff(data.sYmd)<0){
 									$this.flexCancelBtnYn = true;
@@ -1033,12 +1034,16 @@
 					success: function(data) {
 						$this.flexibleAppl = {};
 						if(data!=null) {
+							console.log('신청서 조회');
 							$this.flexibleAppl = data;
+							
+							//임시저장 후 sYmd 조회하기 전에 시작일 지정 다시 하면 바로 직전 이벤트 못 찾아서...
+							console.log('임시저장후:'+$this.flexibleAppl.sYmd);
 							
 							//if('${calendar}' == 'workDayCalendar') {
 							//	dayCalendarVue.getWorkDayResult();
 					    	//}
-						}
+						} 
 						
 					},
 					error: function(e) {
@@ -1066,19 +1071,6 @@
          			$this.calendar.gotoDate($this.applInfo.useSymd);
          		} 
          		$("#flexibleAppl").show();
-         	},
-         	setUsedTermOpt : function(){ //신청서 setting
-         		var $this = this;
-         	
-         		//적용기간은 첫번째 항목으로 기본 세팅
-         		if(calendarTopVue.selectedFlexibleStd.hasOwnProperty("usedTermOpt") && calendarTopVue.selectedFlexibleStd.usedTermOpt!=null) {
-         			var workDateRangeItem = calendarTopVue.selectedFlexibleStd.usedTermOpt[0]; 
-         			
-         			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null)
-         				$this.applInfo.workRange = workDateRangeItem.value;
-         				monthCalendarVue.changeWorkRange();
-         		}
-         		
          	},
          	clearFlexitimeAppl : function(){
          		var $this = this;
@@ -1120,7 +1112,7 @@
    		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD')
    		    	};
          			
- 		    		Util.ajax({
+ 		    	Util.ajax({
 					url: "${rc.getContextPath()}/flexibleAppl/imsi",
 					type: "POST",
 					contentType: 'application/json',
@@ -1128,6 +1120,7 @@
 					dataType: "json",
 					success: function(data) {
 						if(data!=null && data.status=='OK') {
+							console.log('저장했어~!!!');
 							$this.applInfo.applId = data.applId;
 							$this.applInfo.flexibleApplId = data.flexibleApplId;
 							
@@ -1388,6 +1381,7 @@
    		if(e.date!=null && e.date!='undefined' && e.date!='') {
 	   		if(e.oldDate!=null && e.oldDate!='undefined' && e.date!=e.oldDate) {
 	   			calendarLeftVue.applInfo.useSymd = moment(e.date).format('YYYY-MM-DD');
+	   			console.log('여기 오긴 하지?');
 	   	    	calendarLeftVue.changeUseSymd();
 	   		}
    		}

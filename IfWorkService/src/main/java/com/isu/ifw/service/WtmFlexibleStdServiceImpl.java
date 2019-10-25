@@ -78,42 +78,13 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	
 	@Override
 	public List<Map<String, Object>> getStdListWeb(Long tenantId, String enterCd, String ymd) {
-		
-		List<Map<String, Object>> stdList = new ArrayList();
-		List<Map<String, Object>> list = flexibleStdRepository.findByTenantIdAndEnterCdAndYmd(tenantId, enterCd, ymd);
-		
-		for(Map<String, Object> l : list) {
-			Map<String, Object> stdMgr = new HashMap();
-			stdMgr.put("flexibleStdMgrId", l.get("FLEXIBLE_STD_MGR_ID"));
-			stdMgr.put("tenantId", l.get("TENANT_ID"));
-			stdMgr.put("enterCd", l.get("ENTER_CD"));
-			stdMgr.put("workTypeCd", l.get("WORK_TYPE_CD"));
-			stdMgr.put("flexibleNm", l.get("FLEXIBLE_NM"));
-			stdMgr.put("useSymd", l.get("USE_SYMD"));
-			stdMgr.put("useEymd", l.get("USE_EYMD"));
-			stdMgr.put("workShm", l.get("WORK_SHM"));
-			stdMgr.put("workEhm", l.get("WORK_EHM"));
-			stdMgr.put("coreShm", l.get("CORE_SHM"));
-			stdMgr.put("coreEhm", l.get("CORE_EHM"));
-			stdMgr.put("defaultWorkMinute", l.get("DEFAULT_WORK_MINUTE"));
-			stdMgr.put("defaultWorkUseYn", l.get("DEFAULT_WORK_USE_YN"));
-			stdMgr.put("unitMinute", l.get("UNIT_MINUTE"));
-			stdMgr.put("exhaustionYn", l.get("EXHAUSTION_YN"));
-			stdMgr.put("holExceptYn", l.get("HOL_EXCEPT_YN"));
-			stdMgr.put("usedTermOpt", l.get("USED_TERM_OPT"));
-			stdMgr.put("applTermOpt", l.get("APPL_TERM_OPT"));
-			stdMgr.put("coreChkYn", l.get("CORE_CHK_YN"));
-			stdMgr.put("baseWorkYn", l.get("BASE_WORK_YN"));
-			stdMgr.put("regardTimeCdId", l.get("REGARD_TIME_CD_ID"));
-			stdMgr.put("fixotUseType", l.get("FIXOT_USE_TYPE"));
-			stdMgr.put("fixotUseLimit", l.get("FIXOT_USE_LIMIT"));
-			stdMgr.put("taaTimeYn", l.get("TAA_TIME_YN"));
-			stdMgr.put("taaWorkYn", l.get("TAA_WORK_YN"));
-			stdMgr.put("dayOpenType", l.get("DAY_OPEN_TYPE"));
-			stdMgr.put("dayCloseType", l.get("DAY_CLOSE_TYPE"));
-			stdMgr.put("note", l.get("NOTE"));
-			stdList.add(stdMgr);
-		}
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("ymd", ymd);
+		List<Map<String, Object>> stdList = flexStdMapper.getStdListWeb(paramMap);
+				// flexibleStdRepository.findByTenantIdAndEnterCdAndYmd(tenantId, enterCd, ymd);
+
 		return stdList;
 	}
 	
@@ -127,7 +98,6 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 				if(iList != null && iList.size() > 0) {
 					for(Map<String, Object> l : iList) {
 						Map<String, Object> saveMap = new HashMap();
-						saveMap.put("flexibleStdMgrId", l.get("flexibleStdMgrId").toString().equals("") ? null : Long.parseLong(l.get("flexibleStdMgrId").toString()));
 						saveMap.put("tenantId", tenantId);
 						saveMap.put("enterCd", enterCd);
 						String workTypeCd = l.get("workTypeCd").toString();
@@ -140,25 +110,6 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						} else {
 							saveMap.put("baseWorkYn", "N");
 						}
-						saveMap.put("holExceptYn", l.get("holExceptYn").toString());
-						saveMap.put("fixotUseType", l.get("fixotUseType").toString());
-						saveMap.put("fixotUseLimit", Integer.parseInt(l.get("fixotUseLimit").toString()));
-						saveMap.put("workShm", l.get("workShm").toString());
-						saveMap.put("workEhm", l.get("workEhm").toString());
-						saveMap.put("coreShm", l.get("coreShm").toString());
-						saveMap.put("coreEhm", l.get("coreEhm").toString());
-						saveMap.put("coreChkYn", l.get("coreChkYn").toString());
-						saveMap.put("exhaustionYn", l.get("exhaustionYn").toString());
-						saveMap.put("usedTermOpt", l.get("usedTermOpt").toString());
-						saveMap.put("applTermOpt", l.get("applTermOpt").toString());
-						saveMap.put("regardTimeCdId", Integer.parseInt(l.get("regardTimeCdId").toString()));
-						saveMap.put("defaultWorkMinute", Integer.parseInt(l.get("defaultWorkMinute").toString()));
-						saveMap.put("defaultWorkUseYn", l.get("defaultWorkUseYn").toString());
-						saveMap.put("unitMinute", Integer.parseInt(l.get("unitMinute").toString()));
-						saveMap.put("taaTimeYn", l.get("taaTimeYn").toString());
-						saveMap.put("taaWorkYn", l.get("taaWorkYn").toString());
-						saveMap.put("dayOpenType", l.get("dayOpenType").toString());
-						saveMap.put("dayCloseType", l.get("dayCloseType").toString());
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
 						insertList.add(saveMap);
@@ -200,6 +151,7 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						saveMap.put("taaWorkYn", l.get("taaWorkYn").toString());
 						saveMap.put("dayOpenType", l.get("dayOpenType").toString());
 						saveMap.put("dayCloseType", l.get("dayCloseType").toString());
+						saveMap.put("unplannedYn", l.get("unplannedYn").toString());
 						saveMap.put("note", l.get("note").toString());
 						saveMap.put("userId", userId);
 						updateList.add(saveMap);

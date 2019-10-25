@@ -206,7 +206,7 @@
 							{{moment(a.appl.otSdate).format('YYYY.MM.DD')}}~{{moment(a.appl.otEdate).format('YYYY.MM.DD')}}
 						</span>
 						<span v-else>
-							{{moment(a.appl.sYmd).format('YYYY.MM.DD')}}~{{moment(a.appl.eYmd).format('YYYY.MM.DD')}}
+							{{moment(a.appl.symd).format('YYYY.MM.DD')}}~{{moment(a.appl.eymd).format('YYYY.MM.DD')}}
 						</span>
 						<span class="sub-desc" v-if="a.appl.reasonNm">{{a.appl.reasonNm}}</span>
 					</div>
@@ -282,7 +282,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.apprList = [];
-						//console.log(data);
+						console.log(data);
 						if(data.status=='OK' && data!=null && data.apprList!=null) {
 							$this.apprList = data.apprList;
 						}
