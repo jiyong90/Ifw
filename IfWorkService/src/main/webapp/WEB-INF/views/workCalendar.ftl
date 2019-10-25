@@ -960,7 +960,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.rangeInfo = {};
-						console.log(data);
+						//console.log(data);
 						if(data!=null) {
 							$this.rangeInfo = data;
 							
@@ -1034,12 +1034,16 @@
 					success: function(data) {
 						$this.flexibleAppl = {};
 						if(data!=null) {
+							console.log('신청서 조회');
 							$this.flexibleAppl = data;
+							
+							//임시저장 후 sYmd 조회하기 전에 시작일 지정 다시 하면 바로 직전 이벤트 못 찾아서...
+							console.log('임시저장후:'+$this.flexibleAppl.sYmd);
 							
 							//if('${calendar}' == 'workDayCalendar') {
 							//	dayCalendarVue.getWorkDayResult();
 					    	//}
-						}
+						} 
 						
 					},
 					error: function(e) {
@@ -1067,19 +1071,6 @@
          			$this.calendar.gotoDate($this.applInfo.useSymd);
          		} 
          		$("#flexibleAppl").show();
-         	},
-         	setUsedTermOpt : function(){ //신청서 setting
-         		var $this = this;
-         	
-         		//적용기간은 첫번째 항목으로 기본 세팅
-         		if(calendarTopVue.selectedFlexibleStd.hasOwnProperty("usedTermOpt") && calendarTopVue.selectedFlexibleStd.usedTermOpt!=null) {
-         			var workDateRangeItem = calendarTopVue.selectedFlexibleStd.usedTermOpt[0]; 
-         			
-         			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null)
-         				$this.applInfo.workRange = workDateRangeItem.value;
-         				monthCalendarVue.changeWorkRange();
-         		}
-         		
          	},
          	clearFlexitimeAppl : function(){
          		var $this = this;
@@ -1121,7 +1112,7 @@
    		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD')
    		    	};
          			
- 		    		Util.ajax({
+ 		    	Util.ajax({
 					url: "${rc.getContextPath()}/flexibleAppl/imsi",
 					type: "POST",
 					contentType: 'application/json',
@@ -1129,6 +1120,7 @@
 					dataType: "json",
 					success: function(data) {
 						if(data!=null && data.status=='OK') {
+							console.log('저장했어~!!!');
 							$this.applInfo.applId = data.applId;
 							$this.applInfo.flexibleApplId = data.flexibleApplId;
 							

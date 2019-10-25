@@ -44,7 +44,8 @@
 	    		calendarLeftVue.calendar = calendar;
 	    	},
 	    	navLinkDayClickCallback: function(info){
-         		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment(info).format('YYYYMMDD');
+	    		if(calendarLeftVue.useYn!='Y')
+         			location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment(info).format('YYYYMMDD');
 	    	},
 	    	datesRenderCallback: function(info){
 	    		var $this = this;
@@ -85,8 +86,12 @@
 	    	selectCallback : function(info){
 	    		var date = moment(info.start).format('YYYYMMDD');
 	    		calendarLeftVue.selectedDate = date;
-	    		calendarLeftVue.getFlexibleRangeInfo(date);
-	    		calendarLeftVue.getFlexibleDayInfo(date);
+	    		
+	    		if($("#workRangeInfo").is(':visible'))
+	    			calendarLeftVue.getFlexibleRangeInfo(date);
+	    		
+	    		if($("#workDayInfo").is(':visible'))
+	    			calendarLeftVue.getFlexibleDayInfo(date);
 	    	},
 	    	eventRenderCallback : function(info){
 	    		/* if(info.event.id.indexOf('workRange.')==0 && info.isStart) {
@@ -438,16 +443,18 @@
 					}); */
 					
 					//임시저장된 건이 있으면 이벤트 삭제하고 재생성
-					/* if(calendarLeftVue.flexibleAppl.hasOwnProperty("applStatusCd") && calendarLeftVue.flexibleAppl.applStatusCd=='11') {
+					if(calendarLeftVue.flexibleAppl.hasOwnProperty("applStatusCd") && calendarLeftVue.flexibleAppl.applStatusCd=='11') {
+						console.log('before::::'+'workRange.'+ calendarLeftVue.flexibleAppl.applCd + '.' + moment(calendarLeftVue.flexibleAppl.sYmd).format('YYYY-MM-DD'));
 						var eventId = 'workRange.'+ calendarLeftVue.flexibleAppl.applCd + '.' + moment(calendarLeftVue.flexibleAppl.sYmd).format('YYYY-MM-DD');
 						var event = calendar.getEventById(eventId);
 						if(event!=null)
 							event.remove();
-					} */
+					}
+					
+					console.log('after::::'+'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd);
 					
 	       			$this.addEvent({
-	       				//id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
-	       				id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd,
+	       				id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
 	 		    		start: calendarLeftVue.applInfo.useSymd,
 	 		        	end: moment(eYmd).format('YYYY-MM-DD'),
 	 		        	rendering: 'background'
@@ -484,7 +491,17 @@
 		if(!isExist) {
 			calendarLeftVue.applInfo.useSymd = selectedDay;
 			//신청 화면 전환
-			calendarLeftVue.setUsedTermOpt();
+			//calendarLeftVue.setUsedTermOpt();
+			
+			//적용기간은 첫번째 항목으로 기본 세팅
+	   		if(calendarTopVue.selectedFlexibleStd.hasOwnProperty("usedTermOpt") && calendarTopVue.selectedFlexibleStd.usedTermOpt!=null) {
+	   			var workDateRangeItem = calendarTopVue.selectedFlexibleStd.usedTermOpt[0]; 
+	   			
+	   			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null) {
+	   				calendarLeftVue.applInfo.workRange = workDateRangeItem.value;
+	   				monthCalendarVue.changeWorkRange();
+	   			}
+	   		}
 		} else {
 			$("#alertText").html("신청중인 또는 이미 적용된 근무정보가 있습니다.<br>시작일을 다시 지정하세요.");
        		$("#alertModal").on('hidden.bs.modal',function(){
