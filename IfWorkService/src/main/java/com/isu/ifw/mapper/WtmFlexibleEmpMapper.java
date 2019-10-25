@@ -238,7 +238,23 @@ public interface WtmFlexibleEmpMapper {
 	
 	public List<Map<String, Object>> getPlanByFlexibleEmpId(Map<String, Object> paramMap);
 	
+	/**
+	 * 그날의 TimeTypeCd 의 마지막 시분을 가지고 온다
+	 * @param paramMap
+	 * @return
+	 */
 	public Date getMaxPlanEdate(Map<String, Object> paramMap);
+	/**
+	 * 
+	 * @param paramMap
+	 *  { yyyyMMddHHmmss : "20190101180000"  -- 퇴근시간이라면
+	 *    intervalMinute : yyyyMMddHHmmss 이후 "60" -- 60분에 대한 시간이 언제인지 가지고 오기 위해. (휴게시간을 제외한 시간이다.)
+	 *    tenantId
+	 *    enterCd
+	 *    sabun
+	 *    ymd
+	 * @return
+	 */
 	public Date getIntervalDateTime(Map<String, Object> paramMap);
 	
 }
