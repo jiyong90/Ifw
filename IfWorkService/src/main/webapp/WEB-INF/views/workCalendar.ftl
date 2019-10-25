@@ -51,42 +51,6 @@
 	        </div>
 	    </div>
 	    <!-- 근무제 적용 modal end -->
-	    <!-- 근무 계획 작성 리스트 start -->
-	    <div class="modal fade" id="planWorkDayModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-	        <div class="modal-dialog modal-lg" role="document">
-	            <div class="modal-content rounded-0">
-	                <div class="modal-header">
-	                    <h5 class="modal-title">근무제 선택</h5>
-	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	                        <span aria-hidden="true">&times;</span>
-	                    </button>
-	                </div>
-	                <div class="modal-body">
-	                	<div class="modal-app-wrap">
-		                    <p>근무 계획을 작성할 근무제를 선택하세요.</p>
-		                    <div class="mt-3">
-		                       	<div>
-		                            <ul class="list-group select-work-list">
-		                                <li class="list-group-item" v-for="(p, pIdx) in planFlexitimeList" @click="selectedPlanFlexitime(pIdx)">
-		                                    <span :class="['tag ' + p.workTypeCd]">{{p.workTypeNm}}</span>
-		                                    <div class="title">{{p.flexibleNm}}</div>
-		                                    <div class="desc" v-if="p.sYmd && p.eYmd">
-		                                    	근무기간: {{moment(p.sYmd).format('YYYY-MM-DD')}} ~ {{moment(p.eYmd).format('YYYY-MM-DD')}}
-		                                    </div>
-		                                </li>
-		                            </ul>
-		                        </div>
-			                </div>
-		                </div>
-		                <div class="btn-wrap text-center">
-		                    <button type="button" class="btn btn-secondary  rounded-0" data-dismiss="modal">취소</button>
-		                    <button type="button" id="planWorkDayBtn" class="btn btn-default rounded-0" style="display:none;" @click="planWorkDay(selectedPlanFlexitime.flexibleEmpId)">작성하기</button>
-		                </div>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
-	    <!-- 근무 계획 작성 리스트 modal end -->
 	    <div id="sub-nav" class="container-fluid">
 	        <form id="calendar-top-wrap" action="">
 	            <div class="row no-gutters work-time-wrap">
@@ -483,7 +447,7 @@
                                 </div>
                             </div>
                             <div class="btn-wrap mt-5">
-                            	<template v-if="calendarTopVue.flexibleStd">
+                            	<template v-if="calendarTopVue.selectedFlexibleStd">
 	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-if="calendarTopVue.selectedFlexibleStd.workTypeCd=='ELAS'" @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd.workTypeCd)">다음</button>
 	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-else @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd.workTypeCd)">확인요청</button>
                                 </template>
@@ -696,9 +660,7 @@
 	    data : {
 	    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
 	    	flexitimeList: [], //사용할 유연근무제 리스트
-	    	flexibleStd: {}, //현재 근무제
-	    	selectedFlexibleStd: {},
-	    	planFlexitimeList: [] //근무계획을 작성할 유연근무제 리스트
+	    	flexibleStd: {} //현재 근무제
   		},
 	    mounted: function(){
 	    	var $this = this;
@@ -709,7 +671,6 @@
 	    	
 	    	<#if flexibleAppl?? && flexibleAppl!='' && flexibleAppl?exists >
 	    		var flexibleAppl = JSON.parse("${flexibleAppl?js_string}"); //임시저장된 신청서
-	    		
 	    		/* if(flexibleAppl.applStatusCd!=null && flexibleAppl.applStatusCd!='' && flexibleAppl.applStatusCd!='99') {
 					//신청화면 전환
 					$("#applyBtn").bind('click', function(){
@@ -731,9 +692,6 @@
 				});
 	    	</#if>
 	    	
-	    	if('${calendar}'=='workMonthCalendar') {
-	    		$this.getPlanFlexitimeList();
-	    	}
 	    },
 	    methods : {
 	    	getFlexitimeList : function(){ //사용할 근무제 리스트
@@ -803,65 +761,6 @@
          	},
          	getFlexibleAppl : function(flexibleAppl){
          		calendarLeftVue.flexibleAppl = flexibleAppl;
-         	},
-         	getPlanFlexitimeList : function(){ //근무계획을 작성할 근무제 리스트
-	         	var $this = this;
-         	
-         		var param = {
-         			ymd : $this.today
-         		};
-		    		
-		    	Util.ajax({
-					url: "${rc.getContextPath()}/flexibleEmp/plan/list",
-					type: "GET",
-					contentType: 'application/json',
-					data: param,
-					dataType: "json",
-					success: function(data) {
-						$this.planFlexitimeList = [];
-						if(data.status=='OK' && data.flexibleList!=null && data.flexibleList.length>0) {
-							//console.log(data.wtmFlexibleStd);
-							$this.planFlexitimeList = data.flexibleList;
-							
-							//근무 계획을 작성할 근무제 리스트가 1개 이면 바로 근무 계획 작성화면으로 이동
-							//여러 개이면 리스트 팝업 보여줌.
-							if(data.flexibleList.length==1) {
-								
-								var flexibleEmpId;
-								data.flexibleList.map(function(f){
-									flexibleEmpId = f.flexibleEmpId;
-								});
-								
-								$("#planBtn").bind('click', function(){
-									$this.planWorkDay(flexibleEmpId);
-								});
-							} else {
-								$("#planBtn").bind('click', function(){
-									$("#planWorkDayModal").modal("show"); 
-								});
-							}
-							
-							$("#planBtn").show();
-						}
-					},
-					error: function(e) {
-						console.log(e);
-						$this.planFlexitimeList = [];
-					}
-				});
-	         },
-         	selectedPlanFlexitime: function(idx){
-				var $this = this;
-         		
-         		$("#planWorkDayModal .list-group-item").not(idx).removeClass("active");
-         		$("#planWorkDayModal .list-group-item").eq(idx).addClass("active");
-         		
-         		//근무 계획을 작성할 근무제 선택
-         		$this.selectedPlanFlexitime = $this.planFlexitimeList[idx];
-         		$("#planWorkDayBtn").show();
-         	},
-         	planWorkDay: function(flexibleEmpId){
-         		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Day&flexibleEmpId='+flexibleEmpId;
          	}
 	    }
    	});
@@ -961,7 +860,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.rangeInfo = {};
-						console.log(data);
+						//console.log(data);
 						if(data!=null) {
 							$this.rangeInfo = data;
 							
@@ -1384,7 +1283,6 @@
    		if(e.date!=null && e.date!='undefined' && e.date!='') {
 	   		if(e.oldDate!=null && e.oldDate!='undefined' && e.date!=e.oldDate) {
 	   			calendarLeftVue.applInfo.useSymd = moment(e.date).format('YYYY-MM-DD');
-	   			console.log('여기 오긴 하지?');
 	   	    	calendarLeftVue.changeUseSymd();
 	   		}
    		}
