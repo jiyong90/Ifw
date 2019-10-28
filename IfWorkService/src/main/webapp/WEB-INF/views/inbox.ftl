@@ -72,7 +72,8 @@
 				});
 			},
 			goToWorkTimeCalendar: function(){
-				location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.workPlan.sYmd).format('YYYYMMDD');
+				modalVue.getPlanFlexitimeList('N');
+				//location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.workPlan.sYmd).format('YYYYMMDD');
 			}
 			/* ,
 			webSocketCallback : function(paramMap){
