@@ -135,7 +135,6 @@
 				, WORK_EHM = #{item.workEhm} 
 				, CORE_SHM = #{item.coreShm} 
 				, CORE_EHM = #{item.coreEhm} 
-				, DEFAULT_WORK_MINUTE = #{item.defaultWorkMinute}
 				, DEFAULT_WORK_USE_YN = #{item.defaultWorkUseYn}
 				, UNIT_MINUTE = #{item.unitMinute} 
 				, UNIT_MINUTE = #{item.unitMinute} 
@@ -173,7 +172,6 @@
 				 , WORK_EHM AS workEhm
 				 , CORE_SHM AS coreShm
 				 , CORE_EHM AS coreEhm
-				 , DEFAULT_WORK_MINUTE AS defaultWorkMinute
 				 , DEFAULT_WORK_USE_YN AS defaultWorkUseYn
 				 , UNIT_MINUTE AS unitMinute
 				 , EXHAUSTION_YN AS exhaustionYn

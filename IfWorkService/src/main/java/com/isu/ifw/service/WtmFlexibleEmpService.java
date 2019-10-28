@@ -194,5 +194,5 @@ public interface WtmFlexibleEmpService {
 	
 	public Map<String, Object> getFlexibleEmpForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
 	
-	public ReturnParam mergeWorkDayResult(Long tenantId, String enterCd, String ymd, String sabun, Long applId, String timeTypeCd, String taaCd, Date planSdate, Date planEdate, String defaultWorkUseYn, Integer defaultWorkMinute, String fixotUseType, Integer fixotUseLimit,  String userId);
+	public ReturnParam mergeWorkDayResult(Long tenantId, String enterCd, String ymd, String sabun, Long applId, String timeTypeCd, String taaCd, Date planSdate, Date planEdate, String defaultWorkUseYn, String fixotUseType, Integer fixotUseLimit,  String userId);
 }

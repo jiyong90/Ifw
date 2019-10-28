@@ -144,7 +144,6 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						saveMap.put("usedTermOpt", l.get("usedTermOpt").toString());
 						saveMap.put("applTermOpt", l.get("applTermOpt").toString());
 						saveMap.put("regardTimeCdId", Integer.parseInt(l.get("regardTimeCdId").toString()));
-						saveMap.put("defaultWorkMinute", l.get("defaultWorkMinute").toString().equals("") ? null : Integer.parseInt(l.get("defaultWorkMinute").toString()));
 						saveMap.put("defaultWorkUseYn", l.get("defaultWorkUseYn").toString());
 						saveMap.put("unitMinute", l.get("unitMinute").toString().equals("") ? null : Integer.parseInt(l.get("unitMinute").toString()));
 						saveMap.put("taaTimeYn", l.get("taaTimeYn").toString());

@@ -307,7 +307,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 	
 	@Override
-	public ReturnParam mergeWorkDayResult(Long tenantId, String enterCd, String ymd, String sabun, Long applId, String timeTypeCd, String taaCd, Date planSdate, Date planEdate, String defaultWorkUseYn, Integer defaultWorkMinute, String fixotUseType, Integer fixotUseLimit,  String userId) {
+	public ReturnParam mergeWorkDayResult(Long tenantId, String enterCd, String ymd, String sabun, Long applId, String timeTypeCd, String taaCd, Date planSdate, Date planEdate, String defaultWorkUseYn , String fixotUseType, Integer fixotUseLimit,  String userId) {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
@@ -326,7 +326,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			
 			//일별 고정 OT의 경우 기설정된 OT정보를 찾아 지워주자.
 			//지우기 전에 기본근무 시간 종료시간을 가지고 오자.
-			if(defaultWorkUseYn.equals("Y") && defaultWorkMinute > 0 && fixotUseType.equalsIgnoreCase("DAY")) {
+			if(defaultWorkUseYn.equals("Y") && fixotUseType.equalsIgnoreCase("DAY")) {
 				pMap.put("timeTypeCd", WtmApplService.TIME_TYPE_BASE);
 				//기본근무 종료시간을 구하자.
 				Date maxEdate = flexEmpMapper.getMaxPlanEdate(pMap);
@@ -429,7 +429,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			}
 			
 			//고정 OT여부 확인  / 기본 일 근무시간(분) 체크 / 일별소진 옵션만 / 고정 OT시간
-			if(defaultWorkUseYn.equals("Y") && defaultWorkMinute > 0 && fixotUseType.equalsIgnoreCase("DAY")) {
+			if(defaultWorkUseYn.equals("Y") && fixotUseType.equalsIgnoreCase("DAY")) {
 				//일별, 일괄 소진 여부 : 일괄 소진은 여기서 할수 없다. 일마감 시 일괄소진 여부에 따라 OT데이터를 생성해주자.
 
 				pMap.put("yyyyMMddHHmmss", format.format(insEdate));
@@ -513,7 +513,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				        e = cal.getTime();
 					}
 					
-					this.mergeWorkDayResult(emp.getTenantId(), emp.getEnterCd(), k, emp.getSabun(), null, WtmApplService.TIME_TYPE_BASE, null, s, e, stdMgr.getDefaultWorkUseYn(), stdMgr.getDefaultWorkMinute() , stdMgr.getFixotUseType(), stdMgr.getFixotUseLimit(), userId);
+					this.mergeWorkDayResult(emp.getTenantId(), emp.getEnterCd(), k, emp.getSabun(), null, WtmApplService.TIME_TYPE_BASE, null, s, e, stdMgr.getDefaultWorkUseYn() , stdMgr.getFixotUseType(), stdMgr.getFixotUseLimit(), userId);
 				}
 				
 				/*

@@ -21,7 +21,6 @@ public class WtmFlexibleStdVO {
 	private String workEhm;
 	private String coreShm;
 	private String coreEhm;
-	private String defaultWorkMinute;
 	private String unitMinute;
 	private String exhaystionYn;
 	private String holExceptYn;
@@ -99,12 +98,6 @@ public class WtmFlexibleStdVO {
 	}
 	public void setCoreEhm(String coreEhm) {
 		this.coreEhm = coreEhm;
-	}
-	public String getDefaultWorkMinute() {
-		return defaultWorkMinute;
-	}
-	public void setDefaultWorkMinute(String defaultWorkMinute) {
-		this.defaultWorkMinute = defaultWorkMinute;
 	}
 	public String getUnitMinute() {
 		return unitMinute;

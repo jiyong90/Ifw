@@ -77,12 +77,6 @@
 													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" /> 체크시 고정OT 소진기준작성 
 												</td>
 											</tr>
-											<tr id="trBase">
-												<th id="defaultWorkMinuteTit">일 기본근무시간(분)</th>
-												<td colspan="3">
-													<input type="text" id="defaultWorkMinute" name="defaultWorkMinute"/>
-												</td>
-											</tr>
 											<tr id="trFixOt">
 												<th>고정OT 소진방법</th>
 												<td>
@@ -301,7 +295,6 @@
 			{Header:"공휴일제외여부",	Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"holExceptYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"인정근무 단위시간",	Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"unitMinute", 		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },			
 			{Header:"기본시간사용여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"defaultWorkUseYn", KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
-			{Header:"일 기본근무시간",	Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"defaultWorkMinute", KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
 			{Header:"고정OT 소진방법",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"고정OT 한계시간",	Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseLimit",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },			
 			{Header:"간주근무시간",		Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"regardTimeCdId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:20 },
@@ -424,9 +417,6 @@
 	        	var chkYn = getCheckYn("defaultWorkUseYn");
 				sheet1.SetCellValue(row, "defaultWorkUseYn", chkYn);
 	        }
-	        if($('#trBase').is(':visible')){
-	        	sheet1.SetCellValue(row, "defaultWorkMinute", $("#defaultWorkMinute").val());
-	        }
 	        if($('#trFixOt').is(':visible')){
 	        	sheet1.SetCellValue(row, "fixotUseType", $("#fixotUseType").val());
 	        	sheet1.SetCellValue(row, "fixotUseLimit", $("#fixotUseLimit").val());
@@ -496,7 +486,6 @@
 			} else {
 				sheet1.SetCellValue(row, "regardTimeCdId", $("#regardTimeCdId").val());
 			}
-			sheet1.SetCellValue(row, "defaultWorkMinute", $("#defaultWorkMinute").val());
 			sheet1.SetCellValue(row, "unitMinute", $("#unitMinute").val());
 			sheet1.SetCellValue(row, "taaTimeYn", $("#taaTimeYn").val());
 			sheet1.SetCellValue(row, "note", $("#note").val());
@@ -606,8 +595,6 @@
 					if(sheet1.GetCellValue( NewRow, "defaultWorkUseYn") == "Y"){
 						$("input:checkbox[id='defaultWorkUseYn']").prop("checked", true);
 						setDefaultWorkUseYn(true);
-						$("#trBase").show();
-						$("#defaultWorkMinute").val(sheet1.GetCellValue( NewRow, "defaultWorkMinute"));
 						$("#trFixOt").show();
 						$("#fixotUseType").val(sheet1.GetCellValue( NewRow, "fixotUseType")).prop("selected", true);
 						$("#fixotUseLimit").val(sheet1.GetCellValue( NewRow, "fixotUseLimit"));
@@ -622,20 +609,10 @@
 					$("#trWorkTime").show();
 					$("#workShm").val(sheet1.GetCellValue( NewRow, "workShm"));
 					$("#workEhm").val(sheet1.GetCellValue( NewRow, "workEhm"));
-					$("#trCoreChk").show();
-					$("#trCoreTime").show();
-					$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
-					$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
 					if(sheet1.GetCellValue( NewRow, "taaWorkYn") == "Y"){
 						$("input:checkbox[id='taaWorkYn']").prop("checked", true);
 					} else {
 						$("input:checkbox[id='taaWorkYn']").prop("checked", false);
-					}
-					if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
-						$("input:checkbox[id='coreChkYn']").prop("checked", true);
-						setCoreChkYn(true);
-					} else {
-						setCoreChkYn(false);
 					}
 					$("#trBaseFirst").show();
 					$("#exhaustionYn").addClass("required");
@@ -645,6 +622,21 @@
 						$("input:checkbox[id='unplannedYn']").prop("checked", true);
 					} else {
 						$("input:checkbox[id='unplannedYn']").prop("checked", false);
+					}
+					if(workTypeCd == "SELE_C"){
+						$("#trCoreChk").show();
+						if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
+							$("input:checkbox[id='coreChkYn']").prop("checked", true);
+							setCoreChkYn(true);
+						} else {
+							setCoreChkYn(false);
+						}
+						$("#trCoreTime").show();
+						$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
+						$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
+					} else {
+						$("#trCoreChk").hide();
+						$("#trCoreTime").hide();
 					}
 				} else {
 					$("#taaTimeYn").val("N");
@@ -690,7 +682,6 @@
 				}
 				// 간주근무
 				$("#regardTimeCdId").val(sheet1.GetCellValue( NewRow, "regardTimeCdId")).prop("selected", true);
-				$("#defaultWorkMinute").val(sheet1.GetCellValue( NewRow, "defaultWorkMinute"));
 				$("#unitMinute").val(sheet1.GetCellValue( NewRow, "unitMinute"));
 					
 				$("#note").val(sheet1.GetCellValue( NewRow, "note"));
@@ -760,18 +751,13 @@
 	
 	function setDefaultWorkUseYn(chk){
 		if(chk){
-			$("#trBase").show();
         	$("#trFixOt").show();
-        	$("#defaultWorkMinute").addClass("required");
         	$("#fixotUseType").addClass("required");
         	$("#fixotUseLimit").addClass("required");
 		} else {
-			$("#trBase").hide();
             $("#trFixOt").hide();
-            $("#defaultWorkMinute").val("");
            	$("#fixotUseType").val("");
 			$("#fixotUseLimit").val("");
-			$("#defaultWorkMinute").removeClass("required");
         	$("#fixotUseType").removeClass("required");
         	$("#fixotUseLimit").removeClass("required");
 		}

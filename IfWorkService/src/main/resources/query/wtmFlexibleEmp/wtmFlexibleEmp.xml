@@ -120,7 +120,6 @@
 			  , M.FLEXIBLE_NM AS flexibleNm
 			  , M.WORK_TYPE_CD AS workTypeCd
 			  , M.BASE_WORK_YN AS baseWorkYn
-			  , M.DEFAULT_WORK_MINUTE AS defaultWorkMinute
 			  , M.UNIT_MINUTE AS unitMinute
 			  , E.SABUN AS sabun
 			  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END AS sYmd
@@ -239,7 +238,6 @@
 			     , M.WORK_EHM AS workEhm
 			     , M.CORE_SHM AS coreShm
 			     , M.CORE_EHM AS coreEhm
-			     , M.DEFAULT_WORK_MINUTE AS defaultWorkMinute
 			     , M.UNIT_MINUTE AS unitMinute
 			     , M.EXHAUSTION_YN AS exhaustionYn
 			     , M.HOL_EXCEPT_YN AS holExceptYn
