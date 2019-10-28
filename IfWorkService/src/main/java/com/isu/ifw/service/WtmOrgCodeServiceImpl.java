@@ -41,4 +41,22 @@ public class WtmOrgCodeServiceImpl implements WtmOrgCodeService{
 		
 		return searchList;
 	}
+	@Override
+	public List<Map<String, Object>> getOrgComboList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+		List<Map<String, Object>> searchList = new ArrayList();	
+		try {
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			searchList =  wtmOrgCodeMapper.getOrgComboList(paramMap);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			logger.warn(e.toString(), e);
+		} finally {
+			logger.debug("getOrgComboList Service End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			MDC.clear();
+		}
+		
+		return searchList;
+	}
 }

@@ -89,7 +89,7 @@
 		sheet1.SetColProperty("statusCd", {ComboText:statusCdList[0], ComboCode:statusCdList[1]} );
 
 		//조직명
-		var orgCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "ORG_CD"), "선택");
+		var orgCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/orgCode/comboList", "",false).DATA, "선택");
 		sheet1.SetColProperty("orgCd", {ComboText:orgCdList[0], ComboCode:orgCdList[1]} );
 
 		//사업장

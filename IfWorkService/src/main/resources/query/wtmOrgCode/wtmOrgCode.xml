@@ -24,4 +24,14 @@
 				         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
         ]]>
     </select>
+    <select id="getOrgComboList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT ORG_CD AS code
+				 , ORG_NM AS codeNm
+			  FROM WTM_ORG_CODE
+			 WHERE TENANT_ID = #{tenantId}
+			   AND ENTER_CD = #{enterCd} 
+			   AND date_format(now(),'%Y%m%d') BETWEEN SYMD AND EYMD
+        ]]>
+    </select>
 </mapper>

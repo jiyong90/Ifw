@@ -83,7 +83,7 @@
 		sheet1.SetColProperty("workteamMgrId", {ComboText:"|"+workteamCdList[0], ComboCode:"|"+workteamCdList[1]} );
 
 		//부서명
-		var orgCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "ORG_CD"), "");
+		var orgCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/orgCode/comboList", "",false).DATA, "");
 		sheet1.SetColProperty("orgCd", {ComboText:"|"+orgCdList[0], ComboCode:"|"+orgCdList[1]} );
 
 		//직급

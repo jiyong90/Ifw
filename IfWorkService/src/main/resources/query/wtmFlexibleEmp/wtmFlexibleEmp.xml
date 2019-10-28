@@ -1164,6 +1164,8 @@
 			  , A.SYMD AS symd
 			  , A.EYMD AS eymd
 			  , A.NOTE AS note
+			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(NOW(), '%Y%m%d') THEN CONCAT('<a class="basic" onClick="setModify(', FLEXIBLE_EMP_ID, ')">근무변경/취소</a>')
+					    ELSE '' END AS modify
 		  FROM WTM_FLEXIBLE_EMP A
 		 INNER JOIN WTM_FLEXIBLE_STD_MGR B
 		    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
