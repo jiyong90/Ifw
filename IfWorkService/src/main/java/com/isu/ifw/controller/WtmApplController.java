@@ -2,7 +2,9 @@ package com.isu.ifw.controller;
 
 import java.security.InvalidParameterException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.option.vo.ReturnParam;
 
 @RestController
@@ -121,7 +124,18 @@ public class WtmApplController {
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
 					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) { 
-						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, sabun, rp.get("symd")+"", rp.get("eymd")+"", userId);
+						
+						//유연근무제 기간 앞뒤로 +1 일
+						Date sDate = WtmUtil.toDate(rp.get("symd")+"", "yyyyMMdd");
+						Calendar sYmd = Calendar.getInstance();
+						sYmd.setTime(sDate);
+						sYmd.add(Calendar.DATE, -1);
+						
+						Date eDate = WtmUtil.toDate(rp.get("eymd")+"", "yyyyMMdd");
+						Calendar eYmd = Calendar.getInstance();
+						eYmd.setTime(eDate);
+						eYmd.add(Calendar.DATE, 1);
+						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, sabun, WtmUtil.parseDateStr(sYmd.getTime(), "yyyyMMdd"),  WtmUtil.parseDateStr(eYmd.getTime(), "yyyyMMdd"), userId);
 					}
 				}
 			}

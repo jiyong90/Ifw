@@ -22,7 +22,7 @@ import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
 @RequestMapping(value="/close")
-public class WtmWorktimeCloseController {
+public class WtmWorkCloseController {
 	
 	@Autowired
 	private TenantConfigManagerService tcms;

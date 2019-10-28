@@ -272,24 +272,24 @@
 		                        <div class="form-group col-12">
 	                                <label for="planDate">계획 근무시간</label>
 	                                <div id="planDate" v-if="inOutChangeAppl.planSdate||inOutChangeAppl.planEdate">
-		                             	<template v-if="inOutChangeAppl.planSdate">{{inOutChangeAppl.planSdate}}</template>
-		                             	<template v-if="inOutChangeAppl.planEdate">~ {{inOutChangeAppl.planEdate}}</template>
+		                             	<template v-if="inOutChangeAppl.planSdate">{{moment(inOutChangeAppl.planSdate).format('YYYY-MM-DD HH:mm')}}</template>
+		                             	<template v-if="inOutChangeAppl.planEdate">~ {{moment(inOutChangeAppl.planEdate).format('YYYY-MM-DD HH:mm')}}</template>
 	                            	</div>
 	                            </div>
 	                        </div>
 	                        <div class="form-row no-gutters">
 	                            <div class="form-group col-12">
 	                                <label for="inOutDate">출/퇴근 시각</label>
-	                                <div id="inOutDate" v-if="inOutChangeAppl.inoutSdate||inOutChangeAppl.inoutEdate">
+	                                <div>
 		                             	<template v-if="inOutChangeAppl.inoutSdate">
-		                             		{{inOutChangeAppl.inoutSdate}}
+		                             		{{moment(inOutChangeAppl.inoutSdate).format('YYYY-MM-DD HH:mm')}}
 		                             	</template>
 		                             	<template v-else>
 		                             		미타각
 		                             	</template>
 		                             	~
 		                             	<template v-if="inOutChangeAppl.inoutEdate">
-		                             		{{inOutChangeAppl.inoutEdate}}
+		                             		{{moment(inOutChangeAppl.inoutEdate).format('YYYY-MM-DD HH:mm')}}
 		                             	</template>
 		                             	<template v-else>
 		                             		미타각
@@ -300,11 +300,11 @@
                            	<div class="time-input-form form-row no-gutters">
 	                            <div class="form-group col-6 pr-1">
 	                                <label for="chgSdate" data-target-input="nearest">변경 출근시간</label>
-	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="chgSdate" value="" data-toggle="datetimepicker" data-target="#chgSdate" autocomplete="off" required>
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="chgSdate" value="" data-toggle="datetimepicker" data-target="#chgSdate" autocomplete="off">
 	                            </div>
 	                            <div class="form-group col-6 pl-1">
 	                                <label for="chgEdate" data-target-input="nearest">변경 퇴근시간</label>
-	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="chgEdate" value="" data-toggle="datetimepicker" data-target="#chgEdate" autocomplete="off" required>
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="chgEdate" value="" data-toggle="datetimepicker" data-target="#chgEdate" autocomplete="off">
 	                            </div>
 	                        </div>
                             <div class="form-row no-gutters">
@@ -318,7 +318,7 @@
                         <div class="btn-wrap text-center">
                             <button type="button" class="btn btn-secondary rounded-0"
                                 data-dismiss="modal">취소</button>
-                            <button type="button" class="btn btn-default rounded-0" @click="inOutChangeAppl">확인요청</button>
+                            <button type="button" class="btn btn-default rounded-0" @click="inOutChange">확인요청</button>
                         </div>
                     </form>
                 </div>
@@ -659,16 +659,16 @@
   								
   								//근태 사유서
   								if(data.hasOwnProperty('planSdate') && data.planSdate!=null && data.planSdate!='')
-  									$this.inOutChangeAppl['planSdate']=moment(data.planSdate).format('YYYY-MM-DD HH:mm');
+  									$this.inOutChangeAppl['planSdate']=data.planSdate;
   								
   								if(data.hasOwnProperty('planEdate') && data.planEdate!=null && data.planEdate!='')
-  									$this.inOutChangeAppl['planEdate']=moment(data.planEdate).format('YYYY-MM-DD HH:mm');
+  									$this.inOutChangeAppl['planEdate']=data.planEdate;
   								
   								if(data.hasOwnProperty('entrySdate') && data.entrySdate!=null && data.entrySdate!='')
-  									$this.inOutChangeAppl['inoutSdate']=moment(data.entrySdate).format('YYYY-MM-DD HH:mm');
+  									$this.inOutChangeAppl['inoutSdate']=data.entrySdate;
   								
   								if(data.hasOwnProperty('entryEdate') && data.entryEdate!=null && data.entryEdate!='')
-  									$this.inOutChangeAppl['inoutEdate']=moment(data.entryEdate).format('YYYY-MM-DD HH:mm');
+  									$this.inOutChangeAppl['inoutEdate']=data.entryEdate;
   							}
   						},
   						error: function(e) {
@@ -1472,9 +1472,10 @@
   	         	delSubYmd: function(idx){
   	         		this.subYmds.splice(idx,1);
   	         	},
-  	         	inOutChangeAppl: function() {
+  	         	inOutChange: function() {
   	         		var $this = this;
   	         		var applYn = true;
+  	         		var msg = '';
   	         		var forms = document.getElementById('inOutChangeModal').getElementsByClassName('needs-validation');
   	         		var validation = Array.prototype.filter.call(forms, function(form) {
   	         			if (form.checkValidity() === false) {
@@ -1485,11 +1486,17 @@
   	         			form.classList.add('was-validated');
   	         		});
   	         		
+  	         		if($("#chgSdate").val()=='' && $("#chgEdate").val()=='') {
+  	         			applYn = false;
+  	         			msg = '변경 할 출근/퇴근 시간을 입력해 주세요.';
+  	         		}
+  	         		
   	         		if(applYn) {
   	         			var inOutChgAppl = $this.inOutChangeAppl;
   	         			var param = {};
+  	         			var ymd = moment($this.workday).format('YYYYMMDD');
   	         			param['workTypeCd'] = 'ENTRY_CHG';
-  	         			param['ymd'] = moment($this.workday).format('YYYYMMDD');
+  	         			param['ymd'] = ymd;
   	         			
   	         			if(inOutChgAppl.planSdate!=null && inOutChgAppl.planSdate!=undefined && inOutChgAppl.planSdate!='')
   	         				param['planSdate'] = moment(inOutChgAppl.planSdate).format('YYYYMMDDHHmm');
@@ -1499,14 +1506,13 @@
   	         				param['entrySdate'] = moment(inOutChgAppl.entrySdate).format('YYYYMMDDHHmm');
   	         			if(inOutChgAppl.entryEdate!=null && inOutChgAppl.entryEdate!=undefined && inOutChgAppl.entryEdate!='')
   	         				param['entryEdate'] = moment(inOutChgAppl.entryEdate).format('YYYYMMDDHHmm');
-  	         			if(inOutChgAppl.chgSdate!=null && inOutChgAppl.chgSdate!=undefined && inOutChgAppl.chgSdate!='')
-  	         				param['chgSdate'] = moment(inOutChgAppl.chgSdate).format('YYYYMMDDHHmm');
-  	         			if(inOutChgAppl.chgEdate!=null && inOutChgAppl.chgEdate!=undefined && inOutChgAppl.chgEdate!='')
-  	         				param['chgEdate'] = moment(inOutChgAppl.chgEdate).format('YYYYMMDDHHmm');
-  	         			
+  	         			if($("#chgSdate").val()!=undefined && $("#chgSdate").val()!='')
+         					param['chgSdate'] = moment(moment($this.workday+' '+$("#chgSdate").val()).format('YYYY-MM-DD HH:mm')).format('YYYYMMDDHHmm');
+  	         			if($("#chgEdate").val()!=undefined && $("#chgEdate").val()!='')
+  	         				param['chgEdate'] = moment(moment($this.workday+' '+$("#chgEdate").val()).format('YYYY-MM-DD HH:mm')).format('YYYYMMDDHHmm');
   	         			param['reason'] = $("#chgReason").val();
   	         			
-  	         			Util.ajax({
+  	         			/* Util.ajax({
 	  	  					url: "${rc.getContextPath()}/inOutChangeAppl/request",
 	  	  					type: "POST",
 	  	  					contentType: 'application/json',
@@ -1528,7 +1534,14 @@
 	  	    	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
 	  	    	  	         		$("#alertModal").modal("show"); 
 	  	  					}
-	  	  				}); 
+	  	  				}); */
+  	         		} else {
+  	         			$("#alertText").html(msg);
+  		         		$("#alertModal").on('hidden.bs.modal',function(){
+  		         			$("#alertModal").off('hidden.bs.modal');
+  		         			$("#inOutChangeModal").find(".needs-validation").removeClass('was-validated');
+  		         		});
+  		         		$("#alertModal").modal("show"); 
   	         		}
   	         		
   	         	}
