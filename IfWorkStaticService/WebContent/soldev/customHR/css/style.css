@@ -1261,6 +1261,7 @@ table.default td input[type="checkbox"]:checked {
     border: 0;
     margin: 0;
     margin-left: 20px;
+    margin-right: 4px;
     padding: 0;
     background: url('../img/form_check.png') 0 0 no-repeat;
 }
