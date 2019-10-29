@@ -1198,5 +1198,69 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         System.out.println("WtmInterfaceServiceImpl setTaaApplIf end");
 		return;
 	}
+	
+	@Override
+	public void setWorkTimeCloseIf(HashMap reqMap) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl setWorkTimeCloseIf");
+		// 인터페이스 결과 저장용
+    	String retMsg = null;
+    	int resultCnt = 0;
+    	String ifType = "WORKTIME_CLOSE";
+    	Map<String, Object> ifHisMap = new HashMap<>();
+    	ifHisMap.put("tenantId", (Long)reqMap.get("tenantId"));
+    	ifHisMap.put("ifItem", ifType);
+    	
+    	// 인터페이스용 변수
+    	String lastDataTime = null;
+    	String nowDataTime = null;
+    	HashMap<String, Object> getDateMap = null;
+    	HashMap<String, Object> getIfMap = null;
+    	List<Map<String, Object>> getIfList = null;
+    	
+    	// 최종 자료 if 시간 조회
+    	try {
+    		getDateMap = (HashMap<String, Object>) getIfLastDate((Long) reqMap.get("tenantId"), ifType);
+    		lastDataTime = getDateMap.get("nowDate").toString();
+    		nowDataTime = getDateMap.get("nowDate").toString();
+        	
+    	} catch(Exception e) {
+    		retMsg = "WORKTIME_CLOSE get : 최종갱신일 조회오류";
+    	}
+    	
+		// 2. 인터페이스 data 처리
+		try {
+			//String applStatusCd = reqMap.get("status").toString();
+			// 호출이되면 근태신청 데이터를 저장하거나 결재상태를 갱신한다
+			reqMap.put("retCode", "");
+			reqMap.put("retMsg", "");
+			wtmInterfaceMapper.setWorkTimeCloseIf(reqMap);
+			String retCode = reqMap.get("retCode").toString();
+			if("FAIL".equals(retCode)) {
+				ifHisMap.put("ifStatus", "ERR");
+				retMsg = reqMap.get("retMsg").toString();
+			} else {
+				ifHisMap.put("ifStatus", "OK");
+				retMsg = reqMap.get("ym").toString() + " 근무마감 처리완료";
+			}
+		} catch(Exception e){
+			ifHisMap.put("ifStatus", "ERR");
+			retMsg = "TAA_RESULT set : 근태 이관오류";
+            e.printStackTrace();
+        }
+		
+    	// 3. 처리결과 저장
+		try {
+			// WTM_IF_HIS 테이블에 결과저장
+			ifHisMap.put("updateDate", nowDataTime);
+   			ifHisMap.put("ifEndDate", lastDataTime);
+			ifHisMap.put("ifMsg", retMsg);
+			wtmInterfaceMapper.insertIfHis(ifHisMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        System.out.println("WtmInterfaceServiceImpl setTaaApplIf end");
+		return;
+	}
 
 }

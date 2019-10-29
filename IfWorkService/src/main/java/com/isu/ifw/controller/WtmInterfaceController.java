@@ -106,4 +106,19 @@ public class WtmInterfaceController {
 		WtmInterfaceService.setTaaApplIf(reqMap); //근태정보 인터페이스
 		return ;
 	}
+	
+	@RequestMapping(value = "/workTimeCloseIf",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void setWorkTimeCloseIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		HashMap<String, Object> reqMap = new HashMap<>();
+		reqMap.put("tenantId", Long.parseLong(request.getParameter("tenantId").toString()));
+		reqMap.put("enterCd", request.getParameter("enterCd").toString());
+		reqMap.put("ym", request.getParameter("ym").toString());
+		reqMap.put("sYmd", request.getParameter("startYmd").toString());
+		reqMap.put("eYmd", request.getParameter("endYmd").toString());
+		reqMap.put("sabun", request.getParameter("sabun").toString());
+		
+		WtmInterfaceService.setWorkTimeCloseIf(reqMap); //근태정보 인터페이스
+		return ;
+	}
 }

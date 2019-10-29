@@ -173,6 +173,11 @@ public interface WtmInterfaceMapper {
 	 **/
 	public void setTaaApplDayIf(Map<String, Object> paramMap);
 	
+	/**
+	 * 근무마감
+	 **/
+	public void setWorkTimeCloseIf(Map<String, Object> paramMap);
+	
 	
 	
 }

@@ -487,4 +487,17 @@
 		   AND ENTER_CD = #{enterCd}
 		   AND IF_APPL_NO = #{ifApplNo}
 	</select>
+	
+	<select id="setWorkTimeCloseIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_CLOSE_WORKTIME( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{ym, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
 </mapper>
