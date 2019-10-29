@@ -83,8 +83,15 @@
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub6'}">
-                	<a href="#submenu-list6" data-toggle="collapse" :aria-expanded="curSubMenu=='sub6'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub6'">시스템관리</a>
+                	<a href="#submenu-list6" data-toggle="collapse" :aria-expanded="curSubMenu=='sub6'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub6'">근무마감관리</a>
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub6'}" id="submenu-list6">
+                        <li :class="{active: curPageName=='ruleMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/dayClose';">근무마감일별조회</a></li>
+                        <li :class="{active: curPageName=='ruleMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/monClose';">근무마감월별조회</a></li>
+                    </ul>
+                </li>
+                <li :class="{active: curSubMenu=='sub7'}">
+                	<a href="#submenu-list7" data-toggle="collapse" :aria-expanded="curSubMenu=='sub7'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub7'">시스템관리</a>
+                    <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub7'}" id="submenu-list7">
                         <li :class="{active: curPageName=='ruleMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ruleMgr';">규칙관리</a></li>
                     </ul>
                 </li>
