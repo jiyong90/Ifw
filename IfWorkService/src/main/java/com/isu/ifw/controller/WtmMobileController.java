@@ -46,13 +46,13 @@ public class WtmMobileController {
 			@RequestParam(value="locale", required = true) String locale, 
 			@RequestParam(value="empKey", required = false) String empKey, HttpServletRequest request) throws Exception {
 
-		logger.debug("/mobile/{tenantId}/dashboard " + empKey );
+		logger.debug("/mobile/{tenantId}/dashboard ");
 
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
-		String enterCd =  empKey.split("@")[0];
-		String sabun =  empKey.split("@")[1];
+//		String enterCd =  empKey.split("@")[0];
+//		String sabun =  empKey.split("@")[1];
 
         Map statusMap = new HashMap();
         statusMap.put("param1", "10.01 ~ 11.01");
