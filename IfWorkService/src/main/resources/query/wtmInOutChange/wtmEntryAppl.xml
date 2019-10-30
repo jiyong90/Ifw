@@ -6,7 +6,7 @@
 <mapper namespace="com.isu.ifw.mapper.WtmEntryApplMapper">
 	<select id="checkDuplicateEntryAppl" parameterType="map" resultType="map">
   		<![CDATA[
-  		SELECT COUNT(*) AS workCnt FROM (
+  		SELECT COUNT(*) AS chgCnt FROM (
 			SELECT 1 
 			  FROM WTM_APPL A
 			  JOIN WTM_ENTRY_APPL E

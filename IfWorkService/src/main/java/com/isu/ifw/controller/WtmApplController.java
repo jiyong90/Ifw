@@ -52,6 +52,10 @@ public class WtmApplController {
 	WtmApplService wtmOtCanApplService;
 	
 	@Autowired
+	@Qualifier("wtmEntryApplService")
+	WtmApplService wtmEntryApplService;
+	
+	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
 	@Autowired
@@ -120,6 +124,8 @@ public class WtmApplController {
 					rp = wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else if("OT_CAN".equals(applCd)){
 					rp = wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+				} else if("ENTRY_CHG".equals(applCd)){
+					rp = wtmEntryApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else {
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					

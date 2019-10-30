@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
+import com.isu.ifw.entity.WtmEntryAppl;
 import com.isu.ifw.entity.WtmFlexibleAppl;
 import com.isu.ifw.entity.WtmFlexibleDayPlan;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmPropertie;
-import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
@@ -27,6 +27,7 @@ import com.isu.ifw.mapper.WtmOtCanApplMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
+import com.isu.ifw.repository.WtmEntryApplRepository;
 import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.repository.WtmFlexibleDayPlanRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
@@ -97,6 +98,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmOtCanApplMapper otCanMapper;
+	
+	@Autowired
+	WtmEntryApplRepository entryApplRepo;
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -594,6 +598,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 						appr.put("appl", otAppl);
 					} else if("SUBS_CHG".equals(applCd)) { //대체휴가 취소
 						
+					} else if("ENTRY_CHG".equals(applCd)) { //근태사유서
+						WtmEntryAppl entryAppl = entryApplRepo.findByApplId(applId);
+						appr.put("appl", entryAppl);
 					} else {
 						//유연근무제
 						WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);

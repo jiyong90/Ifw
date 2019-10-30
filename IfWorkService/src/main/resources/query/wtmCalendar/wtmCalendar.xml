@@ -184,11 +184,14 @@
     </select>
     
     <update id="updateEntryDateByAdm" parameterType="map">
-        <![CDATA[ 
 			UPDATE WTM_WORK_CALENDAR
 			SET 
+			<if test="chgSdate!=null and !chgSdate.equals('')">
 				ENTRY_SDATE=F_WTM_TO_DATE(#{chgSdate}, '%Y%m%d%H%i%s'), 
+			</if>
+			<if test="chgEdate!=null and !chgEdate.equals('')">
 				ENTRY_EDATE=F_WTM_TO_DATE(#{chgEdate}, '%Y%m%d%H%i%s'), 
+			</if>
 				ENTRY_STYPE_CD = #{typeCd},
 				ENTRY_ETYPE_CD = #{typeCd},
 				UPDATE_DATE = now(),
@@ -197,7 +200,6 @@
 				AND ENTER_CD = #{enterCd}
 				AND SABUN = #{sabun}
 				AND YMD = #{ymd}
-        ]]>
     </update>
     
         <update id="updateEntryDateByAdmTest" parameterType="map">

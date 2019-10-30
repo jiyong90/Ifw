@@ -7,12 +7,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
 import com.isu.ifw.entity.WtmEntryAppl;
 import com.isu.ifw.mapper.WtmApplMapper;
+import com.isu.ifw.mapper.WtmCalendarMapper;
 import com.isu.ifw.mapper.WtmEntryApplMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
@@ -22,8 +24,8 @@ import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
 
-@Service("wtmInOutChangeApplService")
-public class WtmInOutChangeApplServiceImpl implements WtmApplService {
+@Service("wtmEntryApplService")
+public class WtmEntryApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmApplMapper applMapper;
@@ -42,6 +44,15 @@ public class WtmInOutChangeApplServiceImpl implements WtmApplService {
 
 	@Autowired
 	WtmEntryApplRepository wtmEntryApplRepo;
+	
+	@Autowired
+	WtmCalendarMapper calendarMapper;
+	
+	@Autowired
+	WtmFlexibleEmpService flexibleEmpService;
+	
+	@Autowired
+	WtmValidatorService validatorService;
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -76,6 +87,7 @@ public class WtmInOutChangeApplServiceImpl implements WtmApplService {
 		return null;
 	}
 
+	@Transactional
 	@Override
 	public void request(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
 			String sabun, String userId) throws Exception {
@@ -99,11 +111,73 @@ public class WtmInOutChangeApplServiceImpl implements WtmApplService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public ReturnParam apply(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap,
 			String sabun, String userId) throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		ReturnParam rp = new ReturnParam();
+		
+		String ymd = paramMap.get("ymd").toString();
+		rp = validatorService.checkDuplicateEntryAppl(tenantId, enterCd, sabun, ymd, applId);
+		
+		if(rp.getStatus().equals("FAIL")) {
+			return rp;
+		}
+		
+		//결재라인 상태값 업데이트
+		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
+		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
+		//마지막 결재자인지 확인하자
+		boolean lastAppr = false;
+		if(lines != null && lines.size() > 0) {
+			for(WtmApplLine line : lines) {
+				if(line.getApprSeq() == apprSeq && line.getApprSabun().equals(sabun)) {
+					line.setApprStatusCd(APPR_STATUS_APPLY);
+					line.setApprDate(WtmUtil.parseDateStr(new Date(), null));
+					//결재의견
+					if(paramMap != null && paramMap.containsKey("apprOpinion")) {
+						line.setApprOpinion(paramMap.get("apprOpinion").toString());
+						line.setUpdateId(userId);
+					}
+					line = wtmApplLineRepo.save(line);
+					lastAppr = true;
+				}else {
+					if(lastAppr) {
+						line.setApprStatusCd(APPR_STATUS_REQUEST);
+						line = wtmApplLineRepo.save(line);
+					}
+					lastAppr = false;
+				}
+			}
+		}
+		
+		//신청서 메인 상태값 업데이트
+		WtmAppl appl = wtmApplRepo.findById(applId).get();
+		appl.setApplStatusCd((lastAppr)?APPL_STATUS_APPR:APPL_STATUS_APPLY_ING);
+		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
+		appl.setUpdateId(userId);
+		
+		appl = wtmApplRepo.save(appl);
+		
+		if(lastAppr) {
+			//출퇴근 타각 저장
+			paramMap.put("typeCd", "APPL");
+			calendarMapper.updateEntryDateByAdm(paramMap);
+			
+			//출퇴근 타각이 둘 다 있으면 타각 정보로 인정시간 계산
+			String chgSdate = null;
+			if(paramMap.containsKey("chgSdate") && paramMap.get("chgSdate")!=null && !"".equals(paramMap.get("chgSdate")))
+				chgSdate = paramMap.get("chgSdate").toString();
+			String chgEdate = null;
+			if(paramMap.containsKey("chgEdate") && paramMap.get("chgEdate")!=null && !"".equals(paramMap.get("chgEdate")))
+				chgEdate = paramMap.get("chgEdate").toString();
+			if(chgSdate!=null && chgEdate!=null)
+				flexibleEmpService.calcApprDayInfo(tenantId, enterCd, ymd, ymd, sabun);
+			
+		}
+		
+		return rp;
 	}
 
 	@Override
@@ -119,6 +193,7 @@ public class WtmInOutChangeApplServiceImpl implements WtmApplService {
 		
 	}
 
+	@Transactional
 	@Override
 	public ReturnParam imsi(Long tenantId, String enterCd, Long applId, String workTypeCd, Map<String, Object> paramMap,
 			String status, String sabun, String userId) throws Exception {
@@ -134,22 +209,22 @@ public class WtmInOutChangeApplServiceImpl implements WtmApplService {
 		
 		String ymd = paramMap.get("ymd").toString();
 		String planSdate = null;
-		if(paramMap.get("planSdate")!=null && !"".equals(paramMap.get("planSdate")))
+		if(paramMap.containsKey("planSdate") && paramMap.get("planSdate")!=null && !"".equals(paramMap.get("planSdate")))
 			planSdate = paramMap.get("planSdate").toString();
 		String planEdate = null;
-		if(paramMap.get("planEdate")!=null && !"".equals(paramMap.get("planEdate")))
+		if(paramMap.containsKey("planEdate") && paramMap.get("planEdate")!=null && !"".equals(paramMap.get("planEdate")))
 			planEdate = paramMap.get("planEdate").toString();
 		String entrySdate = null;
-		if(paramMap.get("entrySdate")!=null && !"".equals(paramMap.get("entrySdate")))
+		if(paramMap.containsKey("entrySdate") && paramMap.get("entrySdate")!=null && !"".equals(paramMap.get("entrySdate")))
 			entrySdate = paramMap.get("entrySdate").toString();
 		String entryEdate = null;
-		if(paramMap.get("entryEdate")!=null && !"".equals(paramMap.get("entryEdate")))
+		if(paramMap.containsKey("entryEdate") && paramMap.get("entryEdate")!=null && !"".equals(paramMap.get("entryEdate")))
 			entryEdate = paramMap.get("entryEdate").toString();
 		String chgSdate = null;
-		if(paramMap.get("chgSdate")!=null && !"".equals(paramMap.get("chgSdate")))
+		if(paramMap.containsKey("chgSdate") && paramMap.get("chgSdate")!=null && !"".equals(paramMap.get("chgSdate")))
 			chgSdate = paramMap.get("chgSdate").toString();
 		String chgEdate = null;
-		if(paramMap.get("chgEdate")!=null && !"".equals(paramMap.get("chgEdate")))
+		if(paramMap.containsKey("chgEdate") && paramMap.get("chgEdate")!=null && !"".equals(paramMap.get("chgEdate")))
 			chgEdate = paramMap.get("chgEdate").toString();
 		String reason = paramMap.get("reason").toString();
 		
@@ -158,7 +233,7 @@ public class WtmInOutChangeApplServiceImpl implements WtmApplService {
 		
 		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
-		paramMap.put("applId", applId);
+		rp.put("applId", applId);
 		
 
 		if(rp.getStatus().equals("FAIL")) {
@@ -178,20 +253,13 @@ public class WtmInOutChangeApplServiceImpl implements WtmApplService {
 	@Override
 	public ReturnParam validate(Long tenantId, String enterCd, String sabun, String workTypeCd,
 			Map<String, Object> paramMap) {
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
 		
-		paramMap.put("sabun", sabun);
+		String ymd = paramMap.get("ymd").toString();
+		Long applId = null;
+		if(paramMap.containsKey("applId") && paramMap.get("applId")!=null && !"".equals(paramMap.get("applId")))
+			applId = Long.valueOf(paramMap.get("applId").toString());
 		
-		Map<String, Object> resultMap = entryApplMapper.checkDuplicateEntryAppl(paramMap);
-		
-		int chgCnt = Integer.parseInt(resultMap.get("chgCnt").toString());
-		if(chgCnt > 0) {
-			rp.setFail("이미 신청중인 근태사유서가 존재합니다.");
-			return rp;
-		}
-		
-		return rp;
+		return validatorService.checkDuplicateEntryAppl(tenantId, enterCd, sabun, ymd, applId);
 	}
 
 	@Override
@@ -236,7 +304,7 @@ public class WtmInOutChangeApplServiceImpl implements WtmApplService {
 			
 			entryAppl.setChgEdate(edate);
 		}
-		
+		entryAppl.setReason(reason);
 		entryAppl.setUpdateId(userId);
 		
 		return wtmEntryApplRepo.save(entryAppl);

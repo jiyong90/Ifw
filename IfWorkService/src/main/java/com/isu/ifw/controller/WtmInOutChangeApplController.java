@@ -27,8 +27,8 @@ import com.isu.option.vo.ReturnParam;
 public class WtmInOutChangeApplController {
 	
 	@Autowired
-	@Qualifier("wtmInOutChangeApplService")
-	WtmApplService inOutChangeApplService;
+	@Qualifier("wtmEntryApplService")
+	WtmApplService entryApplService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getInOutChangeAppl(@RequestParam Long applId
@@ -42,7 +42,7 @@ public class WtmInOutChangeApplController {
 		String sabun = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		return inOutChangeApplService.getAppl(applId);
+		return entryApplService.getAppl(applId);
 	}
 	
 	@RequestMapping(value="/request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,6 +60,11 @@ public class WtmInOutChangeApplController {
 		String sabun = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("userId", userId);
+		
 		Long applId = null;
 		if(paramMap.get("applId")!=null && !"".equals(paramMap.get("applId")))
 			applId = Long.valueOf(paramMap.get("applId").toString());
@@ -70,9 +75,9 @@ public class WtmInOutChangeApplController {
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			rp = inOutChangeApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
+			rp = entryApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
 			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-				inOutChangeApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+				entryApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
 			}
 			
 		} catch (Exception e) {

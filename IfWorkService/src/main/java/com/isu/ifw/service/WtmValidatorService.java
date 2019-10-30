@@ -35,6 +35,6 @@ public interface WtmValidatorService {
 			String timeTypeCd, String taaCd,
 			String symd, String shm, String eymd, String ehm, Long applId, String locale);
 	
-	
+	public ReturnParam checkDuplicateEntryAppl(Long tenantId, String enterCd, String sabun, String ymd, Long applId);
 	
 }

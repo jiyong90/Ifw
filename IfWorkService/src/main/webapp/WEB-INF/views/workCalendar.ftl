@@ -195,19 +195,34 @@
                     		</div>
                     	</template>
                     	<template v-if="'${calendar}'=='workTimeCalendar'">
-                    		<div class="col-6 pr-1">
-	                           	<button type="button" class="btn btn-cancel btn-block" @click="viewInOutChangeAppl">근태사유서신청</button>
-	                        </div>
-                    		<div class="col-6 pl-1">
-	                           	<button type="button" class="btn btn-apply btn-block" @click="viewOvertimeAppl">
-	                           		<template v-if="holidayYn=='Y'">
-	                           		휴일근로신청
-	                           		</template>
-	                           		<template v-else>
-	                           		연장근로신청
-	                           		</template>
-	                           	</button>
-                           	</div>
+                    		<template v-if="inOutChgBtnYn && otApplBtnYn">
+	                    		<div class="col-6 pr-1">
+		                           	<button type="button" class="btn btn-cancel btn-block" @click="viewInOutChangeAppl">근태사유서신청</button>
+		                        </div>
+	                    		<div class="col-6 pl-1">
+		                           	<button type="button" class="btn btn-apply btn-block" @click="viewOvertimeAppl">
+		                           		<template v-if="holidayYn=='Y'">
+		                           		휴일근로신청
+		                           		</template>
+		                           		<template v-else>
+		                           		연장근로신청
+		                           		</template>
+		                           	</button>
+	                           	</div>
+                           	</template>
+                           	<template v-else>
+                           		<div class="col-12">
+                           			<button type="button" class="btn btn-cancel btn-block" v-if="inOutChgBtnYn" @click="viewInOutChangeAppl">근태사유서신청</button>
+                           			<button type="button" class="btn btn-apply btn-block" v-if="otApplBtnYn" @click="viewOvertimeAppl">
+		                           		<template v-if="holidayYn=='Y'">
+		                           		휴일근로신청
+		                           		</template>
+		                           		<template v-else>
+		                           		연장근로신청
+		                           		</template>
+		                           	</button>
+                           		</div>
+                           	</template>
                     	</template>
                     </div>
                 </div>
@@ -786,7 +801,9 @@
 	    	selectedDate: '${today}',
 	    	workPlanYn: false,
 	    	flexCancelBtnYn: false,
-	    	workPlanBtnYn: false
+	    	workPlanBtnYn: false,
+	    	inOutChgBtnYn: false,
+	    	otApplBtnYn: false
   		},
   		watch: {
   			rangeInfo : function(val, oldVal) {
