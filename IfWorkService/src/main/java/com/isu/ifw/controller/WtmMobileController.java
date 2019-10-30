@@ -55,7 +55,7 @@ public class WtmMobileController {
 //		String sabun =  empKey.split("@")[1];
 
         Map statusMap = new HashMap();
-        statusMap.put("param1", "완전선근제");
+        statusMap.put("param1", "선근제");
         statusMap.put("param2", "72:00");
         statusMap.put("param3", "160:00");
         statusMap.put("param4", "48:00");
