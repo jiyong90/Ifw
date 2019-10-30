@@ -31,7 +31,7 @@
 				</div>
 			</form>
 			<div class="row no-gutters">
-				<div class="col-5 pr-3">
+				<div class="col-6 pr-3">
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">보상휴가 시간조회</div>
@@ -39,7 +39,7 @@
 					</div>
 					<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>
 				</div>
-				<div class="col-5 pr-3">
+				<div class="col-6">
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">보상휴가 생성 상세내역</div>
