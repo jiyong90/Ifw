@@ -65,6 +65,8 @@ public class WtmFlexibleStdMgr {
 	private String applTermOpt;
 	@Column(name="CORE_CHK_YN")
 	private String coreChkYn;
+	@Column(name="CORE_REQUIRE_YN")
+	private String coreRequireYn;
 	@Column(name="BASE_WORK_YN")
 	private String baseWorkYn;
 	@Column(name="REGARD_TIME_CD_ID")
@@ -267,6 +269,14 @@ public class WtmFlexibleStdMgr {
 
 	public void setCoreChkYn(String coreChkYn) {
 		this.coreChkYn = coreChkYn;
+	}
+	
+	public String getCoreRequireYn() {
+		return coreRequireYn;
+	}
+
+	public void setCoreRequireYn(String coreRequireYn) {
+		this.coreRequireYn = coreRequireYn;
 	}
 
 	public String getBaseWorkYn() {
