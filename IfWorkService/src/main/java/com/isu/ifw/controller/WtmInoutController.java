@@ -53,6 +53,7 @@ public class WtmInoutController {
 			@RequestParam(value="locale", required = true) String locale, 
 			@RequestParam(value="empKey", required = true) String empKey, HttpServletRequest request) throws Exception {
 		
+		System.out.println("/mobile/{tenantId}/inout/status");
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
