@@ -42,7 +42,7 @@ public class WtmInOutChangeServiceImpl implements WtmInOutChangeService{
 				
 			try {
 				if(iList != null && iList.size() > 0) {
-					saveInout(tenantId, enterCd, userId, iList);
+					saveInout(tenantId, enterCd, userId, convertMap);
 				}
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -62,20 +62,30 @@ public class WtmInOutChangeServiceImpl implements WtmInOutChangeService{
 	}
 	
 	@Transactional
-	public void saveInout(Long tenantId, String enterCd, Long userId, List<Map<String, Object>> iList) {
+	public void saveInout(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
 		int cnt = 0;
-		for(Map<String, Object> data : iList) {
-			data.put("tenantId", tenantId);
-			data.put("enterCd", enterCd);
-			data.put("userId", userId);
-			data.put("typeCd", "ADM");
-			int n = inOutChangeMapper.setInOutChangeList(data);
-			System.out.println("inOutChangeMapper.setInOutChangeList " + n);
-			n = calendarMapper.updateEntryDateByAdm(data);
-			System.out.println("calendarMapper.updateEntryDateByAdm " + n);
-
-			cnt++;
-		}
+		
+		convertMap.put("tenantId", tenantId);
+		convertMap.put("enterCd", enterCd);
+		convertMap.put("userId", userId);
+		convertMap.put("typeCd", "ADM");
+		
+		cnt = inOutChangeMapper.setInOutChangeList(convertMap);
+		System.out.println("inOutChangeMapper.setInOutChangeList " + cnt);
+		cnt = calendarMapper.updateEntryDateByAdm(convertMap);
+		System.out.println("calendarMapper.updateEntryDateByAdm " + cnt);
+//		for(Map<String, Object> data : iList) {
+//			data.put("tenantId", tenantId);
+//			data.put("enterCd", enterCd);
+//			data.put("userId", userId);
+//			data.put("typeCd", "ADM");
+//			int n = inOutChangeMapper.setInOutChangeList(data);
+//			System.out.println("inOutChangeMapper.setInOutChangeList " + n);
+//			n = calendarMapper.updateEntryDateByAdm(data);
+//			System.out.println("calendarMapper.updateEntryDateByAdm " + n);
+//
+//			cnt++;
+//		}
 	}
 	
 	@Override

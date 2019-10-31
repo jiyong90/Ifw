@@ -184,23 +184,25 @@
     </select>
     
     <update id="updateEntryDateByAdm" parameterType="map">
-        <![CDATA[ 
+		<if test="insertRows!=null and insertRows.size()>0">
+		<foreach collection="insertRows" item="item" separator=";">
 			UPDATE WTM_WORK_CALENDAR
 			SET 
-				ENTRY_SDATE=F_WTM_TO_DATE(#{chgSdate}, '%Y%m%d%H%i%s'), 
-				ENTRY_EDATE=F_WTM_TO_DATE(#{chgEdate}, '%Y%m%d%H%i%s'), 
+				ENTRY_SDATE=F_WTM_TO_DATE(#{item.chgSdate}, '%Y%m%d%H%i%s'), 
+				ENTRY_EDATE=F_WTM_TO_DATE(#{item.chgEdate}, '%Y%m%d%H%i%s'), 
 				ENTRY_STYPE_CD = #{typeCd},
 				ENTRY_ETYPE_CD = #{typeCd},
 				UPDATE_DATE = now(),
 				UPDATE_ID = #{userId}  
 			WHERE TENANT_ID = #{tenantId} 
 				AND ENTER_CD = #{enterCd}
-				AND SABUN = #{sabun}
-				AND YMD = #{ymd}
-        ]]>
-    </update>
-    
-        <update id="updateEntryDateByAdmTest" parameterType="map">
+				AND SABUN = #{item.sabun}
+				AND YMD = #{item.ymd}
+ 		</foreach>
+		</if>
+   	 </update>
+   	 
+     <update id="updateEntryDateByAdmTest" parameterType="map">
         <![CDATA[ 
 			UPDATE WTM_WORK_CALENDAR
 			SET 
