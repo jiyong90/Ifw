@@ -50,7 +50,16 @@ public class WtmInOutChangeServiceImpl implements WtmInOutChangeService{
 			}
 			
 			for(Map<String, Object> data : iList) {
-				empService.calcApprDayInfo(tenantId, enterCd, data.get("ymd").toString(), data.get("ymd").toString(), data.get("sabun").toString());
+				String chgSdate = null;
+				if(data.containsKey("chgSdate") && data.get("chgSdate")!=null && !"".equals(data.get("chgSdate")))
+					chgSdate = data.get("chgSdate").toString();
+				String chgEdate = null;
+				if(data.containsKey("chgEdate") && data.get("chgEdate")!=null && !"".equals(data.get("chgEdate")))
+					chgEdate = data.get("chgEdate").toString();
+				
+				//출퇴근 타각이 둘 다 들어왔을 때만 인정시간 넣어줌
+				if(chgSdate!=null && chgEdate!=null)
+					empService.calcApprDayInfo(tenantId, enterCd, data.get("ymd").toString(), data.get("ymd").toString(), data.get("sabun").toString());
 			}
 			
 		}

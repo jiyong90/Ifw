@@ -184,18 +184,31 @@
     </select>
     
     <update id="updateEntryDateByAdm" parameterType="map">
+<<<<<<< HEAD
 		<if test="insertRows!=null and insertRows.size()>0">
 		<foreach collection="insertRows" item="item" separator=";">
+=======
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 			UPDATE WTM_WORK_CALENDAR
 			SET 
+<<<<<<< HEAD
 				ENTRY_SDATE=F_WTM_TO_DATE(#{item.chgSdate}, '%Y%m%d%H%i%s'), 
 				ENTRY_EDATE=F_WTM_TO_DATE(#{item.chgEdate}, '%Y%m%d%H%i%s'), 
+=======
+			<if test="chgSdate!=null and !chgSdate.equals('')">
+				ENTRY_SDATE=F_WTM_TO_DATE(#{chgSdate}, '%Y%m%d%H%i%s'), 
+			</if>
+			<if test="chgEdate!=null and !chgEdate.equals('')">
+				ENTRY_EDATE=F_WTM_TO_DATE(#{chgEdate}, '%Y%m%d%H%i%s'), 
+			</if>
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 				ENTRY_STYPE_CD = #{typeCd},
 				ENTRY_ETYPE_CD = #{typeCd},
 				UPDATE_DATE = now(),
 				UPDATE_ID = #{userId}  
 			WHERE TENANT_ID = #{tenantId} 
 				AND ENTER_CD = #{enterCd}
+<<<<<<< HEAD
 				AND SABUN = #{item.sabun}
 				AND YMD = #{item.ymd}
  		</foreach>
@@ -203,6 +216,13 @@
    	 </update>
    	 
      <update id="updateEntryDateByAdmTest" parameterType="map">
+=======
+				AND SABUN = #{sabun}
+				AND YMD = #{ymd}
+    </update>
+    
+        <update id="updateEntryDateByAdmTest" parameterType="map">
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
         <![CDATA[ 
 			UPDATE WTM_WORK_CALENDAR
 			SET 

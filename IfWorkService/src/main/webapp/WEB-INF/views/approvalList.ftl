@@ -169,6 +169,92 @@
         </div>
     </div>
     <!-- 연장근무신청 상세보기 modal end -->
+    <!-- 근태사유서신청 상세보기 modal start -->
+    <div class="modal fade show" id="inOutChangeAppl" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">근태사유서신청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                    	<div class="modal-app-wrap">
+                            <div class="inner-wrap">
+                                <div class="title">계획 근무시간</div>
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="appl.planSdate">
+                                        	{{moment(appl.planSdate).format('YYYY-MM-DD HH:mm')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="appl.planEdate">
+                                        	{{moment(appl.planEdate).format('YYYY-MM-DD HH:mm')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">출/퇴근 시각</div>
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="appl.entrySdate">
+                                        	{{moment(appl.entrySdate).format('YYYY-MM-DD HH:mm')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="appl.entryEdate">
+                                        	{{moment(appl.entryEdate).format('YYYY-MM-DD HH:mm')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">변경 출/퇴근 시각</div>
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="appl.chgSdate">
+                                        	{{moment(appl.chgSdate).format('YYYY-MM-DD HH:mm')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="appl.chgEdate">
+                                        	{{moment(appl.chgEdate).format('YYYY-MM-DD HH:mm')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">사유</div>
+                                <div class="desc">
+                                	<template v-if="appl.reason">
+                                	{{appl.reason}}
+                                	</template>
+                                </div>
+                            </div>
+                        </div>
+                        <!--  
+                        <div class="btn-wrap text-center">
+                        </div>
+                        -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 근태사유서신청 상세보기 modal end -->
 	<!-- 결재의견 modal start -->
 	<div class="modal fade" id="apprOpinionModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
@@ -307,6 +393,9 @@
 	    		} else if(appr.applCd=='SELE_F' || appr.applCd=='SELE_C') {
 	    			//선근제 신청서
 	    			$("#flexibleAppl_SELE").modal("show");
+	    		} else if(appr.applCd=='ENTRY_CHG') {
+	    			//근태 사유서
+	    			$("#inOutChangeAppl").modal("show");
 	    		}
 	    		
 	    	},
@@ -327,6 +416,7 @@
 						$this.appl = {};
 						if(data!=null) {
 							$this.appl = data;
+							console.log(data);
 							$("#otAppl").modal("show"); 
 						}
 					},
@@ -386,6 +476,12 @@
 		    				param['otEdate'] = moment(appr.appl.otEdate).format('YYYYMMDDHHmm');
 		    			}
 
+		    			if(appr.applCd=='ENTRY_CHG') {
+		    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
+		    				param['chgSdate'] = moment(appr.appl.chgSdate).format('YYYYMMDDHHmm');
+		    				param['chgEdate'] = moment(appr.appl.chgEdate).format('YYYYMMDDHHmm');
+		    			}
+		    			
 	    	    		Util.ajax({
 	    					url: "${rc.getContextPath()}/appl/"+apprStatus,
 	    					type: "POST",

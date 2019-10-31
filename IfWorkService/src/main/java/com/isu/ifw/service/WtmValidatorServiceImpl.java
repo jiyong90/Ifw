@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.isu.ifw.entity.WtmTaaCode;
+import com.isu.ifw.mapper.WtmEntryApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
 import com.isu.ifw.mapper.WtmValidatorMapper;
@@ -36,6 +37,9 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 
 	@Autowired
 	WtmTaaCodeRepository taaCodeRepo;
+	
+	@Autowired
+	WtmEntryApplMapper entryApplMapper;
 	
 	@Override
 	public ReturnParam validTaa(Long tenantId, String enterCd, String sabun,
@@ -140,6 +144,27 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 		}
 		return rp;
 		 
+	}
+	
+	@Override
+	public ReturnParam checkDuplicateEntryAppl(Long tenantId, String enterCd, String sabun, String ymd, Long applId){
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("ymd", ymd);
+		paramMap.put("applId", applId);
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		Map<String, Object> m = entryApplMapper.checkDuplicateEntryAppl(paramMap);
+		int cnt = Integer.parseInt(m.get("chgCnt").toString());
+		if(cnt > 0) {
+			rp.setFail("이미 신청중인 근태사유서가 존재합니다.");
+			return rp;
+		}
+		
+		return rp;
 	}
 	
 }

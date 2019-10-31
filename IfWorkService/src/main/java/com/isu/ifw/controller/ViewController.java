@@ -28,10 +28,12 @@ import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.entity.WtmPropertie;
 import com.isu.ifw.repository.WtmCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
@@ -74,6 +76,9 @@ public class ViewController {
 	
 	@Resource
 	WtmEmpHisRepository empHisRepo;
+	
+	@Resource
+	WtmPropertieRepository propertieRepo;
 
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
@@ -202,6 +207,12 @@ public class ViewController {
 				calendarType = request.getParameter("calendarType").toString();
 				
 				if("Time".equals(calendarType)) {
+					//근태사유서 신청 기간
+					WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_INOUT_CHG_LIMIT");
+					if(propertie!=null) {
+						mv.addObject("inoutChgLimit", propertie.getInfoValue());
+					}
+					
 					//연장근무 또는 휴일근무 신청 시 사유
 					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
@@ -366,6 +377,12 @@ public class ViewController {
 			mv.addObject("calendar", "work"+ calendarType +"Calendar");
 			
 			if("Time".equals(calendarType)) {
+				//근태사유서 신청 기간
+				WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_INOUT_CHG_LIMIT");
+				if(propertie!=null) {
+					mv.addObject("inoutChgLimit", propertie.getInfoValue());
+				}
+				
 				//연장근무 또는 휴일근무 신청 시 사유
 				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
 				try {

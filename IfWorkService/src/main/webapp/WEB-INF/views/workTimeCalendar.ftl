@@ -543,7 +543,7 @@
   		    	<#if reasons?? && reasons!='' && reasons?exists >
 		    		this.reasons = JSON.parse('${reasons?js_string}');
 		    	</#if>
-  		    	
+		    	
   		    	//this.getFlexibleDayInfo(this.workday);
   		    	
   		    	//근무일 화면 전환
@@ -566,6 +566,21 @@
   		    		if(info.view.type == 'timeGridDay') { //month change
   		    			var ymd = moment(calendar.getDate()).format('YYYYMMDD');
   		    			$this.workday = moment(calendar.getDate()).format('YYYY-MM-DD');
+  		    			
+  		    			calendarLeftVue.otApplBtnYn = false;
+  		    			if(moment('${today}').diff($this.workday)<=0)
+  		  	    			calendarLeftVue.otApplBtnYn = true;
+  		  		    	
+  		  		    	//근태사유서 신청 기간에 따라 버튼 보여줌
+  		  		    	calendarLeftVue.inOutChgBtnYn = false;
+  		  		    	<#if inoutChgLimit?? && inoutChgLimit!='' && inoutChgLimit?exists >
+  		  		    		var inoutChgLimit = JSON.parse('${inoutChgLimit?js_string}');
+  		  		    		var inoutChgDate = moment().subtract(inoutChgLimit, 'd');
+  		  		    		
+  		  		    		if(moment(inoutChgDate).diff($this.workday)<=0 && moment($this.workday).diff('${today}')<=0)
+  		  		    			calendarLeftVue.inOutChgBtnYn = true;
+  		  		    	</#if>
+  		  		    	
   		    			
   		    			//선택한 기간의 근무제 정보(남색 박스)
   		    			calendarLeftVue.getFlexibleRangeInfo(ymd);
@@ -660,15 +675,23 @@
   								//근태 사유서
   								if(data.hasOwnProperty('planSdate') && data.planSdate!=null && data.planSdate!='')
   									$this.inOutChangeAppl['planSdate']=data.planSdate;
+  								else
+  									$this.inOutChangeAppl['planSdate']='';
   								
   								if(data.hasOwnProperty('planEdate') && data.planEdate!=null && data.planEdate!='')
   									$this.inOutChangeAppl['planEdate']=data.planEdate;
+  								else
+  									$this.inOutChangeAppl['planEdate']='';
   								
   								if(data.hasOwnProperty('entrySdate') && data.entrySdate!=null && data.entrySdate!='')
   									$this.inOutChangeAppl['inoutSdate']=data.entrySdate;
+  								else
+  									$this.inOutChangeAppl['inoutSdate']='';
   								
   								if(data.hasOwnProperty('entryEdate') && data.entryEdate!=null && data.entryEdate!='')
   									$this.inOutChangeAppl['inoutEdate']=data.entryEdate;
+  								else
+  									$this.inOutChangeAppl['inoutEdate']='';
   							}
   						},
   						error: function(e) {
@@ -1512,7 +1535,7 @@
   	         				param['chgEdate'] = moment(moment($this.workday+' '+$("#chgEdate").val()).format('YYYY-MM-DD HH:mm')).format('YYYYMMDDHHmm');
   	         			param['reason'] = $("#chgReason").val();
   	         			
-  	         			/* Util.ajax({
+  	         			Util.ajax({
 	  	  					url: "${rc.getContextPath()}/inOutChangeAppl/request",
 	  	  					type: "POST",
 	  	  					contentType: 'application/json',
@@ -1523,7 +1546,7 @@
 		  	  						$("#alertText").html("확인요청 되었습니다.");
 			  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
 			  	  	         			$("#alertModal").off('hidden.bs.modal');
-			  	  	         		$("#inOutChangeModal").modal("show"); 
+			  	  	         			$("#inOutChangeModal").modal("hide"); 
 			  	  	         		});
 			  	  	         		$("#alertModal").modal("show"); 
 	  	  						}
@@ -1534,7 +1557,7 @@
 	  	    	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
 	  	    	  	         		$("#alertModal").modal("show"); 
 	  	  					}
-	  	  				}); */
+	  	  				});
   	         		} else {
   	         			$("#alertText").html(msg);
   		         		$("#alertModal").on('hidden.bs.modal',function(){
