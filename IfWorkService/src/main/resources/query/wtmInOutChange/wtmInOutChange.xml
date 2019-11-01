@@ -37,9 +37,8 @@
 	</select>
     
     <update id="setInOutChangeList" parameterType="map">
-        <![CDATA[
 		        INSERT INTO WTM_INOUT_CHG_HIS 
-					(TENANT_ID, 
+					(TENANT_ID,
 					ENTER_CD, 
 					SABUN, 
 					YMD, 
@@ -53,20 +52,22 @@
 					UPDATE_DATE, 
 					UPDATE_ID)
 				VALUES 
+			<if test="insertRows!=null and insertRows.size()>0">
+			<foreach collection="insertRows" item="item" separator=", ">
 					(#{tenantId}, 
 					#{enterCd}, 
-					#{sabun}, 
-					#{ymd}, 
-					IF(#{entrySdate}= '', NULL, F_WTM_TO_DATE(#{entrySdate}, '%Y%m%d%H%i%s')), 
-					#{entryStypeCd}, 
-					IF(#{entryEdate}='', NULL, F_WTM_TO_DATE(#{entryEdate}, '%Y%m%d%H%i%s')), 
-					#{entryEtypeCd}, 
-					F_WTM_TO_DATE(#{chgSdate}, '%Y%m%d%H%i%s'), 
-					F_WTM_TO_DATE(#{chgEdate}, '%Y%m%d%H%i%s'), 
-					#{reason}, 
+					#{item.sabun}, 
+					#{item.ymd}, 
+					IF(#{item.entrySdate}= '', NULL, F_WTM_TO_DATE(#{item.entrySdate}, '%Y%m%d%H%i%s')), 
+					#{item.entryStypeCd}, 
+					IF(#{item.entryEdate}='', NULL, F_WTM_TO_DATE(#{item.entryEdate}, '%Y%m%d%H%i%s')), 
+					#{item.entryEtypeCd}, 
+					F_WTM_TO_DATE(#{item.chgSdate}, '%Y%m%d%H%i%s'), 
+					F_WTM_TO_DATE(#{item.chgEdate}, '%Y%m%d%H%i%s'), 
+					#{item.reason}, 
 					now(), 
 					#{userId})	
-		]]>
+			</foreach>
+			</if>
     </update>
-    
 </mapper>
