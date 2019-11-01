@@ -99,7 +99,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		
 		if(result != null && result.size() > 0) {
 			try {
-				ifUrl = result.get("info_data").toString() + "/IfWorkInterface" + ifaddUrl + param;
+				ifUrl = result.get("info_data").toString() + ifaddUrl + param;
 				System.out.println("ifUrl : " + ifUrl);
 			} catch(Exception e){
 	            e.printStackTrace();
