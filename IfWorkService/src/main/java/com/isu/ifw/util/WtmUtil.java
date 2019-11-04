@@ -135,4 +135,14 @@ public class WtmUtil {
 		}
 		return false;
 	}
+	
+	public static String paramToString(HttpServletRequest request) {
+		String data = "";
+		Enumeration params = request.getParameterNames();
+		while (params.hasMoreElements()){
+		    String name = (String)params.nextElement();
+		    data += name+":"+request.getParameter(name)+",";
+		}
+		return data;
+	}
 }

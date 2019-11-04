@@ -167,7 +167,7 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 		logger.debug("타각 : " + tenantId + "," + enterCd + "," + sabun + "," + rt.toString());
 		
 		System.out.println("111111111111111111111111111111111111111111111 " + paramMap.get("rtnYmd").toString());
-		if(paramMap.containsKey("rtnYmd") && paramMap.get("rtnYmd") != null && !paramMap.get("inoutType").equals("REST"))
+		if(paramMap.containsKey("rtnYmd") && paramMap.get("rtnYmd") != null && !paramMap.get("inoutType").equals("EXCEPT"))
 			empService.calcApprDayInfo(Long.parseLong(paramMap.get("tenantId").toString()), 
 				paramMap.get("enterCd").toString(), paramMap.get("rtnYmd").toString(),
 				paramMap.get("rtnYmd").toString(), paramMap.get("sabun").toString());
@@ -190,6 +190,18 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 	}
 
 	@Override
+	public Map<String, Object> getMyInoutDetail(Long tenantId, String enterCd, String sabun, String inoutTypeCd, String inoutDate) throws Exception {
+		Map<String, Object> convertMap = new HashMap();
+		convertMap.put("tenantId", tenantId);
+		convertMap.put("enterCd", enterCd);
+		convertMap.put("sabun", sabun);
+		convertMap.put("inoutTypeCd", inoutTypeCd);
+		convertMap.put("inoutDate", inoutDate);
+		
+		return inoutHisMapper.getMyInoutDetail(convertMap);
+	}
+	
+	@Override
 	public List<Map<String, Object>> getMyInoutList(Long tenantId, String enterCd, String sabun, String month) throws Exception {
 		
 		Map<String, Object> paramMap = new HashMap();
@@ -202,16 +214,30 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 	}
 	
 	@Override
-	public Map<String, Object> getMyInoutDetail(Long tenantId, String enterCd, String sabun, String month) throws Exception {
-		
+	public List<Map<String, Object>> getMyInoutHistory(Long tenantId, String enterCd, String sabun, String ymd) throws Exception {
+	
 		Map<String, Object> paramMap = new HashMap();
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
-		paramMap.put("month", month);
+		paramMap.put("ymd", ymd);
 		
-		return inoutHisMapper.getMyInoutDetail(paramMap);
+		List<Map<String, Object>> rs = inoutHisMapper.getMyInoutHistory(paramMap);
+		for(Map<String,Object> temp : rs) {
+			temp.put("key", temp.get("key2"));
+		}
+		
+		return rs;
 	}
+	
+	@Override
+	public ReturnParam cancel(Map<String, Object> paramMap) throws Exception {
+		ReturnParam rp = new ReturnParam();
+		rp.setFail("준비중입니다.");
+		
+		return rp;
+	}
+
 	/*
 	@Override
 	public int checkGoback(Long tenantId, String enterCd, String sabun) {

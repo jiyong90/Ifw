@@ -43,8 +43,8 @@ public class AccessTokenFilter implements Filter {
 
 	String freePassPath = null;
 
-	@Value("${tenants}")
-	private List<String> tenants;
+//	@Value("${tenants}")
+//	private List<String> tenants;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -75,7 +75,7 @@ public class AccessTokenFilter implements Filter {
 		
 		logger.debug("111111111111111111111111111111111111111111111111111111111111111 : " + tenant);
 	
-		if(tenant == null || !tenants.contains(tenant)) {
+		if(tenant == null || loginService.getHrInfoUrl(Long.parseLong(tenant)).equals("")) {
 			chain.doFilter(request, response);
 			return;
 		}

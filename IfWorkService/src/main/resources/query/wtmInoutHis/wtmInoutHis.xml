@@ -81,25 +81,38 @@
 			WHERE A.TENANT_ID = #{tenantId}
 				AND A.ENTER_CD = #{enterCd}
 				AND A.SABUN = #{sabun}
-				AND A.YMD LIKE CONCAT(#{month}, '%') 
+				AND DATE_FORMAT(A.YMD,'%Y%c') = #{month}
 				ORDER BY A.YMD DESC
 	        ]]>
     </select>
     
-    <select id="getMyInoutDetail" parameterType="map" resultType="hashmap">
+    <select id="getMyInoutHistory" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT CONCAT(LEFT(A.YMD, 4),'-',MID(A.YMD, 5,2),'-',RIGHT(A.YMD,2)) as ymd,
-				T.TIME_NM as timeNm,
-				A.ENTRY_SDATE as sdate,
-				A.ENTRY_EDATE as edate
-			FROM WTM_WORK_CALENDAR A 
-				JOIN WTM_TIME_CD_MGR T
-			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID	
+			SELECT CONCAT_WS('@',DATE_FORMAT(A.INOUT_DATE, "%Y%c%d%H%i%s"),A.INOUT_TYPE_CD) AS key2,  
+				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'INOUT_TYPE_CD', A.INOUT_TYPE_CD, #{ymd}) AS title,
+			 	DATE_FORMAT(A.INOUT_DATE, '%H:%i') as caption_lb,
+			 	F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'ENTRY_TYPE_CD', A.ENTRY_TYPE_CD, #{ymd}) AS caption_rb
+			FROM WTM_INOUT_HIS A
 			WHERE A.TENANT_ID = #{tenantId}
 				AND A.ENTER_CD = #{enterCd}
 				AND A.SABUN = #{sabun}
-				AND A.YMD = #{month} 
-				ORDER BY A.YMD DESC
+				AND DATE_FORMAT(A.YMD,'%Y%c%d') = #{ymd}
+				ORDER BY A.INOUT_DATE DESC
+	        ]]>
+    </select>
+    
+    <select id="getMyInoutDetail" parameterType="map" resultType="hashmap">
+        <![CDATA[ 
+			SELECT DATE_FORMAT(INOUT_DATE, '%Y-%c-%d') as ymd,
+				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd},'INOUT_TYPE_CD', INOUT_TYPE_CD, DATE_FORMAT(INOUT_DATE, '%Y%c%d')) AS inoutTypeCd,
+				DATE_FORMAT(INOUT_DATE, '%H:%i:%s') as inoutDate,
+				DATE_FORMAT(INOUT_DATE, "%Y%c%d%H%i%s") AS id
+			FROM WTM_INOUT_HIS 
+			WHERE TENANT_ID = #{tenantId}
+				AND ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun}
+				AND INOUT_TYPE_CD = #{inoutTypeCd}
+				AND DATE_FORMAT(#{inoutDate}, '%Y%c%d%H%i%s') = DATE_FORMAT(INOUT_DATE, '%Y%c%d%H%i%s');
 	        ]]>
     </select>
 </mapper>

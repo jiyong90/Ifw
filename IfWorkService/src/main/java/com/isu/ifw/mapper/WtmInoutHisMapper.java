@@ -35,6 +35,14 @@ public interface WtmInoutHisMapper {
 	public List<Map<String, Object>> getMyInoutList(Map<String, Object> paramMap) throws Exception;
 
 	/**
+	 * 일별 타각데이터 조회
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getMyInoutHistory(Map<String, Object> paramMap) throws Exception;
+
+	
+	/**
 	 * 출퇴근 상세 조회
 	 * @param paramMap
 	 * @return
