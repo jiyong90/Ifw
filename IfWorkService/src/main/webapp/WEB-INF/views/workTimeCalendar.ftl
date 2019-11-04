@@ -605,7 +605,7 @@
   		    		}
   		    	},
   		    	dateClickCallback : function(info){
-  		    		if(!info.allDay)
+  		    		if(!info.allDay && moment('${today}').diff(this.workday)<=0)
   		    			this.preCheck(info, false);
   		    	},
   	         	addEvent : function(Obj){
@@ -669,6 +669,7 @@
   						dataType: "json",
   						success: function(data) {
   							calendarLeftVue.workTimeInfo = {};
+  							$this.inOutChangeAppl = {};
   							if(data!=null) {
   								calendarLeftVue.workTimeInfo = data;
   								
@@ -696,6 +697,7 @@
   						},
   						error: function(e) {
   							calendarLeftVue.workTimeInfo = {};
+  							$this.inOutChangeAppl = {};
   						}
   					});
   	         	},
@@ -1525,10 +1527,10 @@
   	         				param['planSdate'] = moment(inOutChgAppl.planSdate).format('YYYYMMDDHHmm');
   	         			if(inOutChgAppl.planEdate!=null && inOutChgAppl.planEdate!=undefined && inOutChgAppl.planEdate!='')
   	         				param['planEdate'] = moment(inOutChgAppl.planEdate).format('YYYYMMDDHHmm');
-  	         			if(inOutChgAppl.entrySdate!=null && inOutChgAppl.entrySdate!=undefined && inOutChgAppl.entrySdate!='')
-  	         				param['entrySdate'] = moment(inOutChgAppl.entrySdate).format('YYYYMMDDHHmm');
-  	         			if(inOutChgAppl.entryEdate!=null && inOutChgAppl.entryEdate!=undefined && inOutChgAppl.entryEdate!='')
-  	         				param['entryEdate'] = moment(inOutChgAppl.entryEdate).format('YYYYMMDDHHmm');
+  	         			if(inOutChgAppl.inoutSdate!=null && inOutChgAppl.inoutSdate!=undefined && inOutChgAppl.inoutSdate!='')
+  	         				param['entrySdate'] = moment(inOutChgAppl.inoutSdate).format('YYYYMMDDHHmm');
+  	         			if(inOutChgAppl.inoutEdate!=null && inOutChgAppl.inoutEdate!=undefined && inOutChgAppl.inoutEdate!='')
+  	         				param['entryEdate'] = moment(inOutChgAppl.inoutEdate).format('YYYYMMDDHHmm');
   	         			if($("#chgSdate").val()!=undefined && $("#chgSdate").val()!='')
          					param['chgSdate'] = moment(moment($this.workday+' '+$("#chgSdate").val()).format('YYYY-MM-DD HH:mm')).format('YYYYMMDDHHmm');
   	         			if($("#chgEdate").val()!=undefined && $("#chgEdate").val()!='')
@@ -1548,8 +1550,13 @@
 			  	  	         			$("#alertModal").off('hidden.bs.modal');
 			  	  	         			$("#inOutChangeModal").modal("hide"); 
 			  	  	         		});
-			  	  	         		$("#alertModal").modal("show"); 
-	  	  						}
+	  	  						} else {
+									$("#alertText").html(data.message);
+									$("#alertModal").on('hidden.bs.modal',function(){
+										$("#alertModal").off('hidden.bs.modal');
+									});
+								}
+	  	  						$("#alertModal").modal("show"); 
 	  	  					},
 	  	  					error: function(e) {
 	  	  						console.log(e);
@@ -1717,10 +1724,16 @@
    		}
     }); 
    	
+	$('#inOutChangeModal').on('hidden.bs.modal',function(){
+		$(this).find("input,select,textarea").val('').end();
+		$(this).find(".needs-validation").removeClass('was-validated');
+   	});
+   	
+   	
 	$('#timeCalendar [data-dismiss=modal]').on('click', function (e) {
 		var $t = $(this),
 	        target = $t[0].href || $t.data("target") || $t.parents('.modal') || [];
-
+		
 		$(target).find("input,select,textarea").not('input[name="subYn"]').val('').end();
 	  	$(target).find("input[name='subYn']:checked").prop("checked", "").end();
 	  	$(".radio-toggle-wrap").hide();

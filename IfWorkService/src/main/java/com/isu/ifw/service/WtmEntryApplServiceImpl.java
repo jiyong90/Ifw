@@ -1,5 +1,6 @@
 package com.isu.ifw.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
 import com.isu.ifw.entity.WtmEntryAppl;
+import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmCalendarMapper;
 import com.isu.ifw.mapper.WtmEntryApplMapper;
@@ -20,6 +22,7 @@ import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmEntryApplRepository;
+import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.option.vo.ReturnParam;
@@ -46,6 +49,9 @@ public class WtmEntryApplServiceImpl implements WtmApplService {
 	WtmEntryApplRepository wtmEntryApplRepo;
 	
 	@Autowired
+	WtmWorkCalendarRepository workCalendarRepo;
+	
+	@Autowired
 	WtmCalendarMapper calendarMapper;
 	
 	@Autowired
@@ -53,6 +59,7 @@ public class WtmEntryApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmValidatorService validatorService;
+	
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -117,9 +124,10 @@ public class WtmEntryApplServiceImpl implements WtmApplService {
 			String sabun, String userId) throws Exception {
 		// TODO Auto-generated method stub
 		ReturnParam rp = new ReturnParam();
+		String applSabun = paramMap.get("applSabun").toString();
 		
 		String ymd = paramMap.get("ymd").toString();
-		rp = validatorService.checkDuplicateEntryAppl(tenantId, enterCd, sabun, ymd, applId);
+		rp = validatorService.checkDuplicateEntryAppl(tenantId, enterCd, applSabun, ymd, applId);
 		
 		if(rp.getStatus().equals("FAIL")) {
 			return rp;
@@ -160,20 +168,25 @@ public class WtmEntryApplServiceImpl implements WtmApplService {
 		
 		appl = wtmApplRepo.save(appl);
 		
+		
 		if(lastAppr) {
 			//출퇴근 타각 저장
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", applSabun);
 			paramMap.put("typeCd", "APPL");
+			paramMap.put("userId", userId);
+			List<Map<String, Object>> insertRows = new ArrayList<Map<String, Object>>();
+			insertRows.add(paramMap);
+			paramMap.put("insertRows", insertRows);
 			calendarMapper.updateEntryDateByAdm(paramMap);
 			
 			//출퇴근 타각이 둘 다 있으면 타각 정보로 인정시간 계산
-			String chgSdate = null;
-			if(paramMap.containsKey("chgSdate") && paramMap.get("chgSdate")!=null && !"".equals(paramMap.get("chgSdate")))
-				chgSdate = paramMap.get("chgSdate").toString();
-			String chgEdate = null;
-			if(paramMap.containsKey("chgEdate") && paramMap.get("chgEdate")!=null && !"".equals(paramMap.get("chgEdate")))
-				chgEdate = paramMap.get("chgEdate").toString();
-			if(chgSdate!=null && chgEdate!=null)
-				flexibleEmpService.calcApprDayInfo(tenantId, enterCd, ymd, ymd, sabun);
+			WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, applSabun, ymd);
+			if(calendar!=null && calendar.getEntrySdate()!=null && calendar.getEntryEdate()!=null) {
+				System.out.println("calcApprDayInfo>>>");
+				flexibleEmpService.calcApprDayInfo(tenantId, enterCd, ymd, ymd, applSabun);
+			}
 			
 		}
 		

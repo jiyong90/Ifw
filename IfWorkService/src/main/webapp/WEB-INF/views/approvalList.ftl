@@ -455,7 +455,7 @@
 	    	},
 	    	approval: function(appr, apprStatus){ //결재
 	    		var $this = this;
-	    	
+	    	console.log(appr);
 	    		$("#apprBtn").bind('click',function(){
 	    			$("#apprBtn").unbind('click');
 	    			
@@ -478,8 +478,19 @@
 
 		    			if(appr.applCd=='ENTRY_CHG') {
 		    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
-		    				param['chgSdate'] = moment(appr.appl.chgSdate).format('YYYYMMDDHHmm');
-		    				param['chgEdate'] = moment(appr.appl.chgEdate).format('YYYYMMDDHHmm');
+		    				
+		    				if(appr.appl.planSdate!=null && appr.appl.planSdate!=undefined && appr.appl.planSdate!='')
+		    					param['planSdate'] = moment(appr.appl.planSdate).format('YYYYMMDDHHmm');
+		    				if(appr.appl.planEdate!=null && appr.appl.planEdate!=undefined && appr.appl.planEdate!='')
+		    					param['planEdate'] = moment(appr.appl.planEdate).format('YYYYMMDDHHmm');
+		    				if(appr.appl.entrySdate!=null && appr.appl.entrySdate!=undefined && appr.appl.entrySdate!='')
+		    					param['entrySdate'] = moment(appr.appl.entrySdate).format('YYYYMMDDHHmm');
+		    				if(appr.appl.entryEdate!=null && appr.appl.entryEdate!=undefined && appr.appl.entryEdate!='')
+		    					param['entryEdate'] = moment(appr.appl.entryEdate).format('YYYYMMDDHHmm');
+		    				if(appr.appl.chgSdate!=null && appr.appl.chgSdate!=undefined && appr.appl.chgSdate!='')
+		    					param['chgSdate'] = moment(appr.appl.chgSdate).format('YYYYMMDDHHmm');
+		    				if(appr.appl.chgEdate!=null && appr.appl.chgEdate!=undefined && appr.appl.chgEdate!='')
+		    					param['chgEdate'] = moment(appr.appl.chgEdate).format('YYYYMMDDHHmm');
 		    			}
 		    			
 	    	    		Util.ajax({
