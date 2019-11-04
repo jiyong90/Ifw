@@ -711,6 +711,17 @@ box-sizing: border-box;
   /* background-color: rgba(8, 8, 9,0.5); */
 }
 
+/* 대체휴가변경신청  */
+.notice-mark.SUBS_CHG{
+	background-color: #f75353;
+}
+
+/* 근태사유서신청  */
+.notice-mark.ENTRY_CHG{
+	background-color: #85d1f2;
+}
+
+
 /* 추가근무 */
 .notice-mark.OT {
   background-color: #7b5df6;
