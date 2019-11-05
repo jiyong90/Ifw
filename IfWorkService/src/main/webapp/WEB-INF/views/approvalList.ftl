@@ -291,10 +291,13 @@
 						<span v-if="a.applCd=='OT'||a.applCd=='OT_CAN'||a.applCd=='SUBS_CHG'">
 							{{moment(a.appl.otSdate).format('YYYY.MM.DD')}}~{{moment(a.appl.otEdate).format('YYYY.MM.DD')}}
 						</span>
+						<span v-else-if="a.applCd=='ENTRY_CHG'">
+							{{moment(a.appl.ymd).format('YYYY.MM.DD')}}~{{moment(a.appl.ymd).format('YYYY.MM.DD')}}
+						</span>
 						<span v-else>
 							{{moment(a.appl.symd).format('YYYY.MM.DD')}}~{{moment(a.appl.eymd).format('YYYY.MM.DD')}}
 						</span>
-						<span class="sub-desc" v-if="a.appl.reasonNm">{{a.appl.reasonNm}}</span>
+						<span class="sub-desc" v-if="a.appl.reason">{{a.appl.reason}}</span>
 					</div>
 				</div>
 			</div>
