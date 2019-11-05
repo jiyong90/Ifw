@@ -652,6 +652,15 @@ box-sizing: border-box;
     line-height: 1.43;
     color: #292944;
 }
+
+.approval-wrap.nav-pills .nav-link.active,
+.approval-wrap.nav-pills .show>.nav-link {
+  background-color:#4d84fe;
+}
+.approval-wrap.nav-pills a {
+  color:#3e3e4c;
+}
+
 .notice-card{
   padding: 16px 20px;
   margin-top: 10px;

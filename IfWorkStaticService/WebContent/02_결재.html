@@ -345,70 +345,216 @@
             
             <div class="container-fluid">
               <p class="page-title">결재 알림</p>
-              <div class="row no-gutters notice-card">
-                <div class="col-12 col-md-6 col-lg-9">
-                    <div class="rounded-circle notice-mark type01">유</div>
-                    <div class="inner-wrap">
-                        <div class="title">유연근무 사용요청</div>
-                        <div class="desc">
-                            <span class="sub-title">사용기한</span>
-                            <span>2019.06.01~2019.06.21(3주)</span>
+              <!-- 탭 삽입 -->
+              <ul class="nav approval-wrap nav-pills mt-2 mb-2" id="pills-tab" role="tablist">
+                  <li class="nav-item">
+                      <a class="nav-link active" id="pills-tab-status" data-toggle="pill" href="#pills-home" role="tab"
+                          aria-controls="pills-home" aria-selected="true">신청서상태</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" id="pills-tab-in-tray" data-toggle="pill" href="#pills-profile" role="tab"
+                          aria-controls="pills-profile" aria-selected="false">미결함</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" id="pills-tab-out-tray" data-toggle="pill" href="#pills-contact" role="tab"
+                          aria-controls="pills-contact" aria-selected="false">기결함</a>
+                  </li>
+              </ul>
+              <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-tab-status">
+                    <div class="row no-gutters notice-card none">
+                        <div class="col-12">
+                            <div class="rounded-circle notice-mark AUTO"><i class="far fa-bell-slash"></i></div>
+                            <p class="name msg">알림을 모두 확인했습니다.</p>
+                        </div>
+                    </div>
+                    <div class="row no-gutters notice-card">
+                        <div class="col-12 col-md-6 col-lg-9">
+                            <div class="rounded-circle notice-mark SELE_C">유</div>
+                            <div class="inner-wrap">
+                                <div class="title">유연근무 사용요청</div>
+                                <div class="desc">
+                                    <span class="sub-title">사용기한</span>
+                                    <span>2019.06.01~2019.06.21(3주)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="name">김이수</span>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pr-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pl-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
+                        </div>
+                    </div>
+                    <div class="row no-gutters notice-card">
+                        <div class="col-12 col-md-6 col-lg-9">
+                            <div class="rounded-circle notice-mark ELAS">유</div>
+                            <div class="inner-wrap">
+                                <div class="title">유연근무 사용요청</div>
+                                <div class="desc">
+                                    <span class="sub-title">사용기한</span>
+                                    <span>2019.06.01~2019.06.21(3주)</span>
+                                    <span class="sub-desc">긴급장애대응</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="name">김이수</span>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pr-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pl-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-2 col-lg-1" >
-                    <span class="name">김이수</span>
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-tab-in-tray">
+                    <div class="row no-gutters notice-card none">
+                        <div class="col-12">
+                            <div class="rounded-circle notice-mark AUTO"><i class="far fa-bell-slash"></i></div>
+                            <p class="name msg">알림을 모두 확인했습니다.</p>
+                        </div>
+                    </div>
+                    <div class="row no-gutters notice-card">
+                        <div class="col-12 col-md-6 col-lg-9">
+                            <div class="rounded-circle notice-mark SELE_C">유</div>
+                            <div class="inner-wrap">
+                                <div class="title">유연근무 사용요청</div>
+                                <div class="desc">
+                                    <span class="sub-title">사용기한</span>
+                                    <span>2019.06.01~2019.06.21(3주)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="name">김이수</span>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pr-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pl-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
+                        </div>
+                    </div>
+                    <div class="row no-gutters notice-card">
+                        <div class="col-12 col-md-6 col-lg-9">
+                            <div class="rounded-circle notice-mark ELAS">유</div>
+                            <div class="inner-wrap">
+                                <div class="title">유연근무 사용요청</div>
+                                <div class="desc">
+                                    <span class="sub-title">사용기한</span>
+                                    <span>2019.06.01~2019.06.21(3주)</span>
+                                    <span class="sub-desc">긴급장애대응</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="name">김이수</span>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pr-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pl-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
+                        </div>
+                    </div>
+                    <div class="row no-gutters notice-card">
+                        <div class="col-12 col-md-6 col-lg-9">
+                            <div class="rounded-circle notice-mark SELE_F">유</div>
+                            <div class="inner-wrap">
+                                <div class="title">유연근무 사용요청</div>
+                                <div class="desc">
+                                    <span class="sub-title">사용기한</span>
+                                    <span>2019.06.01~2019.06.21(3주)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="name">김이수</span>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pr-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pl-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6 col-md-2 col-lg-1 pr-1">
-                    <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
-                </div>
-                <div class="col-6 col-md-2 col-lg-1 pl-1">
-                    <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
+                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-tab-out-tray">
+                    <div class="row no-gutters notice-card">
+                        <div class="col-12 col-md-6 col-lg-9">
+                            <div class="rounded-circle notice-mark SELE_C">유</div>
+                            <div class="inner-wrap">
+                                <div class="title">유연근무 사용요청</div>
+                                <div class="desc">
+                                    <span class="sub-title">사용기한</span>
+                                    <span>2019.06.01~2019.06.21(3주)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="name">김이수</span>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pr-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pl-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
+                        </div>
+                    </div>
+                    <div class="row no-gutters notice-card">
+                        <div class="col-12 col-md-6 col-lg-9">
+                            <div class="rounded-circle notice-mark ELAS">유</div>
+                            <div class="inner-wrap">
+                                <div class="title">유연근무 사용요청</div>
+                                <div class="desc">
+                                    <span class="sub-title">사용기한</span>
+                                    <span>2019.06.01~2019.06.21(3주)</span>
+                                    <span class="sub-desc">긴급장애대응</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="name">김이수</span>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pr-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pl-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
+                        </div>
+                    </div>
+                    <div class="row no-gutters notice-card">
+                        <div class="col-12 col-md-6 col-lg-9">
+                            <div class="rounded-circle notice-mark SELE_F">유</div>
+                            <div class="inner-wrap">
+                                <div class="title">유연근무 사용요청</div>
+                                <div class="desc">
+                                    <span class="sub-title">사용기한</span>
+                                    <span>2019.06.01~2019.06.21(3주)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="name">김이수</span>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pr-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-1 pl-1">
+                            <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
+                        </div>
+                    </div>
                 </div>
               </div>
-              <div class="row no-gutters notice-card">
-                  <div class="col-12 col-md-6 col-lg-9">
-                      <div class="rounded-circle notice-mark type01">유</div>
-                      <div class="inner-wrap">
-                          <div class="title">유연근무 사용요청</div>
-                          <div class="desc">
-                              <span class="sub-title">사용기한</span>
-                              <span>2019.06.01~2019.06.21(3주)</span>
-                              <span class="sub-desc">긴급장애대응</span>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-12 col-md-2 col-lg-1">
-                      <span class="name">김이수</span>
-                  </div>
-                  <div class="col-6 col-md-2 col-lg-1 pr-1">
-                      <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
-                  </div>
-                  <div class="col-6 col-md-2 col-lg-1 pl-1">
-                      <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
-                  </div>
-              </div>
-              <div class="row no-gutters notice-card">
-                  <div class="col-12 col-md-6 col-lg-9">
-                      <div class="rounded-circle notice-mark type01">유</div>
-                      <div class="inner-wrap">
-                          <div class="title">유연근무 사용요청</div>
-                          <div class="desc">
-                              <span class="sub-title">사용기한</span>
-                              <span>2019.06.01~2019.06.21(3주)</span>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-12 col-md-2 col-lg-1">
-                      <span class="name">김이수</span>
-                  </div>
-                  <div class="col-6 col-md-2 col-lg-1 pr-1">
-                      <button type="button" class="btn btn-block btn-outline btn-approval cancel">반송</button>
-                  </div>
-                  <div class="col-6 col-md-2 col-lg-1 pl-1">
-                      <button type="button" class="btn btn-block btn-outline btn-approval sign">승인</button>
-                  </div>
-              </div>
+              <!-- 탭 삽입 -->
+              
+              
+              
               
             </div>
             <!-- <footer class="text-center mt-auto pt-4">Copyright © 2019 ISUSYSTEM. All rights reserved</footer> -->
