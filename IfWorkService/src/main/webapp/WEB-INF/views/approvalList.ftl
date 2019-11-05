@@ -260,19 +260,21 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">결재 의견</h5>
+                    <h5 class="modal-title" v-if="apprType=='apply'">결재 의견</h5>
+                    <h5 class="modal-title" v-else>반려 의견</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group col-12">
-                        <textarea class="form-control" id="apprOpinion" rows="3" placeholder="결재/반려 의견 작성" v-model="apprOpinion"></textarea>
+                        <textarea class="form-control" id="apprOpinion" rows="3" :placeholder="apprType=='apply'?'결재 의견 작성':'반려 의견 작성'" v-model="apprOpinion"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                    <button type="button" id="apprBtn" class="btn btn-default">결재하기</button>
+                    <button type="button" id="apprBtn" class="btn btn-default" v-if="apprType=='apply'">결재하기</button>
+                    <button type="button" id="apprBtn" class="btn btn-default" v-else>반려하기</button>
                 </div>
             </div>
         </div>
@@ -280,6 +282,20 @@
     <!-- 결재의견 modal end -->
 	<div class="container-fluid">
 		<p class="page-title">결재 알림</p>
+		<ul class="nav approval-wrap nav-pills mt-2 mb-2" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="appl_type_request" data-toggle="pill" @click="getApprovalList('01')" role="tab"
+                    aria-controls="pills-home" aria-selected="true">신청서상태</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="appl_type_pending" data-toggle="pill" @click="getApprovalList('02')" role="tab"
+                    aria-controls="pills-profile" aria-selected="false">미결함</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="appl_type_complete" data-toggle="pill" @click="getApprovalList('03')" role="tab"
+                    aria-controls="pills-contact" aria-selected="false">기결함</a>
+            </li>
+        </ul>
 		<template v-if="apprList.length>0">
 		<div class="row no-gutters notice-card" v-for="a in apprList">
 			<div class="col-12 col-md-6 col-lg-9" @click="viewAppl(a)">
@@ -304,11 +320,11 @@
 			<div class="col-12 col-md-2 col-lg-1">
 				<span class="name">{{a.empNm}}</span>
 			</div>
-			<div class="col-6 col-md-2 col-lg-1 pr-1">
+			<div class="col-6 col-md-2 col-lg-1 pr-1" v-if="applType=='02'">
 				<button type="button"
 					class="btn btn-block btn-outline btn-approval cancel" @click="approval(a,'reject')">반송</button>
 			</div>
-			<div class="col-6 col-md-2 col-lg-1 pl-1">
+			<div class="col-6 col-md-2 col-lg-1 pl-1" v-if="applType=='02'">
 				<button type="button"
 					class="btn btn-block btn-outline btn-approval sign" @click="approval(a,'apply')">승인</button>
 			</div>
@@ -329,11 +345,13 @@
    		el: "#approval",
    		data : {
    			apprList: [],
+   			apprType: '', // 승인 or 반려
+   			applType: '', // 신청 내역 조회('01') or 미결('02') or 기결('03')
    			apprOpinion: '',
    			appl: {}
    		},
 	    mounted: function(){
-	    	this.getApprovalList();
+	    	this.getApprovalList('01'); //신청내역 조회
 	    },
 	    methods : {
 	    	minuteToHHMM : function (min, type) {
@@ -360,14 +378,20 @@
 	    			return '';
 	    		}
 		   	},
-	    	getApprovalList: function(){
+	    	getApprovalList: function(applType){
 	    		var $this = this;
+	    		
+	    		$this.applType = applType;
+	    		
+	    		var param = {
+	    			applType: applType
+	    		};
 	    		
 	    		Util.ajax({
 					url: "${rc.getContextPath()}/appl",
 					type: "GET",
 					contentType: 'application/json',
-					//data: param,
+					data: param,
 					dataType: "json",
 					success: function(data) {
 						$this.apprList = [];
@@ -456,9 +480,11 @@
 					}
 				});
 	    	},
-	    	approval: function(appr, apprStatus){ //결재
+	    	approval: function(appr, apprType){ //결재
 	    		var $this = this;
-	    	console.log(appr);
+	    		
+	    		$this.apprType = apprType;
+					    	
 	    		$("#apprBtn").bind('click',function(){
 	    			$("#apprBtn").unbind('click');
 	    			
@@ -477,9 +503,7 @@
 		    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
 		    				param['otSdate'] = moment(appr.appl.otSdate).format('YYYYMMDDHHmm');
 		    				param['otEdate'] = moment(appr.appl.otEdate).format('YYYYMMDDHHmm');
-		    			}
-
-		    			if(appr.applCd=='ENTRY_CHG') {
+		    			}else if(appr.applCd=='ENTRY_CHG') {
 		    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
 		    				
 		    				if(appr.appl.planSdate!=null && appr.appl.planSdate!=undefined && appr.appl.planSdate!='')
@@ -497,7 +521,7 @@
 		    			}
 		    			
 	    	    		Util.ajax({
-	    					url: "${rc.getContextPath()}/appl/"+apprStatus,
+	    					url: "${rc.getContextPath()}/appl/"+apprType,
 	    					type: "POST",
 	    					contentType: 'application/json',
 	    					data: JSON.stringify(param),

@@ -40,6 +40,10 @@ public class WtmApplController {
 	WtmAsyncService wtmAsyncService;
 	
 	@Autowired
+	@Qualifier("wtmApplService")
+	WtmApplService applService;
+	
+	@Autowired
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
 	
@@ -62,7 +66,7 @@ public class WtmApplController {
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getApprList(/*@RequestBody Map<String, Object> paramMap,*/ HttpServletRequest request) throws Exception {
+	public @ResponseBody ReturnParam getApprList(@RequestParam String applType, HttpServletRequest request) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
@@ -75,7 +79,10 @@ public class WtmApplController {
 		
 		List<Map<String, Object>> apprList = null;
 		try {		
-			apprList = flexibleApplService.getApprList(tenantId, enterCd, empNo, new HashMap<String, Object>(), userId);
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("applType", applType);
+			
+			apprList = applService.getApprList(tenantId, enterCd, empNo, paramMap, userId);
 			
 			rp.put("apprList", apprList);
 		} catch(Exception e) {
@@ -180,7 +187,7 @@ public class WtmApplController {
 				if("OT".equals(applCd)) {
 					wtmOtApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				} else {
-					flexibleApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+					applService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				}
 			}
 			
