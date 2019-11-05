@@ -71,21 +71,31 @@ ul, ol, li{
   border-color: #325fc0;
 }
 
+[type=button].btn-approval{
+  cursor:default;
+}
 .btn-approval{
+  color:#3e3e4c;
   font-size: 14px;
   border-radius: 4px;
   border: solid 1px #dfdfdf;
   background-color: #ffffff;
 }
-.btn-approval.cancel {
+.btn-approval:hover{
+  color:#3e3e4c;
+  background-color: #ffffff;
+}
+[type=button].btn-approval.cancel {
   color: #f75353;
+  cursor:pointer;
 }
 .btn-approval.cancel:hover {
   color:#ffffff;
   background-color: #f75353;
 }
-.btn-approval.sign{
+[type=button].btn-approval.sign {
   color: #4d84fe;
+  cursor:pointer;
 }
 
 .btn-approval.sign:hover {
@@ -722,12 +732,12 @@ box-sizing: border-box;
 
 /* 대체휴가변경신청  */
 .notice-mark.SUBS_CHG{
-	background-color: #f75353;
+  background-color: #f75353;
 }
 
 /* 근태사유서신청  */
 .notice-mark.ENTRY_CHG{
-	background-color: #85d1f2;
+  background-color: #85d1f2;
 }
 
 
@@ -944,6 +954,5 @@ No media query for `xs` since this is the default in Bootstrap */
 .sub-header {
   padding: 16px 16px 20px 16px;
 }
-
 /* date timepicker custom */
 div.bootstrap-datetimepicker-widget.dropdown-menu{width: auto;}
