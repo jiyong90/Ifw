@@ -562,10 +562,13 @@ public class IfwLoginController {
 			return null;
 		}
 			
-		userData.put("loginId", request.getParameter("loginId"));
+		userData.put("userId", request.getParameter("userId"));
+		userData.put("loginId", request.getParameter("userId"));
 		userData.put("empNo", request.getParameter("empNo"));
 		userData.put("enterCd", request.getParameter("enterCd"));
 		userData.put("authCd", request.getParameter("authCd") == null ?"U":request.getParameter("authCd"));	
+		userData.put("isEmbedded",false);
+		userData.put("type","console");
 		
 		return userData;
 	}
