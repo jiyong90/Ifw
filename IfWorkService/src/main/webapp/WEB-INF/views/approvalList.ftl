@@ -284,15 +284,15 @@
 		<p class="page-title">결재 알림</p>
 		<ul class="nav approval-wrap nav-pills mt-2 mb-2" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="appl_type_request" data-toggle="pill" @click="getApprovalList('01')" role="tab"
+                <a href="#" class="nav-link active" id="appl_type_request" data-toggle="pill" @click="getApprovalList('01')" role="tab"
                     aria-controls="pills-home" aria-selected="true">신청서상태</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="appl_type_pending" data-toggle="pill" @click="getApprovalList('02')" role="tab"
+                <a href="#" class="nav-link" id="appl_type_pending" data-toggle="pill" @click="getApprovalList('02')" role="tab"
                     aria-controls="pills-profile" aria-selected="false">미결함</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="appl_type_complete" data-toggle="pill" @click="getApprovalList('03')" role="tab"
+                <a href="#" class="nav-link" id="appl_type_complete" data-toggle="pill" @click="getApprovalList('03')" role="tab"
                     aria-controls="pills-contact" aria-selected="false">기결함</a>
             </li>
         </ul>
@@ -320,14 +320,21 @@
 			<div class="col-12 col-md-2 col-lg-1">
 				<span class="name">{{a.empNm}}</span>
 			</div>
-			<div class="col-6 col-md-2 col-lg-1 pr-1" v-if="applType=='02'">
+			<template v-if="applType=='01'">
+			<div class="col-12 col-md-4 col-lg-2">
+                <button type="button" class="btn btn-block btn-outline btn-approval">{{a.applStatusNm}}</button>
+            </div>
+            </template>
+            <template v-if="applType=='02'">
+			<div class="col-6 col-md-2 col-lg-1 pr-1">
 				<button type="button"
 					class="btn btn-block btn-outline btn-approval cancel" @click="approval(a,'reject')">반송</button>
 			</div>
-			<div class="col-6 col-md-2 col-lg-1 pl-1" v-if="applType=='02'">
+			<div class="col-6 col-md-2 col-lg-1 pl-1">
 				<button type="button"
 					class="btn btn-block btn-outline btn-approval sign" @click="approval(a,'apply')">승인</button>
 			</div>
+			</template>
 		</div>
 		</template>
 		<template v-else>
