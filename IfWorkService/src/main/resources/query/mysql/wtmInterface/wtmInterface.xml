@@ -430,7 +430,7 @@
   	</select>
   	
   	<select id="getEmpBaseList" parameterType="map" resultType="hashmap">
-		SELECT A.TENANT_ID AS tenantId, A.ENTER_CD AS enterCd, A.SABUN AS sabun, GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(NOW(), -1, 'M'), '%Y%m%d'))  as symd, LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(NOW(), 1, 'M'), '%Y%m%d')) as eymd, '0' as userId
+		SELECT A.TENANT_ID AS tenantId, A.ENTER_CD AS enterCd, A.SABUN AS sabun, GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(NOW(), -1, 'M'), 'YMD'))  as symd, LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(NOW(), 1, 'M'), 'YMD')) as eymd, '0' as userId
 		  FROM WTM_EMP_HIS A
 		 INNER JOIN WTM_IF_EMP_MSG B
 			 ON A.TENANT_ID = B.TENANT_ID
@@ -443,6 +443,36 @@
 		   AND B.NEW_VALUE IS NOT NULL
 		 ORDER BY ENTER_CD, SABUN
     </select>
+    
+    <insert id="insertWtmEmpAddr" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_EMP_ADDR (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, SABUN
+        	, EMAIL
+        	, HAND_PHONE
+        	, NOTE
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.tenantId}
+        	, #{item.enterCd}
+        	, #{item.sabun}
+        	, #{item.email}
+        	, #{item.handPhone}
+        	, #{item.note}
+        	, NOW()
+        	, '0'
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              EMAIL = VALUES(EMAIL)
+            , HAND_PHONE = VALUES(HAND_PHONE)
+            , NOTE = VALUES(NOTE)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = '0'
+    </insert>
     
     <select id="setTaaApplIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
   		{ call P_WTM_IF_TAA_APPL( 
@@ -505,4 +535,35 @@
   			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
   			  ) }
   	</select>
+  	
+  	<select id="getExceptRuleId" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT info_data
+			  FROM comm_management_infomation
+			 WHERE tenant_id = #{tenantId}
+			   AND info_key = 'HR.IT_URL'
+        ]]>
+    </select>
+    
+    <select id="getExpTableList" parameterType="map" resultType="hashmap">
+		SELECT TABLE_NAME
+		FROM INFORMATION_SCHEMA.TABLES
+		WHERE TABLE_SCHEMA = #{tableSchema} 
+		  AND TABLE_ROWS > 0
+		    AND TABLE_NAME LIKE 'WTM%'
+  AND TABLE_NAME = 'WTM_WORK_PATT_DET'
+  		ORDER BY TABLE_NAME
+    </select>
+    
+    <select id="getExpColList" parameterType="map" resultType="hashmap">
+		SELECT COLUMN_NAME AS COL_NM, DATA_TYPE, ORDINAL_POSITION AS COL_NO
+		FROM INFORMATION_SCHEMA.COLUMNS
+		WHERE TABLE_SCHEMA= #{tableSchema} 
+		  AND TABLE_NAME = #{tableName} 
+		ORDER BY ORDINAL_POSITION
+    </select>
+    <select id="getExpDataList" parameterType="map" resultType="hashmap">
+		SELECT *
+		FROM ${tableName}
+    </select>
 </mapper>
