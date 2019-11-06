@@ -107,6 +107,7 @@ public class AccessTokenFilter implements Filter {
 			}
 
 			token = request.getParameter(tokenName);
+			logger.debug("request.getParameter tokenName : " + tokenName + " , " + WtmUtil.paramToString((HttpServletRequest)request));
 			logger.debug("request.getParameter token : " + token);
 			
 			if(token == null) {
