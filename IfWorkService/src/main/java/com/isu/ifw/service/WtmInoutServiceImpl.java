@@ -139,7 +139,7 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 		Date now = new Date();
 		String today = format1.format(now);
 		int cnt = 0;
-		
+
 		Map<String, Object> paramMap = new HashMap();
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
@@ -167,7 +167,8 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 		logger.debug("타각 : " + tenantId + "," + enterCd + "," + sabun + "," + rt.toString());
 		
 		System.out.println("111111111111111111111111111111111111111111111 " + paramMap.get("rtnYmd").toString());
-		if(paramMap.containsKey("rtnYmd") && paramMap.get("rtnYmd") != null && !paramMap.get("inoutType").equals("EXCEPT"))
+		//퇴근일때만 인정시간 계산
+		if(paramMap.containsKey("rtnYmd") && paramMap.get("rtnYmd") != null && paramMap.get("inoutType").equals("OUT"))
 			empService.calcApprDayInfo(Long.parseLong(paramMap.get("tenantId").toString()), 
 				paramMap.get("enterCd").toString(), paramMap.get("rtnYmd").toString(),
 				paramMap.get("rtnYmd").toString(), paramMap.get("sabun").toString());
@@ -233,7 +234,7 @@ public class WtmInoutServiceImpl implements WtmInoutService{
 	@Override
 	public ReturnParam cancel(Map<String, Object> paramMap) throws Exception {
 		ReturnParam rp = new ReturnParam();
-		rp.setFail("준비중입니다.");
+		rp.setSuccess("준비중입니다.");
 		
 		return rp;
 	}

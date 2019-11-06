@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.repository.WtmTokenRepository;
 import com.isu.ifw.service.LoginService;
+import com.isu.ifw.util.WtmUtil;
 
 @Component("accessTokenFilter") 
 public class AccessTokenFilter implements Filter {
@@ -55,6 +56,7 @@ public class AccessTokenFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
+		logger.debug("::" + ((HttpServletRequest)request).getRequestURI() +" "+ WtmUtil.paramToString((HttpServletRequest)request) );
 		Cookie[] cookies = ((HttpServletRequest)request).getCookies();
 		Map<String, Object> cookie = new HashMap();
 		
@@ -73,13 +75,11 @@ public class AccessTokenFilter implements Filter {
 		//param, cookie에서 테넌트 id 가져오기
 		if(request.getParameter("tenant") != null) tenant = request.getParameter("tenant");
 		
-		logger.debug("111111111111111111111111111111111111111111111111111111111111111 : " + tenant);
-	
 		if(tenant == null || loginService.getHrInfoUrl(Long.parseLong(tenant)).equals("")) {
 			chain.doFilter(request, response);
 			return;
 		}
-		logger.debug("111111111111111111111111111111111111111111111111111111111111111 : AccessTokenFilter");
+		logger.debug("AccessTokenFilter");
 
 		System.out.println("AccessTokenFilter");
 
@@ -109,23 +109,23 @@ public class AccessTokenFilter implements Filter {
 			}
 
 			token = request.getParameter(tokenName);
-			logger.debug("111111111111111111111111111111111111111111111111111111111111111 : token");
+			logger.debug("request.getParameter token : " + token);
 			
 			if(token == null) {
-				logger.debug("111111111111111111111111111111111111111111111111111111111111111 : param token...null");
-				logger.debug("111111111111111111111111111111111111111111111111111111111111111 : cookie value" + cookie.toString());
+				logger.debug("param token...null");
+				logger.debug("cookie value" + cookie.toString());
 				
 				if(cookie.containsKey(tokenName)) {
 					token = cookie.get(tokenName).toString();
 				} else {
-					logger.debug("111111111111111111111111111111111111111111111111111111111111111 : token이 아무데도 없음!!!!!!!");
+					logger.debug("token이 아무데도 없음!!!!!!!");
 
 					((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 					((HttpServletResponse) response).sendRedirect(infoUrl);
 					return;
 				}
 			} else {
-				logger.debug("111111111111111111111111111111111111111111111111111111111111111 : add cookie");
+				logger.debug("add cookie");
 				Cookie c = new Cookie(tokenName, token);
 				c.setPath("/");
 				Cookie c2 = new Cookie("tenant", tenant);
@@ -136,7 +136,7 @@ public class AccessTokenFilter implements Filter {
 
 			WtmToken wtmToken = loginService.getAccessToken(token);
 			if(wtmToken == null) {
-				logger.debug("111111111111111111111111111111111111111111111111111111111111111 : DB에 토큰 없음");
+				logger.debug("DB에 토큰 없음");
 				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				((HttpServletResponse) response).sendRedirect(infoUrl);
 				return;
@@ -148,7 +148,7 @@ public class AccessTokenFilter implements Filter {
 	 	         
 	 	        int compare = date.compareTo(expiresAt);
 				if(compare >= 0) {
-					logger.debug("111111111111111111111111111111111111111111111111111111111111111 : 토큰만료");
+					logger.debug("토큰만료");
 					wtmToken = loginService.refreshAccessToken(request, response, wtmToken, tokenUrl, tokenName);
 					if(wtmToken == null) {
 						//hr세선 만료일 경우 토큰 갱신 불가
