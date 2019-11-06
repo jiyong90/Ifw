@@ -574,7 +574,7 @@ public class IfwLoginController {
 	
 	@RequestMapping(value = "/sso/{tsid}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void loginForSso(@PathVariable String tsId, HttpServletRequest request,
-										  HttpServletResponse response, RedirectAttributes redirectAttr) {
+										  HttpServletResponse response) {
 		
 		Map<String, Object> userData = makeUserData(request);
 		System.out.println("1111111111111111111111111111111 4" + userData.toString());
