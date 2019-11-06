@@ -1,13 +1,8 @@
 package com.isu.ifw.controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.security.cert.CertificateException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -52,14 +47,12 @@ import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmTokenRepository;
-import com.isu.ifw.repository.WtmWorkteamEmpRepository;
 import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
 import com.isu.option.service.TenantConfigManagerService;
 import com.isu.option.util.Aes256;
+import com.isu.option.util.Sha256;
 import com.isu.option.vo.ReturnParam;
-
-import jdk.nashorn.internal.ir.RuntimeNode.Request;
 
 @RestController
 public class IfwLoginController {
@@ -301,11 +294,17 @@ public class IfwLoginController {
 					String password = (String) userData.get("password");
 					
 					paramMap.put("encryptStr", requestedPassword);
-					Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
+					/*Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
 					if(rMap!=null && rMap.get("encryptStr")!=null) {
 						requestedPassword = rMap.get("encryptStr").toString();
 						System.out.println("requestedPassword : " + requestedPassword);
-					}
+					}*/
+					String encKey = authConfig.getEncryptKey();
+					int repeatCount = authConfig.getHashIterationCount();
+
+					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
+					System.out.println("requestedPassword : " + requestedPassword);
+					
 					
 					if(userData.containsKey("account_lockout_yn") && "Y".equals(userData.get("account_lockout_yn"))) {
 						validYn = false;
