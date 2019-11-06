@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmInoutHisMapper">
+	<select id="getInoutStatus" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT X.YMD AS ymd, 
+				X.P_SDATE AS pSdate, 
+				X.P_EDATE AS pEdate, 
+				DATE_FORMAT(X.P_SDATE,'%Y%m%d') AS pSymd, 
+				DATE_FORMAT(X.P_EDATE,'%Y%m%d') AS pEymd, 
+				C.ENTRY_SDATE AS entrySdate, 
+				C.ENTRY_EDATE AS entryEdate 
+			FROM 
+				(SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS P_SDATE, MAX(A.PLAN_EDATE) AS P_EDATE
+					FROM WTM_WORK_DAY_RESULT A 
+					WHERE A.TENANT_ID = #{tenantId}
+						AND A.ENTER_CD = #{enterCd}
+						AND A.SABUN = #{sabun}
+						AND A.TIME_TYPE_CD IN ('BASE', 'OT') 
+						GROUP BY YMD
+						ORDER BY YMD) AS X
+				JOIN WTM_WORK_CALENDAR C ON C.TENANT_ID = X.TENANT_ID AND C.ENTER_CD = X.ENTER_CD AND C.SABUN = X.SABUN AND C.YMD = X.YMD
+				WHERE (DATE_FORMAT(X.P_SDATE, '%Y%m%d') = DATE_FORMAT(now(),'%Y%m%d') 
+					OR DATE_FORMAT(X.P_EDATE, '%Y%m%d') = DATE_FORMAT(now(),'%Y%m%d'))
+        ]]>
+    </select>
+    
+    <select id="getContext" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	(SELECT DATE_FORMAT(INOUT_DATE,"%Y-%c-%d %H:%i") as inoutDate, INOUT_TYPE_CD as inoutTypeCd
+        	FROM WTM_INOUT_HIS
+        	WHERE INOUT_TYPE_CD IN ('GO', 'BACK')
+        		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
+        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        	UNION ALL 
+        	(SELECT DATE_FORMAT(INOUT_DATE,"%Y-%c-%d %H:%i") as inoutDate, INOUT_TYPE_CD as inoutTypeCd
+        	FROM WTM_INOUT_HIS
+        	WHERE INOUT_TYPE_CD IN ('IN')
+        		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
+        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        	UNION ALL 
+        	(SELECT DATE_FORMAT(INOUT_DATE,"%Y-%c-%d %H:%i") as inoutDate, INOUT_TYPE_CD as inoutTypeCd
+        	FROM WTM_INOUT_HIS
+        	WHERE INOUT_TYPE_CD IN ('OUT')
+        		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
+        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        ]]>
+    </select>
+    
+	<update id="saveWtmInoutHis" parameterType="map">
+        <![CDATA[ 
+			INSERT INTO WTM_INOUT_HIS
+				(TENANT_ID,
+				ENTER_CD,
+				SABUN,
+				INOUT_TYPE_CD,
+				ENTRY_TYPE_CD,
+				YMD,
+				INOUT_DATE)
+			VALUES
+				(#{tenantId},
+				#{enterCd} ,
+				#{sabun} ,
+				#{inoutTypeCd} ,
+				#{entryTypeCd} ,
+				now(), 
+				#{today}
+				)
+        ]]>
+    </update>
+    
+    <select id="getMyInoutList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT A.YMD as key2, RIGHT(A.YMD, 2) as title, DATE_FORMAT(A.ENTRY_SDATE, '%H:%i') as caption_lb, DATE_FORMAT(A.ENTRY_EDATE, '%H:%i') as caption_rb, T.TIME_NM as status 
+			FROM WTM_WORK_CALENDAR A 
+				JOIN WTM_TIME_CD_MGR T
+			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID	
+			WHERE A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+				AND A.SABUN = #{sabun}
+				AND DATE_FORMAT(A.YMD,'%Y%c') = #{month}
+				ORDER BY A.YMD DESC
+	        ]]>
+    </select>
+    
+    <select id="getMyInoutHistory" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CONCAT_WS('@',DATE_FORMAT(A.INOUT_DATE, "%Y%c%d%H%i%s"),A.INOUT_TYPE_CD) AS key2,  
+				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'INOUT_TYPE_CD', A.INOUT_TYPE_CD, #{ymd}) AS title,
+			 	DATE_FORMAT(A.INOUT_DATE, '%H:%i') as caption_lb,
+			 	F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'ENTRY_TYPE_CD', A.ENTRY_TYPE_CD, #{ymd}) AS caption_rb
+			FROM WTM_INOUT_HIS A
+			WHERE A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+				AND A.SABUN = #{sabun}
+				AND DATE_FORMAT(A.YMD,'%Y%c%d') = #{ymd}
+				ORDER BY A.INOUT_DATE DESC
+	        ]]>
+    </select>
+    
+    <select id="getMyInoutDetail" parameterType="map" resultType="hashmap">
+        <![CDATA[ 
+			SELECT DATE_FORMAT(INOUT_DATE, '%Y-%c-%d') as ymd,
+				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd},'INOUT_TYPE_CD', INOUT_TYPE_CD, DATE_FORMAT(INOUT_DATE, '%Y%c%d')) AS inoutTypeCd,
+				DATE_FORMAT(INOUT_DATE, '%H:%i:%s') as inoutDate,
+				DATE_FORMAT(INOUT_DATE, "%Y%c%d%H%i%s") AS id
+			FROM WTM_INOUT_HIS 
+			WHERE TENANT_ID = #{tenantId}
+				AND ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun}
+				AND INOUT_TYPE_CD = #{inoutTypeCd}
+				AND DATE_FORMAT(#{inoutDate}, '%Y%c%d%H%i%s') = DATE_FORMAT(INOUT_DATE, '%Y%c%d%H%i%s');
+	        ]]>
+    </select>
+</mapper>

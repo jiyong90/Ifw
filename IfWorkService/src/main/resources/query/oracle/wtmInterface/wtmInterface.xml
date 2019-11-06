@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmInterfaceMapper">
+
+	<select id="getIfLastDate" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT DATE_FORMAT(MAX(UPDATE_DATE), '%Y%m%d%H%i%s') AS LAST_DATE
+			  FROM WTM_IF_HIS
+			 WHERE TENANT_ID = #{tenantId}
+			   AND IF_ITEM = #{ifType}
+			   AND IF_STATUS = 'OK'
+        ]]>
+    </select>
+    <select id="getIfNowDate" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT DATE_FORMAT(NOW(), '%Y%m%d%H%i%s') AS IF_DATE
+			  FROM DUAL
+        ]]>
+    </select>
+    
+    <select id="getIfUrl" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT info_data
+			  FROM comm_management_infomation
+			 WHERE tenant_id = #{tenantId}
+			   AND info_key = 'HR.IT_URL'
+        ]]>
+    </select>
+    
+	<insert id="insertIfHis" parameterType="hashmap">
+		INSERT INTO WTM_IF_HIS
+		(
+			  TENANT_ID
+			, IF_STATUS
+			, IF_ITEM 
+			, IF_SEARCH_DATE 
+			, IF_MSG 
+			, UPDATE_DATE
+		) VALUES (
+			  #{tenantId}
+			, #{ifStatus}
+			, #{ifItem}
+			, F_WTM_TO_DATE(#{ifEndDate}, '%Y%m%d%H%i%s')
+			, #{ifMsg}
+			, F_WTM_TO_DATE(#{updateDate}, '%Y%m%d%H%i%s')
+		)
+	</insert>
+	
+	<select id="getWtmCodeId" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CODE_ID
+			  FROM WTM_CODE
+			 WHERE TENANT_ID = #{tenantId}
+			   AND ENTER_CD = #{enterCd}
+			   AND GRP_CODE_CD = #{grpCodeCd}
+			   AND CODE_CD = #{codeCd}
+			   AND CODE_NM = #{codeNm}
+			   AND SYMD = #{symd}
+        ]]>
+    </select>
+    
+    <insert id="insertWtmCode" parameterType="hashmap">
+			INSERT INTO WTM_CODE
+			(
+				  TENANT_ID
+				, ENTER_CD 
+				, GRP_CODE_CD 
+				, CODE_CD 
+				, CODE_NM 
+				, SYMD 
+				, EYMD 
+				, NOTE
+				, UPDATE_DATE
+				, UPDATE_ID
+			) VALUES 
+			<foreach collection="list" item="item" separator=", ">
+			(     #{item.tenantId}
+	        	, #{item.enterCd}
+	        	, #{item.grpCodeCd}
+	        	, #{item.codeCd}
+	        	, #{item.codeNm}
+	        	, #{item.symd}
+	        	, #{item.eymd}
+	        	, #{item.note}
+	        	, NOW()
+	        	, '0'
+	        )
+			</foreach>
+	</insert>
+	
+	<update id="updateWtmCode" parameterType="hashmap">
+		UPDATE WTM_CODE SET
+		    NOTE = CASE
+		    <foreach collection="list" item="item" separator="">
+		        when CODE_ID = #{item.codeId} then #{item.note}
+		    </foreach>
+    		END
+		  , UPDATE_DATE = NOW()
+		  , UPDATE_ID = '0'
+		WHERE CODE_ID IN
+		<foreach collection="list" item="item" open="(" close=")" separator=", ">
+			#{item.codeId}
+		</foreach>
+	</update>
+	
+	<update id="updateWtmCodeHisEymd" parameterType="hashmap">
+		<![CDATA[
+			UPDATE WTM_CODE
+			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			  , UPDATE_DATE = NOW()
+			  , UPDATE_ID = '0'
+			WHERE 1=1
+			  AND TENANT_ID = #{tenantId}
+			  AND ENTER_CD = #{enterCd}
+			  AND GRP_CODE_CD = #{grpCodeCd}
+			  AND CODE_CD = #{codeCd}
+			  AND #{symd} > SYMD
+		]]>
+	</update>
+	
+	<update id="updateWtmCodeHisSymd" parameterType="hashmap" >
+        <![CDATA[
+			UPDATE WTM_CODE
+			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			  , UPDATE_DATE = NOW()
+			  , UPDATE_ID = '0'
+			WHERE 1=1
+			  AND TENANT_ID = #{tenantId}
+			  AND ENTER_CD = #{enterCd}
+			  AND GRP_CODE_CD = #{grpCodeCd}
+			  AND CODE_CD = #{codeCd}
+			  AND #{symd} < SYMD
+        ]]>
+    </update>
+    
+    <insert id="insertWtmHoliday" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_HOLIDAY_MGR (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, BISINESS_PLACE_CD
+        	, HOLIDAY_YMD
+        	, HOLIDAY_NM
+        	, SUN_YN
+        	, FESTIVE_YN
+        	, PAY_YN
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.tenantId}
+        	, #{item.enterCd}
+        	, #{item.locationCd}
+        	, #{item.holidayYmd}
+        	, #{item.holidayNm}
+        	, #{item.sunYn}
+        	, #{item.festiveYn}
+        	, #{item.payYn}
+        	, NOW()
+        	, '0'
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              HOLIDAY_NM = VALUES(HOLIDAY_NM)
+            , SUN_YN = VALUES(SUN_YN)
+            , FESTIVE_YN = VALUES(FESTIVE_YN)
+            , PAY_YN = VALUES(PAY_YN)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = '0'
+    </insert>
+    
+    <select id="getWtmTaaCodeId" parameterType="map" resultType="hashmap">
+		SELECT TAA_CODE_ID
+		  FROM WTM_TAA_CODE
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND TAA_CD = #{taaCd}
+    </select>
+    
+    <insert id="insertTaaCode" parameterType="hashmap">
+		INSERT INTO WTM_TAA_CODE
+		(
+			  TENANT_ID
+			, ENTER_CD 
+			, TAA_CD 
+			, TAA_NM 
+			, TAA_TYPE_CD 
+			, HOL_INCL_YN 
+			, REQUEST_TYPE_CD 
+			, WORK_YN
+			, UPDATE_DATE
+			, UPDATE_ID
+		) VALUES 
+		<foreach collection="list" item="item" separator=", ">
+			(
+			  #{item.tenantId}
+			, #{item.enterCd}
+			, #{item.taaCd}
+			, #{item.taaNm}
+			, #{item.taaTypeCd}
+			, #{item.holInclYn}
+			, #{item.requestTypeCd}
+			, #{item.workYn}
+			, NOW()
+			, '0'
+			)
+		</foreach>
+	</insert>
+	
+	<update id="updateTaaCode" parameterType="hashmap">
+		UPDATE WTM_TAA_CODE SET
+		    TAA_NM = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.taaNm}
+		    </foreach> END
+		  , TAA_TYPE_CD = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.taaTypeCd}
+		    </foreach> END
+		  , HOL_INCL_YN = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.holInclYn}
+		    </foreach> END
+		  , REQUEST_TYPE_CD = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.requestTypeCd}
+		    </foreach> END
+		  , WORK_YN = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.workYn}
+		    </foreach> END
+		  , UPDATE_DATE = NOW()
+		  , UPDATE_ID = '0'
+		WHERE TAA_CODE_ID IN 
+		<foreach collection="list" item="item" open="(" close=")" separator=", ">
+			#{item.taaCodeId}
+		</foreach>
+	</update>
+	
+	<insert id="insertWtmOrgCode" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_ORG_CODE (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, ORG_CD
+        	, SYMD
+        	, ORG_NM
+        	, EYMD
+        	, ORG_TYPE
+        	, NOTE
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.tenantId}
+        	, #{item.enterCd}
+        	, #{item.orgCd}
+        	, #{item.symd}
+        	, #{item.orgNm}
+        	, #{item.eymd}
+        	, #{item.orgType}
+        	, #{item.note}
+        	, NOW()
+        	, '0'
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              ORG_NM = VALUES(ORG_NM)
+            , ORG_TYPE = VALUES(ORG_TYPE)
+            , EYMD = VALUES(EYMD)
+            , NOTE = VALUES(NOTE)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = '0'
+    </insert>
+    
+    <update id="updateWtmOrgCodeHisEymd" parameterType="hashmap">
+		<![CDATA[
+			UPDATE WTM_ORG_CODE
+			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			  , UPDATE_DATE = NOW()
+			  , UPDATE_ID = '0'
+			WHERE 1=1
+			  AND TENANT_ID = #{tenantId}
+			  AND ENTER_CD = #{enterCd}
+			  AND ORG_CD = #{orgCd}
+			  AND #{symd} > SYMD
+		]]>
+	</update>
+	
+	<update id="updateWtmOrgCodeHisSymd" parameterType="hashmap" >
+        <![CDATA[
+			UPDATE WTM_ORG_CODE
+			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			  , UPDATE_DATE = NOW()
+			  , UPDATE_ID = '0'
+			WHERE 1=1
+			  AND TENANT_ID = #{tenantId}
+			  AND ENTER_CD = #{enterCd}
+			  AND ORG_CD = #{orgCd}
+			  AND #{symd} < SYMD
+        ]]>
+    </update>
+    
+    <select id="getWtmOgrChartId" parameterType="map" resultType="hashmap">
+		SELECT ORG_CHART_ID
+		  FROM WTM_ORG_CHART
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SYMD = #{symd}
+    </select>
+    
+    <insert id="insertWtmOrgChart" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_ORG_CHART (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, ORG_CHART_NM
+        	, SYMD
+        	, EYMD
+        	, NOTE
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       
+		(     #{tenantId}
+        	, #{enterCd}
+        	, #{orgChartNm}
+        	, #{symd}
+        	, #{eymd}
+        	, #{note}
+        	, NOW()
+        	, '0'
+        )
+    </insert>
+    
+    <update id="updateWtmOrgChart" parameterType="hashmap">
+		UPDATE WTM_ORG_CHART SET
+		    ORG_CHART_NM = #{orgChartNm}
+		  , EYMD = #{eymd}
+		  , NOTE = #{note}
+		  , UPDATE_DATE = NOW()
+		  , UPDATE_ID = '0'
+		WHERE ORG_CHART_ID = #{orgChartId}
+	</update>
+	
+    <insert id="insertWtmOrgChartDet" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_ORG_CHART_DET (
+        	  ORG_CHART_ID
+        	, ORG_CD
+        	, PRIOR_ORG_CD
+        	, SEQ
+        	, ORG_LEVEL
+        	, ORDER_SEQ
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.orgChartId}
+        	, #{item.orgCd}
+        	, #{item.priorOrgCd}
+        	, #{item.seq}
+        	, #{item.orgLevel}
+        	, #{item.orderSeq}
+        	, NOW()
+        	, '0'
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              PRIOR_ORG_CD = VALUES(PRIOR_ORG_CD)
+            , SEQ = VALUES(SEQ)
+            , ORG_LEVEL = VALUES(ORG_LEVEL)
+            , ORDER_SEQ = VALUES(ORDER_SEQ)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = '0'
+    </insert>
+	
+	<insert id="insertEmpHisTemp" parameterType="hashmap">
+		INSERT INTO WTM_IF_EMP_TEMP
+		(
+			  TENANT_ID
+			, ENTER_CD
+			, SABUN
+			, EMP_NM
+			, EMP_ENG_NM
+			, SYMD
+			, EYMD
+			, STATUS_CD
+			, ORG_CD
+			, BUSINESS_PLACE_CD
+			, DUTY_CD
+			, POS_CD
+			, CLASS_CD
+			, JOB_GROUP_CD
+			, JOB_CD
+			, PAY_TYPE_CD
+			, ORG_PATH
+			, LEADER_YN
+			, NOTE
+		) VALUES 
+		<foreach collection="list" item="item" separator=", ">
+			(
+			  #{item.tenantId}
+			, #{item.enterCd}
+			, #{item.sabun}
+			, #{item.empNm}
+			, #{item.empEngNm}
+			, #{item.symd}
+			, #{item.eymd}
+			, #{item.statusCd}
+			, #{item.orgCd}
+			, #{item.businessPlaceCd}
+			, #{item.dutyCd}
+			, #{item.posCd}
+			, #{item.classCd}
+			, #{item.jobGroupCd}
+			, #{item.jobCd}
+			, #{item.payTypeCd}
+			, #{item.orgPath}
+			, #{item.leaderYn}
+			, #{item.note}
+			)
+		</foreach>
+	</insert>
+	
+	<select id="setEmpHis" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_IF_EMP_HIS( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{nowDataTime, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}) }
+  	</select>
+  	
+  	<select id="getEmpBaseList" parameterType="map" resultType="hashmap">
+		SELECT TENANT_ID AS tenantId, ENTER_CD AS enterCd, SABUN AS sabun, '0' as userId 
+		  FROM WTM_IF_EMP_MSG
+		 WHERE TENANT_ID = #{tenantId}
+		   AND DATE_FORMAT(UPDATE_DATE, '%Y%m%d%H%i%s') BETWEEN #{ifEndDate} AND #{updateDate}
+		   AND CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
+		   AND NEW_VALUE IS NOT NULL
+		 ORDER BY ENTER_CD, SABUN
+    </select>
+    
+    <select id="setTaaApplIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_IF_TAA_APPL( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{taaCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{ifApplNo, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{status, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{taaApplId,jdbcType=BIGINT, javaType=java.lang.Long, mode=OUT}
+  			  , #{applId,jdbcType=BIGINT, javaType=java.lang.Long, mode=OUT}
+  			  , #{oldStatus,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
+  	<select id="setTaaApplDayIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_IF_TAA_APPL_DAY( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{taaCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{taaApplId,jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{applId,jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{status,jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{oldStatus,jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{timeTypeCd,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{taaSetYn,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{taaSdate,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{taaEdate,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
+  	
+  	<select id="getWtmTaaApplId" parameterType="map" resultType="hashmap">
+		SELECT TAA_APPL_ID
+		  FROM WTM_TAA_APPL
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND IF_APPL_NO = #{ifApplNo}
+	</select>
+	
+	<select id="setWorkTimeCloseIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_CLOSE_WORKTIME( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{ym, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
+</mapper>

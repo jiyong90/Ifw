@@ -85,7 +85,7 @@ public class DataSourceConfiguration {
 		sqlSessionFactoryBean.setDataSource(dataSource);
 		sqlSessionFactoryBean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource("classpath:config/mybatis-config.xml"));
 		Resource[] arrResource = new PathMatchingResourcePatternResolver()
-	           .getResources("classpath:query/**/*.xml"); 
+	           .getResources("classpath:query/mysql/**/*.xml"); 
 		sqlSessionFactoryBean.setMapperLocations(arrResource);
 		 
 //		 
