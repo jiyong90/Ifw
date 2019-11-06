@@ -21,7 +21,7 @@
 				 #{item.ruleNm} ,
 				 #{item.ruleValue} ,
 				 #{item.note} ,
-				 now(),
+				 SYSDATE,
 				 #{userId}
 				)
 			</foreach>
@@ -34,7 +34,7 @@
 			UPDATE WTM_RULE SET 
 				RULE_VALUE =  #{item.ruleValue}
 				, NOTE = #{item.note}  
-				, UPDATE_DATE = NOW()
+				, UPDATE_DATE = SYSDATE
 				, UPDATE_ID = #{userId}
 			WHERE RULE_ID = #{item.ruleId}
 		</foreach>

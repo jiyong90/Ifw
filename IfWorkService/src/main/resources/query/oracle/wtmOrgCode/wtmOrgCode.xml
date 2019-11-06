@@ -20,7 +20,7 @@
 			   AND ENTER_CD = #{enterCd} 
 			   AND (ORG_CD LIKE CONCAT('%', #{orgKeyword}, '%')
 					  OR ORG_NM LIKE CONCAT('%', #{orgKeyword}, '%')) 
-				AND CASE WHEN #{sYmd} = '' THEN F_WTM_DATE_FORMAT(now(),'YMD')
+				AND CASE WHEN #{sYmd} = '' THEN F_WTM_DATE_FORMAT(SYSDATE,'YMD')
 				         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
         ]]>
     </select>
@@ -31,7 +31,7 @@
 			  FROM WTM_ORG_CODE
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd} 
-			   AND F_WTM_DATE_FORMAT(now(),'YMD') BETWEEN SYMD AND EYMD
+			   AND F_WTM_DATE_FORMAT(SYSDATE,'YMD') BETWEEN SYMD AND EYMD
         ]]>
     </select>
 </mapper>
