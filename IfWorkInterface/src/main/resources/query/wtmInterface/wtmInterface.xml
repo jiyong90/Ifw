@@ -9,8 +9,7 @@
         <![CDATA[
 			SELECT ENTER_CD, GRCODE_CD, CODE, CODE_NM, SYMD, NOTE
 			  FROM V_IF_WTM_CODE
-			 WHERE ENTER_CD = 'BRS'
-			   AND GRCODE_CD IN ('H20010', 'H20020', 'H20030', 'H10050', 'H10110', 'T10003', 'W20010')
+			 WHERE GRCODE_CD IN ('H20010', 'H20020', 'H20030', 'H10050', 'H10110', 'T10003', 'W20010')
 			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD, GRCODE_CD
         ]]>
@@ -20,8 +19,7 @@
         <![CDATA[
 			SELECT ENTER_CD, LOCATION_CD, YY||MM||DD AS YMD, HOLIDAY_NM, FESTIVE_YN, PAY_YN
 			  FROM V_FTM_HOLIDAY
-			 WHERE ENTER_CD = 'BRS'
-			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD
         ]]>
     </select>
@@ -30,8 +28,7 @@
         <![CDATA[
 			SELECT ENTER_CD, GNT_CD, GNT_NM, GNT_GUBUN_CD, HOL_INCL_YN, REQUEST_USE_TYPE, WORK_YN
 			  FROM V_IF_TAA_CODE
-			 WHERE ENTER_CD = 'BRS'
-			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD
         ]]>
     </select>
@@ -40,8 +37,7 @@
         <![CDATA[
 			SELECT ENTER_CD, ORG_CD, ORG_NM, SDATE, EDATE, MEMO
 			  FROM V_IF_ORG_CODE
-			 WHERE ENTER_CD = 'BRS'
-			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD
         ]]>
     </select>
@@ -50,8 +46,7 @@
         <![CDATA[
 			SELECT DISTINCT ENTER_CD, ORG_CHART_NM, SDATE, EDATE, MEMO
 			  FROM V_IF_ORG_CHART
-			 WHERE ENTER_CD = 'BRS'
-			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
 			 ORDER BY SDATE
         ]]>
     </select>
@@ -61,7 +56,7 @@
         	SELECT ORG_CD, PRIOR_ORG_CD, SEQ, ORG_LEVEL, ORDER_SEQ
 			  FROM V_IF_ORG_CHART
 			 WHERE ENTER_CD = #{enterCd}
-			    AND sdate = #{sdate}
+			   AND sdate = #{sdate}
 			 ORDER BY ORDER_SEQ
         ]]>
     </select>
@@ -70,8 +65,7 @@
         <![CDATA[
 			SELECT ENTER_CD, MAP_TYPE_CD, MAP_CD, MAP_NM, SDATE, EDATE, NOTE
 			  FROM V_IF_ORG_MAP_CODE
-			 WHERE ENTER_CD = 'BRS'
-			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD, MAP_TYPE_CD
         ]]>
     </select>
@@ -81,10 +75,17 @@
 			SELECT ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, SYMD, STATUS_CD, ORG_CD, BUSINESS_PLACE_CD
 			     , DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, ORG_PATH, LEADER_YN
 			  FROM V_IF_WTM_EMPHIS
-			 WHERE ENTER_CD = 'BRS'
-			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
 			 ORDER BY ENTER_CD, SABUN, SYMD
         ]]>
     </select>
     
+    <select id="getEmpAddr" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMAIL, HAND_PHONE, NOTE
+			  FROM V_IF_EMP_ADDR
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
 </mapper>

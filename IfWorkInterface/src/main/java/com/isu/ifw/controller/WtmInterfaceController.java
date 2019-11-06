@@ -185,4 +185,25 @@ public class WtmInterfaceController {
 		}
 		return rp;
 	}
+	@RequestMapping(value = "/empAddr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam empAddrIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
+		System.out.println("WtmInterfaceController empAddrIf start");
+		ReturnParam rp = new ReturnParam();
+		
+		// 공통코드
+		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
+		System.out.println("lastDataTime : " + lastDataTime);
+		List<Map<String, Object>> ifList = null;
+		rp.setSuccess("OK");
+		try {
+			ifList = WtmInterfaceService.getEmpAddrIfResult(lastDataTime); //Servie 호출
+			rp.put("ifData", ifList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		return rp;
+	}
+	
+	
 }

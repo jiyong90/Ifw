@@ -396,7 +396,7 @@ public class WtmFlexibleEmpController {
 		}
 		
 		return rp;
-	}
+	} 
 	
 	/**
 	 * 근무 계획을 작성할 근무제 정보 조회
@@ -428,6 +428,7 @@ public class WtmFlexibleEmpController {
 			return rp;
 		}
 		
-		return rp;
+		return rp; 
 	}
+	
 }
