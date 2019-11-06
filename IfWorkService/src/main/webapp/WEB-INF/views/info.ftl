@@ -1,7 +1,18 @@
 <div id="401redirectHrPage">
-<div class="container-fluid pt-3 pb-3 bg-white">
-<div class="ibsheet-wrapper">
-<span id="message"></span>
+<div class="container-fluid">
+                <section class="error-page">
+                    <div class="container">
+                        <div class="icon-wrap mb-4">
+                            <i class="far fa-sad-tear"></i>
+                        </div>
+                        <p class="desc" id="message">
+                           
+                        </p>
+<!--     <a class="btn-main" href="#" title="페이지 메인으로 이동" target="_blank">메인으로 가기&nbsp;&#10095;</a>-->
+                    </div>
+                </section>
+            </div>
+
 <script>
 var result;
 
@@ -15,6 +26,4 @@ else
 	result = "뿅";
 document.getElementById("message").innerHTML=result;
 </script>
-</div>
-</div>
-</div>
+
