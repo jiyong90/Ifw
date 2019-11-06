@@ -1237,7 +1237,7 @@
   	</select>
   	
     <update id="createWorkTermBySabunAndSymdAndEymd" statementType="CALLABLE"  parameterType="map"  >
-  		{ call P_WTM_FLEXIBLE_EMP_WORKTERM_CREATE( #{tenantId}, #{enterCd}, #{sabun}, #{symd}, #{eymd}, #{pId} ) }
+  		{ call P_WTM_FLEXIBLE_EMP_WORKTERM_C( #{tenantId}, #{enterCd}, #{sabun}, #{symd}, #{eymd}, #{pId} ) }
   	</update>
   	
   	<select id="findWorkDayResultMinMaxByYmdAndTimeTypeCdBySabun" parameterType="map" resultType="hashmap">
