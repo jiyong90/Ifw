@@ -610,6 +610,9 @@ public class IfwLoginController {
 				response.sendRedirect("/info?status=130");
 				return;
 			}
+			
+			authConfig = authConfigProvider.initConfig(tenantId, tsId);
+			
 			String userToken = oAuthService.createNewOAuthSession(tsId, userData, null);
 			logger.debug("userToken : " + userToken);
 			// 세션 아이디를 담는 쿠키 생성
