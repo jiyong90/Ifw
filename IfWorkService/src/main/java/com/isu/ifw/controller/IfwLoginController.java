@@ -556,7 +556,7 @@ public class IfwLoginController {
 	
 	private Map<String, Object> makeUserData(HttpServletRequest request) {
 		Map<String, Object> userData = new HashMap();
-		
+		System.out.println("1111111111111111111111111111111 5");
 		if(	request.getParameter("userId") == null ||
 				request.getParameter("empNo") == null ||
 				request.getParameter("enterCd") == null	||
