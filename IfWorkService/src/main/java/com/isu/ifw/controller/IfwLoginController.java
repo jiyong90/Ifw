@@ -548,7 +548,7 @@ public class IfwLoginController {
 		}
 	}
 	
-	@RequestMapping(value = "/login/token/{tsid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/login/token/{tsId}", method = RequestMethod.GET)
 	public void loginForToken(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		session.setAttribute("token", "111111");
@@ -572,7 +572,7 @@ public class IfwLoginController {
 		return userData;
 	}
 	
-	@RequestMapping(value = "/sso/{tsid}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@RequestMapping(value = "/sso/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void loginForSso(@PathVariable String tsId, HttpServletRequest request,
 										  HttpServletResponse response) {
 		
