@@ -1,13 +1,8 @@
 package com.isu.ifw.controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.security.cert.CertificateException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -52,14 +47,12 @@ import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmTokenRepository;
-import com.isu.ifw.repository.WtmWorkteamEmpRepository;
 import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
 import com.isu.option.service.TenantConfigManagerService;
 import com.isu.option.util.Aes256;
+import com.isu.option.util.Sha256;
 import com.isu.option.vo.ReturnParam;
-
-import jdk.nashorn.internal.ir.RuntimeNode.Request;
 
 @RestController
 public class IfwLoginController {
@@ -301,11 +294,17 @@ public class IfwLoginController {
 					String password = (String) userData.get("password");
 					
 					paramMap.put("encryptStr", requestedPassword);
-					Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
+					/*Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
 					if(rMap!=null && rMap.get("encryptStr")!=null) {
 						requestedPassword = rMap.get("encryptStr").toString();
 						System.out.println("requestedPassword : " + requestedPassword);
-					}
+					}*/
+					String encKey = authConfig.getEncryptKey();
+					int repeatCount = authConfig.getHashIterationCount();
+
+					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
+					System.out.println("requestedPassword : " + requestedPassword);
+					
 					
 					if(userData.containsKey("account_lockout_yn") && "Y".equals(userData.get("account_lockout_yn"))) {
 						validYn = false;
@@ -548,7 +547,7 @@ public class IfwLoginController {
 		}
 	}
 	
-	@RequestMapping(value = "/login/token/{tsid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/login/token/{tsId}", method = RequestMethod.GET)
 	public void loginForToken(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		session.setAttribute("token", "111111");
@@ -556,25 +555,26 @@ public class IfwLoginController {
 	
 	private Map<String, Object> makeUserData(HttpServletRequest request) {
 		Map<String, Object> userData = new HashMap();
-		
 		if(	request.getParameter("userId") == null ||
 				request.getParameter("empNo") == null ||
-				request.getParameter("enterCd") == null	||
-				request.getParameter("authCd") == null	) {
+				request.getParameter("enterCd") == null	) {
 			return null;
 		}
 			
-		userData.put("loginId", request.getParameter("loginId"));
+		userData.put("userId", request.getParameter("userId"));
+		userData.put("loginId", request.getParameter("userId"));
 		userData.put("empNo", request.getParameter("empNo"));
 		userData.put("enterCd", request.getParameter("enterCd"));
-		userData.put("authCd", request.getParameter("authCd"));	
+		userData.put("authCd", request.getParameter("authCd") == null ?"U":request.getParameter("authCd"));	
+		userData.put("isEmbedded",false);
+		userData.put("type","console");
 		
 		return userData;
 	}
 	
-	@RequestMapping(value = "/sso/{tsid}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@RequestMapping(value = "/sso/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void loginForSso(@PathVariable String tsId, HttpServletRequest request,
-										  HttpServletResponse response, RedirectAttributes redirectAttr) {
+										  HttpServletResponse response) {
 		
 		Map<String, Object> userData = makeUserData(request);
 		
@@ -598,7 +598,7 @@ public class IfwLoginController {
 			CommTenantModule tm = null;
 			
 			tm = tenantModuleRepo.findByTenantKey(tsId);
-			
+
 			if(tm == null) {
 				response.sendRedirect("/info?status=100");
 				return;
@@ -610,9 +610,13 @@ public class IfwLoginController {
 			WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(tenantId, userData.get("enterCd").toString(), userData.get("empNo").toString());
 			if(emp == null) {
 				response.sendRedirect("/info?status=130");
+				return;
 			}
 			
+			authConfig = authConfigProvider.initConfig(tenantId, tsId);
+			
 			String userToken = oAuthService.createNewOAuthSession(tsId, userData, null);
+			logger.debug("userToken : " + userToken);
 			// 세션 아이디를 담는 쿠키 생성
 			Cookie cookie = null;
 			cookie = new Cookie("userToken", userToken);
@@ -624,7 +628,9 @@ public class IfwLoginController {
 			
 			String endPointUrl = (String) request.getParameter("o");
 			endPointUrl = authConfig.getMainPageEndpoint().getUrl();// "/console/" + tsId;
+			logger.debug("endPointUrl 1 : " + endPointUrl);
 			endPointUrl = stringUtil.appendUri(request, endPointUrl, request.getQueryString()).toString();
+			logger.debug("endPointUrl 2 : " + endPointUrl);
 
 			Cookie c = null;
 			c = new Cookie("tenant", String.valueOf(tenantId));
