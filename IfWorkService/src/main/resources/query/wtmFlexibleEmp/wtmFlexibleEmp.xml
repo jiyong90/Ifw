@@ -15,7 +15,7 @@
 			     , E.WORK_TYPE_CD AS workTypeCd
 			     , E.FLEXIBLE_NM AS flexibleNm
 			     , NULL AS applId 
-				 , NULL AS applCd
+				 , NULL AS applCd 
 				 , NULL AS applStatusCd
 				 , NULL AS applStatusNm
 				 , M.BASE_WORK_YN AS baseWorkYn
@@ -1164,6 +1164,7 @@
 			  , A.SYMD AS symd
 			  , A.EYMD AS eymd
 			  , A.NOTE AS note
+			  , A.FLEXIBLE_EMP_ID AS flexibleEmpId
 			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(NOW(), '%Y%m%d') THEN CONCAT('<a class="basic" onClick="setModify(', FLEXIBLE_EMP_ID, ')">근무변경/취소</a>')
 					    ELSE '' END AS modify
 		  FROM WTM_FLEXIBLE_EMP A
@@ -1349,5 +1350,20 @@
 				   AND C.YMD = #{ymd}
     	]]>
     </select>
+    
+    <select id="GetModifyChk" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_FLEXIBLE_MODIFY_CHK( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{flexibleEmpId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+			  , #{changeType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{userId, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}		
+			  , #{retId,jdbcType=BIGINT, javaType=java.lang.Long, mode=OUT}
+		) }
+  	</select>
     
 </mapper>
