@@ -48,6 +48,7 @@ import com.isu.auth.entity.CommTenantModule;
 import com.isu.auth.repository.CommTenantModuleRepository;
 import com.isu.auth.service.OAuthService;
 import com.isu.ifw.StringUtil;
+import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmTokenRepository;
@@ -57,6 +58,8 @@ import com.isu.ifw.service.LoginService;
 import com.isu.option.service.TenantConfigManagerService;
 import com.isu.option.util.Aes256;
 import com.isu.option.vo.ReturnParam;
+
+import jdk.nashorn.internal.ir.RuntimeNode.Request;
 
 @RestController
 public class IfwLoginController {
@@ -92,6 +95,9 @@ public class IfwLoginController {
 	@Resource
 	WtmTokenRepository tokenRepository;
 
+	@Resource
+	WtmEmpHisRepository empHisRepository;
+	
 	@RequestMapping(value = "/login/certificate/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void loginForRecruitManagement(@PathVariable String tsId, HttpServletRequest request,
 										  HttpServletResponse response, RedirectAttributes redirectAttr) {
@@ -542,9 +548,100 @@ public class IfwLoginController {
 		}
 	}
 	
-	@RequestMapping(value = "/login/token/{tsid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/login/token/{tsId}", method = RequestMethod.GET)
 	public void loginForToken(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		session.setAttribute("token", "111111");
+	}
+	
+	private Map<String, Object> makeUserData(HttpServletRequest request) {
+		Map<String, Object> userData = new HashMap();
+		if(	request.getParameter("userId") == null ||
+				request.getParameter("empNo") == null ||
+				request.getParameter("enterCd") == null	) {
+			return null;
+		}
+			
+		userData.put("loginId", request.getParameter("loginId"));
+		userData.put("empNo", request.getParameter("empNo"));
+		userData.put("enterCd", request.getParameter("enterCd"));
+		userData.put("authCd", request.getParameter("authCd") == null ?"U":request.getParameter("authCd"));	
+		
+		return userData;
+	}
+	
+	@RequestMapping(value = "/sso/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public void loginForSso(@PathVariable String tsId, HttpServletRequest request,
+										  HttpServletResponse response) {
+		
+		Map<String, Object> userData = makeUserData(request);
+		
+		if(userData == null) {
+			try {
+				response.sendRedirect("/info?status=120");
+				return;
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		AuthConfig authConfig = null;
+		try {
+			// 테넌트 id를 찾는다.
+			Long tenantId = null;
+			Long tenantModuleId = null;
+
+			HttpSession session = ((HttpServletRequest) request).getSession();
+			ObjectMapper mapper = new ObjectMapper();
+			CommTenantModule tm = null;
+			
+			tm = tenantModuleRepo.findByTenantKey(tsId);
+
+			if(tm == null) {
+				response.sendRedirect("/info?status=100");
+				return;
+			}
+
+			tenantId = tm.getTenantId();
+			tenantModuleId = tm.getTenantModuleId();
+			
+			WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(tenantId, userData.get("enterCd").toString(), userData.get("empNo").toString());
+			if(emp == null) {
+				response.sendRedirect("/info?status=130");
+				return;
+			}
+			String userToken = oAuthService.createNewOAuthSession(tsId, userData, null);
+			logger.debug("userToken : " + userToken);
+			// 세션 아이디를 담는 쿠키 생성
+			Cookie cookie = null;
+			cookie = new Cookie("userToken", userToken);
+			cookie.setMaxAge(60 * 60);
+			cookie.setPath("/");
+			response.addCookie(cookie);
+
+			session.setAttribute("loginIp", stringUtil.getClientIP(request));
+			
+			String endPointUrl = (String) request.getParameter("o");
+			endPointUrl = authConfig.getMainPageEndpoint().getUrl();// "/console/" + tsId;
+			logger.debug("endPointUrl 1 : " + endPointUrl);
+			endPointUrl = stringUtil.appendUri(request, endPointUrl, request.getQueryString()).toString();
+			logger.debug("endPointUrl 2 : " + endPointUrl);
+
+			Cookie c = null;
+			c = new Cookie("tenant", String.valueOf(tenantId));
+			c.setPath("/");
+			((HttpServletResponse)response).addCookie(c);
+			response.sendRedirect(endPointUrl);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				response.sendRedirect("/info");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		} finally {
+		}	
+		
 	}
 }

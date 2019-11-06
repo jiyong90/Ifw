@@ -9,6 +9,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -38,6 +39,9 @@ import com.zaxxer.hikari.HikariDataSource;
 @MapperScan(	basePackages = {"com.isu.ifw.mapper"})
 public class DataSourceConfiguration {
 	 
+	@Value("${mybatis.config-location}")
+	private String mybatisConfigLocation;
+	
 	@Bean(name= {"authDataSource","dataSource"}, destroyMethod="close")
 	@ConfigurationProperties(prefix = "spring.datasource.hikari")
 	public DataSource dataSource() {
@@ -85,7 +89,7 @@ public class DataSourceConfiguration {
 		sqlSessionFactoryBean.setDataSource(dataSource);
 		sqlSessionFactoryBean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource("classpath:config/mybatis-config.xml"));
 		Resource[] arrResource = new PathMatchingResourcePatternResolver()
-	           .getResources("classpath:query/**/*.xml"); 
+	           .getResources(mybatisConfigLocation); 
 		sqlSessionFactoryBean.setMapperLocations(arrResource);
 		 
 //		 

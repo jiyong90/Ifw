@@ -92,9 +92,7 @@ public class WtmInoutController {
 	@RequestMapping (value="/mobile/{tenantId}/inout/in", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String,Object> requestIn(@PathVariable Long tenantId, 
 			@RequestBody Map<String,Object> params,HttpServletRequest request)throws Exception{
-		
-		logger.debug("/mobile/{tenantId}/inout/in s " + WtmUtil.paramToString(request));
-		
+	
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("출근 체크 되었습니다.");
 		
@@ -149,8 +147,6 @@ public class WtmInoutController {
 	@RequestMapping (value="/mobile/{tenantId}/inout/out", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String,Object> requestOut(@PathVariable Long tenantId, 
 			@RequestBody Map<String,Object> params,HttpServletRequest request)throws Exception{
-
-		logger.debug("/mobile/{tenantId}/inout/out s " + WtmUtil.paramToString(request));
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("퇴근 체크 되었습니다.");
@@ -212,9 +208,6 @@ public class WtmInoutController {
 			@RequestParam(value="id", required = true) String month,
 			HttpServletRequest request) throws Exception {		
 
-		logger.debug("/mobile/{tenantId}/inout/list s " + WtmUtil.paramToString(request));
-
-		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
@@ -256,7 +249,6 @@ public class WtmInoutController {
 			@RequestParam(value="id", required = true) String ymd,
 			HttpServletRequest request) throws Exception {		
 
-		logger.debug("/mobile/{tenantId}/inout/history s " + WtmUtil.paramToString(request));
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
@@ -299,8 +291,6 @@ public class WtmInoutController {
 			@RequestParam(value="id", required = true) String key,
 			HttpServletRequest request) throws Exception {		
 
-		logger.debug("/mobile/{tenantId}/inout/detail s " + WtmUtil.paramToString(request));
-
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
@@ -332,8 +322,6 @@ public class WtmInoutController {
 	public @ResponseBody ReturnParam cancelOutRequest(@PathVariable Long tenantId,
 			@RequestBody Map<String,Object> params, HttpServletRequest request) throws Exception {		
 		
-		logger.debug("/mobile/{tenantId}/inout/cancel s " + WtmUtil.paramToString(request));
-
 		String empKey = params.get("empKey").toString();
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -375,8 +363,6 @@ public class WtmInoutController {
 	@RequestMapping (value="/mobile/{tenantId}/inout/goback", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String,Object> requestGoback(@PathVariable Long tenantId, 
 			@RequestBody Map<String,Object> params,HttpServletRequest request)throws Exception{
-		
-		logger.debug("/mobile/{tenantId}/inout/goback s " + WtmUtil.paramToString(request));
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("체크에 실패하였습니다.");

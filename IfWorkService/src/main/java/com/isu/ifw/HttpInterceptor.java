@@ -66,9 +66,11 @@ public class HttpInterceptor extends HandlerInterceptorAdapter {
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+
 				logger.error(e.getMessage());
 			}
 		} else {
+
 			/*try {
 				ReadableRequestBodyWrapper wrapper = new ReadableRequestBodyWrapper(request);
 				params = wrapper.getRequestBody();
@@ -79,17 +81,17 @@ public class HttpInterceptor extends HandlerInterceptorAdapter {
 				e.printStackTrace();
 			}
 			*/
-			if(request.getAttribute("requestBody")!=null)
+			if(request.getAttribute("requestBody")!=null) {
 				params = request.getAttribute("requestBody").toString();
+			}
 			
 		}
-		
+
 		String ip = request.getHeader("X-FORWARDED-FOR");
         if (ip == null)
             ip = request.getRemoteAddr();
 		
 		logger.debug(request.getMethod()+"::"+requestUri+ " {} {}",ip,params);
-		
 		return true;
 	}
 	

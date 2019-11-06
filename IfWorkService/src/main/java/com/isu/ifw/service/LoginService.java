@@ -15,6 +15,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -46,7 +48,8 @@ import com.isu.option.service.TenantConfigManagerService;
  */
 @Service("LoginService")
 public class LoginService{
-	
+	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
+
 	@Autowired
 	LoginMapper loginMapper;
 	
@@ -159,8 +162,10 @@ public class LoginService{
 
 		WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
 		String tokenName = getHrTokenName(token.getTenantId());
-
+		logger.debug("tokenName  " + tokenName);
 		if(emp != null) {
+			logger.debug("empHis  " + emp.getEmpHisId().toString());
+			
 			token.setUserId(emp.getEmpHisId().toString());
 			token.setUpdateId(emp.getEmpHisId().toString());
 			//기존 토큰 다 삭제하고 새로 등록(기존에 다른 곳에서 로그인한 상황이면 그쪽은 튕김)
@@ -171,7 +176,7 @@ public class LoginService{
 //			cookie.setPath("/");
 //			response.addCookie(cookie);
 		} else {
-			System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx	xxxxxxxxx emp his에 없는 사원정보");
+			logger.debug("emp his에 없는 사원정보 " + token.getSabun());
 			removeTokenCookie(request, response);
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			//hr을 로그아웃시킬 필요는 없겠지
