@@ -121,7 +121,7 @@
 				 #{item.useSymd} ,
 				 #{item.useEymd} ,
 				 #{item.baseWorkYn} ,
-				 now(),
+				 SYSDATE,
 				 #{item.userId}
 				)
 			</foreach>
@@ -153,7 +153,7 @@
 				, DAY_CLOSE_TYPE = #{item.dayCloseType}
 				, UNPLANNED_YN = #{item.unplannedYn} 
 				, NOTE = #{item.note}  
-				, UPDATE_DATE = NOW()
+				, UPDATE_DATE = SYSDATE
 				, UPDATE_ID = #{item.userId}
 			WHERE FLEXIBLE_STD_MGR_ID = #{item.flexibleStdMgrId}
 		</foreach>

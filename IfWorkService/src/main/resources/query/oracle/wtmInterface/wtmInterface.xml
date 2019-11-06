@@ -16,7 +16,7 @@
     </select>
     <select id="getIfNowDate" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT F_WTM_DATE_FORMAT(NOW(), 'YMDHIS') AS IF_DATE
+        	SELECT F_WTM_DATE_FORMAT(SYSDATE, 'YMDHIS') AS IF_DATE
 			  FROM DUAL
         ]]>
     </select>
@@ -85,7 +85,7 @@
 	        	, #{item.symd}
 	        	, #{item.eymd}
 	        	, #{item.note}
-	        	, NOW()
+	        	, SYSDATE
 	        	, '0'
 	        )
 			</foreach>
@@ -98,7 +98,7 @@
 		        when CODE_ID = #{item.codeId} then #{item.note}
 		    </foreach>
     		END
-		  , UPDATE_DATE = NOW()
+		  , UPDATE_DATE = SYSDATE
 		  , UPDATE_ID = '0'
 		WHERE CODE_ID IN
 		<foreach collection="list" item="item" open="(" close=")" separator=", ">
@@ -110,7 +110,7 @@
 		<![CDATA[
 			UPDATE WTM_CODE
 			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
-			  , UPDATE_DATE = NOW()
+			  , UPDATE_DATE = SYSDATE
 			  , UPDATE_ID = '0'
 			WHERE 1=1
 			  AND TENANT_ID = #{tenantId}
@@ -125,7 +125,7 @@
         <![CDATA[
 			UPDATE WTM_CODE
 			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
-			  , UPDATE_DATE = NOW()
+			  , UPDATE_DATE = SYSDATE
 			  , UPDATE_ID = '0'
 			WHERE 1=1
 			  AND TENANT_ID = #{tenantId}
@@ -158,7 +158,7 @@
         	, #{item.sunYn}
         	, #{item.festiveYn}
         	, #{item.payYn}
-        	, NOW()
+        	, SYSDATE
         	, '0'
         )
 		</foreach>
@@ -167,7 +167,7 @@
             , SUN_YN = VALUES(SUN_YN)
             , FESTIVE_YN = VALUES(FESTIVE_YN)
             , PAY_YN = VALUES(PAY_YN)
-            , UPDATE_DATE = NOW()
+            , UPDATE_DATE = SYSDATE
             , UPDATE_ID = '0'
     </insert>
     
@@ -203,7 +203,7 @@
 			, #{item.holInclYn}
 			, #{item.requestTypeCd}
 			, #{item.workYn}
-			, NOW()
+			, SYSDATE
 			, '0'
 			)
 		</foreach>
@@ -231,7 +231,7 @@
 		    <foreach collection="list" item="item" separator="">
 		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.workYn}
 		    </foreach> END
-		  , UPDATE_DATE = NOW()
+		  , UPDATE_DATE = SYSDATE
 		  , UPDATE_ID = '0'
 		WHERE TAA_CODE_ID IN 
 		<foreach collection="list" item="item" open="(" close=")" separator=", ">
@@ -261,7 +261,7 @@
         	, #{item.eymd}
         	, #{item.orgType}
         	, #{item.note}
-        	, NOW()
+        	, SYSDATE
         	, '0'
         )
 		</foreach>
@@ -270,7 +270,7 @@
             , ORG_TYPE = VALUES(ORG_TYPE)
             , EYMD = VALUES(EYMD)
             , NOTE = VALUES(NOTE)
-            , UPDATE_DATE = NOW()
+            , UPDATE_DATE = SYSDATE
             , UPDATE_ID = '0'
     </insert>
     
@@ -278,7 +278,7 @@
 		<![CDATA[
 			UPDATE WTM_ORG_CODE
 			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
-			  , UPDATE_DATE = NOW()
+			  , UPDATE_DATE = SYSDATE
 			  , UPDATE_ID = '0'
 			WHERE 1=1
 			  AND TENANT_ID = #{tenantId}
@@ -292,7 +292,7 @@
         <![CDATA[
 			UPDATE WTM_ORG_CODE
 			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
-			  , UPDATE_DATE = NOW()
+			  , UPDATE_DATE = SYSDATE
 			  , UPDATE_ID = '0'
 			WHERE 1=1
 			  AND TENANT_ID = #{tenantId}
@@ -328,7 +328,7 @@
         	, #{symd}
         	, #{eymd}
         	, #{note}
-        	, NOW()
+        	, SYSDATE
         	, '0'
         )
     </insert>
@@ -338,7 +338,7 @@
 		    ORG_CHART_NM = #{orgChartNm}
 		  , EYMD = #{eymd}
 		  , NOTE = #{note}
-		  , UPDATE_DATE = NOW()
+		  , UPDATE_DATE = SYSDATE
 		  , UPDATE_ID = '0'
 		WHERE ORG_CHART_ID = #{orgChartId}
 	</update>
@@ -361,7 +361,7 @@
         	, #{item.seq}
         	, #{item.orgLevel}
         	, #{item.orderSeq}
-        	, NOW()
+        	, SYSDATE
         	, '0'
         )
 		</foreach>
@@ -370,7 +370,7 @@
             , SEQ = VALUES(SEQ)
             , ORG_LEVEL = VALUES(ORG_LEVEL)
             , ORDER_SEQ = VALUES(ORDER_SEQ)
-            , UPDATE_DATE = NOW()
+            , UPDATE_DATE = SYSDATE
             , UPDATE_ID = '0'
     </insert>
 	

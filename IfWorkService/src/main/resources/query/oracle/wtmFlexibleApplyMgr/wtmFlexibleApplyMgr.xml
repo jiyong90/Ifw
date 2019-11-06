@@ -49,14 +49,14 @@
     
     <insert id="insertApplyEmp" parameterType="map" >
     	INSERT INTO WTM_FLEXIBLE_EMP (TENANT_ID, ENTER_CD, FLEXIBLE_STD_MGR_ID, SABUN, SYMD, EYMD, WORK_TYPE_CD, FLEXIBLE_NM, NOTE, UPDATE_DATE, UPDATE_ID)
-		VALUES (#{tenantId}, #{enterCd}, #{flexibleStdMgrId}, #{sabun}, #{symd}, #{eymd}, #{workTypeCd}, #{flexibleNm}, #{note}, NOW(), #{userId}
+		VALUES (#{tenantId}, #{enterCd}, #{flexibleStdMgrId}, #{sabun}, #{symd}, #{eymd}, #{workTypeCd}, #{flexibleNm}, #{note}, SYSDATE, #{userId}
 		)
     </insert>
     
     <update id="updateApplyEmp" parameterType="map">
 			UPDATE WTM_FLEXIBLE_APPLY SET 
 				APPLY_YN = 'Y'
-				, UPDATE_DATE = NOW()
+				, UPDATE_DATE = SYSDATE
 				, UPDATE_ID = #{userId}
 			WHERE FLEXIBLE_APPLY_ID = #{flexibleApplyId}
 	</update>
@@ -113,7 +113,7 @@
         	, #{item.classCd}
         	, #{item.workteamCd}
         	, #{item.note}
-        	, NOW()
+        	, SYSDATE
         	, #{item.userId}
         )
 		</foreach>
@@ -128,7 +128,7 @@
 	            , CLASS_CD = #{item.classCd}
 	            , WORKTEAM_CD = #{item.workteamCd}
 	            , NOTE = #{item.note}
-				, UPDATE_DATE = NOW()
+				, UPDATE_DATE = SYSDATE
 				, UPDATE_ID = #{item.userId}
 			WHERE FLEXIBLE_APPLY_GROUP_ID = #{item.flexibleapplyGroupId}
 		</foreach>
@@ -170,7 +170,7 @@
 		(     #{item.flexibleApplyId}
         	, #{item.sabun}
         	, #{item.note}
-        	, NOW()
+        	, SYSDATE
         	, #{item.userId}
         )
 		</foreach>
@@ -180,7 +180,7 @@
 		<foreach collection="list" item="item" separator=";">
 			UPDATE WTM_FLEXIBLE_APPLY_EMP SET 
 				NOTE = #{item.note}
-				, UPDATE_DATE = NOW()
+				, UPDATE_DATE = SYSDATE
 				, UPDATE_ID = #{item.userId}
 			WHERE FLEXIBLE_APPLY_EMP_ID = #{item.flexibleapplyEmpId}
 		</foreach>
@@ -209,7 +209,7 @@
         	, UPDATE_DATE
         	, UPDATE_ID
         )
-        SELECT BB.FLEXIBLE_APPLY_ID, AA.TENANT_ID, AA.ENTER_CD, AA.SABUN, NOW(), #{userId}
+        SELECT BB.FLEXIBLE_APPLY_ID, AA.TENANT_ID, AA.ENTER_CD, AA.SABUN, SYSDATE, #{userId}
 		  FROM WTM_EMP_HIS AA
 		 INNER JOIN (SELECT A.FLEXIBLE_APPLY_ID, A.TENANT_ID, A.ENTER_CD, A.USE_SYMD, B.ORG_CD, B.JOB_CD, B.DUTY_CD, B.POS_CD, B.CLASS_CD, B.WORKTEAM_CD
 							  FROM WTM_FLEXIBLE_APPLY A
@@ -227,7 +227,7 @@
 			AND (BB.POS_CD IS NULL OR BB.POS_CD = '' OR AA.POS_CD = BB.POS_CD)
 			AND (BB.CLASS_CD IS NULL OR BB.CLASS_CD = '' OR AA.CLASS_CD = BB.CLASS_CD)
 		UNION ALL
-		SELECT A.FLEXIBLE_APPLY_ID, A.TENANT_ID, A.ENTER_CD, B.SABUN, NOW(), #{userId}
+		SELECT A.FLEXIBLE_APPLY_ID, A.TENANT_ID, A.ENTER_CD, B.SABUN, SYSDATE, #{userId}
 		  FROM WTM_FLEXIBLE_APPLY A
 		 INNER JOIN WTM_FLEXIBLE_APPLY_EMP B
 		    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID

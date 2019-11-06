@@ -282,7 +282,7 @@
     <!-- 결재의견 modal end -->
 	<div class="container-fluid">
 		<p class="page-title">결재 알림</p>
-		<ul class="nav approval-wrap nav-pills mt-2 mb-2" role="tablist">
+		<ul class="nav approval-wrap nav-pills" role="tablist">
             <li class="nav-item">
                 <a href="#" class="nav-link active" id="appl_type_request" data-toggle="pill" @click="getApprovalList('01')" role="tab"
                     aria-controls="pills-home" aria-selected="true">신청서상태</a>

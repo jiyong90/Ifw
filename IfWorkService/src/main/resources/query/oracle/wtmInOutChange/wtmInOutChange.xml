@@ -65,7 +65,7 @@
 					F_WTM_TO_DATE(#{item.chgSdate}, 'YMDHIS'), 
 					F_WTM_TO_DATE(#{item.chgEdate}, 'YMDHIS'), 
 					#{item.reason}, 
-					now(), 
+					SYSDATE, 
 					#{userId})	
 			</foreach>
 			</if>
