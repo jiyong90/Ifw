@@ -54,18 +54,23 @@ public class HttpInterceptor extends HandlerInterceptorAdapter {
 		ObjectMapper mapper = new ObjectMapper();
 		String params = "";
 		if(request.getMethod().equals("GET") || (request.getMethod().equals("POST") && "application/x-www-form-urlencoded".equalsIgnoreCase(request.getContentType())) ) {
+			System.out.println("1111111111111111111111111111111111 1");
 			Map<String, Object> requestParam = new HashMap<String, Object>();
 			Enumeration paramNames = request.getParameterNames();
 			while (paramNames.hasMoreElements()){
 		        String key = (String)paramNames.nextElement();
 		        requestParam.put(key, request.getParameter(key));
 		    }
+			System.out.println("1111111111111111111111111111111111 2");
 			
 			try {
 				params = mapper.writeValueAsString(requestParam);
+				System.out.println("1111111111111111111111111111111111 3");
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.out.println("1111111111111111111111111111111111 4");
+
 				logger.error(e.getMessage());
 			}
 		} else {
