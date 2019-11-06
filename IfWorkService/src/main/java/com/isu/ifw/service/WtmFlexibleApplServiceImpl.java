@@ -368,36 +368,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	 
 	
-	@Transactional
 	@Override
 	public void reject(Long tenantId, String enterCd, Long applId, int apprSeq, Map<String, Object> paramMap, String sabun, String userId)  throws Exception {
-		if(paramMap == null || !paramMap.containsKey("apprOpinion") && paramMap.get("apprOpinion").equals("")) {
-			throw new Exception("사유를 입력하세요.");
-		}
-		String apprOpinion = paramMap.get("apprOpinion").toString();
-		
-		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
-		if(lines != null && lines.size() > 0) {
-			for(WtmApplLine line : lines) {
-				if(line.getApprSeq() <= apprSeq) {
-					line.setApprStatusCd(APPR_STATUS_REJECT);
-					line.setApprDate("");
-					if(line.getApprSeq() == apprSeq) {
-						line.setApprOpinion(apprOpinion);
-					}
-				}else {
-					line.setApprStatusCd("");
-				}
-				line.setUpdateId(userId);
-				wtmApplLineRepo.save(line);
-			}
-		}
-		
-		WtmAppl appl = wtmApplRepo.findById(applId).get();
-		appl.setApplStatusCd(APPL_STATUS_APPLY_REJECT);
-		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
-		appl.setUpdateId(userId);	
-		wtmApplRepo.save(appl);
+		// TODO Auto-generated method stub
 	}
 
 	
@@ -572,46 +545,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	@Override
 	public List<Map<String, Object>> getApprList(Long tenantId, String enterCd, String empNo, Map<String, Object> paramMap, String userId) {
 		// TODO Auto-generated method stub
-		paramMap.put("tenantId", tenantId);
-		paramMap.put("enterCd", enterCd);
-		paramMap.put("empNo", empNo);
-		
-		List<Map<String, Object>> apprList = applMapper.getApprList(paramMap);
-		if(apprList!=null && apprList.size()>0) {
-			for(Map<String, Object> appr : apprList) {
-				
-				if(appr.get("applId")!=null && !"".equals(appr.get("applId")) && appr.get("applCd")!=null && !"".equals(appr.get("applCd"))) {
-					Long applId = Long.valueOf(appr.get("applId").toString());
-					String applCd = appr.get("applCd").toString();
-					
-					if("OT".equals(applCd) || "OT_CAN".equals(applCd)) { //연장, 휴일연장, 연장취소, 휴일연장 취소
-						Map<String, Object> otAppl = null;
-						
-						if("OT".equals(applCd))
-							otAppl = otApplMapper.otApplfindByApplId(applId);
-						else if("OT_CAN".equals(applCd))
-							otAppl = otCanMapper.otApplAndOtCanApplfindByApplId(applId);
-						
-						if(otAppl!=null && otAppl.containsKey("subYn") && otAppl.get("subYn")!=null && "Y".equals(otAppl.get("subYn"))) {
-							otAppl.put("subs", otApplMapper.otSubsApplfindByOtApplId(Long.valueOf(otAppl.get("otApplId").toString())));
-						}
-						appr.put("appl", otAppl);
-					} else if("SUBS_CHG".equals(applCd)) { //대체휴가 취소
-						
-					} else if("ENTRY_CHG".equals(applCd)) { //근태사유서
-						WtmEntryAppl entryAppl = entryApplRepo.findByApplId(applId);
-						appr.put("appl", entryAppl);
-					} else {
-						//유연근무제
-						WtmFlexibleAppl flexibleAppl = wtmFlexibleApplRepo.findByApplId(applId);
-						appr.put("appl", flexibleAppl);
-					}
-					
-				}
-			}
-		}
-		
-		return apprList;
+		return null;
 	}
 
 	@Override
