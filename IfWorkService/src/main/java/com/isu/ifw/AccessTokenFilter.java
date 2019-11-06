@@ -56,7 +56,7 @@ public class AccessTokenFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
-		logger.debug("::" + ((HttpServletRequest)request).getRequestURI() +" "+ WtmUtil.paramToString((HttpServletRequest)request) );
+		logger.debug("::::" + ((HttpServletRequest)request).getRequestURI() +" "+ WtmUtil.paramToString((HttpServletRequest)request) );
 		Cookie[] cookies = ((HttpServletRequest)request).getCookies();
 		Map<String, Object> cookie = new HashMap();
 		
@@ -70,12 +70,14 @@ public class AccessTokenFilter implements Filter {
 				cookie.put(name,  value);
 			}
 		}
-		
+		logger.debug("1111111111111111111111111111111111111111111111");
 		if(cookie.containsKey("tenant")) tenant = cookie.get("tenant").toString();
 		//param, cookie에서 테넌트 id 가져오기
+		logger.debug("2222222222222222222222222222222222222222222222");
 		if(request.getParameter("tenant") != null) tenant = request.getParameter("tenant");
-		
+		logger.debug("3333333333333333333333333333333333333333333333");
 		if(tenant == null || loginService.getHrInfoUrl(Long.parseLong(tenant)).equals("")) {
+			logger.debug("44444444444444444444444444444444444444444444444");
 			chain.doFilter(request, response);
 			return;
 		}
