@@ -263,8 +263,4 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public Date getIntervalDateTime(Map<String, Object> paramMap);
 	
-	
-	public Map<String, Object> GetChangeChk(Map<String, Object> paramMap);
-	
-	
 }

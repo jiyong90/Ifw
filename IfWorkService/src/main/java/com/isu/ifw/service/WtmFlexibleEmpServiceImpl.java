@@ -1238,27 +1238,4 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		return flexibleEmp;
 	}
-	
-	/**
-	 * 유연근무 변경/취소 확인
-	 * @param tenantId
-	 * @param enterCd
-	 * @param workCalendarId
-	 * @return
-	 */
-	@Override
-	public Map<String, Object> GetChangeChk(Map<String, Object> paramMap) {
-		
-		try {
-			paramMap.put("retCode", "");
-			paramMap.put("retMsg", "");
-			
-			flexEmpMapper.GetChangeChk(paramMap);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return paramMap;
-
-	}
 }
