@@ -559,15 +559,14 @@ public class IfwLoginController {
 		System.out.println("1111111111111111111111111111111 5");
 		if(	request.getParameter("userId") == null ||
 				request.getParameter("empNo") == null ||
-				request.getParameter("enterCd") == null	||
-				request.getParameter("authCd") == null	) {
+				request.getParameter("enterCd") == null	) {
 			return null;
 		}
 			
 		userData.put("loginId", request.getParameter("loginId"));
 		userData.put("empNo", request.getParameter("empNo"));
 		userData.put("enterCd", request.getParameter("enterCd"));
-		userData.put("authCd", request.getParameter("authCd"));	
+		userData.put("authCd", request.getParameter("authCd") == null ?"U":request.getParameter("authCd"));	
 		
 		return userData;
 	}
