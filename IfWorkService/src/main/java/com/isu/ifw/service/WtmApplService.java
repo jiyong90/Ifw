@@ -61,6 +61,11 @@ public interface WtmApplService {
 	// 지각/조퇴
 	final static String TIME_TYPE_LLA = "LLA";
 	
+	//결재
+	final static String APPL_TYPE_REQUEST = "01"; //신청
+	final static String APPL_TYPE_PENDING = "02"; //미결
+	final static String APPL_TYPE_COMPLETE = "03"; //기결
+	
 	
 	public Map<String, Object> getAppl(Long applId);
 	
