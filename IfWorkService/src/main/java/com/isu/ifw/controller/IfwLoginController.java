@@ -572,7 +572,7 @@ public class IfwLoginController {
 		return userData;
 	}
 	
-	@RequestMapping(value = "/sso/{tsId}", method = RequestMethod.POST, consumes = MediaType.TEXT_HTML_VALUE)
+	@RequestMapping(value = "/sso/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public void loginForSso(@PathVariable String tsId, HttpServletRequest request,
 										  HttpServletResponse response) {
 		
