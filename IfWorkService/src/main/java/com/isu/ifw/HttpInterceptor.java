@@ -54,7 +54,6 @@ public class HttpInterceptor extends HandlerInterceptorAdapter {
 		ObjectMapper mapper = new ObjectMapper();
 		String params = "";
 		if(request.getMethod().equals("GET") || (request.getMethod().equals("POST") && "application/x-www-form-urlencoded".equalsIgnoreCase(request.getContentType())) ) {
-			System.out.println("11111111111111111111111111111111111 1");
 			Map<String, Object> requestParam = new HashMap<String, Object>();
 			Enumeration paramNames = request.getParameterNames();
 			while (paramNames.hasMoreElements()){
@@ -71,7 +70,6 @@ public class HttpInterceptor extends HandlerInterceptorAdapter {
 				logger.error(e.getMessage());
 			}
 		} else {
-			System.out.println("11111111111111111111111111111111111 2");
 
 			/*try {
 				ReadableRequestBodyWrapper wrapper = new ReadableRequestBodyWrapper(request);
@@ -88,7 +86,6 @@ public class HttpInterceptor extends HandlerInterceptorAdapter {
 			}
 			
 		}
-		System.out.println("11111111111111111111111111111111111 3");
 
 		String ip = request.getHeader("X-FORWARDED-FOR");
         if (ip == null)

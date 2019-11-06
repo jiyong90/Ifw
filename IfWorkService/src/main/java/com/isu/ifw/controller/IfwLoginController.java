@@ -577,6 +577,7 @@ public class IfwLoginController {
 										  HttpServletResponse response, RedirectAttributes redirectAttr) {
 		
 		Map<String, Object> userData = makeUserData(request);
+		System.out.println("1111111111111111111111111111111 4" + userData.toString());
 		
 		if(userData == null) {
 			try {
@@ -598,20 +599,23 @@ public class IfwLoginController {
 			CommTenantModule tm = null;
 			
 			tm = tenantModuleRepo.findByTenantKey(tsId);
-			
+			System.out.println("1111111111111111111111111111111 5");
+
 			if(tm == null) {
 				response.sendRedirect("/info?status=100");
 				return;
 			}
 
+			System.out.println("1111111111111111111111111111111 6");
 			tenantId = tm.getTenantId();
 			tenantModuleId = tm.getTenantModuleId();
 			
 			WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(tenantId, userData.get("enterCd").toString(), userData.get("empNo").toString());
 			if(emp == null) {
 				response.sendRedirect("/info?status=130");
+				return;
 			}
-			
+			System.out.println("1111111111111111111111111111111 7");
 			String userToken = oAuthService.createNewOAuthSession(tsId, userData, null);
 			// 세션 아이디를 담는 쿠키 생성
 			Cookie cookie = null;
@@ -636,6 +640,7 @@ public class IfwLoginController {
 			e.printStackTrace();
 			try {
 				response.sendRedirect("/info");
+				System.out.println("1111111111111111111111111111111 8");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
