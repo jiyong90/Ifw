@@ -556,7 +556,6 @@ public class IfwLoginController {
 	
 	private Map<String, Object> makeUserData(HttpServletRequest request) {
 		Map<String, Object> userData = new HashMap();
-		System.out.println("1111111111111111111111111111111 5");
 		if(	request.getParameter("userId") == null ||
 				request.getParameter("empNo") == null ||
 				request.getParameter("enterCd") == null	) {
@@ -576,7 +575,6 @@ public class IfwLoginController {
 										  HttpServletResponse response) {
 		
 		Map<String, Object> userData = makeUserData(request);
-		System.out.println("1111111111111111111111111111111 4" + userData.toString());
 		
 		if(userData == null) {
 			try {
@@ -598,14 +596,12 @@ public class IfwLoginController {
 			CommTenantModule tm = null;
 			
 			tm = tenantModuleRepo.findByTenantKey(tsId);
-			System.out.println("1111111111111111111111111111111 5");
 
 			if(tm == null) {
 				response.sendRedirect("/info?status=100");
 				return;
 			}
 
-			System.out.println("1111111111111111111111111111111 6");
 			tenantId = tm.getTenantId();
 			tenantModuleId = tm.getTenantModuleId();
 			
@@ -614,8 +610,8 @@ public class IfwLoginController {
 				response.sendRedirect("/info?status=130");
 				return;
 			}
-			System.out.println("1111111111111111111111111111111 7");
 			String userToken = oAuthService.createNewOAuthSession(tsId, userData, null);
+			logger.debug("userToken : " + userToken);
 			// 세션 아이디를 담는 쿠키 생성
 			Cookie cookie = null;
 			cookie = new Cookie("userToken", userToken);
@@ -627,7 +623,9 @@ public class IfwLoginController {
 			
 			String endPointUrl = (String) request.getParameter("o");
 			endPointUrl = authConfig.getMainPageEndpoint().getUrl();// "/console/" + tsId;
+			logger.debug("endPointUrl 1 : " + endPointUrl);
 			endPointUrl = stringUtil.appendUri(request, endPointUrl, request.getQueryString()).toString();
+			logger.debug("endPointUrl 2 : " + endPointUrl);
 
 			Cookie c = null;
 			c = new Cookie("tenant", String.valueOf(tenantId));
@@ -639,7 +637,6 @@ public class IfwLoginController {
 			e.printStackTrace();
 			try {
 				response.sendRedirect("/info");
-				System.out.println("1111111111111111111111111111111 8");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
