@@ -551,12 +551,17 @@
   	</select>
   	
   	<select id="getEmpBaseList" parameterType="map" resultType="hashmap">
-		SELECT TENANT_ID AS tenantId, ENTER_CD AS enterCd, SABUN AS sabun, '0' as userId 
-		  FROM WTM_IF_EMP_MSG
-		 WHERE TENANT_ID = #{tenantId}
-		   AND F_WTM_DATE_FORMAT(UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
-		   AND CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
-		   AND NEW_VALUE IS NOT NULL
+		SELECT A.TENANT_ID AS tenantId, A.ENTER_CD AS enterCd, A.SABUN AS sabun, GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, -1, 'M'), 'YMD'))  as symd, LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, 1, 'M'), 'YMD')) as eymd, '0' as userId
+		  FROM WTM_EMP_HIS A
+		 INNER JOIN WTM_IF_EMP_MSG B
+			 ON A.TENANT_ID = B.TENANT_ID
+			AND A.ENTER_CD = B.ENTER_CD
+			AND A.SABUN = B.SABUN
+			AND A.SYMD = B.CHG_YMD
+		 WHERE B.TENANT_ID = #{tenantId}
+		   AND DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
+		   AND B.CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
+		   AND B.NEW_VALUE IS NOT NULL
 		 ORDER BY ENTER_CD, SABUN
     </select>
     
