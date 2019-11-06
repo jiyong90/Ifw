@@ -77,26 +77,26 @@
 			<choose>
 			    <when test="searchValue=='ALL'">
 			   		<if test="searchCondition=='more'">
-			   			and APPR_WORK_MINUTE+APPR_OT_MINUTE &gt;= CAST(#{searchMinute} AS SIGNED)* 60
+			   			and APPR_WORK_MINUTE+APPR_OT_MINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y')* 60
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and APPR_WORK_MINUTE+APPR_OT_MINUTE &lt; CAST(#{searchMinute} AS SIGNED)* 60
+			   			and APPR_WORK_MINUTE+APPR_OT_MINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y')* 60
 			   		</if>
 			   	</when>
 			   	<when test="searchValue=='BASE'">
 			   		<if test="searchCondition=='more'">
-			   			and APPR_WORK_MINUTE &gt;= CAST(#{searchMinute} AS SIGNED)* 60
+			   			and APPR_WORK_MINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y')* 60
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and APPR_WORK_MINUTE &lt; CAST(#{searchMinute} AS SIGNED)* 60
+			   			and APPR_WORK_MINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y')* 60
 			   		</if>
 			   	</when>
 			   	<when test="searchValue=='OT'">
 			   		<if test="searchCondition=='more'">
-			   			and APPR_OT_MINUTE &gt;= CAST(#{searchMinute} AS SIGNED)* 60
+			   			and APPR_OT_MINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y')* 60
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and APPR_OT_MINUTE &lt; CAST(#{searchMinute} AS SIGNED)* 60
+			   			and APPR_OT_MINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y')* 60
 			   		</if>
 			   	</when>
 			</choose>
@@ -230,26 +230,26 @@
 			<choose>
 			    <when test="searchValue=='ALL'">
 			   		<if test="searchCondition=='more'">
-			   			and (diffSminute &gt;= CAST(#{searchMinute} AS SIGNED) OR diffEminute &gt;= CAST(#{searchMinute} AS SIGNED))
+			   			and (diffSminute &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y') OR diffEminute &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y'))
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and (diffSminute &lt; CAST(#{searchMinute} AS SIGNED) OR diffSminute &lt; CAST(#{searchMinute} AS SIGNED))
+			   			and (diffSminute &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y') OR diffSminute &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y'))
 			   		</if>
 			   	</when>
 			   	<when test="searchValue=='IN'">
 			   		<if test="searchCondition=='more'">
-			   			and diffSminute &gt;= CAST(#{searchMinute} AS SIGNED)
+			   			and diffSminute &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y')
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and diffSminute &lt; CAST(#{searchMinute} AS SIGNED)
+			   			and diffSminute &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y')
 			   		</if>
 			   	</when>
 			   	<when test="searchValue=='OUT'">
 			   		<if test="searchCondition=='more'">
-			   			and diffEminute &gt;= CAST(#{searchMinute} AS SIGNED)
+			   			and diffEminute &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y')
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and diffEminute &lt; CAST(#{searchMinute} AS SIGNED)
+			   			and diffEminute &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y')
 			   		</if>
 			   	</when>
 			</choose>
