@@ -663,13 +663,28 @@ box-sizing: border-box;
     color: #292944;
 }
 
-.approval-wrap.nav-pills .nav-link.active,
-.approval-wrap.nav-pills .show>.nav-link {
-  background-color:#4d84fe;
+.nav.approval-wrap.nav-pills{
+  margin-top:10px;
+  margin-bottom:14px;
 }
-.approval-wrap.nav-pills a {
-  color:#3e3e4c;
+.nav.approval-wrap.nav-pills .nav-link{
+  border-radius: 22px;
+  border: 1px solid #292944;
 }
+.nav.approval-wrap.nav-pills a{
+  font-size: 14px;
+  color:#292944;
+}
+
+.nav.approval-wrap.nav-pills .nav-link.active,
+.nav.approval-wrap.nav-pills .show>.nav-link {
+  background-color:#292944;
+  color: #ffffff;
+}
+.nav.approval-wrap li+li{
+  margin-left: 8px;
+}
+
 
 .notice-card{
   padding: 16px 20px;
