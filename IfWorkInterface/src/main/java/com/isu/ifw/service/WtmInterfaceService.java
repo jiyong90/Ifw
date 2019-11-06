@@ -75,4 +75,14 @@ public interface WtmInterfaceService {
 	 * @throws Exception 
 	 */
 	public List<Map<String, Object>> getEmpHisIfResult(String lastDataTime) throws Exception;
+	
+	/**
+	 * 임직원정보 이관
+	 * @param tenantId - 테넌트 아이디
+	 * @return 
+	 * @throws Exception 
+	 */
+	public List<Map<String, Object>> getEmpAddrIfResult(String lastDataTime) throws Exception;
+	
+	
 }

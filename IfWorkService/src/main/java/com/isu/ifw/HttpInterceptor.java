@@ -70,6 +70,7 @@ public class HttpInterceptor extends HandlerInterceptorAdapter {
 				logger.error(e.getMessage());
 			}
 		} else {
+
 			/*try {
 				ReadableRequestBodyWrapper wrapper = new ReadableRequestBodyWrapper(request);
 				params = wrapper.getRequestBody();
@@ -85,7 +86,7 @@ public class HttpInterceptor extends HandlerInterceptorAdapter {
 			}
 			
 		}
-		
+
 		String ip = request.getHeader("X-FORWARDED-FOR");
         if (ip == null)
             ip = request.getRemoteAddr();

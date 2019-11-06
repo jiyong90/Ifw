@@ -92,7 +92,11 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		List<Map<String, Object>> ifList = null;
         try {
         	// if 데이터 조회
-        	ifList = wtmInterfaceMapper.getOrgChartDtl(lastDataTime, enterCd, sdate);
+        	Map<String, Object> paramMap = new HashMap<>();
+        	paramMap.put("enterCd", enterCd);
+        	paramMap.put("sdate", sdate);
+        			
+        	ifList = wtmInterfaceMapper.getOrgChartDtl(paramMap);
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -121,6 +125,20 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         try {
         	// if 데이터 조회
         	ifList = wtmInterfaceMapper.getEmp(lastDataTime);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return ifList;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getEmpAddrIfResult(String lastDataTime) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getEmpAddrIfResult");
+		List<Map<String, Object>> ifList = null;
+        try {
+        	// if 데이터 조회
+        	ifList = wtmInterfaceMapper.getEmpAddr(lastDataTime);
         } catch(Exception e){
             e.printStackTrace();
         }

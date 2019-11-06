@@ -88,6 +88,15 @@ public class WtmInterfaceController {
 		return ;
 	}
 	
+	@RequestMapping(value = "/empAddr",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void empAddrIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원메일정보
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+		//Long tenantId = (long) 38;
+		WtmInterfaceService.getEmpAddrIfResult(tenantId); //사원 변경정보 저장 Servie 호출
+		return ;
+	}
+	
 	@RequestMapping(value = "/workTimeIf",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setTaaApplIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
@@ -119,6 +128,17 @@ public class WtmInterfaceController {
 		reqMap.put("sabun", request.getParameter("sabun").toString());
 		
 		WtmInterfaceService.setWorkTimeCloseIf(reqMap); //근태정보 인터페이스
+		return ;
+	}
+	
+	
+	@RequestMapping(value = "/dataExp",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void getDataExp(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		HashMap<String, Object> reqMap = new HashMap<>();
+		reqMap.put("tenantId", Long.parseLong(request.getParameter("tenantId").toString()));
+		
+		WtmInterfaceService.getDataExp(reqMap); //근태정보 인터페이스
 		return ;
 	}
 }
