@@ -35,7 +35,7 @@ public interface WtmInterfaceMapper {
 	/**
 	 * 조직코드 조회
 	 **/
-	public List<Map<String, Object>> getOrgChartDtl(String lastDataTime, String enterCd, String sdate);
+	public List<Map<String, Object>> getOrgChartDtl(Map<String, Object> paramMap);
 	
 	/**
 	 * 조직코드설정(근무조,사업장) 조회
@@ -46,4 +46,9 @@ public interface WtmInterfaceMapper {
 	 * 발령이력 조회
 	 **/
 	public List<Map<String, Object>> getEmp(String lastDataTime);
+	
+	/**
+	 * 발령이력 조회
+	 **/
+	public List<Map<String, Object>> getEmpAddr(String lastDataTime);
 }

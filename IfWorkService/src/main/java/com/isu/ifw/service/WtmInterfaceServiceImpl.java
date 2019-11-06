@@ -565,6 +565,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		ifHisMap.put("ifStatus", "OK");
 	        		
 	        		// 이력데이터 수정은 건별로
+	        		/*
 	        		for(int i=0; i< ifList.size(); i++) {
 	        			Map<String, Object> ifCodeHisMap = new HashMap<>();
 	        			ifCodeHisMap = ifList.get(i);
@@ -578,6 +579,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	    		            e.printStackTrace();
 	        			}
 	        		}
+	        		*/
         		} catch (Exception e) {
         			ifHisMap.put("ifStatus", "ERR");
         			retMsg = e.getMessage();
@@ -585,6 +587,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     			}
 	        	
 	        } catch(Exception e){
+	        	ifHisMap.put("ifStatus", "ERR");
 	            e.printStackTrace();
 	        }
 		} else {
@@ -1042,12 +1045,25 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		
 		// 4. 기본근무 생성대상자 조회해서 근무를 생성해주자
 		try {
+			// 근무관리 제외차 체크
+			/*
+			List<Long> ruleIds = new ArrayList<Long>();
+			Map<String, Object> ruleMap = null;
+			Long targetRuleId =
+			*/ 
 			List<Map<String, Object>> getEmpBaseList = null;
 			getEmpBaseList = wtmInterfaceMapper.getEmpBaseList(ifHisMap);
 			if(getEmpBaseList != null && getEmpBaseList.size() > 0) {
 				for(int i=0; i<getEmpBaseList.size(); i++) {
 					Map<String, Object> setEmpMap = new HashMap<>();
 					setEmpMap = getEmpBaseList.get(i);
+					// 파라메터 체크 #{tenantId}, #{enterCd}, #{symd}, #{eymd}, #{sabun} , #{userId}
+					System.out.println("tenantId : " + setEmpMap.get("tenantId").toString());
+					System.out.println("enterCd : " + setEmpMap.get("enterCd").toString());
+					System.out.println("symd : " + setEmpMap.get("symd").toString());
+					System.out.println("eymd : " + setEmpMap.get("eymd").toString());
+					System.out.println("sabun : " + setEmpMap.get("sabun").toString());
+					System.out.println("userId : " + setEmpMap.get("userId").toString());
 					// 입사자만? 이력정리용 프로시저 호출하기
 			    	wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(setEmpMap);
 				}
@@ -1057,6 +1073,100 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		}
     	
 	    return;
+	}
+	
+	@Override
+	public void getEmpAddrIfResult(Long tenantId) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("WtmInterfaceServiceImpl getEmpAddrIfResult");
+		// 인터페이스 결과 저장용
+    	String retMsg = null;
+    	int resultCnt = 0;
+    	String ifType = "V_IF_EMP_ADDR";
+    	Map<String, Object> ifHisMap = new HashMap<>();
+    	ifHisMap.put("tenantId", tenantId);
+    	ifHisMap.put("ifItem", ifType);
+    	
+    	// 인터페이스용 변수
+    	String lastDataTime = null;
+    	String nowDataTime = null;
+    	HashMap<String, Object> getDateMap = null;
+    	HashMap<String, Object> getIfMap = null;
+    	List<Map<String, Object>> getIfList = null;
+    	
+    	// 최종 자료 if 시간 조회
+    	try {
+    		getDateMap = (HashMap<String, Object>) getIfLastDate(tenantId, ifType);
+    		lastDataTime = getDateMap.get("lastDate").toString();
+    		nowDataTime = getDateMap.get("nowDate").toString();
+        	try {
+        		String param = "?lastDataTime="+lastDataTime;
+	        	String ifUrl = setIfUrl(tenantId, "/empAddr", param);  
+	        	getIfMap = getIfRt(ifUrl);
+		   		
+		   		if (getIfMap != null && getIfMap.size() > 0) {
+		   			String ifMsg = getIfMap.get("message").toString();
+		   			getIfList = (List<Map<String, Object>>) getIfMap.get("ifData");
+		   		} else {
+		   			retMsg = "empAddr get : If 데이터 없음";
+		   		}
+        	} catch(Exception e) {
+        		retMsg = "empAddr get : 서버통신 오류";
+        	}
+    	} catch(Exception e) {
+    		retMsg = "empAddr get : 최종갱신일 조회오류";
+    	}
+    	// 조회된 자료가 있으면...
+		if(retMsg == null && getIfList != null && getIfList.size() > 0) {
+			try {
+	        	List<Map<String, Object>> ifList = new ArrayList();
+   	        	for(int i=0; i<getIfList.size(); i++) {
+	        		Map<String, Object> ifMap = new HashMap<>();
+	        		ifMap.put("tenantId", tenantId);
+	        		ifMap.put("enterCd", getIfList.get(i).get("ENTER_CD"));
+	        		ifMap.put("sabun", getIfList.get(i).get("SABUN"));
+	        		ifMap.put("email", getIfList.get(i).get("EMAIL"));
+	        		ifMap.put("handPhone", getIfList.get(i).get("HAND_PHONE"));
+	        		ifMap.put("note", getIfList.get(i).get("NOTE"));
+	        		ifList.add(ifMap);
+   	        	}
+   	        	if (ifList.size() > 0) {
+		        	// 2. data 저장
+		    		try {
+		    			// key값을 기준으로 mergeinto하자
+						resultCnt = wtmInterfaceMapper.insertWtmEmpAddr(ifList);
+						retMsg = resultCnt + "건 반영완료";
+						ifHisMap.put("ifStatus", "OK");
+					} catch (Exception e) {
+						ifHisMap.put("ifStatus", "ERR");
+						retMsg = "Holiday set : 데이터 저장 오류";
+						e.printStackTrace();
+					}
+	        	} else {
+	        		retMsg = "갱신자료없음";
+					ifHisMap.put("ifStatus", "OK");
+	        	}
+        	
+			} catch (Exception e) {
+    			ifHisMap.put("ifStatus", "ERR");
+    			retMsg = e.getMessage();
+	            e.printStackTrace();
+			}
+		} else {
+			ifHisMap.put("ifStatus", "ERR");
+		}
+    	// 3. 처리결과 저장
+		try {
+			// WTM_IF_HIS 테이블에 결과저장
+			ifHisMap.put("updateDate", nowDataTime);
+   			ifHisMap.put("ifEndDate", lastDataTime);
+			ifHisMap.put("ifMsg", retMsg);
+			wtmInterfaceMapper.insertIfHis(ifHisMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        System.out.println("WtmInterfaceServiceImpl getEmpAddrIfResult end");
+		return;
 	}
 	
 	@Override
@@ -1261,6 +1371,77 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		}
         System.out.println("WtmInterfaceServiceImpl setTaaApplIf end");
 		return;
+	}
+	
+	@Override
+	public void getDataExp(HashMap reqMap) throws Exception {
+		List<Map<String, Object>> tableList = new ArrayList();
+		List<Map<String, Object>> colList = new ArrayList();
+		List<Map<String, Object>> dataList = new ArrayList();
+		
+		reqMap.put("tableSchema", "worktimemanagement");
+		
+		tableList = wtmInterfaceMapper.getExpTableList(reqMap);
+		if(tableList != null && tableList.size() > 0) {
+			// 테이블 루프
+			for(int i=0; i<tableList.size(); i++) {
+				String tableName = tableList.get(i).get("TABLE_NAME").toString();
+				System.out.println("-- tableName : " + tableName + " start!");
+				reqMap.put("tableName", tableName);
+				colList = wtmInterfaceMapper.getExpColList(reqMap);
+				
+				String InsertStr = "";
+				if(colList != null && colList.size() > 0) {
+					InsertStr = "INSERT INTO " + tableName + "(";
+					for(int j=0; j<colList.size(); j++) {
+						if("1".equals(colList.get(j).get("COL_NO").toString())) {
+							InsertStr += colList.get(j).get("COL_NM").toString();
+						} else {
+							InsertStr += ", " + colList.get(j).get("COL_NM").toString(); 
+						}
+					}
+					InsertStr += ")"; 
+					// System.out.println("-- collist InsertStr : " + InsertStr);
+				} else {
+					System.out.println("tableName : " + tableName + "no column");
+				}
+				dataList = wtmInterfaceMapper.getExpDataList(reqMap);
+				if(dataList != null && dataList.size() > 0) {
+					String dataStr = "";
+					for(int x=0; x<dataList.size(); x++) {
+						dataStr = "SELECT ";
+						for(int j=0; j<colList.size(); j++) {
+							if(j > 0) {dataStr += ", ";}
+							
+							String colNm = colList.get(j).get("COL_NM").toString();
+							String colType = colList.get(j).get("DATA_TYPE").toString();
+							String dataVal = "";
+							if(dataList.get(x).get(colNm) == null || "".equals(dataList.get(x).get(colNm).toString().trim())){
+								dataStr += " null ";
+							} else {
+								if("bigint".equals(colType) || "smallint".equals(colType) || "int".equals(colType)) {
+									dataStr += dataList.get(x).get(colNm).toString() + " ";
+								} else if ("datetime".equals(colType)) {
+									// '2019-09-20 15:48:59.0' 로 넘어오니깐 data 맞추자
+									if(dataVal.length() > 19) {dataVal = dataVal.substring(0, 19);}
+									
+									dataStr += "TO_DATE('" + dataVal + "', 'YYYY-MM-DD HH24:MI:SS') ";
+								} else {
+									dataStr += "'" + dataList.get(x).get(colNm).toString() + "'";
+								}
+							}
+						}
+						
+						dataStr += " FROM DUAL;";
+						System.out.println(InsertStr + dataStr);
+					}
+				}
+			}
+			
+		} else {
+			System.out.println("nodata !!!!");
+		}
+		
 	}
 
 }

@@ -164,6 +164,13 @@ public interface WtmInterfaceMapper {
 	public void setTaaApplIf(Map<String, Object> paramMap);
 	
 	/**
+	 * 사원메일정보 저장
+	 * @param paramMap
+	 * @return
+	 */
+	public int insertWtmEmpAddr(List<Map<String, Object>> paramList);
+	
+	/**
 	 * 신청서유무 ID조회
 	 **/
 	public Map<String, Object> getWtmTaaApplId(Map<String, Object> paramMap);
@@ -177,6 +184,11 @@ public interface WtmInterfaceMapper {
 	 * 근무마감
 	 **/
 	public void setWorkTimeCloseIf(Map<String, Object> paramMap);
+	
+	
+	public List<Map<String, Object>> getExpTableList(Map<String, Object> paramMap);
+	public List<Map<String, Object>> getExpColList(Map<String, Object> paramMap);
+	public List<Map<String, Object>> getExpDataList(Map<String, Object> paramMap);
 	
 	
 	

@@ -192,7 +192,7 @@
 		sheet2.SetColProperty("workteamCd", {ComboText:"전체|"+workteamCdList[0], ComboCode:"|"+workteamCdList[1]} );
 		
 		//조직
-        // setSheetAutocompleteOrg("sheet2", "orgNm");
+        setSheetAutocompleteOrg("sheet2", "orgNm");
 		
 		var initdata3 = {};
 		initdata3.Cfg = {SearchMode:smLazyLoad,Page:22};
