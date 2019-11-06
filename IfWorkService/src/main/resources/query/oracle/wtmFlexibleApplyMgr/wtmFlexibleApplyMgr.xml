@@ -94,6 +94,7 @@
     </select>
     
 	<insert id="insertGrp" parameterType="java.util.List" >
+		<foreach collection="list" item="item" separator="; ">
         INSERT INTO WTM_FLEXIBLE_APPLY_GROUP (
         	  FLEXIBLE_APPLY_ID
         	, ORG_CD
@@ -105,7 +106,6 @@
         	, UPDATE_DATE
         	, UPDATE_ID
         ) VALUES 
-       <foreach collection="list" item="item" separator=", ">
 		(     #{item.flexibleApplyId}
         	, #{item.orgCd}
         	, #{item.dutyCd}
@@ -159,6 +159,7 @@
     </select>
     
 	<insert id="insertEmp" parameterType="java.util.List" >
+		<foreach collection="list" item="item" separator="; ">
         INSERT INTO WTM_FLEXIBLE_APPLY_EMP (
         	  FLEXIBLE_APPLY_ID
         	, SABUN
@@ -166,7 +167,6 @@
         	, UPDATE_DATE
         	, UPDATE_ID
         ) VALUES 
-       <foreach collection="list" item="item" separator=", ">
 		(     #{item.flexibleApplyId}
         	, #{item.sabun}
         	, #{item.note}

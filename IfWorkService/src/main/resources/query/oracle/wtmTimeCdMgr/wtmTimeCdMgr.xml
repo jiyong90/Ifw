@@ -6,8 +6,9 @@
 <mapper namespace="com.isu.ifw.mapper.WtmTimeCdMgrMapper">
     <update id="saveWtmTimeCdMgr" parameterType="map">
         <![CDATA[ 
-			INSERT INTO WTM_TIME_CD_MGR 
-					(TENANT_ID, 
+		MERGE INTO WTM_TIME_CD_MGR M
+        USING (
+        	SELECT TENANT_ID, 
 					ENTER_CD, 
 					TIME_CD, 
 					TIME_NM, 
@@ -21,37 +22,97 @@
 					LEAVE_CHK_YN,
 					ABSENCE_CHK_YN, 
 					NOTE, 
+	        	    SYSDATE AS UPDATE_DATE,
+	        	    '0' AS UPDATE_ID
+        	  FROM (
+        	  		SELECT NULL AS TENANT_ID, 
+							NULL AS ENTER_CD, 
+							NULL AS TIME_CD, 
+							NULL AS TIME_NM, 
+							NULL AS SYMD,
+							NULL AS EYMD,
+							NULL AS WORK_SHM,
+							NULL AS WORK_EHM,  
+							NULL AS HOL_YN, 
+							NULL AS HOL_TIME_CD_MGR_ID,
+							NULL AS LATE_CHK_YN,
+							NULL AS LEAVE_CHK_YN,
+							NULL AS ABSENCE_CHK_YN, 
+							NULL AS NOTE
+				  	  FROM DUAL 
+        	  		UNION ALL
+		        	SELECT TRIM(#{tenantId}) AS TENANT_ID, 
+							 TRIM(#{enterCd}) AS ENTER_CD, 
+							 TRIM(#{timeCd}) AS TIME_CD, 
+							 TRIM(#{timeNm}) AS TIME_NM, 
+							 TRIM(#{symd}) AS SYMD, 
+							 TRIM(#{eymd}) AS EYMD, 
+							 TRIM(#{workShm}) AS WORK_SHM, 
+							 TRIM(#{workEhm}) AS WORK_EHM, 
+							 TRIM(#{holYn}) AS HOL_YN, 
+							 TRIM(#{holTimeCdMgrId}) AS HOL_TIME_CD_MGR_ID, 
+							 TRIM(#{lateChkYn}) AS LATE_CHK_YN, 
+							 TRIM(#{leaveChkYn}) AS LEAVE_CHK_YN, 
+							 TRIM(#{absenceChkYn}) AS ABSENCE_CHK_YN, 
+							 TRIM(#{note}) AS NOTE
+			          FROM DUAL
+        	  ) T
+        	  WHERE T.TENANT_ID IS NOT NULL
+        	    AND T.ENTER_CD IS NOT NULL
+        	    AND T.TIME_CD IS NOT NULL
+        	    AND T.SYMD IS NOT NULL
+        ) S
+        ON (M.TENANT_ID = S.TENANT_ID 
+	        AND M.ENTER_CD = S.ENTER_CD
+	        AND M.TIME_CD = S.TIME_CD
+	        AND M.SYMD = S.SYMD)
+        WHEN MATCHED THEN
+        	UPDATE SET TIME_NM = S.TIME_NM,
+					EYMD = S.EYMD,
+					WORK_SHM = S.WORK_SHM,
+					WORK_EHM = S.WORK_EHM,
+					HOL_YN = S.HOL_YN,
+					HOL_TIME_CD_MGR_ID = S.HOL_TIME_CD_MGR_ID,
+					LATE_CHK_YN = S.LATE_CHK_YN,
+					LEAVE_CHK_YN = S.LEAVE_CHK_YN,
+					ABSENCE_CHK_YN = S.ABSENCE_CHK_YN,
+					NOTE = S.NOTE,
+	                UPDATE_DATE = S.UPDATE_DATE,
+	                UPDATE_ID = S.UPDATE_ID
+        WHEN NOT MATCHED THEN
+        	INSERT (TENANT_ID, 
+					ENTER_CD, 
+					TIME_CD, 
+					TIME_NM, 
+					SYMD,
+					EYMD,
+					WORK_SHM,
+					WORK_EHM,  
+					HOL_YN, 
+					HOL_TIME_CD_MGR_ID,
+					LATE_CHK_YN,
+					LEAVE_CHK_YN,
+					ABSENCE_CHK_YN, 
+					NOTE, 
+					UPDATE_DATE, 
 					UPDATE_ID)
-				VALUES
-					(#{tenantId},
-					 #{enterCd} ,
-					 #{timeCd} ,
-					 #{timeNm} ,
-					 #{symd} ,
-					 #{eymd} ,
-					 #{workShm} ,
-					 #{workEhm} ,
-					 #{holYn} ,
-					 #{holTimeCdMgrId},
-					 #{lateChkYn} ,
-					 #{leaveChkYn} ,
-					 #{absenceChkYn} ,
-					 #{note} ,
-					 #{userId}
-				)
-			ON DUPLICATE KEY UPDATE 
-				TIME_NM = VALUES(TIME_NM),
-				EYMD = VALUES(EYMD),
-				WORK_SHM = VALUES(WORK_SHM),
-				WORK_EHM = VALUES(WORK_EHM),
-				HOL_YN = VALUES(HOL_YN),
-				HOL_TIME_CD_MGR_ID = VALUES(HOL_TIME_CD_MGR_ID),
-				LATE_CHK_YN = VALUES(LATE_CHK_YN),
-				LEAVE_CHK_YN = VALUES(LEAVE_CHK_YN),
-				ABSENCE_CHK_YN = VALUES(ABSENCE_CHK_YN),
-				NOTE = VALUES(NOTE),
-				UPDATE_DATE = SYSDATE,
-				UPDATE_ID = VALUES(UPDATE_ID)
+	        VALUES (S.TENANT_ID, 
+					S.ENTER_CD, 
+					S.TIME_CD, 
+					S.TIME_NM, 
+					S.SYMD,
+					S.EYMD,
+					S.WORK_SHM,
+					S.WORK_EHM,  
+					S.HOL_YN, 
+					S.HOL_TIME_CD_MGR_ID,
+					S.LATE_CHK_YN,
+					S.LEAVE_CHK_YN,
+					S.ABSENCE_CHK_YN, 
+					S.NOTE, 
+					S.UPDATE_DATE,
+	        		S.UPDATE_ID
+	        ) 
         ]]>
     </update>
 </mapper>
