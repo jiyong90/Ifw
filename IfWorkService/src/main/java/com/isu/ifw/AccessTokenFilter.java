@@ -75,8 +75,6 @@ public class AccessTokenFilter implements Filter {
 		//param, cookie에서 테넌트 id 가져오기
 		if(request.getParameter("tenant") != null) tenant = request.getParameter("tenant");
 		
-		System.out.println("start " +loginService.getHrInfoUrl(Long.parseLong(tenant)));
-
 		if(tenant == null || loginService.getHrInfoUrl(Long.parseLong(tenant)).equals("")) {
 			chain.doFilter(request, response);
 			return;
