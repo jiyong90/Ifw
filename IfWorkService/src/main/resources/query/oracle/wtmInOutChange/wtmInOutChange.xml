@@ -37,6 +37,8 @@
 	</select>
     
     <update id="setInOutChangeList" parameterType="map">
+    	<if test="insertRows!=null and insertRows.size()>0">
+			<foreach collection="insertRows" item="item" separator="; ">
 		        INSERT INTO WTM_INOUT_CHG_HIS 
 					(TENANT_ID,
 					ENTER_CD, 
@@ -52,8 +54,6 @@
 					UPDATE_DATE, 
 					UPDATE_ID)
 				VALUES 
-			<if test="insertRows!=null and insertRows.size()>0">
-			<foreach collection="insertRows" item="item" separator=", ">
 					(#{tenantId}, 
 					#{enterCd}, 
 					#{item.sabun}, 
@@ -68,6 +68,6 @@
 					SYSDATE, 
 					#{userId})	
 			</foreach>
-			</if>
+		</if>
     </update>
 </mapper>

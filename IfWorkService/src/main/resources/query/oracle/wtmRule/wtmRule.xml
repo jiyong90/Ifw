@@ -5,6 +5,8 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmRuleMapper">
     <update id="insertRule" parameterType="hashmap">
+    	<if test="insertRows!=null and insertRows.size()>0">
+		<foreach collection="insertRows" item="item" separator="; ">
 		INSERT INTO WTM_RULE
 				(TENANT_ID, 
 				ENTER_CD, 
@@ -14,8 +16,6 @@
 				UPDATE_DATE,
 				UPDATE_ID)
 			VALUES
-			<if test="insertRows!=null and insertRows.size()>0">
-			<foreach collection="insertRows" item="item" separator=", ">
 				(#{tenantId},
 				 #{enterCd} ,
 				 #{item.ruleNm} ,

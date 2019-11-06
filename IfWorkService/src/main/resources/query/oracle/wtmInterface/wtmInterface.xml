@@ -63,6 +63,7 @@
     </select>
     
     <insert id="insertWtmCode" parameterType="hashmap">
+    	<foreach collection="list" item="item" separator="; ">
 			INSERT INTO WTM_CODE
 			(
 				  TENANT_ID
@@ -76,7 +77,6 @@
 				, UPDATE_DATE
 				, UPDATE_ID
 			) VALUES 
-			<foreach collection="list" item="item" separator=", ">
 			(     #{item.tenantId}
 	        	, #{item.enterCd}
 	        	, #{item.grpCodeCd}
@@ -136,40 +136,84 @@
         ]]>
     </update>
     
-    <insert id="insertWtmHoliday" parameterType="java.util.HashMap" >
-        INSERT INTO WTM_HOLIDAY_MGR (
-        	  TENANT_ID
-        	, ENTER_CD
-        	, BISINESS_PLACE_CD
-        	, HOLIDAY_YMD
-        	, HOLIDAY_NM
-        	, SUN_YN
-        	, FESTIVE_YN
-        	, PAY_YN
-        	, UPDATE_DATE
-        	, UPDATE_ID
-        ) VALUES 
-       <foreach collection="list" item="item" separator=", ">
-		(     #{item.tenantId}
-        	, #{item.enterCd}
-        	, #{item.locationCd}
-        	, #{item.holidayYmd}
-        	, #{item.holidayNm}
-        	, #{item.sunYn}
-        	, #{item.festiveYn}
-        	, #{item.payYn}
-        	, SYSDATE
-        	, '0'
-        )
-		</foreach>
-        ON DUPLICATE KEY UPDATE
-              HOLIDAY_NM = VALUES(HOLIDAY_NM)
-            , SUN_YN = VALUES(SUN_YN)
-            , FESTIVE_YN = VALUES(FESTIVE_YN)
-            , PAY_YN = VALUES(PAY_YN)
-            , UPDATE_DATE = SYSDATE
-            , UPDATE_ID = '0'
-    </insert>
+    <update id="insertWtmHoliday" parameterType="java.util.HashMap" >
+        MERGE INTO WTM_HOLIDAY_MGR M
+        USING (
+        	SELECT T.TENANT_ID
+        	     , T.ENTER_CD
+        	     , T.BISINESS_PLACE_CD
+        	     , T.HOLIDAY_YMD
+	        	 , T.HOLIDAY_NM
+	        	 , T.SUN_YN
+	        	 , T.FESTIVE_YN
+	        	 , T.PAY_YN
+	        	 , SYSDATE AS UPDATE_DATE
+	        	 , '0' AS UPDATE_ID
+        	  FROM (
+        	  		SELECT NULL AS TENANT_ID
+						 , NULL AS ENTER_CD
+						 , NULL AS BISINESS_PLACE_CD
+						 , NULL AS HOLIDAY_YMD
+						 , NULL AS HOLIDAY_NM
+						 , NULL AS SUN_YN
+						 , NULL AS FESTIVE_YN
+						 , NULL AS PAY_YN
+				  	  FROM DUAL 
+        	  		<foreach collection="list" item="item">    
+        	  		UNION ALL
+		        	SELECT TRIM(#{item.tenantId}) AS TENANT_ID
+			        	, TRIM(#{item.enterCd}) AS ENTER_CD
+			        	, TRIM(#{item.locationCd}) AS BISINESS_PLACE_CD
+			        	, TRIM(#{item.holidayYmd}) AS HOLIDAY_YMD
+			        	, TRIM(#{item.holidayNm}) AS HOLIDAY_NM
+			        	, TRIM(#{item.sunYn}) AS SUN_YN
+			        	, TRIM(#{item.festiveYn}) AS FESTIVE_YN
+			        	, TRIM(#{item.payYn}) AS PAY_YN
+			          FROM DUAL
+        	  		</foreach>
+        	  ) T
+        	  WHERE T.TENANT_ID IS NOT NULL
+        	    AND T.ENTER_CD IS NOT NULL
+        	    AND T.BISINESS_PLACE_CD IS NOT NULL
+        	    AND T.HOLIDAY_YMD IS NOT NULL
+        ) S
+        ON (M.TENANT_ID = S.TENANT_ID 
+	        AND M.ENTER_CD = S.ENTER_CD
+	        AND M.BISINESS_PLACE_CD = S.BISINESS_PLACE_CD
+	        AND M.HOLIDAY_YMD = S.HOLIDAY_YMD)
+        WHEN MATCHED THEN
+        	UPDATE SET M.HOLIDAY_NM = S.HOLIDAY_NM
+	             , SUN_YN = S.SUN_YN
+	             , FESTIVE_YN = S.FESTIVE_YN
+	             , PAY_YN = S.PAY_YN
+	             , UPDATE_DATE = S.UPDATE_DATE
+	             , UPDATE_ID = S.UPDATE_ID
+        WHEN NOT MATCHED THEN
+        	INSERT (
+	        	  TENANT_ID
+	        	, ENTER_CD
+	        	, BISINESS_PLACE_CD
+	        	, HOLIDAY_YMD
+	        	, HOLIDAY_NM
+	        	, SUN_YN
+	        	, FESTIVE_YN
+	        	, PAY_YN
+	        	, UPDATE_DATE
+	        	, UPDATE_ID
+	        ) 
+	        VALUES (
+	        	  S.TENANT_ID
+	        	, S.ENTER_CD
+	        	, S.BISINESS_PLACE_CD
+	        	, S.HOLIDAY_YMD
+	        	, S.HOLIDAY_NM
+	        	, S.SUN_YN
+	        	, S.FESTIVE_YN
+	        	, S.PAY_YN
+	        	, S.UPDATE_DATE
+	        	, S.UPDATE_ID
+	        ) 
+    </update>
     
     <select id="getWtmTaaCodeId" parameterType="map" resultType="hashmap">
 		SELECT TAA_CODE_ID
@@ -180,6 +224,7 @@
     </select>
     
     <insert id="insertTaaCode" parameterType="hashmap">
+    	<foreach collection="list" item="item" separator="; ">
 		INSERT INTO WTM_TAA_CODE
 		(
 			  TENANT_ID
@@ -193,7 +238,6 @@
 			, UPDATE_DATE
 			, UPDATE_ID
 		) VALUES 
-		<foreach collection="list" item="item" separator=", ">
 			(
 			  #{item.tenantId}
 			, #{item.enterCd}
@@ -239,40 +283,84 @@
 		</foreach>
 	</update>
 	
-	<insert id="insertWtmOrgCode" parameterType="java.util.HashMap" >
-        INSERT INTO WTM_ORG_CODE (
-        	  TENANT_ID
-        	, ENTER_CD
-        	, ORG_CD
-        	, SYMD
-        	, ORG_NM
-        	, EYMD
-        	, ORG_TYPE
-        	, NOTE
-        	, UPDATE_DATE
-        	, UPDATE_ID
-        ) VALUES 
-       <foreach collection="list" item="item" separator=", ">
-		(     #{item.tenantId}
-        	, #{item.enterCd}
-        	, #{item.orgCd}
-        	, #{item.symd}
-        	, #{item.orgNm}
-        	, #{item.eymd}
-        	, #{item.orgType}
-        	, #{item.note}
-        	, SYSDATE
-        	, '0'
-        )
-		</foreach>
-        ON DUPLICATE KEY UPDATE
-              ORG_NM = VALUES(ORG_NM)
-            , ORG_TYPE = VALUES(ORG_TYPE)
-            , EYMD = VALUES(EYMD)
-            , NOTE = VALUES(NOTE)
-            , UPDATE_DATE = SYSDATE
-            , UPDATE_ID = '0'
-    </insert>
+	<update id="insertWtmOrgCode" parameterType="java.util.HashMap" >
+    	MERGE INTO WTM_ORG_CODE C
+        USING (
+        	SELECT T.TENANT_ID
+	        	 , T.ENTER_CD
+	        	 , T.ORG_CD
+	        	 , T.SYMD
+	        	 , T.ORG_NM
+	        	 , T.EYMD
+	        	 , T.ORG_TYPE
+	        	 , T.NOTE
+	        	 , SYSDATE AS UPDATE_DATE
+	        	 , '0' AS UPDATE_ID
+        	  FROM (
+        	  		SELECT NULL AS TENANT_ID
+						 , NULL AS ENTER_CD
+						 , NULL AS ORG_CD
+						 , NULL AS SYMD
+						 , NULL AS ORG_NM
+						 , NULL AS EYMD
+						 , NULL AS ORG_TYPE
+						 , NULL AS NOTE
+				  	  FROM DUAL 
+        	  		<foreach collection="list" item="item">    
+        	  		UNION ALL
+		        	SELECT TRIM(#{item.tenantId}) AS TENANT_ID
+			        	, TRIM(#{item.enterCd}) AS ENTER_CD
+			        	, TRIM(#{item.orgCd}) AS ORG_CD
+			        	, TRIM(#{item.symd}) AS SYMD
+			        	, TRIM(#{item.orgNm}) AS ORG_NM
+			        	, TRIM(#{item.eymd}) AS EYMD
+			        	, TRIM(#{item.orgType}) AS ORG_TYPE
+			        	, TRIM(#{item.note}) AS NOTE
+			          FROM DUAL
+        	  		</foreach>
+        	  ) T
+        	  WHERE T.TENANT_ID IS NOT NULL
+        	    AND T.ENTER_CD IS NOT NULL
+        	    AND T.ORG_CD IS NOT NULL
+        	    AND T.SYMD IS NOT NULL
+        ) S
+        ON (C.TENANT_ID = S.TENANT_ID 
+	        AND C.ENTER_CD = S.ENTER_CD
+	        AND C.ORG_CD = S.ORG_CD
+	        AND C.SYMD = S.SYMD)
+        WHEN MATCHED THEN
+        	UPDATE SET ORG_NM = S.ORG_NM
+	             , ORG_TYPE = S.ORG_TYPE
+	             , EYMD = S.EYMD
+	             , NOTE = S.NOTE
+	             , UPDATE_DATE = S.UPDATE_DATE
+	             , UPDATE_ID = S.UPDATE_ID
+        WHEN NOT MATCHED THEN
+        	INSERT (
+	        	  TENANT_ID
+	        	, ENTER_CD
+	        	, ORG_CD
+	        	, SYMD
+	        	, ORG_NM
+	        	, EYMD
+	        	, ORG_TYPE
+	        	, NOTE
+	        	, UPDATE_DATE
+	        	, UPDATE_ID
+	        ) 
+	        VALUES (
+	        	  S.TENANT_ID
+	        	, S.ENTER_CD
+	        	, S.ORG_CD
+	        	, S.SYMD
+	        	, S.ORG_NM
+	        	, S.EYMD
+	        	, S.ORG_TYPE
+	        	, S.NOTE
+	        	, S.UPDATE_DATE
+	        	, S.UPDATE_ID
+	        ) 
+    </update>
     
     <update id="updateWtmOrgCodeHisEymd" parameterType="hashmap">
 		<![CDATA[
@@ -321,7 +409,6 @@
         	, UPDATE_DATE
         	, UPDATE_ID
         ) VALUES 
-       
 		(     #{tenantId}
         	, #{enterCd}
         	, #{orgChartNm}
@@ -343,38 +430,73 @@
 		WHERE ORG_CHART_ID = #{orgChartId}
 	</update>
 	
-    <insert id="insertWtmOrgChartDet" parameterType="java.util.HashMap" >
-        INSERT INTO WTM_ORG_CHART_DET (
-        	  ORG_CHART_ID
-        	, ORG_CD
-        	, PRIOR_ORG_CD
-        	, SEQ
-        	, ORG_LEVEL
-        	, ORDER_SEQ
-        	, UPDATE_DATE
-        	, UPDATE_ID
-        ) VALUES 
-       <foreach collection="list" item="item" separator=", ">
-		(     #{item.orgChartId}
-        	, #{item.orgCd}
-        	, #{item.priorOrgCd}
-        	, #{item.seq}
-        	, #{item.orgLevel}
-        	, #{item.orderSeq}
-        	, SYSDATE
-        	, '0'
-        )
-		</foreach>
-        ON DUPLICATE KEY UPDATE
-              PRIOR_ORG_CD = VALUES(PRIOR_ORG_CD)
-            , SEQ = VALUES(SEQ)
-            , ORG_LEVEL = VALUES(ORG_LEVEL)
-            , ORDER_SEQ = VALUES(ORDER_SEQ)
-            , UPDATE_DATE = SYSDATE
-            , UPDATE_ID = '0'
-    </insert>
+    <update id="insertWtmOrgChartDet" parameterType="java.util.HashMap" >
+    	MERGE INTO WTM_ORG_CHART_DET D
+        USING (
+        	SELECT T.ORG_CHART_ID
+	        	 , T.ORG_CD
+	        	 , T.PRIOR_ORG_CD
+	        	 , T.SEQ
+	        	 , T.ORG_LEVEL
+	        	 , T.ORDER_SEQ
+	        	 , SYSDATE AS UPDATE_DATE
+	        	 , '0' AS UPDATE_ID
+        	  FROM (
+        	  		SELECT NULL AS ORG_CHART_ID
+						 , NULL AS ORG_CD
+						 , NULL AS PRIOR_ORG_CD
+						 , NULL AS SEQ
+						 , NULL AS ORG_LEVEL
+						 , NULL AS ORDER_SEQ
+				  	  FROM DUAL 
+        	  		<foreach collection="list" item="item">    
+        	  		UNION ALL
+		        	SELECT TRIM(#{item.orgChartId}) AS ORG_CHART_ID
+			        	, TRIM(#{item.orgCd}) AS ORG_CD
+			        	, TRIM(#{item.priorOrgCd}) AS PRIOR_ORG_CD
+			        	, TRIM(#{item.seq}) AS SEQ
+			        	, TRIM(#{item.orgLevel}) AS ORG_LEVEL
+			        	, TRIM(#{item.orderSeq}) AS ORDER_SEQ
+			          FROM DUAL
+        	  		</foreach>
+        	  ) T
+        	  WHERE T.ORG_CHART_ID IS NOT NULL
+        	    AND T.ORG_CD IS NOT NULL
+        ) S
+        ON (D.ORG_CHART_ID = S.ORG_CHART_ID 
+	        AND D.ORG_CD = S.ORG_CD)
+        WHEN MATCHED THEN
+        	UPDATE SET PRIOR_ORG_CD = S.PRIOR_ORG_CD
+	             , SEQ = S.SEQ
+	             , ORG_LEVEL = S.ORG_LEVEL
+	             , ORDER_SEQ = S.ORDER_SEQ
+	             , UPDATE_DATE = S.UPDATE_DATE
+	             , UPDATE_ID = S.UPDATE_ID
+        WHEN NOT MATCHED THEN
+        	INSERT (
+	        	  ORG_CHART_ID
+	        	, ORG_CD
+	        	, PRIOR_ORG_CD
+	        	, SEQ
+	        	, ORG_LEVEL
+	        	, ORDER_SEQ
+	        	, UPDATE_DATE
+	        	, UPDATE_ID
+	        ) 
+	        VALUES (
+	        	  S.ORG_CHART_ID
+	        	, S.ORG_CD
+	        	, S.PRIOR_ORG_CD
+	        	, S.SEQ
+	        	, S.ORG_LEVEL
+	        	, S.ORDER_SEQ
+	        	, S.UPDATE_DATE
+	        	, S.UPDATE_ID
+	        ) 
+    </update>
 	
 	<insert id="insertEmpHisTemp" parameterType="hashmap">
+		<foreach collection="list" item="item" separator="; ">
 		INSERT INTO WTM_IF_EMP_TEMP
 		(
 			  TENANT_ID
@@ -397,7 +519,6 @@
 			, LEADER_YN
 			, NOTE
 		) VALUES 
-		<foreach collection="list" item="item" separator=", ">
 			(
 			  #{item.tenantId}
 			, #{item.enterCd}
