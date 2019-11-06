@@ -30,7 +30,7 @@
 				   AND R.TIME_TYPE_CD = ${timeTypeCd}
 				   AND T.REQUEST_TYPE_CD = ${requestTypeCd}
 				   AND C.YMD BETWEEN ${symd} AND ${eymd}
-				   -- AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') <= #{edate} ))
+				   -- AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') <= #{edate} ))
 				 UNION ALL
 				SELECT O.*
 				  FROM WTM_APPL A
@@ -41,7 +41,7 @@
 				   AND A.APPL_IN_SABUN = ${sabun}
 				   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 				   AND A.APPL_STATUS_CD IN ('21','31')
-				   -- AND ((F_WTM_DATE_FORMAT(O.OT_SDATE,'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(O.OT_SDATE,'%Y%m%d%H%i') < #{edate}) OR (F_WTM_DATE_FORMAT(O.OT_EDATE,'%Y%m%d%H%i') > #{sdate} AND F_WTM_DATE_FORMAT(O.OT_EDATE,'%Y%m%d%H%i') <= #{edate}))
+				   -- AND ((F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') < #{edate}) OR (F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') > #{sdate} AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') <= #{edate}))
 				) X
 		]]>	
   	</select>
@@ -64,7 +64,7 @@
 				   AND E.ENTER_CD = ${enterCd}
 				   AND E.SABUN = ${sabun}
 				   AND R.TIME_TYPE_CD = ${timeTypeCd} 
-				   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') <= #{edate} ))
+				   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') <= #{edate} ))
 				 UNION ALL
 				SELECT O.*
 				  FROM WTM_APPL A

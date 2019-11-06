@@ -7,7 +7,7 @@
 	 <update id="calcOtMinute" parameterType="map">
 	 	UPDATE WTM_OT_APPL O
 		   SET OT_MINUTE = (
-			SELECT F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(O.OT_SDATE, '%H%i') ,F_WTM_DATE_FORMAT(O.OT_EDATE, '%H%i'),  '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,F_WTM_DATE_FORMAT(O.OT_SDATE, '%H%i') ,F_WTM_DATE_FORMAT(O.OT_EDATE, '%H%i'),  '')) 
+			SELECT F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(O.OT_SDATE, 'HI') ,F_WTM_DATE_FORMAT(O.OT_EDATE, 'HI'),  '','','') -  SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM,F_WTM_DATE_FORMAT(O.OT_SDATE, 'HI') ,F_WTM_DATE_FORMAT(O.OT_EDATE, 'HI'),  '')) 
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_WORK_CALENDAR C
 			    ON E.TENANT_ID = C.TENANT_ID
@@ -106,7 +106,7 @@
 			     , O.OT_SDATE AS sDate
 			     , O.OT_EDATE AS eDate
 			     , O.OT_MINUTE AS otMinute
-			     , CASE F_WTM_WEEKDAY(F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d')) 
+			     , CASE F_WTM_WEEKDAY(F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD')) 
 			  			WHEN 1 THEN '일' 
 						WHEN 2 THEN '월'
 						WHEN 3 THEN '화' 
@@ -114,7 +114,7 @@
 						WHEN 5 THEN '목' 
 						WHEN 6 THEN '금' 
 						WHEN 7 THEN '토' END AS sDay
-				  , CASE F_WTM_WEEKDAY(F_WTM_DATE_FORMAT(O.OT_EDATE, '%Y%m%d')) 
+				  , CASE F_WTM_WEEKDAY(F_WTM_DATE_FORMAT(O.OT_EDATE, 'YMD')) 
 			  			WHEN 1 THEN '일' 
 						WHEN 2 THEN '월'
 						WHEN 3 THEN '화' 

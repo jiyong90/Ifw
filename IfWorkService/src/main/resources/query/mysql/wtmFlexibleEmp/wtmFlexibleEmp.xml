@@ -26,7 +26,7 @@
 				AND E.ENTER_CD = #{enterCd}
 				AND E.SABUN = #{sabun}
 				AND M.BASE_WORK_YN = 'Y'
-				AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(E.EYMD, '%Y%m%d') AND F_WTM_TO_DATE(E.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
+				AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(E.EYMD, 'YMD') AND F_WTM_TO_DATE(E.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			UNION
 			SELECT A.TENANT_ID AS tenantId
 			     , A.ENTER_CD AS enterCd
@@ -54,7 +54,7 @@
 			WHERE A.TENANT_ID = #{tenantId}
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
-			  AND (F_WTM_TO_DATE(#{sYmd}, '%Y%m%d') <= F_WTM_TO_DATE(FA.EYMD, '%Y%m%d') AND F_WTM_TO_DATE(FA.SYMD, '%Y%m%d') < F_WTM_TO_DATE(#{eYmd}, '%Y%m%d'))
+			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			ORDER BY sYmd
         ]]>
     </select>
@@ -108,7 +108,7 @@
 		   AND C.ENTER_CD = #{enterCd}
 		   AND C.SABUN = #{sabun}
 		   AND C.YMD = #{ymd}
-		   AND #{ymd} BETWEEN F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE), '%Y%m%d') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE), '%Y%m%d') 
+		   AND #{ymd} BETWEEN F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE), 'YMD') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE), 'YMD') 
 		ORDER BY ymd, sDate
 		]]>
     </select>
@@ -264,7 +264,7 @@
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
-			   AND F_WTM_DATE_FORMAT(F_WTM_TO_DATE(#{ymd}, '%Y%m%d'), '%Y%m%d') BETWEEN E.SYMD AND E.EYMD
+			   AND F_WTM_DATE_FORMAT(F_WTM_TO_DATE(#{ymd}, 'YMD'), 'YMD') BETWEEN E.SYMD AND E.EYMD
         ]]>
     </select>
 	
@@ -297,7 +297,7 @@
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{empNo}
-			   AND F_WTM_TO_DATE(#{ymd},'%Y%m%d') BETWEEN F_WTM_TO_DATE(E.SYMD,'%Y%m%d') AND F_WTM_TO_DATE(E.EYMD,'%Y%m%d')
+			   AND F_WTM_TO_DATE(#{ymd},'YMD') BETWEEN F_WTM_TO_DATE(E.SYMD,'YMD') AND F_WTM_TO_DATE(E.EYMD,'YMD')
         ]]>
     </select>
     
@@ -342,8 +342,8 @@
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
 			SELECT D.WORK_DAY_RESULT_ID  
-				 , F_WTM_CALC_MINUTE( date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i'), '','', '') -
-				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.PLAN_SDATE, '%H%i') ,  date_format(D.PLAN_EDATE, '%H%i'), '' )) AS CM
+				 , F_WTM_CALC_MINUTE( F_WTM_DATE_FORMAT(D.PLAN_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.PLAN_EDATE, 'HI'), '','', '') -
+				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(D.PLAN_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.PLAN_EDATE, 'HI'), '' )) AS CM
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_WORK_CALENDAR C
 			    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
@@ -361,8 +361,8 @@
 			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 			   AND E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 			   AND D.TIME_TYPE_CD = 'BASE'
-			   AND (B.SHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i') 
-			     OR B.EHM BETWEEN date_format(D.PLAN_SDATE, '%H%i') AND date_format(D.PLAN_EDATE, '%H%i'))
+			   AND (B.SHM BETWEEN F_WTM_DATE_FORMAT(D.PLAN_SDATE, 'HI') AND F_WTM_DATE_FORMAT(D.PLAN_EDATE, 'HI') 
+			     OR B.EHM BETWEEN F_WTM_DATE_FORMAT(D.PLAN_SDATE, 'HI') AND F_WTM_DATE_FORMAT(D.PLAN_EDATE, 'HI'))
 			 GROUP BY D.WORK_DAY_RESULT_ID
 			) XX
 			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
@@ -403,8 +403,8 @@
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
 			SELECT D.WORK_DAY_RESULT_ID  
-				 , F_WTM_CALC_MINUTE( date_format(D.APPR_SDATE, '%H%i') ,  date_format(D.APPR_EDATE, '%H%i'), '','', '') -
-				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.APPR_SDATE, '%H%i') ,  date_format(D.APPR_EDATE, '%H%i'), '' )) AS CM
+				 , F_WTM_CALC_MINUTE( F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '','', '') -
+				   SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '' )) AS CM
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_WORK_CALENDAR C
 			    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
@@ -424,8 +424,8 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
-			   AND (B.SHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i') 
-			     OR B.EHM BETWEEN date_format(D.APPR_SDATE, '%H%i') AND date_format(D.APPR_EDATE, '%H%i'))
+			   AND (B.SHM BETWEEN F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI') AND F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI') 
+			     OR B.EHM BETWEEN F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI') AND F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'))
 			 GROUP BY D.WORK_DAY_RESULT_ID
 			) XX
 			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
@@ -586,7 +586,7 @@
 				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
 				   AND C.ENTRY_SDATE IS NOT NULL
 				   AND C.ENTRY_EDATE IS NOT NULL  
-				   AND C.ENTRY_EDATE <= F_WTM_TO_DATE(CONCAT(C.YMD, M.CORE_SHM), '%Y%m%d%H%i')
+				   AND C.ENTRY_EDATE <= F_WTM_TO_DATE(CONCAT(C.YMD, M.CORE_SHM), 'YMDHI')
 				   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL) 
 				   AND M.CORE_REQUIRE_YN = 'Y' 
     	]]>
@@ -720,19 +720,19 @@
     
     <select id="getWorktimePlan" parameterType="Long" resultType="map" >
     	<![CDATA[
-    	SELECT F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') AS ymd
-		     , F_WTM_DATE_FORMAT(O.OT_SDATE, '%H:%i') AS shm
-		     , F_WTM_DATE_FORMAT(O.OT_EDATE, '%H:%i') AS ehm
+    	SELECT F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD') AS ymd
+		     , F_WTM_DATE_FORMAT(O.OT_SDATE, 'H:I') AS shm
+		     , F_WTM_DATE_FORMAT(O.OT_EDATE, 'H:I') AS ehm
 		     , O.OT_MINUTE AS minute
 		     , 'OT' AS timeTypeCd
 		     , NULL AS taaCd
 		     , NULL AS taaNm
 			 , O.HOLIDAY_YN AS holidayYn
 			 , (SELECT M.TIME_NM FROM WTM_TIME_CD_MGR M JOIN WTM_WORK_CALENDAR C ON M.TIME_CD_MGR_ID = C.TIME_CD_MGR_ID 
-			 	WHERE C.TENANT_ID = E.TENANT_ID AND C.ENTER_CD = E.ENTER_CD AND C.SABUN = E.SABUN AND C.YMD = F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d')) AS timeNm
+			 	WHERE C.TENANT_ID = E.TENANT_ID AND C.ENTER_CD = E.ENTER_CD AND C.SABUN = E.SABUN AND C.YMD = F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD')) AS timeNm
 		  FROM WTM_FLEXIBLE_EMP E
 		  JOIN WTM_OT_APPL O
-		    ON F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN E.SYMD AND E.EYMD
+		    ON F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD') BETWEEN E.SYMD AND E.EYMD
 		  JOIN WTM_APPL A
 		    ON O.APPL_ID = A.APPL_ID
 			AND E.TENANT_ID = A.TENANT_ID
@@ -742,8 +742,8 @@
 		   AND A.APPL_STATUS_CD <> '99'
 		UNION ALL
     	SELECT C.YMD AS ymd
-    	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, '%H:%i') AS shm
-		     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_EDATE IS NOT NULL AND R.APPR_EDATE != '' THEN R.APPR_EDATE ELSE R.PLAN_EDATE END, '%H:%i') AS ehm
+    	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, 'H:I') AS shm
+		     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_EDATE IS NOT NULL AND R.APPR_EDATE != '' THEN R.APPR_EDATE ELSE R.PLAN_EDATE END, 'H:I') AS ehm
 		     , CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END AS minute
 		     , R.TIME_TYPE_CD AS timeTypeCd
 		     , R.TAA_CD AS taaCd
@@ -778,9 +778,9 @@
 		    	SELECT  E.TENANT_ID AS tenantId
 				     , E.ENTER_CD AS enterCd
 				     , E.SABUN AS sabun
-		    	     , F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') AS ymd
-				     , F_WTM_DATE_FORMAT(O.OT_SDATE, '%H:%i') AS shm
-				     , F_WTM_DATE_FORMAT(O.OT_EDATE, '%H:%i') AS ehm
+		    	     , F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD') AS ymd
+				     , F_WTM_DATE_FORMAT(O.OT_SDATE, 'H:I') AS shm
+				     , F_WTM_DATE_FORMAT(O.OT_EDATE, 'H:I') AS ehm
 				     , O.OT_MINUTE AS minute
 				     , 'OT' AS timeTypeCd
 				     , NULL AS taaCd
@@ -788,7 +788,7 @@
 					  , O.HOLIDAY_YN AS holidayYn
 				  FROM WTM_FLEXIBLE_EMP E
 				  JOIN WTM_OT_APPL O
-				    ON F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN E.SYMD AND E.EYMD
+				    ON F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD') BETWEEN E.SYMD AND E.EYMD
 				  JOIN WTM_APPL A
 				    ON O.APPL_ID = A.APPL_ID
 					AND E.TENANT_ID = A.TENANT_ID
@@ -796,7 +796,7 @@
 				   AND E.SABUN = A.APPL_SABUN
 				 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 				   AND A.APPL_STATUS_CD <> '99'
-				   AND F_WTM_DATE_FORMAT(O.OT_SDATE, '%Y%m%d') BETWEEN #{sYmd} AND #{eYmd}
+				   AND F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD') BETWEEN #{sYmd} AND #{eYmd}
 				   AND E.TENANT_ID = #{tenantId}
 				   AND E.ENTER_CD = #{enterCd}
 				   AND E.SABUN = #{sabun}
@@ -806,8 +806,8 @@
 		     , E.ENTER_CD AS enterCd
 		     , E.SABUN AS sabun
     	     , C.YMD AS ymd
-    	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, '%H:%i') AS shm
-		     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_EDATE IS NOT NULL AND R.APPR_EDATE != '' THEN R.APPR_EDATE ELSE R.PLAN_EDATE END, '%H:%i') AS ehm
+    	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, 'H:I') AS shm
+		     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_EDATE IS NOT NULL AND R.APPR_EDATE != '' THEN R.APPR_EDATE ELSE R.PLAN_EDATE END, 'H:I') AS ehm
 		     , CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END AS minute
 		     , R.TIME_TYPE_CD AS timeTypeCd
 		     , R.TAA_CD AS taaCd
@@ -1007,7 +1007,7 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
 			   AND C.YMD BETWEEN SUBSTR(#{sdate},1,6) AND SUBSTR(#{edate},1,6)
-			   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') <= #{edate} ))
+			   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') <= #{edate} ))
 			 UNION ALL
 			SELECT 2 
 			  FROM WTM_APPL A
@@ -1018,7 +1018,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND ((F_WTM_DATE_FORMAT(O.OT_SDATE,'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(O.OT_SDATE,'%Y%m%d%H%i') < #{edate}) OR (F_WTM_DATE_FORMAT(O.OT_EDATE,'%Y%m%d%H%i') > #{sdate} AND F_WTM_DATE_FORMAT(O.OT_EDATE,'%Y%m%d%H%i') <= #{edate}))
+			   AND ((F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') < #{edate}) OR (F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') > #{sdate} AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') <= #{edate}))
 			 UNION ALL
 			SELECT 3 
 			  FROM WTM_APPL A
@@ -1029,7 +1029,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND ((F_WTM_DATE_FORMAT(O.SUBS_SDATE,'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_SDATE,'%Y%m%d%H%i') < #{edate}) OR (F_WTM_DATE_FORMAT(O.SUBS_EDATE,'%Y%m%d%H%i') > #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'%Y%m%d%H%i') <= #{edate}))
+			   AND ((F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') < #{edate}) OR (F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI') > #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI') <= #{edate}))
 			) X
 		]]>	
   	</select>
@@ -1053,7 +1053,7 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
 			   AND R.TIME_TYPE_CD != 'BASE'
-			   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'%Y%m%d%H%i') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'%Y%m%d%H%i') <= #{edate} ))
+			   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') <= #{edate} ))
 			 UNION ALL
 			SELECT 2 
 			  FROM WTM_APPL A
@@ -1064,7 +1064,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND ((F_WTM_DATE_FORMAT(O.OT_SDATE,'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(O.OT_SDATE,'%Y%m%d%H%i') < #{edate}) OR (F_WTM_DATE_FORMAT(O.OT_EDATE,'%Y%m%d%H%i') > #{sdate} AND F_WTM_DATE_FORMAT(O.OT_EDATE,'%Y%m%d%H%i') <= #{edate}))
+			   AND ((F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') < #{edate}) OR (F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') > #{sdate} AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') <= #{edate}))
 			 UNION ALL
 			SELECT 3 
 			  FROM WTM_APPL A
@@ -1075,7 +1075,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND ((F_WTM_DATE_FORMAT(O.SUBS_SDATE,'%Y%m%d%H%i') >= #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_SDATE,'%Y%m%d%H%i') < #{edate}) OR (F_WTM_DATE_FORMAT(O.SUBS_EDATE,'%Y%m%d%H%i') > #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'%Y%m%d%H%i') <= #{edate}))
+			   AND ((F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') < #{edate}) OR (F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI') > #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI') <= #{edate}))
 			) X
 		]]>	
   	</select>
@@ -1189,11 +1189,11 @@
 	    			, C.SABUN as sabun
 	    			, C.TIME_TYPE_CD as timeTypeCd
 	    			, C.TAA_CD as taaCd
-	    			, DATE_FORMAT(C.PLAN_SDATE, '%Y%m%d%H%i') as planSdate
-	    			, DATE_FORMAT(C.PLAN_EDATE, '%Y%m%d%H%i') as planEdate
+	    			, F_WTM_DATE_FORMAT(C.PLAN_SDATE, 'YMDHI') as planSdate
+	    			, F_WTM_DATE_FORMAT(C.PLAN_EDATE, 'YMDHI') as planEdate
 	    			, C.PLAN_MINUTE as planMinute
-	    			, DATE_FORMAT(C.APPR_SDATE, '%Y%m%d%H%i') as apprSdate
-	    			, DATE_FORMAT(C.APPR_EDATE, '%Y%m%d%H%i') as apprEdate
+	    			, F_WTM_DATE_FORMAT(C.APPR_SDATE, 'YMDHI') as apprSdate
+	    			, F_WTM_DATE_FORMAT(C.APPR_EDATE, 'YMDHI') as apprEdate
 	    			, C.APPR_MINUTE as apprMinute
 	    			, C.WORK_YN as workYn
 			  FROM WTM_WORK_DAY_RESULT C
@@ -1215,7 +1215,7 @@
 			  , A.SYMD AS symd
 			  , A.EYMD AS eymd
 			  , A.NOTE AS note
-			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(NOW(), '%Y%m%d') THEN CONCAT('<a class="basic" onClick="setModify(', FLEXIBLE_EMP_ID, ')">근무변경/취소</a>')
+			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(NOW(), 'YMD') THEN CONCAT('<a class="basic" onClick="setModify(', FLEXIBLE_EMP_ID, ')">근무변경/취소</a>')
 					    ELSE '' END AS modify
 		  FROM WTM_FLEXIBLE_EMP A
 		 INNER JOIN WTM_FLEXIBLE_STD_MGR B
@@ -1345,8 +1345,8 @@
     <select id="getPlanByFlexibleEmpId" parameterType="map" resultType="map" >
     	<![CDATA[
     	SELECT C.YMD AS ymd
-    	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, '%H:%i') AS shm
-		     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_EDATE IS NOT NULL THEN R.APPR_EDATE ELSE R.PLAN_EDATE END, '%H:%i') AS ehm
+    	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, 'H:I') AS shm
+		     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_EDATE IS NOT NULL THEN R.APPR_EDATE ELSE R.PLAN_EDATE END, 'H:I') AS ehm
 		     , CASE WHEN R.APPR_MINUTE IS NOT NULL THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END AS minute
 		     , R.TIME_TYPE_CD AS timeTypeCd
 		     , R.TAA_CD AS taaCd
@@ -1385,14 +1385,14 @@
     
     <select id="getIntervalDateTime" parameterType="map" resultType="Date" >
     	<![CDATA[
-    		SELECT DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} + SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, date_format(D.SDATE, '%H%i') ,  date_format(D.EDATE, '%H%i'), '' ))
+    		SELECT DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} + SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(D.SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.EDATE, 'HI'), '' ))
 				MINUTE ) AS EDATE
 				  FROM WTM_WORK_CALENDAR C
 				  JOIN WTM_TIME_CD_MGR T
 				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 				  JOIN WTM_TIME_BREAK_MGR B
 				    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
-				  JOIN (SELECT STR_TO_DATE(#{yyyyMMddHHmmss}, '%Y%m%d%H%i%s') AS SDATE, DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} MINUTE) AS EDATE ) D
+				  JOIN (SELECT STR_TO_DATE(#{yyyyMMddHHmmss}, 'YMDHIS') AS SDATE, DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} MINUTE) AS EDATE ) D
 				    ON 1=1
 				 WHERE C.TENANT_ID = #{tenantId}
 				   AND C.ENTER_CD = #{enterCd}

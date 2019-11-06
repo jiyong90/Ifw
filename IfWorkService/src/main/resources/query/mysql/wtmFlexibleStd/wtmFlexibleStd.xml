@@ -77,7 +77,7 @@
     <select id="getRangeWeekDay" parameterType="map" resultType="map">
     	<![CDATA[
     	SELECT X.FIRST_DAY AS symd
-    		 , F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(X.FIRST_DAY,'%Y%m%d'), 6, 'D'), '%Y%m%d')  AS eymd
+    		 , F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(X.FIRST_DAY,'YMD'), 6, 'D'), 'YMD')  AS eymd
 		  FROM (
 		SELECT CASE WHEN  P.INFO_VALUE < F_WTM_WEEKDAY(#{d}) THEN MAX(D.SUN_YMD)
 				  	WHEN  P.INFO_VALUE > F_WTM_WEEKDAY(#{d}) THEN MIN(D.SUN_YMD)
@@ -87,9 +87,9 @@
 		    ON 1=1
 		 WHERE 1=1
 		   AND (
-			( P.INFO_VALUE < F_WTM_WEEKDAY(#{d}) AND D.SUN_YMD BETWEEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{d},'%Y%m%d'), -6, 'D') AND  #{d}  AND D.DAY_NM = P.INFO_VALUE)
+			( P.INFO_VALUE < F_WTM_WEEKDAY(#{d}) AND D.SUN_YMD BETWEEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{d},'YMD'), -6, 'D') AND  #{d}  AND D.DAY_NM = P.INFO_VALUE)
 			OR
-			( P.INFO_VALUE > F_WTM_WEEKDAY(#{d}) AND D.SUN_YMD BETWEEN  #{d} AND F_WTM_DATE_ADD(F_WTM_TO_DATE(#{d},'%Y%m%d'), 6, 'D')   AND D.DAY_NM = P.INFO_VALUE)
+			( P.INFO_VALUE > F_WTM_WEEKDAY(#{d}) AND D.SUN_YMD BETWEEN  #{d} AND F_WTM_DATE_ADD(F_WTM_TO_DATE(#{d},'YMD'), 6, 'D')   AND D.DAY_NM = P.INFO_VALUE)
 		    OR 
 		    ( P.INFO_VALUE = F_WTM_WEEKDAY(#{d}) AND D.SUN_YMD =  #{d} )
 		 	)

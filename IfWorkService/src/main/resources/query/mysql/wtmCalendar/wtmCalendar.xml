@@ -6,11 +6,11 @@
 <mapper namespace="com.isu.ifw.mapper.WtmCalendarMapper">
 	<select id="getCalendar" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT F_WTM_DATE_FORMAT(d.SUN_YMD,'%Y-%m-%d') as sunYmd
+			SELECT F_WTM_DATE_FORMAT(d.SUN_YMD,'Y-M-D') as sunYmd
 			     , d.DAY_NM as dayNm
 			     , d.NOTE as note
-			     , F_WTM_DATE_FORMAT(d.MOON_YMD,'%Y-%m-%d') as moonYmd
-			     , F_WTM_DATE_FORMAT(h.HOLIDAY_YMD,'%Y-%m-%d') as holidayYmd
+			     , F_WTM_DATE_FORMAT(d.MOON_YMD,'Y-M-D') as moonYmd
+			     , F_WTM_DATE_FORMAT(h.HOLIDAY_YMD,'Y-M-D') as holidayYmd
 			     , h.HOLIDAY_NM as holidayNm
 			  FROM WTM_DAY_MGR d
 			  JOIN WTM_HOLIDAY_MGR h
@@ -48,8 +48,8 @@
 				A.TENANT_ID as tenantId, 
 				A.ENTER_CD as enterCd, 
 				A.SABUN as sabun, 
-				F_WTM_GET_EMP_ORG_NM(#{tenantId}, #{enterCd}, A.SABUN, date_format(now(),'%Y%m%d')) AS orgNm,
-				F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, A.SABUN, date_format(now(),'%Y%m%d')) AS empNm,
+				F_WTM_GET_EMP_ORG_NM(#{tenantId}, #{enterCd}, A.SABUN, F_WTM_DATE_FORMAT(now(),'YMD')) AS orgNm,
+				F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, A.SABUN, F_WTM_DATE_FORMAT(now(),'YMD')) AS empNm,
 				A.YMD as ymd, 
 				A.TIME_CD_MGR_ID as timeCdMgrId,
 				A.ENTRY_SDATE as entrySdate,
@@ -61,9 +61,9 @@
 				A.NOTE as note,
 				B.FLEXIBLE_STD_MGR_ID as flexibleStdMgrId,
 				D.EMP_NM as empNm,
-				CASE WHEN A.YMD > date_format(now(),'%Y%m%d') THEN SUM(PLAN_MINUTE)
-					 WHEN A.YMD < date_format(now(),'%Y%m%d') THEN SUM(APPR_MINUTE)
-					 WHEN (A.YMD = date_format(now(),'%Y%m%d') && A.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
+				CASE WHEN A.YMD > F_WTM_DATE_FORMAT(now(),'YMD') THEN SUM(PLAN_MINUTE)
+					 WHEN A.YMD < F_WTM_DATE_FORMAT(now(),'YMD') THEN SUM(APPR_MINUTE)
+					 WHEN (A.YMD = F_WTM_DATE_FORMAT(now(),'YMD') && A.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
 					 ELSE SUM(PLAN_MINUTE) END AS totTime,
 				E.CORE_SHM as coreShm,
 				E.CORE_EHM as coreEhm
@@ -73,7 +73,7 @@
 			LEFT JOIN WTM_WORK_DAY_RESULT C
 				ON C.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=C.ENTER_CD AND A.SABUN=C.SABUN AND C.YMD = A.YMD 
 			JOIN WTM_EMP_HIS D
-				ON D.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN=D.SABUN AND date_format(now(),'%Y%m%d') BETWEEN D.SYMD AND D.EYMD 
+				ON D.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN=D.SABUN AND F_WTM_DATE_FORMAT(now(),'YMD') BETWEEN D.SYMD AND D.EYMD 
 			JOIN WTM_FLEXIBLE_STD_MGR E
 				ON E.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
 			WHERE A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '') 
@@ -108,9 +108,9 @@
 							C.HOLIDAY_YN as holidayYn,
 							C.NOTE as note,
 							E.FLEXIBLE_STD_MGR_ID as flexibleStdMgrId,
-							CASE WHEN C.YMD > date_format(now(),'%Y%m%d') THEN SUM(PLAN_MINUTE)
-								 WHEN C.YMD < date_format(now(),'%Y%m%d') THEN SUM(APPR_MINUTE)
-								 WHEN (C.YMD = date_format(now(),'%Y%m%d') && C.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
+							CASE WHEN C.YMD > F_WTM_DATE_FORMAT(now(),'YMD') THEN SUM(PLAN_MINUTE)
+								 WHEN C.YMD < F_WTM_DATE_FORMAT(now(),'YMD') THEN SUM(APPR_MINUTE)
+								 WHEN (C.YMD = F_WTM_DATE_FORMAT(now(),'YMD') && C.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
 								 ELSE SUM(PLAN_MINUTE) END AS totTime
 					  FROM WTM_WORK_CALENDAR C
 					  JOIN WTM_FLEXIBLE_EMP E
@@ -148,12 +148,12 @@
         <select id="getEmpWorkCalendarDayInfo" parameterType="map" resultType="hashmap">
         <![CDATA[
 		      SELECT A.YMD as ymd, 
-		      	F_WTM_DATE_FORMAT(A.ENTRY_SDATE, '%Y%m%d%H%i') as entrySdate, 
+		      	F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'YMDHI') as entrySdate, 
 		      	A.ENTRY_STYPE_CD as entryStypeCd, 
-		      	F_WTM_DATE_FORMAT(A.ENTRY_EDATE, '%Y%m%d%H%i') as entryEdate, 
+		      	F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'YMDHI') as entryEdate, 
 		      	A.ENTRY_ETYPE_CD as entryEtypeCd, 
-		      	F_WTM_DATE_FORMAT(MIN(B.PLAN_SDATE), '%Y%m%d%H%i') as planSdate, 
-		      	F_WTM_DATE_FORMAT(MAX(B.PLAN_EDATE), '%Y%m%d%H%i') as planEdate,
+		      	F_WTM_DATE_FORMAT(MIN(B.PLAN_SDATE), 'YMDHI') as planSdate, 
+		      	F_WTM_DATE_FORMAT(MAX(B.PLAN_EDATE), 'YMDHI') as planEdate,
 		      	F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) as flexibleNm,
 		      	F_WTM_GET_TIME_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) as timeNm
 			FROM WTM_WORK_CALENDAR A 
@@ -189,11 +189,11 @@
 			UPDATE WTM_WORK_CALENDAR
 			SET 
 				<if test="item.chgSdate!=null and !item.chgSdate.equals('')">
-				ENTRY_SDATE=F_WTM_TO_DATE(#{item.chgSdate}, '%Y%m%d%H%i%s'), 
+				ENTRY_SDATE=F_WTM_TO_DATE(#{item.chgSdate}, 'YMDHIS'), 
 				ENTRY_STYPE_CD = #{typeCd},
 				</if>
 				<if test="item.chgEdate!=null and !item.chgEdate.equals('')">
-				ENTRY_EDATE=F_WTM_TO_DATE(#{item.chgEdate}, '%Y%m%d%H%i%s'), 
+				ENTRY_EDATE=F_WTM_TO_DATE(#{item.chgEdate}, 'YMDHIS'), 
 				ENTRY_ETYPE_CD = #{typeCd},
 				</if>
 				UPDATE_DATE = now(),

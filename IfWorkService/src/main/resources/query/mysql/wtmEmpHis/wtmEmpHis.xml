@@ -35,7 +35,7 @@
 			   AND ENTER_CD = #{enterCd} 
 			   AND (SABUN LIKE CONCAT(#{searchKeyword}, '%')
 					  OR EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')) 
-				AND CASE WHEN #{sYmd} = '' THEN date_format(now(),'%Y%m%d')
+				AND CASE WHEN #{sYmd} = '' THEN F_WTM_DATE_FORMAT(now(),'YMD')
 				         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
         ]]>
     </select>

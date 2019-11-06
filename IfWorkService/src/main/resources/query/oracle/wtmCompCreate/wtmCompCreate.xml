@@ -6,7 +6,7 @@
 <mapper namespace="com.isu.ifw.mapper.WtmCompCreateMapper">
     <select id="getCompCreateList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, F_WTM_DATE_FORMAT(NOW(),'%Y%m%d')) AS orgNm
+        	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, F_WTM_DATE_FORMAT(NOW(),'YMD')) AS orgNm
 				  , A.SABUN AS sabun
 				  , B.EMP_NM AS empNm
 				  , SUM(TOT_MINUTE) AS totMinute

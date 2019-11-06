@@ -39,11 +39,11 @@
   		  FROM (
 	  		SELECT T.TENANT_ID
 			     , T.ENTER_CD
-			     , F_WTM_GET_EMP_ORG_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, '%Y%m%d')) AS ORG_NM
+			     , F_WTM_GET_EMP_ORG_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, 'YMD')) AS ORG_NM
 			     , T.SABUN
-			     , F_WTM_GET_EMP_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, '%Y%m%d')) AS EMP_NM
+			     , F_WTM_GET_EMP_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, 'YMD')) AS EMP_NM
 			     , T.WORK_TYPE_CD 
-			     , F_WTM_GET_FLEXIBLE_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, '%Y%m%d')) AS FLEXIBLE_NM
+			     , F_WTM_GET_FLEXIBLE_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, 'YMD')) AS FLEXIBLE_NM
 			     , T.FLEXIBLE_SDATE
 			     , T.FLEXIBLE_EDATE
 			     , CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_SDATE ELSE T.WEEK_SDATE END AS WEEK_SDATE
@@ -111,11 +111,11 @@
 			  , C.ENTRY_EDATE AS entryEdate
 			  , R.TIME_TYPE_CD AS timeTypeCd
 			  , R.TAA_CD AS taaCd
-			  , F_WTM_DATE_FORMAT(R.PLAN_SDATE, '%Y%m%d%H%i') AS planSdate
-			  , F_WTM_DATE_FORMAT(R.PLAN_EDATE, '%Y%m%d%H%i') AS planEdate
+			  , F_WTM_DATE_FORMAT(R.PLAN_SDATE, 'YMDHI') AS planSdate
+			  , F_WTM_DATE_FORMAT(R.PLAN_EDATE, 'YMDHI') AS planEdate
 			  , CONCAT(FLOOR(R.PLAN_MINUTE/60),':',LPAD(MOD(R.PLAN_MINUTE,60),2,'0')) AS planMinute
-			  , F_WTM_DATE_FORMAT(R.APPR_SDATE, '%Y%m%d%H%i') AS apprSdate
-			  , F_WTM_DATE_FORMAT(R.APPR_EDATE, '%Y%m%d%H%i') AS apprEdate
+			  , F_WTM_DATE_FORMAT(R.APPR_SDATE, 'YMDHI') AS apprSdate
+			  , F_WTM_DATE_FORMAT(R.APPR_EDATE, 'YMDHI') AS apprEdate
 			  , CONCAT(FLOOR(R.APPR_MINUTE/60),':',LPAD(MOD(R.APPR_MINUTE,60),2,'0')) AS apprMinute
 			FROM WTM_WORK_CALENDAR C
 			LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
@@ -140,9 +140,9 @@
 			 , C.YMD as ymd
 			 , F_WTM_GET_FLEXIBLE_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS flexibleNm
 			 , C.TIME_CD_MGR_ID as timeCdMgrId
-			 , F_WTM_DATE_FORMAT(C.ENTRY_SDATE, '%Y%m%d%H%i') as entrySdate
+			 , F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'YMDHI') as entrySdate
 			 , C.ENTRY_STYPE_CD as entryStypeCd
-			 , F_WTM_DATE_FORMAT(C.ENTRY_EDATE, '%Y%m%d%H%i') as entryEdate
+			 , F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'YMDHI') as entryEdate
 			 , C.ENTRY_ETYPE_CD as enteryEtypeCd
 			 , C.WORK_CLOSE_YN as workCloseYn
 			 , C.HOLIDAY_YN as holidayYn
@@ -181,15 +181,15 @@
 		     , ymd
 		     , flexibleNm
 		     , timeCdMgrId
-		     , F_WTM_DATE_FORMAT(planSdate, '%Y%m%d%H%i') AS planSdate
-		     , F_WTM_DATE_FORMAT(entrySdate, '%Y%m%d%H%i') AS entrySdate
+		     , F_WTM_DATE_FORMAT(planSdate, 'YMDHI') AS planSdate
+		     , F_WTM_DATE_FORMAT(entrySdate, 'YMDHI') AS entrySdate
 		     , CASE WHEN diffSsecond is not null THEN 
 			  					CASE WHEN diffSsecond&lt;0 THEN CONCAT('-',FLOOR(ABS(diffSsecond)/60),':',LPAD(MOD(ABS(diffSsecond),60),2,'0')) 
 			  						  WHEN diffSsecond=0 THEN NULL
 			  						  ELSE CONCAT(FLOOR(diffSsecond/60),':',LPAD(MOD(diffSsecond,60),2,'0')) END
 						ELSE diffSsecond END AS diffSminute
-		     , F_WTM_DATE_FORMAT(planEdate, '%Y%m%d%H%i') AS planEdate
-		     , F_WTM_DATE_FORMAT(entryEdate, '%Y%m%d%H%i') AS entryEdate
+		     , F_WTM_DATE_FORMAT(planEdate, 'YMDHI') AS planEdate
+		     , F_WTM_DATE_FORMAT(entryEdate, 'YMDHI') AS entryEdate
 		     , CASE WHEN diffEsecond is not null THEN 
 			  					CASE WHEN diffEsecond&lt;0 THEN CONCAT(FLOOR(ABS(diffEsecond)/60),':',LPAD(MOD(ABS(diffEsecond),60),2,'0')) 
 			  						  WHEN diffEsecond=0 THEN NULL

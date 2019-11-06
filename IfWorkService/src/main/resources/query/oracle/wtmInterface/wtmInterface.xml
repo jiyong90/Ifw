@@ -7,7 +7,7 @@
 
 	<select id="getIfLastDate" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT DATE_FORMAT(MAX(UPDATE_DATE), '%Y%m%d%H%i%s') AS LAST_DATE
+        	SELECT F_WTM_DATE_FORMAT(MAX(UPDATE_DATE), 'YMDHIS') AS LAST_DATE
 			  FROM WTM_IF_HIS
 			 WHERE TENANT_ID = #{tenantId}
 			   AND IF_ITEM = #{ifType}
@@ -16,7 +16,7 @@
     </select>
     <select id="getIfNowDate" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT DATE_FORMAT(NOW(), '%Y%m%d%H%i%s') AS IF_DATE
+        	SELECT F_WTM_DATE_FORMAT(NOW(), 'YMDHIS') AS IF_DATE
 			  FROM DUAL
         ]]>
     </select>
@@ -43,9 +43,9 @@
 			  #{tenantId}
 			, #{ifStatus}
 			, #{ifItem}
-			, F_WTM_TO_DATE(#{ifEndDate}, '%Y%m%d%H%i%s')
+			, F_WTM_TO_DATE(#{ifEndDate}, 'YMDHIS')
 			, #{ifMsg}
-			, F_WTM_TO_DATE(#{updateDate}, '%Y%m%d%H%i%s')
+			, F_WTM_TO_DATE(#{updateDate}, 'YMDHIS')
 		)
 	</insert>
 	
@@ -109,7 +109,7 @@
 	<update id="updateWtmCodeHisEymd" parameterType="hashmap">
 		<![CDATA[
 			UPDATE WTM_CODE
-			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
 			  , UPDATE_DATE = NOW()
 			  , UPDATE_ID = '0'
 			WHERE 1=1
@@ -124,7 +124,7 @@
 	<update id="updateWtmCodeHisSymd" parameterType="hashmap" >
         <![CDATA[
 			UPDATE WTM_CODE
-			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
 			  , UPDATE_DATE = NOW()
 			  , UPDATE_ID = '0'
 			WHERE 1=1
@@ -277,7 +277,7 @@
     <update id="updateWtmOrgCodeHisEymd" parameterType="hashmap">
 		<![CDATA[
 			UPDATE WTM_ORG_CODE
-			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
 			  , UPDATE_DATE = NOW()
 			  , UPDATE_ID = '0'
 			WHERE 1=1
@@ -291,7 +291,7 @@
 	<update id="updateWtmOrgCodeHisSymd" parameterType="hashmap" >
         <![CDATA[
 			UPDATE WTM_ORG_CODE
-			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, '%Y%m%d'), INTERVAL -1 DAY), '%Y%m%d'), '29991231')
+			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
 			  , UPDATE_DATE = NOW()
 			  , UPDATE_ID = '0'
 			WHERE 1=1
@@ -433,7 +433,7 @@
 		SELECT TENANT_ID AS tenantId, ENTER_CD AS enterCd, SABUN AS sabun, '0' as userId 
 		  FROM WTM_IF_EMP_MSG
 		 WHERE TENANT_ID = #{tenantId}
-		   AND DATE_FORMAT(UPDATE_DATE, '%Y%m%d%H%i%s') BETWEEN #{ifEndDate} AND #{updateDate}
+		   AND F_WTM_DATE_FORMAT(UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
 		   AND CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
 		   AND NEW_VALUE IS NOT NULL
 		 ORDER BY ENTER_CD, SABUN

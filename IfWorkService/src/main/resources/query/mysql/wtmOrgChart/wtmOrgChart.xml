@@ -31,7 +31,7 @@
 									   ON C.ORG_CHART_ID = D.ORG_CHART_ID
 								   WHERE C.TENANT_ID = #{tenantId}
 							   	  AND C.ENTER_CD = #{enterCd}
-							        AND F_WTM_DATE_FORMAT(#{ymd}, '%Y%m%d') BETWEEN C.SYMD AND C.EYMD
+							        AND F_WTM_DATE_FORMAT(#{ymd}, 'YMD') BETWEEN C.SYMD AND C.EYMD
 							   ) O
 				 ) S
 			 WHERE S.ORG_CD IS NOT NULL
