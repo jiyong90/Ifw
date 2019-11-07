@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<#include "/metadata.ftl">
+    <title>근태관리 시스템</title>
+</head>
+<body style="background-color: #e2e5ed;" >
+
 <div id="401redirectHrPage">
 <div class="container-fluid">
                 <section class="error-page">
@@ -26,4 +34,6 @@ else
 	result = "뿅";
 document.getElementById("message").innerHTML=result;
 </script>
+</body>
+</html>
 
