@@ -877,7 +877,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.rangeInfo = {};
-						//console.log(data);
+						console.log(data);
 						if(data!=null) {
 							$this.rangeInfo = data;
 							
