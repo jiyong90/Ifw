@@ -119,7 +119,7 @@ public class IfwLoginController {
 			}
 			
 			if(tm == null) {
-				response.sendRedirect(request.getContextPath()+"/info?status=100");
+				response.sendRedirect(request.getContextPath()+"/info/"+tsId+"?status=100");
 			}
 
 			tenantId = tm.getTenantId();
@@ -581,7 +581,7 @@ public class IfwLoginController {
 		
 		if(userData == null) {
 			try {
-				response.sendRedirect(request.getContextPath()+"/info?status=120");
+				response.sendRedirect(request.getContextPath()+"/info/"+tsId+"?status=120");
 				return;
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -601,7 +601,7 @@ public class IfwLoginController {
 			tm = tenantModuleRepo.findByTenantKey(tsId);
 
 			if(tm == null) {
-				response.sendRedirect(request.getContextPath()+"/info?status=100");
+				response.sendRedirect(request.getContextPath()+"/info/"+tsId+"?status=100");
 				return;
 			}
 
@@ -610,7 +610,7 @@ public class IfwLoginController {
 			
 			WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, userData.get("enterCd").toString(), userData.get("empNo").toString(), WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
-				response.sendRedirect(request.getContextPath()+"/info?status=130");
+				response.sendRedirect(request.getContextPath()+"/info/"+tsId+"?status=130");
 				return;
 			}
 			
@@ -642,7 +642,7 @@ public class IfwLoginController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
-				response.sendRedirect(request.getContextPath()+"/info");
+				response.sendRedirect(request.getContextPath()+"/info/"+tsId);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

@@ -1,0 +1,95 @@
+@charset "utf-8";
+
+/* color code */
+/* layout.css */
+/* gnb mark */
+.navbar .gnb-nav-wrap .ico-wrap .new {
+    background-color: #0f5aa4;
+}
+/* sidebar */
+#sidebar {
+  background: #0f5aa4;
+}
+
+#sidebar.active ul li.active a span.title {
+    color: #0f5aa4;
+}
+
+#sidebar.active ul li a:hover span.title {
+    color: #0f5aa4;
+}
+
+#sidebar ul li a:hover {
+    color: #0f5aa4;
+}
+
+#sidebar ul li a.dropdown-toggle.collapsed {
+    color: #0f5aa4;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #0f5aa4;
+}
+
+#sidebar #lnb-sub li.active>a {
+    color: #0f5aa4;
+}
+
+/* common.css */
+/* button */
+.btn-write {
+    background-color: #0f5aa4;
+    border-color: #004f9c;
+}
+.btn-write:hover {
+    color: #ffffff;
+    background-color: #2576c6;
+    border-color: #004f9c;
+}
+.btn-default {
+    color: #ffffff;
+    background-color: #0f5aa4;
+    border-color: #004f9c;
+}
+.btn-default:hover {
+    color: #ffffff;
+    background-color: #2576c6;
+    border-color: #004f9c;
+}
+/* 결재페이지 */
+[type=button].btn-approval.sign {
+    color: #0f5aa4;
+}
+.btn-approval.sign:hover {
+    color:#ffffff;
+    background-color: #0f5aa4;
+}
+/* 근무계획 */
+.white-box-wrap .btn-info-wrap a {
+    color: #0f5aa4;
+}
+.white-box-wrap .btn-info-wrap span {
+    color: #0f5aa4;
+}
+.work-plan-wrap .sub-list .sub-title i.fas {
+    color: #0f5aa4;
+}
+/* calendar */
+.calendar-wrap {
+    border-top: 3px solid #0f5aa4;
+}
+/* modal */
+.modal-app-wrap .guide {
+    color: #0f5aa4;
+}
+.modal-app-wrap i.fas {
+    color: #0f5aa4;
+}
+/* error page */
+.error-page .container .icon-wrap i {
+    color: #0f5aa4;
+}
+.error-page .container a.btn-main {
+    background-color: #0f5aa4;
+}

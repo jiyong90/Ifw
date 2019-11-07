@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<#include "/metadata.ftl">
+    <title>근태관리 시스템</title>
+</head>
+<body style="background-color: #e2e5ed;" >
+
 <div id="401redirectHrPage">
 <div class="container-fluid">
                 <section class="error-page">
@@ -14,16 +22,16 @@
             </div>
 
 <script>
-var result;
+var result = "일시적으로 서비스를 사용할 수 없는 상태입니다.";
 
 if (${status} == "100") 
 	result = "테넌트가 존재핮 않습니다. url을 확인해주세요.";
 else if(${status} == "120")
 	result = "HR 로그인을 다시 하신 후 다시 시도해주세요.";
-else if(${status} == "120")
+else if(${status} == "130")
 	result = "사용자 정보가 존재하지 않습니다.";
-else
-	result = "뿅";
 document.getElementById("message").innerHTML=result;
 </script>
+</body>
+</html>
 

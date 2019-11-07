@@ -253,10 +253,11 @@ public class ViewController {
 		
 	}
 	
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView viewInfo(HttpServletRequest request) throws Exception {
+	@RequestMapping(value = "/info/{tsId}", method = RequestMethod.GET)
+	public ModelAndView viewInfo(@PathVariable String tsId, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("info");
 		mv.addObject("status", request.getParameter("status"));
+		mv.addObject("tsId", tsId);
 		return mv;
 	}
 	
