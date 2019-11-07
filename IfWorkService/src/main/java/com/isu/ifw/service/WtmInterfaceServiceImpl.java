@@ -99,7 +99,10 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		
 		if(result != null && result.size() > 0) {
 			try {
+				System.out.println("info_data : " + result.get("info_data").toString());
+				
 				ifUrl = result.get("info_data").toString() + ifaddUrl + param;
+				
 				System.out.println("ifUrl : " + ifUrl);
 			} catch(Exception e){
 	            e.printStackTrace();
@@ -314,6 +317,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		ifMap.put("holidayYmd", getIfList.get(i).get("YMD"));
 	        		ifMap.put("holidayNm", getIfList.get(i).get("HOLIDAY_NM"));
 	        		ifMap.put("sunYn", "Y");
+	        		//System.out.println(getIfList.get(i).get("YMD") + "///" + getIfList.get(i).get("FESTIVE_YN"));
 	        		ifMap.put("festiveYn", getIfList.get(i).get("FESTIVE_YN"));
 	        		ifMap.put("payYn", getIfList.get(i).get("PAY_YN"));
 	        		ifList.add(ifMap);
@@ -972,7 +976,9 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        try {
 	        	List<Map<String, Object>> ifList = new ArrayList();
    	        	List<Map<String, Object>> ifUpdateList = new ArrayList();
+   	        	
    	        	for(int i=0; i<getIfList.size(); i++) {
+   	        		System.out.println("************* i : " + i);
 	        		// 사원이력을 임시테이블로 이관 후 프로시저에서 이력을 정리한다.
 	        		Map<String, Object> ifMap = new HashMap<>();
 	        		ifMap.put("tenantId", tenantId);
@@ -993,33 +999,36 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		ifMap.put("payTypeCd", getIfList.get(i).get("PAY_TYPE_CD"));
 	        		ifMap.put("orgPath", getIfList.get(i).get("ORG_PATH"));
 	        		ifMap.put("leaderYn", getIfList.get(i).get("LEADER_YN"));
+
 	        		ifList.add(ifMap);
+//	        		resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifMap);
+//	        		retMsg = resultCnt + "건 반영완료";
 	        	}
 	        	
 	        	try {
-	        	// 추가건이 있으면
-	    		if (ifList.size() > 0) {
-	    			//System.out.println("insert size : " + ifList.size());
-	    			resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifList);
-	    			if(resultCnt > 0) {
-	        			retMsg = resultCnt + "건 반영완료";
-	        		} else {
-	        			retMsg = "갱신자료없음";
-	        		}
-	    			
-	    			// temp 저장후 프로시저 호출
-	    			HashMap<String, Object> setSpRetMap = new HashMap<>();
-	    			setSpRetMap.put("tenantId", tenantId);
-	    			setSpRetMap.put("nowDataTime", nowDataTime);
-	    			setSpRetMap.put("retCode", "");
-	    			wtmInterfaceMapper.setEmpHis(setSpRetMap);
-	    			
-	    			String retCode = setSpRetMap.get("retCode").toString();
-	    			ifHisMap.put("ifStatus", retCode);
-	    			if("ERR".equals(retCode)) {
-	    				retMsg = "사원정보 이관갱신중 오류 오류로그 확인";
-	    			}
-	    		}
+		        	// 추가건이 있으면
+		    		if (ifList.size() > 0) {
+		    			//System.out.println("insert size : " + ifList.size());
+		    			resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifList);
+		    			if(resultCnt > 0) {
+		        			retMsg = resultCnt + "건 반영완료";
+		        		} else {
+		        			retMsg = "갱신자료없음";
+		        		}
+		    			
+		    			// temp 저장후 프로시저 호출
+		    			HashMap<String, Object> setSpRetMap = new HashMap<>();
+		    			setSpRetMap.put("tenantId", tenantId);
+		    			setSpRetMap.put("nowDataTime", nowDataTime);
+		    			setSpRetMap.put("retCode", "");
+		    			wtmInterfaceMapper.setEmpHis(setSpRetMap);
+		    			
+		    			String retCode = setSpRetMap.get("retCode").toString();
+		    			ifHisMap.put("ifStatus", retCode);
+		    			if("ERR".equals(retCode)) {
+		    				retMsg = "사원정보 이관갱신중 오류 오류로그 확인";
+		    			}
+		    		}
 	        	}catch(Exception e) {
 	        		ifHisMap.put("ifStatus", "ERR");
 	        		retMsg = "emp set : temp 자료저장 오류";

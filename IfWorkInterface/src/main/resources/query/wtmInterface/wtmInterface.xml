@@ -18,7 +18,7 @@
     <select id="getHoliday" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT ENTER_CD, LOCATION_CD, YY||MM||DD AS YMD, HOLIDAY_NM, FESTIVE_YN, PAY_YN
-			  FROM V_FTM_HOLIDAY
+			  FROM V_IF_WTM_HOLIDAY
 			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
 			 ORDER BY ENTER_CD
         ]]>
@@ -76,6 +76,7 @@
 			     , DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, ORG_PATH, LEADER_YN
 			  FROM V_IF_WTM_EMPHIS
 			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
+			   AND SABUN BETWEEN '160000' AND '190000' -- 개발테스트용 임시
 			 ORDER BY ENTER_CD, SABUN, SYMD
         ]]>
     </select>

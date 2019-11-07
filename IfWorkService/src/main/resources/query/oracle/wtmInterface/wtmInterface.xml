@@ -23,7 +23,7 @@
     
     <select id="getIfUrl" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT INFO_DATA
+        	SELECT INFO_DATA AS "info_data"
 			  FROM comm_management_infomation
 			 WHERE tenant_id = #{tenantId}
 			   AND info_key = 'HR.IT_URL'
@@ -63,8 +63,8 @@
     </select>
     
     <insert id="insertWtmCode" parameterType="hashmap">
-    	<foreach collection="list" item="item" separator="; ">
-			INSERT INTO WTM_CODE
+    	<foreach collection="list" item="item" index="index" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+			INTO WTM_CODE
 			(
 				  TENANT_ID
 				, ENTER_CD 
@@ -162,14 +162,14 @@
         	  		<foreach collection="list" item="item">   
        				 <![CDATA[ 
         	  		UNION ALL
-		        	SELECT TRIM(#{item.tenantId}) AS TENANT_ID
-			        	, TRIM(#{item.enterCd}) AS ENTER_CD
-			        	, TRIM(#{item.locationCd}) AS BISINESS_PLACE_CD
-			        	, TRIM(#{item.holidayYmd}) AS HOLIDAY_YMD
-			        	, TRIM(#{item.holidayNm}) AS HOLIDAY_NM
-			        	, TRIM(#{item.sunYn}) AS SUN_YN
+		        	SELECT TRIM(#{item.tenantId, jdbcType=NUMERIC}) AS TENANT_ID
+			        	, TRIM(#{item.enterCd, jdbcType=VARCHAR}) AS ENTER_CD
+			        	, TRIM(#{item.locationCd, jdbcType=VARCHAR}) AS BISINESS_PLACE_CD
+			        	, TRIM(#{item.holidayYmd, jdbcType=VARCHAR}) AS HOLIDAY_YMD
+			        	, TRIM(#{item.holidayNm, jdbcType=VARCHAR}) AS HOLIDAY_NM
+			        	, TRIM(#{item.sunYn, jdbcType=VARCHAR}) AS SUN_YN
 			        	, TRIM(#{item.FESTIVE_YN, jdbcType=VARCHAR}) AS FESTIVE_YN
-			        	, TRIM(#{item.payYn}) AS PAY_YN
+			        	, TRIM(#{item.payYn, jdbcType=VARCHAR}) AS PAY_YN
 			          FROM DUAL
         				]]>
         	  		</foreach>
@@ -226,8 +226,8 @@
     </select>
     
     <insert id="insertTaaCode" parameterType="hashmap">
-    	<foreach collection="list" item="item" separator="; ">
-		INSERT INTO WTM_TAA_CODE
+    	<foreach collection="list" item="item" index="index" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+		INTO WTM_TAA_CODE
 		(
 			  TENANT_ID
 			, ENTER_CD 
@@ -241,14 +241,14 @@
 			, UPDATE_ID
 		) VALUES 
 			(
-			  #{item.tenantId}
-			, #{item.enterCd}
-			, #{item.taaCd}
-			, #{item.taaNm}
-			, #{item.taaTypeCd}
-			, #{item.holInclYn}
-			, #{item.requestTypeCd}
-			, #{item.workYn}
+			  #{item.tenantId, jdbcType=NUMERIC}
+			, #{item.enterCd, jdbcType=VARCHAR}
+			, #{item.taaCd, jdbcType=VARCHAR}
+			, #{item.taaNm, jdbcType=VARCHAR}
+			, #{item.taaTypeCd, jdbcType=VARCHAR}
+			, #{item.holInclYn, jdbcType=VARCHAR}
+			, #{item.requestTypeCd, jdbcType=VARCHAR}
+			, #{item.workYn, jdbcType=VARCHAR}
 			, SYSDATE
 			, '0'
 			)
@@ -259,23 +259,23 @@
 		UPDATE WTM_TAA_CODE SET
 		    TAA_NM = CASE 
 		    <foreach collection="list" item="item" separator="">
-		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.taaNm}
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.taaNm, jdbcType=VARCHAR}
 		    </foreach> END
 		  , TAA_TYPE_CD = CASE 
 		    <foreach collection="list" item="item" separator="">
-		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.taaTypeCd}
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.taaTypeCd, jdbcType=VARCHAR}
 		    </foreach> END
 		  , HOL_INCL_YN = CASE 
 		    <foreach collection="list" item="item" separator="">
-		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.holInclYn}
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.holInclYn, jdbcType=VARCHAR}
 		    </foreach> END
 		  , REQUEST_TYPE_CD = CASE 
 		    <foreach collection="list" item="item" separator="">
-		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.requestTypeCd}
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.requestTypeCd, jdbcType=VARCHAR}
 		    </foreach> END
 		  , WORK_YN = CASE 
 		    <foreach collection="list" item="item" separator="">
-		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.workYn}
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.workYn, jdbcType=VARCHAR}
 		    </foreach> END
 		  , UPDATE_DATE = SYSDATE
 		  , UPDATE_ID = '0'
@@ -310,14 +310,14 @@
 				  	  FROM DUAL 
         	  		<foreach collection="list" item="item">    
         	  		UNION ALL
-		        	SELECT TRIM(#{item.tenantId}) AS TENANT_ID
-			        	, TRIM(#{item.enterCd}) AS ENTER_CD
-			        	, TRIM(#{item.orgCd}) AS ORG_CD
-			        	, TRIM(#{item.symd}) AS SYMD
-			        	, TRIM(#{item.orgNm}) AS ORG_NM
-			        	, TRIM(#{item.eymd}) AS EYMD
-			        	, TRIM(#{item.orgType}) AS ORG_TYPE
-			        	, TRIM(#{item.note}) AS NOTE
+		        	SELECT TRIM(#{item.tenantId, jdbcType=NUMERIC}) AS TENANT_ID
+			        	, TRIM(#{item.enterCd, jdbcType=VARCHAR}) AS ENTER_CD
+			        	, TRIM(#{item.orgCd, jdbcType=VARCHAR}) AS ORG_CD
+			        	, TRIM(#{item.symd, jdbcType=VARCHAR}) AS SYMD
+			        	, TRIM(#{item.orgNm, jdbcType=VARCHAR}) AS ORG_NM
+			        	, TRIM(#{item.eymd, jdbcType=VARCHAR}) AS EYMD
+			        	, TRIM(#{item.orgType, jdbcType=VARCHAR}) AS ORG_TYPE
+			        	, TRIM(#{item.note, jdbcType=VARCHAR}) AS NOTE
 			          FROM DUAL
         	  		</foreach>
         	  ) T
@@ -411,12 +411,12 @@
         	, UPDATE_DATE
         	, UPDATE_ID
         ) VALUES 
-		(     #{tenantId}
-        	, #{enterCd}
-        	, #{orgChartNm}
-        	, #{symd}
-        	, #{eymd}
-        	, #{note}
+		(     #{tenantId, jdbcType=NUMERIC}
+        	, #{enterCd, jdbcType=VARCHAR}
+        	, #{orgChartNm, jdbcType=VARCHAR}
+        	, #{symd, jdbcType=VARCHAR}
+        	, #{eymd, jdbcType=VARCHAR}
+        	, #{note, jdbcType=VARCHAR}
         	, SYSDATE
         	, '0'
         )
@@ -424,9 +424,9 @@
     
     <update id="updateWtmOrgChart" parameterType="hashmap">
 		UPDATE WTM_ORG_CHART SET
-		    ORG_CHART_NM = #{orgChartNm}
-		  , EYMD = #{eymd}
-		  , NOTE = #{note}
+		    ORG_CHART_NM = #{orgChartNm, jdbcType=VARCHAR}
+		  , EYMD = #{eymd, jdbcType=VARCHAR}
+		  , NOTE = #{note, jdbcType=VARCHAR}
 		  , UPDATE_DATE = SYSDATE
 		  , UPDATE_ID = '0'
 		WHERE ORG_CHART_ID = #{orgChartId}
@@ -453,12 +453,12 @@
 				  	  FROM DUAL 
         	  		<foreach collection="list" item="item">    
         	  		UNION ALL
-		        	SELECT TRIM(#{item.orgChartId}) AS ORG_CHART_ID
-			        	, TRIM(#{item.orgCd}) AS ORG_CD
-			        	, TRIM(#{item.priorOrgCd}) AS PRIOR_ORG_CD
-			        	, TRIM(#{item.seq}) AS SEQ
-			        	, TRIM(#{item.orgLevel}) AS ORG_LEVEL
-			        	, TRIM(#{item.orderSeq}) AS ORDER_SEQ
+		        	SELECT TRIM(#{item.orgChartId, jdbcType=NUMERIC}) AS ORG_CHART_ID
+			        	, TRIM(#{item.orgCd, jdbcType=VARCHAR}) AS ORG_CD
+			        	, TRIM(#{item.priorOrgCd, jdbcType=VARCHAR}) AS PRIOR_ORG_CD
+			        	, TRIM(#{item.seq, jdbcType=NUMERIC}) AS SEQ
+			        	, TRIM(#{item.orgLevel, jdbcType=NUMERIC}) AS ORG_LEVEL
+			        	, TRIM(#{item.orderSeq, jdbcType=NUMERIC}) AS ORDER_SEQ
 			          FROM DUAL
         	  		</foreach>
         	  ) T
@@ -498,10 +498,9 @@
     </update>
 	
 	<insert id="insertEmpHisTemp" parameterType="hashmap">
-		<foreach collection="list" item="item" separator="; ">
-		INSERT INTO WTM_IF_EMP_TEMP
-		(
-			  TENANT_ID
+		<foreach collection="list" item="item" index="index" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+            INTO WTM_IF_EMP_TEMP  (
+                 TENANT_ID
 			, ENTER_CD
 			, SABUN
 			, EMP_NM
@@ -519,30 +518,27 @@
 			, PAY_TYPE_CD
 			, ORG_PATH
 			, LEADER_YN
-			, NOTE
-		) VALUES 
-			(
+		) VALUES (
 			  #{item.tenantId}
 			, #{item.enterCd}
 			, #{item.sabun}
 			, #{item.empNm}
-			, #{item.empEngNm}
+			, #{item.empEngNm, jdbcType=VARCHAR}
 			, #{item.symd}
 			, #{item.eymd}
 			, #{item.statusCd}
 			, #{item.orgCd}
 			, #{item.businessPlaceCd}
-			, #{item.dutyCd}
-			, #{item.posCd}
-			, #{item.classCd}
-			, #{item.jobGroupCd}
-			, #{item.jobCd}
-			, #{item.payTypeCd}
-			, #{item.orgPath}
+			, #{item.dutyCd, jdbcType=VARCHAR}
+			, #{item.posCd, jdbcType=VARCHAR}
+			, #{item.classCd, jdbcType=VARCHAR}
+			, #{item.jobGroupCd, jdbcType=VARCHAR}
+			, #{item.jobCd, jdbcType=VARCHAR}
+			, #{item.payTypeCd, jdbcType=VARCHAR}
+			, #{item.orgPath, jdbcType=VARCHAR}
 			, #{item.leaderYn}
-			, #{item.note}
-			)
-		</foreach>
+		)
+    	</foreach>
 	</insert>
 	
 	<select id="setEmpHis" statementType="CALLABLE" parameterType="java.util.HashMap" >
@@ -553,7 +549,7 @@
   	</select>
   	
   	<select id="getEmpBaseList" parameterType="map" resultType="hashmap">
-		SELECT A.TENANT_ID AS tenantId, A.ENTER_CD AS enterCd, A.SABUN AS sabun, GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, -1, 'M'), 'YMD'))  as symd, LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, 1, 'M'), 'YMD')) as eymd, '0' as userId
+		SELECT A.TENANT_ID AS "tenantId", A.ENTER_CD AS "enterCd", A.SABUN AS "sabun", GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, -1, 'M'), 'YMD'))  as "symd", LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, 1, 'M'), 'YMD')) as "eymd", '0' as "userId"
 		  FROM WTM_EMP_HIS A
 		 INNER JOIN WTM_IF_EMP_MSG B
 			 ON A.TENANT_ID = B.TENANT_ID
@@ -561,10 +557,10 @@
 			AND A.SABUN = B.SABUN
 			AND A.SYMD = B.CHG_YMD
 		 WHERE B.TENANT_ID = #{tenantId}
-		   AND DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
+		   AND F_WTM_DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
 		   AND B.CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
 		   AND B.NEW_VALUE IS NOT NULL
-		 ORDER BY ENTER_CD, SABUN
+		 ORDER BY A.ENTER_CD, A.SABUN
     </select>
     
     <insert id="insertWtmEmpAddr" parameterType="java.util.HashMap" >
@@ -588,12 +584,12 @@
 					FROM DUAL
 				<foreach collection="list" item="item">    
         	  		UNION ALL
-					SELECT TRIM(#{item.tenantId}) AS TENANT_ID
-			        	, TRIM(#{item.enterCd}) AS ENTER_CD
-			        	, TRIM(#{item.sabun}) AS SABUN
-			        	, TRIM(#{item.email}) AS EMAIL
-			        	, TRIM(#{item.handPhone}) AS HAND_PHONE
-						, TRIM(#{item.note}) AS NOTE
+					SELECT TRIM(#{item.tenantId, jdbcType=NUMERIC}) AS TENANT_ID
+			        	, TRIM(#{item.enterCd, jdbcType=VARCHAR}) AS ENTER_CD
+			        	, TRIM(#{item.sabun, jdbcType=VARCHAR}) AS SABUN
+			        	, TRIM(#{item.email, jdbcType=VARCHAR}) AS EMAIL
+			        	, TRIM(#{item.handPhone, jdbcType=VARCHAR}) AS HAND_PHONE
+						, TRIM(#{item.note, jdbcType=VARCHAR}) AS NOTE
 			          FROM DUAL
         	  		</foreach>
 					) T
