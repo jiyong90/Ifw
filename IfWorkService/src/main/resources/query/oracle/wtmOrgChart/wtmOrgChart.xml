@@ -6,7 +6,7 @@
 <mapper namespace="com.isu.ifw.mapper.WtmOrgChartMapper">
 	<select id="getLowLevelOrg" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-			SELECT D.ORG_CD AS orgCd
+			SELECT D.ORG_CD 
 			FROM WTM_ORG_CHART C
 			JOIN WTM_ORG_CHART_DET D
 			 ON C.ORG_CHART_ID = D.ORG_CHART_ID

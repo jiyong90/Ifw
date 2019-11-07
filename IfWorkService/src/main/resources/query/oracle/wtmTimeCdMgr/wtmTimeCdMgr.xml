@@ -118,23 +118,23 @@
     
     <select id="getTimeCdMgrList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-			SELECT TIME_CD_MGR_ID AS timeCdMgrId
-			     , TENANT_ID AS tenantId
-			     , ENTER_CD AS enterCd
-			     , TIME_CD AS timeCd
-			     , TIME_NM AS timeNm
-			     , SYMD AS symd
-			     , EYMD AS eymd
-			     , WORK_SHM AS workShm
-			     , WORK_EHM AS workEhm
-			     , HOL_YN AS holYn
-			     , HOL_TIME_CD_MGR_ID AS holTimeCdMgrId
-			     , LATE_CHK_YN AS lateChkYn
-			     , LEAVE_CHK_YN AS leaveChkYn
-			     , ABSENCE_CHK_YN AS absenceChkYn
-			     , NOTE AS note
-			     , UPDATE_DATE AS updateDate
-			     , UPDATE_ID AS updateId
+			SELECT TIME_CD_MGR_ID 
+			     , TENANT_ID 
+			     , ENTER_CD 
+			     , TIME_CD 
+			     , TIME_NM
+			     , SYMD 
+			     , EYMD
+			     , WORK_SHM 
+			     , WORK_EHM
+			     , HOL_YN 
+			     , HOL_TIME_CD_MGR_ID 
+			     , LATE_CHK_YN 
+			     , LEAVE_CHK_YN 
+			     , ABSENCE_CHK_YN 
+			     , NOTE 
+			     , UPDATE_DATE 
+			     , UPDATE_ID 
 			  FROM WTM_TIME_CD_MGR 
 			 WHERE TENANT_ID = #{tenantId} 
 			   AND ENTER_CD = #{enterCd} 
