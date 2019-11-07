@@ -776,6 +776,8 @@
     <!-- 달력에 표시되는 날짜에 해당하는 plan만 가져옴  -->
     <select id="getWorktimePlanByYmdBetween" parameterType="map" resultType="wtmGeneral" >
     	<![CDATA[
+    	SELECT *
+    	  FROM (
     	SELECT T.*
 		     , (SELECT M.TIME_NM FROM WTM_TIME_CD_MGR M JOIN WTM_WORK_CALENDAR C ON M.TIME_CD_MGR_ID = C.TIME_CD_MGR_ID
 			  	  WHERE C.TENANT_ID = T.TENANT_ID AND C.ENTER_CD = T.ENTER_CD AND C.SABUN = T.SABUN AND C.YMD = T.YMD) AS TIME_NM
@@ -837,7 +839,8 @@
 		   AND C.TENANT_ID = #{tenantId}
 		   AND C.ENTER_CD = #{enterCd}
 		   AND C.SABUN = #{sabun}
-		 ORDER BY ymd
+		 ) S
+		 ORDER BY S.YMD
 		 ]]>
     </select>
     
