@@ -114,13 +114,12 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
-<!-- 
- 	<dependency>
+	 	<dependency>
             <groupId>com.isu.commons</groupId>
             <artifactId>isu-commons-auth</artifactId>
-            <version>3.0.5.D5</version>
+            <version>3.0.5.D6</version>
         </dependency> 
- -->
+ 
 		<dependency>
 			<groupId>com.isu.commons</groupId>
 			<artifactId>isu-commons-option</artifactId>
