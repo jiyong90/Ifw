@@ -82,7 +82,7 @@
 			</systemPath>
 		</dependency>  
 		-->
-		
+		 
 		<!-- mysql -->		
 		<dependency>
 			<groupId>mysql</groupId>
@@ -114,13 +114,13 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
-
+<!-- 
  	<dependency>
             <groupId>com.isu.commons</groupId>
             <artifactId>isu-commons-auth</artifactId>
             <version>3.0.5.D5</version>
         </dependency> 
-
+ -->
 		<dependency>
 			<groupId>com.isu.commons</groupId>
 			<artifactId>isu-commons-option</artifactId>
