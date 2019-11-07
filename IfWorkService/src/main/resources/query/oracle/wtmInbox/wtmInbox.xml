@@ -36,11 +36,12 @@
 						   AND E.WORK_TYPE_CD IN ('SELE_F', 'SELE_C')
 						   AND (#{ymd} BETWEEN E.SYMD AND E.EYMD OR F_WTM_TO_DATE(#{ymd},'YMD') < F_WTM_TO_DATE(E.EYMD,'YMD'))
 						 GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN
-						 HAVING toDoPlanDays <> 0   ) B
+						   ) B
 			    ON A.TENANT_ID = B.TENANT_ID
 			   AND A.ENTER_CD = B.ENTER_CD
 			   AND A.SABUN = B.SABUN
 			   AND A.SYMD = B.SYMD
+			  WHERE B.toDoPlanDays <> 0
         ]]>
     </select>
 </mapper>
