@@ -1,0 +1,95 @@
+@charset "utf-8";
+
+/* color code */
+/* layout.css */
+/* gnb mark */
+.navbar .gnb-nav-wrap .ico-wrap .new {
+    background-color: #4d84fe;
+}
+/* sidebar */
+#sidebar {
+  background: #4d84fe;
+}
+
+#sidebar.active ul li.active a span.title {
+    color: #4d84fe;
+}
+
+#sidebar.active ul li a:hover span.title {
+    color: #4d84fe;
+}
+
+#sidebar ul li a:hover {
+    color: #4d84fe;
+}
+
+#sidebar ul li a.dropdown-toggle.collapsed {
+    color: #4d84fe;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #4d84fe;
+}
+
+#sidebar #lnb-sub li.active>a {
+    color: #4d84fe;
+}
+
+/* common.css */
+/* button */
+.btn-write {
+    background-color: #4d84fe;
+    border-color: #325fc0;
+}
+.btn-write:hover {
+    color: #ffffff;
+    background-color: #5780da;
+    border-color: #325fc0;
+}
+.btn-default {
+    color: #ffffff;
+    background-color: #4d84fe;
+    border-color: #325fc0;
+}
+.btn-default:hover {
+    color: #ffffff;
+    background-color: #5780da;
+    border-color: #325fc0;
+}
+/* 결재페이지 */
+[type=button].btn-approval.sign {
+    color: #4d84fe;
+}
+.btn-approval.sign:hover {
+    color:#ffffff;
+    background-color: #4d84fe;
+}
+/* 근무계획 */
+.white-box-wrap .btn-info-wrap a {
+    color: #4d84fe;
+}
+.white-box-wrap .btn-info-wrap span {
+    color: #4d84fe;
+}
+.work-plan-wrap .sub-list .sub-title i.fas {
+    color: #4d84fe;
+}
+/* calendar */
+.calendar-wrap {
+    border-top: 3px solid #4d84fe;
+}
+/* modal */
+.modal-app-wrap .guide {
+    color: #4d84fe;
+}
+.modal-app-wrap i.fas {
+    color: #4d84fe;
+}
+/* error page */
+.error-page .container .icon-wrap i {
+    color: #4d84fe;
+}
+.error-page .container a.btn-main {
+    background-color: #4d84fe;
+}
