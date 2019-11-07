@@ -4,23 +4,23 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmInOutChangeMapper">
-	<select id="getInOutChangeList" parameterType="map" resultType="hashmap">
+	<select id="getInOutChangeList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-		        SELECT A.SABUN as sabun , 
-					B.EMP_NM as empNm, 
-					A.YMD as ymd, 
-					F_WTM_GET_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) AS orgNm,
-					F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) AS flexibleNm,
-					F_WTM_GET_TIME_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) AS timeNm,
-					A.ENTRY_SDATE as entrySdate,
-					A.ENTRY_STYPE_CD as entryStypeCd,
-					A.ENTRY_EDATE as entryEdate,
-					A.ENTRY_ETYPE_CD as entryEtypeCd,
-					A.CHG_SDATE as chgSdate,
-					A.CHG_EDATE as chgEdate,
-					A.REASON as reason,
-					A.UPDATE_ID as updateId,
-					A.UPDATE_DATE as updateDate
+		        SELECT A.SABUN , 
+					B.EMP_NM , 
+					A.YMD , 
+					F_WTM_GET_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) AS ORG_NM,
+					F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) AS FLEXIBLE_NM,
+					F_WTM_GET_TIME_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) AS TIME_NM,
+					A.ENTRY_SDATE ,
+					A.ENTRY_STYPE_CD ,
+					A.ENTRY_EDATE ,
+					A.ENTRY_ETYPE_CD ,
+					A.CHG_SDATE ,
+					A.CHG_EDATE ,
+					A.REASON ,
+					A.UPDATE_ID,
+					A.UPDATE_DATE 
 				FROM WTM_INOUT_CHG_HIS A
 				 INNER JOIN WTM_EMP_HIS B
 				    ON A.TENANT_ID = B.TENANT_ID

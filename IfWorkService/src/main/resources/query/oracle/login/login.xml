@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.LoginMapper">
-    <select id="loginTryCnt" resultType="hashmap">
+    <select id="loginTryCnt" resultType="wtmGeneral">
         <![CDATA[
 			SELECT DECODE(T2.ID,NULL,'N','Y') AS id_exst
 	              ,NVL(T2.ROCKING_YN,'N')     AS ROCKING_YN

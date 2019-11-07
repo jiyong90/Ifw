@@ -5,24 +5,24 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmFlexibleApplyMgrMapper">
 	
-	<select id="getApplyList" parameterType="map" resultType="hashmap">
+	<select id="getApplyList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT FLEXIBLE_APPLY_ID AS flexibleApplyId
-        		 , FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
-        		 , TENANT_ID AS tenantId
-        		 , ENTER_CD AS enterCd
-        		 , APPLY_NM AS applyNm
-        		 , USE_SYMD AS useSymd
-        		 , USE_EYMD AS useEymd
-        		 , REPEAT_YN AS repeatYn
-        		 , WORK_MINUTE AS workMinute
-        		 , OT_MINUTE AS otMinute
-        		 , '0' AS selectImg
-        		 , APPLY_YN as applyYn
+        	SELECT FLEXIBLE_APPLY_ID
+        		 , FLEXIBLE_STD_MGR_ID 
+        		 , TENANT_ID 
+        		 , ENTER_CD 
+        		 , APPLY_NM 
+        		 , USE_SYMD 
+        		 , USE_EYMD 
+        		 , REPEAT_YN 
+        		 , WORK_MINUTE 
+        		 , OT_MINUTE 
+        		 , '0' AS SELECT_IMG
+        		 , APPLY_YN 
 			     , CASE WHEN F_WTM_NVL(APPLY_YN, 'N') = 'Y' THEN '완료'
 					    ELSE CONCAT('<a class="basic" onClick="setEndConfirm(', FLEXIBLE_APPLY_ID, ')">확정</a>') END AS endImg
 			     , (SELECT COUNT(*) FROM WTM_FLEXIBLE_APPLY_EMP_TEMP A WHERE FLEXIBLE_APPLY_ID = A.FLEXIBLE_APPLY_ID) AS CNT
-        		 , NOTE AS note
+        		 , NOTE 
 			  FROM WTM_FLEXIBLE_APPLY 
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd} 
@@ -30,9 +30,9 @@
         ]]>
     </select>
     
-    <select id="getApplyConfirmList" parameterType="map" resultType="hashmap">
+    <select id="getApplyConfirmList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT DISTINCT A.USE_SYMD AS symd, A.USE_EYMD AS eymd, B.SABUN AS sabun, C.WORK_TYPE_CD AS workTypeCd
+        	SELECT DISTINCT A.USE_SYMD AS SYMD, A.USE_EYMD AS EYMD, B.SABUN , C.WORK_TYPE_CD 
         		 , A.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
         		 , A.APPLY_NM AS flexibleNm
         		 , A.TENANT_ID AS tenantId
@@ -61,9 +61,9 @@
 			WHERE FLEXIBLE_APPLY_ID = #{flexibleApplyId}
 	</update>
     
-    <select id="setApplyEmpId" parameterType="map" resultType="hashmap">
+    <select id="setApplyEmpId" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT FLEXIBLE_EMP_ID AS flexibleEmpId
+        	SELECT FLEXIBLE_EMP_ID 
 			  FROM WTM_FLEXIBLE_EMP
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd}
@@ -74,18 +74,18 @@
         ]]>
     </select>
     
-	<select id="getApplyGrpList" parameterType="map" resultType="hashmap">
+	<select id="getApplyGrpList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT A.FLEXIBLE_APPLY_GROUP_ID AS flexibleApplyGroupId
-        		 , A.FLEXIBLE_APPLY_ID AS flexibleApplyId
-        		 , A.ORG_CD AS orgCd
-        		 , F_WTM_GET_ORG_NM(B.TENANT_ID, B.ENTER_CD, A.ORG_CD, B.USE_SYMD)  AS orgNm
-        		 , A.JOB_CD AS jobCd
-        		 , A.DUTY_CD AS dutyCd
-        		 , A.POS_CD AS posCd
-        		 , A.CLASS_CD AS classCd
-        		 , A.WORKTEAM_CD AS workteamCd
-        		 , A.NOTE AS note
+        	SELECT A.FLEXIBLE_APPLY_GROUP_ID 
+        		 , A.FLEXIBLE_APPLY_ID
+        		 , A.ORG_CD 
+        		 , F_WTM_GET_ORG_NM(B.TENANT_ID, B.ENTER_CD, A.ORG_CD, B.USE_SYMD)  AS ORG_NM
+        		 , A.JOB_CD 
+        		 , A.DUTY_CD
+        		 , A.POS_CD 
+        		 , A.CLASS_CD 
+        		 , A.WORKTEAM_CD 
+        		 , A.NOTE
 			  FROM WTM_FLEXIBLE_APPLY_GROUP A
 			 INNER JOIN WTM_FLEXIBLE_APPLY B
 			    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
@@ -143,7 +143,7 @@
     		)
 	</update>
 	
-	<select id="getApplyEmpList" parameterType="map" resultType="hashmap">
+	<select id="getApplyEmpList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT A.FLEXIBLE_APPLY_EMP_ID AS flexibleApplyEmpId
         		 , A.FLEXIBLE_APPLY_ID AS flexibleApplyId
@@ -234,7 +234,7 @@
 		 WHERE A.FLEXIBLE_APPLY_ID = ${flexibleApplyId}
     </insert>
     
-    <select id="getApplyEmpPopList" parameterType="map" resultType="hashmap">
+    <select id="getApplyEmpPopList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT B.SABUN AS sabun
 				  , C.EMP_NM AS empNm

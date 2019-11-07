@@ -5,16 +5,16 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmOrgCodeMapper">
 	
-	<select id="getOrgCodeList" parameterType="map" resultType="hashmap">
+	<select id="getOrgCodeList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT TENANT_ID AS tenantId
-				  , ENTER_CD AS enterCd
-				  , ORG_CD AS orgCd
-				  , ORG_NM AS orgNm
-				  , SYMD AS symd
-				  , EYMD AS eymd
-				  , ORG_TYPE AS orgType
-				  , NOTE AS note
+        	SELECT TENANT_ID 
+				  , ENTER_CD 
+				  , ORG_CD 
+				  , ORG_NM 
+				  , SYMD 
+				  , EYMD 
+				  , ORG_TYPE 
+				  , NOTE 
 			  FROM WTM_ORG_CODE
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd} 
@@ -24,10 +24,10 @@
 				         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
         ]]>
     </select>
-    <select id="getOrgComboList" parameterType="map" resultType="hashmap">
+    <select id="getOrgComboList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT ORG_CD AS code
-				 , ORG_NM AS codeNm
+        	SELECT ORG_CD AS CODE
+				 , ORG_NM AS CODE_NM
 			  FROM WTM_ORG_CODE
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd} 

@@ -4,9 +4,9 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmEntryApplMapper">
-	<select id="checkDuplicateEntryAppl" parameterType="map" resultType="map">
+	<select id="checkDuplicateEntryAppl" parameterType="map" resultType="wtmGeneral">
   		<![CDATA[
-  		SELECT COUNT(*) AS chgCnt FROM (
+  		SELECT COUNT(*) AS CHG_CNT FROM (
 			SELECT 1 
 			  FROM WTM_APPL A
 			  JOIN WTM_ENTRY_APPL E

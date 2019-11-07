@@ -11,6 +11,8 @@ public class WtmGeneralVO extends HashMap {
 		
 		String k = (String)key;
 		
+		//System.out.println("k :: " + k);
+		
 		try {
 			// _ to camelCase
 			if(k.contains("_") || k.equals(k.toUpperCase()))
@@ -21,6 +23,8 @@ public class WtmGeneralVO extends HashMap {
 			k = (String)key;
 		}
 		
-		return super.put(k, value); 
+		//ystem.out.println("change k :: " + k);
+		
+		return super.put(k, value);
 	}
 }
