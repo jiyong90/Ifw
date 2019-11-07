@@ -116,7 +116,7 @@
         ]]>
     </update>
     
-    <select id="getTimeCdMgrList" parameterType="map" resultType="hashmap">
+    <select id="getTimeCdMgrList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
 			SELECT TIME_CD_MGR_ID AS timeCdMgrId
 			     , TENANT_ID AS tenantId

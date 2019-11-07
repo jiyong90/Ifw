@@ -5,7 +5,7 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmWorktimeCloseMapper">
 	
-	<select id="getDayList" parameterType="map" resultType="hashmap">
+	<select id="getDayList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, YMD) AS orgNm
 				  , A.SABUN AS sabun
@@ -36,7 +36,7 @@
         ]]>
     </select>
     
-    <select id="getMonList" parameterType="map" resultType="hashmap">
+    <select id="getMonList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.EYMD) AS orgNm
 				  , A.SABUN AS sabun

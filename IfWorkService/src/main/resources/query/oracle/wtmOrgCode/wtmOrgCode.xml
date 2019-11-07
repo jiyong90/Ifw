@@ -5,7 +5,7 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmOrgCodeMapper">
 	
-	<select id="getOrgCodeList" parameterType="map" resultType="hashmap">
+	<select id="getOrgCodeList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT TENANT_ID AS tenantId
 				  , ENTER_CD AS enterCd
@@ -24,7 +24,7 @@
 				         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
         ]]>
     </select>
-    <select id="getOrgComboList" parameterType="map" resultType="hashmap">
+    <select id="getOrgComboList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT ORG_CD AS code
 				 , ORG_NM AS codeNm

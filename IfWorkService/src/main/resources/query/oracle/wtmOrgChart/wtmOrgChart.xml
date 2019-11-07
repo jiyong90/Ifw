@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmOrgChartMapper">
-	<select id="getLowLevelOrg" parameterType="map" resultType="hashmap">
+	<select id="getLowLevelOrg" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
 			SELECT D.ORG_CD AS orgCd
 			FROM WTM_ORG_CHART C

@@ -13,7 +13,7 @@
 			     , E.SYMD AS sYmd
 			     , E.EYMD AS eYmd
 			     , E.WORK_TYPE_CD AS workTypeCd
-			     , E.FLEXIBLE_NM AS flexibleNm
+			     , M.FLEXIBLE_NM AS flexibleNm
 			     , NULL AS applId 
 				 , NULL AS applCd
 				 , NULL AS applStatusCd
@@ -35,7 +35,7 @@
 			     , FA.SYMD AS sYmd
 			     , FA.EYMD AS eYmd
 			     , E.WORK_TYPE_CD AS workTypeCd
-			     , E.FLEXIBLE_NM AS flexibleNm
+			     , F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD,A.APPL_SABUN,A.APPL_YMD) AS flexibleNm
 			     , A.APPL_ID AS applId
 			     , A.APPL_CD AS applCd
 			     , A.APPL_STATUS_CD AS applStatusCd
@@ -164,7 +164,7 @@
 			 , F_WTM_WORK_DAY_HOUR(T.tenantId, T.enterCd, T.sabun, T.ymd, 'OT', 'OT') AS otBasicHour
 			 , F_WTM_WORK_DAY_HOUR(T.tenantId, T.enterCd, T.sabun, T.ymd, 'OT', 'NIGHT') AS otNightHour
 			 , F_WTM_WORK_DAY_HOUR(T.tenantId, T.enterCd, T.sabun, T.ymd, 'BREAK', 'BASE') AS breakHour
-			 , F_WTM_WORK_DAY_HOUR(T.tenantId, T.enterCd, T.sabun, T.ymd, 'BREAK', 'PAID') AS paidhour
+			 , F_WTM_WORK_DAY_HOUR(T.tenantId, T.enterCd, T.sabun, T.ymd, 'BREAK', 'PAID') AS paidHour
 		  FROM (
 		          SELECT C.TENANT_ID AS tenantId
 		                , C.ENTER_CD AS enterCd

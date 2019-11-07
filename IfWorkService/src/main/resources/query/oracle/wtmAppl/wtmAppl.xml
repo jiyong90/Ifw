@@ -59,7 +59,7 @@
         ]]>
     </select>
     
-    <select id="calcWorkDay" parameterType="map" resultType="map">
+    <select id="calcWorkDay" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
 			SELECT SUM(CASE WHEN CASE X.HOL_EXCEPT_YN WHEN 'Y' THEN X.SUN_YN ELSE X.HOLIDAY_YN END = 'Y' THEN 0 ELSE 1 END) AS WORK_CNT
 			FROM (
@@ -78,23 +78,23 @@
         ]]>
     </select>
     
-    <select id="getApprList01" parameterType="map" resultType="hashmap">
+    <select id="getApprList01" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT A.APPL_ID AS applId
-			     , A.APPL_CD AS applCd
-			     , C.APPL_NM AS applNm
-			     , A.APPL_SABUN AS applSabun
-			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
-			     , A.APPL_YMD AS applYmd
-			     , A.APPL_IN_SABUN AS applInSabun
-			     , A.APPL_STATUS_CD AS applStatusCd
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
-			     , L.APPR_SEQ AS apprSeq
-			     , L.APPR_SABUN AS apprSabun
-			     , L.APPR_DATE AS apprDate
-			     , L.APPR_STATUS_CD AS apprStatusCd
-			     , L.APPR_TYPE_CD AS apprTypeCd
-			     , L.APPR_OPINION AS apprOpinion
+        	SELECT A.APPL_ID
+			     , A.APPL_CD
+			     , C.APPL_NM
+			     , A.APPL_SABUN
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS EMP_NM
+			     , A.APPL_YMD 
+			     , A.APPL_IN_SABUN 
+			     , A.APPL_STATUS_CD 
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
+			     , L.APPR_SEQ 
+			     , L.APPR_SABUN
+			     , L.APPR_DATE
+			     , L.APPR_STATUS_CD
+			     , L.APPR_TYPE_CD
+			     , L.APPR_OPINION
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -110,23 +110,23 @@
 		]]>
     </select>
     
-    <select id="getApprList02" parameterType="map" resultType="hashmap">
+    <select id="getApprList02" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT A.APPL_ID AS applId
-			     , A.APPL_CD AS applCd
-			     , C.APPL_NM AS applNm
-			     , A.APPL_SABUN AS applSabun
-			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
-			     , A.APPL_YMD AS applYmd
-			     , A.APPL_IN_SABUN AS applInSabun
-			     , A.APPL_STATUS_CD AS applStatusCd
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
-			     , L.APPR_SEQ AS apprSeq
-			     , L.APPR_SABUN AS apprSabun
-			     , L.APPR_DATE AS apprDate
-			     , L.APPR_STATUS_CD AS apprStatusCd
-			     , L.APPR_TYPE_CD AS apprTypeCd
-			     , L.APPR_OPINION AS apprOpinion
+        	SELECT A.APPL_ID
+			     , A.APPL_CD
+			     , C.APPL_NM
+			     , A.APPL_SABUN
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS EMP_NM
+			     , A.APPL_YMD
+			     , A.APPL_IN_SABUN 
+			     , A.APPL_STATUS_CD
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
+			     , L.APPR_SEQ 
+			     , L.APPR_SABUN
+			     , L.APPR_DATE
+			     , L.APPR_STATUS_CD 
+			     , L.APPR_TYPE_CD 
+			     , L.APPR_OPINION
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -143,23 +143,23 @@
 		]]>
     </select>
     
-    <select id="getApprList03" parameterType="map" resultType="hashmap">
+    <select id="getApprList03" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT A.APPL_ID AS applId
-			     , A.APPL_CD AS applCd
-			     , C.APPL_NM AS applNm
-			     , A.APPL_SABUN AS applSabun
-			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
-			     , A.APPL_YMD AS applYmd
-			     , A.APPL_IN_SABUN AS applInSabun
-			     , A.APPL_STATUS_CD AS applStatusCd
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
-			     , L.APPR_SEQ AS apprSeq
-			     , L.APPR_SABUN AS apprSabun
-			     , L.APPR_DATE AS apprDate
-			     , L.APPR_STATUS_CD AS apprStatusCd
-			     , L.APPR_TYPE_CD AS apprTypeCd
-			     , L.APPR_OPINION AS apprOpinion
+        	SELECT A.APPL_ID 
+			     , A.APPL_CD 
+			     , C.APPL_NM
+			     , A.APPL_SABUN 
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS EMP_NM
+			     , A.APPL_YMD 
+			     , A.APPL_IN_SABUN 
+			     , A.APPL_STATUS_CD 
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
+			     , L.APPR_SEQ 
+			     , L.APPR_SABUN
+			     , L.APPR_DATE 
+			     , L.APPR_STATUS_CD
+			     , L.APPR_TYPE_CD 
+			     , L.APPR_OPINION 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID

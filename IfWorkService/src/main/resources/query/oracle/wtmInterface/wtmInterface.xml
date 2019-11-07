@@ -5,7 +5,7 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmInterfaceMapper">
 
-	<select id="getIfLastDate" parameterType="map" resultType="hashmap">
+	<select id="getIfLastDate" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT F_WTM_DATE_FORMAT(MAX(UPDATE_DATE), 'YMDHIS') AS LAST_DATE
 			  FROM WTM_IF_HIS
@@ -14,14 +14,14 @@
 			   AND IF_STATUS = 'OK'
         ]]>
     </select>
-    <select id="getIfNowDate" parameterType="map" resultType="hashmap">
+    <select id="getIfNowDate" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT F_WTM_DATE_FORMAT(SYSDATE, 'YMDHIS') AS IF_DATE
 			  FROM DUAL
         ]]>
     </select>
     
-    <select id="getIfUrl" parameterType="map" resultType="hashmap">
+    <select id="getIfUrl" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT INFO_DATA AS "info_data"
 			  FROM comm_management_infomation
@@ -49,7 +49,7 @@
 		)
 	</insert>
 	
-	<select id="getWtmCodeId" parameterType="map" resultType="hashmap">
+	<select id="getWtmCodeId" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
 			SELECT CODE_ID
 			  FROM WTM_CODE
@@ -217,7 +217,7 @@
 	        ) 
     </update>
     
-    <select id="getWtmTaaCodeId" parameterType="map" resultType="hashmap">
+    <select id="getWtmTaaCodeId" parameterType="map" resultType="wtmGeneral">
 		SELECT TAA_CODE_ID
 		  FROM WTM_TAA_CODE
 		 WHERE TENANT_ID = #{tenantId}
@@ -392,7 +392,7 @@
         ]]>
     </update>
     
-    <select id="getWtmOgrChartId" parameterType="map" resultType="hashmap">
+    <select id="getWtmOgrChartId" parameterType="map" resultType="wtmGeneral">
 		SELECT ORG_CHART_ID
 		  FROM WTM_ORG_CHART
 		 WHERE TENANT_ID = #{tenantId}
@@ -548,7 +548,7 @@
   			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}) }
   	</select>
   	
-  	<select id="getEmpBaseList" parameterType="map" resultType="hashmap">
+  	<select id="getEmpBaseList" parameterType="map" resultType="wtmGeneral">
 		SELECT A.TENANT_ID AS "tenantId", A.ENTER_CD AS "enterCd", A.SABUN AS "sabun", GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, -1, 'M'), 'YMD'))  as "symd", LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, 1, 'M'), 'YMD')) as "eymd", '0' as "userId"
 		  FROM WTM_EMP_HIS A
 		 INNER JOIN WTM_IF_EMP_MSG B
@@ -670,7 +670,7 @@
   			  ) }
   	</select>
   	
-  	<select id="getWtmTaaApplId" parameterType="map" resultType="hashmap">
+  	<select id="getWtmTaaApplId" parameterType="map" resultType="wtmGeneral">
 		SELECT TAA_APPL_ID
 		  FROM WTM_TAA_APPL
 		 WHERE TENANT_ID = #{tenantId}
@@ -691,7 +691,7 @@
   			  ) }
   	</select>
   	
-  	<select id="getExceptRuleId" parameterType="map" resultType="hashmap">
+  	<select id="getExceptRuleId" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT info_data
 			  FROM comm_management_infomation
@@ -700,7 +700,7 @@
         ]]>
     </select>
     
-    <select id="getExpTableList" parameterType="map" resultType="hashmap">
+    <select id="getExpTableList" parameterType="map" resultType="wtmGeneral">
 		SELECT TABLE_NAME
 		FROM INFORMATION_SCHEMA.TABLES
 		WHERE TABLE_SCHEMA = #{tableSchema} 
@@ -710,14 +710,14 @@
   		ORDER BY TABLE_NAME
     </select>
     
-    <select id="getExpColList" parameterType="map" resultType="hashmap">
+    <select id="getExpColList" parameterType="map" resultType="wtmGeneral">
 		SELECT COLUMN_NAME AS COL_NM, DATA_TYPE, ORDINAL_POSITION AS COL_NO
 		FROM INFORMATION_SCHEMA.COLUMNS
 		WHERE TABLE_SCHEMA= #{tableSchema} 
 		  AND TABLE_NAME = #{tableName} 
 		ORDER BY ORDINAL_POSITION
     </select>
-    <select id="getExpDataList" parameterType="map" resultType="hashmap">
+    <select id="getExpDataList" parameterType="map" resultType="wtmGeneral">
 		SELECT *
 		FROM ${tableName}
     </select>

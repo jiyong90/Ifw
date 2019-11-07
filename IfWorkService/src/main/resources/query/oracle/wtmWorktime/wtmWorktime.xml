@@ -5,7 +5,7 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmWorktimeMapper">
 	<!--근태 이상자 조회 -->
-  	<select id="getWorktimeCheckList" parameterType="map" resultType="map">
+  	<select id="getWorktimeCheckList" parameterType="map" resultType="wtmGeneral">
   		SELECT T.TENANT_ID AS tenantId
 		     , T.ENTER_CD AS enterCd
 		     , T.ORG_NM AS orgNm
@@ -104,7 +104,7 @@
 		order by flexibleSdate desc
   	</select>
   	
-  	<select id="getWorktimeDetail" parameterType="map" resultType="map">
+  	<select id="getWorktimeDetail" parameterType="map" resultType="wtmGeneral">
   		SELECT C.YMD AS ymd
 		     , F_WTM_GET_FLEXIBLE_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS flexibleNm
 		     , C.ENTRY_SDATE AS entrySdate
@@ -131,7 +131,7 @@
 		ORDER BY ymd desc, apprSdate, planSdate
   	</select>
   	
-  	<select id="getEntryCheckList" parameterType="map" resultType="map">
+  	<select id="getEntryCheckList" parameterType="map" resultType="wtmGeneral">
   		SELECT C.TENANT_ID as tenantId
 			 , C.ENTER_CD as enterCd
 			 , C.SABUN as sabun 
@@ -172,7 +172,7 @@
 	ORDER BY entrySdate desc
   	</select>
   	
-  	<select id="getEntryDiffList" parameterType="map" resultType="map">
+  	<select id="getEntryDiffList" parameterType="map" resultType="wtmGeneral">
   		SELECT tenantId
 		     , enterCd
 		     , sabun
