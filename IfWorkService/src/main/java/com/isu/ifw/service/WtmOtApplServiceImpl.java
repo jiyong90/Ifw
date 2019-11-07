@@ -1059,7 +1059,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		boolean isTarget = false;
 		
 		if(ruleMap != null){ 
-			WtmEmpHis e = wtmEmpHisRepo.findByTenantIdAndEnterCdAndSabunAndBetweenSymdAndEymd(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), null));
+			WtmEmpHis e = wtmEmpHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), null));
 			if(ruleMap.containsKey("INCLUDE")) {
 				//여기에등록되어 있으면 포함이 되었더도 안됨 이놈이 우선 
 				isTarget = true;

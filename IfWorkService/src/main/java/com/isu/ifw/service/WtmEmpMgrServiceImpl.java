@@ -1,6 +1,7 @@
 package com.isu.ifw.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.isu.ifw.entity.WtmEmpHis;
-import com.isu.ifw.entity.WtmIfEmpMsg;
 import com.isu.ifw.mapper.WtmEmpHisMapper;
+import com.isu.ifw.mapper.WtmIfEmpMsgMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmIfEmpMsgRepository;
+import com.isu.ifw.util.WtmUtil;
 
 
 @Service("empMgrService")
@@ -29,6 +30,9 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 	
 	@Resource
 	WtmIfEmpMsgRepository empMsgRepository;
+	
+	@Autowired
+	WtmIfEmpMsgMapper ifEmpMsgMapper;
 	
 	@Autowired
 	WtmEmpHisMapper wtmEmpHisMapper;
@@ -97,8 +101,20 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 	
 	@Override
 	public List<Map<String, Object>> getEmpIfMsgList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
-		List<Map<String, Object>> empList = new ArrayList();	
-		List<WtmIfEmpMsg> list = empMsgRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString(), paramMap.get("searchKeyword").toString());
+		List<Map<String, Object>> empList = new ArrayList();
+		
+		String ymd = null;
+		if(paramMap.get("sYmd")!=null && !"".equals(paramMap.get("sYmd"))) {
+			ymd = paramMap.get("sYmd").toString().replaceAll("-", "");
+		} else {
+			ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+		}
+		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("ymd", ymd);
+		
+		/*List<WtmIfEmpMsg> list = empMsgRepository.findByTenantIdAndEnterCd(tenantId, enterCd, s, paramMap.get("searchKeyword").toString());
 		
 		for(WtmIfEmpMsg l : list) {
 			Map<String, Object> emp = new HashMap();
@@ -110,6 +126,9 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 			emp.put("note", l.getNote());
 			empList.add(emp);
 		}
-		return empList;
+		return empList; */
+		
+		return ifEmpMsgMapper.getIfEmpMsg(paramMap);
+		
 	}
 }

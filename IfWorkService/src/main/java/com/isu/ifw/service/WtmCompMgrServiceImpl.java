@@ -27,7 +27,7 @@ public class WtmCompMgrServiceImpl implements WtmCompMgrService{
 	public List<Map<String, Object>> getCompMgrList(Long tenantId, String enterCd) {
 		List<Map<String, Object>> codeList = new ArrayList();	
 		try {
-			List<WtmCompMgr> list = compMgrRepository.findByTenantIdAndEnterCd(tenantId, enterCd);
+			List<WtmCompMgr> list = compMgrRepository.findByTenantIdAndEnterCdOrderBySymdDesc(tenantId, enterCd);
 			
 			for(WtmCompMgr l : list) {
 				Map<String, Object> code = new HashMap();

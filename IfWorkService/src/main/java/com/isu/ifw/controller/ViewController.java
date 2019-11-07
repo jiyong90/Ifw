@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
@@ -191,7 +193,9 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabun(tenantId, enterCd, empNo);
+		
+		String ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, empNo, ymd);
 		if(empHis!=null) {
 			mv.addObject("leaderYn", empHis.getLeaderYn());
 		}
@@ -216,7 +220,7 @@ public class ViewController {
 					}
 					
 					//연장근무 또는 휴일근무 신청 시 사유
-					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, ymd, "REASON_CD");
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
 				} else if("Day".equals(calendarType)) {
 					//근무 계획을 작성한 근무제 정보
@@ -283,7 +287,7 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabun(tenantId, enterCd, empNo);
+		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, empNo, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 		if(empHis!=null) {
 			mv.addObject("leaderYn", empHis.getLeaderYn());
 		}
@@ -390,7 +394,7 @@ public class ViewController {
 				}
 				
 				//연장근무 또는 휴일근무 신청 시 사유
-				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "REASON_CD");
 				try {
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
 				} catch (JsonProcessingException e) {

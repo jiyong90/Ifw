@@ -13,14 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.isu.ifw.entity.WtmTimeCdMgr;
 import com.isu.ifw.entity.WtmWorkteamEmp;
-import com.isu.ifw.entity.WtmWorkteamMgr;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
-import com.isu.ifw.repository.WtmTimeCdMgrRepository;
+import com.isu.ifw.mapper.WtmWorkteamEmpMapper;
 import com.isu.ifw.repository.WtmWorkteamEmpRepository;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.option.vo.ReturnParam;
 
 @Service
@@ -35,11 +33,14 @@ public class WtmWorkteamEmpServiceImpl implements WtmWorkteamEmpService{
 	@Autowired
 	WtmFlexibleEmpMapper flexEmpMapper;
 	
+	@Autowired
+	WtmWorkteamEmpMapper workteamEmpMapper;
+	
 	@Override
 	public List<Map<String, Object>> getWorkteamList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
 		List<Map<String, Object>> timeList = new ArrayList();	
 		try {
-			List<Map<String, Object>> list = workteamRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString(), paramMap.get("searchKeyword").toString());
+			/*List<Map<String, Object>> list = workteamRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString(), paramMap.get("searchKeyword").toString());
 			
 			for(Map<String, Object> l : list) {
 				Map<String, Object> time = new HashMap();
@@ -53,7 +54,20 @@ public class WtmWorkteamEmpServiceImpl implements WtmWorkteamEmpService{
 				time.put("classCd", l.get("classCd"));
 				time.put("empNm", l.get("empNm"));
 				timeList.add(time);
+			}*/
+			
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			
+			String ymd = null;
+			if(paramMap.get("sYmd")!=null && !"".equals(paramMap.get("sYmd"))) {
+				ymd = paramMap.get("sYmd").toString().replaceAll("-", "");
+			} else {
+				ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
 			}
+			paramMap.put("ymd", ymd);
+			
+			timeList = workteamEmpMapper.getWorkteamEmpList(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
 			logger.debug(e.toString(), e);
@@ -70,6 +84,8 @@ public class WtmWorkteamEmpServiceImpl implements WtmWorkteamEmpService{
 	public ReturnParam setWorkteamList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		ReturnParam rp = new ReturnParam();
 		Map<String, Object> paramMap = new HashMap();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
  
 		rp.setSuccess("저장에 성공하였습니다.");
 		int cnt = 0;
@@ -88,13 +104,21 @@ public class WtmWorkteamEmpServiceImpl implements WtmWorkteamEmpService{
 						workteam.setNote(l.get("note").toString());
 						workteam.setSymd(l.get("symd").toString());
 						
-						List<Map<String, Object>> dup = workteamRepository.dupCheckByYmd(tenantId, enterCd, l.get("sabun").toString(), l.get("workteamEmpId").toString(), l.get("symd").toString(), l.get("eymd").toString());
+						//List<Map<String, Object>> dup = workteamRepository.dupCheckByYmd(tenantId, enterCd, l.get("sabun").toString(), l.get("workteamEmpId").toString(), l.get("symd").toString(), l.get("eymd").toString());
+						
+						paramMap.put("sabun", l.get("sabun").toString());
+						paramMap.put("workteamEmpId", l.get("workteamEmpId").toString());
+						paramMap.put("sYmd", l.get("symd").toString());
+						paramMap.put("eYmd", l.get("eymd").toString());
+						List<Map<String, Object>> dup = workteamEmpMapper.dupCheckByYmd(paramMap);
 						if(dup != null && dup.size() > 0) {
 							rp.setFail("중복된 기간이 존재합니다. (sabun : " + l.get("sabun").toString() + ")");
 							return rp;
 						}
 						//saveList.add(workteam);
 						workteam = workteamRepository.save(workteam);
+						
+						paramMap = new HashMap();
 						paramMap.put("workteamMgrId", workteam.getWorkteamMgrId());
 						paramMap.put("sabun", workteam.getSabun());
 						paramMap.put("pId", userId);

@@ -95,16 +95,17 @@ public class WtmCalendarServiceImpl implements WtmCalendarService{
 	 */
 	public List<Map<String, Object>> getOrgEmpWorkCalendar(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) throws Exception {
 		
+		String ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
-		paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
+		paramMap.put("ymd", ymd);
 		
 		if(paramMap.get("sYmd")!=null && paramMap.get("eYmd")!=null) {
 			paramMap.put("sYmd", paramMap.get("sYmd").toString().replaceAll("-", ""));
 			paramMap.put("eYmd", paramMap.get("eYmd").toString().replaceAll("-", ""));
 		}
 		
-		WtmEmpHis emp = empHisRepo.findByTenantIdAndEnterCdAndSabun(tenantId, enterCd, sabun);
+		WtmEmpHis emp = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
 		if(emp!=null && emp.getOrgCd()!=null && !"".equals(emp.getOrgCd()))
 			paramMap.put("orgCd", emp.getOrgCd());
 		
