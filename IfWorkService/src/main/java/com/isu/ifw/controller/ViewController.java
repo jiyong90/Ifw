@@ -174,7 +174,8 @@ public class ViewController {
 		String loginId = sessionData.get("loginId").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
-		
+		String authCd = (sessionData.containsKey("authCd")?sessionData.get("authCd").toString():"U");
+
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
@@ -183,6 +184,7 @@ public class ViewController {
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		mv.addObject("isEmbedded",false);
 		mv.addObject("type","console");
+		mv.addObject("authCd", authCd);
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -265,7 +267,8 @@ public class ViewController {
 		String loginId = sessionData.get("loginId").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
-		
+		String authCd = (sessionData.containsKey("authCd")?sessionData.get("authCd").toString():"U");
+
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
@@ -273,7 +276,8 @@ public class ViewController {
 		mv.addObject("pageName", "mgr/"+viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		mv.addObject("type","console");
-
+		mv.addObject("authCd", authCd);
+		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
@@ -341,7 +345,8 @@ public class ViewController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
-		
+		String authCd = (sessionData.containsKey("authCd")?sessionData.get("authCd").toString():"U");
+
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
@@ -361,6 +366,7 @@ public class ViewController {
 		mv.addObject("pageName", viewPage);
 		mv.addObject("type","hr");
 		mv.addObject("redirectUrl", loginService.getHrInfoUrl(tenantId));
+		mv.addObject("authCd", authCd);
 //		mv.addObject("tenant", tenantId);
 
 		if("workCalendar".equals(viewPage)){
