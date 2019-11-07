@@ -23,7 +23,7 @@
     
     <select id="getIfUrl" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT info_data
+        	SELECT INFO_DATA
 			  FROM comm_management_infomation
 			 WHERE tenant_id = #{tenantId}
 			   AND info_key = 'HR.IT_URL'
@@ -40,11 +40,11 @@
 			, IF_MSG 
 			, UPDATE_DATE
 		) VALUES (
-			  #{tenantId}
-			, #{ifStatus}
-			, #{ifItem}
+			  #{tenantId, jdbcType=NUMERIC}
+			, #{ifStatus, jdbcType=VARCHAR}
+			, #{ifItem, jdbcType=VARCHAR}
 			, F_WTM_TO_DATE(#{ifEndDate}, 'YMDHIS')
-			, #{ifMsg}
+			, #{ifMsg, jdbcType=VARCHAR}
 			, F_WTM_TO_DATE(#{updateDate}, 'YMDHIS')
 		)
 	</insert>
@@ -77,14 +77,14 @@
 				, UPDATE_DATE
 				, UPDATE_ID
 			) VALUES 
-			(     #{item.tenantId}
-	        	, #{item.enterCd}
-	        	, #{item.grpCodeCd}
-	        	, #{item.codeCd}
-	        	, #{item.codeNm}
-	        	, #{item.symd}
-	        	, #{item.eymd}
-	        	, #{item.note}
+			(     #{item.tenantId, jdbcType=NUMERIC}
+	        	, #{item.enterCd, jdbcType=VARCHAR}
+	        	, #{item.grpCodeCd, jdbcType=VARCHAR}
+	        	, #{item.codeCd, jdbcType=VARCHAR}
+	        	, #{item.codeNm, jdbcType=VARCHAR}
+	        	, #{item.symd, jdbcType=VARCHAR}
+	        	, #{item.eymd, jdbcType=VARCHAR}
+	        	, #{item.note, jdbcType=VARCHAR}
 	        	, SYSDATE
 	        	, '0'
 	        )
@@ -109,7 +109,7 @@
 	<update id="updateWtmCodeHisEymd" parameterType="hashmap">
 		<![CDATA[
 			UPDATE WTM_CODE
-			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{symd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
+			   SET EYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(#{symd}, 'YMD'), -1, 'D'), 'YMD'), '29991231')
 			  , UPDATE_DATE = SYSDATE
 			  , UPDATE_ID = '0'
 			WHERE 1=1
@@ -124,7 +124,7 @@
 	<update id="updateWtmCodeHisSymd" parameterType="hashmap" >
         <![CDATA[
 			UPDATE WTM_CODE
-			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(DATE_ADD(F_WTM_TO_DATE(#{eymd}, 'YMD'), INTERVAL -1 DAY), 'YMD'), '29991231')
+			   SET SYMD =F_WTM_NVL(F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eymd}, 'YMD'), -1, 'D'), 'YMD'), '29991231')
 			  , UPDATE_DATE = SYSDATE
 			  , UPDATE_ID = '0'
 			WHERE 1=1
@@ -136,7 +136,7 @@
         ]]>
     </update>
     
-    <update id="insertWtmHoliday" parameterType="java.util.HashMap" >
+    <update id="insertWtmHoliday" parameterType="map" >
         MERGE INTO WTM_HOLIDAY_MGR M
         USING (
         	SELECT T.TENANT_ID
@@ -158,8 +158,9 @@
 						 , NULL AS SUN_YN
 						 , NULL AS FESTIVE_YN
 						 , NULL AS PAY_YN
-				  	  FROM DUAL 
-        	  		<foreach collection="list" item="item">    
+				  	  FROM DUAL  
+        	  		<foreach collection="list" item="item">   
+       				 <![CDATA[ 
         	  		UNION ALL
 		        	SELECT TRIM(#{item.tenantId}) AS TENANT_ID
 			        	, TRIM(#{item.enterCd}) AS ENTER_CD
@@ -167,9 +168,10 @@
 			        	, TRIM(#{item.holidayYmd}) AS HOLIDAY_YMD
 			        	, TRIM(#{item.holidayNm}) AS HOLIDAY_NM
 			        	, TRIM(#{item.sunYn}) AS SUN_YN
-			        	, TRIM(#{item.festiveYn}) AS FESTIVE_YN
+			        	, TRIM(#{item.FESTIVE_YN, jdbcType=VARCHAR}) AS FESTIVE_YN
 			        	, TRIM(#{item.payYn}) AS PAY_YN
 			          FROM DUAL
+        				]]>
         	  		</foreach>
         	  ) T
         	  WHERE T.TENANT_ID IS NOT NULL
