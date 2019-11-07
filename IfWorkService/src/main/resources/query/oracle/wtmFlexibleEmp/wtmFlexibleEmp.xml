@@ -259,7 +259,7 @@
 			     , E.SYMD AS S_YMD
 			     , E.EYMD AS E_YMD
 			     , E.WORK_TYPE_CD 
-			     , E.WORK_MINUT
+			     , E.WORK_MINUTE
 			     , E.OT_MINUTE 
 				 , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS REST_WORK_MINUTE
 				 , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS REST_OT_MINUTE

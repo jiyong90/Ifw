@@ -372,6 +372,9 @@ public class IfwLoginController {
 //				endPointUrl = endPointUrl.replace("http://", "https://");
 //			}
 			
+			
+			System.out.println("endPointUrl :::: " + endPointUrl);
+			
 			//cookie에 테넌트 추가
 			Cookie c = null;
 			c = new Cookie("tenant", String.valueOf(tenantId));
