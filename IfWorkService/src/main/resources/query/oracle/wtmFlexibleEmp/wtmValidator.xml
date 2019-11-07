@@ -5,9 +5,9 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmValidatorMapper">
 	
-  	<select id="checkDuplicateTaa" parameterType="map" resultType="wtmGeneral">
+  	<select id="checkDuplicateTaa" parameterType="map" resultType="map">
   		<![CDATA[ 
-			SELECT COUNT(*) AS CNT FROM (
+			SELECT COUNT(*) AS cnt FROM (
 				SELECT R.*
 				  FROM WTM_FLEXIBLE_EMP E
 				  JOIN WTM_WORK_CALENDAR C
@@ -45,9 +45,9 @@
 				) X
 		]]>	
   	</select>
-  	<select id="checkDuplicateTaaByTaaTypeH" parameterType="map" resultType="wtmGeneral">
+  	<select id="checkDuplicateTaaByTaaTypeH" parameterType="map" resultType="map">
   		<![CDATA[ 
-			SELECT COUNT(*) AS CNT FROM (
+			SELECT COUNT(*) AS cnt FROM (
 				SELECT R.*
 				  FROM WTM_FLEXIBLE_EMP E
 				  JOIN WTM_WORK_CALENDAR C

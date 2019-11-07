@@ -4,22 +4,22 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmOtCanApplMapper"> 
-	 <select id="otCanApplfindByApplId" parameterType="Long" resultType="wtmGeneral">
+	 <select id="otCanApplfindByApplId" parameterType="Long" resultType="hashmap">
         <![CDATA[
-			SELECT O.OT_CAN_APPL_ID 
-			     , O.APPL_ID 
-			     , O.OT_APPL_ID 
-			     , O.WORK_DAY_RESULT_ID 
-			     , O.YMD 
-			     , O.TIME_TYPE_CD 
-			     , O.PLAN_SDATE 
-			     , O.PLAN_EDATE 
-			     , O.PLAN_MINUTE
-			     , O.APPR_SDATE 
-			     , O.APPR_EDATE 
-			     , O.APPR_MINUTE
-			     , O.REASON 
-			     , A.APPL_STATUS_CD
+			SELECT O.OT_CAN_APPL_ID AS otCanApplId
+			     , O.APPL_ID AS applId
+			     , O.OT_APPL_ID AS otApplId
+			     , O.WORK_DAY_RESULT_ID AS workDayResultId
+			     , O.YMD AS ymd
+			     , O.TIME_TYPE_CD AS timeTypeCd
+			     , O.PLAN_SDATE AS planSdate
+			     , O.PLAN_EDATE AS planEdate
+			     , O.PLAN_MINUTE AS planMinute
+			     , O.APPR_SDATE AS apprSdate
+			     , O.APPR_EDATE AS apprEdate
+			     , O.APPR_MINUTE AS apprMinute
+			     , O.REASON AS reason 
+			     , A.APPL_STATUS_CD AS applStatusCd
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_CAN_APPL O
 			    ON A.APPL_ID = O.APPL_ID
@@ -27,24 +27,24 @@
 	        ]]>
     </select>
      
-    <select id="otApplAndOtCanApplfindByApplId" parameterType="Long" resultType="wtmGeneral">
+    <select id="otApplAndOtCanApplfindByApplId" parameterType="Long" resultType="hashmap">
         <![CDATA[
-			SELECT A.APPL_ID 
-			     , A.APPL_CD 
-			     , A.APPL_STATUS_CD 
-			     , O.YMD 
-			     , O.HOLIDAY_YN 
-			     , O.OT_SDATE 
-			     , O.OT_EDATE 
-			     , O.OT_MINUTE 
-			     , O.REASON_CD 
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS REASON_NM
-			     , O.REASON 
-			     , O.SUB_YN
-			     , O.OT_APPL_ID 
-			     , O.OLD_OT_APPL_ID 
-			     , O.CANCEL_YN 
-			     , C.REASON 
+			SELECT A.APPL_ID AS applId
+			     , A.APPL_CD as applCd
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , O.YMD AS ymd
+			     , O.HOLIDAY_YN AS holidayYn
+			     , O.OT_SDATE AS otSdate
+			     , O.OT_EDATE AS otEdate
+			     , O.OT_MINUTE AS otMinute
+			     , O.REASON_CD AS reasonCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS reasonNm
+			     , O.REASON AS reason
+			     , O.SUB_YN as subYn
+			     , O.OT_APPL_ID AS otApplId
+			     , O.OLD_OT_APPL_ID AS oldOtApplId
+			     , O.CANCEL_YN AS cancelYn
+			     , C.REASON AS cancelReason
 			  FROM WTM_OT_CAN_APPL C
 			  JOIN WTM_APPL A
 			    ON C.APPL_ID = A.APPL_ID

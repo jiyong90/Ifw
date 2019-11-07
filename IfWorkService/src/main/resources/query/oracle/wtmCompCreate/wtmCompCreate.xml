@@ -4,9 +4,9 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmCompCreateMapper">
-    <select id="getCompCreateList" parameterType="map" resultType="wtmGeneral">
+    <select id="getCompCreateList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, F_WTM_DATE_FORMAT(SYSDATE,'YMD')) AS ORG_NM
+        	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, F_WTM_DATE_FORMAT(SYSDATE,'YMD')) AS orgNm
 				  , A.SABUN AS sabun
 				  , B.EMP_NM AS empNm
 				  , SUM(TOT_MINUTE) AS totMinute
@@ -23,16 +23,16 @@
 			 GROUP BY orgNm, sabun, empNm
         ]]>
     </select>
-    <select id="getCompCreateDetList" parameterType="map" resultType="wtmGeneral">
+    <select id="getCompCreateDetList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT YMD
-				  , OT_MINUTE 
-				  , ADD_MINUTE 
-				  , TOT_MINUTE
-				  , REST_MINUTE
-				  , ALLOW_MINUTE
-				  , SYMD
-				  , EYMD
+        	SELECT ymd
+				  , OT_MINUTE AS otMinute
+				  , ADD_MINUTE AS addMinute
+				  , TOT_MINUTE AS totMinute
+				  , REST_MINUTE AS restMinute
+				  , ALLOW_MINUTE AS allowMinute
+				  , symd
+				  , eymd
 			  FROM WTM_COMP_CREATE A
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}

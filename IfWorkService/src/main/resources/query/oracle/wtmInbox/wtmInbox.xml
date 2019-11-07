@@ -7,11 +7,11 @@
 	<!--
    		근무 계획 잔여 일 수(0이 아니면 근무 계획 작성 알림)
      -->
-	<select id="getToDoPlanDays" parameterType="map" resultType="wtmGeneral">
+	<select id="getToDoPlanDays" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT A.FLEXIBLE_EMP_ID 
-			     , A.SYMD AS S_YMD
-			     , B.toDoPlanDays AS TO_DO_PLAN_DAYS
+			SELECT A.FLEXIBLE_EMP_ID AS flexibleEmpId
+			     , A.SYMD AS sYmd
+			     , B.toDoPlanDays
 			  FROM WTM_FLEXIBLE_EMP A
 			  JOIN ( SELECT E.TENANT_ID
 						     , E.ENTER_CD

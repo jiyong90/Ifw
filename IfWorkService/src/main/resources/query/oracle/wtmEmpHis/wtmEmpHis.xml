@@ -5,31 +5,31 @@
   
 <mapper namespace="com.isu.ifw.mapper.WtmEmpHisMapper">
 	
-	<select id="getEmpHisList" parameterType="map" resultType="wtmGeneral">
+	<select id="getEmpHisList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT EMP_HIS_ID 
-				 , ENTER_CD
-				 , SABUN
-				 , EMP_NM 
-				 , EMP_ENG_NM
-				 , SYMD 
-				 , EYMD 
-				 , STATUS_CD 
-				 , ORG_CD
-				 , BUSINESS_PLACE_CD
-				 , DUTY_CD 
-				 , POS_CD 
-				 , CLASS_CD
-				 , JOB_GROUP_CD
-				 , JOB_CD 
-				 , PAY_TYPE_CD 
-				 , LEADER_YN
-				 , NOTE 
-				 , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS ORG_NM
-				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'DUTY_CD', DUTY_CD, SYMD) AS DUTY_NM
-				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'POS_CD', POS_CD, SYMD) AS POS_NM
-				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'CLASS_CD', CLASS_CD, SYMD) AS CLASS_NM
-				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'JOB_CD', JOB_CD, SYMD) AS JOB_NM
+        	SELECT EMP_HIS_ID AS empHisId
+				 , ENTER_CD AS enterCd
+				 , SABUN AS sabun
+				 , EMP_NM AS empNm
+				 , EMP_ENG_NM AS empEngNm
+				 , SYMD AS symd
+				 , EYMD AS eymd
+				 , STATUS_CD AS statusCd
+				 , ORG_CD AS orgCd
+				 , BUSINESS_PLACE_CD AS businessPlaceCd
+				 , DUTY_CD AS dutyCd
+				 , POS_CD AS posCd
+				 , CLASS_CD AS classCd
+				 , JOB_GROUP_CD AS jobGroupCd
+				 , JOB_CD AS jobCd
+				 , PAY_TYPE_CD AS payTypeCd
+				 , LEADER_YN AS leaderYn
+				 , NOTE AS note
+				 , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS orgNm
+				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'DUTY_CD', DUTY_CD, SYMD) AS dutyNm
+				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'POS_CD', POS_CD, SYMD) AS posNm
+				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'CLASS_CD', CLASS_CD, SYMD) AS classNm
+				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'JOB_CD', JOB_CD, SYMD) AS jobNm
 			  FROM WTM_EMP_HIS
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd} 
@@ -40,26 +40,26 @@
         ]]>
     </select>
     
-    <select id="getEmpHis" parameterType="map" resultType="wtmGeneral">
+    <select id="getEmpHis" parameterType="map" resultType="map">
         <![CDATA[
-        	SELECT EMP_HIS_ID 
-				 , ENTER_CD 
-				 , SABUN 
-				 , EMP_NM 
-				 , EMP_ENG_NM 
-				 , SYMD 
-				 , EYMD 
-				 , STATUS_CD 
-				 , ORG_CD 
-				 , BUSINESS_PLACE_CD 
-				 , DUTY_CD 
-				 , POS_CD 
-				 , CLASS_CD 
-				 , JOB_GROUP_CD 
-				 , JOB_CD 
-				 , PAY_TYPE_CD
-				 , LEADER_YN
-				 , NOTE
+        	SELECT EMP_HIS_ID AS empHisId
+				 , ENTER_CD AS enterCd
+				 , SABUN AS sabun
+				 , EMP_NM AS empNm
+				 , EMP_ENG_NM AS empEngNm
+				 , SYMD AS symd
+				 , EYMD AS eymd
+				 , STATUS_CD AS statusCd
+				 , ORG_CD AS orgCd
+				 , BUSINESS_PLACE_CD AS businessPlaceCd
+				 , DUTY_CD AS dutyCd
+				 , POS_CD AS posCd
+				 , CLASS_CD AS classCd
+				 , JOB_GROUP_CD AS jobGroupCd
+				 , JOB_CD AS jobCd
+				 , PAY_TYPE_CD AS payTypeCd
+				 , LEADER_YN AS leaderYn
+				 , NOTE AS note
 				 , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS orgNm
 				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'DUTY_CD', DUTY_CD, SYMD) AS dutyNm
 				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'POS_CD', POS_CD, SYMD) AS posNm

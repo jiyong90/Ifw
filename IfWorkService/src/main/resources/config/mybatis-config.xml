@@ -17,6 +17,5 @@
     	<typeAlias type="com.isu.ifw.vo.WtmFlexibleEmpVO" alias="wtmFlexibleEmp"/>
     	<typeAlias type="com.isu.ifw.vo.WtmFlexibleApplVO" alias="wtmFlexibleAppl"/>
     	<typeAlias type="com.isu.ifw.vo.WtmWorkTermTimeVO" alias="wtmWorkTermTime"/>
-    	<typeAlias type="com.isu.ifw.vo.WtmGeneralVO" alias="wtmGeneral"/>
     </typeAliases>
 </configuration>

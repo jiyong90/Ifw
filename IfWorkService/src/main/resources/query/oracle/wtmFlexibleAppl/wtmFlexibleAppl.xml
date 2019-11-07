@@ -4,26 +4,26 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmFlexibleApplMapper">
-	<select id="getLastAppl" parameterType="map" resultType="wtmGeneral">
+	<select id="getLastAppl" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT FA.FLEXIBLE_APPL_ID 
-			     , FA.FLEXIBLE_STD_MGR_ID 
-			     , FA.APPL_ID
-			     , FA.YM 
-			     , FA.SYMD 
-			     , FA.EYMD
-			     , FA.WORK_DAY
-			     , FA.REASON 
-			     , A.APPL_SABUN
-			     , A.APPL_CD 
-			     , A.APPL_STATUS_CD 
-			     , E.FLEXIBLE_EMP_ID
-			     , E.FLEXIBLE_STD_MGR_ID
-			     , M.WORK_SHM
-			     , M.WORK_EHM
-			     , M.CORE_SHM 
-			     , M.CORE_EHM 
-			     , M.CORE_CHK_YN 
+			SELECT FA.FLEXIBLE_APPL_ID AS flexibleApplId
+			     , FA.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+			     , FA.APPL_ID AS applId
+			     , FA.YM AS ym
+			     , FA.SYMD AS sYmd
+			     , FA.EYMD AS eYmd
+			     , FA.WORK_DAY AS workDay
+			     , FA.REASON AS reason
+			     , A.APPL_SABUN AS sabun
+			     , A.APPL_CD AS applCd
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
+			     , E.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+			     , M.WORK_SHM AS workShm
+			     , M.WORK_EHM AS workEhm
+			     , M.CORE_SHM AS coreShm
+			     , M.CORE_EHM AS coreEhm
+			     , M.CORE_CHK_YN AS coreChkYn
 			  FROM WTM_APPL A
 			  JOIN WTM_FLEXIBLE_APPL FA
 			    ON A.APPL_ID = FA.APPL_ID 
@@ -48,24 +48,24 @@
 	        ]]>
     </select>
     
-    <select id="findByApplId" parameterType="Long" resultType="wtmGeneral">
+    <select id="findByApplId" parameterType="Long" resultType="hashmap">
         <![CDATA[
-			SELECT FA.FLEXIBLE_APPL_ID 
-			     , FA.FLEXIBLE_STD_MGR_ID 
-			     , FA.APPL_ID 
-			     , FA.YM 
-			     , FA.SYMD 
-			     , FA.EYMD 
-			     , FA.WORK_DAY
-			     , FA.REASON 
-			     , A.APPL_CD
-			     , A.APPL_STATUS_CD 
-			     , E.FLEXIBLE_EMP_ID 
-			     , E.FLEXIBLE_STD_MGR_ID 
-			     , M.WORK_SHM 
-			     , M.WORK_EHM
-			     , M.CORE_SHM 
-			     , M.CORE_EHM 
+			SELECT FA.FLEXIBLE_APPL_ID AS flexibleApplId
+			     , FA.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+			     , FA.APPL_ID AS applId
+			     , FA.YM AS ym
+			     , FA.SYMD AS sYmd
+			     , FA.EYMD AS eYmd
+			     , FA.WORK_DAY AS workDay
+			     , FA.REASON AS reason
+			     , A.APPL_CD AS applCd
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , E.FLEXIBLE_EMP_ID AS flexibleEmpId
+			     , E.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+			     , M.WORK_SHM AS workShm
+			     , M.WORK_EHM AS workEhm
+			     , M.CORE_SHM AS coreShm
+			     , M.CORE_EHM AS coreEhm
 			  FROM WTM_APPL A
 			  JOIN WTM_FLEXIBLE_APPL FA
 			    ON A.APPL_ID = FA.APPL_ID 
