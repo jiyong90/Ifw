@@ -551,14 +551,85 @@
   	</select>
   	
   	<select id="getEmpBaseList" parameterType="map" resultType="hashmap">
-		SELECT TENANT_ID AS tenantId, ENTER_CD AS enterCd, SABUN AS sabun, '0' as userId 
-		  FROM WTM_IF_EMP_MSG
-		 WHERE TENANT_ID = #{tenantId}
-		   AND F_WTM_DATE_FORMAT(UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
-		   AND CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
-		   AND NEW_VALUE IS NOT NULL
+		SELECT A.TENANT_ID AS tenantId, A.ENTER_CD AS enterCd, A.SABUN AS sabun, GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, -1, 'M'), 'YMD'))  as symd, LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, 1, 'M'), 'YMD')) as eymd, '0' as userId
+		  FROM WTM_EMP_HIS A
+		 INNER JOIN WTM_IF_EMP_MSG B
+			 ON A.TENANT_ID = B.TENANT_ID
+			AND A.ENTER_CD = B.ENTER_CD
+			AND A.SABUN = B.SABUN
+			AND A.SYMD = B.CHG_YMD
+		 WHERE B.TENANT_ID = #{tenantId}
+		   AND DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
+		   AND B.CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
+		   AND B.NEW_VALUE IS NOT NULL
 		 ORDER BY ENTER_CD, SABUN
     </select>
+    
+    <insert id="insertWtmEmpAddr" parameterType="java.util.HashMap" >
+        MERGE INTO WTM_EMP_ADDR D
+	USING (
+			SELECT T.TENANT_ID
+					, T.ENTER_CD
+					, T.SABUN
+					, T.EMAIL
+					, T.HAND_PHONE
+					, T.NOTE
+	        	 , SYSDATE AS UPDATE_DATE
+	        	 , '0' AS UPDATE_ID
+			  FROM (
+				SELECT NULL AS TENANT_ID
+					, NULL AS ENTER_CD
+					, NULL AS SABUN
+					, NULL AS EMAIL
+					, NULL AS HAND_PHONE
+					, NULL AS NOTE
+					FROM DUAL
+				<foreach collection="list" item="item">    
+        	  		UNION ALL
+					SELECT TRIM(#{item.tenantId}) AS TENANT_ID
+			        	, TRIM(#{item.enterCd}) AS ENTER_CD
+			        	, TRIM(#{item.sabun}) AS SABUN
+			        	, TRIM(#{item.email}) AS EMAIL
+			        	, TRIM(#{item.handPhone}) AS HAND_PHONE
+						, TRIM(#{item.note}) AS NOTE
+			          FROM DUAL
+        	  		</foreach>
+					) T
+				WHERE T.TENANT_ID IS NOT NULL
+				AND T.ENTER_CD IS NOT NULL
+				AND T.SABUN IS NOT NULL
+			) S
+		 ON (D.TENANT_ID = S.TENANT_ID
+			AND D.ENTER_CD = S.ENTER_CD
+			AND D.SABUN = S.SABUN)
+        WHEN MATCHED THEN
+        	UPDATE SET EMAIL = S.EMAIL
+	             , HAND_PHONE = S.HAND_PHONE
+	             , NOTE = S.NOTE
+	             , UPDATE_DATE = S.UPDATE_DATE
+	             , UPDATE_ID = S.UPDATE_ID
+        WHEN NOT MATCHED THEN
+        	INSERT (
+	        	  TENANT_ID
+	        	, ENTER_CD
+	        	, SABUN
+	        	, EMAIL
+	        	, HAND_PHONE
+	        	, NOTE
+	        	, UPDATE_DATE
+	        	, UPDATE_ID
+	        ) 
+	        VALUES (
+	        	  S.TENANT_ID
+	        	, S.ENTER_CD
+	        	, S.SABUN
+	        	, S.EMAIL
+	        	, S.HAND_PHONE
+	        	, S.NOTE
+	        	, S.UPDATE_DATE
+	        	, S.UPDATE_ID
+	        ) 
+    </insert>
     
     <select id="setTaaApplIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
   		{ call P_WTM_IF_TAA_APPL( 
@@ -621,4 +692,35 @@
   			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
   			  ) }
   	</select>
+  	
+  	<select id="getExceptRuleId" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT info_data
+			  FROM comm_management_infomation
+			 WHERE tenant_id = #{tenantId}
+			   AND info_key = 'HR.IT_URL'
+        ]]>
+    </select>
+    
+    <select id="getExpTableList" parameterType="map" resultType="hashmap">
+		SELECT TABLE_NAME
+		FROM INFORMATION_SCHEMA.TABLES
+		WHERE TABLE_SCHEMA = #{tableSchema} 
+		  AND TABLE_ROWS > 0
+		    AND TABLE_NAME LIKE 'WTM%'
+  AND TABLE_NAME = 'WTM_WORK_PATT_DET'
+  		ORDER BY TABLE_NAME
+    </select>
+    
+    <select id="getExpColList" parameterType="map" resultType="hashmap">
+		SELECT COLUMN_NAME AS COL_NM, DATA_TYPE, ORDINAL_POSITION AS COL_NO
+		FROM INFORMATION_SCHEMA.COLUMNS
+		WHERE TABLE_SCHEMA= #{tableSchema} 
+		  AND TABLE_NAME = #{tableName} 
+		ORDER BY ORDINAL_POSITION
+    </select>
+    <select id="getExpDataList" parameterType="map" resultType="hashmap">
+		SELECT *
+		FROM ${tableName}
+    </select>
 </mapper>
