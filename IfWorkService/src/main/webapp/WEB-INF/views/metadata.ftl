@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/calendar.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/all.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/fontawesome.min.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/${tsId}/theme.css">
 
     <!-- for dateTimepicker -->
     <link rel="stylesheet" href="${rc.getContextPath()}/tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.css">

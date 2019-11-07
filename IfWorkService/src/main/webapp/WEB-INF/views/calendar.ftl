@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
 <link rel="stylesheet" href="${rc.getContextPath()}/fullcalendar-4.2.0/packages/list/main.css"/>
 <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/calendar.css">
+<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/${tsId}/theme.css">
 <!-- E : for calendar -->
 <!-- for dateTimepicker-->
 <link rel="stylesheet" href="${rc.getContextPath()}/tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.css">
