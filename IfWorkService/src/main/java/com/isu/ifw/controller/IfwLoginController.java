@@ -49,6 +49,7 @@ import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmTokenRepository;
 import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.option.service.TenantConfigManagerService;
 import com.isu.option.util.Aes256;
 import com.isu.option.util.Sha256;
@@ -118,7 +119,7 @@ public class IfwLoginController {
 			}
 			
 			if(tm == null) {
-				response.sendRedirect("/info?status=100");
+				response.sendRedirect(request.getContextPath()+"/info?status=100");
 			}
 
 			tenantId = tm.getTenantId();
@@ -580,7 +581,7 @@ public class IfwLoginController {
 		
 		if(userData == null) {
 			try {
-				response.sendRedirect("/info?status=120");
+				response.sendRedirect(request.getContextPath()+"/info?status=120");
 				return;
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -600,16 +601,16 @@ public class IfwLoginController {
 			tm = tenantModuleRepo.findByTenantKey(tsId);
 
 			if(tm == null) {
-				response.sendRedirect("/info?status=100");
+				response.sendRedirect(request.getContextPath()+"/info?status=100");
 				return;
 			}
 
 			tenantId = tm.getTenantId();
 			tenantModuleId = tm.getTenantModuleId();
 			
-			WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(tenantId, userData.get("enterCd").toString(), userData.get("empNo").toString());
+			WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, userData.get("enterCd").toString(), userData.get("empNo").toString(), WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
-				response.sendRedirect("/info?status=130");
+				response.sendRedirect(request.getContextPath()+"/info?status=130");
 				return;
 			}
 			
@@ -641,7 +642,7 @@ public class IfwLoginController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
-				response.sendRedirect("/info");
+				response.sendRedirect(request.getContextPath()+"/info");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

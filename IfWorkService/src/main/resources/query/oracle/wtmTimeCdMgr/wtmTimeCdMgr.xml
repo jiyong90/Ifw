@@ -115,4 +115,31 @@
 	        ) 
         ]]>
     </update>
+    
+    <select id="getTimeCdMgrList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT TIME_CD_MGR_ID AS timeCdMgrId
+			     , TENANT_ID AS tenantId
+			     , ENTER_CD AS enterCd
+			     , TIME_CD AS timeCd
+			     , TIME_NM AS timeNm
+			     , SYMD AS symd
+			     , EYMD AS eymd
+			     , WORK_SHM AS workShm
+			     , WORK_EHM AS workEhm
+			     , HOL_YN AS holYn
+			     , HOL_TIME_CD_MGR_ID AS holTimeCdMgrId
+			     , LATE_CHK_YN AS lateChkYn
+			     , LEAVE_CHK_YN AS leaveChkYn
+			     , ABSENCE_CHK_YN AS absenceChkYn
+			     , NOTE AS note
+			     , UPDATE_DATE AS updateDate
+			     , UPDATE_ID AS updateId
+			  FROM WTM_TIME_CD_MGR 
+			 WHERE TENANT_ID = #{tenantId} 
+			   AND ENTER_CD = #{enterCd} 
+			   AND #{ymd} BETWEEN SYMD AND F_WTM_NVL(EYMD, '99991231')) 
+			 ORDER BY SYMD, TIME_CD
+        ]]>
+    </select>
 </mapper>

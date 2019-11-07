@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
@@ -174,7 +176,8 @@ public class ViewController {
 		String loginId = sessionData.get("loginId").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
-		
+		String authCd = (sessionData.containsKey("authCd")?sessionData.get("authCd").toString():"U");
+
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
@@ -183,13 +186,16 @@ public class ViewController {
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		mv.addObject("isEmbedded",false);
 		mv.addObject("type","console");
+		mv.addObject("authCd", authCd);
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabun(tenantId, enterCd, empNo);
+		
+		String ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, empNo, ymd);
 		if(empHis!=null) {
 			mv.addObject("leaderYn", empHis.getLeaderYn());
 		}
@@ -214,7 +220,7 @@ public class ViewController {
 					}
 					
 					//연장근무 또는 휴일근무 신청 시 사유
-					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, ymd, "REASON_CD");
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
 				} else if("Day".equals(calendarType)) {
 					//근무 계획을 작성한 근무제 정보
@@ -265,7 +271,8 @@ public class ViewController {
 		String loginId = sessionData.get("loginId").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
-		
+		String authCd = (sessionData.containsKey("authCd")?sessionData.get("authCd").toString():"U");
+
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
@@ -273,13 +280,14 @@ public class ViewController {
 		mv.addObject("pageName", "mgr/"+viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		mv.addObject("type","console");
-
+		mv.addObject("authCd", authCd);
+		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
-		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabun(tenantId, enterCd, empNo);
+		WtmEmpHis empHis = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, empNo, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 		if(empHis!=null) {
 			mv.addObject("leaderYn", empHis.getLeaderYn());
 		}
@@ -341,7 +349,8 @@ public class ViewController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
-		
+		String authCd = (sessionData.containsKey("authCd")?sessionData.get("authCd").toString():"U");
+
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
@@ -361,6 +370,7 @@ public class ViewController {
 		mv.addObject("pageName", viewPage);
 		mv.addObject("type","hr");
 		mv.addObject("redirectUrl", loginService.getHrInfoUrl(tenantId));
+		mv.addObject("authCd", authCd);
 //		mv.addObject("tenant", tenantId);
 
 		if("workCalendar".equals(viewPage)){
@@ -384,7 +394,7 @@ public class ViewController {
 				}
 				
 				//연장근무 또는 휴일근무 신청 시 사유
-				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCd(tenantId, enterCd, "REASON_CD");
+				List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "REASON_CD");
 				try {
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
 				} catch (JsonProcessingException e) {

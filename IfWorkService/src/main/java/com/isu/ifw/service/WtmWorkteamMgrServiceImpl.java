@@ -1,6 +1,7 @@
 package com.isu.ifw.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import com.isu.ifw.entity.WtmWorkteamMgr;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmWorkteamMgrMapper;
 import com.isu.ifw.repository.WtmWorkteamMgrRepository;
+import com.isu.ifw.util.WtmUtil;
 
 @Service("workteamMgrService")
 public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
@@ -36,7 +38,15 @@ public class WtmWorkteamMgrServiceImpl implements WtmWorkteamMgrService{
 	@Override
 	public List<Map<String, Object>> getWorkteamMgrList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
 		List<Map<String, Object>> searchList = new ArrayList();	
-		List<WtmWorkteamMgr> list = workteamMgrRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString());
+		//List<WtmWorkteamMgr> list = workteamMgrRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString());
+		
+		String sYmd = null;
+		if(paramMap.get("sYmd")!=null && !"".equals(paramMap.get("sYmd"))) {
+			sYmd = paramMap.get("sYmd").toString().replaceAll("-", "");
+		} else {
+			sYmd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+		}
+		List<WtmWorkteamMgr> list = workteamMgrRepository.findByTenantIdAndEnterCdAndSymd(tenantId, enterCd, sYmd);
 		
 		for(WtmWorkteamMgr l : list) {
 			Map<String, Object> workteam = new HashMap();

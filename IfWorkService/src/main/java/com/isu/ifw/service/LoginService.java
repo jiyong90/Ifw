@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
@@ -18,25 +17,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isu.auth.repository.CommTenantModuleRepository;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.mapper.LoginMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmTokenRepository;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.Login;
 import com.isu.option.service.TenantConfigManagerService;
 
@@ -160,7 +153,8 @@ public class LoginService{
 	public void creatAccessToken(HttpServletRequest request, HttpServletResponse response, WtmToken token) {
 		tokenRepository.deleteByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
 
-		WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
+		//WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
+		WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabunAndYmd(token.getTenantId(), token.getEnterCd(), token.getSabun(), WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 		String tokenName = getHrTokenName(token.getTenantId());
 		logger.debug("tokenName  " + tokenName);
 		if(emp != null) {
