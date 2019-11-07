@@ -1,6 +1,7 @@
 package com.isu.ifw.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,14 +11,16 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.isu.ifw.entity.WtmTaaCode;
 import com.isu.ifw.entity.WtmTimeBreakMgr;
 import com.isu.ifw.entity.WtmTimeCdMgr;
+import com.isu.ifw.mapper.WtmTimeCdMgrMapper;
 import com.isu.ifw.repository.WtmTimeBreakMgrRepository;
 import com.isu.ifw.repository.WtmTimeCdMgrRepository;
+import com.isu.ifw.util.WtmUtil;
 
 @Transactional
 @Service
@@ -25,7 +28,8 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	
 	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
 	
-	
+	@Autowired
+	WtmTimeCdMgrMapper timeCdMgrMapper;
 	@Resource
 	WtmTimeCdMgrRepository timeCdMgrRepository;
 	@Resource
@@ -33,8 +37,8 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 
 	@Override
 	public List<Map<String, Object>> getTimeCdMgrList(Long tenantId, String enterCd,  Map<String, Object> paramMap) {
-		List<Map<String, Object>> timeList = new ArrayList();	
-				List<WtmTimeCdMgr> list = timeCdMgrRepository.findByTenantIdAndEnterCd(tenantId, enterCd,paramMap.containsKey("sYmd")?paramMap.get("sYmd").toString():"");
+		/*List<Map<String, Object>> timeList = new ArrayList();	
+		List<WtmTimeCdMgr> list = timeCdMgrRepository.findByTenantIdAndEnterCd(tenantId, enterCd,paramMap.containsKey("sYmd")?paramMap.get("sYmd").toString():"");
 		
 		for(WtmTimeCdMgr l : list) {
 			Map<String, Object> time = new HashMap();
@@ -55,7 +59,20 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 			time.put("note", l.getNote());
 			timeList.add(time);
 		}
-		return timeList;
+		return timeList;*/
+		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		
+		String ymd = null;
+		if(paramMap.get("sYmd")!=null && !"".equals(paramMap.get("sYmd"))) {
+			ymd = paramMap.get("sYmd").toString().replaceAll("-", "");
+		} else {
+			ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+		}
+		paramMap.put("ymd", ymd);
+		
+		return timeCdMgrMapper.getTimeCdMgrList(paramMap);
 	}
 	
 	@Override
@@ -195,7 +212,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	@Override
 	public List<Map<String, Object>> getTimeCodeList(Long tenantId, String enterCd, String holYn) {
 		List<Map<String, Object>> timeList = new ArrayList();	
-				List<WtmTimeCdMgr> list = timeCdMgrRepository.findByTenantIdAndEnterCdAndHolYn(tenantId, enterCd,holYn);
+				List<WtmTimeCdMgr> list = timeCdMgrRepository.findByTenantIdAndEnterCdAndHolYnAndYmd(tenantId, enterCd, holYn, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 		
 		for(WtmTimeCdMgr l : list) {
 			Map<String, Object> time = new HashMap();

@@ -49,6 +49,7 @@ import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmTokenRepository;
 import com.isu.ifw.service.EncryptionService;
 import com.isu.ifw.service.LoginService;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.option.service.TenantConfigManagerService;
 import com.isu.option.util.Aes256;
 import com.isu.option.util.Sha256;
@@ -607,7 +608,7 @@ public class IfwLoginController {
 			tenantId = tm.getTenantId();
 			tenantModuleId = tm.getTenantModuleId();
 			
-			WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabun(tenantId, userData.get("enterCd").toString(), userData.get("empNo").toString());
+			WtmEmpHis emp = empHisRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, userData.get("enterCd").toString(), userData.get("empNo").toString(), WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				response.sendRedirect("/info?status=130");
 				return;

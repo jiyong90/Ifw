@@ -1,6 +1,7 @@
 package com.isu.ifw.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,14 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.isu.ifw.entity.WtmBaseWorkMgr;
-import com.isu.ifw.entity.WtmTaaCode;
-import com.isu.ifw.mapper.WtmTaaCodeMapper;
 import com.isu.ifw.repository.WtmBaseWorkMgrRepository;
-import com.isu.ifw.repository.WtmCodeRepository;
-import com.isu.ifw.repository.WtmTaaCodeRepository;
+import com.isu.ifw.util.WtmUtil;
 
 @Service("baseWorkMgrService")
 public class WtmBaseWorkMgrServiceImpl implements WtmBaseWorkMgrService{
@@ -30,8 +27,16 @@ public class WtmBaseWorkMgrServiceImpl implements WtmBaseWorkMgrService{
 	
 	@Override
 	public List<Map<String, Object>> getBaseWorkList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
-		List<Map<String, Object>> baseList = new ArrayList();	
-		List<WtmBaseWorkMgr> list = baseWorkRepository.findByTenantIdAndEnterCd(tenantId, enterCd, paramMap.get("sYmd").toString());
+		List<Map<String, Object>> baseList = new ArrayList();			
+		
+		String sYmd = null;
+		if(paramMap.get("sYmd")!=null && !"".equals(paramMap.get("sYmd").toString())) {
+			sYmd = paramMap.get("sYmd").toString().replaceAll("-", "");
+		} else {
+			sYmd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+		}
+		
+		List<WtmBaseWorkMgr> list = baseWorkRepository.findByTenantIdAndEnterCdAndSymd(tenantId, enterCd, sYmd);
 		
 		for(WtmBaseWorkMgr l : list) {
 			Map<String, Object> time = new HashMap();
