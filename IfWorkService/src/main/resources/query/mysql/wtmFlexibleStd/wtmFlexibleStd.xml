@@ -97,6 +97,7 @@
 		   AND P.ENTER_CD = #{enterCd}
 		   AND P.INFO_KEY = 'OPTION_FIRSTDAY_OF_WEEK'
 		   AND D.SUN_YMD BETWEEN #{sYmd} AND #{eYmd}
+		   GROUP BY D.SUN_YMD, P.INFO_VALUE
 		 ) X
 		 ]]>
     </select>

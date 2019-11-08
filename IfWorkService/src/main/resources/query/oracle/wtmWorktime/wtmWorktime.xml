@@ -72,7 +72,7 @@
 			GROUP BY T.TENANT_ID, T.ENTER_CD, T.SABUN, T.WORK_TYPE_CD, T.FLEXIBLE_SDATE, T.FLEXIBLE_EDATE
 		) T
 		WHERE 1=1
-		  AND (#{searchKeyword}='' OR #{searchKeyword} IS NULL OR #{searchKeyword}=T.SABUN OR T.EMP_NM LIKE CONCAT(#{searchKeyword}, '%'))
+		  AND (#{searchKeyword, jdbcType=VARCHAR}='' OR #{searchKeyword, jdbcType=VARCHAR} IS NULL OR #{searchKeyword, jdbcType=VARCHAR}=T.SABUN OR T.EMP_NM LIKE CONCAT(#{searchKeyword, jdbcType=VARCHAR}, '%'))
 		<if test="searchValue!='' and searchMinute!='' and searchCondition!=''">
 			<choose>
 			    <when test="searchValue=='ALL'">

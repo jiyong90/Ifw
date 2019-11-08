@@ -14,7 +14,7 @@
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
 			   AND A.APPL_IN_SABUN = #{sabun}
-			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
+			   AND (A.APPL_ID <> #{applId, jdbcType=NUMBER} OR #{applId, jdbcType=NUMBER} IS NULL OR #{applId, jdbcType=NUMBER} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			   AND E.YMD = #{ymd}
 		) X
