@@ -3,7 +3,12 @@
   <!-- Tell the browser to be responsive to screen width -->
   	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   	
-  	<link rel="shortcut icon" href="${rc.getContextPath()}/soldev/img/favicon.ico" />
+  	<#if tsId?exists && tsId?has_content>
+		<link rel="shortcut icon" href="${rc.getContextPath()}/soldev/img/favicon_${tsId}.ico">
+	<#else>
+		<link rel="shortcut icon" href="${rc.getContextPath()}/soldev/img/favicon.ico" />
+	</#if>
+  	
     <!-- Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap-reboot.min.css"> -->
     <link rel="stylesheet" href="${rc.getContextPath()}/bootstrap-4.3.1-dist/css/bootstrap.min.css">
