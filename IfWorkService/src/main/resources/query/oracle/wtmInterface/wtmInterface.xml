@@ -549,7 +549,7 @@
   	</select>
   	
   	<select id="getEmpBaseList" parameterType="map" resultType="wtmGeneral">
-		SELECT A.TENANT_ID , A.ENTER_CD , A.SABUN, GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, -1, 'M'), 'YMD')) , LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, 1, 'M'), 'YMD')), '0' as USER_ID
+		SELECT A.TENANT_ID , A.ENTER_CD , A.SABUN, GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, -1, 'M'), 'YMD')) AS SYMD, LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, 1, 'M'), 'YMD')) AS EYMD, '0' as USER_ID
 		  FROM WTM_EMP_HIS A
 		 INNER JOIN WTM_IF_EMP_MSG B
 			 ON A.TENANT_ID = B.TENANT_ID

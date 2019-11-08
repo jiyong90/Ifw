@@ -44,10 +44,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("ifType", ifType);
 			Map<String, Object> result = wtmInterfaceMapper.getIfLastDate(paramMap);
-			
+//			for ( String key : result.keySet() ) {
+//    		    System.out.println("key : " + key +" / value : " + result.get(key));
+//    		}
 			if(result != null && result.size() > 0) {
 				try {
-        			lastDataTime = result.get("LAST_DATE").toString();
+        			lastDataTime = result.get("lastDate").toString();
 				} catch(Exception e){
 		            e.printStackTrace();
 		        }
@@ -59,7 +61,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 			result = wtmInterfaceMapper.getIfNowDate(paramMap);
 			if(result != null && result.size() > 0) {
 				try {
-					nowDataTime = result.get("IF_DATE").toString();
+					nowDataTime = result.get("ifDate").toString();
 				} catch(Exception e){
 		            e.printStackTrace();
 		        }
@@ -99,9 +101,9 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		
 		if(result != null && result.size() > 0) {
 			try {
-				System.out.println("info_data : " + result.get("info_data").toString());
+				System.out.println("info_data : " + result.get("infoData").toString());
 				
-				ifUrl = result.get("info_data").toString() + ifaddUrl + param;
+				ifUrl = result.get("infoData").toString() + ifaddUrl + param;
 				
 				System.out.println("ifUrl : " + ifUrl);
 			} catch(Exception e){
@@ -180,7 +182,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
    	        			
    	        			if(result != null) {
    	        				try {
-   		            			String codeId = result.get("CODE_ID").toString();
+   		            			String codeId = result.get("codeId").toString();
    		            			//System.out.println(codeId);
    		            			if(codeId != null && codeId.equals("")) {
    		            				ifMap.put("codeId", codeId);
@@ -423,7 +425,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        			Map<String, Object> result = wtmInterfaceMapper.getWtmTaaCodeId(ifMap);
 	        			if(result != null) {
 	        				try {
-	        					String taaCodeId = result.get("TAA_CODE_ID").toString();
+	        					String taaCodeId = result.get("taaCodeId").toString();
 	        					if(taaCodeId != null && taaCodeId.equals("")) {
 		            				ifMap.put("taaCodeId", taaCodeId);
 		            				ifUpdateList.add(ifMap);
@@ -674,7 +676,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		Map<String, Object> result = wtmInterfaceMapper.getWtmOgrChartId(ifMap);
         			if(result != null) {
         				try {
-        					orgChartId = Long.parseLong(result.get("ORG_CHART_ID").toString());
+        					orgChartId = Long.parseLong(result.get("orgChartId").toString());
         					if(orgChartId != null) {
         						// 기존
 	            				ifMap.put("orgChartId", orgChartId);
@@ -691,7 +693,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         				resultCnt += wtmInterfaceMapper.insertWtmOrgChart(ifMap);
         				// 저장후 id 조회
         				Map<String, Object> resultId = wtmInterfaceMapper.getWtmOgrChartId(ifMap);
-        				orgChartId = Long.parseLong(resultId.get("ORG_CHART_ID").toString());
+        				orgChartId = Long.parseLong(resultId.get("orgChartId").toString());
         				System.out.println("insert orgChartId : " + orgChartId);
         				ifMap.put("orgChartId", orgChartId);
         			}
@@ -850,7 +852,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        			
 	        			if(result != null) {
 	        				try {
-		            			String codeId = result.get("CODE_ID").toString();
+		            			String codeId = result.get("codeId").toString();
 		            			if(codeId != null && codeId.equals("")) {
 		            				ifMap.put("codeId", codeId);
 		            				ifUpdateList.add(ifMap);
@@ -1394,7 +1396,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		if(tableList != null && tableList.size() > 0) {
 			// 테이블 루프
 			for(int i=0; i<tableList.size(); i++) {
-				String tableName = tableList.get(i).get("TABLE_NAME").toString();
+				String tableName = tableList.get(i).get("tableName").toString();
 				System.out.println("-- tableName : " + tableName + " start!");
 				reqMap.put("tableName", tableName);
 				colList = wtmInterfaceMapper.getExpColList(reqMap);
@@ -1403,10 +1405,10 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 				if(colList != null && colList.size() > 0) {
 					InsertStr = "INSERT INTO " + tableName + "(";
 					for(int j=0; j<colList.size(); j++) {
-						if("1".equals(colList.get(j).get("COL_NO").toString())) {
-							InsertStr += colList.get(j).get("COL_NM").toString();
+						if("1".equals(colList.get(j).get("colNo").toString())) {
+							InsertStr += colList.get(j).get("colNm").toString();
 						} else {
-							InsertStr += ", " + colList.get(j).get("COL_NM").toString(); 
+							InsertStr += ", " + colList.get(j).get("colNm").toString(); 
 						}
 					}
 					InsertStr += ")"; 
@@ -1422,8 +1424,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 						for(int j=0; j<colList.size(); j++) {
 							if(j > 0) {dataStr += ", ";}
 							
-							String colNm = colList.get(j).get("COL_NM").toString();
-							String colType = colList.get(j).get("DATA_TYPE").toString();
+							String colNm = colList.get(j).get("colNm").toString();
+							String colType = colList.get(j).get("dataType").toString();
 							String dataVal = "";
 							if(dataList.get(x).get(colNm) == null || "".equals(dataList.get(x).get(colNm).toString().trim())){
 								dataStr += " null ";

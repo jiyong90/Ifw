@@ -7,7 +7,7 @@
 
 	<select id="getIfLastDate" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT F_WTM_DATE_FORMAT(MAX(UPDATE_DATE), 'YMDHIS') AS LAST_DATE
+        	SELECT F_WTM_DATE_FORMAT(MAX(UPDATE_DATE), 'YMDHIS') AS lastDate
 			  FROM WTM_IF_HIS
 			 WHERE TENANT_ID = #{tenantId}
 			   AND IF_ITEM = #{ifType}
@@ -16,14 +16,14 @@
     </select>
     <select id="getIfNowDate" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT F_WTM_DATE_FORMAT(NOW(), 'YMDHIS') AS IF_DATE
+        	SELECT F_WTM_DATE_FORMAT(NOW(), 'YMDHIS') AS ifDate
 			  FROM DUAL
         ]]>
     </select>
     
     <select id="getIfUrl" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT info_data
+        	SELECT info_data as infoData
 			  FROM comm_management_infomation
 			 WHERE tenant_id = #{tenantId}
 			   AND info_key = 'HR.IT_URL'
@@ -51,7 +51,7 @@
 	
 	<select id="getWtmCodeId" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT CODE_ID
+			SELECT CODE_ID as codeId
 			  FROM WTM_CODE
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd}
@@ -172,7 +172,7 @@
     </insert>
     
     <select id="getWtmTaaCodeId" parameterType="map" resultType="hashmap">
-		SELECT TAA_CODE_ID
+		SELECT TAA_CODE_ID as taaCodeId
 		  FROM WTM_TAA_CODE
 		 WHERE TENANT_ID = #{tenantId}
 		   AND ENTER_CD = #{enterCd}
@@ -303,7 +303,7 @@
     </update>
     
     <select id="getWtmOgrChartId" parameterType="map" resultType="hashmap">
-		SELECT ORG_CHART_ID
+		SELECT ORG_CHART_ID as orgChartId
 		  FROM WTM_ORG_CHART
 		 WHERE TENANT_ID = #{tenantId}
 		   AND ENTER_CD = #{enterCd}
@@ -516,7 +516,7 @@
   	</select>
   	
   	<select id="getWtmTaaApplId" parameterType="map" resultType="hashmap">
-		SELECT TAA_APPL_ID
+		SELECT TAA_APPL_ID as taaApplId
 		  FROM WTM_TAA_APPL
 		 WHERE TENANT_ID = #{tenantId}
 		   AND ENTER_CD = #{enterCd}
@@ -546,7 +546,7 @@
     </select>
     
     <select id="getExpTableList" parameterType="map" resultType="hashmap">
-		SELECT TABLE_NAME
+		SELECT TABLE_NAME as tableName
 		FROM INFORMATION_SCHEMA.TABLES
 		WHERE TABLE_SCHEMA = #{tableSchema} 
 		  AND TABLE_ROWS > 0
@@ -556,7 +556,7 @@
     </select>
     
     <select id="getExpColList" parameterType="map" resultType="hashmap">
-		SELECT COLUMN_NAME AS COL_NM, DATA_TYPE, ORDINAL_POSITION AS COL_NO
+		SELECT COLUMN_NAME AS colNm, DATA_TYPE as dataType, ORDINAL_POSITION AS colNo
 		FROM INFORMATION_SCHEMA.COLUMNS
 		WHERE TABLE_SCHEMA= #{tableSchema} 
 		  AND TABLE_NAME = #{tableName} 
