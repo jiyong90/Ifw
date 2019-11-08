@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -114,6 +115,8 @@ public class ViewController {
         
         mv.addObject("loginBackgroundImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.BACKGROUND_IMG", true, ""));
         mv.addObject("loginLogoImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.LOGO_IMG", true, ""));
+        mv.addObject("mainTitle", tcms.getConfigValue(tenantId, "WTMS.MAIN.TITLE", true, ""));
+        mv.addObject("copyright", tcms.getConfigValue(tenantId, "WTMS.MAIN.COPYRIGHT", true, ""));
         
 		return mv;
 	}
@@ -184,6 +187,7 @@ public class ViewController {
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
+		mv.addObject("mainTitle", tcms.getConfigValue(tenantId, "WTMS.MAIN.TITLE", true, ""));
 		mv.addObject("isEmbedded",false);
 		mv.addObject("type","console");
 		mv.addObject("authCd", authCd);
@@ -280,6 +284,7 @@ public class ViewController {
 		mv.addObject("loginId", loginId);
 		mv.addObject("pageName", "mgr/"+viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
+		mv.addObject("mainTitle", tcms.getConfigValue(tenantId, "WTMS.MAIN.TITLE", true, ""));
 		mv.addObject("type","console");
 		mv.addObject("authCd", authCd);
 		

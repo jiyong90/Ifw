@@ -2,13 +2,12 @@
 <html lang="ko">
 <head>
 	<#include "/metadata.ftl">
-    <title>근태관리 시스템</title>
 </head>
 <body class="login text-center" style="background-image:URL('${loginBackgroundImg}');">
     <form class="form-login" action="${rc.getContextPath()}${AUTH_CONFIG.getLoginFormSubmitEndpoint().getUrl()}" method="post">
         <!-- <img class="mb-4 logo" src="soldev/img/bootstrap-solid.svg" alt=""> -->
         <img class="mb-0 logo" src="${loginLogoImg}" alt="기업로고">
-        <h1 class="h3 mb-3 font-weight-normal">이수시스템</h1>
+        <!-- <h1 class="h3 mb-3 font-weight-normal">이수시스템</h1> -->
         <#if companyList?exists && companyList?has_content>
         	<select id="enterCd" name="enterCd" class="form-control" style="margin:0 0 20px;">
         		<#list companyList as company>
@@ -29,7 +28,9 @@
         <#if certificateError??>
 		<span style="color: red; font-style: italic;">${certificateError}</span><br>
 		</#if>
-        <p class="mt-5 mb-3 text-muted">Copyright © 2019 ISUSYSTEM.<br>All rights reserved.</p>
+		<#if copyright?exists && copyright?has_content>
+        <p class="mt-5 mb-3 text-muted">${copyright}</p>
+        </#if>
     </form>
     <#include "/metaScript.ftl">
     <script type="text/javascript">

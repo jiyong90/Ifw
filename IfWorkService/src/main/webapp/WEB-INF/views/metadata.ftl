@@ -40,4 +40,10 @@
   	[v-cloak] {display: none}
   </style>
   
+<#if mainTitle?exists && mainTitle?has_content>
+	<title>${mainTitle}</title>
+<#else>
+	<title>근태관리 시스템</title>
+</#if>
+  
    
