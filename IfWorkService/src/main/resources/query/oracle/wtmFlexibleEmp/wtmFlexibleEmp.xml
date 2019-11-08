@@ -10,8 +10,8 @@
 			     , E.ENTER_CD 
 			     , E.SABUN 
 			     , E.FLEXIBLE_EMP_ID
-			     , E.SYMD 
-			     , E.EYMD
+			     , E.SYMD AS S_YMD 
+			     , E.EYMD AS E_YMD
 			     , E.WORK_TYPE_CD
 			     , M.FLEXIBLE_NM 
 			     , NULL AS APPL_ID 
@@ -32,8 +32,8 @@
 			     , A.ENTER_CD
 			     , A.APPL_SABUN AS SABUN
 			     , E.FLEXIBLE_EMP_ID 
-			     , FA.SYMD
-			     , FA.EYMD
+			     , FA.SYMD AS S_YMD
+			     , FA.EYMD AS E_YMD
 			     , E.WORK_TYPE_CD 
 			     , F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD,A.APPL_SABUN,A.APPL_YMD) AS FLEXIBLE_NM
 			     , A.APPL_ID 
@@ -55,7 +55,7 @@
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
 			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
-			ORDER BY sYmd
+			ORDER BY S_YMD
         ]]>
     </select>
 
