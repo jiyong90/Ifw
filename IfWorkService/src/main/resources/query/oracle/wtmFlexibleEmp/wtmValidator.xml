@@ -39,7 +39,7 @@
 				 WHERE A.TENANT_ID = ${tenantId}
 				   AND A.ENTER_CD = ${enterCd}
 				   AND A.APPL_IN_SABUN = ${sabun}
-				   AND (A.APPL_ID <> #{applId, jdbcType=NUMBER} OR #{applId, jdbcType=NUMBER} IS NULL OR #{applId, jdbcType=NUMBER} = '')
+				   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '')
 				   AND A.APPL_STATUS_CD IN ('21','31')
 				   -- AND ((F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') < #{edate}) OR (F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') > #{sdate} AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') <= #{edate}))
 				) X
@@ -73,7 +73,7 @@
 				 WHERE A.TENANT_ID = ${tenantId}
 				   AND A.ENTER_CD = ${enterCd}
 				   AND A.APPL_IN_SABUN = ${sabun}
-				   AND (A.APPL_ID <> #{applId, jdbcType=NUMBER} OR #{applId, jdbcType=NUMBER} IS NULL OR #{applId, jdbcType=NUMBER} = '')
+				   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '')
 				   AND A.APPL_STATUS_CD IN ('21','31')
 				   AND (CONCAT(O.SYMD, O.SHM) >= #{sdate} AND CONCAT(O.SYMD, O.SHM) < #{edate}) OR (CONCAT(O.EYMD, O.EHM) > #{sdate} AND CONCAT(O.EYMD, O.EHM) <= #{edate}))
 				) X

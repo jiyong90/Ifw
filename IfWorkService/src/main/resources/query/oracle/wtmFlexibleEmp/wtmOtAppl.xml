@@ -146,7 +146,7 @@
 			 WHERE A.APPL_STATUS_CD IN ('21','31')
 			   AND O.YMD BETWEEN #{symd} AND #{eymd}
 			   AND A.APPL_IN_SABUN = #{sabun}
-			   AND (A.APPL_ID <> #{applId, jdbcType=NUMBER} OR #{applId, jdbcType=NUMBER} IS NULL OR #{applId, jdbcType=NUMBER} = '') 
+			   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '') 
 			 UNION ALL
 			SELECT F_WTM_NVL(CASE WHEN R.APPR_MINUTE IS NULL THEN R.PLAN_MINUTE ELSE R.APPR_MINUTE END,0) AS OT_MINUTE
 			  FROM WTM_WORK_DAY_RESULT R
