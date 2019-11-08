@@ -23,7 +23,7 @@
     </select>
     <select id="checkRequestDate" parameterType="map" resultType="map"> 
         <![CDATA[
-        	SELECT SUM(XX.CNT) AS CNT FROM (
+        	SELECT SUM(XX.CNT) AS cnt FROM (
 			SELECT COUNT(*) AS CNT
 			  FROM WTM_APPL A
 			  JOIN WTM_FLEXIBLE_APPL F

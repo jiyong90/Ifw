@@ -478,7 +478,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		if(sYmd != null && !sYmd.equals("") && eYmd != null && !eYmd.equals("")) {
 			Map<String, Object> m = applMapper.calcWorkDay(paramMap);
 			if(m != null) {
-				flexibleAppl.setWorkDay(m.get("WORK_CNT").toString());
+				flexibleAppl.setWorkDay(m.get("workCnt").toString());
 			}
 		}
 		

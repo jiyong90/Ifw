@@ -30,7 +30,7 @@
     
     <select id="getWtmApplLineByApplId" parameterType="Long" resultType="wtmApplLine">
         <![CDATA[
-			SELECT 1 AS APPR_TYPE_CD
+			SELECT '1' AS APPR_TYPE_CD
 			     , 0 AS APPR_SEQ
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPR_TYPE_CD', 1, A.APPL_YMD) AS APPR_TYPE_NM
 			     , A.APPL_SABUN AS SABUN

@@ -116,7 +116,7 @@ public class WtmValidatorServiceImpl implements WtmValidatorService  {
 		paramMap.put("applId", applId);
 		
 		Map<String, Object> m = flexStdMapper.checkRequestDate(paramMap);
-		int cnt = Integer.parseInt(m.get("CNT").toString());
+		int cnt = Integer.parseInt(m.get("cnt").toString());
 		if(cnt > 0) {
 			rp.setFail("신청중인 또는 이미 적용된 근무정보가 있습니다.");
 			return rp;
