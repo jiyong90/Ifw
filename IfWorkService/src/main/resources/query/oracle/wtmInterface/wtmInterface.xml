@@ -519,16 +519,16 @@
 			, ORG_PATH
 			, LEADER_YN
 		) VALUES (
-			  #{item.tenantId}
-			, #{item.enterCd}
-			, #{item.sabun}
-			, #{item.empNm}
+			  #{item.tenantId, jdbcType=NUMERIC}
+			, #{item.enterCd, jdbcType=VARCHAR}
+			, #{item.sabun, jdbcType=VARCHAR}
+			, #{item.empNm, jdbcType=VARCHAR}
 			, #{item.empEngNm, jdbcType=VARCHAR}
-			, #{item.symd}
-			, #{item.eymd}
-			, #{item.statusCd}
-			, #{item.orgCd}
-			, #{item.businessPlaceCd}
+			, #{item.symd, jdbcType=VARCHAR}
+			, #{item.eymd, jdbcType=VARCHAR}
+			, #{item.statusCd, jdbcType=VARCHAR}
+			, #{item.orgCd, jdbcType=VARCHAR}
+			, #{item.businessPlaceCd, jdbcType=VARCHAR}
 			, #{item.dutyCd, jdbcType=VARCHAR}
 			, #{item.posCd, jdbcType=VARCHAR}
 			, #{item.classCd, jdbcType=VARCHAR}
@@ -536,7 +536,7 @@
 			, #{item.jobCd, jdbcType=VARCHAR}
 			, #{item.payTypeCd, jdbcType=VARCHAR}
 			, #{item.orgPath, jdbcType=VARCHAR}
-			, #{item.leaderYn}
+			, #{item.leaderYn, jdbcType=VARCHAR}
 		)
     	</foreach>
 	</insert>
@@ -555,7 +555,7 @@
 			 ON A.TENANT_ID = B.TENANT_ID
 			AND A.ENTER_CD = B.ENTER_CD
 			AND A.SABUN = B.SABUN
-			AND A.SYMD = B.CHG_YMD
+			AND A.EYMD = '29991231'
 		 WHERE B.TENANT_ID = #{tenantId}
 		   AND F_WTM_DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
 		   AND B.CHG_TYPE_CD = 'BUSINESS_PLACE_CD'

@@ -976,11 +976,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	// 조회된 자료가 있으면...
     	if(retMsg == null && getIfList != null && getIfList.size() > 0) {
 	        try {
-	        	List<Map<String, Object>> ifList = new ArrayList();
+	        	
    	        	List<Map<String, Object>> ifUpdateList = new ArrayList();
    	        	
    	        	for(int i=0; i<getIfList.size(); i++) {
    	        		System.out.println("************* i : " + i);
+   	        		List<Map<String, Object>> ifList = new ArrayList();
 	        		// 사원이력을 임시테이블로 이관 후 프로시저에서 이력을 정리한다.
 	        		Map<String, Object> ifMap = new HashMap<>();
 	        		ifMap.put("tenantId", tenantId);
@@ -1001,24 +1002,27 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		ifMap.put("payTypeCd", getIfList.get(i).get("PAY_TYPE_CD"));
 	        		ifMap.put("orgPath", getIfList.get(i).get("ORG_PATH"));
 	        		ifMap.put("leaderYn", getIfList.get(i).get("LEADER_YN"));
-
+	        		
+	    			for ( String key : ifMap.keySet() ) {
+		    		    System.out.println("key : " + key +" / value : " + ifMap.get(key));
+		    		}
+	    			
 	        		ifList.add(ifMap);
+	        		// 건별반영
+	        		resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifList);
 //	        		resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifMap);
 //	        		retMsg = resultCnt + "건 반영완료";
 	        	}
 	        	
 	        	try {
 		        	// 추가건이 있으면
-		    		if (ifList.size() > 0) {
+		    		//if (ifList.size() > 0) {
 		    			//System.out.println("insert size : " + ifList.size());
-		    			resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifList);
-		    			if(resultCnt > 0) {
-		        			retMsg = resultCnt + "건 반영완료";
-		        		} else {
-		        			retMsg = "갱신자료없음";
-		        		}
-		    			
-		    			// temp 저장후 프로시저 호출
+		    			//resultCnt += wtmInterfaceMapper.insertEmpHisTemp(ifList);
+	    			if(resultCnt > 0) {
+	        			retMsg = resultCnt + "건 반영완료";
+	        			
+	        			// temp 저장후 프로시저 호출
 		    			HashMap<String, Object> setSpRetMap = new HashMap<>();
 		    			setSpRetMap.put("tenantId", tenantId);
 		    			setSpRetMap.put("nowDataTime", nowDataTime);
@@ -1030,7 +1034,11 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		    			if("ERR".equals(retCode)) {
 		    				retMsg = "사원정보 이관갱신중 오류 오류로그 확인";
 		    			}
-		    		}
+		    			
+	        		} else {
+	        			retMsg = "갱신자료없음";
+	        		}
+		    		//}
 	        	}catch(Exception e) {
 	        		ifHisMap.put("ifStatus", "ERR");
 	        		retMsg = "emp set : temp 자료저장 오류";
@@ -1040,7 +1048,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 	        }
     	} else {
-			ifHisMap.put("ifStatus", "ERR");
+			ifHisMap.put("ifStatus", "OK");
+			retMsg = "갱신자료없음";
 		}
     	// 3. 처리결과 저장
 		try {
@@ -1054,35 +1063,39 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 			e.printStackTrace();
 		}
 		
-		// 4. 기본근무 생성대상자 조회해서 근무를 생성해주자
-		try {
-			// 근무관리 제외차 체크
-			/*
-			List<Long> ruleIds = new ArrayList<Long>();
-			Map<String, Object> ruleMap = null;
-			Long targetRuleId =
-			*/ 
-			List<Map<String, Object>> getEmpBaseList = null;
-			getEmpBaseList = wtmInterfaceMapper.getEmpBaseList(ifHisMap);
-			if(getEmpBaseList != null && getEmpBaseList.size() > 0) {
-				for(int i=0; i<getEmpBaseList.size(); i++) {
-					Map<String, Object> setEmpMap = new HashMap<>();
-					setEmpMap = getEmpBaseList.get(i);
-					// 파라메터 체크 #{tenantId}, #{enterCd}, #{symd}, #{eymd}, #{sabun} , #{userId}
-					System.out.println("tenantId : " + setEmpMap.get("tenantId").toString());
-					System.out.println("enterCd : " + setEmpMap.get("enterCd").toString());
-					System.out.println("symd : " + setEmpMap.get("symd").toString());
-					System.out.println("eymd : " + setEmpMap.get("eymd").toString());
-					System.out.println("sabun : " + setEmpMap.get("sabun").toString());
-					System.out.println("userId : " + setEmpMap.get("userId").toString());
-					// 입사자만? 이력정리용 프로시저 호출하기
-			    	wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(setEmpMap);
+		if("OK".equals(ifHisMap.get("ifStatus"))) {
+			// 4. 기본근무 생성대상자 조회해서 근무를 생성해주자
+			try {
+				System.out.println("base flexible emp add ");
+				// 근무관리 제외차 체크
+				/*
+				List<Long> ruleIds = new ArrayList<Long>();
+				Map<String, Object> ruleMap = null;
+				Long targetRuleId =
+				*/ 
+				List<Map<String, Object>> getEmpBaseList = null;
+				getEmpBaseList = wtmInterfaceMapper.getEmpBaseList(ifHisMap);
+				if(getEmpBaseList != null && getEmpBaseList.size() > 0) {
+					for(int i=0; i<getEmpBaseList.size(); i++) {
+						Map<String, Object> setEmpMap = new HashMap<>();
+						setEmpMap = getEmpBaseList.get(i);
+						// 파라메터 체크 #{tenantId}, #{enterCd}, #{symd}, #{eymd}, #{sabun} , #{userId}
+						System.out.println("tenantId : " + setEmpMap.get("tenantId").toString());
+						System.out.println("enterCd : " + setEmpMap.get("enterCd").toString());
+						System.out.println("symd : " + setEmpMap.get("symd").toString());
+						System.out.println("eymd : " + setEmpMap.get("eymd").toString());
+						System.out.println("sabun : " + setEmpMap.get("sabun").toString());
+						System.out.println("userId : " + setEmpMap.get("userId").toString());
+						setEmpMap.put("pId", setEmpMap.get("userId").toString());
+						// 입사자만? 이력정리용 프로시저 호출하기
+				    	wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(setEmpMap);
+						wtmFlexibleEmpMapper.createWorkTermBySabunAndSymdAndEymd(setEmpMap);
+					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-    	
 	    return;
 	}
 	
