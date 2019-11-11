@@ -1488,7 +1488,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	}
     	
     	getDateMap = new HashMap();
-    	ymd = "20191112";
+    	// ymd = "20191112";
     	getDateMap.put("tenantId", tenantId);
     	getDateMap.put("ymd", ymd);
     	getDateMap.put("closeType", closeType);
