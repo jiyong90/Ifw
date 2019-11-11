@@ -52,9 +52,9 @@
 				F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, A.SABUN, F_WTM_DATE_FORMAT(SYSDATE,'YMD')) AS EMP_NM,
 				A.YMD, 
 				A.TIME_CD_MGR_ID ,
-				A.ENTRY_SDATE,
+				F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'HI') as ENTRY_SDATE,
 				A.ENTRY_STYPE_CD,
-				A.ENTRY_EDATE,
+				F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'HI') as ENTRY_EDATE,
 				A.ENTRY_ETYPE_CD,
 				A.WORK_CLOSE_YN,
 				A.HOLIDAY_YN,
@@ -79,8 +79,8 @@
 			WHERE A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '') 
 				AND #{tenantId} = A.TENANT_ID AND A.ENTER_CD = #{enterCd}
 		]]>
-		<if test="searchKeyword!=null and !searchKeyword.equals('')">
-			AND (A.SABUN LIKE CONCAT('%', #{searchKeyword, jdbcType=VARCHAR}, '%') OR D.EMP_NM LIKE CONCAT('%', #{searchKeyword, jdbcType=VARCHAR}, '%'))
+		<if test="searchKeyword!=null and !searchKeyword.equals('')"> 
+			AND (A.SABUN LIKE #{searchKeyword, jdbcType=VARCHAR} || '%' OR D.EMP_NM LIKE '%' || #{searchKeyword, jdbcType=VARCHAR} || '%')
 		</if>
 		<![CDATA[
 			GROUP BY A.WORK_CALENDAR_ID , A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, A.TIME_CD_MGR_ID ,	A.ENTRY_SDATE, A.ENTRY_STYPE_CD,	A.ENTRY_EDATE,	A.ENTRY_ETYPE_CD, A.WORK_CLOSE_YN, A.HOLIDAY_YN, A.NOTE, B.FLEXIBLE_STD_MGR_ID, D.EMP_NM,E.CORE_SHM,				E.CORE_EHM
@@ -100,9 +100,9 @@
 							F_WTM_GET_EMP_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS EMP_NM,
 							C.YMD, 
 							C.TIME_CD_MGR_ID,
-							C.ENTRY_SDATE,
+							F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'HI') as ENTRY_SDATE,
 							C.ENTRY_STYPE_CD,
-							C.ENTRY_EDATE,
+							F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'HI') as ENTRY_SDATE,
 							C.ENTRY_ETYPE_CD,
 							C.WORK_CLOSE_YN,
 							C.HOLIDAY_YNn,
@@ -140,7 +140,7 @@
 					GROUP BY C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD
 			) T
 			<if test="searchKeyword!=null and !searchKeyword.equals('')">
-				WHERE (T.SABUN LIKE CONCAT('%', #{searchKeyword}, '%') OR T.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%'))
+				WHERE (T.SABUN LIKE  #{searchKeyword} || '%' OR T.EMP_NM LIKE '%' || #{searchKeyword} || '%')
 			</if>
 			ORDER BY YMD DESC, SABUN
     </select>

@@ -91,7 +91,7 @@
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
-		sheet1.SetEditable(true);
+		sheet1.SetEditable(false);	//sheet1.SetEditable(true);
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
 		sheet1.SetCountPosition(8);
@@ -156,12 +156,14 @@
 		case "Search":
 			sheet1.DoSearch( "${rc.getContextPath()}/calendar/all" , $("#sheetForm").serialize());
 			break;
+	/*
 		case "Save":
 			if(!dupChk(sheet1,"businessPlaceCd|symd", false, true)){break;}
 			IBS_SaveName(document.sheetForm,sheet1);
 			sheet1.DoSave("${rc.getContextPath()}/basework/save", $("#sheetForm").serialize()); break;
 
 			break;
+	*/
 		case "Insert":
 			sheet1.DataInsert(0) ;
 			break;
