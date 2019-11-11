@@ -21,7 +21,7 @@
 			   AND #{ymd} BETWEEN C.SYMD AND C.EYMD 
 			   AND C.ENTER_CD= #{enterCd}
 			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD 
-			   AND (E.SABUN like CONCAT('%', #{sData}, '%')  OR C.EMP_NM like CONCAT('%', #{sData}, '%')
+			   AND (E.SABUN like CONCAT('%', #{searchKeyword, jdbcType=VARCHAR}, '%')  OR C.EMP_NM like CONCAT('%', #{searchKeyword, jdbcType=VARCHAR}, '%')
         ]]>
     </select>
     

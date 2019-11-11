@@ -38,8 +38,8 @@
     
     <update id="setInOutChangeList" parameterType="map">
     	<if test="insertRows!=null and insertRows.size()>0">
-			<foreach collection="insertRows" item="item" separator="; ">
-		        INSERT INTO WTM_INOUT_CHG_HIS 
+			<foreach collection="insertRows" item="item" open="INSERT ALL" close="SELECT * FROM DUAL" separator=" ">
+		        INTO WTM_INOUT_CHG_HIS 
 					(TENANT_ID,
 					ENTER_CD, 
 					SABUN, 
@@ -58,12 +58,12 @@
 					#{enterCd}, 
 					#{item.sabun}, 
 					#{item.ymd}, 
-					IF(#{item.entrySdate}= '', NULL, F_WTM_TO_DATE(#{item.entrySdate}, 'YMDHIS')), 
-					#{item.entryStypeCd}, 
-					IF(#{item.entryEdate}='', NULL, F_WTM_TO_DATE(#{item.entryEdate}, 'YMDHIS')), 
-					#{item.entryEtypeCd}, 
-					F_WTM_TO_DATE(#{item.chgSdate}, 'YMDHIS'), 
-					F_WTM_TO_DATE(#{item.chgEdate}, 'YMDHIS'), 
+					NVL(#{item.entrySdate, jdbcType=VARCHAR}, NULL, F_WTM_TO_DATE(#{item.entrySdate, jdbcType=VARCHAR}, 'YMDHI')), 
+					#{item.entryStypeCd, jdbcType=VARCHAR}, 
+					NVL(#{item.entryEdate, jdbcType=VARCHAR}, NULL, F_WTM_TO_DATE(#{item.entryEdate, jdbcType=VARCHAR}, 'YMDHI')), 
+					#{item.entryEtypeCd, jdbcType=VARCHAR}, 
+					F_WTM_TO_DATE(#{item.chgSdate, jdbcType=VARCHAR}, 'YMDHIS'), 
+					F_WTM_TO_DATE(#{item.chgEdate, jdbcType=VARCHAR}, 'YMDHIS'), 
 					#{item.reason}, 
 					SYSDATE, 
 					#{userId})	
