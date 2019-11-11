@@ -138,7 +138,6 @@
 				, CORE_EHM = #{item.coreEhm} 
 				, DEFAULT_WORK_USE_YN = #{item.defaultWorkUseYn}
 				, UNIT_MINUTE = #{item.unitMinute} 
-				, UNIT_MINUTE = #{item.unitMinute} 
 				, EXHAUSTION_YN = #{item.exhaustionYn} 
 				, HOL_EXCEPT_YN = #{item.holExceptYn} 
 				, WORK_DAYS_OPT = #{item.workDaysOpt} 

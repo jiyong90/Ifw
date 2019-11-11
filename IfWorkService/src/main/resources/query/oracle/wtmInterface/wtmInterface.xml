@@ -645,7 +645,7 @@
     
     <select id="setTaaApplIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
   		{ call P_WTM_IF_TAA_APPL( 
-  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  				#{tenantId, jdbcType=NUMERIC, javaType=java.lang.Long, mode=IN}
   			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{taaCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
@@ -664,7 +664,7 @@
   	</select>
   	<select id="setTaaApplDayIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
   		{ call P_WTM_IF_TAA_APPL_DAY( 
-  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  				#{tenantId, jdbcType=NUMERIC, javaType=java.lang.Long, mode=IN}
   			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{taaCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
@@ -694,7 +694,7 @@
 	
 	<select id="setWorkTimeCloseIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
   		{ call P_WTM_CLOSE_WORKTIME( 
-  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  				#{tenantId, jdbcType=NUMERIC, javaType=java.lang.Long, mode=IN}
   			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{ym, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}

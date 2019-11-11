@@ -138,7 +138,7 @@
 			  FROM WTM_TIME_CD_MGR 
 			 WHERE TENANT_ID = #{tenantId} 
 			   AND ENTER_CD = #{enterCd} 
-			   AND #{ymd} BETWEEN SYMD AND F_WTM_NVL(EYMD, '99991231')) 
+			   AND #{ymd} BETWEEN SYMD AND F_WTM_NVL(EYMD, '99991231')
 			 ORDER BY SYMD, TIME_CD
         ]]>
     </select>

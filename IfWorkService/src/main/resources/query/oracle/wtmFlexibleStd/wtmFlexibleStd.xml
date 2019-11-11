@@ -131,32 +131,31 @@
 	<update id="updateFlexibleStd" parameterType="java.util.List">
 		<foreach collection="list" item="item" separator=";">
 			UPDATE WTM_FLEXIBLE_STD_MGR SET 
-				USE_EYMD =  #{item.useEymd}
-				, WORK_SHM = #{item.workShm} 
-				, WORK_EHM = #{item.workEhm} 
-				, CORE_SHM = #{item.coreShm} 
-				, CORE_EHM = #{item.coreEhm} 
-				, DEFAULT_WORK_USE_YN = #{item.defaultWorkUseYn}
-				, UNIT_MINUTE = #{item.unitMinute} 
-				, UNIT_MINUTE = #{item.unitMinute} 
-				, EXHAUSTION_YN = #{item.exhaustionYn} 
-				, HOL_EXCEPT_YN = #{item.holExceptYn} 
-				, WORK_DAYS_OPT = #{item.workDaysOpt} 
-				, USED_TERM_OPT = #{item.usedTermOpt} 
-				, APPL_TERM_OPT = #{item.applTermOpt} 
-				, CORE_CHK_YN = #{item.coreChkYn} 
-				, REGARD_TIME_CD_ID = #{item.regardTimeCdId} 
-				, FIXOT_USE_TYPE = #{item.fixotUseType} 
-				, FIXOT_USE_LIMIT = #{item.fixotUseLimit}
-				, TAA_TIME_YN = #{item.taaTimeYn}
-				, TAA_WORK_YN = #{item.taaWorkYn}
-				, DAY_OPEN_TYPE = #{item.dayOpenType}
-				, DAY_CLOSE_TYPE = #{item.dayCloseType}
-				, UNPLANNED_YN = #{item.unplannedYn} 
-				, NOTE = #{item.note}  
+				USE_EYMD =  #{item.useEymd, jdbcType=VARCHAR}
+				, WORK_SHM = #{item.workShm, jdbcType=VARCHAR} 
+				, WORK_EHM = #{item.workEhm, jdbcType=VARCHAR} 
+				, CORE_SHM = #{item.coreShm, jdbcType=VARCHAR} 
+				, CORE_EHM = #{item.coreEhm, jdbcType=VARCHAR} 
+				, DEFAULT_WORK_USE_YN = #{item.defaultWorkUseYn, jdbcType=VARCHAR}
+				, UNIT_MINUTE = #{item.unitMinute, jdbcType=VARCHAR} 
+				, EXHAUSTION_YN = #{item.exhaustionYn, jdbcType=VARCHAR} 
+				, HOL_EXCEPT_YN = #{item.holExceptYn, jdbcType=VARCHAR} 
+				, WORK_DAYS_OPT = #{item.workDaysOpt, jdbcType=VARCHAR} 
+				, USED_TERM_OPT = #{item.usedTermOpt, jdbcType=VARCHAR} 
+				, APPL_TERM_OPT = #{item.applTermOpt, jdbcType=VARCHAR} 
+				, CORE_CHK_YN = #{item.coreChkYn, jdbcType=VARCHAR} 
+				, REGARD_TIME_CD_ID = #{item.regardTimeCdId, jdbcType=NUMERIC} 
+				, FIXOT_USE_TYPE = #{item.fixotUseType, jdbcType=VARCHAR} 
+				, FIXOT_USE_LIMIT = #{item.fixotUseLimit, jdbcType=NUMERIC}
+				, TAA_TIME_YN = #{item.taaTimeYn, jdbcType=VARCHAR}
+				, TAA_WORK_YN = #{item.taaWorkYn, jdbcType=VARCHAR}
+				, DAY_OPEN_TYPE = #{item.dayOpenType, jdbcType=VARCHAR}
+				, DAY_CLOSE_TYPE = #{item.dayCloseType, jdbcType=VARCHAR}
+				, UNPLANNED_YN = #{item.unplannedYn, jdbcType=VARCHAR} 
+				, NOTE = #{item.note, jdbcType=VARCHAR}  
 				, UPDATE_DATE = SYSDATE
-				, UPDATE_ID = #{item.userId}
-			WHERE FLEXIBLE_STD_MGR_ID = #{item.flexibleStdMgrId}
+				, UPDATE_ID = #{item.userId, jdbcType=NUMERIC}
+			WHERE FLEXIBLE_STD_MGR_ID = #{item.flexibleStdMgrId, jdbcType=NUMERIC}
 		</foreach>
 	</update>
 	
