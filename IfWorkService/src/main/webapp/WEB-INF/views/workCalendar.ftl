@@ -70,7 +70,7 @@
 	                </div>
 	                <div v-if="'${calendar}'!='workTimeCalendar'" class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
 	                    <div class="btn-wrap text-right">
-	                        <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal">근무제 적용하기</button>
+	                        <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'">근무제 적용하기</button>
 	                    	<button type="button" id="planBtn" class="btn btn-write" style="display:none;">근무계획작성</button>
 	                    </div>
 	                </div>
@@ -674,12 +674,17 @@
    		el: "#calendar_top",
 	    data : {
 	    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
+	    	flexApplYn: '', //근무제 사용 여부
 	    	flexitimeList: [], //사용할 유연근무제 리스트
 	    	flexibleStd: {} //현재 근무제
   		},
 	    mounted: function(){
 	    	var $this = this;
 	    	
+	    	<#if flexApplYn?? && flexApplYn!='' && flexApplYn?exists >
+				$this.flexApplYn = "${flexApplYn}";
+			</#if>
+			
 	    	<#if flexibleStdMgr?? && flexibleStdMgr!='' && flexibleStdMgr?exists >
 				$this.flexibleStd = JSON.parse("${flexibleStdMgr?js_string}");
 			</#if>
