@@ -1467,5 +1467,49 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		}
 		
 	}
+	
+	@Override
+	public void setCloseDay(Long tenantId) throws Exception {
+		
+		// 인터페이스용 변수
+		String ifType = "dayClose";
+    	String nowDataTime = null;
+		HashMap<String, Object> getDateMap = null;
+		
+		getDateMap = (HashMap<String, Object>) getIfLastDate(tenantId, ifType);
+    	nowDataTime = getDateMap.get("nowDate").toString();
+    		
+    	String ymd = nowDataTime.substring(0, 8);
+    	System.out.println("********** ymd : " + ymd);
+    	// 마감구분 A:자정(당일퇴근자 마감), B:익일4시(익일심야근무 퇴근자 마감)
+    	String closeType = "A";
+    	if("04".equals(nowDataTime.substring(8, 10))) {
+    		closeType = "B";
+    	}
+    	
+    	getDateMap = new HashMap();
+    	ymd = "20191112";
+    	getDateMap.put("tenantId", tenantId);
+    	getDateMap.put("ymd", ymd);
+    	getDateMap.put("closeType", closeType);
+    	
+    	// DB로 타각 갱신부터 처리한다.
+    	wtmInterfaceMapper.setCloseEntryOut(getDateMap);
+    	
+    	// 타각갱신이 완료되면, 출퇴근 기록완성자의 근무시간을 갱신해야한다.
+		List<Map<String, Object>> closeList = new ArrayList();
+		closeList = wtmInterfaceMapper.getWtmCloseDay(getDateMap);
+		
+		if(closeList != null && closeList.size() > 0) {
+			// 일마감처리로 지각조퇴결근, 근무시간계산처리를 완료한다
+			for(int i=0; i<closeList.size(); i++) {
+        		String enterCd = closeList.get(i).get("enterCd").toString();
+        		String sabun = closeList.get(i).get("sabun").toString();
+        		String closeYmd = closeList.get(i).get("ymd").toString();
+        		System.out.println("********** sabun : " + sabun + ", ymd : " + closeYmd);
+        		WtmFlexibleEmpService.calcApprDayInfo(tenantId, enterCd, closeYmd, closeYmd, sabun);
+			}
+		}
+	}
 
 }

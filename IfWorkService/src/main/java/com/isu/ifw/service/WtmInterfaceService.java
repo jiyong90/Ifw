@@ -124,5 +124,11 @@ public interface WtmInterfaceService {
 	 */
 	public void getDataExp(HashMap reqMap) throws Exception;
 	
-	
+	/**
+	 * 일마감(타각)
+	 * @param reqMap - 파라메터 맵
+	 * @return 
+	 * @throws Exception 
+	 */
+	public void setCloseDay(Long tenantId) throws Exception;
 }

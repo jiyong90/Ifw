@@ -190,6 +190,12 @@ public interface WtmInterfaceMapper {
 	public List<Map<String, Object>> getExpColList(Map<String, Object> paramMap);
 	public List<Map<String, Object>> getExpDataList(Map<String, Object> paramMap);
 	
+	/**
+	 * 일 퇴근마감
+	 **/
+	public void setCloseEntryOut(Map<String, Object> paramMap);
+	public List<Map<String, Object>> getWtmCloseDay(Map<String, Object> paramMap);
+	
 	
 	
 }
