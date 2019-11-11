@@ -1113,7 +1113,8 @@
   	</update>
   	
   	<update id="updateWorkteamOfWtmFlexibleEmp" parameterType="map" >
-  		UPDATE WTM_WORKTcheckBaseWorktimeE
+  		UPDATE WTM_WORKTEAM_MGR M
+  		  JOIN WTM_WORKTEAM_EMP E
 		    ON M.WORKTEAM_MGR_ID = E.WORKTEAM_MGR_ID
 		  JOIN WTM_FLEXIBLE_STD_MGR S
 		    ON M.FLEXIBLE_STD_MGR_ID = S.FLEXIBLE_STD_MGR_ID
