@@ -141,4 +141,16 @@ public class WtmInterfaceController {
 		WtmInterfaceService.getDataExp(reqMap); //근태정보 인터페이스
 		return ;
 	}
+	
+	@RequestMapping(value = "/colseDayPP",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void setCloseDay(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 공통코드
+		System.out.println("setCloseDay start");
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+		//Long tenantId = (long) 38;
+		WtmInterfaceService.setCloseDay(tenantId);
+		System.out.println("setCloseDay end");
+		
+		return;
+	}
 }

@@ -556,10 +556,24 @@
 			AND A.ENTER_CD = B.ENTER_CD
 			AND A.SABUN = B.SABUN
 			AND A.EYMD = '29991231'
+			AND A.STATUS_CD = 'AA'
 		 WHERE B.TENANT_ID = #{tenantId}
 		   AND F_WTM_DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
 		   AND B.CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
 		   AND B.NEW_VALUE IS NOT NULL
+		 UNION
+		 SELECT A.TENANT_ID , A.ENTER_CD , A.SABUN, GREATEST(A.SYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, -1, 'M'), 'YMD')) AS SYMD, LEAST(A.EYMD, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(sysdate, 1, 'M'), 'YMD')) AS EYMD, '0' as USER_ID
+		  FROM WTM_EMP_HIS A
+		 INNER JOIN WTM_IF_EMP_MSG B
+			 ON A.TENANT_ID = B.TENANT_ID
+			AND A.ENTER_CD = B.ENTER_CD
+			AND A.SABUN = B.SABUN
+			AND A.EYMD = '29991231'
+			AND A.STATUS_CD = 'AA'
+		 WHERE B.TENANT_ID = #{tenantId}
+		   AND F_WTM_DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
+		   AND B.CHG_TYPE_CD = 'STATUS_CD'
+		   AND B.OLD_VALUE != 'AA'
 		 ORDER BY A.ENTER_CD, A.SABUN
     </select>
     
@@ -720,5 +734,32 @@
     <select id="getExpDataList" parameterType="map" resultType="wtmGeneral">
 		SELECT *
 		FROM ${tableName}
+    </select>
+    
+    <select id="setCloseEntryOut" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_CLOSE_ENTRY_OUT( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{closeType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  ) }
+  	</select>
+    <select id="getWtmCloseDay" parameterType="map" resultType="wtmGeneral">
+        <![CDATA[
+        	SELECT AA.ENTER_CD, AA.SABUN, AA.YMD
+              FROM (SELECT A.ENTER_CD, A.SABUN, A.YMD, MIN(TO_CHAR(B.PLAN_SDATE, 'YYYYMMDD')) AS SDATE, MAX(TO_CHAR(B.PLAN_EDATE, 'YYYYMMDD')) AS EDATE
+                    FROM WTM_WORK_CALENDAR A
+                   INNER JOIN WTM_WORK_DAY_RESULT B
+                       ON A.TENANT_ID = B.TENANT_ID
+                      AND A.ENTER_CD = B.ENTER_CD
+                      AND A.SABUN = B.SABUN
+                      AND A.YMD = B.YMD
+                   WHERE B.TIME_TYPE_CD IN ('BASE', 'REGA', 'OT', 'NIGTH')	-- 간주근무나 기본근무일때)
+                      AND A.TENANT_ID = #{tenantId} 
+                      AND A.YMD = TO_CHAR(TO_DATE(#{ymd}, 'YYYYMMDD')-1, 'YYYYMMDD')
+                   GROUP BY A.ENTER_CD, A.SABUN, A.YMD
+                   ) AA
+             WHERE ((#{closeType} = 'A' AND AA.SDATE = AA.EDATE)
+                 OR (#{closeType} = 'B' AND AA.SDATE != AA.EDATE))
+        ]]>
     </select>
 </mapper>
