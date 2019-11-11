@@ -974,21 +974,29 @@
   	         			//출퇴근 타각 표시
   	         			if($this.result.hasOwnProperty('entry')) {
   	         				var entry = $this.result.entry;
+  	         			
+  	         				if(entry.hasOwnProperty('entrySdate')) {
+  	         					//var sEdate = new Date(entry.entrySdate);
+  	         					//sEdate.setMinutes(sEdate.getMinutes()+3);
+  	         					var sEdate = moment(entry.entrySdate).add(3, 'minutes');
+  	  	         				
+  	         				}
   	         				
-  	         				var sEdate = new Date(entry.entrySdate);
-  	         				sEdate.setMinutes(sEdate.getMinutes()+3);
-  	         				
-  	         				var eEdate = new Date(entry.entryEdate);
-  	         				eEdate.setMinutes(eEdate.getMinutes()+3);
+  	         				if(entry.hasOwnProperty('entryEdate')) {
+	  	         				//var eEdate = new Date(entry.entryEdate);
+	  	         				//eEdate.setMinutes(eEdate.getMinutes()+3);
+  	         					var eEdate = moment(entry.entryEdate).add(3, 'minutes');
+  	         				}
   	         				
   	         				classNames = [];
 							classNames.push('ENTRY');
+							
   	         				
   	         				var sEntry = {
  	         					id: 'entrySdate',
- 	         					title: '출근 ' + entry.entrySdate,
+ 	         					title: '출근 ' + moment(entry.entrySdate).format('YYYY-MM-DD HH:mm:ss'),
 								start: entry.entrySdate,
-	  		  		        	end: moment(sEdate).format('YYYY-MM-DDTHH:mm:ss'),
+	  		  		        	end: moment(sEdate).format('YYYY-MM-DD HH:mm:ss'),
 	  		  		        	editable: false,
 	  		  		        	classNames: classNames
   	         				};
@@ -996,9 +1004,9 @@
   	         				
   	         				var eEntry = {
  	         					id: 'entryEdate',
- 	         					title: '퇴근 ' + entry.entryEdate,
+ 	         					title: '퇴근 ' + moment(entry.entryEdate).format('YYYY-MM-DD HH:mm:ss'),
 								start: entry.entryEdate,
-	  		  		        	end: moment(eEdate).format('YYYY-MM-DDTHH:mm:ss'),
+	  		  		        	end: moment(eEdate).format('YYYY-MM-DD HH:mm:ss'),
 	  		  		        	editable: false,
 	  		  		        	classNames: classNames
   	         				};
@@ -1505,6 +1513,7 @@
   	         		var validation = Array.prototype.filter.call(forms, function(form) {
   	         			if (form.checkValidity() === false) {
   	         				applYn = false;
+  	         				msg = "사유를 입력해 주세요.";
   	         				event.preventDefault();
   	         		        event.stopPropagation();
   	         			}
