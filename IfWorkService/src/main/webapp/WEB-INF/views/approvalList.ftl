@@ -387,7 +387,7 @@
 		   	},
 	    	getApprovalList: function(applType){
 	    		var $this = this;
-	    		
+	    		$this.apprList = [];
 	    		$this.applType = applType;
 	    		
 	    		var param = {
@@ -401,8 +401,6 @@
 					data: param,
 					dataType: "json",
 					success: function(data) {
-						//$this.apprList = [];
-						console.log(data);
 						if(data.status=='OK' && data!=null && data.apprList!=null) {
 							$this.apprList = data.apprList;
 						}
