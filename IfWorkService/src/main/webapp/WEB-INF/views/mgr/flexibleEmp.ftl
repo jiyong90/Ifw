@@ -219,7 +219,7 @@
  			, chgSymd: chgSymd
  			, chgEymd: chgEymd
  		};
-		
+		/*
 		if(confirm(msg1)){
 			Util.ajax({
 				url: "${rc.getContextPath()}/flexibleEmp/changeChk",
@@ -229,7 +229,7 @@
 				dataType: "json",
 				success: function(data) {
 					if(data!=null && data.status=='OK') {
-						$(#)data.sabun
+						$("#data.sabun")
 					} else {
 						alert("근무변경정보 조회에 오류가 발생하였습니다.");
 					}
@@ -240,6 +240,7 @@
 				}
 			});
 		}
+		*/
 	}
 	$("#changeType").change(function(){
 		if($("#changeType").val() == "DEL"){
