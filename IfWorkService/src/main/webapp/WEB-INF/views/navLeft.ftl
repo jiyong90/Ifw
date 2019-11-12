@@ -29,7 +29,7 @@
                 <span class="title">결재</span>
             </a>
         </li>
-        <li v-if="authCd=='10'" :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'">
+        <li v-if="tsId=='ISU' || authCd=='10'" :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'">
         	<a href="#" id="lnb-mng">
                 <i class="fas fa-laptop"></i>
                 <span class="title">유연근무관리</span>
@@ -127,12 +127,17 @@
 			curSubMenu: '',
 			curPageName: '',
 			leaderYn: '',
+			tsId: '',
 			authCd: ''
 		},
 		mounted: function(){
 			
 			<#if leaderYn?? && leaderYn!='' && leaderYn?exists >
 				this.leaderYn = "${leaderYn}";
+			</#if>
+			
+			<#if tsId?? && tsId!='' && tsId?exists >
+				this.tsId = "${tsId}";
 			</#if>
 			
 			<#if authCd?? && authCd!='' && authCd?exists >
