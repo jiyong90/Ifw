@@ -398,6 +398,8 @@
 		   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
 		   AND C.ENTRY_SDATE IS NOT NULL
 		   AND C.ENTRY_EDATE IS NOT NULL
+		   AND C.ENTRY_EDATE >= R.PLAN_SDATE 
+		   AND C.ENTRY_SDATE <= R.PLAN_EDATE  
 		   AND C.YMD NOT IN (SELECT DISTINCT SR.YMD 
 							   FROM WTM_WORK_DAY_RESULT SR 
 							   WHERE SR.TENANT_ID = R.TENANT_ID 
@@ -1412,14 +1414,14 @@
     
     <select id="getIntervalDateTime" parameterType="map" resultType="Date" >
     	<![CDATA[
-    		SELECT DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} + SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(D.SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.EDATE, 'HI'), '' ))
+    		SELECT F_WTM_DATE_ADD(F_WTM_TO_DATE(#{yyyyMMddHHmmss},'YMDHIS'), #{intervalMinute} + SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(D.SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.EDATE, 'HI'), '' ), 'I' )
 				MINUTE ) AS EDATE
 				  FROM WTM_WORK_CALENDAR C
 				  JOIN WTM_TIME_CD_MGR T
 				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 				  JOIN WTM_TIME_BREAK_MGR B
 				    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
-				  JOIN (SELECT STR_TO_DATE(#{yyyyMMddHHmmss}, 'YMDHIS') AS SDATE, DATE_ADD(#{yyyyMMddHHmmss}, INTERVAL #{intervalMinute} MINUTE) AS EDATE ) D
+				  JOIN (SELECT F_WTM_TO_DATE(#{yyyyMMddHHmmss}, 'YMDHIS') AS SDATE, F_WTM_DATE_ADD(F_WTM_TO_DATE(#{yyyyMMddHHmmss}, 'YMDHIS'),  #{intervalMinute} ,'I') AS EDATE ) D
 				    ON 1=1
 				 WHERE C.TENANT_ID = #{tenantId}
 				   AND C.ENTER_CD = #{enterCd}
