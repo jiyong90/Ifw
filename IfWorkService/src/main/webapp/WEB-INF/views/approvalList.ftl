@@ -353,12 +353,12 @@
    		data : {
    			apprList: [],
    			apprType: '', // 승인 or 반려
-   			applType: '', // 신청 내역 조회('01') or 미결('02') or 기결('03')
+   			applType: '${applType}', // 신청 내역 조회('01') or 미결('02') or 기결('03')
    			apprOpinion: '',
    			appl: {}
    		},
 	    mounted: function(){
-	    	this.getApprovalList('01'); //신청내역 조회
+	    	this.getApprovalList(this.applType); //신청내역 조회
 	    },
 	    methods : {
 	    	minuteToHHMM : function (min, type) {
@@ -503,6 +503,8 @@
 	    				//$('#apprOpinionModal').modal("hide"); 
 	    				$("#loading").show();
 		    			var param = appr;
+		    			
+		    			param['apprOpinion'] = $this.apprOpinion
 		    			
 		    			if(appr.applCd=='OT') {
 		    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');

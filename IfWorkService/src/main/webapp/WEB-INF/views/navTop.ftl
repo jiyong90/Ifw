@@ -27,6 +27,29 @@
         </ul>
     </div>
 </nav>
+<div class="modal fade show" id="modalExample" tabindex="-1" role="dialog">
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content rounded-0">
+        <div class="modal-header">
+            <h5 class="modal-title">{{title}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form class="needs-validation" novalidate>
+                <div class="modal-app-wrap">
+                {{contents}}
+                </div>
+                <div class="btn-wrap text-center">
+                    <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
+                    <button type="submit" class="btn btn-default rounded-0">확인</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
 <script type="text/javascript">
 
 $(document).ready(function(){
@@ -45,8 +68,9 @@ $(document).ready(function(){
 				dataType : "json",
 				success: function(data) {
 					if(data!=null && data.status=='OK') {
+						console.log(data);
 						$this.inboxCount = data.inboxCount;
-						//$this.data = data;
+						$this.inboxCount += data.apprCount;
 						
 						if(data.workPlan) {
 							if(data.workPlan.hasOwnProperty("toDoPlanDays") && Number(data.workPlan.toDoPlanDays)!=0)
@@ -64,10 +88,11 @@ $(document).ready(function(){
 				var $this = this;
 				if(paramMap.body){
 					var data = JSON.parse(paramMap.body);
-					console.log(paramMap);
-					console.log(data);
+					//console.log(paramMap);
+					//console.log(data);
 					$this.inboxCount = 1;
 					$this.title = data.title;
+					$this.contents = data.contents;
 					alert("알림도착 : " + $this.title);
 				}
 			}

@@ -191,6 +191,7 @@ public class ViewController {
 		mv.addObject("isEmbedded",false);
 		mv.addObject("type","console");
 		mv.addObject("authCd", authCd);
+		mv.addObject("applType", request.getParameter("applType")!=null?request.getParameter("applType"):"01");
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -264,10 +265,10 @@ public class ViewController {
 		
 	}
 	
-	@RequestMapping(value = "/info/{tsId}", method = RequestMethod.GET)
-	public ModelAndView viewInfo(@PathVariable String tsId, HttpServletRequest request) throws Exception {
+	@RequestMapping(value = "/info/{tsId}/{status}", method = RequestMethod.GET)
+	public ModelAndView viewInfo(@PathVariable String tsId, @PathVariable String status, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("info");
-		mv.addObject("status", request.getParameter("status"));
+		mv.addObject("status", status);
 		mv.addObject("tsId", tsId);
 		return mv;
 	}

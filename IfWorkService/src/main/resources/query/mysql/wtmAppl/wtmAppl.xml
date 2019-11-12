@@ -188,4 +188,23 @@
 			ORDER BY A.APPL_YMD DESC
 		]]>
     </select>
+    
+    <select id="countByApprList02" parameterType="map" resultType="int">
+        <![CDATA[
+        	SELECT count(*)
+			  FROM WTM_APPL A
+			  JOIN WTM_APPL_CODE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.APPL_CD = C.APPL_CD
+			  JOIN WTM_APPL_LINE L
+			    ON L.APPL_ID = A.APPL_ID
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.ENTER_CD = #{enterCd} 
+			   AND APPR_SABUN = #{sabun}
+			   AND L.APPR_STATUS_CD = '10'
+			   AND A.APPL_STATUS_CD IN ('21','31')
+			ORDER BY A.APPL_YMD DESC
+		]]>
+    </select>
 </mapper>

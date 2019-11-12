@@ -13,7 +13,7 @@ import com.isu.option.vo.ReturnParam;
 @Service("WtmInboxService")
 public interface WtmInboxService{
 	
-	public void setInbox(Long tenantId, String enterCd, String sabun, String type, String title);
+	public void setInbox(Long tenantId, String enterCd, String sabun, Long applCodeId, String type, String title, String contents, String checkYn);
 	
 	public ReturnParam getInboxCount(Long tenantId, String enterCd, String sabun);
 

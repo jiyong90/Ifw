@@ -77,7 +77,7 @@ public class IfWorkServiceApplication {
 	public FilterRegistrationBean getAccessTokenFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(accessTokenFilter);
 		registrationBean.addUrlPatterns("/*"); 
-		registrationBean.addInitParameter("freePassPath", "/info,/certificate,/error,/mobile/logout,/login,/login/certificate,/interface,/sendNoti,/sso");
+		registrationBean.addInitParameter("freePassPath", "/api,/info,/certificate,/error,/mobile/logout,/login,/login/certificate,/interface,/sendNoti,/sso");
 		registrationBean.addInitParameter("moduleId", "1");
 		return registrationBean;
 	    

@@ -30,6 +30,8 @@ else if(${status} == "120")
 	result = "HR 로그인을 다시 하신 후 다시 시도해주세요.";
 else if(${status} == "130")
 	result = "사용자 정보가 존재하지 않습니다.";
+else if(${status} == "140")
+	result = "세션이 만료되었습니다.";
 document.getElementById("message").innerHTML=result;
 </script>
 </body>

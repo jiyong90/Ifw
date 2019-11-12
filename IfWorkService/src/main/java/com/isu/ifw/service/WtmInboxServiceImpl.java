@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.isu.ifw.entity.WtmInbox;
+import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmInboxMapper;
 import com.isu.ifw.repository.WtmInboxRepository;
 import com.isu.ifw.util.WtmUtil;
@@ -34,18 +35,24 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 	@Resource
 	WtmInboxRepository inboxRepository;
 	
+	@Autowired
+	WtmApplMapper applMapper;
+	
 	@Resource
 	WtmInboxMapper inboxMapper;
 	
 	@Async("threadPoolTaskExecutor")
 	@Override
-	public void setInbox(Long tenantId, String enterCd, String sabun, String type, String title) {
+	public void setInbox(Long tenantId, String enterCd, String sabun, Long applCodeId, String type, String title, String contents, String checkYn) {
 		WtmInbox data = new WtmInbox();
 		data.setEnterCd(enterCd);
 		data.setSabun(sabun);
 		data.setTenantId(tenantId);
 		data.setType(type);
 		data.setTitle(title);
+		data.setContents(contents);
+		data.setApplCodeId(String.valueOf(applCodeId));
+		data.setCheckYn(checkYn);
 		
 		try {
 			MDC.put("inbox", data.toString());
@@ -57,8 +64,9 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 			e.printStackTrace();
 		} finally {
 			MDC.remove("inbox");
+			//connect("/api/${tenantId}/${enterCd}/${empNo}/navTop", navTopVue.webSocketCallback);
 			if (data != null && data.getId() != null) {
-				String url = "/api/"+tenantId+"/"+enterCd+"/"+sabun+"/noti";
+				String url = "/api/"+tenantId+"/"+enterCd+"/"+sabun+"/navTop";
 				System.out.println(url);
 				this.template.convertAndSend(url, data);
 			}
@@ -72,8 +80,18 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 		rp.setSuccess("");
 		
 		List<WtmInbox> inboxList = null;
+		int apprCnt = 0;
 		try {
 			inboxList = inboxRepository.findByTenantIdAndEnterCdAndSabunAndCheckYn(tenantId, enterCd, sabun, "N");
+			//미결건수 
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			apprCnt = applMapper.countByApprList02(paramMap);
+			
+		
 		}catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -82,7 +100,7 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 
 		//알림 리스트
 		rp.put("inboxList", inboxList);
-		
+		rp.put("apprCount", apprCnt);
 		return rp;
 	
 	}
@@ -93,14 +111,14 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 		rp.setSuccess("");
 		
 		Map<String, Object> toDoPlanDays = null;
+		//유연근무제 근무 계획 작성 여부
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
 		int inboxCount = 0;
 		try {
-			//유연근무제 근무 계획 작성 여부
-			Map<String, Object> paramMap = new HashMap<String, Object>();
-			paramMap.put("tenantId", tenantId);
-			paramMap.put("enterCd", enterCd);
-			paramMap.put("sabun", sabun);
-			paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), null));
 			toDoPlanDays = inboxMapper.getToDoPlanDays(paramMap);
 			
 			//알림 카운트
@@ -114,6 +132,9 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 		//근무 계획 작성 알림
 		rp.put("workPlan", toDoPlanDays);
 		
+		//미결건수 
+		int apprCnt = applMapper.countByApprList02(paramMap);
+		rp.put("apprCount", apprCnt);
 		//알림 카운트
 		rp.put("inboxCount", inboxCount);
 		

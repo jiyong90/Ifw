@@ -80,6 +80,9 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 	@Autowired
 	WtmOtCanApplMapper wtmOtCanApplMapper;
 	
+	@Autowired
+	WtmInboxService inbox;
+
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
 		try {
@@ -134,7 +137,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		
 		//결재라인 상태값 업데이트
 		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
-		
+		String apprSabun = null;
 		if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
 			applId = Long.valueOf(rp.get("applId").toString());
 			List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
@@ -144,12 +147,13 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 					//첫번째 결재자의 상태만 변경 후 스탑
 					line.setApprStatusCd(APPR_STATUS_REQUEST);
 					line = wtmApplLineRepo.save(line);
+					apprSabun = line.getApprSabun();
 					break;
 					 
 				}
 			}
 		}
-		
+		inbox.setInbox(tenantId, enterCd, apprSabun, applId, "APPR", "결재요청 : 연장근무취소신청", "", "Y");
 	}
 
 	@Transactional
@@ -171,6 +175,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		//WtmApplLine line = wtmApplLineRepo.findByApplIdAndApprSeq(applId, apprSeq);
 		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
 
+		String apprSabun = null;
 		//마지막 결재자인지 확인하자
 		boolean lastAppr = false;
 		if(lines != null && lines.size() > 0) {
@@ -184,6 +189,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 						line.setUpdateId(userId);
 					}
 					line = wtmApplLineRepo.save(line);
+					apprSabun = line.getApprSabun();
 					lastAppr = true;
 				}else {
 					if(lastAppr) {
@@ -191,6 +197,7 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 						line = wtmApplLineRepo.save(line);
 					}
 					lastAppr = false;
+					apprSabun = line.getApprSabun();
 				}
 			}
 		}
@@ -239,6 +246,12 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 			}
 		}
 		
+		if(lastAppr) {
+			inbox.setInbox(tenantId, enterCd, applSabun, applId, "APPLY", "결재완료", "연장근무취소 신청서가  승인되었습니다.", "N");
+		} else {
+			inbox.setInbox(tenantId, enterCd, apprSabun, applId, "APPR", "결재요청 : 연장근무취소신청", "", "N");
+		}
+		
 		return rp;
 	}
 
@@ -248,6 +261,8 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		if(paramMap == null || !paramMap.containsKey("apprOpinion") && paramMap.get("apprOpinion").equals("")) {
 			throw new Exception("사유를 입력하세요.");
 		}
+
+		String applSabun = paramMap.get("applSabun").toString();
 		String apprOpinion = paramMap.get("apprOpinion").toString();
 		
 		List<WtmApplLine> lines = wtmApplLineRepo.findByApplIdOrderByApprSeqAsc(applId);
@@ -272,7 +287,8 @@ public class WtmOtCanApplServiceImpl implements WtmApplService {
 		appl.setApplYmd(WtmUtil.parseDateStr(new Date(), null));
 		appl.setUpdateId(userId);	
 		wtmApplRepo.save(appl);
-		
+	
+		inbox.setInbox(tenantId, enterCd, applSabun, applId, "APPLY", "결재완료", "연장근무 신청서가  반려되었습니다.", "N");
 	}
 
 	@Override
