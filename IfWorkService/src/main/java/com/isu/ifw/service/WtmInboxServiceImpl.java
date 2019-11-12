@@ -140,5 +140,26 @@ public class WtmInboxServiceImpl implements WtmInboxService{
 		
 		return rp;
 	}
-
+	
+	@Override
+	public ReturnParam setInboxCheckYn(Long tenantId, String enterCd, String sabun, long id) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			
+			WtmInbox inbox = inboxRepository.findById(id);
+			if(inbox == null) {
+				rp.setFail("메세지를 찾을 수 없습니다.");
+				return rp;
+			}
+			
+			inbox.setCheckYn("Y");
+			inboxRepository.save(inbox);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("메세지 상태 업데이트 중 오류가 발생했습니다.");
+		}
+		
+		return rp;
+	}
 }

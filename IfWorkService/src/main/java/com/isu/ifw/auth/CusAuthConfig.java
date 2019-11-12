@@ -153,7 +153,7 @@ public class CusAuthConfig implements AuthConfig {
 	
 	@Override
 	public int getSetCookieTime() {
-		return 60*30; //30분
+		return 60*60*24; 
 	}
 
 }

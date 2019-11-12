@@ -12,18 +12,21 @@
         </li>
 	</ul>
 	<ul class="alert-list-wrap" v-else>
-		<li v-if="inboxList.length==0 && apprCount==0">
-           <span class="ico-wrap"><i class="far fa-bell-slash"></i></span>
-           <div class="desc">알림을 모두 확인했습니다.</div>
-        </li>
-        <li v-if="apprCount != 0">
+		 <li v-if="inboxList.length==0 && apprCount==0">
+	         <span class="ico-wrap"><i class="far fa-bell-slash"></i></span>
+	         <div class="desc">
+	             알림을 모두 확인했습니다.
+	         </div>
+	     </li>
+         <li v-if="apprCount != 0">
+        	<span class="status SELE_F"></span>
         	<div class="desc">결재할 문서가 <a href="#" onclick="location.href='${rc.getContextPath()}/${type}/${tsId}/views/approvalList?applType=02';">{{apprCount}}건</a> 있습니다. </div>
-        </li>
+       	</li>
         <li v-for="(f, fIdx) in inboxList">
-        	<div class="desc">
-        		{{f.title}}
-        	</div>
-        </li> 
+        	<span class="status ELAS"></span>
+        	<div class="desc">{{f.title}} [{{f.contents}}]</div>
+        	<button class="btn-close" @click="notiCheckYn(f.id)">&#215;</button>
+        </li>
 	</ul>
 </aside>
 
@@ -85,7 +88,27 @@
 			goToWorkTimeCalendar: function(){
 				modalVue.getPlanFlexitimeList('N');
 				//location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day&date='+moment(this.workPlan.sYmd).format('YYYYMMDD');
-			}
+			},
+			notiCheckYn: function(id){
+				var $this = this;
+				var param = {
+	       				id : id
+	   		    	};
+				
+				Util.ajax({
+					url: "${rc.getContextPath()}/noti/inbox/check",
+					type: "POST",
+					data: JSON.stringify(param),
+					contentType : 'application/json',
+					dataType : "json",
+					success: function(response) {
+						$this.getInboxList();
+					}, 
+					error: function(e) { 
+						console.log(e);
+					}
+				});
+			},
 			/* ,
 			webSocketCallback : function(paramMap){
 				var $this = this;
