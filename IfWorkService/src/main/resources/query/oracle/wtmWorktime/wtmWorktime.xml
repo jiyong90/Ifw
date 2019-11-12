@@ -128,7 +128,7 @@
 			  AND C.TENANT_ID = #{tenantId}
 			  AND C.ENTER_CD = #{enterCd}
 			  AND C.SABUN = #{sabun}
-		ORDER BY ymd desc, apprSdate, planSdate
+		ORDER BY C.YMD desc, APPR_SDATE, PLAN_SDATE
   	</select>
   	
   	<select id="getEntryCheckList" parameterType="map" resultType="wtmGeneral">
