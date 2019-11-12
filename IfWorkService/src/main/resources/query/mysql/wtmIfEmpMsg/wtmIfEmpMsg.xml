@@ -20,7 +20,7 @@
 			  FROM WTM_IF_EMP_MSG
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd}
-			   AND (SABUN like CONCAT('%', #{searchKeyword}, '%') 
+			   AND (SABUN like CONCAT('%', #{searchKeyword}, '%') )
 			   AND #{ymd} <= CHG_YMD
         ]]>
     </select>
