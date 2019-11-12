@@ -95,7 +95,15 @@
 			   AND S.SUB_YMD = R.YMD
 			 WHERE S.OT_APPL_ID = #{otApplId}
 			   AND (S.CANCEL_YN IS NULL OR S.CANCEL_YN = 'N')
-			 GROUP BY S.SUB_YMD
+			 GROUP BY S.SUB_YMD, S.OT_SUBS_APPL_ID 
+				     , S.OT_APPL_ID 
+				     , S.APPL_ID
+				     , S.HOLIDAY_TYPE 
+				     , S.SUB_YMD
+				     , S.SUBS_SDATE 
+				     , S.SUBS_EDATE 
+				     , S.SUBS_MINUTE 
+				     , S.OLD_SUBS_APPL_ID 
 			 ORDER BY S.SUB_YMD, S.SUBS_SDATE
 	        ]]>
     </select>

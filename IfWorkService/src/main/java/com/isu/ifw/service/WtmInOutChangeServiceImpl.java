@@ -35,7 +35,7 @@ public class WtmInOutChangeServiceImpl implements WtmInOutChangeService{
 	WtmFlexibleEmpService empService;
 		
 	@Override
-	public int setInOutChangeList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public int setInOutChangeList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		if(convertMap.containsKey("insertRows") && ((List)convertMap.get("insertRows")).size() > 0) {
 			List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("insertRows");
 			List<Map<String, Object>> saveList = new ArrayList();
@@ -71,7 +71,7 @@ public class WtmInOutChangeServiceImpl implements WtmInOutChangeService{
 	}
 	
 	@Transactional
-	public void saveInout(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap) {
+	public void saveInout(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) {
 		int cnt = 0;
 		
 		convertMap.put("tenantId", tenantId);

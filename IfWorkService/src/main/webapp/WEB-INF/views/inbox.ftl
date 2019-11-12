@@ -12,16 +12,25 @@
         </li>
 	</ul>
 	<ul class="alert-list-wrap" v-else>
-		<li>
+		<li v-if="inboxList.length==0 && apprCount==0">
            <span class="ico-wrap"><i class="far fa-bell-slash"></i></span>
            <div class="desc">알림을 모두 확인했습니다.</div>
         </li>
+        <li v-if="apprCount != 0">
+        	<div class="desc">결재할 문서가 <a href="#" onclick="location.href='${rc.getContextPath()}/${type}/${tsId}/views/approvalList?applType=02';">{{apprCount}}건</a> 있습니다. </div>
+        </li>
+        <li v-for="(f, fIdx) in inboxList">
+        	<div class="desc">
+        		{{f.title}}
+        	</div>
+        </li> 
 	</ul>
 </aside>
 
 <script type="text/javascript">
 	$(function(){
 		$('#alertLink').on('click', function () {
+			inboxVue.getInboxList();
 		    $('#alertSidebar').toggleClass('active');
 		});
 		
@@ -34,6 +43,7 @@
 		el : '#alertSidebar',
 		data : {
 			inboxCount: 0,
+			apprCount: 0,
 			inboxList : [],
 			workPlan: {}
 		},
@@ -63,7 +73,8 @@
 					dataType : "json",
 					success: function(response) {
 						if(response!=null && response.status=='OK') {
-							$this.inboxList = response.indboxList;
+							$this.inboxList = response.inboxList;
+							$this.apprCount = response.apprCount;
 						}
 					}, 
 					error: function(e) { 
