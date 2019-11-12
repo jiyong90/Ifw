@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public interface WtmInOutChangeService {
 
-	public int setInOutChangeList(Long tenantId, String enterCd, Long userId, Map<String, Object> convertMap);
+	public int setInOutChangeList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 	
 	public List<Map<String, Object>> getInpoutChangeHis(Map<String, Object> paramMap);
 }
