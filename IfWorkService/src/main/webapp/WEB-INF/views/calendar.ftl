@@ -230,8 +230,15 @@
 					option.defaultView = this.defaultview;
 				}
 				
+				var defalutDate = '';
+				<#if workday?? && workday!='' && workday?exists >
+					defalutDate = moment('${workday}').format('YYYY-MM-DD');
+  		    	<#else>
+					defalutDate = '${today}';
+  		    	</#if>
+				
 				if(this.defaultdate!='') {
-					option.defaultDate = this.defaultdate;
+					option.defaultDate = defalutDate;
 				}
 				
 				if(this.navlinks) {

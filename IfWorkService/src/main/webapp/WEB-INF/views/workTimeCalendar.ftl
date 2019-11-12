@@ -453,7 +453,7 @@
     </div>
     <!-- 연장근무신청 상세보기 modal end -->
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :unselectauto="t" :custombuttons="customButtons" :header="header" :defaultview="view" :defaultdate="workday" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :unselectauto="t" :custombuttons="customButtons" :header="header" :defaultview="view" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
 </div>
 <script type="text/javascript">
