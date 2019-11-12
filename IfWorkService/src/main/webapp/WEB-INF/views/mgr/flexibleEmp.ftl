@@ -207,8 +207,8 @@
 		msg1 = $("#orgEmpNm").text() + "님의 " + $("#orgFlexibleNm").text + " 유연근무제도를 ";
 		
 		if(changeType == "MOD"){
-			chgSymd = $(#chgSymd").val();
-			chgEymd = $(#chgEymd").val();
+			chgSymd = $("#chgSymd").val();
+			chgEymd = $("#chgEymd").val();
 			msg1 = msg1 + "변경하시겠습니까?";
 		}else{
 			msg1 = msg1 + "취소하시겠습니까?";

@@ -355,7 +355,7 @@
 		sheet2.SetUnicodeByte(3);
         
 		//근무시간
-		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/list", "",false).DATA, "선택");
+		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=%",false).DATA, "선택");
 		sheet2.SetColProperty("timeCdMgrId", {ComboText:timeCdMgrIdList[0], ComboCode:timeCdMgrIdList[1]} );
 
 		sheetInit();
