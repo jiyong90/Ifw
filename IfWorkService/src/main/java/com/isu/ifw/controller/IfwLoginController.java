@@ -295,15 +295,15 @@ public class IfwLoginController {
 					String password = (String) userData.get("password");
 					
 					paramMap.put("encryptStr", requestedPassword);
-					/*Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
+					Map<String, Object> rMap = (Map<String, Object>)encryptionService.getShaEncrypt(paramMap);
 					if(rMap!=null && rMap.get("encryptStr")!=null) {
 						requestedPassword = rMap.get("encryptStr").toString();
 						System.out.println("requestedPassword : " + requestedPassword);
-					}*/
-					String encKey = authConfig.getEncryptKey();
+					}
+					/*String encKey = authConfig.getEncryptKey();
 					int repeatCount = authConfig.getHashIterationCount();
 
-					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
+					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);*/
 					System.out.println("requestedPassword : " + requestedPassword);
 					
 					
