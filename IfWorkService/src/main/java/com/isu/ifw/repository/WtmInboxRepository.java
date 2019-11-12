@@ -12,4 +12,5 @@ import com.isu.ifw.entity.WtmInbox;
 public interface WtmInboxRepository extends JpaRepository<WtmInbox, Long> {
 	public int countByTenantIdAndEnterCdAndSabunAndCheckYn(Long tenantId, String enterCd, String sabun, String checkYn);
 	public List<WtmInbox> findByTenantIdAndEnterCdAndSabunAndCheckYn(Long tenantId, String enterCd, String sabun, String checkYn);
+	public WtmInbox findById(long id);
 }

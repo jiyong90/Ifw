@@ -18,4 +18,6 @@ public interface WtmInboxService{
 	public ReturnParam getInboxCount(Long tenantId, String enterCd, String sabun);
 
 	public ReturnParam getInboxList(Long tenantId, String enterCd, String sabun);
+	
+	public ReturnParam setInboxCheckYn(Long tenantId, String enterCd, String sabun, long id);
 }
