@@ -193,7 +193,7 @@
 		     , CASE WHEN diffEsecond is not null THEN 
 			  					CASE WHEN diffEsecond&lt;0 THEN CONCAT(FLOOR(ABS(diffEsecond)/60),':',LPAD(MOD(ABS(diffEsecond),60),2,'0')) 
 			  						  WHEN diffEsecond=0 THEN NULL
-			  						  ELSE CONCAT('-',FLOOR(diffEsecond/60),':',LPAD(MOD(diffEsecond,60),2,'0')) END
+			  						  ELSE CONCAT(FLOOR(diffEsecond/60),':',LPAD(MOD(diffEsecond,60),2,'0')) END
 						ELSE diffEsecond END AS diffEminute
 		     , note
 		  FROM ( SELECT C.TENANT_ID as tenantId
