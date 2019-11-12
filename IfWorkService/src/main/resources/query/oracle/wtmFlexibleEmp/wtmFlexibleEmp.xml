@@ -374,7 +374,8 @@
 		    WHEN MATCHED THEN
                 UPDATE SET X.PLAN_MINUTE = XX.CM
     </update>
-    <update id="updateApprDatetimeByYmdAndSabun" parameterType="map"> 
+    <update id="updateApprDatetimeByYmdAndSabun" parameterType="map">
+     <![CDATA[
     	MERGE INTO WTM_WORK_DAY_RESULT X
             USING ( 
     	SELECT R.WORK_DAY_RESULT_ID
@@ -414,6 +415,7 @@
 	     WHEN MATCHED THEN
                 UPDATE SET X.APPR_SDATE = XX.APPR_SDATE
 			 			 , X.APPR_EDATE = XX.APPR_EDATE
+    	]]>
     </update>
     <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
     	MERGE INTO WTM_WORK_DAY_RESULT X

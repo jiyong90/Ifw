@@ -374,6 +374,7 @@
 		   SET X.PLAN_MINUTE = XX.CM
     </update>
     <update id="updateApprDatetimeByYmdAndSabun" parameterType="map">
+    <![CDATA[
     	UPDATE WTM_FLEXIBLE_STD_MGR M
 		  JOIN WTM_FLEXIBLE_EMP E
 		    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
@@ -405,6 +406,7 @@
 							   AND SR.TAA_CD = #{taaCd}
 							   AND SR.YMD BETWEEN #{sYmd} AND #{eYmd})
 		   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
+    ]]>
     </update>
     <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
     	UPDATE WTM_WORK_DAY_RESULT X 
