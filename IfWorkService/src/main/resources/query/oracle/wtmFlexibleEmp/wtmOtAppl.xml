@@ -79,24 +79,28 @@
 			     , S.SUBS_EDATE 
 			     , S.SUBS_MINUTE 
 			     , S.OLD_SUBS_APPL_ID 
-			     , MIN(CASE WHEN S.SUBS_SDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE 
-	  						OR S.SUBS_EDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE THEN R.PLAN_SDATE ELSE NULL END) AS WORK_S_DATE
-			     , MAX(CASE WHEN S.SUBS_SDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE 
-				  			OR S.SUBS_EDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE THEN R.PLAN_EDATE ELSE NULL END) AS WORK_E_DATE
-			  FROM WTM_OT_APPL O
-			  JOIN WTM_OT_SUBS_APPL S
-			    ON O.OT_APPL_ID = S.OT_APPL_ID
-			  JOIN WTM_APPL A
-			    ON S.APPL_ID = A.APPL_ID
-			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT  R
-			    ON A.TENANT_ID = R.TENANT_ID
-			   AND A.ENTER_CD = R.ENTER_CD
-			   AND A.APPL_SABUN = R.SABUN
-			   AND S.SUB_YMD = R.YMD
+			     , T.WORK_S_DATE
+			     , T.WORK_E_DATE
+			  FROM WTM_OT_SUBS_APPL S
+			  LEFT OUTER JOIN ( SELECT S.OT_SUBS_APPL_ID
+			                       , S.SUB_YMD
+			                       , MIN(R.PLAN_SDATE) AS WORK_S_DATE
+			                       , MAX(R.PLAN_EDATE) AS WORK_E_DATE
+			                    FROM WTM_OT_SUBS_APPL S
+			                    JOIN WTM_APPL A
+			                      ON S.APPL_ID = A.APPL_ID
+			                    JOIN WTM_WORK_DAY_RESULT R
+			                      ON A.TENANT_ID = R.TENANT_ID
+			                     AND A.ENTER_CD = R.ENTER_CD
+			                     AND A.APPL_SABUN = R.SABUN
+			                     AND S.SUB_YMD = R.YMD
+			                     AND ( S.SUBS_SDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE OR S.SUBS_EDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE )
+			                   WHERE S.OT_APPL_ID = #{otApplId} 
+			                  GROUP BY S.OT_SUBS_APPL_ID, S.SUB_YMD ) T
+			    ON S.OT_SUBS_APPL_ID = T.OT_SUBS_APPL_ID
 			 WHERE S.OT_APPL_ID = #{otApplId}
 			   AND (S.CANCEL_YN IS NULL OR S.CANCEL_YN = 'N')
-			 GROUP BY S.SUB_YMD
-			 ORDER BY S.SUB_YMD, S.SUBS_SDATE
+			ORDER BY S.SUB_YMD, S.SUBS_SDATE
 	        ]]>
     </select>
     

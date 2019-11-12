@@ -1237,6 +1237,7 @@
   	  	         		if(isValid) {
   	         				$this.otAppl(otSdate, otEdate);
   	  	         		} else {
+  	  	         			$("#loading").hide();
   	  	         			$("#alertText").html(msg);
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
 	  	  	         			$("#alertModal").off('hidden.bs.modal');

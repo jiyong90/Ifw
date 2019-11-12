@@ -1,6 +1,6 @@
 <div id="approval" v-cloak>
 	<!-- 유연근무제신청 상세보기 modal start -->
-    <div class="modal fade show" id="flexibleAppl_SELE" tabindex="-1" role="dialog">
+    <div class="modal fade show" id="flexibleAppl_SELE" tabindex="-1" role="dialog" v-if="appl">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
@@ -58,7 +58,7 @@
     </div>
     <!-- 유연근무제신청 상세보기 modal end -->
 	<!-- 연장근무신청 상세보기 modal start -->
-    <div class="modal fade show" id="otAppl" tabindex="-1" role="dialog">
+    <div class="modal fade show" id="otAppl" tabindex="-1" role="dialog"  v-if="appl">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
@@ -170,7 +170,7 @@
     </div>
     <!-- 연장근무신청 상세보기 modal end -->
     <!-- 근태사유서신청 상세보기 modal start -->
-    <div class="modal fade show" id="inOutChangeAppl" tabindex="-1" role="dialog">
+    <div class="modal fade show" id="inOutChangeAppl" tabindex="-1" role="dialog" v-if="appl">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
@@ -302,7 +302,7 @@
 				<div :class="['rounded-circle notice-mark '] + a.applCd">{{a.applNm.substr(0,1)}}</div>
 				<div class="inner-wrap">
 					<div class="title">{{a.applNm}}</div>
-					<div class="desc">
+					<div class="desc" v-if="a.appl">
 						<span class="sub-title">사용기한</span> 
 						<span v-if="a.applCd=='OT'||a.applCd=='OT_CAN'||a.applCd=='SUBS_CHG'">
 							{{moment(a.appl.otSdate).format('YYYY.MM.DD')}}~{{moment(a.appl.otEdate).format('YYYY.MM.DD')}}
@@ -401,7 +401,7 @@
 					data: param,
 					dataType: "json",
 					success: function(data) {
-						$this.apprList = [];
+						//$this.apprList = [];
 						console.log(data);
 						if(data.status=='OK' && data!=null && data.apprList!=null) {
 							$this.apprList = data.apprList;
