@@ -70,7 +70,7 @@
 	                </div>
 	                <div v-if="'${calendar}'!='workTimeCalendar'" class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
 	                    <div class="btn-wrap text-right">
-	                        <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'">근무제 적용하기</button>
+	                        <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'" @click="getFlexitimeList">근무제 적용하기</button>
 	                    	<button type="button" id="planBtn" class="btn btn-write" style="display:none;">근무계획작성</button>
 	                    </div>
 	                </div>
@@ -682,7 +682,7 @@
 	    	var $this = this;
 	    	
 	    	<#if flexApplYn?? && flexApplYn!='' && flexApplYn?exists >
-				$this.flexApplYn = "${flexApplYn}";
+	    		$this.flexApplYn = "${flexApplYn}";
 			</#if>
 			
 	    	<#if flexibleStdMgr?? && flexibleStdMgr!='' && flexibleStdMgr?exists >
@@ -701,15 +701,6 @@
 	    				$this.getFlexitimeList();
 					});
 	    		} */
-       		
-	    		$("#applyBtn").bind('click', function(){
-    				$this.getFlexitimeList();
-				});
-       		<#else>
-	    		//사용할 근무제 리스트 조회
-				$("#applyBtn").bind('click', function(){
-					 $this.getFlexitimeList();
-				});
 	    	</#if>
 	    	
 	    },
