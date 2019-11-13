@@ -574,7 +574,7 @@
 		   AND F_WTM_DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') BETWEEN #{ifEndDate} AND #{updateDate}
 		   AND B.CHG_TYPE_CD = 'STATUS_CD'
 		   AND B.OLD_VALUE != 'AA'
-		 ORDER BY A.ENTER_CD, A.SABUN
+		 ORDER BY ENTER_CD, SABUN
     </select>
     
     <insert id="insertWtmEmpAddr" parameterType="java.util.HashMap" >
