@@ -143,8 +143,9 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	        		String param = "?lastDataTime="+lastDataTime;
 		        	String ifUrl = setIfUrl(tenantId, "/code", param);
 			   		getIfMap = getIfRt(ifUrl);
-			   		
+			   		System.out.println("getIfMap.size() : " + getIfMap.size());
 			   		if (getIfMap != null && getIfMap.size() > 0) {
+			   			
 			   			String ifMsg = getIfMap.get("message").toString();
 			   			getIfList = (List<Map<String, Object>>) getIfMap.get("ifData");
 			   		} else {
@@ -156,7 +157,6 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	} catch(Exception e) {
         		retMsg = "Code get : 최종갱신일 조회오류";
         	}
-        	
         	// 조회된 자료가 있으면...
    			if(retMsg == null && getIfList != null && getIfList.size() > 0) {
    	        	
@@ -247,7 +247,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
    	        		ifHisMap.put("ifStatus", "ERR");
    	        	}
    			} else {
-   				ifHisMap.put("ifStatus", "ERR");
+   				retMsg = "갱신자료없음";
+   				ifHisMap.put("ifStatus", "OK");
    			}
    			// 3. 처리결과 저장
     		try {
@@ -344,7 +345,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 	        }
 		} else {
-			ifHisMap.put("ifStatus", "ERR");
+			retMsg = "갱신자료없음";
+			ifHisMap.put("ifStatus", "OK");
 		}
         // 3. 처리결과 저장
 		try {
@@ -479,7 +481,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 			}
 		} else {
-			ifHisMap.put("ifStatus", "ERR");
+			retMsg = "갱신자료없음";
+			ifHisMap.put("ifStatus", "OK");
 		}
     	// 3. 처리결과 저장
 		try {
@@ -597,7 +600,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 	        }
 		} else {
-			ifHisMap.put("ifStatus", "ERR");
+			retMsg = "갱신자료없음";
+			ifHisMap.put("ifStatus", "OK");
 		}
         // 3. 처리결과 저장
 		try {
@@ -762,7 +766,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 	        }
 		} else {
-			ifHisMap.put("ifStatus", "ERR");
+			retMsg = "갱신자료없음";
+			ifHisMap.put("ifStatus", "OK");
 		}
         // 3. 처리결과 저장
 		try {
@@ -917,7 +922,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 	        }
     	} else {
-			ifHisMap.put("ifStatus", "ERR");
+    		retMsg = "갱신자료없음";
+			ifHisMap.put("ifStatus", "OK");
 		}
     	// 3. 처리결과 저장
 		try {
@@ -1177,7 +1183,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	            e.printStackTrace();
 			}
 		} else {
-			ifHisMap.put("ifStatus", "ERR");
+			retMsg = "갱신자료없음";
+			ifHisMap.put("ifStatus", "OK");
 		}
     	// 3. 처리결과 저장
 		try {
@@ -1202,7 +1209,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	int resultCnt = 0;
     	String ifType = "TAA_APPL";
     	Map<String, Object> ifHisMap = new HashMap<>();
-    	ifHisMap.put("tenantId", (Long)reqMap.get("tenantId"));
+    	ifHisMap.put("tenantId", reqMap.get("tenantId"));
     	ifHisMap.put("ifItem", ifType);
     	
     	// 인터페이스용 변수
@@ -1342,7 +1349,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	int resultCnt = 0;
     	String ifType = "WORKTIME_CLOSE";
     	Map<String, Object> ifHisMap = new HashMap<>();
-    	ifHisMap.put("tenantId", (Long)reqMap.get("tenantId"));
+    	ifHisMap.put("tenantId", reqMap.get("tenantId"));
     	ifHisMap.put("ifItem", ifType);
     	
     	// 인터페이스용 변수

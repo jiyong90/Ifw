@@ -30,6 +30,41 @@ public class WtmInterfaceController {
 		this.restTemplate = restTemplate;
 	}
 	
+	@RequestMapping(value = "/ifAll", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void getIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 인터페이스 시작
+		System.out.println("getIf start");
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString()); 
+		//Long tenantId = (long) 38;
+		System.out.println("getCodeIfResult call");
+		WtmInterfaceService.getCodeIfResult(tenantId);
+		
+		WtmInterfaceService.getOrgMapCodeIfResult(tenantId); // 조직관련코드(사업장등)
+		
+		System.out.println("getHolidayIfResult call");
+		WtmInterfaceService.getHolidayIfResult(tenantId);	// 공휴일
+		
+		System.out.println("getTaaCodeIfResult call");
+		WtmInterfaceService.getTaaCodeIfResult(tenantId);	// 근태코드
+		
+		System.out.println("getOrgCodeIfResult call");
+		WtmInterfaceService.getOrgCodeIfResult(tenantId); // 조직코드
+		
+		System.out.println("getOrgChartIfResult call");
+		WtmInterfaceService.getOrgChartIfResult(tenantId); // 조직도
+		
+		System.out.println("getEmpHisIfResult call");
+		WtmInterfaceService.getEmpHisIfResult(tenantId); //사원이력
+		
+		System.out.println("getEmpAddrIfResult call");
+		WtmInterfaceService.getEmpAddrIfResult(tenantId); //사원 주소
+		
+		System.out.println("getIf end");
+		
+		return;
+	}
+	
+	
 	@RequestMapping(value = "/code",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getcodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공통코드
