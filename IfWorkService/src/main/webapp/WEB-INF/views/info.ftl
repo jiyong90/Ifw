@@ -10,7 +10,7 @@
 <div class="container-fluid">
                 <section class="error-page">
                     <div class="container">
-                        <div class="icon-wrap mb-4">
+                        <div class="icon-wrap mb-5">
                             <i class="far fa-sad-tear"></i>
                         </div>
                         <p class="desc" id="message">
