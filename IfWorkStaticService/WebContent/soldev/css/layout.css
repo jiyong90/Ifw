@@ -659,7 +659,7 @@ a.article:hover {
 }
 
 #sub-nav .work-check-wrap {
-  float:left;
+  float:right;
   margin-top:1px;
   vertical-align: middle;
 }
@@ -743,7 +743,7 @@ a.article:hover {
   border-radius: 50%;
   */
   width: 10px;
-  height: 2px;
+  height: 3px;
   margin-top: -2px;
   margin-right: 4px;
   margin-bottom:0px;
