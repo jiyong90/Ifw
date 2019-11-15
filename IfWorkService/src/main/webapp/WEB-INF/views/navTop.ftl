@@ -16,10 +16,10 @@
                 <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
             </li>
             <li class="nav-item">
-            	<a href="#" id="alertLink"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"></span></span></a>
+            	<a href="#" id="alertLink" title="알림보기"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span :class="{'new':inboxCount > 0}"></span></span></a>
             </li>
             <li class="nav-item">
-                <a class="" href="${rc.getContextPath()}/logout/${tsId}"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
+                <a class="" href="${rc.getContextPath()}/logout/${tsId}" title="로그아웃"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
             </li>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
