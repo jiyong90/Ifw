@@ -73,10 +73,22 @@ public interface WtmFlexibleEmpMapper {
 	
 
 	/**
-	 * 인정시간의 분 계산 - 휴게시간 제외
+	 * 인정시간의 분 계산 - 휴게시간 제외 -
+	 * BreakTypeCd = MGR 기준
 	 * @param paramMap
 	 */
 	public void updateApprMinuteByYmdAndSabun(Map<String, Object> paramMap);
+	
+	/**
+	 * BreakTypeCd = TIME 계산
+	 * @param paramMap
+	 */
+	public void updateTimeTypeApprMinuteByYmdAndSabun(Map<String, Object> paramMap);
+	/**
+	 * BreakTypeCd = TIMEFIX 계산
+	 * @param paramMap
+	 */
+	public void updateTimeFixTypeApprMinuteByYmdAndSabun(Map<String, Object> paramMap);
 	
 	public Map<String, Object> checkBaseWorktime(@Param("flexibleEmpId") Long flexibleEmpId);
 	
@@ -176,6 +188,13 @@ public interface WtmFlexibleEmpMapper {
 	 * @param paramMap
 	 */
 	public void initWtmFlexibleEmpOfWtmWorkDayResult(Map<String, Object> paramMap);
+	
+	/**
+	 * 고정 OT 일괄소진 계산 : flexibleEmpId별 근무제 기간 내 : 날짜 구간이 겹치면 앞단에서 LOOP 돌아야한당
+	 * 
+	 * @param paramMap
+	 */
+	public void resetFixOtWtmWorkDayResultByFlexibleEmpId(Map<String, Object> paramMap);
 	
 	public void createWtmWorkteamOfWtmWorkDayResult(Map<String, Object> paramMap);
 	

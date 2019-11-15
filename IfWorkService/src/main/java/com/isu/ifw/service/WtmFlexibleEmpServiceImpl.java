@@ -800,9 +800,26 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		
 		
-		
+		// BREAK_TYPE_CD가 MGR인것만 계산
 		flexEmpMapper.updateApprMinuteByYmdAndSabun(paramMap);
-		//연장근로의 경우 히스토리 타각기록을 통해 계산이 필요함
+		
+		// BREAK_TYPE_CD가 TIME인것만 계산
+		flexEmpMapper.updateTimeTypeApprMinuteByYmdAndSabun(paramMap);
+		
+		// BREAK_TYPE_CD가 TIMEFIX인것만 계산
+		flexEmpMapper.updateTimeFixTypeApprMinuteByYmdAndSabun(paramMap);
+		
+		
+		/**
+		 * 고정 OT 일괄 소진에 대한 부분
+		 */
+		List<WtmFlexibleEmp> emps = flexEmpRepo.findAllTypeFixotByTenantIdAndEnterCdAndSymdAndEymdAnd(tenantId, enterCd, sYmd, eYmd);
+		if(emps != null && emps.size() >0) {
+			for( WtmFlexibleEmp emp : emps) {
+				paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
+				flexEmpMapper.resetFixOtWtmWorkDayResultByFlexibleEmpId(paramMap);
+			}
+		}
 	}
 
 	@Override

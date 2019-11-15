@@ -33,5 +33,13 @@ public interface WtmFlexibleEmpRepository extends JpaRepository<WtmFlexibleEmp, 
 	@Query("SELECT E FROM WtmFlexibleEmp E WHERE E.tenantId = ?1 AND E.enterCd = ?2 AND ?3 BETWEEN E.symd AND E.eymd")
 	public List<WtmFlexibleEmp> findByTenantIdAndEnterCdAndYmdBetween(Long tenantId, String enterCd, String d);
 	
+	@Query("SELECT E FROM WtmFlexibleEmp E WHERE E.tenantId = ?1 AND E.enterCd = ?2 AND ?3 <= E.eymd AND  ?4 >= E.symd")
+	public List<WtmFlexibleEmp> findByTenantIdAndEnterCdAndSymdAndEymd(Long tenantId, String enterCd, String symd, String eymd);
 
+	@Query("SELECT E FROM WtmFlexibleEmp E WHERE E.tenantId = ?1 AND E.enterCd = ?2 AND ?3 <= E.eymd AND  ?4 >= E.symd")
+	public List<WtmFlexibleEmp> findByTenantIdAndEnterCdAndSymdAndEymdAnd(Long tenantId, String enterCd, String symd, String eymd);
+	
+	@Query("SELECT E FROM WtmFlexibleEmp E JOIN WtmFlexibleStdMgr M ON E.flexibleStdMgrId = M.flexibleStdMgrId WHERE E.tenantId = ?1 AND E.enterCd = ?2 AND ?3 <= E.eymd AND  ?4 >= E.symd AND M.defaultWorkUseYn = 'Y' AND M.fixotUseType = 'ALL' ")
+	public List<WtmFlexibleEmp> findAllTypeFixotByTenantIdAndEnterCdAndSymdAndEymdAnd(Long tenantId, String enterCd, String symd, String eymd);
+	
 }
