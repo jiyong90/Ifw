@@ -45,7 +45,7 @@
                                         <div class="title" id="overtime" v-else>휴일근로시간</div>
                                         <span class="time-wrap">
                                             <i class="fas fa-clock"></i>
-                                            <span class="time" v-if="overtime.calcHour">{{overtime.calcHour}}</span>
+                                            <span class="time" v-if="overtime.calcMinute">{{minuteToHHMM(overtime.calcMinute,'detail')}}</span>
                                         </span>
                                     </div>
                                     <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
@@ -65,7 +65,7 @@
                                                 <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="eTime" data-toggle="datetimepicker" data-target="#eTime" autocomplete="off" required>
                                             </div>
                                         </div>
-                                        <div class="guide" v-if="overtime.breakHour">*해당일 총 휴게시간은 {{overtime.breakHour}} 입니다.</div>
+                                        <div class="guide" v-if="overtime.breakMinute && overtime.breakMinute!=0">*해당일 총 휴게시간은 {{minuteToHHMM(overtime.breakMinute,'detail')}} 입니다.</div>
                                     </div>
                                 </div>
                             </div>
@@ -775,18 +775,6 @@
 								if(data!=null) {
 									result = data;
 									//console.log(result);
-									if(data.hasOwnProperty('calcMinute')) {
-										if(data.calcMinute==0)
-											result['calcHour'] = "0시간";
-										else
-											result['calcHour'] = minuteToHHMM(data.calcMinute, 'detail');
-									}
-									if(data.hasOwnProperty('breakMinute')) {
-										if(data.breakMinute==0)
-											result['breakHour'] = "0시간";
-										else
-											result['breakHour'] = minuteToHHMM(data.breakMinute, 'detail');
-									}
 								} 
 							},
 							error: function(e) {
@@ -1128,6 +1116,8 @@
   	         			
   	         			$("#loading").show();
   	         			
+  	         			var holidayYn = $this.result.holidayYn;
+  	         			
   	         			//신청하려는 ot시간이 소정근무시간에 해당되지 않는지 체크
   	         			var sDate = $("#sDate").val().replace(/-/gi,"");
 			   			var eDate = $("#eDate").val().replace(/-/gi,"");
@@ -1138,10 +1128,24 @@
 			         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
 			         	
 			         	var applCode = $this.applCode;
-			       		
-		       			//신청 가능 시간
-		     			var inShm = moment(sDate+' '+applCode.inShm).format('YYYYMMDD HHmm');
-		     			var inEhm = moment(eDate+' '+applCode.inEhm).format('YYYYMMDD HHmm');
+			       		//console.log(applCode);
+			         	
+		       			//신청 가능 시간 체크
+		       			var inShm;
+		       			var inEhm;
+		       			if(holidayYn=='Y') {
+		       				if(applCode.holInShm!=null && applCode.holInShm!=undefined && applCode.holInShm!=''
+		       						&&applCode.holInEhm!=null && applCode.holInEhm!=undefined && applCode.holInEhm!='') {
+		       					inShm = moment(sDate+' '+applCode.holInShm).format('YYYYMMDD HHmm');
+			     				inEhm = moment(eDate+' '+applCode.holInEhm).format('YYYYMMDD HHmm');
+		       				}
+		       			} else {
+		       				if(applCode.inShm!=null && applCode.inShm!=undefined && applCode.inShm!=''
+		       						&&applCode.inEhm!=null && applCode.inEhm!=undefined && applCode.inEhm!='') {
+		       					inShm = moment(sDate+' '+applCode.inShm).format('YYYYMMDD HHmm');
+			     				inEhm = moment(eDate+' '+applCode.inEhm).format('YYYYMMDD HHmm');
+		       				}
+		       			}
 		       			
 		     			if(moment(otSdate).diff(inShm)<0 || moment(otEdate).diff(inEhm)>0) {
 		     				isValid = false;
@@ -1152,23 +1156,62 @@
   	  	         			$("#eTime").val('');
 		   				}
 		     				
-		       			//신청 시간 단위
-		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='')
+		     			var time = Number(moment(otEdate).diff(otSdate,'minutes'));
+		       			// 신청 시간 단위
+		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='') {
 		       				var timeUnit = Number(applCode.timeUnit);
 		       			
-		       			var time = Number(moment(otEdate).diff(otSdate,'minutes'));
-		       			if(time % timeUnit != 0) {
-		       				isValid = false;
-		       				msg = '근무시간은 '+timeUnit+'분 단위로 신청 가능합니다.';
-		       				$("#sTime").val('');
-  	  	         			$("#eTime").val('');
-		       			} 
+			       			if(time % timeUnit != 0) {
+			       				isValid = false;
+			       				msg = '근무시간은 '+timeUnit+'분 단위로 신청 가능합니다.';
+			       				$("#sTime").val('');
+	  	  	         			$("#eTime").val('');
+			       			} 
+		       			}
 			         	
+		       			if(moment(otEdate).diff(otSdate)==0) {
+			         		isValid = false;
+			         		msg = "근무시간을 지정하세요.";
+			         		$("#sTime").val('');
+  	  	         			$("#eTime").val('');
+			         	}
 			         	if(moment(otEdate).diff(otSdate)<0) {
 			         		isValid = false;
 			         		msg = "종료일이 시작일보다 작습니다.";
 			         		$("#sTime").val('');
   	  	         			$("#eTime").val('');
+			         	}
+			         	
+			         	
+			         	//휴일근무 신청 시간 단위 체크
+			         	//휴게시간 차감 후 근무시간을 휴일근무 신청시간으로 딱 나눠떨어져야함(분 단위)
+			         	if(holidayYn=='Y') {
+			         		if(applCode.holApplTypeCd!=null && applCode.holApplTypeCd!=undefined && applCode.holApplTypeCd!='') {
+			         			var holApplTypeCd = Number(applCode.holApplTypeCd);
+			         			
+			         			//휴게시간 차감
+			         			if($this.overtime.breakMinute!=null && $this.overtime.breakMinute!=undefined && $this.overtime.breakMinute!='')
+			         				time = time - Number($this.overtime.breakMinute);
+			         			
+			         			if(time % holApplTypeCd != 0) {
+			         				isValid = false;
+				       				msg = '휴일 근무시간은 '+minuteToHHMM(holApplTypeCd,'detail')+' 단위로 신청 가능합니다.';
+				       				$("#sTime").val('');
+		  	  	         			$("#eTime").val('');
+			         			}
+			         			
+			         			//최대 신청 시간을 넘지 않는지 체크
+			         			if(applCode.holMaxMinute!=null && applCode.holMaxMinute!=undefined && applCode.holMaxMinute!='') {
+				         			var holMaxMinute = Number(applCode.holMaxMinute);
+				         			
+				         			if(time > holMaxMinute) {
+				         				isValid = false;
+					       				msg = '근무시간은 최대 '+minuteToHHMM(holMaxMinute,'detail')+' 까지 신청 가능합니다.';
+					       				$("#sTime").val('');
+			  	  	         			$("#eTime").val('');
+				         			}
+				         		}
+			         		}
 			         	}
   	  	         		
 			         	if(isValid) {

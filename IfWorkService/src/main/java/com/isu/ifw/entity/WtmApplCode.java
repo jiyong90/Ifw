@@ -61,6 +61,15 @@ public class WtmApplCode {
 	private Date updateDate;
 	@Column(name="UPDATE_ID")
 	private String updateId;
+	@Column(name="HOL_IN_SHM")
+	private String holInShm;
+	@Column(name="HOL_IN_EHM")
+	private String holInEhm;
+	@Column(name="HOL_APPL_TYPE_CD")
+	private String holApplTypeCd;
+	@Column(name="HOL_MAX_MINUTE")
+	private Integer holMaxMinute;
+	
 	public Long getApplCodeId() {
 		return applCodeId;
 	}
@@ -185,5 +194,29 @@ public class WtmApplCode {
     protected void onUpdate() {
     	this.updateDate = new Date();
     }
-	
+	public String getHolInShm() {
+		return holInShm;
+	}
+	public void setHolInShm(String holInShm) {
+		this.holInShm = holInShm;
+	}
+	public String getHolInEhm() {
+		return holInEhm;
+	}
+	public void setHolInEhm(String holInEhm) {
+		this.holInEhm = holInEhm;
+	}
+	public String getHolApplTypeCd() {
+		return holApplTypeCd;
+	}
+	public void setHolApplTypeCd(String holApplTypeCd) {
+		this.holApplTypeCd = holApplTypeCd;
+	}
+	public Integer getHolMaxMinute() {
+		return holMaxMinute;
+	}
+	public void setHolMaxMinute(Integer holMaxMinute) {
+		this.holMaxMinute = holMaxMinute;
+	}
+    
 }

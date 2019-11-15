@@ -68,7 +68,7 @@ $(document).ready(function(){
 				dataType : "json",
 				success: function(data) {
 					if(data!=null && data.status=='OK') {
-						console.log(data);
+						//console.log(data);
 						$this.inboxCount = data.inboxCount;
 						$this.inboxCount += data.apprCount;
 						
