@@ -9,16 +9,18 @@
 			SELECT X.APPR_SEQ, E.SABUN, E.EMP_NM
 			  FROM WTM_EMP_HIS E
 			  JOIN (
-						SELECT D.ORG_CD
+			  			
+						SELECT S.ORG_CD
 			                 , LEVEL AS APPR_SEQ
-			            FROM WTM_ORG_CHART C
-			            JOIN WTM_ORG_CHART_DET D
-			             ON C.ORG_CHART_ID = D.ORG_CHART_ID
-			            WHERE C.TENANT_ID = #{tenantId}
-			              AND C.ENTER_CD = #{enterCd}
-			              AND F_WTM_DATE_FORMAT(#{d}, 'YMD') BETWEEN C.SYMD AND C.EYMD
-			            START WITH ORG_CD = (SELECT ORG_CD FROM WTM_EMP_HIS H WHERE H.TENANT_ID=#{tenantId} AND H.ENTER_CD=#{enterCd} AND H.SABUN=#{sabun} AND #{d} BETWEEN H.SYMD AND H.EYMD)
-			            CONNECT BY PRIOR PRIOR_ORG_CD = ORG_CD
+			             FROM ( SELECT D.*
+					            FROM WTM_ORG_CHART C
+					            JOIN WTM_ORG_CHART_DET D
+					             ON C.ORG_CHART_ID = D.ORG_CHART_ID
+					            WHERE C.TENANT_ID = #{tenantId}
+					              AND C.ENTER_CD = #{enterCd}
+					              AND F_WTM_DATE_FORMAT(#{d}, 'YMD') BETWEEN C.SYMD AND C.EYMD ) S
+			            START WITH S.ORG_CD = (SELECT ORG_CD FROM WTM_EMP_HIS H WHERE H.TENANT_ID=#{tenantId} AND H.ENTER_CD=#{enterCd} AND H.SABUN=#{sabun} AND #{d} BETWEEN H.SYMD AND H.EYMD)
+			            CONNECT BY PRIOR S.PRIOR_ORG_CD = ORG_CD
 					 ) X
 			    ON E.ORG_CD = X.ORG_CD
 			 WHERE E.ENTER_CD = #{enterCd}
