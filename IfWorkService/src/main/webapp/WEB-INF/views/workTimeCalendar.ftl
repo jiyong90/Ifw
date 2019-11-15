@@ -1655,7 +1655,7 @@
  		    useCurrent: false
  		});
  		
- 		$(this).on("change.datetimepicker", function(e){
+ 		$(this).off("change.datetimepicker").on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
  				var subDate = moment(e.date).format('YYYYMMDD');
  				var id = $($this).attr('id');
@@ -1712,6 +1712,8 @@
   	
    	$('body').on('focus',"input[id^='subsShm']", function(){
    		var $this = this;
+
+   		
 		$(this).datetimepicker({
 			format: 'HH:mm',
             use24hours: true,
@@ -1729,7 +1731,7 @@
 				$(this).datetimepicker('stepping',Number(unitMinute));
 		}
 		
-		$(this).on("change.datetimepicker", function(e){
+		$(this).off("change.datetimepicker").on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
  				var id = $($this).attr('id');
  				timeCalendarVue.updateValue(id, moment(e.date).format('HH:mm'));
@@ -1757,7 +1759,7 @@
 				$(this).datetimepicker('stepping',Number(unitMinute));
 		}
 		
-		$(this).on("change.datetimepicker", function(e){
+		$(this).off("change.datetimepicker").on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
  				var id = $($this).attr('id');
  				timeCalendarVue.updateValue(id, moment(e.date).format('HH:mm'));
@@ -1767,15 +1769,15 @@
    	})
 
    	//날짜,시간 변경 시 근로시간 계산
-   	$('#sDate, #eDate, #sTime, #eTime').on("change.datetimepicker", function(e){
-   		
+   	$('#sDate, #eDate, #sTime, #eTime').off("change.datetimepicker").on("change.datetimepicker", function(e){
    		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
    			var sTime = $("#sTime").val().replace(/:/gi,"");
    			var eTime = $("#eTime").val().replace(/:/gi,"");
        		
        		timeCalendarVue.overtime = timeCalendarVue.calcMinute(moment(timeCalendarVue.workday).format('YYYYMMDD'), sTime, eTime);
    		}
-    }); 
+    });
+    
    	
 	$('#inOutChangeModal').on('hidden.bs.modal',function(){
 		$(this).find("input,select,textarea").val('').end();
