@@ -407,7 +407,7 @@
                                 	</template>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && (overtimeAppl.subYn=='Y'|| overtimeAppl.payTargetYn=='Y')">
                                 <div class="title">휴일대체방법</div>
                                 <div class="desc">
                                 	<template v-if="overtimeAppl.subYn">
@@ -415,7 +415,7 @@
                                 	</template>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && overtimeAppl.subYn=='Y'">
                                 <div class="title">대체일시</div>
                                 <template v-if="overtimeAppl.subs" v-for="sub in overtimeAppl.subs">
                                 <div class="desc">
@@ -530,7 +530,7 @@
   		    },
   		    computed: {
   		    	subsRequired: function(val, oldVal) {
-  		    		return this.result.holidayYn=='Y'?true:false;
+  		    		return this.result.holidayYn=='Y'&&(this.subsYn=='Y'||this.payTypeYn=='Y')?true:false;
   		    	}
   		    },
   		    mounted: function(){
@@ -1131,8 +1131,8 @@
 			       		//console.log(applCode);
 			         	
 		       			//신청 가능 시간 체크
-		       			var inShm;
-		       			var inEhm;
+		       			var inShm=null;
+		       			var inEhm=null;
 		       			if(holidayYn=='Y') {
 		       				if(applCode.holInShm!=null && applCode.holInShm!=undefined && applCode.holInShm!=''
 		       						&&applCode.holInEhm!=null && applCode.holInEhm!=undefined && applCode.holInEhm!='') {
@@ -1147,7 +1147,7 @@
 		       				}
 		       			}
 		       			
-		     			if(moment(otSdate).diff(inShm)<0 || moment(otEdate).diff(inEhm)>0) {
+		     			if(inShm!=null && inEhm!=null && (moment(otSdate).diff(inShm)<0 || moment(otEdate).diff(inEhm)>0)) {
 		     				isValid = false;
 		       				var shm =  moment(inShm).format('HH:mm');
 		       				var ehm =  moment(inEhm).format('HH:mm');

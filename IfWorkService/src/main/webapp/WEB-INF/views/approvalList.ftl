@@ -129,7 +129,7 @@
                                 	</template>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="appl.holidayYn=='Y'">
+                            <div class="inner-wrap" v-show="appl.holidayYn=='Y' && (appl.subYn=='Y'||appl.payTargetYn=='Y')">
                                 <div class="title">휴일대체방법</div>
                                 <div class="desc">
                                 	<template v-if="appl.subYn">
@@ -137,7 +137,7 @@
                                 	</template>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="appl.holidayYn=='Y'">
+                            <div class="inner-wrap" v-show="appl.holidayYn=='Y' && appl.subYn=='Y'">
                                 <div class="title">대체일시</div>
                                 <template v-if="appl.subs" v-for="sub in appl.subs">
                                 <div class="desc">
