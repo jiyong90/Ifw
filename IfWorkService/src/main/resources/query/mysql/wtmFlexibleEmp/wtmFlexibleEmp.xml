@@ -986,7 +986,7 @@
   	</select>
   	<select id="getSumOtMinute" parameterType="map" resultType="map">
   		<![CDATA[
-  		SELECT SUM(X.otMinute) AS otMinute FROM (
+  		SELECT F_WTM_TO_NUMBER(SUM(X.otMinute),'Y') AS otMinute FROM (
 			SELECT F_WTM_NVL(SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' AND R.APPR_MINUTE > 0 THEN F_WTM_NVL(R.APPR_MINUTE, 0)
 							ELSE F_WTM_NVL(R.PLAN_MINUTE, 0) END 
 			                ), 0) AS otMinute
