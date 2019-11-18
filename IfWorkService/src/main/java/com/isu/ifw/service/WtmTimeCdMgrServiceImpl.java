@@ -16,9 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.isu.ifw.entity.WtmTimeBreakMgr;
+import com.isu.ifw.entity.WtmTimeBreakTime;
 import com.isu.ifw.entity.WtmTimeCdMgr;
 import com.isu.ifw.mapper.WtmTimeCdMgrMapper;
 import com.isu.ifw.repository.WtmTimeBreakMgrRepository;
+import com.isu.ifw.repository.WtmTimeBreakTimeRepository;
 import com.isu.ifw.repository.WtmTimeCdMgrRepository;
 import com.isu.ifw.util.WtmUtil;
 
@@ -34,6 +36,10 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 	WtmTimeCdMgrRepository timeCdMgrRepository;
 	@Resource
 	WtmTimeBreakMgrRepository timeBreakMgrRepository; 
+	@Resource
+	WtmTimeBreakTimeRepository timeBreakTimeRepository;
+	
+	
 
 	@Override
 	public List<Map<String, Object>> getTimeCdMgrList(Long tenantId, String enterCd,  Map<String, Object> paramMap) {
@@ -95,6 +101,7 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 						code.setWorkShm(l.get("workShm").toString());
 						code.setWorkEhm(l.get("workEhm").toString());
 						code.setHolYn(l.get("holYn").toString());
+						code.setBreakTypeCd(l.get("breakTypeCd").toString());
 						code.setHolTimeCdMgrId(l.get("holTimeCdMgrId").toString().equals("") ? null : Long.parseLong(l.get("holTimeCdMgrId").toString()));
 						code.setLateChkYn(l.get("lateChkYn").toString());
 						code.setLeaveChkYn(l.get("leaveChkYn").toString());
@@ -204,6 +211,75 @@ public class WtmTimeCdMgrServiceImpl implements WtmTimeCdMgrService{
 			logger.warn(e.toString(), e);
 		} finally {
 			logger.debug("setTimeCodeMgrList Service End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			MDC.clear();
+		}
+		return cnt;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getTimeBreakTimeList(Long tenantId, String enterCd,  Map<String, Object> paramMap) {
+		List<Map<String, Object>> timeBreakList = new ArrayList();	
+		System.out.println("timecdmgrid : " + paramMap.get("timeCdMgrId").toString());
+		List<WtmTimeBreakTime> list = timeBreakTimeRepository.findByTimeCdMgrId(paramMap.get("timeCdMgrId").toString());
+		
+		for(WtmTimeBreakTime l : list) {
+			Map<String, Object> timeBreak = new HashMap();
+			timeBreak.put("timeBreakTimeId", l.getTimeBreakTimeId());
+			timeBreak.put("timeCdMgrId", l.getTimeCdMgrId());
+			timeBreak.put("workMinute", l.getWorkMinute());
+			timeBreak.put("breakMinute", l.getBreakMinute());
+			timeBreak.put("note", l.getNote());
+			timeBreakList.add(timeBreak);
+		}
+		return timeBreakList;
+	}
+	
+	@Override
+	public int setTimeBreakTimeList(String userId, Map<String, Object> convertMap) {
+		int cnt = 0;
+		try {
+			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
+				List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("mergeRows");
+				List<WtmTimeBreakTime> saveList = new ArrayList();
+				if(iList != null && iList.size() > 0) {
+					for(Map<String, Object> l : iList) {
+						WtmTimeBreakTime code = new WtmTimeBreakTime();
+						code.setTimeBreakTimeId(l.get("timeBreakTimeId").toString().equals("") ? null : Long.parseLong(l.get("timeBreakTimeId").toString()));
+						code.setTimeCdMgrId(Long.parseLong(l.get("timeCdMgrId").toString()));
+						code.setWorkMinute(l.get("workMinute").toString());
+						code.setBreakMinute(l.get("breakMinute").toString());
+						code.setNote(l.get("note").toString());
+						code.setUpdateId(userId);
+						saveList.add(code);
+					}
+					saveList = timeBreakTimeRepository.saveAll(saveList);
+					cnt += saveList.size();
+				}
+				
+				MDC.put("insert cnt", "" + cnt);
+			}
+		
+			if(convertMap.containsKey("deleteRows") && ((List)convertMap.get("deleteRows")).size() > 0) {
+				List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("deleteRows");
+				List<WtmTimeBreakTime> delList = new ArrayList();
+				if(iList != null && iList.size() > 0) {
+					for(Map<String, Object> l : iList) {
+						WtmTimeBreakTime code = new WtmTimeBreakTime();
+						code.setTimeBreakTimeId(Long.parseLong(l.get("timeBreakTimeId").toString()));
+						delList.add(code);
+					}
+					timeBreakTimeRepository.deleteAll(delList);
+				}
+				
+				MDC.put("delete cnt", "" + iList.size());
+				cnt += iList.size();
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			logger.warn(e.toString(), e);
+		} finally {
+			logger.debug("setTimeBreakTimeList Service End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 			MDC.clear();
 		}
 		return cnt;

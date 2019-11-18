@@ -42,6 +42,10 @@ public class WtmApplCodeServiceImpl implements WtmApplCodeService{
 				code.put("useMinutes", l.getUseMinutes());
 				code.put("inShm", l.getInShm());
 				code.put("inEhm", l.getInEhm());
+				code.put("holInShm", l.getHolInShm());
+				code.put("holInEhm", l.getHolInEhm());
+				code.put("holApplTypeCd", l.getHolApplTypeCd());
+				code.put("holMaxMinute", l.getHolMaxMinute());
 				code.put("subsYn", l.getSubsYn());
 				code.put("subsRuleId", l.getSubsRuleId());
 				code.put("subsSday", l.getSubsSday());
@@ -82,9 +86,13 @@ public class WtmApplCodeServiceImpl implements WtmApplCodeService{
 						code.setInShm(l.get("inShm").toString());
 						code.setInEhm(l.get("inEhm").toString());
 						code.setSubsYn(l.get("subsYn").toString());
-						code.setSubsRuleId(Long.valueOf(l.get("subsRuleId").toString()));
+						code.setSubsRuleId(l.get("subsRuleId").toString().equals("") ? null : Long.parseLong(l.get("subsRuleId").toString()));
 						code.setSubsSday(Integer.parseInt(l.get("subsSday").toString()));
 						code.setSubsEday(Integer.parseInt(l.get("subsEday").toString()));
+						code.setHolInShm(l.get("holInShm").toString());
+						code.setHolInEhm(l.get("holInEhm").toString());
+						code.setHolApplTypeCd(l.get("holApplTypeCd").toString());
+						code.setHolMaxMinute(l.get("holMaxMinute").toString().equals("") ? null : Integer.parseInt(l.get("holMaxMinute").toString()));
 						code.setNote(l.get("note").toString());
 						code.setUpdateId(userId);
 						codes.add(code);

@@ -33,7 +33,7 @@
 					<script type="text/javascript">createIBSheet("sheet1", "100%", halfsheetH,"kr"); </script>
 				</td>
 			</tr>
-			<tr>
+			<tr id="trBreakMgr" style="display:none;">
 				<td>
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
@@ -45,6 +45,20 @@
 						</div>
 					</div>
 					<script type="text/javascript">createIBSheet("sheet2", "100%", halfsheetH,"kr"); </script>
+				</td>
+			</tr>
+			<tr id="trBreakTime" style="display:none;">
+				<td>
+					<div class="inner">
+						<div class="sheet_title_wrap clearfix">
+						<div class="float-left title">휴식시간관리</div>
+							<ul class="float-right btn-wrap">
+								<li><a href="javascript:doAction3('Insert')" class="basic authA">입력</a></li>
+								<li><a href="javascript:doAction3('Save')" class="basic authA">저장</a></li>
+							</ul>
+						</div>
+					</div>
+					<script type="text/javascript">createIBSheet("sheet3", "100%", halfsheetH,"kr"); </script>
 				</td>
 			</tr>
 		</table>
@@ -75,6 +89,7 @@
 			{Header:"근무유형명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"시작일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"symd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
 			{Header:"종료일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"eymd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
+			{Header:"휴게시간\n차감기준",		Type:"Combo",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"breakTypeCd",    KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"휴일여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holYn",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"공휴시\n근무코드",		Type:"Combo",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holTimeCdMgrId",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"기본근무\n시작시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workShm",			KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
@@ -94,6 +109,9 @@
 		
 		var timeCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=Y",false).DATA, "");
 		sheet1.SetColProperty("holTimeCdMgrId", 	{ComboText:"|"+timeCdList[0], ComboCode:"|"+timeCdList[1]} );
+		
+		var holBreakTypeList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "BREAK_TYPE_CD"), "선택");
+		sheet1.SetColProperty("breakTypeCd", 	{ComboText:"|"+holBreakTypeList[0], ComboCode:"|"+holBreakTypeList[1]} );
 		
 		var initdata2 = {};
 		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -121,7 +139,27 @@
 		//휴식코드
 		var breakCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "BREAK_TIME_CD"), "선택");
 		sheet2.SetColProperty("breakTimeCd", {ComboText:breakCdList[0], ComboCode:breakCdList[1]} );
-
+		
+		var initdata3 = {};
+		initdata3.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata3.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+		
+        initdata3.Cols = [
+            {Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
+			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+   			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeBreakTimeId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"upid",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"기준시간(분)",	Type:"Int",			Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workMinute",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"휴식시간(분)",  Type:"Int",     	Hidden:0,   Width:70,  Align:"Center",  ColMerge:0, SaveName:"breakMinute",  KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+			{Header:"비고",			Type:"Text",	  Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+        ];
+        IBS_InitSheet(sheet3, initdata3);
+		sheet3.SetEditable(true);
+		sheet3.SetVisible(true);
+		sheet3.SetUseDefaultTime(0);
+		sheet3.SetUnicodeByte(3);
+        
 		sheetInit();
 		doAction1("Search");
 	});
@@ -169,6 +207,30 @@
 			break;
 		}
 	}
+	
+	function doAction3(sAction) {
+		switch (sAction) {
+		case "Search":
+			var param = "timeCdMgrId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
+			sheet3.DoSearch( "${rc.getContextPath()}/timeCdMgr/breakTimeList" , param);
+			break;
+		
+		case "Save":
+			IBS_SaveName(document.sheetForm,sheet3);
+			sheet3.DoSave("${rc.getContextPath()}/timeCdMgr/breakTimeSave", $("#sheetForm").serialize()); break;
+			break;
+			
+		case "Insert":
+			var timeCdMgrId = sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
+			if(timeCdMgrId == ""){
+				alert("근무유형 저장 후 휴식시간을 입력하셔야 합니다");
+			} else {
+				var row = sheet3.DataInsert(0) ;
+				sheet3.SetCellValue(row, "timeCdMgrId" , timeCdMgrId);
+			}
+			break;
+		}
+	}
 
 	// 조회 후 에러 메시지
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
@@ -180,6 +242,7 @@
 				alert(Msg);
 			}
 			if(sheet1.SearchRows() > 0) {
+				// 하단 화면을 보여줘야함.
 				var rowCnt = sheet1.LastRow();
 				for (var i=1; i<=rowCnt; i++) {
 					if (sheet1.GetCellValue(i, "holYn") == "Y" ) {
@@ -225,7 +288,9 @@
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
 		if(OldRow != NewRow){
 			sheet2.RemoveAll();
-			doAction2('Search');
+			sheet3.RemoveAll();
+			var breakTypeCd = sheet1.GetCellValue(NewRow,"breakTypeCd");
+			setBerakSheet(breakTypeCd);
 		}
 	}
 	
@@ -254,6 +319,46 @@
 			doAction2("Search");
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+	
+	// 조회 후 에러 메시지
+	function sheet3_OnSearchEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (StCode == 401) {
+				window.parent.location.href = loginUrl;
+			}
+			if (Msg != "") {
+				alert(Msg);
+			}
+
+			sheetResize();
+		} catch (ex) {
+			alert("OnSearchEnd Event Error : " + ex);
+		}
+	}
+
+	// 저장 후 메시지
+	function sheet3_OnSaveEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
+			doAction3("Search");
+		} catch (ex) {
+			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+	
+	function setBerakSheet(breakTypeCd){
+		if(breakTypeCd == "MGR"){
+			$("#trBreakTime").hide();
+			$("#trBreakMgr").show();
+			doAction2("Search");
+		} else {
+			$("#trBreakMgr").hide();
+			$("#trBreakTime").show();
+			doAction3("Search");
 		}
 	}
 </script>

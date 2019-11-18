@@ -15,6 +15,7 @@
 			     , EYMD
 			     , WORK_SHM 
 			     , WORK_EHM
+			     , BREAK_TYPE_CD
 			     , HOL_YN 
 			     , HOL_TIME_CD_MGR_ID 
 			     , LATE_CHK_YN 
@@ -40,6 +41,7 @@
 					TIME_NM, 
 					SYMD,
 					EYMD,
+					BREAK_TYPE_CD,
 					WORK_SHM,
 					WORK_EHM,  
 					HOL_YN, 
@@ -56,6 +58,7 @@
 					 #{timeNm} ,
 					 #{symd} ,
 					 #{eymd} ,
+					 #{breakTypeCd} ,
 					 #{workShm} ,
 					 #{workEhm} ,
 					 #{holYn} ,
@@ -69,6 +72,7 @@
 			ON DUPLICATE KEY UPDATE 
 				TIME_NM = VALUES(TIME_NM),
 				EYMD = VALUES(EYMD),
+				BREAK_TYPE_CD = VALUES(BREAK_TYPE_CD),
 				WORK_SHM = VALUES(WORK_SHM),
 				WORK_EHM = VALUES(WORK_EHM),
 				HOL_YN = VALUES(HOL_YN),

@@ -44,7 +44,7 @@
 									<col width="30%">
 								</colgroup>
 								<tbody>
-									<tr id="trApplMinute">
+									<tr id="trApplMinute" style="display:none;">
 										<th>신청 시간 단위</th>
 										<td>
 											<select id="timeUnit">
@@ -69,15 +69,41 @@
 											-->
 										</td>
 									</tr>
-									<tr id="trApplTime">
-										<th>신청 가능 시각</th>
+									<tr id="trApplTime" style="display:none;">
+										<th>연장근무 신청 가능 시각</th>
 										<td colspan="3">
 											<input type="text" id="inShm" name="inShm" class="required" />
 											~
 											<input type="text" id="inEhm" name="inEhm" class="required" />
 										</td>
 									</tr>
-									<tr id="trHol">
+									<tr id="trHolTime" style="display:none;">
+										<th>휴일근무 신청 가능 시각</th>
+										<td colspan="3">
+											<input type="text" id="holInShm" name="holInShm" class="required" />
+											~
+											<input type="text" id="holInEhm" name="holInEhm" class="required" />
+										</td>
+									</tr>
+									<tr id="trHolBreak" style="display:none;">
+										<th>휴일근무 신청시간 기준</th>
+										<td>
+											<select id="holApplTypeCd">
+			                                    <option value=""   >선택</option>
+			                                    <option value="30" >30분 단위</option>
+			                                    <option value="60" >1시간 단위</option>
+			                                    <option value="120">2시간 단위</option>
+			                                    <option value="180">3시간 단위</option>
+			                                    <option value="240">4시간 단위</option>
+			                                    <option value="480">8시간 단위</option>
+			                                </select>
+										</td>
+										<th>휴일근무 최대 신청시간(분)</th>
+										<td>
+											<input type="text" id="holMaxMinute" name="holMaxMinute" class="required" />
+										</td>
+									</tr>
+									<tr id="trHol" style="display:none;">
 										<th>휴일대체 사용여부</th>
 										<td>
 											<select id="subsYn">
@@ -92,7 +118,7 @@
 			                                </select>
 										</td>
 									</tr>
-									<tr id="trSubs">
+									<tr id="trSubs" style="display:none;">
 										<th>휴일대체 사용기간<br>(근무일이전)</th>
 										<td>
 											<input type="text" id="subsSday" name="subsSday" class="required"/>일
@@ -123,10 +149,6 @@
    	$(function() {
    		//resize
    		$(window).smartresize(sheetResize);
-   		// 일단 숨기고시작하기
-   		$("#trApplMinute").hide();
-		$("#trApplTime").hide();
-		$("#trHol").hide();
    		
 		var initdata1 = {};
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -147,6 +169,10 @@
    			{Header:"신청사용분",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"useMinutes",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:2000  },
    			{Header:"입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inShm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
    			{Header:"입력종료시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inEhm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
+   			{Header:"휴일입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holInShm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
+   			{Header:"휴일입력종료시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holInEhm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
+   			{Header:"휴일신청시간기준",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holApplTypeCd",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:50  },
+   			{Header:"휴일신청최대시간",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holMaxMinute",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
    			{Header:"대휴사용여부",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsYn",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:1  },
    			{Header:"대휴선택대상",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsRuleId",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:20  },
    			{Header:"대휴사용시작",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsSday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
@@ -162,6 +188,9 @@
 		var levelCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "LEVEL_CD"), "선택");
 		sheet1.SetColProperty("applLevelCd", {ComboText:"없음|"+levelCdList[0], ComboCode:"|"+levelCdList[1]} );
 		sheet1.SetColProperty("recLevelCd", {ComboText:"없음|"+levelCdList[0], ComboCode:"|"+levelCdList[1]} );
+		
+		var holApplTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "HOL_APPL_TYPE_CD"), "선택");
+		$("#holApplTypeCd").html(holApplTypeCdList[2]);
 
 		sheetInit();
 		doAction1("Search");
@@ -206,6 +235,14 @@
 				sheet1.SetCellValue(row, "subsSday", $("#subsSday").val());
 				sheet1.SetCellValue(row, "subsEday", $("#subsEday").val());
 			}
+			if($('#trHolTime').is(':visible')){
+				sheet1.SetCellValue(row, "holInShm", $("#holInShm").val());
+				sheet1.SetCellValue(row, "holInEhm", $("#holInEhm").val());
+			}
+			if($('#trHolBreak').is(':visible')){
+				sheet1.SetCellValue(row, "holApplTypeCd", $("#holApplTypeCd").val());
+				sheet1.SetCellValue(row, "holMaxMinute", $("#holMaxMinute").val());
+			}
 			sheet1.SetCellValue(row, "note", $("#note").val());
 			doAction1("Save");
 			
@@ -236,17 +273,23 @@
 				$("#trApplTime").show();
 				$("#trHol").show();
 				$("#trSubs").show();
+				$("#trHolTime").show();
+				$("#trHolBreak").show();
 			} else if(applCd == "SUBS_CHG"){
 				// 연장/휴일근무신청서
 				$("#trApplMinute").hide();
 				$("#trApplTime").hide();
 				$("#trHol").hide();
 				$("#trSubs").show();
+				$("#trHolTime").hide();
+				$("#trHolBreak").hide();
 			} else {
 				$("#trApplMinute").hide();
 				$("#trApplTime").hide();
 				$("#trHol").hide();
 				$("#trSubs").hide();
+				$("#trHolTime").hide();
+				$("#trHolBreak").hide();
 			}
 			// 데이터 셋팅
 			if($('#trApplMinute').is(':visible')){
@@ -270,6 +313,14 @@
 			if($('#trSubs').is(':visible')){
 				$("#subsSday").val(sheet1.GetCellValue( NewRow, "subsSday"));
 				$("#subsEday").val(sheet1.GetCellValue( NewRow, "subsEday"));
+			}
+			if($('#trHolTime').is(':visible')){
+				$("#holInShm").val(sheet1.GetCellValue( NewRow, "holInShm"));
+				$("#holInEhm").val(sheet1.GetCellValue( NewRow, "holInEhm"));
+			}
+			if($('#trHolBreak').is(':visible')){
+				$("#holApplTypeCd").val(sheet1.GetCellValue( NewRow, "holApplTypeCd")).prop("selected", true);;
+				$("#holMaxMinute").val(sheet1.GetCellValue( NewRow, "holMaxMinute"));
 			}
 			$("#note").val(sheet1.GetCellValue( NewRow, "note"));
 		}

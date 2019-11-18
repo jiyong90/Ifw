@@ -41,6 +41,8 @@ public class WtmTimeCdMgr {
 	private String workEhm;
 	@Column(name="HOL_YN")
 	private String holYn;
+	@Column(name="BREAK_TYPE_CD")
+	private String breakTypeCd;
 	@Column(name="HOL_TIME_CD_MGR_ID")
 	private Long holTimeCdMgrId;
 	@Column(name="LATE_CHK_YN")
@@ -159,6 +161,16 @@ public class WtmTimeCdMgr {
 	}
 
 	
+	public String getBreakTypeCd() {
+		return breakTypeCd;
+	}
+
+
+	public void setBreakTypeCd(String breakTypeCd) {
+		this.breakTypeCd = breakTypeCd;
+	}
+
+
 	public Long getHolTimeCdMgrId() {
 		return holTimeCdMgrId;
 	}

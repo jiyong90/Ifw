@@ -14,6 +14,7 @@
 					TIME_NM, 
 					SYMD,
 					EYMD,
+					BREAK_TYPE_CD,
 					WORK_SHM,
 					WORK_EHM,  
 					HOL_YN, 
@@ -31,6 +32,7 @@
 							NULL AS TIME_NM, 
 							NULL AS SYMD,
 							NULL AS EYMD,
+							NULL AS BREAK_TYPE_CD,
 							NULL AS WORK_SHM,
 							NULL AS WORK_EHM,  
 							NULL AS HOL_YN, 
@@ -46,7 +48,8 @@
 							 TRIM(#{timeCd}) AS TIME_CD, 
 							 TRIM(#{timeNm}) AS TIME_NM, 
 							 TRIM(#{symd}) AS SYMD, 
-							 TRIM(#{eymd}) AS EYMD, 
+							 TRIM(#{eymd}) AS EYMD,
+							 TRIM(#{breakTypeCd}) AS BREAK_TYPE_CD,  
 							 TRIM(#{workShm}) AS WORK_SHM, 
 							 TRIM(#{workEhm}) AS WORK_EHM, 
 							 TRIM(#{holYn}) AS HOL_YN, 
@@ -69,6 +72,7 @@
         WHEN MATCHED THEN
         	UPDATE SET TIME_NM = S.TIME_NM,
 					EYMD = S.EYMD,
+					BREAK_TYPE_CD = S.BREAK_TYPE_CD,
 					WORK_SHM = S.WORK_SHM,
 					WORK_EHM = S.WORK_EHM,
 					HOL_YN = S.HOL_YN,
@@ -86,6 +90,7 @@
 					TIME_NM, 
 					SYMD,
 					EYMD,
+					BREAK_TYPE_CD,
 					WORK_SHM,
 					WORK_EHM,  
 					HOL_YN, 
@@ -102,6 +107,7 @@
 					S.TIME_NM, 
 					S.SYMD,
 					S.EYMD,
+					S.BREAK_TYPE_CD
 					S.WORK_SHM,
 					S.WORK_EHM,  
 					S.HOL_YN, 
@@ -127,6 +133,7 @@
 			     , EYMD
 			     , WORK_SHM 
 			     , WORK_EHM
+			     , BREAK_TYPE_CD
 			     , HOL_YN 
 			     , HOL_TIME_CD_MGR_ID 
 			     , LATE_CHK_YN 
