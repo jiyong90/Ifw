@@ -33,7 +33,7 @@
 				  FROM WTM_APPL A
 				  JOIN WTM_FLEXIBLE_APPL F
 				    ON A.APPL_ID = F.APPL_ID
-				   AND A.APPL_ID = #{applId}
+				   AND A.APPL_ID = #{applId, jdbcType=NUMERIC}
 			  ) X
 			   ON A.TENANT_ID = X.TENANT_ID AND A.ENTER_CD = X.ENTER_CD AND A.APPL_SABUN = X.APPL_SABUN
 			WHERE A.APPL_STATUS_CD NOT IN ('11','22','44','32','99') 

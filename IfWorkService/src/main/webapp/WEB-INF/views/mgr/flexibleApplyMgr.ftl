@@ -129,13 +129,15 @@
 			{Header:"근무명칭",		Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applyNm",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"근무제도기준",		Type:"Combo",	Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"flexibleStdMgrId",KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"시작일",			Type:"Date",    Hidden:0, 	Width:90,   Align:"Center", ColMerge:0, SaveName:"useSymd",      	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
-			{Header:"종료일",			Type:"Date",    Hidden:0, 	Width:90,   Align:"Center", ColMerge:0, SaveName:"useEymd",      	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
-			{Header:"반복여부",		Type:"CheckBox",    Hidden:0, 	Width:70,   Align:"Center", ColMerge:0, SaveName:"repeatYn",      	KeyField:0, Format:"",   	PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
+			{Header:"종료일",			Type:"Date",    Hidden:0, 	Width:90,   Align:"Center", ColMerge:0, SaveName:"useEymd",      	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:100 },
+			{Header:"반복기준",			Type:"Combo",   Hidden:0, 	Width:70,   Align:"Center", ColMerge:0, SaveName:"repeatTypeCd",   	KeyField:0, Format:"",   	PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:50 },
+			{Header:"반복횟수",			Type:"Int",    	Hidden:0, 	Width:70,   Align:"Center", ColMerge:0, SaveName:"repeatCnt",      	KeyField:0, Format:"",   	PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:2 },
 			{Header:"소정근무시간(분)",	Type:"Int",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workMinute",	  	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"연장근무시간(분)",	Type:"Int",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"otMinute",		KeyField:0,	Format:"",		PointCount:2,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"대상자조회",		Type:"Image", 	Hidden:0,  	Width:70,  	Align:"Center", ColMerge:0, SaveName:"selectImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:1    },
 			{Header:"확정여부",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"applyYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
-			{Header:"확정상태",		Type:"Html", 		Hidden:0,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"endImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:1    },
+			{Header:"근무제도",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"workTypeCd",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },			
+			{Header:"확정상태",		Type:"Html", 		Hidden:0,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"endImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:100   },
 			{Header:"확정상태",		Type:"Int", 		Hidden:1,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"cnt",  			KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:1    },
 			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 		]; 
@@ -149,10 +151,13 @@
 		
 		sheet1.SetImageList(0,"${rc.getContextPath()}/IBLeaders/Sheet/icon/icon_popup.png");
 		
-		//sheet1.SetColProperty("workTime", {ComboText:"선택|1주|2주|3주|4주", ComboCode:"|1week|2week|3week|4week"} );
+		var repeatTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "REPEAT_TYPE_CD"), "선택");		
+		sheet1.SetColProperty("repeatTypeCd", {ComboText:repeatTypeCdList[0], ComboCode:repeatTypeCdList[1]} );
+		
+		
 		//근무제도
 		var flexibleList = stfConvCode(ajaxCall("${rc.getContextPath()}/flexibleStd/all", "",false).DATA, "선택");
-		sheet1.SetColProperty("flexibleStdMgrId", {ComboText:flexibleList[0], ComboCode:flexibleList[1]} );
+		sheet1.SetColProperty("flexibleStdMgrId", {ComboText:flexibleList[0], ComboCode:flexibleList[1], comboEtc:flexibleList[2]} );
 		
 		var initdata2 = {};
 		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -192,7 +197,7 @@
 		sheet2.SetColProperty("workteamCd", {ComboText:"전체|"+workteamCdList[0], ComboCode:"|"+workteamCdList[1]} );
 		
 		//조직
-        setSheetAutocompleteOrg("sheet2", "orgNm");
+        // setSheetAutocompleteOrg("sheet2", "orgNm");
 		
 		var initdata3 = {};
 		initdata3.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -205,8 +210,8 @@
 			{Header:"id",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleApplyEmpId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"upid",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleApplyId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"소속",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0, SaveName:"orgNm",		  		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"사번",		Type:"Text",		Hidden:0,	Width:80,	Align:"Center", ColMerge:0, SaveName:"sabun",		  		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:13 },
-			{Header:"성명",		Type:"Text",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"name",		  		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"사번",		Type:"Text",		Hidden:0,	Width:80,	Align:"Center", ColMerge:0, SaveName:"sabun",		  		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:13 },
+			{Header:"성명",		Type:"Text",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"empNm",		  		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",		Type:"Text",	  	Hidden:0,	Width:80,	Align:"Left",	ColMerge:0, SaveName:"note",	 			KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 			
         ];
@@ -282,10 +287,6 @@
 			if(!dupChk(sheet1,"tenantId|enterCd|applyNm|useSymd", false, true)){break;}
 			IBS_SaveName(document.sheetForm,sheet1);
 			sheet1.DoSave("${rc.getContextPath()}/flexibleApply/save", $("#sheetForm").serialize()); break;
-			break;
-		case "Apply":
-			IBS_SaveName(document.sheetForm,sheet1);
-			sheet1.DoSave("${rc.getContextPath()}/flexibleApply/Apply", $("#sheetForm").serialize()); break;
 			break;
 		}
 	}
@@ -373,7 +374,6 @@
 			alert("확정할 내용이 없습니다.");
 			
 		}
-		
 	}
 	
 	function getReturnValue(returnValue) {
@@ -409,12 +409,40 @@
 			}
 		}
 	}
+	
+	function setRepeatSelect(row, flexibleStdMgrId){
+		var test = "";
+		/*
+		var repeatTypeCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/flexibleApply/workType", "flexibleStdMgrId="+flexibleStdMgrId,false).DATA, "선택");
+		var info = {"ComboCode":repeatTypeCdList[1],"ComboText":repeatTypeCdList[0]};
+   	 	sheet1.CellComboItem(row,"repeatTypeCd",info);
+   	 	*/
+	}
 
 	// 조회 후 에러 메시지
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
 				alert(Msg);
+			} else {
+				for(i=1;i<=sheet1.RowCount();i++){
+			   	  	// 확정완료는 수정불가
+					var applyYn = sheet1.GetCellValue(i, "applyYn");
+			   	  	if(applyYn == "Y"){
+			   	  		sheet1.SetRowEditable(i, 0);
+			   	  	} else {
+			   	  		sheet1.SetRowEditable(i, 1);
+				   		// 반복여부
+			   	  		var repeatTypeCd = sheet1.GetCellValue(i, "repeatTypeCd", 0);
+			   	  		if(repeatTypeCd == "" || repeatTypeCd == "NO"){
+				   	  		sheet1.SetCellEditable(i, "repeatCnt", 0);
+							sheet1.SetCellEditable(i, "useEymd", 1);
+			   	  		} else {
+				   	  		sheet1.SetCellEditable(i, "repeatCnt", 1);
+							sheet1.SetCellEditable(i, "useEymd", 0);
+			   	  		}
+			   	  	}
+			   	}
 			}
 			sheetResize();
 		} catch (ex) {
@@ -436,6 +464,8 @@
 	
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
 		if(OldRow != NewRow){
+			var flexibleStdMgrId = sheet1.GetCellValue(NewRow, "flexibleStdMgrId");
+	   	  	setRepeatSelect(NewRow, flexibleStdMgrId);
 			sheet2.RemoveAll();
 			sheet3.RemoveAll();
 			doAction2('Search');
@@ -464,6 +494,49 @@
 			alert("OnClick Event Error : " + ex);
 		}
 	}
+	
+	//셀 값변경 이벤트
+	function sheet1_OnChange(Row, Col, Value) {
+		console.log("Row : " + Row);
+		console.log("Col : " + Col);
+		var colNm = sheet1.ColSaveName(Col);
+		var repeatTypeCd = sheet1.GetCellValue(Row, "repeatTypeCd");
+		console.log("111111111111111111");
+		var status = sheet1.GetCellValue(Row, "stauts");
+		console.log(status);
+		if(colNm == "flexibleStdMgrId" && status == "I"){
+			var flexibleStdMgrId = sheet1.GetCellValue(Row, "flexibleStdMgrId");
+			console.log("flexibleStdMgrId : " + flexibleStdMgrId);
+   	  		setRepeatSelect(Row, flexibleStdMgrId);
+		}
+		if(colNm == "repeatTypeCd"){
+			if(repeatTypeCd == "NO"){
+				//반복이 없으면
+				sheet1.SetCellEditable(Row, "repeatCnt", 0);
+				sheet1.SetCellValue(Row, "repeatCnt", "", 0);
+				sheet1.SetCellEditable(Row, "useEymd", 1);
+			} else {
+				sheet1.SetCellEditable(Row, "repeatCnt", 1);
+				sheet1.SetCellEditable(Row, "useEymd", 0);
+				sheet1.SetCellValue(Row, "useEymd", "", 0);
+			}
+		}
+		
+		if(colNm == "useSymd" || colNm == "repeatTypeCd" || colNm == "repeatCnt"){
+			var symd = sheet1.GetCellValue(Row, "useSymd");
+			var repeatCnt = sheet1.GetCellValue(Row, "repeatCnt");
+			
+			if(symd != "" && repeatTypeCd != "" && repeatCnt > 0){
+				// 종료일 조회
+				var param = "symd=" + symd + "&repeatTypeCd=" + repeatTypeCd + "&repeatCnt=" + repeatCnt;
+				var rtn = ajaxCall("${rc.getContextPath()}/flexibleApply/getEymd", param ,false).DATA;
+				if(rtn != null && rtn != "") {
+					sheet1.SetCellValue(Row, "useEymd", rtn.eymd, 0);
+				}
+			}
+		}
+	}
+
 	
 	// 조회 후 에러 메시지
 	function sheet2_OnSearchEnd(Code, Msg, StCode, StMsg) {

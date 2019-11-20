@@ -16,7 +16,11 @@ public interface WtmFlexibleApplyMgrService {
 
 	public int setApplyList(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap);
 	
-	public ReturnParam setApply(Long tenantId, String enterCd, String userId, Long flexibleApplyId);
+	public ReturnParam setApply(Map<String, Object> paramMap);
+	
+	public List<Map<String, Object>> getworkTypeList(Long flexibleStdMgrId);
+	
+	public Map<String, Object> getEymd(Map<String, Object> paramMap);
 	
 	public List<Map<String, Object>> getApplyGrpList(Map<String, Object> paramMap);
 
