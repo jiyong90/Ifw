@@ -287,7 +287,7 @@ box-sizing: border-box;
 
 .white-box-wrap .time-list .title{
   margin-right: 4px;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: -0.6px;
   color: #6b6b80;
 }
@@ -539,7 +539,7 @@ box-sizing: border-box;
 
 .time-input-form label{
     padding: 0 0 4px;
-    font-size: 14px;
+    font-size: 12px;
     letter-spacing: -0.6px;
     text-align: left;
     color: #6b6b80;
