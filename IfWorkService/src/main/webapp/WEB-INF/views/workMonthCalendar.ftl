@@ -1,7 +1,7 @@
 <div id="monthCalendar" class="calendar-wrap" v-cloak>
 	<div id="calendar-popover" class="popover-inner-wrap" style="display:none;">
 		<div class="msg">시작일로 지정</div>
-		<span id="startDaySelect" class="btn btn-default btn-flat">
+		<span id="startDaySelect" class="btn btn-default btn-flat btn-sm mt-1">
 			<input id="startDay" type="hidden" value="">확인
 		</span>
 	</div>
@@ -466,7 +466,9 @@
 	       			
 	       			calendar.gotoDate(calendarLeftVue.applInfo.useSymd);
 	       			
-	       			calendarLeftVue.flexitimeApplImsi();
+	       			//탄근제 제외하고 임시저장
+	       			if(calendarTopVue.selectedFlexibleStd.workTypeCd!='ELAS')
+	       				calendarLeftVue.flexitimeApplImsi();
          		}
          	}
     	}
