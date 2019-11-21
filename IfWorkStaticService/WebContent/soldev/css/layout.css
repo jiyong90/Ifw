@@ -107,7 +107,7 @@ html {
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
 .navbar .gnb-nav-wrap .sp_ico.alarm{
-  animation: bell 3s linear;
+  animation: bell 5s linear;
   animation-iteration-count:1;
 }
 
