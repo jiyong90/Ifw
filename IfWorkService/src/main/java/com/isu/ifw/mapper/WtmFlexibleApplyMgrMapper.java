@@ -7,6 +7,12 @@ public interface WtmFlexibleApplyMgrMapper {
 	
 	public List<Map<String, Object>> getApplyList(Map<String, Object> paramMap);
 	
+	public List<Map<String, Object>> getApplyRepeatList(Map<String, Object> paramMap);
+	
+	public Map<String, Object> getEymd(Map<String, Object> paramMap);
+	
+	public List<Map<String, Object>> getworkTypeList(Map<String, Object> paramMap);
+	
 	public List<Map<String, Object>> getApplyConfirmList(Map<String, Object> paramMap);
 	
 	public int insertApplyEmp(Map<String, Object> paramMap);

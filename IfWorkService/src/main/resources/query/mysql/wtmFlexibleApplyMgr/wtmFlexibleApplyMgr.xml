@@ -9,30 +9,63 @@
         <![CDATA[
         	SELECT FLEXIBLE_APPLY_ID AS flexibleApplyId
         		 , FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+        		 , (SELECT WORK_TYPE_CD FROM WTM_FLEXIBLE_STD_MGR A WHERE A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID) AS workTypeCd
         		 , TENANT_ID AS tenantId
         		 , ENTER_CD AS enterCd
         		 , APPLY_NM AS applyNm
         		 , USE_SYMD AS useSymd
         		 , USE_EYMD AS useEymd
-        		 , REPEAT_YN AS repeatYn
+        		 , REPEAT_TYPE_CD AS repeatTypeCd
+        		 , REPEAT_CNT AS repeatCnt
         		 , WORK_MINUTE AS workMinute
         		 , OT_MINUTE AS otMinute
         		 , '0' AS selectImg
         		 , APPLY_YN as applyYn
 			     , CASE WHEN F_WTM_NVL(APPLY_YN, 'N') = 'Y' THEN '완료'
 					    ELSE CONCAT('<a class="basic" onClick="setEndConfirm(', FLEXIBLE_APPLY_ID, ')">확정</a>') END AS endImg
-			     , (SELECT COUNT(*) FROM WTM_FLEXIBLE_APPLY_EMP_TEMP A WHERE FLEXIBLE_APPLY_ID = A.FLEXIBLE_APPLY_ID) AS CNT
+			     , (SELECT COUNT(*) FROM WTM_FLEXIBLE_APPLY_EMP_TEMP A WHERE B.FLEXIBLE_APPLY_ID = A.FLEXIBLE_APPLY_ID) AS CNT
         		 , NOTE AS note
-			  FROM WTM_FLEXIBLE_APPLY 
+			  FROM WTM_FLEXIBLE_APPLY B
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd} 
 			   AND REPLACE(#{sYmd}, '-', '') BETWEEN USE_SYMD AND USE_EYMD
         ]]>
     </select>
     
+    <select id="getEymd" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT F_WTM_GET_FLEXIBLE_APPLYEYMD(#{symd}, #{repeatTypeCd}, #{repeatCnt}) AS eymd
+  			  FROM DUAL
+        ]]>
+    </select>
+    
+    <select id="getworkTypeList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.CODE_CD AS codeCd
+			     , A.CODE_NM AS codeNm
+			  FROM WTM_CODE A
+			 INNER JOIN WTM_FLEXIBLE_STD_MGR B
+			    ON A.TENANT_ID = B.TENANT_ID
+			   AND A.ENTER_CD = B.ENTER_CD
+			   AND B.FLEXIBLE_STD_MGR_ID = #{flexibleStdMgrId}
+			   AND INSTR(A.NOTE, B.WORK_TYPE_CD) > 0
+			 ORDER BY A.SEQ
+        ]]>
+    </select>
+    
+    <select id="getApplyRepeatList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT USE_SYMD AS useSymd, USE_EYMD AS useEymd, REPEAT_CNT as repeatCnt, REPEAT_TYPE_CD AS repeatTypeCd
+  			  FROM WTM_FLEXIBLE_APPLY
+			 WHERE FLEXIBLE_APPLY_ID = #{flexibleApplyId}
+        ]]>
+    </select>
+    
     <select id="getApplyConfirmList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT DISTINCT A.USE_SYMD AS symd, A.USE_EYMD AS eymd, B.SABUN AS sabun, C.WORK_TYPE_CD AS workTypeCd
+        	SELECT DISTINCT F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(A.USE_SYMD, 'YMD'), -1, 'D'), 'YMD') as useSymd
+        		 , F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(A.USE_EYMD, 'YMD'), 1, 'D'), 'YMD') as useEymd 
+        		 , B.SABUN AS sabun, C.WORK_TYPE_CD AS workTypeCd
         		 , A.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
         		 , A.APPLY_NM AS flexibleNm
         		 , A.TENANT_ID AS tenantId

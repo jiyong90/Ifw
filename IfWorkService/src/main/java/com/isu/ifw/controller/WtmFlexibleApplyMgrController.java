@@ -100,34 +100,90 @@ public class WtmFlexibleApplyMgrController {
 		return rp;
 	}
 	
+	@RequestMapping(value="/getEymd", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getEymd(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		
+		rp.setSuccess("");
+		
+		Map<String, Object> codeMap = null;
+		try {
+			codeMap = flexibleApplyService.getEymd(paramMap);
+			
+			rp.put("DATA", codeMap);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/workType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getworkType(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		Long flexibleStdMgrId = Long.valueOf(paramMap.get("flexibleStdMgrId").toString());
+		
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> codeList = null;
+		try {
+			codeList = flexibleApplyService.getworkTypeList(flexibleStdMgrId);
+			
+			rp.put("DATA", codeList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	
+	
+	
 	@RequestMapping(value="/apply", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam setApply(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setFail("확정 시 오류가 발생했습니다.");
-		
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
-		String userId = sessionData.get("userId").toString();
-		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		MDC.put("param", paramMap.toString());
-		logger.debug("setApply Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-		
-		Map<String, Object> convertMap = new HashMap();
-		convertMap.put("enterCd", enterCd);
-		convertMap.put("tenantId", tenantId);
-		convertMap.put("userId", userId);
-		Long flexibleApplyId = Long.parseLong(paramMap.get("flexibleApplyId").toString());
-		
-		rp = flexibleApplyService.setApply(tenantId, enterCd, userId, flexibleApplyId);
-
-		MDC.put("convertMap", convertMap);
-
+		try {
+			Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+			Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+			String enterCd = sessionData.get("enterCd").toString();
+			String empNo = sessionData.get("empNo").toString();
+			String userId = sessionData.get("userId").toString();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("userId", userId);
+			
+			MDC.put("sessionId", request.getSession().getId());
+			MDC.put("logId", UUID.randomUUID().toString());
+			MDC.put("type", "C");
+			MDC.put("param", paramMap.toString());
+			logger.debug("setApply Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			
+			Map<String, Object> convertMap = new HashMap();
+			convertMap.put("enterCd", enterCd);
+			convertMap.put("tenantId", tenantId);
+			convertMap.put("userId", userId);
+			
+			rp = flexibleApplyService.setApply(paramMap);
+	
+			MDC.put("convertMap", convertMap);
+		} catch(Exception e) {
+			rp.setStatus("FAIL");
+			rp.setFail("확정 시 오류가 발생했습니다.");
+			return rp;
+		}
 		
 		//rp.setSuccess("");
 		return rp;

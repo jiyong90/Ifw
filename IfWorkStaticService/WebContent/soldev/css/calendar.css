@@ -316,6 +316,9 @@
 .fc-content .dot.time:before{
   background-color:#00c4b6;
 }
+.fc-content .dot.ot:before{
+  background-color:#fc8262;
+}
 .fc-content .dot.time{
   color:#6b6b80;
 }

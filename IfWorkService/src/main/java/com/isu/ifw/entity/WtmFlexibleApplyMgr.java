@@ -35,8 +35,10 @@ public class WtmFlexibleApplyMgr {
 	private String useSymd;
 	@Column(name="USE_EYMD")
 	private String useEymd;
-	@Column(name="REPEAT_YN")
-	private String repeatYn;
+	@Column(name="REPEAT_TYPE_CD")
+	private String repeatTypeCd;
+	@Column(name="REPEAT_CNT")
+	private Integer repeatCnt;
 	@Column(name="WORK_MINUTE")
 	private Integer workMinute;
 	@Column(name="OT_MINUTE")
@@ -95,11 +97,18 @@ public class WtmFlexibleApplyMgr {
 	public void setUseEymd(String useEymd) {
 		this.useEymd = useEymd;
 	}
-	public String getRepeatYn() {
-		return repeatYn;
+	
+	public String getRepeatTypeCd() {
+		return repeatTypeCd;
 	}
-	public void setRepeatYn(String repeatYn) {
-		this.repeatYn = repeatYn;
+	public void setRepeatTypeCd(String repeatTypeCd) {
+		this.repeatTypeCd = repeatTypeCd;
+	}
+	public Integer getRepeatCnt() {
+		return repeatCnt;
+	}
+	public void setRepeatCnt(Integer repeatCnt) {
+		this.repeatCnt = repeatCnt;
 	}
 	public Integer getWorkMinute() {
 		return workMinute;
