@@ -435,7 +435,7 @@
                         </div>
                     </div>
                     <div class="sub-wrap" v-show="applInfo.useSymd">
-                        <form action="" class="time-input-form needs-validation" novalidate>
+                        <form action="" class="time-input-form needs-validation" v-if="calendarTopVue.selectedFlexibleStd" novalidate>
                             <div class="form-row no-gutters">
                                 <div class="form-group col-6 pr-1">
                                     <label for="useSymd-dt">시작일자</label>
@@ -456,22 +456,20 @@
                                         <option v-for="term in calendarTopVue.selectedFlexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-12">
+                                <div v-if="calendarTopVue.selectedFlexibleStd.workTypeCd!='ELAS'" class="form-group col-12">
                                     <label for="reson">사유</label>
-                                    <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason" required></textarea>
+                                    <textarea class="form-control" id="reason" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason" required></textarea>
                                 </div>
                             </div>
                             <div class="btn-wrap mt-5">
-                            	<template v-if="calendarTopVue.selectedFlexibleStd">
-	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-if="calendarTopVue.selectedFlexibleStd.workTypeCd=='ELAS'" @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd.workTypeCd)">다음</button>
-	                                <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-else @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd.workTypeCd)">확인요청</button>
-                                </template>
+	                            <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-if="calendarTopVue.selectedFlexibleStd.workTypeCd=='ELAS'" @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd)">다음</button>
+	                            <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-else @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd)">확인요청</button>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div id="flexibleDayPlan" class="white-box-wrap full-height mb-3" style="display:none;">
-                	<form class="needs-validation" novalidate>
+                	<form class="needs-validation time-input-form" novalidate>
 		                <div class="work-plan-wrap">
 		                    <div class="big-title">
 		                    	<template v-if="flexibleAppl.sYmd && flexibleAppl.eYmd">
@@ -497,6 +495,7 @@
 	                                    </div>
 	                                </li>
 	                            </ul>
+	                            
 		                    </div>
 		                    <div class="inner-wrap graph-wrap" v-if="flexibleAppl.workShm && flexibleAppl.workEhm || flexibleAppl.coreShm && flexibleAppl.coreEhm">
                                 <div class="time-graph">
@@ -514,7 +513,7 @@
                                     <div id="timeNm" class="main-desc"></div>
                                 </li>
 	                            <li>
-	                                <div class="main-title">신청일자</div>
+	                                <div class="main-title">선택일자</div>
 	                                <div id="selectedRange" class="main-desc"></div>
 	                            </li>
 	                        </ul>
@@ -528,22 +527,58 @@
 	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime" value="" data-toggle="datetimepicker" data-target="#endTime" autocomplete="off" @focusout="changeWorkTime" required>
 	                            </div>
 	                        </div>
+	                        <div id="elasOtTime" class="time-input-form form-row no-gutters" style="display:none;">
+	                            <div class="form-group col-6 pr-1">
+	                                <label for="otbMinute" data-target-input="nearest">조출시간(분)</label>
+	                                <input type="number" class="form-control form-control-sm mr-2" id="otbMinute" value="" @focusout="changeWorkTime">
+	                            </div>
+	                            <div class="form-group col-6 pl-1">
+	                                <label for="otaMinute" data-target-input="nearest">잔업시간(분)</label>
+	                                <input type="number" class="form-control form-control-sm mr-2" id="otaMinute" value="" @focusout="changeWorkTime">
+	                            </div>
+	                        </div>
 		                </div>
-		                <div class="sub-wrap">
-		                    <ul class="time-block-list">
-		                        <li>
-		                            <div class="title">약정 근로 시간</div>
-		                            <div class="desc">{{minuteToHHMM(flexibleAppl.totalWorkMinute,'detail')}}</div>
-		                        </li>
-		                        <li>
-		                            <div class="title">계획 시간</div>
-		                            <div class="desc">{{minuteToHHMM(flexibleAppl.planWorkMinute,'detail')}}</div>
-		                        </li>
-		                    </ul>
-		                </div>
-		                <div class="btn-wrap">
-		                    <button type="button" id="timeSaveBtn" class="btn btn-apply btn-block btn-lg" @click="validateWorkDayResult">저장</button>
-		                </div>
+		                <template v-if="flexibleAppl.workTypeCd=='ELAS'">
+		                	<div class="sub-wrap">
+			                    <ul class="time-block-list">
+			                        <li>
+			                            <div class="title">평균 근무 시간</div>
+			                            <div class="desc">{{minuteToHHMM(flexibleAppl.avgHour,'detail')}}</div>
+			                        </li>
+			                    </ul>
+			                    <div class="form-row no-gutters">
+				                    <div class="form-group col-12">
+		                                <label for="reason">사유</label>
+		                                <textarea class="form-control" id="reason" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason"></textarea>
+		                            </div>
+	                            </div>
+			                </div>
+		                	<div class="btn-wrap row no-gutters">
+			                	<div class="col-6 pr-1">
+	                    			<button type="button" id="timeSaveBtn" class="btn btn-cancel btn-block" @click="validateWorkDayResult">저장</button>
+	                       		</div>
+	                       		<div class="col-6 pl-1">
+	                       			<button type="button" id="timeApprBtn" class="btn btn-apply btn-block">확인요청</button>
+	                    		</div>
+	                    	</div>
+			            </template>
+			            <template v-else>
+			            	<div class="sub-wrap">
+			                    <ul class="time-block-list">
+			                        <li>
+			                            <div class="title">약정 근로 시간</div>
+			                            <div class="desc">{{minuteToHHMM(flexibleAppl.totalWorkMinute,'detail')}}</div>
+			                        </li>
+			                        <li>
+			                            <div class="title">계획 시간</div>
+			                            <div class="desc">{{minuteToHHMM(flexibleAppl.planWorkMinute,'detail')}}</div>
+			                        </li>
+			                    </ul>
+			                </div>
+			                <div class="btn-wrap">
+			                    <button type="button" id="timeSaveBtn" class="btn btn-apply btn-block btn-lg" @click="validateWorkDayResult">저장</button>
+			                </div>
+		                </template>
 	                </form>
 	            </div>
 	            <div id="flexibleDayInfo" class="white-box-wrap mb-3" style="display:none;">
@@ -962,7 +997,7 @@
 					}
 				});
          	},
-         	viewFlexitimeAppl : function(obj){
+         	viewFlexitimeAppl : function(obj){ //유연근무제 신청서
          		var $this = this;
 
 				$("#workRangeInfo").hide();
@@ -982,6 +1017,19 @@
          			$this.calendar.gotoDate($this.applInfo.useSymd);
          		} 
          		$("#flexibleAppl").show();
+         	},
+         	viewElasFlexitimeAppl : function(){ //탄근제 신청서
+         		var $this = this;
+         		var flexibleStd = calendarTopVue.selectedFlexibleStd;
+         		
+         		var param = {
+         			flexibleStdMgrId : flexibleStd.flexibleStdMgrId,
+         			sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
+   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD')
+         		};
+         		
+         		$this.flexitimeApplImsi();		
+         		
          	},
          	clearFlexitimeAppl : function(){
          		var $this = this;
@@ -1025,6 +1073,7 @@
    		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD')
    		    	};
          			
+       			//탄근제의 경우 근무패턴 조회하여 flexibleApplDet에 저장하고 출/퇴근시간, 조출/잔업 입력하는 근무 계획 작성 화면으로 넘어감
  		    	Util.ajax({
 					url: "${rc.getContextPath()}/flexibleAppl/imsi",
 					type: "POST",
@@ -1038,6 +1087,10 @@
 							
 							//신청서 조회
 							$this.getFlexitimeAppl(data.applId);
+							
+							//탄근제의 경우 근무 계획 작성 화면으로 전환
+							if(flexibleStd.workTypeCd=='ELAS') 
+								$this.planElasWorkDay(data.flexibleApplId);
 						} else {
 							$("#loading").hide();
 						}
@@ -1052,7 +1105,8 @@
 				}); 
 
          	},
-         	validateFlexitimeAppl : function(workTypeCd){
+         	validateFlexitimeAppl : function(flexStd){
+         		var $this = this;
          		var applYn = true;
          		var forms = document.getElementById('flexibleAppl').getElementsByClassName('needs-validation');
          		var validation = Array.prototype.filter.call(forms, function(form) {
@@ -1064,15 +1118,60 @@
          			form.classList.add('was-validated');
          		});
          		
+         		//console.log(this.applInfo);
+         		
          		if(applYn) {
-         			if(workTypeCd == 'ELAS') { //탄근제
-         				if(this.applInfo==null || this.applInfo.applId==null || this.applInfo.applId==undefined || this.applInfo.applId=='') {
-         					//임시저장
-         					this.flexitimeApplImsi();
-         				}
-         			
-         				//근무계획 작성 화면전환
-         				this.viewWorkDayCalendar(moment(this.applInfo.useSymd).format('YYYYMMDD'));
+         			if(flexStd.workTypeCd == 'ELAS') { //탄근제
+         				
+         				var param = {
+         					ymd: moment($this.applInfo.useSymd).format('YYYYMMDD')
+         				};
+         				
+         				//선택한 근무제의 패턴 시작일과 신청 시작일의 요일이 같은지 확인
+         				Util.ajax({
+        					url: "${rc.getContextPath()}/flexibleStd/dayOfWeek",
+        					type: "GET",
+        					contentType: 'application/json',
+        					data: param,
+        					dataType: "json",
+        					success: function(data) {
+        						var viewYn = false;
+        						if(data!=null && data.status=='OK' && data.hasOwnProperty('weekDay'))
+        							if(data.weekDay == flexStd.weekDay)
+        								viewYn = true;
+        						
+        						if(viewYn) {
+        							$this.viewElasFlexitimeAppl();
+        						}else {
+        							$("#alertText").html("탄력근무제의 시작 요일은 "+flexStd.weekDay+" 입니다.<br>달력에서 근무제 시작일을 다시 지정해 주세요.");
+        		  	         		$("#alertModal").on('hidden.bs.modal',function(){
+        		  	         			$("#alertModal").off('hidden.bs.modal');
+        		  	         			var eventId = 'workRange.'+flexStd.workTypeCd+'.'+$this.applInfo.useSymd;
+										var event = $this.calendar.getEventById(eventId);
+										if(event!=null)
+											event.remove();
+										
+										$this.applInfo.useSymd='';
+        		  	         		});
+        		  	         		$("#alertModal").modal("show"); 
+        						}
+        							
+        					},
+        					error: function(e) {
+        						console.log(e);
+        						$("#alertText").html("탄력근무제의 시작 요일은 "+flexStd.weekDay+" 입니다.<br>달력에서 근무제 시작일을 다시 지정해 주세요.");
+    		  	         		$("#alertModal").on('hidden.bs.modal',function(){
+    		  	         			$("#alertModal").off('hidden.bs.modal');
+    		  	         			var eventId = 'workRange.'+flexStd.workTypeCd+'.'+$this.applInfo.useSymd;
+									var event = $this.calendar.getEventById(eventId);
+									if(event!=null)
+										event.remove();
+									
+									$this.applInfo.useSymd='';
+    		  	         		});
+    		  	         		$("#alertModal").modal("show"); 
+        					}
+        				});
          				
          			} else {
          				this.flexitimeAppl();
@@ -1282,6 +1381,9 @@
          	},
          	viewInOutChangeAppl: function(){
          		$("#inOutChangeModal").modal("show"); 
+         	},
+         	planElasWorkDay: function(flexibleApplId){
+         		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Day&flexibleApplId='+flexibleApplId;
          	}
 	    }
    	});

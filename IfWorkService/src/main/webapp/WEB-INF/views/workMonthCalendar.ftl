@@ -466,7 +466,9 @@
 	       			
 	       			calendar.gotoDate(calendarLeftVue.applInfo.useSymd);
 	       			
-	       			calendarLeftVue.flexitimeApplImsi();
+	       			//탄근제 제외하고 임시저장
+	       			if(calendarTopVue.selectedFlexibleStd.workTypeCd!='ELAS')
+	       				calendarLeftVue.flexitimeApplImsi();
          		}
          	}
     	}
