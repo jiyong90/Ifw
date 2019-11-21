@@ -83,6 +83,8 @@ public class WtmFlexibleStdMgr {
 	private String dayOpenType;
 	@Column(name="DAY_CLOSE_TYPE")
 	private String dayCloseType;
+	@Column(name="ELAS_APPL_EDIT_YN")
+	private String elasApplEditYn;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -341,6 +343,14 @@ public class WtmFlexibleStdMgr {
 
 	public void setDayCloseType(String dayCloseType) {
 		this.dayCloseType = dayCloseType;
+	}
+	
+	public String getElasApplEditYn() {
+		return elasApplEditYn;
+	}
+
+	public void setElasApplEditYn(String elasApplEditYn) {
+		this.elasApplEditYn = elasApplEditYn;
 	}
 
 	public String getNote() {

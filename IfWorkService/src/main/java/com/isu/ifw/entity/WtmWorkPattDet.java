@@ -29,6 +29,18 @@ public class WtmWorkPattDet {
 	private Integer seq;
 	@Column(name="TIME_CD_MGR_ID")
 	private Long timeCdMgrId;
+	@Column(name="HOLIDAY_YN")
+	private String holidayYn;
+	@Column(name="PLAN_SHM")
+	private String planShm;
+	@Column(name="PLAN_EHM")
+	private String planEhm;
+	@Column(name="PLAN_MINUTE")
+	private Integer planMinute; 
+	@Column(name="OTB_MINUTE")
+	private Integer otbMinute;
+	@Column(name="OTA_MINUTE")
+	private Integer otaMinute;
 	@Column(name="NOTE")
 	private String note;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -62,6 +74,42 @@ public class WtmWorkPattDet {
 	}
 	public void setTimeCdMgrId(Long timeCdMgrId) {
 		this.timeCdMgrId = timeCdMgrId;
+	}
+	public String getHolidayYn() {
+		return holidayYn;
+	}
+	public void setHolidayYn(String holidayYn) {
+		this.holidayYn = holidayYn;
+	}
+	public String getPlanShm() {
+		return planShm;
+	}
+	public void setPlanShm(String planShm) {
+		this.planShm = planShm;
+	}
+	public String getPlanEhm() {
+		return planEhm;
+	}
+	public void setPlanEhm(String planEhm) {
+		this.planEhm = planEhm;
+	}
+	public Integer getPlanMinute() {
+		return planMinute;
+	}
+	public void setPlanMinute(Integer planMinute) {
+		this.planMinute = planMinute;
+	}
+	public Integer getOtbMinute() {
+		return otbMinute;
+	}
+	public void setOtbMinute(Integer otbMinute) {
+		this.otbMinute = otbMinute;
+	}
+	public Integer getOtaMinute() {
+		return otaMinute;
+	}
+	public void setOtaMinute(Integer otaMinute) {
+		this.otaMinute = otaMinute;
 	}
 	public String getNote() {
 		return note;

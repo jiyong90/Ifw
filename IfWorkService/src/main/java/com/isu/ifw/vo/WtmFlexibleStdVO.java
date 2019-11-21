@@ -27,6 +27,7 @@ public class WtmFlexibleStdVO {
 	private Map<String, Object> workDaysOpt;
 	private List<Map<String, Object>> usedTermOpt;
 	private String applShowYn;
+	private String weekDay;
 	public Long getFlexibleStdMgrId() {
 		return flexibleStdMgrId;
 	}
@@ -156,6 +157,12 @@ public class WtmFlexibleStdVO {
 	}
 	public void setApplShowYn(String applShowYn) {
 		this.applShowYn = applShowYn;
+	}
+	public String getWeekDay() {
+		return weekDay;
+	}
+	public void setWeekDay(String weekDay) {
+		this.weekDay = weekDay;
 	}
 	
 	

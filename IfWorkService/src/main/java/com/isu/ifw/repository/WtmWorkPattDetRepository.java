@@ -12,6 +12,8 @@ import com.isu.ifw.entity.WtmWorkPattDet;
 @Repository
 public interface WtmWorkPattDetRepository extends JpaRepository<WtmWorkPattDet, Long> {
 	
+	public WtmWorkPattDet findTopByFlexibleStdMgrIdOrderBySeqDesc(Long flexibleStdMgrId);
+	
 	@Query(value="SELECT * FROM WTM_WORK_PATT_DET WHERE FLEXIBLE_STD_MGR_ID = :flexibleStdMgrId", nativeQuery = true)
 	public List<WtmWorkPattDet> findByFlexibleStdMgrId(@Param(value="flexibleStdMgrId")Long flexibleStdMgrId);
 }

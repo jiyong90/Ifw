@@ -27,6 +27,10 @@ public class WtmFlexibleApplDet {
 	private Long flexibleApplId;
 	@Column(name="YMD")
 	private String ymd;
+	@Column(name="TIME_CD_MGR_ID")
+	private Long timeCdMgrId;
+	@Column(name="HOLIDAY_YN")
+	private String holidayYn;
 	@Column(name="PLAN_SDATE", columnDefinition="DATETIME") 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date planSdate;
@@ -35,6 +39,22 @@ public class WtmFlexibleApplDet {
 	private Date planEdate;
 	@Column(name="PLAN_MINUTE")
 	private Integer planMinute; 
+	@Column(name="OTB_SDATE", columnDefinition="DATETIME") 
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date otbSdate;
+	@Column(name="OTB_EDATE", columnDefinition="DATETIME") 
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date otbEdate;
+	@Column(name="OTB_MINUTE")
+	private Integer otbMinute; 
+	@Column(name="OTA_SDATE", columnDefinition="DATETIME") 
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date otaSdate;
+	@Column(name="OTA_EDATE", columnDefinition="DATETIME") 
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date otaEdate;
+	@Column(name="OTA_MINUTE")
+	private Integer otaMinute; 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="UPDATE_DATE", columnDefinition="DATETIME") 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -77,6 +97,54 @@ public class WtmFlexibleApplDet {
 	}
 	public void setPlanMinute(Integer planMinute) {
 		this.planMinute = planMinute;
+	}
+	public Long getTimeCdMgrId() {
+		return timeCdMgrId;
+	}
+	public void setTimeCdMgrId(Long timeCdMgrId) {
+		this.timeCdMgrId = timeCdMgrId;
+	}
+	public String getHolidayYn() {
+		return holidayYn;
+	}
+	public void setHolidayYn(String holidayYn) {
+		this.holidayYn = holidayYn;
+	}
+	public Date getOtbSdate() {
+		return otbSdate;
+	}
+	public void setOtbSdate(Date otbSdate) {
+		this.otbSdate = otbSdate;
+	}
+	public Date getOtbEdate() {
+		return otbEdate;
+	}
+	public void setOtbEdate(Date otbEdate) {
+		this.otbEdate = otbEdate;
+	}
+	public Date getOtaSdate() {
+		return otaSdate;
+	}
+	public void setOtaSdate(Date otaSdate) {
+		this.otaSdate = otaSdate;
+	}
+	public Date getOtaEdate() {
+		return otaEdate;
+	}
+	public void setOtaEdate(Date otaEdate) {
+		this.otaEdate = otaEdate;
+	}
+	public Integer getOtbMinute() {
+		return otbMinute;
+	}
+	public void setOtbMinute(Integer otbMinute) {
+		this.otbMinute = otbMinute;
+	}
+	public Integer getOtaMinute() {
+		return otaMinute;
+	}
+	public void setOtaMinute(Integer otaMinute) {
+		this.otaMinute = otaMinute;
 	}
 	public Date getUpdateDate() {
 		return updateDate;
