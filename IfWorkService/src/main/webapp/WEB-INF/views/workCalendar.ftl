@@ -54,7 +54,7 @@
 	    <div id="sub-nav" class="container-fluid">
 	        <form id="calendar-top-wrap" action="">
 	            <div class="row no-gutters work-time-wrap">
-	                <div class="col-12 col-sm-2 col-xl-1">
+	                <div class="col-12 col-sm-3 col-xl-1">
 	                    <div class="title">현재 근무계획</div>
 	                    <div class="desc">{{flexibleStd.flexibleNm}}</div>
 	                </div>
