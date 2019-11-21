@@ -1,8 +1,9 @@
 package com.isu.ifw.mapper;
 
+import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
+import com.isu.ifw.vo.WtmFlexibleApplDetVO;
 
 
 public interface WtmFlexibleApplMapper {
@@ -22,4 +23,5 @@ public interface WtmFlexibleApplMapper {
 	 */
 	public void updateWorkMinuteOfWtmFlexibleEmp(Map<String, Object> paramMap);
 	
+	public List<WtmFlexibleApplDetVO> getWorkPattern(Map<String, Object> paramMap);
 }

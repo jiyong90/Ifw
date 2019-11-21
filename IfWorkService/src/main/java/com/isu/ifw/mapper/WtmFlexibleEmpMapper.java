@@ -131,6 +131,13 @@ public interface WtmFlexibleEmpMapper {
 	public Map<String, Object> calcMinuteExceptBreaktime(Map<String, Object> paramMap);
 	
 	/**
+	 * 탄력 근무제의 휴게시간을 제외한 계획 시간 계산
+	 * @param paramMap { flexibleApplId: 111 , ymd: '20191120'}
+	 * @return
+	 */
+	public Map<String, Object> calcElasPlanMinuteExceptBreaktime(Map<String, Object> paramMap);
+	
+	/**
 	 * 근무제 기간에 대한 정보
 	 * @param paramMap
 	 * @return
@@ -281,5 +288,35 @@ public interface WtmFlexibleEmpMapper {
 	 * @return
 	 */
 	public Date getIntervalDateTime(Map<String, Object> paramMap);
+	
+	/**
+	 * 계획을 작성해야 하는 탄근제 조회
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> getElasForPlan(Map<String, Object> paramMap);
+	
+	/**
+	 * 탄근제 근무 계획 조회
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getElasPlanByFlexibleApplId(Map<String, Object> paramMap);
+	
+	/** 
+	 * 탄근제 근무 계획 조회 - work_day_result 테이블에 저장 하기 위함
+	 * 하나의 ROW를 BASE와 OT로 분리
+	 * @param paramMap flexibleApplId
+	 * @return
+	 */
+	public List<Map<String, Object>> getElasWorkDayResult(Map<String, Object> paramMap);
+	
+	
+	/**
+	 * 탄근제 평균 근무 시간 조회
+	 * @param paramMap flexibleApplId
+	 * @return
+	 */
+	public Map<String, Object> getElasAvgHour(Map<String, Object> paramMap);
 	
 }
