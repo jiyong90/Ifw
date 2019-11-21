@@ -321,7 +321,8 @@
 .fc-content .dot.time:before{
   background-color:#00c4b6;
 }
-.fc-content .dot.ot:before{
+.fc-content .dot.early:before,
+.fc-content .dot.later:before{
   background-color:#fc8262;
 }
 .fc-content .dot.work-type:before {
