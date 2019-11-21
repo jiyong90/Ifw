@@ -313,18 +313,22 @@
   margin-right: 3px;
   margin-left: 3px;
 }
+
+.fc-content .dot span{
+  color:#6b6b80;
+}
+
 .fc-content .dot.time:before{
   background-color:#00c4b6;
 }
 .fc-content .dot.ot:before{
   background-color:#fc8262;
 }
-.fc-content .dot.time{
-  color:#6b6b80;
-}
 .fc-content .dot.work-type:before {
   background-color: #7601dc;
 }
+
+
 
 /* button */
 #calendar-container .btn-default{
