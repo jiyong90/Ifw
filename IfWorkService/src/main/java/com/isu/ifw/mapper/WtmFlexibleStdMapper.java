@@ -48,4 +48,11 @@ public interface WtmFlexibleStdMapper {
 	
 	// 근무제도 관리자 화면 조회
 	public List<Map<String, Object>> getStdListWeb(Map<String, Object> paramMap);
+	
+	/**
+	 * 해당 일의 요일 가져오기
+	 * @param weekday
+	 * @return
+	 */
+	public Map<String, Object> getWeekday(String weekday);
 }
