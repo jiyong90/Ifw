@@ -1,7 +1,7 @@
 <div id="monthCalendar" class="calendar-wrap" v-cloak>
 	<div id="calendar-popover" class="popover-inner-wrap" style="display:none;">
 		<div class="msg">시작일로 지정</div>
-		<span id="startDaySelect" class="btn btn-default btn-flat">
+		<span id="startDaySelect" class="btn btn-default btn-flat btn-sm mt-1">
 			<input id="startDay" type="hidden" value="">확인
 		</span>
 	</div>
