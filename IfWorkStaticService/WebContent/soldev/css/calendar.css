@@ -2,7 +2,7 @@
   /* calendar */
 .calendar-wrap {
     position: relative;
-    height: calc(100vh - 222px);
+    height: calc(100vh - 228px);
     background-color:#ffffff;
     border-top: 3px solid #4d84fe;
     box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
@@ -37,14 +37,7 @@
 #calendar-container .fc-toolbar h2 {
   font-size: 18px;
 }
-
-/* 버튼 커스텀 : 근태달력보기 */
-#calendar-container .fc-toolbar .fc-month_calendar-button {
-	border-color:#333333;
-	background-color:#3E3E4C;
-}
-
-
+ 
 /* 이전,이후,오늘 */
 .fc-prev-button,
 .fc-next-button,
@@ -313,23 +306,15 @@
   margin-right: 3px;
   margin-left: 3px;
 }
-
-.fc-content .dot span{
-  color:#6b6b80;
-}
-
-.fc-content .dot.time.general:before{
+.fc-content .dot.time:before{
   background-color:#00c4b6;
 }
-.fc-content .dot.time.early:before,
-.fc-content .dot.time.later:before{
-  background-color:#fc8262;
+.fc-content .dot.time{
+  color:#6b6b80;
 }
 .fc-content .dot.work-type:before {
   background-color: #7601dc;
 }
-
-
 
 /* button */
 #calendar-container .btn-default{
