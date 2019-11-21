@@ -106,6 +106,22 @@ html {
   /* Uncomment for 3D effect */
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
+.navbar .gnb-nav-wrap .sp_ico.alarm{
+  animation: bell 3s linear;
+  animation-iteration-count:1;
+}
+
+@keyframes bell{
+  0%, 50%{
+		transform: rotate(0deg);
+	}
+  5%, 15%, 25%, 35%, 45% {
+    transform: rotate(13deg);
+  }
+  10%, 20%, 30%, 40% {
+    transform: rotate(-13deg);
+  }
+}
 
 /* .navbar .gnb-nav-wrap .sp_ico.calendar{
   background-position: 0 0;
@@ -365,6 +381,12 @@ html {
   font-size: 1.1em;
   display: block;
   color:#ffffff;
+  -o-transition:.5s;
+  -ms-transition:.5s;
+  -moz-transition:.5s;
+  -webkit-transition:.5s;
+  /* ...and now for the proper property */
+  transition:.5s;
 }
 
 #sidebar ul li a:hover {
