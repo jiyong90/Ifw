@@ -33,7 +33,7 @@
 				  FROM WTM_APPL A
 				  JOIN WTM_FLEXIBLE_APPL F
 				    ON A.APPL_ID = F.APPL_ID
-				   AND A.APPL_ID = #{applId}
+				   AND A.APPL_ID = #{applId, jdbcType=NUMERIC}
 			  ) X
 			   ON A.TENANT_ID = X.TENANT_ID AND A.ENTER_CD = X.ENTER_CD AND A.APPL_SABUN = X.APPL_SABUN
 			WHERE A.APPL_STATUS_CD NOT IN ('11','22','44','32','99') 
@@ -202,6 +202,20 @@
 			   AND ENTER_CD = #{enterCd}
 			   AND REPLACE(#{ymd}, '-', '') BETWEEN USE_SYMD AND F_WTM_NVL(USE_EYMD, '99991231') 
 			 ORDER BY WORK_TYPE_CD, USE_SYMD DESC
+        ]]> 
+    </select>
+    
+     <select id="getWeekday" parameterType="String" resultType="wtmGeneral">
+        <![CDATA[
+			SELECT CASE F_WTM_WEEKDAY(#{value}) 
+						WHEN 1 THEN '일요일'
+						WHEN 2 THEN '월요일'
+						WHEN 3 THEN '화요일'
+						WHEN 4 THEN '수요일'
+						WHEN 5 THEN '목요일'
+						WHEN 6 THEN '금요일'
+						WHEN 7 THEN '토요일' END AS WEEK_DAY
+		      FROM DUAL 
         ]]>
     </select>
 </mapper>

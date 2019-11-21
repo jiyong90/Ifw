@@ -9,6 +9,14 @@
 			SELECT C.APPL_NM AS WORK_TYPE_NM 
 			     , S.*
 			     , C.*
+			     , CASE F_WTM_WEEKDAY(use_symd) 
+						WHEN 1 THEN '일요일'
+						WHEN 2 THEN '월요일'
+						WHEN 3 THEN '화요일'
+						WHEN 4 THEN '수요일'
+						WHEN 5 THEN '목요일'
+						WHEN 6 THEN '금요일'
+						WHEN 7 THEN '토요일' END AS WEEK_DAY
 			  FROM WTM_FLEXIBLE_STD_MGR S 
 			  JOIN WTM_APPL_CODE C
 			    ON C.ENTER_CD = S.ENTER_CD
@@ -202,6 +210,20 @@
 			   AND ENTER_CD = #{enterCd}
 			   AND REPLACE(#{ymd}, '-', '') BETWEEN USE_SYMD AND F_WTM_NVL(USE_EYMD, '99991231') 
 			 ORDER BY WORK_TYPE_CD, USE_SYMD DESC
+        ]]>
+    </select>
+    
+    <select id="getWeekday" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CASE F_WTM_WEEKDAY(#{d}) 
+						WHEN 1 THEN '일요일'
+						WHEN 2 THEN '월요일'
+						WHEN 3 THEN '화요일'
+						WHEN 4 THEN '수요일'
+						WHEN 5 THEN '목요일'
+						WHEN 6 THEN '금요일'
+						WHEN 7 THEN '토요일' END AS weekDay
+		      FROM DUAL 
         ]]>
     </select>
 </mapper>
