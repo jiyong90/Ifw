@@ -122,7 +122,6 @@ html {
     transform: rotate(-13deg);
   }
 }
-
 /* .navbar .gnb-nav-wrap .sp_ico.calendar{
   background-position: 0 0;
 }
@@ -455,11 +454,11 @@ a.article:hover {
   /* position: relative; */
 }
 #sidebar #lnb-sub{
-  display: none;
+  opacity: 0;
   width: 150px;
   position: absolute;
   top: 0;
-  left: -250px;
+  left: 100px;
   height: 100%;
   padding: 8px 14px;
   z-index: 90;
@@ -468,10 +467,14 @@ a.article:hover {
   transition: all 0.3s;
   overflow-y: auto;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  transition:opacity .3s ease-out;
+  -webkit-transition: opacity .3s ease-out;
+  -moz-transition: opacity .3s ease-out;
+  -o-transition: opacity .3s ease-out;
 }
 
 #sidebar #lnb-sub.active{
-  display:block;
+  opacity: 1;
   left:100px;
 }
 
@@ -847,4 +850,3 @@ No media query for `xs` since this is the default in Bootstrap */
     margin-left: 0px;
   }
 }
-
