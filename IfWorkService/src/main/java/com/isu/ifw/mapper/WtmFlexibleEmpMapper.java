@@ -132,10 +132,17 @@ public interface WtmFlexibleEmpMapper {
 	
 	/**
 	 * 탄력 근무제의 휴게시간을 제외한 계획 시간 계산
-	 * @param paramMap { flexibleApplId: 111 , ymd: '20191120'}
+	 * @param paramMap { flexibleApplId: 111 , ymd: '20191120', shm: , ehm:}
 	 * @return
 	 */
 	public Map<String, Object> calcElasPlanMinuteExceptBreaktime(Map<String, Object> paramMap);
+	
+	/**
+	 * 탄력 근무제의 휴게시간을 제외한 연장 시간 계산
+	 * @param paramMap { flexibleApplId: 111 , ymd: '20191120', minute: }
+	 * @return
+	 */
+	public Map<String, Object> calcElasOtMinuteExceptBreaktime(Map<String, Object> paramMap);
 	
 	/**
 	 * 근무제 기간에 대한 정보

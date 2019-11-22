@@ -1088,8 +1088,41 @@
 					  JOIN WTM_TIME_BREAK_MGR B
 						 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
 					 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
-					   AND D.YMD = #{ymd}
-					GROUP BY PLAN_SDATE, PLAN_EDATE ) S
+					   AND D.YMD = #{ymd} ) S
+  	</select>
+  	
+  	<select id="calcElasOtMinuteExceptBreaktime" parameterType="map" resultType="map">
+  		SELECT F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(PLAN_SDATE, -CALC_MINUTE,'I') ELSE PLAN_EDATE END,'YMDHIS') AS sDate
+		     , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN PLAN_SDATE ELSE F_WTM_DATE_ADD(PLAN_EDATE, CALC_MINUTE, 'I') END,'YMDHIS') AS eDate
+		     , BREAK_MINUTE AS breakMinute
+			  , CALC_MINUTE AS calcMinute
+		  FROM (
+					SELECT PLAN_SDATE
+					      , PLAN_EDATE
+					      , BREAK_MINUTE
+							, F_WTM_CALC_MINUTE(SHM, EHM, '','','') - BREAK_MINUTE AS CALC_MINUTE
+					  FROM ( SELECT PLAN_SDATE
+					              , PLAN_EDATE
+					              , D.SHM
+					              , D.EHM
+					              , CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) IS NULL THEN 0 
+						  				 ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) END AS BREAK_MINUTE
+								  FROM ( SELECT FLEXIBLE_APPL_ID
+								              , YMD
+								              , TIME_CD_MGR_ID
+								              , F_WTM_TO_DATE(#{sDate},'YMDHI') AS PLAN_SDATE
+								              , F_WTM_TO_DATE(#{eDate},'YMDHI') AS PLAN_EDATE
+								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{sDate},'YMDHI'), -#{minute},'I') ELSE F_WTM_TO_DATE(#{eDate},'YMDHI') END, 'HI') AS SHM
+								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_TO_DATE(#{sDate},'YMDHI') ELSE F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eDate},'YMDHI'), #{minute}, 'I') END, 'HI') AS EHM
+								           FROM WTM_FLEXIBLE_APPL_DET) AS D
+								  JOIN WTM_TIME_CD_MGR T
+									 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+								  JOIN WTM_TIME_BREAK_MGR B
+									 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+								 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+								   AND D.YMD = #{ymd}
+								GROUP BY PLAN_SDATE, PLAN_EDATE, D.SHM, D.EHM ) S
+				 ) T
   	</select>
   	
   	<select id="checkDuplicateWorktime" parameterType="map" resultType="map">
@@ -1515,6 +1548,9 @@
   	<select id="getElasForPlan" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT F.FLEXIBLE_APPL_ID AS flexibleApplId
+			     , A.APPL_ID AS applId
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , M.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
 			     , M.FLEXIBLE_NM AS flexibleNm
 			     , A.TENANT_ID AS tenantId
 			     , A.ENTER_CD AS enterCd

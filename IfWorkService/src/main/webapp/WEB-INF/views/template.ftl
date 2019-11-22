@@ -18,7 +18,7 @@
                 <span class="sr-only">Loading...</span>
             </div>
             <!-- alert modal start -->
-			<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" style="z-index:1600;">
+			<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" style="z-index:1600;">
 		        <div class="modal-dialog " role="document">
 		            <div class="modal-content">
 		                <!-- <div class="modal-header">
