@@ -717,7 +717,7 @@ box-sizing: border-box;
   transition:.5s;
 }
 .notice-card:hover{
-	box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.18);
+	box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.18);
 }
 .notice-card.none{
   background-color: #e2e5ed;
