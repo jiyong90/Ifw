@@ -1,6 +1,6 @@
 <div id="approval" v-cloak>
 	<!-- 유연근무제신청 상세보기 modal start -->
-    <div class="modal fade show" id="flexibleAppl_SELE" tabindex="-1" role="dialog" v-if="appl">
+    <div class="modal fade show" id="flexibleAppl" tabindex="-1" role="dialog" v-if="appl">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
@@ -422,9 +422,9 @@
 	    		if(appr.applCd=='OT' || appr.applCd=='OT_CAN') {
 	    			//연장근무신청서
 	    			$("#otAppl").modal("show"); 
-	    		} else if(appr.applCd=='SELE_F' || appr.applCd=='SELE_C') {
+	    		} else if(appr.applCd=='SELE_F' || appr.applCd=='SELE_C' || appr.applCd=='ELAS') {
 	    			//선근제 신청서
-	    			$("#flexibleAppl_SELE").modal("show");
+	    			$("#flexibleAppl").modal("show");
 	    		} else if(appr.applCd=='ENTRY_CHG') {
 	    			//근태 사유서
 	    			$("#inOutChangeAppl").modal("show");
@@ -476,7 +476,7 @@
 						$this.appl = {};
 						if(data!=null) {
 							$this.appl = data;
-							$("#flexibleAppl_SELE").modal("show");
+							$("#flexibleAppl").modal("show");
 						}
 						
 					},
