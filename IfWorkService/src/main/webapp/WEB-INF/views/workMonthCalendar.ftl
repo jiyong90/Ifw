@@ -51,8 +51,18 @@
 	    		var $this = this;
 	    		var calendar = this.$refs.fullCalendar.cal;
 	    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
-	    			calendar.select(moment(calendar.getDate()).format('YYYY-MM-DD'));
+	    			var d = moment(calendar.getDate()).format('YYYY-MM-DD');
+	    			calendar.select(d);
 	    			
+	    			//월이 바뀌었을 때 달력에 남아있는 event 지우기
+	    			if(calendarTopVue.selectedFlexibleStd!=null && Object.keys(calendarTopVue.selectedFlexibleStd).length>0
+	    					&& (moment(d).diff(calendar.view.currentStart)<0 || moment(calendar.view.currentEnd).diff(d)<0)) {
+	    				var event = calendar.getEventById('workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.new');
+	    				if(event!=null) {
+		       				event.remove();
+		       			}
+	    			}
+	    		
 	    			$this.markAdditionalInfo();
 	 		    	this.getFlexibleEmpList(calendar.view.activeStart, calendar.view.activeEnd);
 	 		    	//console.log(calendar.getEvents());
@@ -134,7 +144,6 @@
          	addEvent : function(Obj){
          		if(Obj!=null) {
          			var calendar = this.$refs.fullCalendar.cal;
-         			
          			var event = calendar.getEventById(Obj.id);
          			
 	       			/* if(event==null) {
@@ -333,10 +342,18 @@
 		 		    				//} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
 		 		    				if((plan.valueMap.taaCd==undefined || plan.valueMap.taaCd=='') 
 		 		    						&& (plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='')) {
+		 		    					//클래스명 알파벳 순서대로 이벤트가 정렬됨 ㅠㅠ
+		  		    					if(plan.valueMap.hasOwnProperty("timeTypeCd") && (plan.valueMap.timeTypeCd=='OTFIX' || plan.valueMap.timeTypeCd=='OTA')) //고정ot, 조출, 야간은 색 다르게 표기
+		  		    						timeTypeClass = ' later';
+		  		    					else if(plan.valueMap.hasOwnProperty("timeTypeCd") && plan.valueMap.timeTypeCd=='OTB') //고정ot, 조출, 야간은 색 다르게 표기
+	  		    							timeTypeClass = ' early';
+		  		    					else
+		  		    						timeTypeClass = ' general';
+		 		    					
 		 		    					//계획시간
 										var timeEvent = {
 											id: day,
-				    						title: "<div class='dot time'><span>" + plan.label + "</span></div>",
+				    						title: "<div class='dot time "+timeTypeClass+"'><span>" + plan.label + "</span></div>",
 				    						start: day,
 				    						end: day
 				    					};
@@ -408,22 +425,12 @@
 					}
 				});
          	},
-         	changeUseSymd : function(){
-         		var $this = this;
-         		
-         		if(moment(calendarLeftVue.applInfo.useSymd).diff($this.prevEdate)<=0) {
-         			calendarLeftVue.clearFlexitimeAppl();
-         			return false;
-         		}
-		
-         		$this.changeWorkRange();
-         	},
          	changeWorkRange : function(){ //근무기간 변경에 따라 background 변경
          		var $this = this;
          		var calendar = $this.$refs.fullCalendar.cal;
          		
          		if(calendarLeftVue.applInfo.useSymd!=null && calendarLeftVue.applInfo.useSymd!='' && calendarLeftVue.applInfo.workRange!=null && calendarLeftVue.applInfo.workRange!='') {
-	         		var workDateRange = calendarLeftVue.applInfo.workRange.split('_');
+         			var workDateRange = calendarLeftVue.applInfo.workRange.split('_');
 	       			var eYmd = new Date(calendarLeftVue.applInfo.useSymd);
 	       			if(workDateRange[1]=='week') {
 	       				eYmd.setDate(eYmd.getDate()+ (workDateRange[0]*7));
@@ -443,15 +450,17 @@
 					}); */
 					
 					//임시저장된 건이 있으면 이벤트 삭제하고 재생성
-					if(calendarLeftVue.flexibleAppl.hasOwnProperty("applStatusCd") && calendarLeftVue.flexibleAppl.applStatusCd=='11') {
+					/* if(calendarLeftVue.flexibleAppl.hasOwnProperty("applStatusCd") && calendarLeftVue.flexibleAppl.applStatusCd=='11') {
 						var eventId = 'workRange.'+ calendarLeftVue.flexibleAppl.applCd + '.' + moment(calendarLeftVue.flexibleAppl.sYmd).format('YYYY-MM-DD');
 						var event = calendar.getEventById(eventId);
+						//console.log(eventId);
+						//console.log(event);
 						if(event!=null)
 							event.remove();
-					}
-					
+					} */
+					//console.log('new event:' + 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd);
 	       			$this.addEvent({
-	       				id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.'+calendarLeftVue.applInfo.useSymd,
+	       				id: 'workRange.'+calendarTopVue.selectedFlexibleStd.workTypeCd+'.new',
 	 		    		start: calendarLeftVue.applInfo.useSymd,
 	 		        	end: moment(eYmd).format('YYYY-MM-DD'),
 	 		        	rendering: 'background'
@@ -489,6 +498,8 @@
 		
 		if(!isExist) {
 			calendarLeftVue.applInfo.useSymd = selectedDay;
+			$("#flexibleAppl").find(".sub-wrap").show();
+			
 			//신청 화면 전환
 			//calendarLeftVue.setUsedTermOpt();
 			

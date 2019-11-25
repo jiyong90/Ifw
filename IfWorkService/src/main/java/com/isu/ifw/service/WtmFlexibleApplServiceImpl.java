@@ -1,5 +1,6 @@
 package com.isu.ifw.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,12 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmApplLine;
-import com.isu.ifw.entity.WtmEntryAppl;
 import com.isu.ifw.entity.WtmFlexibleAppl;
+import com.isu.ifw.entity.WtmFlexibleApplDet;
 import com.isu.ifw.entity.WtmFlexibleDayPlan;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.entity.WtmWorkPattDet;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
@@ -28,6 +30,7 @@ import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmApplLineRepository;
 import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmEntryApplRepository;
+import com.isu.ifw.repository.WtmFlexibleApplDetRepository;
 import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.repository.WtmFlexibleDayPlanRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
@@ -35,8 +38,10 @@ import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtSubsApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
+import com.isu.ifw.repository.WtmWorkPattDetRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmApplLineVO;
+import com.isu.ifw.vo.WtmFlexibleApplDetVO;
 import com.isu.option.vo.ReturnParam;
 
 @Service("wtmFlexibleApplService")
@@ -62,6 +67,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmFlexibleApplRepository wtmFlexibleApplRepo;
+	
+	@Autowired
+	WtmFlexibleApplDetRepository wtmFlexibleApplDetRepo;
 	
 	@Autowired
 	WtmFlexibleStdMgrRepository flexStdMgrRepo;
@@ -101,6 +109,9 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmEntryApplRepository entryApplRepo;
+	
+	@Autowired
+	WtmWorkPattDetRepository workPattDetRepo;
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -146,6 +157,11 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			//근무제 신청서 테이블 조회
 			WtmFlexibleAppl flexibleAppl = saveWtmFlexibleAppl(tenantId, enterCd, applId, flexibleStdMgrId, sYmd, eYmd, "", sabun, userId);
 			
+			//탄근제의 경우 추가로 근무제 패턴을 flexibleApplDet 저장
+			if(workTypeCd.equals("ELAS")) {
+				List<WtmFlexibleApplDet> flexibleApplDet = saveWtmFlexibleApplDet(tenantId, enterCd, flexibleAppl.getFlexibleApplId(), flexibleStdMgrId, sYmd, eYmd, sabun, userId);
+			}
+				
 			saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		
 			rp.put("applId", appl.getApplId());
@@ -427,7 +443,8 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 				
 			}else if(workTypeCd.equals("ELAS")) {
 				//탄근제
-				
+				//근로시간은 주 평균 40 시간, OT시간은 주 12시간 초과 시 신청할 수 없고
+				//2주 이내 탄근제는 주간 최대 근무시간은 48시간, 2주 이상 타근제는 주간 최대 근무시간 52시간 
 			}else if(workTypeCd.equals("DIFF")) {
 				//시차
 				
@@ -485,6 +502,103 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		return wtmFlexibleApplRepo.save(flexibleAppl);
 	}
 	 
+	protected List<WtmFlexibleApplDet> saveWtmFlexibleApplDet(Long tenantId, String enterCd, Long flexibleApplId, Long flexibleStdMgrId, String sYmd, String eYmd, String sabun, String userId) {
+		
+		WtmFlexibleStdMgr flexibleStdMgr = flexStdMgrRepo.findById(flexibleStdMgrId).get();
+		
+		// 공휴일 제외 여부
+		String holExceptYn = "N";
+		if(flexibleStdMgr!=null && flexibleStdMgr.getHolExceptYn()!=null && !"".equals(flexibleStdMgr.getHolExceptYn())) 
+			holExceptYn = flexibleStdMgr.getHolExceptYn();
+
+		// 근무제 패턴으로 정해놓은 일 수  
+		int maxPattDet = 0;
+		WtmWorkPattDet workPattDet = workPattDetRepo.findTopByFlexibleStdMgrIdOrderBySeqDesc(flexibleStdMgrId);
+		if(workPattDet!=null && workPattDet.getSeq()!=null) 
+			maxPattDet = workPattDet.getSeq();
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sYmd", sYmd);
+		paramMap.put("eYmd", eYmd);
+		paramMap.put("flexibleStdMgrId", flexibleStdMgrId);
+		paramMap.put("holExceptYn", holExceptYn);
+		paramMap.put("maxPattDet", maxPattDet);
+		
+		List<WtmFlexibleApplDet> workList = new ArrayList<WtmFlexibleApplDet>();
+		List<WtmFlexibleApplDetVO> patterns = flexApplMapper.getWorkPattern(paramMap);
+		if(patterns!=null && patterns.size()>0) {
+			for(WtmFlexibleApplDetVO p : patterns) {
+				WtmFlexibleApplDet fd = new WtmFlexibleApplDet();
+				fd.setFlexibleApplId(flexibleApplId);
+				fd.setYmd(p.getYmd());
+				fd.setTimeCdMgrId(p.getTimeCdMgrId());
+				fd.setHolidayYn(p.getHolidayYn());
+				
+				Date planSdate = null;
+				if(p.getPlanSdate()!=null && !"".equals(p.getPlanSdate())) {
+					planSdate = WtmUtil.toDate(p.getPlanSdate(), "yyyy-MM-dd HH:mm:ss");
+					fd.setPlanSdate(planSdate);
+				}
+				
+				Date planEdate = null;
+				if(p.getPlanEdate()!=null && !"".equals(p.getPlanEdate())) {
+					planEdate = WtmUtil.toDate(p.getPlanEdate(), "yyyy-MM-dd HH:mm:ss");
+					fd.setPlanEdate(planEdate);
+				}
+				
+				paramMap.put("ymd", p.getYmd());
+				
+				if(planSdate!=null && planEdate!=null) {
+					paramMap.put("shm", WtmUtil.parseDateStr(planSdate, "HHmm"));
+					paramMap.put("ehm", WtmUtil.parseDateStr(planEdate, "HHmm"));
+					Map<String, Object> planMinuteMap = wtmFlexibleEmpMapper.calcElasPlanMinuteExceptBreaktime(paramMap);
+					fd.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+""));
+					
+					System.out.println("otbMin: " + p.getOtbMinute());
+					
+					paramMap.put("otType", "OTB");
+					paramMap.put("sDate", p.getPlanSdate());
+					paramMap.put("eDate", p.getPlanEdate());
+					paramMap.put("minute", p.getOtbMinute());
+					Map<String, Object> otbMinuteMap = wtmFlexibleEmpMapper.calcElasOtMinuteExceptBreaktime(paramMap);
+					
+					if(otbMinuteMap!=null) {
+						Date otbSdate = WtmUtil.toDate(otbMinuteMap.get("sDate").toString(), "yyyyMMddHHmmss");
+						Date otbEdate = WtmUtil.toDate(otbMinuteMap.get("eDate").toString(), "yyyyMMddHHmmss");
+						
+						fd.setOtbSdate(otbSdate);
+						fd.setOtbEdate(otbEdate);
+						fd.setOtbMinute(Integer.parseInt(otbMinuteMap.get("calcMinute").toString()));
+					}	
+					
+					paramMap.put("otType", "OTA");
+					paramMap.put("sDate", p.getPlanSdate());
+					paramMap.put("eDate", p.getPlanEdate());
+					paramMap.put("minute", p.getOtaMinute());
+					Map<String, Object> otaMinuteMap = wtmFlexibleEmpMapper.calcElasOtMinuteExceptBreaktime(paramMap);
+					
+					if(otaMinuteMap!=null) {
+						Date otaSdate = WtmUtil.toDate(otaMinuteMap.get("sDate").toString(), "yyyyMMddHHmmss");
+						Date otaEdate = WtmUtil.toDate(otaMinuteMap.get("eDate").toString(), "yyyyMMddHHmmss");
+						
+						fd.setOtaSdate(otaSdate);
+						fd.setOtaEdate(otaEdate);
+						fd.setOtaMinute(Integer.parseInt(otaMinuteMap.get("calcMinute").toString()));
+					}	
+				}
+				
+				fd.setUpdateDate(new Date());
+				fd.setUpdateId(userId);
+				workList.add(fd);
+			}
+			
+			wtmFlexibleApplDetRepo.saveAll(workList);
+		}
+		
+		return workList;
+	}
 	
 	protected void saveWtmApplLine(Long tenantId, String enterCd, int apprLvl, Long applId, String sabun, String userId) {
 		

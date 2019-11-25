@@ -242,4 +242,9 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 		return cnt;
 	}
 	
+	@Override
+	public Map<String, Object> getWeekday(String ymd) {
+		return flexStdMapper.getWeekday(ymd);
+	}
+	
 }

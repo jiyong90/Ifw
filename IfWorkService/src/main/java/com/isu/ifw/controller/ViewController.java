@@ -235,14 +235,14 @@ public class ViewController {
 					List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, ymd, "REASON_CD");
 					mv.addObject("reasons", mapper.writeValueAsString(reasons));
 				} else if("Day".equals(calendarType)) {
-					//근무 계획을 작성한 근무제 정보
+					//근무 계획을 작성해야 하는 근무제
 					if(request.getParameter("flexibleEmpId")!=null && !"".equals(request.getParameter("flexibleEmpId"))) {
 						Map<String, Object> paramMap = new HashMap<String, Object>();
 						paramMap.put("flexibleEmpId", Long.valueOf(request.getParameter("flexibleEmpId")));
 						Map<String, Object> flexibleEmp = flexibleEmpService.getFlexibleEmpForPlan(tenantId, enterCd, empNo, paramMap, userId);
 						if(flexibleEmp!=null) {
 							try {
-								System.out.println("flexibleEmp::::::"+mapper.writeValueAsString(flexibleEmp));
+								//System.out.println("flexibleEmp::::::"+mapper.writeValueAsString(flexibleEmp));
 								mv.addObject("flexibleEmp", mapper.writeValueAsString(flexibleEmp));
 							} catch (JsonProcessingException e) {
 								// TODO Auto-generated catch block
@@ -252,7 +252,24 @@ public class ViewController {
 						}
 						
 					}
+					
+					//탄근제 근무제패턴 조회
+					//탄근제의 경우 신청 시 바로 근무계획을 작성
+					if(request.getParameter("flexibleApplId")!=null && !"".equals(request.getParameter("flexibleApplId"))) {
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("flexibleApplId", Long.valueOf(request.getParameter("flexibleApplId")));
+						Map<String, Object> flexibleEmp = flexibleEmpService.getFlexibleApplDetForPlan(tenantId, enterCd, empNo, paramMap, userId);
+						if(flexibleEmp!=null) {
+							try {
+								mv.addObject("flexibleEmp", mapper.writeValueAsString(flexibleEmp));
+							} catch (JsonProcessingException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								mv.addObject("flexibleEmp", null);
+							}
+						}
 						
+					}
 				}
 			} 
 			
@@ -422,7 +439,7 @@ public class ViewController {
 					mv.addObject("reasons", null);
 				}
 			} else if("Day".equals(calendarType)) {
-				//근무 계획을 작성한 근무제 정보
+				//근무 계획을 작성해야 하는 근무제
 				if(request.getParameter("flexibleEmpId")!=null && !"".equals(request.getParameter("flexibleEmpId"))) {
 					Map<String, Object> paramMap = new HashMap<String, Object>();
 					paramMap.put("flexibleEmpId", Long.valueOf(request.getParameter("flexibleEmpId")));

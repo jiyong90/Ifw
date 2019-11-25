@@ -1354,7 +1354,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Override
 	public Map<String, Object> getFlexibleEmpForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
-		// TODO Auto-generated method stub
+		// 탄근제를 제외한 근무제의 근무 계획 조회
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
@@ -1376,7 +1376,6 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return flexibleEmp;
 	}
 	
-
 	@Override
 	public Map<String, Object> getFlexibleApplDetForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
 		// 탄근제의 근무 계획 조회
@@ -1499,6 +1498,6 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			e.printStackTrace();
 		}
 		return paramMap;
-
 	}
+
 }

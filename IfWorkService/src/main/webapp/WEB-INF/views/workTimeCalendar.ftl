@@ -1712,7 +1712,6 @@
   	
    	$('body').on('focus',"input[id^='subsShm']", function(){
    		var $this = this;
-
    		
 		$(this).datetimepicker({
 			format: 'HH:mm',

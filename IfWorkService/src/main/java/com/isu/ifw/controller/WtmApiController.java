@@ -4,15 +4,18 @@ import java.security.cert.CertificateException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.auth.control.TenantSecuredControl;
@@ -31,6 +34,23 @@ public class WtmApiController extends TenantSecuredControl {
 	
 	@Autowired
 	private WtmValidatorService validatorService;
+	
+	@RequestMapping(value="/secret", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getSecret(@RequestBody Map<String, Object> paramMap, HttpServletRequest request ) throws Exception {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String apiKey = paramMap.get("apiKey").toString();
+			String secret = paramMap.get("secret").toString();
+			
+			this.certificate(apiKey, secret, request.getRemoteHost());
+		} catch (CertificateException e1) {
+			rp.setFail(e1.getMessage());
+			return rp;
+		}
+		
+		return rp;
+	}
 
 	@RequestMapping(value="/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam test(HttpServletRequest request ) throws Exception {

@@ -614,8 +614,8 @@
         $( ".btn-info-wrap" ).on('click',function() {
             $('#btn-full-info').toggle();
             $('#btn-simple-info').toggle();
-            $('#full-info').toggle();
-            $('#simple-info').toggle();
+            $('#full-info').toggle(480);
+            $('#simple-info').toggle(480);
         });
         
     });
