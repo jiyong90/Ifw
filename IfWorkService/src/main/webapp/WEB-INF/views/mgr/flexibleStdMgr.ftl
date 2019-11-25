@@ -101,9 +101,9 @@
 											<tr id="trWorkTime">
 												<th>근무가능시각</th>
 												<td>
-													<input type="text" id="workShm" name="workShm" class="date2" data-toggle="datetimepicker" />
+													<input type="text" id="workShm" name="workShm" class="date2" data-toggle="datetimepicker" data-target="#workShm" placeholder="시:분" autocomplete="off"/>
 													~
-													<input type="text" id="workEhm" name="workEhm" class="date2" data-toggle="datetimepicker" />
+													<input type="text" id="workEhm" name="workEhm" class="date2" data-toggle="datetimepicker" data-target="#workEhm" placeholder="시:분" autocomplete="off"/>
 												</td>
 												<th>근태일 근무가능여부</th>
 												<td>
@@ -119,9 +119,9 @@
 											<tr id="trCoreTime">
 												<th>코어근무시각</th>
 												<td colspan="3">
-													<input type="text" id="coreShm" name="coreShm" class="date2" data-toggle="datetimepicker"/>
+													<input type="text" id="coreShm" name="coreShm" class="date2" data-toggle="datetimepicker" data-target="#coreShm" placeholder="시:분" autocomplete="off"/>
 													~
-													<input type="text" id="coreEhm" name="coreEhm" class="date2" data-toggle="datetimepicker"/>
+													<input type="text" id="coreEhm" name="coreEhm" class="date2" data-toggle="datetimepicker" data-target="#coreEhm" placeholder="시:분" autocomplete="off"/>
 												</td>
 											</tr>
 											<tr id="trBaseFirst">
@@ -196,34 +196,6 @@
 
 <script type="text/javascript">
    	$(function() {
-   		
-   	 new jBox('Tooltip', {
-   	    attach: '#Tooltip-7',
-   	    target: '#Tooltip-7',
-   	    theme: 'TooltipBorder',
-   	    trigger: 'click',
-   	    adjustTracker: true,
-   	    closeOnClick: 'body',
-   	    closeButton: 'box',
-   	    animation: 'move',
-   	    position: {
-   	      x: 'left',
-   	      y: 'top'
-   	    },
-   	    outside: 'y',
-   	    pointer: 'left:20',
-   	    offset: {
-   	      x: 25
-   	    },
-   	    content: '사용자 기간지정은 개인 당 사전에 계획된 근무 기간을 등록하는 것을 뜻합니다.',
-   	    onOpen: function () {
-   	      this.source.addClass('active');
-   	    },
-   	    onClose: function () {
-   	      this.source.removeClass('active');
-   	    }
-   	  });
-   	 
    		//resize
 		$(window).smartresize(sheetResize);
    	
@@ -274,6 +246,32 @@
                 vertical: 'bottom'
             }
         }); 
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-7',
+       	    target: '#Tooltip-7',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '사용자 기간지정은 개인 당 사전에 계획된 근무 기간을 등록하는 것을 뜻합니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
         
         
 		var initdata1 = {};
