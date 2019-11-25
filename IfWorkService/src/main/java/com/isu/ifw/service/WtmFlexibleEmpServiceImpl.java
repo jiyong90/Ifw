@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleApplDet;
 import com.isu.ifw.entity.WtmFlexibleEmp;
@@ -331,7 +330,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			
 			//일별 고정 OT의 경우 기설정된 OT정보를 찾아 지워주자.
 			//지우기 전에 기본근무 시간 종료시간을 가지고 오자.
-			if(defaultWorkUseYn.equals("Y") && fixotUseType.equalsIgnoreCase("DAY")) {
+			if(defaultWorkUseYn!=null && defaultWorkUseYn.equals("Y") && fixotUseType!=null && fixotUseType.equalsIgnoreCase("DAY")) {
 				pMap.put("timeTypeCd", WtmApplService.TIME_TYPE_BASE);
 				//기본근무 종료시간을 구하자.
 				Date maxEdate = flexEmpMapper.getMaxPlanEdate(pMap);
@@ -437,7 +436,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			}
 			
 			//고정 OT여부 확인  / 기본 일 근무시간(분) 체크 / 일별소진 옵션만 / 고정 OT시간
-			if(defaultWorkUseYn.equals("Y") && fixotUseType.equalsIgnoreCase("DAY")) {
+			if(defaultWorkUseYn!=null && defaultWorkUseYn.equals("Y") && fixotUseType!=null && fixotUseType.equalsIgnoreCase("DAY")) {
 				//일별, 일괄 소진 여부 : 일괄 소진은 여기서 할수 없다. 일마감 시 일괄소진 여부에 따라 OT데이터를 생성해주자.
 
 				pMap.put("yyyyMMddHHmmss", format.format(insEdate));

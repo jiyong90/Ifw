@@ -641,10 +641,20 @@
   							if(data!=null) {
   								$this.applCode = data;
   								
-  								if(data.useMinutes!=null && data.useMinutes!=undefined && data.useMinutes!=''){
-  									var useMinutes = Number(data.useMinutes);
-									$('#sTime').datetimepicker('stepping', useMinutes);
-									$('#eTime').datetimepicker('stepping', useMinutes);
+  								if($this.result.holidayYn=='Y') {
+  								//휴일연장 시간단위
+  									if(data.holApplTypeCd!=null && data.holApplTypeCd!=undefined && data.holApplTypeCd!=''){
+  	  									var holApplTypeCd = Number(data.holApplTypeCd);
+  										$('#sTime').datetimepicker('stepping', holApplTypeCd);
+  										$('#eTime').datetimepicker('stepping', holApplTypeCd);
+  	  								}
+  								} else {
+  								//연장 시간단위
+  									if(data.timeUnit!=null && data.timeUnit!=undefined && data.timeUnit!=''){
+  	  									var timeUnit = Number(data.timeUnit);
+  										$('#sTime').datetimepicker('stepping', timeUnit);
+  										$('#eTime').datetimepicker('stepping', timeUnit);
+  	  								}
   								}
   								
   							}

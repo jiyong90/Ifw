@@ -45,6 +45,13 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public void createWorkCalendarOfSeleC(@Param("flexibleEmpId")Long flexibleEmpId, @Param("userId")String userId);
 	
+	/**
+	 * 탄근제의 캘린더 생성
+	 * @param flexibleApplId
+	 * @param userId
+	 */
+	public void createWorkCalendarOfElas(@Param("flexibleApplId")Long flexibleEmpId, @Param("userId")String userId);
+	
 	public void updateHolidayYnOFWorkCalendar(Map<String, Object> paramMap);
 	
 	public void updatePlanMinute(@Param("flexibleEmpId") Long flexibleEmpId);
@@ -315,11 +322,10 @@ public interface WtmFlexibleEmpMapper {
 	/** 
 	 * 탄근제 근무 계획 조회 - work_day_result 테이블에 저장 하기 위함
 	 * 하나의 ROW를 BASE와 OT로 분리
-	 * @param paramMap flexibleApplId
+	 * @param flexibleApplId
 	 * @return
 	 */
-	public List<Map<String, Object>> getElasWorkDayResult(Map<String, Object> paramMap);
-	
+	public List<Map<String, Object>> getElasWorkDayResult(@Param("flexibleApplId")Long flexibleApplId);
 	
 	/**
 	 * 탄근제 평균 근무 시간 조회
@@ -328,6 +334,7 @@ public interface WtmFlexibleEmpMapper {
 	 */
 	public Map<String, Object> getElasAvgHour(Map<String, Object> paramMap);
 	
+
 	/**
 	 * 유연근무 변경/취소 확인
 	 */
