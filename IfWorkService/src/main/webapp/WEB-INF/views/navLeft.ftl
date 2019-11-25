@@ -30,7 +30,7 @@
             </a>
         </li>
         <li v-if="tsId=='isu' || authCd=='10'" :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'">
-        	<a href="#" id="lnb-mng">
+        	<a href="javascript:void(0);" onclick="callLnb(this);return false;">
                 <i class="fas fa-laptop"></i>
                 <span class="title">유연근무관리</span>
             </a>
@@ -120,6 +120,9 @@
 		$("#cal").removeAttr('class', 'active');
 	}
 }); */
+function callLnb (obj) {
+    $(obj).siblings('#lnb-sub').toggleClass('active');
+}
 	var navLeftVue = new Vue({
 		el: "#sidebar",
 		data : {
@@ -164,13 +167,8 @@
 			
 			if(this.curSubMenu!='') 
 				this.curMenu='flexibleMgr';
+			
 		}
 	});
 	
-	$(function(){
-		//lnb-sub-menu
-	    $('#lnb-mng').on('click', function () {
-	        $(this).siblings('#lnb-sub').toggleClass('active');
-	    });
-	});
 </script>

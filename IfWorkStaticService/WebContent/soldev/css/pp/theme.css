@@ -95,6 +95,9 @@ a[aria-expanded="true"] {
 }
 
 /*근무제 표시 감춤*/
-#sub-nav .work-check-wrap{
+#sub-nav .sub-info-wrap{
+	height:19px;
+}
+#sub-nav .sub-info-wrap .work-check-wrap{
 	display:none;
 }
