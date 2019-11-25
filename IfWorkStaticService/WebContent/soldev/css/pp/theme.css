@@ -93,3 +93,8 @@ a[aria-expanded="true"] {
 .error-page .container a.btn-main {
     background-color: #0f5aa4;
 }
+
+/*근무제 표시 감춤*/
+#sub-nav .work-check-wrap{
+	display:none;
+}
