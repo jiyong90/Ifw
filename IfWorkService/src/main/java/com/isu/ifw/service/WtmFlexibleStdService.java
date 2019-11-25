@@ -77,4 +77,11 @@ public interface WtmFlexibleStdService {
 	 */
 	public int setWorkPattList(String userId, Map<String, Object> convertMap);
 	
+	/**
+	 * 해당 일의 요일 가져오기
+	 * @param ymd
+	 * @return
+	 */
+	public Map<String, Object> getWeekday(String ymd);
+	
 }

@@ -5,7 +5,11 @@ import java.security.cert.CertificateException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+<<<<<<< HEAD
 import java.util.Enumeration;
+=======
+import java.util.Map;
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,14 +20,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+<<<<<<< HEAD
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+=======
+import org.springframework.web.bind.annotation.RequestBody;
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -43,6 +52,23 @@ public class WtmApiController extends TenantSecuredControl {
 	
 	@Autowired
 	private WtmValidatorService validatorService;
+	
+	@RequestMapping(value="/secret", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getSecret(@RequestBody Map<String, Object> paramMap, HttpServletRequest request ) throws Exception {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String apiKey = paramMap.get("apiKey").toString();
+			String secret = paramMap.get("secret").toString();
+			
+			this.certificate(apiKey, secret, request.getRemoteHost());
+		} catch (CertificateException e1) {
+			rp.setFail(e1.getMessage());
+			return rp;
+		}
+		
+		return rp;
+	}
 
 	@Autowired
 	private RestTemplate restTemplate;

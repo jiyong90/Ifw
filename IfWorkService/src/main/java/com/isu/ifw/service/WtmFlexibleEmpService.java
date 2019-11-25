@@ -144,6 +144,15 @@ public interface WtmFlexibleEmpService {
 	 */
 	public ReturnParam save(Long flexibleEmpId, Map<String, Object> dateMap, String userId) throws Exception;
 	
+	/**
+	 * 탄력근무제 계획 저장
+	 * @param paramMap { flexibleApplId : 111 , dayResult : { "20190101" : {"shm" : "0800" , "ehm" : "0200"} } }
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public ReturnParam saveElasPlan(Long flexibleApplId, Map<String, Object> paramMap, String userId) throws Exception;
+	
 	//public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Map<String, Object> paramMap, Long userId);
 	public List<WtmDayWorkVO> getDayWorks(List<Map<String, Object>> plans, String userId);
 	public void createWorkteamEmpData(Long tenantId, String enterCd, Long workteamMgrId, String userId); 
@@ -196,4 +205,31 @@ public interface WtmFlexibleEmpService {
 	
 	public ReturnParam mergeWorkDayResult(Long tenantId, String enterCd, String ymd, String sabun, Long applId, String timeTypeCd, String taaCd, Date planSdate, Date planEdate, String defaultWorkUseYn, String fixotUseType, Integer fixotUseLimit,  String userId);
 	
+	/**
+	 * 탄근제 근무 계획 조회
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param paramMap  { flexibleApplId : 근무제 신청서 아이디}
+	 * @param userId
+	 * @return
+	 */
+	public Map<String, Object> getFlexibleApplDetForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
+	
+
+	/**
+	 * 유연근무 변경/취소 확인
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> GetChangeChk(Map<String, Object> paramMap);
+	
+	/**
+	 * 유연근무 변경/취소 적용
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> setChangeFlexible(Map<String, Object> paramMap);
+	
+
 }

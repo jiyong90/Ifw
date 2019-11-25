@@ -68,7 +68,7 @@
 	                </div>
 	                <div class="col">
 	                </div>
-	                <div v-if="'${calendar}'!='workTimeCalendar'" class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+	                <div v-if="'${calendar}'=='workMonthCalendar'" class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
 	                    <div class="btn-wrap text-right">
 	                        <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'" @click="getFlexitimeList">근무제 적용하기</button>
 	                    	<button type="button" id="planBtn" class="btn btn-write" style="display:none;">근무계획작성</button>
@@ -404,8 +404,8 @@
 	                </div>
                 </div>
                 <div id="flexibleAppl" class="white-box-wrap full-height mb-3" style="display:none;">
-                    <div class="work-plan-wrap">
-                        <div class="main-wrap" v-if="calendarTopVue.selectedFlexibleStd">
+                    <div class="work-plan-wrap" v-if="useYn=='Y'">
+                        <div class="main-wrap">
                             <div class="main-title">해당일의 근무계획 구분</div>
                             <div class="main-desc">{{calendarTopVue.selectedFlexibleStd.flexibleNm}}</div>
                             <ul class="time-list">
@@ -434,11 +434,12 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="sub-wrap" v-show="applInfo.useSymd">
-                        <form action="" class="time-input-form needs-validation" v-if="calendarTopVue.selectedFlexibleStd" novalidate>
+                    <template v-if="calendarTopVue.selectedFlexibleStd!='ELAS'">
+                    <div class="sub-wrap" style="display:none;">
+                        <form action="" class="time-input-form needs-validation" novalidate>
                             <div class="form-row no-gutters">
                                 <div class="form-group col-6 pr-1">
-                                    <label for="useSymd-dt">시작일자</label>
+                                    <label for="useSymd">시작일자</label>
                                     <div data-target-input="nearest">
                                     	<input type="text" id="useSymd" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#useSymd" placeholder="연도-월-일"
                                             autocomplete="off" v-model="applInfo.useSymd" :value="applInfo.useSymd" required>
@@ -456,17 +457,48 @@
                                         <option v-for="term in calendarTopVue.selectedFlexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
                                     </select>
                                 </div>
-                                <div v-if="calendarTopVue.selectedFlexibleStd.workTypeCd!='ELAS'" class="form-group col-12">
-                                    <label for="reson">사유</label>
+                                <div class="form-group col-12">
+                                    <label for="reason">사유</label>
                                     <textarea class="form-control" id="reason" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason" required></textarea>
                                 </div>
                             </div>
                             <div class="btn-wrap mt-5">
-	                            <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-if="calendarTopVue.selectedFlexibleStd.workTypeCd=='ELAS'" @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd)">다음</button>
-	                            <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" v-else @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd)">확인요청</button>
+	                            <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd)">확인요청</button>
                             </div>
                         </form>
                     </div>
+                    </template>
+                    <template v-else>
+                    <!-- 탄근제 신청서 -->
+                    <div class="sub-wrap" style="display:none;">
+                        <form action="" class="time-input-form needs-validation" novalidate>
+                            <div class="form-row no-gutters">
+                                <div class="form-group col-6 pr-1">
+                                    <label for="useSymd">시작일자</label>
+                                    <div data-target-input="nearest">
+                                    	<input type="text" id="useSymd" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#useSymd" placeholder="연도-월-일"
+                                            autocomplete="off" v-model="applInfo.useSymd" :value="applInfo.useSymd" required>
+                                	</div>
+                                </div>
+                                <div class="form-group col-6 pl-1">
+                                    <label for="useEymd">종료일자</label>
+                                    <div>
+	                                    <input type="text" id="useEymd" class="form-control" v-model="applInfo.useEymd" :value="applInfo.useEymd" disabled required>
+	                                </div>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label for="workTime">근무기간</label>
+                                    <select id="workTime" v-if="calendarTopVue.selectedFlexibleStd" class="form-control" v-model="applInfo.workRange" :value="applInfo.workRange" @change="changeWorkRange" required>
+                                        <option v-for="term in calendarTopVue.selectedFlexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="btn-wrap mt-5">
+	                            <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd)">다음</button>
+                            </div>
+                        </form>
+                    </div>
+                    </template>
                 </div>
                 <div id="flexibleDayPlan" class="white-box-wrap full-height mb-3" style="display:none;">
                 	<form class="needs-validation time-input-form" novalidate>
@@ -520,11 +552,11 @@
 	                        <div class="time-input-form form-row no-gutters">
 	                            <div class="form-group col-6 pr-1">
 	                                <label for="startTime" data-target-input="nearest">출근시간</label>
-	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime" value="" data-toggle="datetimepicker" data-target="#startTime" autocomplete="off" @focusout="changeWorkTime" required>
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime" value="" data-toggle="datetimepicker" data-target="#startTime" autocomplete="off" @focusout="changeWorkTime" :required="flexibleAppl.workTypeCd!='ELAS'?true:false">
 	                            </div>
 	                            <div class="form-group col-6 pl-1">
 	                                <label for="endTime" data-target-input="nearest">퇴근시간</label>
-	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime" value="" data-toggle="datetimepicker" data-target="#endTime" autocomplete="off" @focusout="changeWorkTime" required>
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime" value="" data-toggle="datetimepicker" data-target="#endTime" autocomplete="off" @focusout="changeWorkTime" :required="flexibleAppl.workTypeCd!='ELAS'?true:false">
 	                            </div>
 	                        </div>
 	                        <div id="elasOtTime" class="time-input-form form-row no-gutters" style="display:none;">
@@ -538,7 +570,7 @@
 	                            </div>
 	                        </div>
 		                </div>
-		                <template v-if="flexibleAppl.workTypeCd=='ELAS'">
+		                <template v-if="flexibleAppl.workTypeCd=='ELAS'"> <!-- 탄력근무제 신청 -->
 		                	<div class="sub-wrap">
 			                    <ul class="time-block-list">
 			                        <li>
@@ -553,12 +585,12 @@
 		                            </div>
 	                            </div>
 			                </div>
-		                	<div class="btn-wrap row no-gutters">
+		                	<div class="btn-wrap row no-gutters" v-if="flexibleAppl.applStatusCd=='11'">
 			                	<div class="col-6 pr-1">
-	                    			<button type="button" id="timeSaveBtn" class="btn btn-cancel btn-block" @click="validateWorkDayResult">저장</button>
+	                    			<button type="button" id="timeSaveBtn" class="btn btn-cancel btn-block" @click="validateWorkDayResult('N')">저장</button>
 	                       		</div>
 	                       		<div class="col-6 pl-1">
-	                       			<button type="button" id="timeApprBtn" class="btn btn-apply btn-block">확인요청</button>
+	                       			<button type="button" id="timeApprBtn" class="btn btn-apply btn-block" @click="validateWorkDayResult('Y')">확인요청</button>
 	                    		</div>
 	                    	</div>
 			            </template>
@@ -576,7 +608,7 @@
 			                    </ul>
 			                </div>
 			                <div class="btn-wrap">
-			                    <button type="button" id="timeSaveBtn" class="btn btn-apply btn-block btn-lg" @click="validateWorkDayResult">저장</button>
+			                    <button type="button" id="timeSaveBtn" class="btn btn-apply btn-block btn-lg" @click="validateWorkDayResult('N')">저장</button>
 			                </div>
 		                </template>
 	                </form>
@@ -696,13 +728,13 @@
             $('#lbottom-wrap').toggle();
             $('#lbottom-simple-wrap').toggle();
         });
-		
-		//유연근무제 신청일자
+        
+      	//유연근무제 신청일자
 		$('#useSymd').datetimepicker({
 	        format: 'YYYY-MM-DD',
 	        language: 'ko'
 	    });
-
+		
 	});
 	
    	var calendarTopVue = new Vue({
@@ -778,7 +810,7 @@
          	applyFlexitime : function(){ //근무제 적용
          		var $this = this;
          	
-         		calendarLeftVue.clearFlexitimeAppl();
+         		//calendarLeftVue.clearFlexitimeAppl();
          		calendarLeftVue.applInfo.workRange = '';
          	
          		$('#flexitimeModal').on('hidden.bs.modal',function(){
@@ -1146,7 +1178,7 @@
         							$("#alertText").html("탄력근무제의 시작 요일은 "+flexStd.weekDay+" 입니다.<br>달력에서 근무제 시작일을 다시 지정해 주세요.");
         		  	         		$("#alertModal").on('hidden.bs.modal',function(){
         		  	         			$("#alertModal").off('hidden.bs.modal');
-        		  	         			var eventId = 'workRange.'+flexStd.workTypeCd+'.'+$this.applInfo.useSymd;
+        		  	         			var eventId = 'workRange.'+flexStd.workTypeCd+'.new';
 										var event = $this.calendar.getEventById(eventId);
 										if(event!=null)
 											event.remove();
@@ -1174,60 +1206,21 @@
         				});
          				
          			} else {
-         				this.flexitimeAppl();
+         				this.flexitimeAppl(calendarTopVue.selectedFlexibleStd.workTypeCd);
          			}
          		}
          		
          	},
-         	elasFlexitimeAppl : function(){
-         		var $this = this;
-  	         	
-         		//선택한 근무제
-	         	var flexibleStd = calendarTopVue.selectedFlexibleStd;
-	         	//임시저장된 신청서
-	         	var flexibleAppl = $this.flexibleAppl;
-	         	//신청서 정보
-	         	var applInfo = $this.applInfo;
-	         	
-	         	var param = {
-         			flexibleStdMgrId : flexibleStd.flexibleStdMgrId,
-         			workTypeCd : flexibleStd.workTypeCd,
-   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
-   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
-   		    		reason: applInfo.reason
-   		    	};
-	         	
-	         	/* Util.ajax({
-					url: "${rc.getContextPath()}/flexibleAppl/imsi",
-					type: "POST",
-					contentType: 'application/json',
-					data: JSON.stringify(param),
-					dataType: "json",
-					success: function(data) {
-						if(data!=null && data.status=='OK') {
-							applInfo.applId = data.applId;
-							applInfo.flexibleApplId = data.flexibleApplId;
-							
-							//근무 계획 화면 전환
-							location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Day&date='+moment(applInfo.useSymd).format('YYYYMMDD');
-						}
-					},
-					error: function(e) {
-						console.log(e);
-						$("#alertText").html("저장 시 오류가 발생했습니다.");
-  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
-  	  	         		$("#alertModal").modal("show"); 
-					}
-				}); */
+         	validateElasFlexitimeAppl : function() { //탄근제 확인요청 시 체크
+         		dayCalendarVue.validateElasFlexitimeAppl();
          	},
-         	flexitimeAppl : function(){ //확인요청
+         	flexitimeAppl : function(workTypeCd){ //확인요청
 	         	var $this = this;
          	
 	         	$("#loading").show();
 	  	         	
 	         	//선택한 근무제
-	         	var flexibleStd = calendarTopVue.selectedFlexibleStd;
-	         	
+	         	//var flexibleStd = calendarTopVue.selectedFlexibleStd;
 	         	//임시저장된 신청서
 	         	var flexibleAppl = $this.flexibleAppl;
 	         	//신청서 정보
@@ -1249,17 +1242,25 @@
 					$("#alertText").html("사유를 입력해 주세요.");
          		}*/
          		
-         		if(flexibleStd.workTypeCd.indexOf('SELE')==0 || flexibleStd.workTypeCd.indexOf('DIFF')==0) {
+         		
+         		//if(flexibleStd.workTypeCd.indexOf('SELE')==0 || flexibleStd.workTypeCd.indexOf('DIFF')==0) {
 					var param = {
 						flexibleApplId : flexibleAppl.flexibleApplId,	
 						applId : flexibleAppl.applId,
  	         			flexibleStdMgrId : flexibleAppl.flexibleStdMgrId,
- 	         			workTypeCd : flexibleStd.workTypeCd,
+ 	         			workTypeCd : workTypeCd,
  	         			//empNo : "${empNo}",
-	   		    		sYmd : moment($this.applInfo.useSymd).format('YYYYMMDD'),
-	   		    		eYmd : moment($this.applInfo.useEymd).format('YYYYMMDD'),
 	   		    		reason: applInfo.reason
 	   		    	};
+					
+					if(flexibleAppl.workTypeCd== 'ELAS') {
+						param['sYmd'] = flexibleAppl.sYmd;
+						param['eYmd'] = flexibleAppl.eYmd;
+					} else {
+						param['sYmd'] = moment($this.applInfo.useSymd).format('YYYYMMDD');
+						param['eYmd'] = moment($this.applInfo.useEymd).format('YYYYMMDD');
+					}
+					
 					
    		    		Util.ajax({
 						url: "${rc.getContextPath()}/flexibleAppl/request",
@@ -1274,6 +1275,8 @@
 								if(data.status=='OK') {
 									$("#alertText").html("확인요청 되었습니다.");
 									$("#alertModal").on('hidden.bs.modal',function(){
+										$("#alertModal").off('hidden.bs.modal');
+										
 										location.reload();
 									});
 								} else {
@@ -1281,7 +1284,7 @@
 									$("#alertModal").on('hidden.bs.modal',function(){
 										$("#alertModal").off('hidden.bs.modal');
 										
-										var eventId = 'workRange.'+flexibleStd.workTypeCd+'.'+$this.applInfo.useSymd;
+										var eventId = 'workRange.'+workTypeCd+'.'+$this.applInfo.useSymd;
 										var event = $this.calendar.getEventById(eventId);
 										if(event!=null)
 											event.remove();
@@ -1301,9 +1304,9 @@
 						}
 					});
 					
-	         	} else if(flexibleStd.workTypeCd.indexOf('ELAS')==0){
-	         		$("#flexibleAppl").hide();
-	         	}
+	         	//} else if(flexibleStd.workTypeCd.indexOf('ELAS')==0){
+	         	//	$("#flexibleAppl").hide();
+	         	//}
 	        },
 	        cancelFlexitime: function(){ //근무제 적용 취소
 	        	
@@ -1326,7 +1329,9 @@
 							$("#alertText").html("취소되었습니다.");
 							$("#alertModal").on('hidden.bs.modal',function(){
 								$("#alertModal").off('hidden.bs.modal');
+								
 								location.reload();
+									
 							});
 						} else {
 							$("#alertText").html(data.message);
@@ -1349,7 +1354,7 @@
 				});
 	        	
 			},
-	        validateWorkDayResult : function(){
+	        validateWorkDayResult : function(lastYn){
          		var applYn = true;
          		var forms = document.getElementById('flexibleDayPlan').getElementsByClassName('needs-validation');
          		var validation = Array.prototype.filter.call(forms, function(form) {
@@ -1362,12 +1367,12 @@
          		});
          		
          		if(applYn) {
-         			this.saveWorkDayResult();
+         			this.saveWorkDayResult(lastYn);
          		}
          		
          	},
-         	saveWorkDayResult: function(){
-         		dayCalendarVue.saveWorkDayResult();
+         	saveWorkDayResult: function(lastYn){
+         		dayCalendarVue.saveWorkDayResult(lastYn);
          	},
          	viewWorkDayCalendar: function(date){
          		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Day&date='+date;
@@ -1394,15 +1399,15 @@
    		$("#applyFlexBtn").hide();
    	});
    	
-   	$('#useSymd').on("change.datetimepicker", function(e){
+    $("#useSymd").off("change.datetimepicker").on("change.datetimepicker", function(e){
    		if(e.date!=null && e.date!='undefined' && e.date!='') {
 	   		if(e.oldDate!=null && e.oldDate!='undefined' && e.date!=e.oldDate) {
 	   			calendarLeftVue.applInfo.useSymd = moment(e.date).format('YYYY-MM-DD');
-	   	    	calendarLeftVue.changeUseSymd();
+	   	    	calendarLeftVue.changeWorkRange();
 	   		}
    		}
-    }); 
-   	
+    });
+  	
    	function minuteToHHMM(min, type) {
 		if(min!=null && min!=undefined && min!='') {
     		if(type==null || type=='')

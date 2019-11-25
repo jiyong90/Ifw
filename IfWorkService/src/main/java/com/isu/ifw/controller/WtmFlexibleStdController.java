@@ -323,5 +323,27 @@ public class WtmFlexibleStdController {
 		return rp;
 	}
 	
-	
+	@RequestMapping(value="/dayOfWeek", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getWeekday(@RequestParam String ymd
+			                                   		, HttpServletRequest request) {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String userId = sessionData.get("userId").toString();
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		try {
+			Map<String, Object> result = WtmFlexibleStdService.getWeekday(ymd);
+			if(result!=null && result.get("weekDay")!=null && !"".equals(result.get("weekDay"))) {
+				rp.put("weekDay", result.get("weekDay").toString());
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("요일 조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 }
