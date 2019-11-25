@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -271,6 +272,45 @@ public class WtmFlexibleEmpController {
 		return rp;
 	}
 	
+	@RequestMapping(value="/save/elas", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam saveElasWorkDayResult(@RequestBody Map<String, Object> paramMap
+														, HttpServletRequest request) {
+		
+		validateParamMap(paramMap, "flexibleApplId");
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		Long flexibleApplId = Long.valueOf(paramMap.get("flexibleApplId").toString());
+		
+		try {
+			rp = flexibleEmpService.saveElasPlan(flexibleApplId, paramMap, userId);
+			
+			List<Map<String, Object>> plans = flexEmpMapper.getElasPlanByFlexibleApplId(paramMap);
+			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(plans, userId);
+			
+			rp.put("dayWorks", dayWorks);
+			
+			//평균 근무 시간 계산
+			Map<String, Object> avgHourMap = flexEmpMapper.getElasAvgHour(paramMap);
+			if(avgHourMap!=null) {
+				rp.put("avgHour", Double.parseDouble(avgHourMap.get("avgHour")+""));
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
+	
 	/**
 	 * 파라미터 맵의 유효성을 검사한다.
 	 * 파라미터가 다음의 두 조건을 만족하지 않으면, InvalidParameterException를 발생한다.
@@ -429,6 +469,86 @@ public class WtmFlexibleEmpController {
 			return rp;
 		}
 		
+		return rp; 
+	}
+	
+	/**
+	 * 유연근무 변경/취소 확인
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+
+	@RequestMapping(value="/changeChk", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getChangeChk(@RequestBody Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		System.out.println("changeChk controller start");
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("userId", userId);
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Map<String, Object> retMap = null;
+		
+		try {
+			retMap = flexibleEmpService.GetChangeChk(paramMap);
+			rp.put("data", retMap);
+			System.out.println("changeChk controller end service");
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		System.out.println("changeChk controller end");
+		return rp; 
+	}
+	
+	/**
+	 * 유연근무 변경/취소 적용
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+
+	@RequestMapping(value="/changeFlexible", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam setChangeFlexible(@RequestBody Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		System.out.println("setChangeFlexible controller start");
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("userId", userId);
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Map<String, Object> retMap = null;
+		
+		try {
+			retMap = flexibleEmpService.setChangeFlexible(paramMap);
+			rp.put("data", retMap);
+			System.out.println("changeChk controller end service");
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		System.out.println("changeChk controller end");
 		return rp; 
 	}
 	

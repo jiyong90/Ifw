@@ -1024,8 +1024,41 @@
 					  JOIN WTM_TIME_BREAK_MGR B
 						 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
 					 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
-					   AND D.YMD = #{ymd}
-					GROUP BY PLAN_SDATE, PLAN_EDATE ) S
+					   AND D.YMD = #{ymd} ) S
+  	</select>
+  	
+  	<select id="calcElasOtMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
+  		SELECT F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(PLAN_SDATE, -CALC_MINUTE,'I') ELSE PLAN_EDATE END, 'YMDHIS') AS S_DATE
+		     , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN PLAN_SDATE ELSE F_WTM_DATE_ADD(PLAN_EDATE, CALC_MINUTE, 'I') END, 'YMDHIS') AS E_DATE
+		     , BREAK_MINUTE
+			 , CALC_MINUTE 
+		  FROM (
+					SELECT PLAN_SDATE
+					      , PLAN_EDATE
+					      , BREAK_MINUTE
+							, F_WTM_CALC_MINUTE(SHM, EHM, '','','') - BREAK_MINUTE AS CALC_MINUTE
+					  FROM ( SELECT PLAN_SDATE
+					              , PLAN_EDATE
+					              , D.SHM
+					              , D.EHM
+					              , CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) IS NULL THEN 0 
+						  				 ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) END AS BREAK_MINUTE
+								  FROM ( SELECT FLEXIBLE_APPL_ID
+								              , YMD
+								              , TIME_CD_MGR_ID
+								              , F_WTM_TO_DATE(#{sDate},'YMDHI') AS PLAN_SDATE
+								              , F_WTM_TO_DATE(#{eDate},'YMDHI') AS PLAN_EDATE
+								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{sDate},'YMDHI'), -#{minute},'I') ELSE F_WTM_TO_DATE(#{eDate},'YMDHI') END, 'HI') AS SHM
+								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_TO_DATE(#{sDate},'YMDHI') ELSE F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eDate},'YMDHI'), #{minute}, 'I') END, 'HI') AS EHM
+								           FROM WTM_FLEXIBLE_APPL_DET) AS D
+								  JOIN WTM_TIME_CD_MGR T
+									 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+								  JOIN WTM_TIME_BREAK_MGR B
+									 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+								 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+								   AND D.YMD = #{ymd}
+								GROUP BY PLAN_SDATE, PLAN_EDATE, D.SHM, D.EHM ) S
+				 ) T
   	</select>
   	
   	<select id="checkDuplicateWorktime" parameterType="map" resultType="wtmGeneral">
@@ -1451,6 +1484,9 @@
   	<select id="getElasForPlan" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
 			SELECT F.FLEXIBLE_APPL_ID
+			     , A.APPL_ID
+			     , A.APPL_STATUS_CD
+			     , M.FLEXIBLE_STD_MGR_ID
 			     , M.FLEXIBLE_NM 
 			     , A.TENANT_ID
 			     , A.ENTER_CD
@@ -1646,4 +1682,33 @@
 			GROUP BY FLEXIBLE_APPL_ID
     	]]>
     </select>
+    
+    <select id="getChangeChk" statementType="CALLABLE" parameterType="map" >
+  		{ call P_WTM_FLEXIBLE_MODIFY_CHK( 
+  				#{tenantId, jdbcType=NUMERIC, javaType=java.lang.Long, mode=IN}
+			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{flexibleEmpId, jdbcType=NUMERIC, javaType=java.lang.Long, mode=IN}
+			  , #{changeType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{userId, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+			  , #{hisId, jdbcType=NUMERIC, javaType=java.lang.Long, mode=IN}
+			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}		
+			  , #{retId,jdbcType=NUMERIC, javaType=java.lang.Long, mode=OUT}
+		) }
+  	</select>
+  	
+  	<update id="deleteByflexibleEmpId" parameterType="map">
+		DELETE E 
+		FROM WTM_FLEXIBLE_EMP E 
+	    WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+	</update>
+	
+	<update id="updateByflexibleEmpId" parameterType="map">
+		UPDATE WTM_FLEXIBLE_EMP SET
+			SYMD = #{sYmd}
+			EYMD = #{eYmd}
+	    WHERE FLEXIBLE_EMP_ID = #{flexibleEmpId}
+	</update>
 </mapper>

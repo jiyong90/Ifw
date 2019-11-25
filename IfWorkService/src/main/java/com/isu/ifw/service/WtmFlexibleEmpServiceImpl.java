@@ -1,5 +1,6 @@
 package com.isu.ifw.service;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,9 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleApplDet;
 import com.isu.ifw.entity.WtmFlexibleEmp;
@@ -21,6 +24,7 @@ import com.isu.ifw.entity.WtmOtCanAppl;
 import com.isu.ifw.entity.WtmTaaCode;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
+import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
 import com.isu.ifw.repository.WtmFlexibleApplDetRepository;
@@ -32,6 +36,7 @@ import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.repository.WtmWorkteamEmpRepository;
 import com.isu.ifw.repository.WtmWorkteamMgrRepository;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmDayPlanVO;
 import com.isu.ifw.vo.WtmDayWorkVO;
 import com.isu.option.vo.ReturnParam;
@@ -65,6 +70,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Autowired
 	WtmTaaCodeRepository taaCodeRepo;
+	
+	@Autowired
+	WtmFlexibleApplMapper flexApplMapper;
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
@@ -328,15 +336,18 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				//기본근무 종료시간을 구하자.
 				Date maxEdate = flexEmpMapper.getMaxPlanEdate(pMap);
 				
-				pMap.put("yyyyMMddHHmmss", format.format(maxEdate));
-				pMap.put("intervalMinute", fixotUseLimit);
+				if(maxEdate!=null) {
+					pMap.put("yyyyMMddHHmmss", format.format(maxEdate));
+					pMap.put("intervalMinute", fixotUseLimit);
+					
+					//고정 OT의 종료시간을 가지고 오자.
+					Date flxotEdate = flexEmpMapper.getIntervalDateTime(pMap);
+					//데이터는 같아야 한다. 설정의 변경으로 인해 데이터가 망가지는건 설정화면에서 변경하지 못하도록 제어한다. 비슷하다는걸로 판단하면 안됨.
+					WtmWorkDayResult otDayResult = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndPlanSdateAndPlanEdate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_OTFIX, maxEdate, flxotEdate);
+					if(otDayResult!=null)
+						workDayResultRepo.delete(otDayResult);
+				}
 				
-				//고정 OT의 종료시간을 가지고 오자.
-				Date flxotEdate = flexEmpMapper.getIntervalDateTime(pMap);
-				//데이터는 같아야 한다. 설정의 변경으로 인해 데이터가 망가지는건 설정화면에서 변경하지 못하도록 제어한다. 비슷하다는걸로 판단하면 안됨.
-				WtmWorkDayResult otDayResult = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndPlanSdateAndPlanEdate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_OTFIX, maxEdate, flxotEdate);
-				if(otDayResult!=null)
-					workDayResultRepo.delete(otDayResult);
 			}
 			
 			//기본근무 정보는 삭제 하고 다시 만들자 그게 속편하다
@@ -589,6 +600,111 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		return rp;
 	}
+	
+	@Transactional
+	@Override
+	public ReturnParam saveElasPlan(Long flexibleApplId, Map<String, Object> paramMap, String userId) throws Exception{
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		if(paramMap.get("dayResult")!=null && !"".equals(paramMap.get("dayResult"))){
+			//dayResult는 이런 형식 {ymd : {shm: 0900, ehm: 1800, otbMinute: 1, otaMinute:2 } }
+			Map<String, Object> dayResult = (Map<String, Object>)paramMap.get("dayResult");
+			
+			if(dayResult!=null && dayResult.size()>0) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+				List<WtmFlexibleApplDet> applDets = new ArrayList<WtmFlexibleApplDet>();
+				
+				for(String k : dayResult.keySet()) {
+					Map<String, Object> vMap = (Map<String, Object>)dayResult.get(k);
+					WtmFlexibleApplDet applDet = flexApplDetRepo.findByFlexibleApplIdAndYmd(flexibleApplId, k);
+					
+					if(applDet!=null) {
+						String shm = null;
+						Date planSdate = null;
+						if(vMap.get("shm") != null && !vMap.get("shm").equals("") && !vMap.get("shm").equals("0000")) {
+							shm = vMap.get("shm").toString();
+							planSdate = sdf.parse(k+shm);
+							
+							applDet.setPlanSdate(planSdate);
+						} else {
+							applDet.setPlanSdate(null);
+						}
+						String ehm = null;
+						Date planEdate = null;
+						if(vMap.get("ehm") != null && !vMap.get("ehm").equals("") && !vMap.get("ehm").equals("0000")) {
+							ehm = vMap.get("ehm").toString();
+							planEdate = sdf.parse(k+ehm);
+							
+							applDet.setPlanEdate(planEdate);
+						} else {
+							applDet.setPlanEdate(null);
+						}
+						
+						paramMap.put("ymd", k);
+						
+						if(shm!=null && ehm!=null) {
+							paramMap.put("shm", shm);
+							paramMap.put("ehm", ehm);
+							Map<String, Object> planMinuteMap = flexEmpMapper.calcElasPlanMinuteExceptBreaktime(paramMap);
+							applDet.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+""));
+						}
+						
+						if(shm!=null && ehm!=null && vMap.get("otbMinute") != null && !vMap.get("otbMinute").equals("")) {
+							paramMap.put("otType", "OTB");
+							paramMap.put("sDate", k+shm );
+							paramMap.put("eDate", k+ehm );
+							paramMap.put("minute", vMap.get("otbMinute"));
+							Map<String, Object> otbMinuteMap = flexEmpMapper.calcElasOtMinuteExceptBreaktime(paramMap);
+							
+							if(otbMinuteMap!=null) {
+								Date otbSdate = WtmUtil.toDate(otbMinuteMap.get("sDate").toString(), "yyyyMMddHHmmss");
+								Date otbEdate = WtmUtil.toDate(otbMinuteMap.get("eDate").toString(), "yyyyMMddHHmmss");
+								
+								applDet.setOtbSdate(otbSdate);
+								applDet.setOtbEdate(otbEdate);
+								applDet.setOtbMinute(Integer.parseInt(otbMinuteMap.get("calcMinute").toString()));
+							}
+							
+						} else {
+							applDet.setOtbSdate(null);
+							applDet.setOtbEdate(null);
+							applDet.setOtbMinute(null);
+						}
+						
+						if(shm!=null && ehm!=null && vMap.get("otaMinute") != null && !vMap.get("otaMinute").equals("")) {
+							paramMap.put("otType", "OTA");
+							paramMap.put("sDate", k+shm );
+							paramMap.put("eDate", k+ehm );
+							paramMap.put("minute", vMap.get("otaMinute"));
+							
+							Map<String, Object> otaMinuteMap = flexEmpMapper.calcElasOtMinuteExceptBreaktime(paramMap);
+							Date otaSdate = WtmUtil.toDate(otaMinuteMap.get("sDate").toString(), "yyyyMMddHHmmss");
+							Date otaEdate = WtmUtil.toDate(otaMinuteMap.get("eDate").toString(), "yyyyMMddHHmmss");
+							
+							applDet.setOtaSdate(otaSdate);
+							applDet.setOtaEdate(otaEdate);
+							applDet.setOtaMinute(Integer.parseInt(otaMinuteMap.get("calcMinute").toString()));
+						} else {
+							applDet.setOtaSdate(null);
+							applDet.setOtaEdate(null);
+							applDet.setOtaMinute(null);
+						}
+							
+						applDet.setUpdateDate(new Date());
+						
+						applDets.add(applDet);
+					}
+				}
+				
+				if(applDets.size()>0) 
+					flexApplDetRepo.saveAll(applDets);
+			}
+				
+		}
+		
+		return rp;
+	}
 
 	@Override
 	//public List<WtmDayWorkVO> getDayWorks(Long flexibleEmpId, Long userId) {
@@ -626,6 +742,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					H = Float.parseFloat(m)/60;
 					i = (H - H.intValue()) * 60;
 				}
+
 				String taaCd =  "";
 				if(plan.containsKey("taaCd") && plan.get("taaCd") != null) {
 					 taaCd = plan.get("taaCd").toString();
@@ -633,6 +750,10 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				String taaNm =  "";
 				if(plan.containsKey("taaNm") && plan.get("taaNm") != null) {
 					taaNm = plan.get("taaNm").toString();
+				}
+				String timeTypeCd =  "";
+				if(plan.containsKey("timeTypeCd") && plan.get("timeTypeCd") != null) {
+					timeTypeCd = plan.get("timeTypeCd").toString();
 				}
 				
 				List<WtmDayPlanVO> planVOs = new ArrayList<>();
@@ -647,7 +768,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				if(taaNm != null && !taaNm.equals("")) {
 					planVO.setLabel(taaNm);
 				}else{
-					planVO.setLabel(shm + "~" + ehm + "("+H.intValue()+"시간"+((i.intValue()>0)?i.intValue()+"분":"")+")");
+					String label = shm + "~" + ehm + "("+H.intValue()+"시간"+((i.intValue()>0)?i.intValue()+"분":"")+")";
+					planVO.setLabel(label);
 				}
 				
 				Map<String, Object> valueMap = new HashMap<>();
@@ -656,6 +778,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				valueMap.put("m", m);
 				valueMap.put("taaNm", taaNm);
 				valueMap.put("taaCd", taaCd);
+				valueMap.put("timeTypeCd", timeTypeCd);
 				planVO.setValueMap(valueMap);
 				planVOs.add(planVO);
 
@@ -1251,5 +1374,131 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		}
 		
 		return flexibleEmp;
+	}
+	
+
+	@Override
+	public Map<String, Object> getFlexibleApplDetForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
+		// 탄근제의 근무 계획 조회
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		Map<String, Object> flexibleEmp = flexEmpMapper.getElasForPlan(paramMap);
+		if(flexibleEmp!=null) {
+			List<Map<String, Object>> plans = flexEmpMapper.getElasPlanByFlexibleApplId(paramMap);
+			List<WtmDayWorkVO> dayWorks = getDayWorks(plans, userId);
+			flexibleEmp.put("dayWorks", dayWorks);
+			
+			//평균 근무 시간 계산
+			Map<String, Object> avgHourMap = flexEmpMapper.getElasAvgHour(paramMap);
+			if(avgHourMap!=null) {
+				flexibleEmp.put("avgHour", Double.parseDouble(avgHourMap.get("avgHour")+""));
+			}
+		}
+		
+		return flexibleEmp;
+	}
+	
+	/**
+	 * 유연근무 변경/취소 확인
+	 * @param tenantId
+	 * @param enterCd
+	 * @param workCalendarId
+	 * @return
+	 */
+	@Override
+	public Map<String, Object> GetChangeChk(Map<String, Object> paramMap) {
+		
+		try {
+			System.out.println("changeChk serviceImpl start");
+			paramMap.put("retCode", "");
+			paramMap.put("retMsg", "");
+			
+			flexEmpMapper.getChangeChk(paramMap);
+			
+			String retCode = paramMap.get("retCode").toString();
+			String retMsg = paramMap.get("retMsg").toString();
+			Long retId = Long.parseLong(paramMap.get("retId").toString());
+			
+			if("OK".equals(retCode)) {
+				paramMap.put("retType", "END");
+				// 체크 성공 반영하러 보내기
+				paramMap.put("hisId", retId);
+				paramMap = setChangeFlexible(paramMap);
+			} else {
+				paramMap.put("retType", "MSG");
+			}
+			System.out.println("changeChk serviceImpl end");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return paramMap;
+
+	}
+	
+	/**
+	 * 유연근무 변경/취소 적용
+	 * @param tenantId
+	 * @param enterCd
+	 * @param flexibleEmpId
+	 * @param flexibleStdMgrId
+	 * @param sYmd
+	 * @param eYmd
+	 * @param symd
+	 * @param eymd
+	 * @param sabun
+	 * @param hisId
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public Map<String, Object> setChangeFlexible(Map<String, Object> paramMap) {
+		
+		try {
+			System.out.println("setChangeFlexible serviceImpl start");
+			// 변경데이터 flexibleemp에 적용하고 reset 부르기
+			String changeType = paramMap.get("changeType").toString();
+			String symd = paramMap.get("symd").toString();
+			String eymd = paramMap.get("eymd").toString();
+			if("DEL".equals(changeType)) {
+				// 유연근무 기간 지우기
+				flexEmpMapper.deleteByflexibleEmpId(paramMap);
+			} else {
+				// 유연근무 기간 변경하기
+				flexEmpMapper.deleteByflexibleEmpId(paramMap);
+				//근무제 기간의 총 소정근로 시간을 업데이트 한다.
+				flexApplMapper.updateWorkMinuteOfWtmFlexibleEmp(paramMap);
+			}
+			// 기본근무정산은 유연근무시작일 -1일부터 유연근무종료일 +1일 처리함
+			// 직전종료일 +1일을 해줘야함
+			DateFormat df = new SimpleDateFormat("yyyyMMdd");
+			Date sdate = df.parse(symd);
+	        // 날짜 더하기
+	        Calendar cal = Calendar.getInstance();
+	        cal.setTime(sdate);
+	        cal.add(Calendar.DATE, -1);
+	        symd = df.format(cal.getTime());
+	        Date edate = df.parse(eymd);
+	        // 날짜 더하기
+	        cal = Calendar.getInstance();
+	        cal.setTime(edate);
+	        cal.add(Calendar.DATE, 1);
+	        eymd = df.format(cal.getTime());
+	        
+	        paramMap.remove("symd");
+	        paramMap.remove("eymd");
+	        
+	        paramMap.put("symd", symd);
+			paramMap.put("eymd", eymd);
+	        
+			// 그리고 리셋하기
+			flexEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
+			System.out.println("setChangeFlexible serviceImpl end");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return paramMap;
+
 	}
 }
