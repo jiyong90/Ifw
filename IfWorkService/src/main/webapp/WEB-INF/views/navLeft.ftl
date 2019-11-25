@@ -29,7 +29,7 @@
                 <span class="title">결재</span>
             </a>
         </li>
-        <li :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'">
+        <li v-if="tsId=='isu' || authCd=='10'" :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'">
         	<a href="javascript:void(0);" onclick="callLnb(this);return false;">
                 <i class="fas fa-laptop"></i>
                 <span class="title">유연근무관리</span>

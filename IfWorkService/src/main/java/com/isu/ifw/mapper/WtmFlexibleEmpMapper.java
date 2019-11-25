@@ -328,12 +328,17 @@ public interface WtmFlexibleEmpMapper {
 	public List<Map<String, Object>> getElasWorkDayResult(@Param("flexibleApplId")Long flexibleApplId);
 	
 	
+	
 	/**
-	 * 탄근제 평균 근무 시간 조회
-	 * @param paramMap flexibleApplId
-	 * @return
+	 * 유연근무 변경/취소 확인
 	 */
-	public Map<String, Object> getElasAvgHour(Map<String, Object> paramMap);
+	public Map<String, Object> getChangeChk(Map<String, Object> paramMap);
+	
+	/**
+	 * 유연근무 적용내용 삭제
+	 */
+	public void deleteByflexibleEmpId(Map<String, Object> paramMap);
+	
 	
 	/**
 	 * 유연근무 변경/취소 확인
@@ -349,12 +354,4 @@ public interface WtmFlexibleEmpMapper {
 	 * 유연근무 적용내용 수정
 	 */
 	public void updateByflexibleEmpId(Map<String, Object> paramMap);
-	
-	/**
-	 * 탄근제 주별 근무시간 조회
-	 * @param flexibleApplId
-	 * @return
-	 */
-	public List<Map<String, Object>> getElasWeekHour(@Param("flexibleApplId")Long flexibleApplId);
-	
 }

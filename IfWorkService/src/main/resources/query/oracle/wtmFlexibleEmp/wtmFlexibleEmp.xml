@@ -1645,6 +1645,7 @@
 			GROUP BY FLEXIBLE_APPL_ID
     	]]>
     </select>
+   
     
     <select id="getChangeChk" statementType="CALLABLE" parameterType="map" >
   		{ call P_WTM_FLEXIBLE_MODIFY_CHK( 
@@ -1674,27 +1675,4 @@
 			EYMD = #{eYmd}
 	    WHERE FLEXIBLE_EMP_ID = #{flexibleEmpId}
 	</update>
-    
-    <select id="getElasWeekHour" parameterType="Long" resultType="wtmGeneral" >
-    	<![CDATA[
-    		SELECT START_YMD
-			     , SUM(CASE WHEN HOLIDAY_YN = 'N' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END) AS WORK_MINUTE
-			     , SUM(CASE WHEN HOLIDAY_YN = 'Y' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END)
-				     + SUM(CASE WHEN OTB_MINUTE IS NOT NULL AND OTB_MINUTE<>0 THEN OTB_MINUTE ELSE 0 END)
-				     + SUM(CASE WHEN OTA_MINUTE IS NOT NULL AND OTA_MINUTE<>0 THEN OTA_MINUTE ELSE 0 END) AS OT_MINUTE
-			  FROM ( SELECT YMD
-						     , HOLIDAY_YN
-							  , DATE_SUB(YMD, INTERVAL (CASE WHEN DAYOFWEEK(YMD)<startWeekDay THEN maxWeekDay-DAYOFWEEK(YMD) ELSE DAYOFWEEK(YMD)-startWeekDay END) DAY) AS START_YMD
-							  , PLAN_MINUTE
-							  , OTB_MINUTE
-							  , OTA_MINUTE
-						  FROM WTM_FLEXIBLE_APPL_DET D
-						  JOIN ( SELECT F_WTM_WEEKDAY(MIN(YMD)) AS startWeekDay , MAX(F_WTM_WEEKDAY(YMD)) AS maxWeekDay 
-						           FROM WTM_FLEXIBLE_APPL_DET
-						          WHERE FLEXIBLE_APPL_ID = #{flexibleApplId} ) T  
-						    ON 1=1
-						 WHERE FLEXIBLE_APPL_ID = #{flexibleApplId} ) S
-			GROUP BY START_YMD
-    	]]>
-    </select>
 </mapper>
