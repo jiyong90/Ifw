@@ -460,7 +460,7 @@ a.article:hover {
   top: 0;
   left: 100px;
   height: 100%;
-  padding: 0px;
+  padding: 8px 0px;
   z-index: 90;
   background: #ffffff;
   color: #272740;
