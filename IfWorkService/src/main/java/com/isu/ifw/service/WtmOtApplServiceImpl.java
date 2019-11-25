@@ -24,6 +24,7 @@ import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.entity.WtmOtSubsAppl;
 import com.isu.ifw.entity.WtmPropertie;
 import com.isu.ifw.entity.WtmRule;
+import com.isu.ifw.entity.WtmTimeCdMgr;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmApplMapper;
@@ -43,6 +44,7 @@ import com.isu.ifw.repository.WtmOtApplRepository;
 import com.isu.ifw.repository.WtmOtSubsApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.repository.WtmRuleRepository;
+import com.isu.ifw.repository.WtmTimeCdMgrRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.util.WtmUtil;
@@ -114,6 +116,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmInboxService inbox;
+	
+	@Autowired
+	WtmTimeCdMgrRepository wtmTimeCdMgrRepo;
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -314,6 +319,17 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				otNightEdate = format.parse(otAppl.getYmd()+n_ehm);
 			}
 			
+			//break_type_cd
+			String breakTypeCd = "";
+			WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, appl.getApplSabun(), otAppl.getYmd());
+			if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
+				Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
+				
+				WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
+				if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
+					breakTypeCd = timeCdMgr.getBreakTypeCd();
+			}
+			
 			//신청부터 야간연장신청이다.
 			if(otAppl.getOtSdate().compareTo(otNightSdate) == 1 ) {
 				//연장야간 종료시간이 야간 종료시간보다 클경우
@@ -335,7 +351,16 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					reCalc.put("ymd", otAppl.getYmd());
 					reCalc.put("shm", sdf.format(otAppl.getOtSdate()));
 					reCalc.put("ehm", sdf.format(otNightSdate));
-					Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+					//Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+					Map<String, Object> addPlanMinuteMap = null;
+					if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
+						addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+					} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
+						
+					} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
+					
+					}
+					
 					dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
 					 
 					dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_NIGHT);
@@ -355,7 +380,14 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					 
 					reCalc.put("shm", sdf.format(otNightSdate));
 					reCalc.put("ehm", sdf.format(otAppl.getOtEdate()));
-					addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+					//addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+					if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
+						addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+					} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
+						
+					} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
+					
+					}
 					dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+"")); 
 					dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_OT);
 					dayResult.setUpdateId(userId);
@@ -398,7 +430,15 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				reCalc.put("ymd", otAppl.getYmd());
 				reCalc.put("shm", sdf.format(otAppl.getOtSdate()));
 				reCalc.put("ehm", sdf.format(otNightSdate));
-				Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+				//Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+				Map<String, Object> addPlanMinuteMap = null;
+				if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
+					addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+				} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
+					
+				} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
+				
+				}
 				dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
 				 
 				dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_OT);
@@ -419,7 +459,14 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				 
 				reCalc.put("shm", sdf.format(otNightSdate));
 				reCalc.put("ehm", sdf.format(otAppl.getOtEdate()));
-				addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+				//addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+				if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
+					addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
+				} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
+					
+				} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
+				
+				}
 				dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+"")); 
 				dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_NIGHT);
 				dayResult.setUpdateId(userId);

@@ -216,4 +216,20 @@ public interface WtmFlexibleEmpService {
 	 */
 	public Map<String, Object> getFlexibleApplDetForPlan(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
 	
+
+	/**
+	 * 유연근무 변경/취소 확인
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> GetChangeChk(Map<String, Object> paramMap);
+	
+	/**
+	 * 유연근무 변경/취소 적용
+	 * @param paramMap
+	 * @return
+	 */
+	public Map<String, Object> setChangeFlexible(Map<String, Object> paramMap);
+	
+
 }
