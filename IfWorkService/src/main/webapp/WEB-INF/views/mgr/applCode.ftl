@@ -56,7 +56,7 @@
 										</td>
 										<th>신청 지정 분</th>
 										<td>
-											<select id="timeUnit">
+											<select id="useMinutes">
 			                                    <option value="1">1분</option>
 			                                    <option value="0">00분</option>
 			                                    <option value="10">10분</option>
@@ -72,17 +72,17 @@
 									<tr id="trApplTime" style="display:none;">
 										<th>연장근무 신청 가능 시각</th>
 										<td colspan="3">
-											<input type="text" id="inShm" name="inShm" class="required" />
+											<input type="text" id="inShm" name="inShm" class="date2 required" data-toggle="datetimepicker" data-target="#inShm" placeholder="시:분" autocomplete="off"/>
 											~
-											<input type="text" id="inEhm" name="inEhm" class="required" />
+											<input type="text" id="inEhm" name="inEhm" class="date2 required" data-toggle="datetimepicker" data-target="#inEhm" placeholder="시:분" autocomplete="off"/>
 										</td>
 									</tr>
 									<tr id="trHolTime" style="display:none;">
 										<th>휴일근무 신청 가능 시각</th>
 										<td colspan="3">
-											<input type="text" id="holInShm" name="holInShm" class="required" />
+											<input type="text" id="holInShm" name="holInShm" class="date2 required" data-toggle="datetimepicker" data-target="#holInShm" placeholder="시:분" autocomplete="off"/>
 											~
-											<input type="text" id="holInEhm" name="holInEhm" class="required" />
+											<input type="text" id="holInEhm" name="holInEhm" class="date2 required" data-toggle="datetimepicker" data-target="#holInEhm" placeholder="시:분" autocomplete="off"/>
 										</td>
 									</tr>
 									<tr id="trHolBreak" style="display:none;">
@@ -147,6 +147,47 @@
 
 <script type="text/javascript">
    	$(function() {
+   		
+   		$('#inShm').datetimepicker({
+            //format: 'LT',
+            format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'bottom'
+            }
+        });
+   		$('#inEhm').datetimepicker({
+            //format: 'LT',
+            format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'bottom'
+            }
+        });
+   		$('#holInShm').datetimepicker({
+            //format: 'LT',
+            format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'bottom'
+            }
+        });
+   		$('#holInEhm').datetimepicker({
+            //format: 'LT',
+            format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'bottom'
+            }
+        });
    		//resize
    		$(window).smartresize(sheetResize);
    		
