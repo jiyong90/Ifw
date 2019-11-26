@@ -1459,6 +1459,8 @@
 			  , A.SYMD 
 			  , A.EYMD 
 			  , A.NOTE 
+			  , A.FLEXIBLE_STD_MGR_ID
+			  , A.FLEXIBLE_EMP_ID
 			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(SYSDATE, 'YMD') THEN CONCAT('<a class="basic" onClick="setModify(', FLEXIBLE_EMP_ID, ')">근무변경/취소</a>')
 					    ELSE '' END AS MODIFY
 		  FROM WTM_FLEXIBLE_EMP A
@@ -1846,8 +1848,20 @@
 	
 	<update id="updateByflexibleEmpId" parameterType="map">
 		UPDATE WTM_FLEXIBLE_EMP SET
-			SYMD = #{sYmd}
-			EYMD = #{eYmd}
+			SYMD = #{symd}
+			, EYMD = #{eymd}
 	    WHERE FLEXIBLE_EMP_ID = #{flexibleEmpId}
+	</update>
+	
+	<update id="setChangeErrMsg" parameterType="map">
+		UPDATE WTM_FLEXIBLE_CHG_HIS SET
+			ERR_MSG = #{retMsg}
+	    WHERE FLEXIBLE_CHG_HIS_ID = #{retId}
+	</update>
+	
+	<update id="setChangeEndMsg" parameterType="map">
+		UPDATE WTM_FLEXIBLE_CHG_HIS SET
+			END_MSG = #{retMsg}
+	    WHERE FLEXIBLE_CHG_HIS_ID = #{hisId}
 	</update>
 </mapper>

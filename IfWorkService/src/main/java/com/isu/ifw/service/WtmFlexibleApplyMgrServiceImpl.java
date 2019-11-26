@@ -186,7 +186,11 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 		try {
 			// 반복기준 조회
 			repeatList = wtmFlexibleApplyMgrMapper.getApplyRepeatList(paramMap);
-			int repeatCnt = Integer.parseInt(repeatList.get(0).get("repeatCnt").toString());
+			int repeatCnt = 0;
+			if(repeatList.get(0).get("repeatCnt") != null) {
+				repeatCnt = Integer.parseInt(repeatList.get(0).get("repeatCnt").toString());
+			}
+			
 			String repeatTypeCd = repeatList.get(0).get("repeatTypeCd").toString();
 			paramMap.put("repeatTypeCd", repeatTypeCd);
 			if(repeatCnt == 0) {
@@ -284,6 +288,7 @@ public class WtmFlexibleApplyMgrServiceImpl implements WtmFlexibleApplyMgrServic
 		    		}
 						
 					flexEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(calendarMap);
+					flexEmpMapper.createWorkTermBySabunAndSymdAndEymd(calendarMap);
 					System.out.println("initWtmFlexibleEmpOfWtmWorkDayResult");
 				}
 			}

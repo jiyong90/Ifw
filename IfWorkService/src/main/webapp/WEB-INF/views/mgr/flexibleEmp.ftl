@@ -117,6 +117,7 @@
 
 <script type="text/javascript">
 	var modifyFlexibleEmpId;
+	var flexibleStdMgrId;
    	$(function() {
    		//resize
 		$(window).smartresize(sheetResize);
@@ -135,7 +136,8 @@
 			{Header:"No",		Type:"Seq",			Hidden:0,	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"삭제",		Type:"DelCheck",	Hidden:1,	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
 			{Header:"상태",		Type:"Status",		Hidden:1,	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
-			{Header:"oid",		Type:"Text",		Hidden:0,	Width:120,	Align:"Left",	ColMerge:0,	SaveName:"flexibleEmpId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"oid",		Type:"Text",		Hidden:1,	Width:120,	Align:"Left",	ColMerge:0,	SaveName:"flexibleEmpId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"stdmgrId",	Type:"Text",		Hidden:1,	Width:120,	Align:"Left",	ColMerge:0,	SaveName:"flexibleStdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"소속",		Type:"Text",		Hidden:0,	Width:120,	Align:"Left",	ColMerge:0,	SaveName:"orgNm",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"사번",		Type:"Text",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0,	SaveName:"sabun",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"성명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"empNm",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
@@ -185,6 +187,7 @@
 		var findVal = flexibleEmpId + "";
 		var row = sheet1.FindText(3, findVal);
 		modifyFlexibleEmpId = flexibleEmpId;
+		flexibleStdMgrId = sheet1.GetCellValue(row, "sabflexibleStdMgrIdun");
 		$("#orgSabun").text(sheet1.GetCellValue(row, "sabun"));
 		$("#orgEmpNm").text(sheet1.GetCellValue(row, "empNm"));
 		$("#orgWorkTypeNm").text(sheet1.GetCellText(row, "workTypeCd"));
@@ -203,45 +206,104 @@
 		var changeType = $("#changeType").val();
 		var chgSymd = "";
 		var chgEymd = "";
+		var sabun = $("#orgSabun").text();
+		var orgSymd = replaceAll($("#orgSymd").text(), "-", "");
+		var orgEymd = replaceAll($("#orgEymd").text(), "-", "");
 		
-		msg1 = $("#orgEmpNm").text() + "님의 " + $("#orgFlexibleNm").text + " 유연근무제도를 ";
+		msg1 = $("#orgEmpNm").text() + "님의 " + $("#orgFlexibleNm").text() + " 유연근무제도를 ";
 		
 		if(changeType == "MOD"){
-			chgSymd = $("#chgSymd").val();
-			chgEymd = $("#chgEymd").val();
+			chgSymd = replaceAll($("#chgSymd").val(), "-", "");
+			chgEymd = replaceAll($("#chgEymd").val(), "-", "");
 			msg1 = msg1 + "변경하시겠습니까?";
 		}else{
 			msg1 = msg1 + "취소하시겠습니까?";
 		}
-		var param = {
- 			  modifyFlexibleEmpId: modifyFlexibleEmpId
- 			, changeType: changeType
- 			, chgSymd: chgSymd
- 			, chgEymd: chgEymd
- 		};
-		/*
+		
 		if(confirm(msg1)){
-			Util.ajax({
+
+			var param = {
+				  flexibleEmpId : modifyFlexibleEmpId
+	 			, flexibleStdMgrId : flexibleStdMgrId
+				, changeType : changeType
+				, sabun : sabun
+	 			, sYmd : chgSymd
+	 			, eYmd : chgEymd
+	 			, orgSymd : orgSymd
+	 			, orgEymd : orgEymd
+	 		};
+			console.log(param);
+	    	Util.ajax({
 				url: "${rc.getContextPath()}/flexibleEmp/changeChk",
 				type: "POST",
 				contentType: 'application/json',
 				data: JSON.stringify(param),
 				dataType: "json",
 				success: function(data) {
-					if(data!=null && data.status=='OK') {
-						$("#data.sabun")
+					console.log(data);					
+					if(data!=null) {
+						if(data.data.retType == "END"){
+							alert("적용완료되었습니다.");
+							$("#flexibleModifyPopModal").modal("hide");
+							doAction1("Search");
+							// 팝업닫고 재조회
+						} else if(data.data.retType == "MSG"){
+							// 안내할 메시지가 있음 반영여부 확인 
+							if(confirm(data.data.retMsg)){
+								// 오류가 있어도 반영한다면 다시 부르자 갱신로직
+								if(changeType == "DEL"){
+									chgSymd = orgSymd;
+									chgEymd = orgEymd;
+								}
+								var param2 = {
+									  flexibleEmpId : modifyFlexibleEmpId
+						 			, flexibleStdMgrId : flexibleStdMgrId
+									, changeType : changeType
+									, sabun : sabun
+						 			, symd : chgSymd
+						 			, eymd : chgEymd
+						 			, orgSymd : orgSymd
+						 			, orgEymd : orgEymd
+						 			, hisId : data.data.retId
+						 		};
+								console.log(param2);
+								Util.ajax({
+									url: "${rc.getContextPath()}/flexibleEmp/changeFlexible",
+									type: "POST",
+									contentType: 'application/json',
+									data: JSON.stringify(param2),
+									dataType: "json",
+									success: function(data) {
+										if(data!=null) {
+											if(data.data.retType == "END"){
+												alert("적용완료되었습니다.");
+												// 팝업닫고 재조회
+												$("#flexibleModifyPopModal").modal("hide");
+												doAction1("Search");
+											} else {
+												alert(data.data.retMsg);
+											}
+										}
+									},error: function(e) {
+										console.log(e);
+										alert("근무적용중 오류가 발생하였습니다.");
+									}
+								});
+							}
+						}
 					} else {
-						alert("근무변경정보 조회에 오류가 발생하였습니다.");
+						alert("근무적용검증중 오류가 발생하였습니다.");
 					}
+					
 				},
 				error: function(e) {
 					console.log(e);
 					alert("근무변경정보 조회에 오류가 발생하였습니다.");
 				}
-			});
+			}); 
 		}
-		*/
 	}
+	
 	$("#changeType").change(function(){
 		if($("#changeType").val() == "DEL"){
 			// 유연근무취소

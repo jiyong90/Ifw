@@ -1426,6 +1426,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				paramMap = setChangeFlexible(paramMap);
 			} else {
 				paramMap.put("retType", "MSG");
+				// 검증메시지가 있으면 메시지 호출
+				flexEmpMapper.setChangeErrMsg(paramMap);
 			}
 			System.out.println("changeChk serviceImpl end");
 		} catch (Exception e) {
@@ -1457,18 +1459,18 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			System.out.println("setChangeFlexible serviceImpl start");
 			// 변경데이터 flexibleemp에 적용하고 reset 부르기
 			String changeType = paramMap.get("changeType").toString();
-			String symd = paramMap.get("symd").toString();
-			String eymd = paramMap.get("eymd").toString();
 			if("DEL".equals(changeType)) {
 				// 유연근무 기간 지우기
 				flexEmpMapper.deleteByflexibleEmpId(paramMap);
 			} else {
 				// 유연근무 기간 변경하기
-				flexEmpMapper.deleteByflexibleEmpId(paramMap);
+				flexEmpMapper.updateByflexibleEmpId(paramMap);
 				//근무제 기간의 총 소정근로 시간을 업데이트 한다.
 				flexApplMapper.updateWorkMinuteOfWtmFlexibleEmp(paramMap);
 			}
 			// 기본근무정산은 유연근무시작일 -1일부터 유연근무종료일 +1일 처리함
+			String symd = paramMap.get("orgSymd").toString();
+			String eymd = paramMap.get("orgEymd").toString();
 			// 직전종료일 +1일을 해줘야함
 			DateFormat df = new SimpleDateFormat("yyyyMMdd");
 			Date sdate = df.parse(symd);
@@ -1492,6 +1494,12 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	        
 			// 그리고 리셋하기
 			flexEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
+			// 근무시간계산 다시 부르기
+			flexEmpMapper.createWorkTermBySabunAndSymdAndEymd(paramMap);
+			paramMap.put("retType", "END");
+			paramMap.put("retMsg", "근무적용완료");
+			flexEmpMapper.setChangeEndMsg(paramMap);
+			
 			System.out.println("setChangeFlexible serviceImpl end");
 		} catch (Exception e) {
 			e.printStackTrace();
