@@ -547,10 +547,7 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 						}
 					}
 					
-					System.out.println("sumWorkMinute:::" + sumWorkMinute);
-					System.out.println("avgWorkMinute:::" + (sumWorkMinute/days.size()*7));
-					
-					if(sumWorkMinute>0 && (sumWorkMinute/days.size()*7)>40) {
+					if(sumWorkMinute>0 && (sumWorkMinute/days.size()*7)/60>40) {
 						rp.setFail("소정 근무는 평균 40시간을 초과할 수 없습니다.");
 						return rp;
 					} 

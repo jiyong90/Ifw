@@ -1128,8 +1128,6 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
-		paramMap.put("symd", paramMap.get("ymd").toString());
-		paramMap.put("eymd", paramMap.get("ymd").toString());
 		
 		String breakTypeCd = "";
 		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, paramMap.get("ymd").toString());

@@ -349,8 +349,6 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					reCalc.put("enterCd", enterCd);
 					reCalc.put("sabun", sabun);
 					reCalc.put("ymd", otAppl.getYmd());
-					reCalc.put("symd", otAppl.getYmd());
-					reCalc.put("eymd", otAppl.getYmd());
 					reCalc.put("shm", sdf.format(otAppl.getOtSdate()));
 					reCalc.put("ehm", sdf.format(otNightSdate));
 					//Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
@@ -430,8 +428,6 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				reCalc.put("enterCd", enterCd);
 				reCalc.put("sabun", sabun);
 				reCalc.put("ymd", otAppl.getYmd());
-				reCalc.put("symd", otAppl.getYmd());
-				reCalc.put("eymd", otAppl.getYmd());
 				reCalc.put("shm", sdf.format(otAppl.getOtSdate()));
 				reCalc.put("ehm", sdf.format(otNightSdate));
 				//Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
