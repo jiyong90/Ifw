@@ -485,14 +485,14 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 		if(paramMap != null && paramMap.containsKey("flexibleApplId") && !paramMap.equals("")) {
 			flexibleApplId = Long.parseLong(paramMap.get("flexibleApplId").toString());
 		}
-		List<WtmFlexibleDayPlan> days = wtmFlexibleDayPlanRepo.findByFlexibleApplId(flexibleApplId);
+		List<WtmFlexibleApplDet> days = wtmFlexibleApplDetRepo.findByFlexibleApplId(flexibleApplId);
 		//근무 상세에 대한 소정근로시간 체크 (탄근제)
 		//근무제로 판단하지 않고 신청 시 신청에 딸린 계획데이터가 있을경우 체크하즈아.
 		if(days != null && days.size() > 0) {
 			WtmPropertie propertie = null;
 			String defultWorktime = "8";
-			String max2weekWithin = "0";
-			String max2weekMorethen = "0";
+			String max2weekWithin = "48";
+			String max2weekMorethen = "52";
 			String maxAdd = "0";
 			propertie = wtmPropertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_DEFAULT_WORKTIME");
 			if(propertie != null)
@@ -517,17 +517,44 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 				//탄근제
 				//근로시간은 평균 40 시간, OT시간은 주 12시간 초과 시 신청할 수 없고
 				//2주 이내 탄근제는 주간 최대 근무시간은 48시간, 2주 이상 탄근제는 주간 최대 근무시간 52시간 
-				long dayCnt = 0;
-				try {
-					dayCnt = WtmUtil.dayCnt(sYmd, eYmd);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} //탄근제 시행일수
+				int sumWorkMinute = 0;
+				List<Map<String, Object>> weekList = wtmFlexibleEmpMapper.getElasWeekHour(flexibleApplId);
 				
-				//List<Map<String, Object>> weekHour = wtmFlexibleEmpMapper.getElasWeekHour(flexibleApplId);
-				
-				
+				if(weekList!=null && weekList.size()>0) {
+					for(Map<String, Object> w : weekList) {
+						int workMinute = 0;
+						if(w.get("workMinute")!=null && !"".equals(w.get("workMinute"))) {
+							workMinute = Integer.parseInt(w.get("workMinute").toString());
+							sumWorkMinute += workMinute;
+							
+							if(days.size()>14 && (workMinute/60) > Integer.parseInt(max2weekMorethen)) {
+								rp.setFail("2주 이상 탄근제는 주간 최대 "+max2weekMorethen+"시간을 초과할 수 없습니다.");
+								return rp;
+							}
+							if(days.size()<=14 && (workMinute/60) > Integer.parseInt(max2weekWithin)) {
+								rp.setFail("2주 이내 탄근제는 주간 최대 "+max2weekWithin+"시간을 초과할 수 없습니다.");
+								return rp;
+							}
+						}
+						
+						int otMinute = 0;
+						if(w.get("otMinute")!=null && !"".equals(w.get("otMinute"))) 
+							otMinute = Integer.parseInt(w.get("otMinute").toString());
+						
+						if((otMinute/60) > 12) {
+							rp.setFail("연장 근무는 주 12시간을 초과할 수 없습니다.");
+							return rp;
+						}
+					}
+					
+					System.out.println("sumWorkMinute:::" + sumWorkMinute);
+					System.out.println("avgWorkMinute:::" + (sumWorkMinute/days.size()*7));
+					
+					if(sumWorkMinute>0 && (sumWorkMinute/days.size()*7)>40) {
+						rp.setFail("소정 근무는 평균 40시간을 초과할 수 없습니다.");
+						return rp;
+					} 
+				}
 				
 			}else if(workTypeCd.equals("DIFF")) {
 				//시차

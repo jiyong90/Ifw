@@ -11,11 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.entity.WtmAppl;
+import com.isu.ifw.entity.WtmFlexibleAppl;
 import com.isu.ifw.entity.WtmFlexibleApplDet;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
@@ -27,7 +28,9 @@ import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
+import com.isu.ifw.repository.WtmApplRepository;
 import com.isu.ifw.repository.WtmFlexibleApplDetRepository;
+import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtCanApplRepository;
@@ -67,6 +70,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	WtmOtCanApplRepository otCanApplRepo;
 	
 	@Autowired
+	WtmFlexibleApplRepository flexApplRepo;
+	
+	@Autowired
 	WtmFlexibleApplDetRepository flexApplDetRepo;
 	
 	@Autowired
@@ -77,6 +83,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Autowired
 	WtmTimeCdMgrRepository wtmTimeCdMgrRepo;
+	
+	@Autowired
+	WtmApplRepository applRepo;
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
@@ -652,6 +661,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 							paramMap.put("ehm", ehm);
 							Map<String, Object> planMinuteMap = flexEmpMapper.calcElasPlanMinuteExceptBreaktime(paramMap);
 							applDet.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+""));
+						} else {
+							applDet.setPlanMinute(null);
 						}
 						
 						if(shm!=null && ehm!=null && vMap.get("otbMinute") != null && !vMap.get("otbMinute").equals("")) {
@@ -705,6 +716,14 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					flexApplDetRepo.saveAll(applDets);
 			}
 				
+		}
+		
+		if(paramMap.get("reason")!=null && !"".equals(paramMap.get("reason"))){
+			WtmFlexibleAppl flexAppl =  flexApplRepo.findById(flexibleApplId).get();
+			if(flexAppl!=null) {
+				flexAppl.setReason(paramMap.get("reason").toString());
+				flexApplRepo.save(flexAppl);
+			}
 		}
 		
 		return rp;
@@ -1109,6 +1128,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
+		paramMap.put("symd", paramMap.get("ymd").toString());
+		paramMap.put("eymd", paramMap.get("ymd").toString());
 		
 		String breakTypeCd = "";
 		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, paramMap.get("ymd").toString());

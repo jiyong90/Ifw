@@ -500,8 +500,10 @@
 	         	viewWorkPlan : function(d){
   	         		var $this = this;
   	         		var calendar = $this.$refs.fullCalendar.cal;
-  	         		
+  	         		console.log(d);
   	         		calendarLeftVue.flexibleAppl = d;
+  	         		if(d.hasOwnProperty('reason') && d.reason!=null && d.reason!=undefined)
+  	         			calendarLeftVue.applInfo.reason = d.reason;
   	         		
          			var eDate = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
          			eDate.setDate(eDate.getDate()+1);
@@ -700,10 +702,8 @@
 				  		    			};
 		  		    				}
 	  		    						
-	  		    					if($("#otbMinute").val()!='')
-	  		    						$this.dayResult[moment(d).format('YYYYMMDD')].otbMinute = $("#otbMinute").val();
-	  		    					if($("#otaMinute").val()!='')
-	  		    						$this.dayResult[moment(d).format('YYYYMMDD')].otaMinute = $("#otaMinute").val();
+	  		    					$this.dayResult[moment(d).format('YYYYMMDD')].otbMinute = $("#otbMinute").val();
+	  		    					$this.dayResult[moment(d).format('YYYYMMDD')].otaMinute = $("#otaMinute").val();
 	  		    				}
 		  		    				
 			  		    		//날짜 증가
@@ -788,6 +788,7 @@
          			} else {
          				url += "/elas";
          				param['flexibleApplId'] = $this.flexibleEmp.flexibleApplId;
+         				param['reason'] = calendarLeftVue.applInfo.reason;
          			}
          				
          			//dayResult는 이런 형식으로 저장 {ymd : {shm: 0900, ehm: 1800, otbMinute: 1, otaMinute:2 } }

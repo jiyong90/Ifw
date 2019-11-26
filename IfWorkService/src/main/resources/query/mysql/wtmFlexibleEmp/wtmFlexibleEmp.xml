@@ -54,6 +54,7 @@
 			WHERE A.TENANT_ID = #{tenantId}
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
+			  AND A.APPL_STATUS_CD NOT IN ('22','32')
 			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			ORDER BY sYmd
         ]]>
@@ -1120,11 +1121,12 @@
 				 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 				   AND T.BREAK_TYPE_CD = 'TIME'
 				   AND E.TENANT_ID = ${tenantId}
-				   AND E.ENTER_CD = ${enterCd}
+				   AND E.ENTER_CD = #{enterCd}
 	               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
-				   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
+				   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 				   AND C.YMD BETWEEN #{symd} AND #{eymd} 
 				 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
+			) XZ
 		]]>	
   	</select>
   	
@@ -1149,9 +1151,9 @@
 			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 			   AND T.BREAK_TYPE_CD = 'TIMEFIX'
 			   AND E.TENANT_ID = ${tenantId}
-			   AND E.ENTER_CD = ${enterCd}
+			   AND E.ENTER_CD = #{enterCd}
 	              AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
-			   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
+			   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 			   AND C.YMD BETWEEN #{symd} AND #{eymd} 
 			 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 		]]>	
@@ -1639,6 +1641,7 @@
 			     , A.APPL_SABUN AS sabun
 			     , F.SYMD AS sYmd
 			     , F.EYMD AS eYmd
+			     , F.REASON AS reason
 			     , A.APPL_CD AS workTypeCd
 			     , C.APPL_NM AS workTypeNm
 			     , M.WORK_SHM AS workShm
