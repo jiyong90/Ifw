@@ -434,7 +434,8 @@
                             </ul>
                         </div>
                     </div>
-                    <template v-if="calendarTopVue.selectedFlexibleStd!='ELAS'">
+                    <template v-if="calendarTopVue.selectedFlexibleStd">
+                    <template v-if="calendarTopVue.selectedFlexibleStd.workTypeCd!='ELAS'">
                     <div class="sub-wrap" style="display:none;">
                         <form action="" class="time-input-form needs-validation" novalidate>
                             <div class="form-row no-gutters">
@@ -498,6 +499,7 @@
                             </div>
                         </form>
                     </div>
+                    </template>
                     </template>
                 </div>
                 <div id="flexibleDayPlan" class="white-box-wrap full-height mb-3" style="display:none;">

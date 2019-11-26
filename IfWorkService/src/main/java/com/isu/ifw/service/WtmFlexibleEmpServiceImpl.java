@@ -21,6 +21,7 @@ import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmOtCanAppl;
 import com.isu.ifw.entity.WtmTaaCode;
+import com.isu.ifw.entity.WtmTimeCdMgr;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
@@ -31,6 +32,7 @@ import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtCanApplRepository;
 import com.isu.ifw.repository.WtmTaaCodeRepository;
+import com.isu.ifw.repository.WtmTimeCdMgrRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.repository.WtmWorkteamEmpRepository;
@@ -72,6 +74,9 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Autowired
 	WtmFlexibleApplMapper flexApplMapper;
+	
+	@Autowired
+	WtmTimeCdMgrRepository wtmTimeCdMgrRepo;
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
@@ -1105,7 +1110,26 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 		
-		return flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
+		String breakTypeCd = "";
+		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, paramMap.get("ymd").toString());
+		if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
+			Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
+			
+			WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
+			if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
+				breakTypeCd = timeCdMgr.getBreakTypeCd();
+		}
+		
+		Map<String, Object> result = null;
+		if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_MGR)) {
+			result = flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
+		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIME)) {
+			result = flexEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(paramMap);
+		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIMEFIX)) {
+			result = flexEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(paramMap);
+		}
+		
+		return result;
 	}
 	
 	@Override
