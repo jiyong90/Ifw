@@ -1438,6 +1438,8 @@
 			  , A.SYMD AS symd
 			  , A.EYMD AS eymd
 			  , A.NOTE AS note
+			  , A.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+			  , A.FLEXIBLE_EMP_ID AS flexibleEmpId
 			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(NOW(), 'YMD') THEN CONCAT('<a class="basic" onClick="setModify(', FLEXIBLE_EMP_ID, ')">근무변경/취소</a>')
 					    ELSE '' END AS modify
 		  FROM WTM_FLEXIBLE_EMP A
@@ -1779,11 +1781,11 @@
     
 	<select id="getElasWeekHour" parameterType="Long" resultType="wtmGeneral" >
     	<![CDATA[
-    		SELECT START_YMD
-			     , SUM(CASE WHEN HOLIDAY_YN = 'N' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END) AS WORK_MINUTE
+    		SELECT START_YMD AS startYmd
+    		     , SUM(CASE WHEN HOLIDAY_YN = 'N' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END) AS workMinute
 			     , SUM(CASE WHEN HOLIDAY_YN = 'Y' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END)
 				     + SUM(CASE WHEN OTB_MINUTE IS NOT NULL AND OTB_MINUTE<>0 THEN OTB_MINUTE ELSE 0 END)
-				     + SUM(CASE WHEN OTA_MINUTE IS NOT NULL AND OTA_MINUTE<>0 THEN OTA_MINUTE ELSE 0 END) AS OT_MINUTE
+				     + SUM(CASE WHEN OTA_MINUTE IS NOT NULL AND OTA_MINUTE<>0 THEN OTA_MINUTE ELSE 0 END) AS otMinute
 			  FROM ( SELECT YMD
 						     , HOLIDAY_YN
 							  , DATE_SUB(YMD, INTERVAL (CASE WHEN DAYOFWEEK(YMD)<startWeekDay THEN maxWeekDay-DAYOFWEEK(YMD) ELSE DAYOFWEEK(YMD)-startWeekDay END) DAY) AS START_YMD
@@ -1824,8 +1826,20 @@
 	
 	<update id="updateByflexibleEmpId" parameterType="map">
 		UPDATE WTM_FLEXIBLE_EMP SET
-			SYMD = #{sYmd}
-			EYMD = #{eYmd}
+			SYMD = #{symd}
+			, EYMD = #{eymd}
 	    WHERE FLEXIBLE_EMP_ID = #{flexibleEmpId}
+	</update>
+	
+	<update id="setChangeErrMsg" parameterType="map">
+		UPDATE WTM_FLEXIBLE_CHG_HIS SET
+			ERR_MSG = #{retMsg}
+	    WHERE FLEXIBLE_CHG_HIS_ID = #{retId}
+	</update>
+	
+	<update id="setChangeEndMsg" parameterType="map">
+		UPDATE WTM_FLEXIBLE_CHG_HIS SET
+			END_MSG = #{retMsg}
+	    WHERE FLEXIBLE_CHG_HIS_ID = #{hisId}
 	</update>
 </mapper>

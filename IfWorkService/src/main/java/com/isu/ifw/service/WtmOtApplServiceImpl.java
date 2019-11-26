@@ -356,9 +356,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
 						addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
 					} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
-						
+						addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(reCalc);
 					} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
-					
+						addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(reCalc);
 					}
 					
 					dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
@@ -384,9 +384,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
 						addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
 					} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
-						
+						addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(reCalc);
 					} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
-					
+						addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(reCalc);
 					}
 					dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+"")); 
 					dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_OT);
@@ -435,9 +435,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
 					addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
 				} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
-					
+					addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(reCalc);
 				} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
-				
+					addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(reCalc);
 				}
 				dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
 				 
@@ -463,9 +463,9 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
 					addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
 				} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
-					
+					addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(reCalc);
 				} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
-				
+					addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(reCalc);
 				}
 				dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+"")); 
 				dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_NIGHT);
