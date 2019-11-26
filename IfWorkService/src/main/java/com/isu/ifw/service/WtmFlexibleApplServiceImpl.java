@@ -1,5 +1,7 @@
 package com.isu.ifw.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +21,8 @@ import com.isu.ifw.entity.WtmFlexibleDayPlan;
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
 import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.entity.WtmWorkCalendar;
+import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.entity.WtmWorkPattDet;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
@@ -37,6 +41,7 @@ import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmOtSubsApplRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
+import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.repository.WtmWorkPattDetRepository;
 import com.isu.ifw.util.WtmUtil;
@@ -112,6 +117,12 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 	
 	@Autowired
 	WtmWorkPattDetRepository workPattDetRepo;
+	
+	@Autowired
+	WtmWorkCalendarRepository workCalendarRepo;
+	
+	@Autowired
+	WtmFlexibleEmpService flexibleEmpService;
 	
 	@Override
 	public Map<String, Object> getAppl(Long applId) {
@@ -376,6 +387,67 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 			//근무제 기간의 총 소정근로 시간을 업데이트 한다.
 			flexApplMapper.updateWorkMinuteOfWtmFlexibleEmp(paramMap);
 
+			//탄근제의 경우 근무 계획까지 작성하여 신청을 하기 때문에
+			//calendar, result 만들어준다.
+			if(appl.getApplCd().equals("ELAS")) {
+				//calendar 있으면 삭제하고 다시 만들어주자.
+				List<WtmWorkCalendar> calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, appl.getApplSabun(), flexibleAppl.getSymd(), flexibleAppl.getEymd());
+				
+				if(calendar!=null && calendar.size()>0) {
+					workCalendarRepo.deleteAll(calendar);
+					workCalendarRepo.flush();
+				}
+				
+				//List<WtmWorkCalendar> calendar2 = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmdBetween(tenantId, enterCd, appl.getApplSabun(), flexibleAppl.getSymd(), flexibleAppl.getEymd());
+				
+				wtmFlexibleEmpMapper.createWorkCalendarOfElas(flexibleAppl.getFlexibleApplId(), userId);
+				
+				//result 만들어주자.
+				List<WtmWorkDayResult> result = new ArrayList<WtmWorkDayResult>();
+				List<Map<String, Object>> dets = wtmFlexibleEmpMapper.getElasWorkDayResult(flexibleAppl.getFlexibleApplId());
+				if(dets!=null && dets.size()>0) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+					
+					//result 에 base와 ot 있으면 삭제하고 다시 만들어주자.
+					List<WtmWorkDayResult> base = wtmWorkDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, appl.getApplSabun(), TIME_TYPE_BASE, flexibleAppl.getSymd(), flexibleAppl.getEymd());
+					if(base!=null && base.size()>0) {
+						wtmWorkDayResultRepo.deleteAll(base);
+						wtmWorkDayResultRepo.flush();
+					}
+					
+					List<WtmWorkDayResult> ot = wtmWorkDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndYmdBetween(tenantId, enterCd, appl.getApplSabun(), TIME_TYPE_OT, flexibleAppl.getSymd(), flexibleAppl.getEymd());
+					if(ot!=null && ot.size()>0) {
+						wtmWorkDayResultRepo.deleteAll(ot);
+						wtmWorkDayResultRepo.flush();
+					}
+					
+					for(Map<String, Object> det : dets) {
+						Date s = sdf.parse(det.get("planSdate").toString());
+						Date e = sdf.parse(det.get("planEdate").toString());
+						
+						WtmWorkDayResult r = new WtmWorkDayResult();
+						r.setTenantId(tenantId);
+						r.setEnterCd(enterCd);
+						r.setYmd(det.get("ymd").toString());
+						r.setSabun(appl.getApplSabun());
+						r.setApplId(applId);
+						r.setTimeTypeCd(det.get("timeTypeCd").toString());
+						r.setTaaCd(null);
+						r.setPlanSdate(s);
+						r.setPlanEdate(e);
+						r.setPlanMinute(Integer.parseInt(det.get("planMinute").toString()));
+						r.setUpdateDate(new Date());
+						r.setUpdateId(userId);
+						
+						result.add(r);
+					}
+					
+					if(result.size()>0)
+						wtmWorkDayResultRepo.saveAll(result);
+				}
+				
+			}
+			
 		}
 		
 		return rp;
@@ -443,8 +515,20 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 				
 			}else if(workTypeCd.equals("ELAS")) {
 				//탄근제
-				//근로시간은 주 평균 40 시간, OT시간은 주 12시간 초과 시 신청할 수 없고
-				//2주 이내 탄근제는 주간 최대 근무시간은 48시간, 2주 이상 타근제는 주간 최대 근무시간 52시간 
+				//근로시간은 평균 40 시간, OT시간은 주 12시간 초과 시 신청할 수 없고
+				//2주 이내 탄근제는 주간 최대 근무시간은 48시간, 2주 이상 탄근제는 주간 최대 근무시간 52시간 
+				long dayCnt = 0;
+				try {
+					dayCnt = WtmUtil.dayCnt(sYmd, eYmd);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} //탄근제 시행일수
+				
+				//List<Map<String, Object>> weekHour = wtmFlexibleEmpMapper.getElasWeekHour(flexibleApplId);
+				
+				
+				
 			}else if(workTypeCd.equals("DIFF")) {
 				//시차
 				

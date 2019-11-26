@@ -66,6 +66,13 @@ public interface WtmApplService {
 	final static String APPL_TYPE_PENDING = "02"; //미결
 	final static String APPL_TYPE_COMPLETE = "03"; //기결
 	
+	//휴게시간
+	final static String BREAK_TYPE_MGR = "MGR";
+	//휴게시간
+	final static String BREAK_TYPE_TIME = "TIME";
+	//휴게시간
+	final static String BREAK_TYPE_TIMEFIX = "TIMEFIX";
+	
 	
 	public Map<String, Object> getAppl(Long applId);
 	

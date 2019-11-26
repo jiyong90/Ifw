@@ -1,22 +1,34 @@
 package com.isu.ifw.controller;
 
+import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.isu.auth.control.TenantSecuredControl;
 import com.isu.ifw.service.WtmApplService;
@@ -52,6 +64,107 @@ public class WtmApiController extends TenantSecuredControl {
 		return rp;
 	}
 
+	@Autowired
+	private RestTemplate restTemplate;
+
+	@RequestMapping(value="/callback", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void callback(HttpServletRequest request , HttpServletResponse response) {
+		System.out.println("444444444444444444444444444444444444444444");
+		
+		Enumeration<String> p = request.getParameterNames();
+        System.out.println("callback param start");
+        while(p.hasMoreElements()) {
+        	String key = p.nextElement();
+        	System.out.println(key + " : " + request.getParameter(key));
+        }
+        
+        String code = request.getParameter("code");
+        System.out.println("callback param end");
+        
+        Enumeration<String> k = request.getHeaderNames();
+        System.out.println("callback header start");
+        while(k.hasMoreElements()) {
+        	String key = k.nextElement();
+        	System.out.println(key + " : " + request.getHeader(key));
+        }
+        System.out.println("callback header end");
+        
+        /*
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(); 
+        factory.setReadTimeout(3000); 
+        factory.setConnectTimeout(3000); 
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build(); 
+        factory.setHttpClient(httpClient); 
+        RestTemplate restTemplate = new RestTemplate(factory);
+        */
+        String url = "http://10.30.30.188:8380/ifo/oauth/token";
+        
+        String clientCredentials = "foo:var";
+        String base64ClientCredentials = new String(Base64.encodeBase64(clientCredentials.getBytes()));
+        
+        MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+        param.add("code", code); 
+        param.add("grant_type", "authorization_code"); 
+        param.add("redirect_uri", "http://10.30.30.188/ifw/api/callback"); 
+        param.add("scope", "read"); 
+        
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Basic "+base64ClientCredentials);
+        headers.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+
+        /*
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(param, headers);
+         
+        ResponseEntity<Map> res = restTemplate.postForEntity(url, entity, Map.class);
+        
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+			System.out.println(mapper.writeValueAsString(res.getBody()));
+		} catch (JsonProcessingException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+        */
+        
+      try {
+          Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+          System.out.println(auth.getName());
+          System.out.println(auth.getPrincipal().toString());
+          HttpSession session = request.getSession();
+          
+          Enumeration<String> sess = session.getAttributeNames();
+          System.out.println("callback session start");
+          while(sess.hasMoreElements()) {
+        	  String sk = sess.nextElement();
+        	  System.out.println(sk + " : " + session.getAttribute(sk)); 
+          }
+          System.out.println("callback session end");
+          
+          DefaultOAuth2ClientContext client = (DefaultOAuth2ClientContext) session.getAttribute("scopedTarget.oauth2ClientContext");
+          System.out.println("client.getAccessToken() : " + client.getAccessToken());
+          /*
+         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+               
+           Authentication authentication = 
+                   new UsernamePasswordAuthenticationToken("TMP4", "a1234", authorities);
+           
+            SecurityContextHolder.getContext().setAuthentication(authentication); // put that in the security context
+            */
+            response.sendRedirect("/ifw/console/isu");
+      } catch(Exception e) {
+    	  e.printStackTrace();
+         try {
+            ((HttpServletResponse) response).sendRedirect("/login/isu");
+            return;
+         } catch (IOException e1) {
+            e1.printStackTrace();
+         }
+         e.printStackTrace();
+      }
+	} 
+	
 	@RequestMapping(value="/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam test(HttpServletRequest request ) throws Exception {
 		ReturnParam rp = new ReturnParam();
