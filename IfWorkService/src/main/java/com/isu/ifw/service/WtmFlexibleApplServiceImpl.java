@@ -422,8 +422,8 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 					}
 					
 					for(Map<String, Object> det : dets) {
-						Date s = sdf.parse(det.get("planSdate").toString());
-						Date e = sdf.parse(det.get("planEdate").toString());
+						Date s = null;
+						Date e = null;
 						
 						WtmWorkDayResult r = new WtmWorkDayResult();
 						r.setTenantId(tenantId);
@@ -433,9 +433,21 @@ public class WtmFlexibleApplServiceImpl implements WtmApplService {
 						r.setApplId(applId);
 						r.setTimeTypeCd(det.get("timeTypeCd").toString());
 						r.setTaaCd(null);
-						r.setPlanSdate(s);
-						r.setPlanEdate(e);
-						r.setPlanMinute(Integer.parseInt(det.get("planMinute").toString()));
+						
+						if(det.get("planSdate")!=null && !"".equals(det.get("planSdate"))) {
+							s = sdf.parse(det.get("planSdate").toString());
+							r.setPlanSdate(s);
+						}
+						
+						if(det.get("planEdate")!=null && !"".equals(det.get("planEdate"))) {
+							e = sdf.parse(det.get("planEdate").toString());
+							r.setPlanEdate(e);
+						}
+						
+						if(det.get("planMinute")!=null && !"".equals(det.get("planMinute"))) {
+							r.setPlanMinute(Integer.parseInt(det.get("planMinute").toString()));
+						}
+						
 						r.setUpdateDate(new Date());
 						r.setUpdateId(userId);
 						

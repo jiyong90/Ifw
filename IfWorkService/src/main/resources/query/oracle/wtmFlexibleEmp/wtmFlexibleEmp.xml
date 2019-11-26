@@ -1021,25 +1021,25 @@
 			SELECT F_WTM_NVL(SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' AND R.APPR_MINUTE > 0 THEN F_WTM_NVL(R.APPR_MINUTE, 0)
 							ELSE F_WTM_NVL(R.PLAN_MINUTE, 0) END 
 			                ), 0) AS otMinute
-			  FROM WTM_FLEXIBLE_EMP E
+			  FROM WTM_WORK_TERM_TIME E
 			  JOIN WTM_WORK_CALENDAR C
 			    ON E.TENANT_ID = C.TENANT_ID
 			   AND E.ENTER_CD = C.ENTER_CD
 			   AND E.SABUN = C.SABUN
-			   AND C.YMD BETWEEN E.SYMD AND E.EYMD
+			   AND C.YMD BETWEEN E.WEEK_SDATE AND E.WEEK_EDATE
 			  JOIN WTM_WORK_DAY_RESULT R
 			    ON C.TENANT_ID = R.TENANT_ID
 			   AND C.ENTER_CD = R.ENTER_CD
 			   AND C.YMD = R.YMD
 			   AND C.SABUN = R.SABUN
-			 WHERE #{ymd} BETWEEN E.SYMD AND E.EYMD
-			   AND R.TIME_TYPE_CD = 'OT'
+			 WHERE #{ymd} BETWEEN E.WEEK_SDATE AND E.WEEK_EDATE
+			   AND R.TIME_TYPE_CD IN ('OT','FIXOT')
 			   AND E.SABUN = #{sabun}
 			   AND E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			 UNION ALL
 			SELECT F_WTM_NVL(SUM(NVL(O.OT_MINUTE, 0)),0)  AS otMinute
-			  FROM WTM_FLEXIBLE_EMP E
+			  FROM WTM_WORK_TERM_TIME E
 			  JOIN WTM_APPL A
 			    ON E.TENANT_ID = A.TENANT_ID
 			   AND E.ENTER_CD = A.ENTER_CD
@@ -1050,7 +1050,7 @@
 			   AND E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
-			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD
+			   AND #{ymd} BETWEEN E.WEEK_SDATE AND E.WEEK_EDATE
 			   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '') 
 			 ) X
 		]]>	
@@ -1737,8 +1737,8 @@
     <select id="getElasWorkDayResult" parameterType="Long" resultType="wtmGeneral" >
     	<![CDATA[
     	SELECT YMD 
-		     , PLAN_SDATE 
-		     , PLAN_EDATE 
+		     , F_WTM_DATE_FORMAT(PLAN_SDATE,'YMDHIS') AS PLAN_SDATE
+		     , F_WTM_DATE_FORMAT(PLAN_EDATE,'YMDHIS') AS PLAN_EDATE
 		     , PLAN_MINUTE 
 			  , TIME_TYPE_CD 
 		  FROM ( SELECT YMD
