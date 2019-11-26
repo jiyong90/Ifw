@@ -329,6 +329,18 @@
 			     	   AND C.TENANT_ID = E.TENANT_ID
 				)
     </update>
+    
+    <update id="createWorkCalendarOfElas" parameterType="map">
+    	INSERT INTO WTM_WORK_CALENDAR(TENANT_ID, ENTER_CD, SABUN, YMD, TIME_CD_MGR_ID, WORK_CLOSE_YN, HOLIDAY_YN, UPDATE_ID)
+		SELECT A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, D.YMD, D.TIME_CD_MGR_ID, 'N', D.HOLIDAY_YN, #{userId}
+		  FROM WTM_FLEXIBLE_APPL_DET D
+		  JOIN WTM_FLEXIBLE_APPL F
+		    ON D.FLEXIBLE_APPL_ID = F.FLEXIBLE_APPL_ID
+		  JOIN WTM_APPL A
+		    ON F.APPL_ID = A.APPL_ID
+		 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+    </update>
+    
     <!-- 
     <update id="updateHolidayYnOFWorkCalendar" parameterType="map">
     	UPDATE WTM_WORK_CALENDAR C
@@ -450,6 +462,88 @@
 	     WHEN MATCHED THEN
                 UPDATE SET X.APPR_MINUTE = XX.CM
     </update>
+    
+    <update id="updateTimeTypeApprMinuteByYmdAndSabun" parameterType="map">
+    	<![CDATA[
+			 MERGE INTO WTM_WORK_DAY_RESULT X
+            	USING ( 
+					SELECT XZ.WORK_DAY_RESULT_ID,
+						   CASE WHEN XZ.APPR_MINUTE BETWEEN XZ.PRE_WORK_MINUTE + XZ.PRE_BREAK_MINUTE AND XZ.PRE_WORK_MINUTE + XZ.PRE_BREAK_MINUTE + XZ.BREAK_MINUTE  THEN XZ.PRE_WORK_MINUTE
+									  WHEN XZ.APPR_MINUTE < XZ.BREAK_MINUTE THEN 0
+									  ELSE XZ.APPR_MINUTE - XZ.BREAK_MINUTE
+			                          END AS CM
+					FROM (
+					SELECT D.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','') AS APPR_MINUTE,  MAX(B.WORK_MINUTE) AS PRE_WORK_MINUTE, MAX(B.BREAK_MINUTE) AS PRE_BREAK_MINUTE
+						, MIN(BB.WORK_MINUTE) AS WORK_MINUTE, MIN(BB.BREAK_MINUTE) AS BREAK_MINUTE
+						  FROM WTM_FLEXIBLE_EMP E
+						  JOIN WTM_WORK_CALENDAR C
+						    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
+						   AND E.SABUN = C.SABUN
+					       AND C.YMD BETWEEN E.SYMD AND E.EYMD
+						  JOIN WTM_WORK_DAY_RESULT D 
+						    ON C.TENANT_ID = D.TENANT_ID
+						   AND C.ENTER_CD = D.ENTER_CD
+						   AND C.YMD = D.YMD
+						   AND C.SABUN = D.SABUN
+						  JOIN WTM_TIME_CD_MGR T
+						    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+						  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
+						    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			              AND (B.WORK_MINUTE + B.BREAK_MINUTE) < F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+						  LEFT OUTER JOIN WTM_TIME_BREAK_TIME BB
+						    ON T.TIME_CD_MGR_ID = BB.TIME_CD_MGR_ID 
+			              AND (BB.WORK_MINUTE + BB.BREAK_MINUTE) >= F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+						 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+						   AND T.BREAK_TYPE_CD = 'TIME'
+						   AND E.TENANT_ID = ${tenantId}
+						   AND E.ENTER_CD = ${enterCd}
+			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
+						   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
+						   AND C.YMD BETWEEN #{symd} AND #{eymd} 
+						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
+					 ) XZ
+	 			) XX
+	 			ON (X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID)
+	     	WHEN MATCHED THEN
+ 		   		UPDATE SET X.APPR_MINUTE = XX.CM	
+    	]]>
+    </update>
+    
+    <update id="updateTimeFixTypeApprMinuteByYmdAndSabun" parameterType="map">
+    	<![CDATA[
+			 MERGE INTO WTM_WORK_DAY_RESULT X
+            	USING ( 
+					SELECT D.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','') AS APPR_MINUTE,  MAX(B.WORK_MINUTE) AS CM
+						  FROM WTM_FLEXIBLE_EMP E
+						  JOIN WTM_WORK_CALENDAR C
+						    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
+						   AND E.SABUN = C.SABUN
+					       AND C.YMD BETWEEN E.SYMD AND E.EYMD
+						  JOIN WTM_WORK_DAY_RESULT D 
+						    ON C.TENANT_ID = D.TENANT_ID
+						   AND C.ENTER_CD = D.ENTER_CD
+						   AND C.YMD = D.YMD
+						   AND C.SABUN = D.SABUN
+						  JOIN WTM_TIME_CD_MGR T
+						    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+						  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
+						    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			              AND (B.WORK_MINUTE + B.BREAK_MINUTE) <= F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+						 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+						   AND T.BREAK_TYPE_CD = 'TIMEFIX'
+						   AND E.TENANT_ID = ${tenantId}
+						   AND E.ENTER_CD = ${enterCd}
+			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
+						   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
+						   AND C.YMD BETWEEN #{symd} AND #{eymd} 
+						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
+	 				) XX
+	 			ON (X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID)
+	     		WHEN MATCHED THEN
+ 		   			UPDATE SET X.APPR_MINUTE = XX.CM	
+    	]]>
+    </update>
+    
     
     <update id="updateEntrySdateByTenantIdAndEnterCdAndYmdBetweenAndSabun" parameterType="map">
     	<![CDATA[ 
@@ -1006,11 +1100,82 @@
 				  JOIN WTM_TIME_BREAK_MGR B
 				    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
 				 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+			   	   AND T.BREAK_TYPE_CD = 'MGR'
 				   AND E.TENANT_ID = #{tenantId}
 				   AND E.ENTER_CD = #{enterCd}
 				   AND E.SABUN = #{sabun}
 				   AND C.YMD = #{ymd}
 				   ) S
+  	</select>
+  	
+  	
+  	<select id="calcTimeTypeApprMinuteExceptBreaktime" parameterType="map" resultType="map">
+  		<![CDATA[
+	  		SELECT XZ.WORK_DAY_RESULT_ID,
+				   CASE WHEN XZ.APPR_MINUTE BETWEEN XZ.PRE_WORK_MINUTE + XZ.PRE_BREAK_MINUTE AND XZ.PRE_WORK_MINUTE + XZ.PRE_BREAK_MINUTE + XZ.BREAK_MINUTE  THEN XZ.PRE_WORK_MINUTE
+							  WHEN XZ.APPR_MINUTE < XZ.BREAK_MINUTE THEN 0
+							  ELSE XZ.APPR_MINUTE - XZ.BREAK_MINUTE
+	                          END AS CALC_MINUTE
+			FROM (
+			SELECT D.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','') AS APPR_MINUTE,  MAX(B.WORK_MINUTE) AS PRE_WORK_MINUTE, MAX(B.BREAK_MINUTE) AS PRE_BREAK_MINUTE
+				, MIN(BB.WORK_MINUTE) AS WORK_MINUTE, MIN(BB.BREAK_MINUTE) AS BREAK_MINUTE
+				  FROM WTM_FLEXIBLE_EMP E
+				  JOIN WTM_WORK_CALENDAR C
+				    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
+				   AND E.SABUN = C.SABUN
+			       AND C.YMD BETWEEN E.SYMD AND E.EYMD
+				  JOIN WTM_WORK_DAY_RESULT D 
+				    ON C.TENANT_ID = D.TENANT_ID
+				   AND C.ENTER_CD = D.ENTER_CD
+				   AND C.YMD = D.YMD
+				   AND C.SABUN = D.SABUN
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
+				    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+	              AND (B.WORK_MINUTE + B.BREAK_MINUTE) < F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+				  LEFT OUTER JOIN WTM_TIME_BREAK_TIME BB
+				    ON T.TIME_CD_MGR_ID = BB.TIME_CD_MGR_ID 
+	              AND (BB.WORK_MINUTE + BB.BREAK_MINUTE) >= F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+				 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+				   AND T.BREAK_TYPE_CD = 'TIME'
+				   AND E.TENANT_ID = ${tenantId}
+				   AND E.ENTER_CD = ${enterCd}
+	               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
+				   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
+				   AND C.YMD BETWEEN #{symd} AND #{eymd} 
+				 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
+			 ) XZ
+		]]>	
+  	</select>
+  	
+  	<select id="calcTimeTypeFixMinuteExceptBreaktime" parameterType="map" resultType="map">
+  		<![CDATA[
+	  		SELECT D.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','') AS APPR_MINUTE,  MAX(B.WORK_MINUTE) AS CALC_MINUTE
+			  FROM WTM_FLEXIBLE_EMP E
+			  JOIN WTM_WORK_CALENDAR C
+			    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
+			   AND E.SABUN = C.SABUN
+		       AND C.YMD BETWEEN E.SYMD AND E.EYMD
+			  JOIN WTM_WORK_DAY_RESULT D 
+			    ON C.TENANT_ID = D.TENANT_ID
+			   AND C.ENTER_CD = D.ENTER_CD
+			   AND C.YMD = D.YMD
+			   AND C.SABUN = D.SABUN
+			  JOIN WTM_TIME_CD_MGR T
+			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
+			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+              AND (B.WORK_MINUTE + B.BREAK_MINUTE) <= F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+			   AND T.BREAK_TYPE_CD = 'TIMEFIX'
+			   AND E.TENANT_ID = ${tenantId}
+			   AND E.ENTER_CD = ${enterCd}
+               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
+			   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
+			   AND C.YMD BETWEEN #{symd} AND #{eymd} 
+			 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
+		]]>	
   	</select>
   	
   	<select id="calcElasPlanMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
@@ -1294,6 +1459,8 @@
 			  , A.SYMD 
 			  , A.EYMD 
 			  , A.NOTE 
+			  , A.FLEXIBLE_STD_MGR_ID
+			  , A.FLEXIBLE_EMP_ID
 			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(SYSDATE, 'YMD') THEN CONCAT('<a class="basic" onClick="setModify(', FLEXIBLE_EMP_ID, ')">근무변경/취소</a>')
 					    ELSE '' END AS MODIFY
 		  FROM WTM_FLEXIBLE_EMP A
@@ -1573,116 +1740,90 @@
     </select>
     
     <!-- 탄근제 근무 계획 하나의 ROW를 BASE와 OT로 분리 -->
-    <select id="getElasWorkDayResult" parameterType="map" resultType="wtmGeneral" >
+    <select id="getElasWorkDayResult" parameterType="Long" resultType="wtmGeneral" >
     	<![CDATA[
-    	SELECT YMD AS ymd
-		     , F_WTM_DATE_FORMAT(SDATE, 'H:I') AS shm
-		     , F_WTM_DATE_FORMAT(EDATE, 'H:I') AS ehm
-			 , TIME_TYPE_CD
-		     , NULL AS TAA_CD
-		     , NULL AS TAA_NM
-		     , HOLIDAY_YN
-		     , TIME_CD_MGR_ID
-		     , TIME_NM
-		  FROM (
-					SELECT YMD
+    	SELECT YMD 
+		     , PLAN_SDATE 
+		     , PLAN_EDATE 
+		     , PLAN_MINUTE 
+			  , TIME_TYPE_CD 
+		  FROM ( SELECT YMD
 					     , 'OT' AS TIME_TYPE_CD
-					     , CASE WHEN OTB_BREAK_TIME IS NOT NULL AND OTB_BREAK_TIME<>0 THEN F_WTM_DATE_ADD(PLAN_SDATE, -(OTB_MINUTE+OTB_BREAK_TIME), 'I')
-					             ELSE OTB_SDATE END AS SDATE
-					     , PLAN_SDATE AS EDATE
-					     , HOLIDAY_YN
-					     , TIME_CD_MGR_ID
-					     , TIME_NM
-					  FROM ( SELECT YMD
-					              , OTB_SDATE
-					              , PLAN_SDATE
-					              , OTB_MINUTE
-					              , CASE WHEN OTB_SDATE IS NOT NULL AND PLAN_SDATE IS NOT NULL 
-									  				  THEN CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(OTB_SDATE,'HI'), F_WTM_DATE_FORMAT(PLAN_SDATE,'HI'), '')) IS NULL THEN 0 
-								            			  		ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(OTB_SDATE,'HI'), F_WTM_DATE_FORMAT(PLAN_SDATE,'HI'), '')) END 
-												ELSE 0 END AS OTB_BREAK_TIME
-									  , O.HOLIDAY_YN
-									  , O.TIME_CD_MGR_ID
-									  , T.TIME_NM
-								  FROM ( SELECT YMD
-								              , TIME_CD_MGR_ID
-								              , PLAN_SDATE
-								              , OTB_MINUTE
-								              , CASE WHEN D.OTB_MINUTE IS NOT NULL AND D.OTB_MINUTE<>0 THEN F_WTM_DATE_ADD(D.PLAN_SDATE, -D.OTB_MINUTE,'I')
-											             ELSE NULL END OTB_SDATE
-											     , HOLIDAY_YN
-											  FROM WTM_FLEXIBLE_APPL_DET D
-											 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
-										 ) O
-								  JOIN WTM_TIME_CD_MGR T
-									 ON O.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-								  JOIN WTM_TIME_BREAK_MGR B
-									 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
-								GROUP BY YMD, OTB_SDATE, PLAN_SDATE, OTB_MINUTE, O.HOLIDAY_YN, O.TIME_CD_MGR_ID, T.TIME_NM
-							  ) S
+					     , OTB_SDATE AS PLAN_SDATE
+					     , OTB_EDATE AS PLAN_EDATE
+					     , OTB_MINUTE AS PLAN_MINUTE
+					  FROM WTM_FLEXIBLE_APPL_DET D
+					 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+					   AND HOLIDAY_YN = 'N'
+					   AND (D.OTB_MINUTE IS NOT NULL OR D.OTB_MINUTE<>0)
 					UNION
 					SELECT YMD
 					     , 'BASE' AS TIME_TYPE_CD
-					     , PLAN_SDATE AS SDATE
-					     , PLAN_EDATE AS EDATE
-					     , HOLIDAY_YN
-					     , D.TIME_CD_MGR_ID
-					     , T.TIME_NM
+					     , PLAN_SDATE AS PLAN_SDATE
+					     , PLAN_EDATE AS PLAN_EDATE
+					     , PLAN_MINUTE AS PLAN_MINUTE
 					  FROM WTM_FLEXIBLE_APPL_DET D
-					  JOIN WTM_TIME_CD_MGR T
-					    ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 					 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+					   AND HOLIDAY_YN = 'N'
 					UNION
 					SELECT YMD
 					     , 'OT' AS TIME_TYPE_CD
-					     , PLAN_EDATE AS SDATE
-					     , CASE WHEN OTA_BREAK_TIME IS NOT NULL AND OTA_BREAK_TIME<>0 THEN F_WTM_DATE_ADD(PLAN_EDATE, (OTA_MINUTE+OTA_BREAK_TIME), 'I') 
-					             ELSE OTA_EDATE END AS EDATE
-					     , HOLIDAY_YN
-					     , TIME_CD_MGR_ID
-					     , TIME_NM
-					  FROM ( SELECT YMD
-					              , OTA_EDATE
-					              , PLAN_EDATE
-					              , OTA_MINUTE
-					              , CASE WHEN OTA_EDATE IS NOT NULL AND PLAN_EDATE IS NOT NULL 
-									    			  THEN CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(PLAN_EDATE,'HI'), F_WTM_DATE_FORMAT(OTA_EDATE,'HI'), '')) IS NULL THEN 0 
-									  								ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(PLAN_EDATE,'HI'), F_WTM_DATE_FORMAT(OTA_EDATE,'HI'), '')) END 
-												ELSE 0 END AS OTA_BREAK_TIME
-									  , O.HOLIDAY_YN	
-									  , O.TIME_CD_MGR_ID		
-									  , T.TIME_NM
-								  FROM ( SELECT YMD
-								              , TIME_CD_MGR_ID
-								              , PLAN_EDATE
-								              , OTA_MINUTE
-								              , CASE WHEN D.OTA_MINUTE IS NOT NULL AND D.OTA_MINUTE<>0 THEN F_WTM_DATE_ADD(D.PLAN_EDATE, D.OTA_MINUTE,'I') 
-											             ELSE NULL END OTA_EDATE
-											     , HOLIDAY_YN
-											  FROM WTM_FLEXIBLE_APPL_DET D
-											 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
-										 ) O
-								  JOIN WTM_TIME_CD_MGR T
-									 ON O.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-								  JOIN WTM_TIME_BREAK_MGR B
-									 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
-								GROUP BY YMD, OTA_EDATE, PLAN_EDATE, OTA_MINUTE, O.HOLIDAY_YN, O.TIME_CD_MGR_ID, T.TIME_NM
-							  ) S
-					) A		
-		 WHERE TIME_TYPE_CD = 'BASE' OR (TIME_TYPE_CD='OT' AND SDATE IS NOT NULL AND EDATE IS NOT NULL)
-		ORDER BY YMD, SDATE
+					     , OTA_SDATE AS PLAN_SDATE
+					     , OTA_EDATE AS PLAN_EDATE
+					     , OTA_MINUTE AS PLAN_MINUTE
+					  FROM WTM_FLEXIBLE_APPL_DET D
+					 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+					   AND (D.OTA_MINUTE IS NOT NULL OR D.OTA_MINUTE<>0)
+					   AND HOLIDAY_YN = 'N'
+				   UNION
+					SELECT YMD
+					     , 'OT' AS TIME_TYPE_CD
+					     , CASE WHEN OTB_MINUTE IS NOT NULL THEN OTB_SDATE ELSE PLAN_SDATE END AS PLAN_SDATE
+					     , CASE WHEN OTA_MINUTE IS NOT NULL THEN OTA_EDATE ELSE PLAN_EDATE END AS PLAN_EDATE
+					     , CASE WHEN OTB_MINUTE IS NOT NULL THEN OTB_MINUTE ELSE 0 END
+						    + CASE WHEN PLAN_MINUTE IS NOT NULL THEN PLAN_MINUTE ELSE 0 END 
+							 + CASE WHEN OTA_MINUTE IS NOT NULL THEN OTA_MINUTE ELSE 0 END AS PLAN_MINUTE
+					  FROM WTM_FLEXIBLE_APPL_DET D
+					 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+					   AND HOLIDAY_YN = 'Y'
+				 ) S
+		ORDER BY YMD, PLAN_SDATE
 		 ]]>
     </select>
     
     <select id="getElasAvgHour" parameterType="map" resultType="wtmGeneral" >
     	<![CDATA[
-    		SELECT ROUND(SUM(CASE WHEN PLAN_MINUTE IS NULL THEN 0 ELSE PLAN_MINUTE END) / COUNT(YMD) * 7,2) AS AVG_HOUR
+    		SELECT ROUND(SUM(CASE WHEN HOLIDAY_YN = 'N' AND PLAN_MINUTE IS NULL THEN 0 ELSE PLAN_MINUTE END) / COUNT(YMD) * 7,2) AS AVG_HOUR
 			  FROM WTM_FLEXIBLE_APPL_DET
 			 WHERE FLEXIBLE_APPL_ID = #{flexibleApplId}
+			   AND HOLIDAY_YN = 'N'
 			GROUP BY FLEXIBLE_APPL_ID
     	]]>
     </select>
     
+    <select id="getElasWeekHour" parameterType="Long" resultType="wtmGeneral" >
+    	<![CDATA[
+    		SELECT START_YMD
+			     , SUM(CASE WHEN HOLIDAY_YN = 'N' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END) AS WORK_MINUTE
+			     , SUM(CASE WHEN HOLIDAY_YN = 'Y' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END)
+				     + SUM(CASE WHEN OTB_MINUTE IS NOT NULL AND OTB_MINUTE<>0 THEN OTB_MINUTE ELSE 0 END)
+				     + SUM(CASE WHEN OTA_MINUTE IS NOT NULL AND OTA_MINUTE<>0 THEN OTA_MINUTE ELSE 0 END) AS OT_MINUTE
+			  FROM ( SELECT YMD
+						     , HOLIDAY_YN
+							  , DATE_SUB(YMD, INTERVAL (CASE WHEN DAYOFWEEK(YMD)<startWeekDay THEN maxWeekDay-DAYOFWEEK(YMD) ELSE DAYOFWEEK(YMD)-startWeekDay END) DAY) AS START_YMD
+							  , PLAN_MINUTE
+							  , OTB_MINUTE
+							  , OTA_MINUTE
+						  FROM WTM_FLEXIBLE_APPL_DET D
+						  JOIN ( SELECT F_WTM_WEEKDAY(MIN(YMD)) AS startWeekDay , MAX(F_WTM_WEEKDAY(YMD)) AS maxWeekDay 
+						           FROM WTM_FLEXIBLE_APPL_DET
+						          WHERE FLEXIBLE_APPL_ID = #{flexibleApplId} ) T  
+						    ON 1=1
+						 WHERE FLEXIBLE_APPL_ID = #{flexibleApplId} ) S
+			GROUP BY START_YMD
+    	]]>
+    </select>
+
     <select id="getChangeChk" statementType="CALLABLE" parameterType="map" >
   		{ call P_WTM_FLEXIBLE_MODIFY_CHK( 
   				#{tenantId, jdbcType=NUMERIC, javaType=java.lang.Long, mode=IN}
@@ -1707,8 +1848,20 @@
 	
 	<update id="updateByflexibleEmpId" parameterType="map">
 		UPDATE WTM_FLEXIBLE_EMP SET
-			SYMD = #{sYmd}
-			EYMD = #{eYmd}
+			SYMD = #{symd}
+			, EYMD = #{eymd}
 	    WHERE FLEXIBLE_EMP_ID = #{flexibleEmpId}
+	</update>
+	
+	<update id="setChangeErrMsg" parameterType="map">
+		UPDATE WTM_FLEXIBLE_CHG_HIS SET
+			ERR_MSG = #{retMsg}
+	    WHERE FLEXIBLE_CHG_HIS_ID = #{retId}
+	</update>
+	
+	<update id="setChangeEndMsg" parameterType="map">
+		UPDATE WTM_FLEXIBLE_CHG_HIS SET
+			END_MSG = #{retMsg}
+	    WHERE FLEXIBLE_CHG_HIS_ID = #{hisId}
 	</update>
 </mapper>
