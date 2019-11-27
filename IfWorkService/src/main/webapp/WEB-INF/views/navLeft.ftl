@@ -51,10 +51,10 @@
                 	<a href="#submenu-list2" data-toggle="collapse" :aria-expanded="curSubMenu=='sub2'?true:false" class="dropdown-toggle" @click="curSubMenu='sub2'">근무제도관리</a>
                 	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub2'}" id="submenu-list2">
                         <li :class="{active: curPageName=='timeCdMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">근무시간표관리</a></li>
-                        <li :class="{active: curPageName=='baseWorkMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/baseWorkMgr';">기본근무시간관리</a></li>
                         <li :class="{active: curPageName=='workteamMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamMgr';">근무조관리</a></li>
                         <li :class="{active: curPageName=='workteamEmp'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamEmp';">근무조대상자관리</a></li>
-                        <li :class="{active: curPageName=='flexibleStdMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">근무제도관리</a></li>                                
+                        <li :class="{active: curPageName=='flexibleStdMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">근무제도관리</a></li>
+                        <li :class="{active: curPageName=='baseWorkMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/baseWorkMgr';">기본근무시간관리</a></li>                                
                         <li :class="{active: curPageName=='flexibleApplyMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleApplyMgr';">근무제도적용</a></li>                                
                         <li :class="{active: curPageName=='flexibleEmp'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">개인별 근무제도 조회</a></li>
                     </ul>
