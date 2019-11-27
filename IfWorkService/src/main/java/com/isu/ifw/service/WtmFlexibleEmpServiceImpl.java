@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
 import com.isu.ifw.entity.WtmFlexibleAppl;
@@ -86,6 +88,12 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	
 	@Autowired
 	WtmApplRepository applRepo;
+	
+	@Autowired
+	@Qualifier("wtmOtApplService")
+	WtmApplService applService;
+	
+	
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
@@ -1102,7 +1110,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 						result.setEnterCd(enterCd);
 						result.setSabun(l.get("sabun").toString());
 						result.setTenantId(tenantId);
-						result.setTimeTypeCd("BASE");
+						result.setTimeTypeCd(l.get("timeTypeCd").toString());
 						result.setYmd(l.get("ymd").toString());
 					}
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
@@ -1114,42 +1122,30 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					
 					workDayResultRepo.save(result);
 					
-					Map<String, Object> result2 = flexEmpMapper.checkBaseWorktime(Long.parseLong(l.get("flexibleEmpId").toString()));
-					if(result2!=null && result2.get("isValid")!=null && result2.get("isValid").equals("0")) {
-						throw new RuntimeException(result2.get("totalWorktime").toString() + "시간의 소정근로시간을 넘을 수 없습니다.");
+					// 
+					String timeTypeCd = l.get("timeTypeCd").toString();
+					if("BASE".equals(timeTypeCd)) {
+						Map<String, Object> result2 = flexEmpMapper.checkBaseWorktimeMgr(l);
+						if(result2!=null && result2.get("isValid")!=null && result2.get("isValid").equals("0")) {
+							throw new RuntimeException(result2.get("totalWorktime").toString() + "시간의 소정근로시간을 넘을 수 없습니다.");
+						}
+					} else {
+						// ot시간검증
+						ReturnParam rp = new ReturnParam();
+						Map<String, Object> chkMap = new HashMap();
+						chkMap.put("ymd", l.get("ymd").toString());
+						chkMap.put("otSdate", l.get("planSdate").toString());
+						chkMap.put("otEdate", l.get("planEdate").toString());
+						rp = applService.validate( tenantId,  enterCd,  l.get("sabun").toString(),  timeTypeCd, chkMap);
+						if(rp.getStatus().equals("FAIL")) {
+							throw new RuntimeException(rp.get("message").toString());
+						}
+						
 					}
 				}
 			}
 		}
 	}	
-	
-	@Override
-	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
-		paramMap.put("tenantId", tenantId);
-		paramMap.put("enterCd", enterCd);
-		paramMap.put("sabun", sabun);
-		
-		String breakTypeCd = "";
-		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, paramMap.get("ymd").toString());
-		if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
-			Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
-			
-			WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
-			if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
-				breakTypeCd = timeCdMgr.getBreakTypeCd();
-		}
-		
-		Map<String, Object> result = null;
-		if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_MGR)) {
-			result = flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
-		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIME)) {
-			result = flexEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(paramMap);
-		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIMEFIX)) {
-			result = flexEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(paramMap);
-		}
-		
-		return result;
-	}
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
@@ -1550,19 +1546,28 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return paramMap;
 	}
 	
+
 	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
-		
-		//break_type_cd
-		String breakTypeCd = "";
 		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, paramMap.get("ymd").toString());
 		
+		Map<String, Object> result = null;
 		if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
 			Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
-			
-			WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
-			if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
-				breakTypeCd = timeCdMgr.getBreakTypeCd();
+			result = calcMinuteExceptBreaktime(timeCdMgrId, paramMap, userId);
 		}
+		
+		return result;
+	}
+	
+	public Map<String, Object> calcMinuteExceptBreaktime(Long timeCdMgrId, Map<String, Object> paramMap, String userId) {
+		//break_type_cd
+		String breakTypeCd = "";
+		
+		paramMap.put("timeCdMgrId", timeCdMgrId);
+			
+		WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
+		if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
+			breakTypeCd = timeCdMgr.getBreakTypeCd();
 		
 		Map<String, Object> result = null;
 		if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_MGR)) {
@@ -1578,16 +1583,12 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 	
 	public Map<String, Object> calcElasPlanMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId) {
-		
-		WtmFlexibleAppl flexibleAppl = flexApplRepo.findById(flexibleApplId).get();
-		WtmAppl appl = applRepo.findById(flexibleAppl.getApplId()).get();
-		
 		//break_type_cd
 		String breakTypeCd = "";
-		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(appl.getTenantId(), appl.getEnterCd(), appl.getApplSabun(), paramMap.get("ymd").toString());
+		WtmFlexibleApplDet flexApplDet = flexApplDetRepo.findByFlexibleApplIdAndYmd(flexibleApplId, paramMap.get("ymd").toString());
 		
-		if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
-			Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
+		if(flexApplDet!=null && flexApplDet.getTimeCdMgrId()!=null) {
+			Long timeCdMgrId = Long.valueOf(flexApplDet.getTimeCdMgrId());
 			
 			WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
 			if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
@@ -1608,16 +1609,11 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}
 	
 	public Map<String, Object> calcElasOtMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId) {
-		
-		WtmFlexibleAppl flexibleAppl = flexApplRepo.findById(flexibleApplId).get();
-		WtmAppl appl = applRepo.findById(flexibleAppl.getApplId()).get();
-		
-		//break_type_cd
 		String breakTypeCd = "";
-		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(appl.getTenantId(), appl.getEnterCd(), appl.getApplSabun(), paramMap.get("ymd").toString());
+		WtmFlexibleApplDet flexApplDet = flexApplDetRepo.findByFlexibleApplIdAndYmd(flexibleApplId, paramMap.get("ymd").toString());
 		
-		if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
-			Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
+		if(flexApplDet!=null && flexApplDet.getTimeCdMgrId()!=null) {
+			Long timeCdMgrId = Long.valueOf(flexApplDet.getTimeCdMgrId());
 			
 			WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
 			if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
