@@ -320,6 +320,8 @@
 			         	v.map(function(dayWork){
 			         		//근무일
 			         		//if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+			         			var ymd = '';
+			         			var isBase = false;
 								dayWork.plans.map(function(plan){
 									var day = moment(plan.key).format('YYYY-MM-DD');
 								
@@ -342,18 +344,18 @@
 		 		    				//} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
 		 		    				if((plan.valueMap.taaCd==undefined || plan.valueMap.taaCd=='') 
 		 		    						&& (plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='')) {
-		 		    					//클래스명 알파벳 순서대로 이벤트가 정렬됨 ㅠㅠ
-		  		    					if(plan.valueMap.hasOwnProperty("timeTypeCd") && (plan.valueMap.timeTypeCd=='OTFIX' || plan.valueMap.timeTypeCd=='OTA')) //고정ot, 조출, 야간은 색 다르게 표기
+		 		    					//타이틀 알파벳 순서대로 이벤트가 정렬됨 ㅠㅠ
+		  		    					if(plan.valueMap.hasOwnProperty("timeTypeCd") && (plan.valueMap.timeTypeCd=='OTFIX' || plan.valueMap.timeTypeCd=='OT')) { //고정ot, 조출, 야간은 색 다르게 표기
 		  		    						timeTypeClass = ' later';
-		  		    					else if(plan.valueMap.hasOwnProperty("timeTypeCd") && plan.valueMap.timeTypeCd=='OTB') //고정ot, 조출, 야간은 색 다르게 표기
-	  		    							timeTypeClass = ' early';
-		  		    					else
+		  		    					} else {
 		  		    						timeTypeClass = ' general';
+		  		    					}
+		 		    					
 		 		    					
 		 		    					//계획시간
 										var timeEvent = {
 											id: day,
-				    						title: "<div class='dot time "+timeTypeClass+"'><span>" + plan.label + "</span></div>",
+				    						title: "<span style='display:none;'>"+moment(day+' '+plan.valueMap.shm).format('YYYY-MM-DD HH:mm')+"</span>"+"<div class='dot time "+timeTypeClass+"'><span>"+ plan.label + "</span></div>",
 				    						start: day,
 				    						end: day
 				    					};
