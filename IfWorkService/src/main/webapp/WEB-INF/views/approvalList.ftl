@@ -273,8 +273,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                    <button type="button" id="apprBtn" class="btn btn-default" v-if="apprType=='apply'">결재하기</button>
-                    <button type="button" id="apprBtn" class="btn btn-default" v-else>반려하기</button>
+                    <button type="button" id="apprBtn" class="btn btn-default" v-if="apprType=='apply'" @click="apply">결재하기</button>
+                    <button type="button" id="apprBtn" class="btn btn-default" v-else  @click="apply">반려하기</button>
                 </div>
             </div>
         </div>
@@ -355,7 +355,8 @@
    			apprType: '', // 승인 or 반려
    			applType: '${applType}', // 신청 내역 조회('01') or 미결('02') or 기결('03')
    			apprOpinion: '',
-   			appl: {}
+   			appl: {}, //신청서view 
+   			appr: {} //승인할 신청서
    		},
 	    mounted: function(){
 	    	this.getApprovalList(this.applType); //신청내역 조회
@@ -486,83 +487,86 @@
 				});
 	    	},
 	    	approval: function(appr, apprType){ //결재
+	    		this.appr = appr;
+	    		this.apprType = apprType;
+	    		
+	    		$('#apprOpinionModal').modal("show"); 
+	    	},
+	    	apply: function(){
 	    		var $this = this;
 	    		
-	    		$this.apprType = apprType;
-					    	
-	    		$("#apprBtn").bind('click',function(){
-	    			$("#apprBtn").unbind('click');
+    			var saveYn = true;
+    			if($this.apprOpinion=='') {
+    				saveYn = false;
+    				$("#alertText").html("의견을 입력해 주세요.");
+    			}
+    			
+    			if(saveYn) {
+    				//$('#apprOpinionModal').modal("hide"); 
+    				$("#loading").show();
+    				var appr = $this.appr;
+	    			var param = appr;
 	    			
-	    			var saveYn = true;
-	    			if($this.apprOpinion=='') {
-	    				saveYn = false;
-	    				$("#alertText").html("의견을 입력해 주세요.");
+	    			param['apprOpinion'] = $this.apprOpinion;
+	    			
+	    			if(appr.applCd=='OT') {
+	    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
+	    				param['otSdate'] = moment(appr.appl.otSdate).format('YYYYMMDDHHmm');
+	    				param['otEdate'] = moment(appr.appl.otEdate).format('YYYYMMDDHHmm');
+	    			}else if(appr.applCd=='ENTRY_CHG') {
+	    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
+	    				
+	    				if(appr.appl.planSdate!=null && appr.appl.planSdate!=undefined && appr.appl.planSdate!='')
+	    					param['planSdate'] = moment(appr.appl.planSdate).format('YYYYMMDDHHmm');
+	    				if(appr.appl.planEdate!=null && appr.appl.planEdate!=undefined && appr.appl.planEdate!='')
+	    					param['planEdate'] = moment(appr.appl.planEdate).format('YYYYMMDDHHmm');
+	    				if(appr.appl.entrySdate!=null && appr.appl.entrySdate!=undefined && appr.appl.entrySdate!='')
+	    					param['entrySdate'] = moment(appr.appl.entrySdate).format('YYYYMMDDHHmm');
+	    				if(appr.appl.entryEdate!=null && appr.appl.entryEdate!=undefined && appr.appl.entryEdate!='')
+	    					param['entryEdate'] = moment(appr.appl.entryEdate).format('YYYYMMDDHHmm');
+	    				if(appr.appl.chgSdate!=null && appr.appl.chgSdate!=undefined && appr.appl.chgSdate!='')
+	    					param['chgSdate'] = moment(appr.appl.chgSdate).format('YYYYMMDDHHmm');
+	    				if(appr.appl.chgEdate!=null && appr.appl.chgEdate!=undefined && appr.appl.chgEdate!='')
+	    					param['chgEdate'] = moment(appr.appl.chgEdate).format('YYYYMMDDHHmm');
 	    			}
 	    			
-	    			if(saveYn) {
-	    				//$('#apprOpinionModal').modal("hide"); 
-	    				$("#loading").show();
-		    			var param = appr;
-		    			
-		    			param['apprOpinion'] = $this.apprOpinion
-		    			
-		    			if(appr.applCd=='OT') {
-		    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
-		    				param['otSdate'] = moment(appr.appl.otSdate).format('YYYYMMDDHHmm');
-		    				param['otEdate'] = moment(appr.appl.otEdate).format('YYYYMMDDHHmm');
-		    			}else if(appr.applCd=='ENTRY_CHG') {
-		    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
-		    				
-		    				if(appr.appl.planSdate!=null && appr.appl.planSdate!=undefined && appr.appl.planSdate!='')
-		    					param['planSdate'] = moment(appr.appl.planSdate).format('YYYYMMDDHHmm');
-		    				if(appr.appl.planEdate!=null && appr.appl.planEdate!=undefined && appr.appl.planEdate!='')
-		    					param['planEdate'] = moment(appr.appl.planEdate).format('YYYYMMDDHHmm');
-		    				if(appr.appl.entrySdate!=null && appr.appl.entrySdate!=undefined && appr.appl.entrySdate!='')
-		    					param['entrySdate'] = moment(appr.appl.entrySdate).format('YYYYMMDDHHmm');
-		    				if(appr.appl.entryEdate!=null && appr.appl.entryEdate!=undefined && appr.appl.entryEdate!='')
-		    					param['entryEdate'] = moment(appr.appl.entryEdate).format('YYYYMMDDHHmm');
-		    				if(appr.appl.chgSdate!=null && appr.appl.chgSdate!=undefined && appr.appl.chgSdate!='')
-		    					param['chgSdate'] = moment(appr.appl.chgSdate).format('YYYYMMDDHHmm');
-		    				if(appr.appl.chgEdate!=null && appr.appl.chgEdate!=undefined && appr.appl.chgEdate!='')
-		    					param['chgEdate'] = moment(appr.appl.chgEdate).format('YYYYMMDDHHmm');
-		    			}
-		    			
-	    	    		Util.ajax({
-	    					url: "${rc.getContextPath()}/appl/"+apprType,
-	    					type: "POST",
-	    					contentType: 'application/json',
-	    					data: JSON.stringify(param),
-	    					dataType: "json",
-	    					success: function(data) {
-	    						$("#loading").hide();
-	    						$('#apprOpinionModal .close').click();
-	    						
-	    						if(data!=null && data.status=='OK') {
-									$("#alertText").html("결재되었습니다.");
-								} else {
-									$("#alertText").html(data.message);
-								}
-								$("#alertModal").on('hidden.bs.modal',function(){
-									$this.getApprovalList();
-								});
-		  	  	         		$("#alertModal").modal("show"); 
-	    					},
-	    					error: function(e) {
-	    						$("#loading").hide();
-	    						console.log(e);
-	    						$("#alertText").html("확인요청 시 오류가 발생했습니다.");
-	      	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
-	      	  	         		$("#alertModal").modal("show"); 
-	    					}
-	    				});
-	    			} else {
-	    				$("#alertModal").on('hidden.bs.modal',function(){
-	    					$("#apprOpinion").focus();
-	    				});
-  	  	         		$("#alertModal").modal("show"); 
-	    			}
-	    		});
-	    		$('#apprOpinionModal').modal("show"); 
+    	    		Util.ajax({
+    					url: "${rc.getContextPath()}/appl/"+$this.apprType,
+    					type: "POST",
+    					contentType: 'application/json',
+    					data: JSON.stringify(param),
+    					dataType: "json",
+    					success: function(data) {
+    						$("#loading").hide();
+    						$('#apprOpinionModal .close').click();
+    						
+    						if(data!=null && data.status=='OK') {
+								$("#alertText").html("결재되었습니다.");
+							} else {
+								$("#alertText").html(data.message);
+							}
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+								$this.getApprovalList();
+							});
+	  	  	         		$("#alertModal").modal("show"); 
+    					},
+    					error: function(e) {
+    						$("#loading").hide();
+    						console.log(e);
+    						$("#alertText").html("확인요청 시 오류가 발생했습니다.");
+      	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+      	  	         			$("#alertModal").off('hidden.bs.modal');
+      	  	         		});
+      	  	         		$("#alertModal").modal("show"); 
+    					}
+    				});
+    			} else {
+    				$("#alertModal").on('hidden.bs.modal',function(){
+    					$("#apprOpinion").focus();
+    				});
+ 	  	         		$("#alertModal").modal("show"); 
+    			}
 	    	}
 	    }
    	});

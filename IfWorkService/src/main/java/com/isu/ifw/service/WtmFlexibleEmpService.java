@@ -176,13 +176,6 @@ public interface WtmFlexibleEmpService {
 	public void saveEmpDayResults(Long tenantId, String enterCd, String userId, Map<String, Object> convertMap) throws Exception;
 
 	/**
-	 * 휴게시간을 제외한 시간 계산
-	 * @param paramMap { timeCdMgrId : 휴게시간아이디,shm : '2200', ehm : '0200'}
-	 * @return { calcMinute : 22 } 
-	 */
-	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
-	
-	/**
 	 * 개인별 근무제도조회 관리자 화면
 	 * @param tenantId
 	 * @param enterCd
@@ -241,6 +234,7 @@ public interface WtmFlexibleEmpService {
 	 * @return
 	 */
 	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
+	public Map<String, Object> calcMinuteExceptBreaktime(Long timeCdMgrId, Map<String, Object> paramMap, String userId);
 	
 	/**
 	 * 탄근제 근무시간 계산
