@@ -272,7 +272,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return flexEmpMapper.getPrevFlexible(paramMap);
 	}
 	
-	public void imsi(Long tenantId, Long enterCd, String sabun, Long flexibleApplId, Map<String, Object> dateMap, String userId) throws Exception{
+	public void imsi(Long tenantId, String enterCd, String sabun, Long flexibleApplId, Map<String, Object> dateMap, String userId) throws Exception{
 		
 		flexEmpMapper.createFlexibleApplDet(flexibleApplId, userId);
 
@@ -305,7 +305,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 						paramMap.put("sabun", sabun);
 						paramMap.put("ymd", result.getYmd());
 						
-						Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
+						Map<String, Object> planMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, sabun, paramMap, userId);
 						result.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+""));
 					}else {
 						result.setPlanSdate(null);
@@ -408,7 +408,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 						String ehm = sdf.format(r.getPlanSdate()); 
 						pMap.put("shm", shm);
 						pMap.put("ehm", ehm);
-						Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(pMap);
+						Map<String, Object> planMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, sabun, pMap, userId);
 						newDayResult.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+"")); 
 						newDayResult.setUpdateId(userId);
 						workDayResultRepo.save(newDayResult);
@@ -443,7 +443,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				String ehm = sdf.format(insEdate); 
 				pMap.put("shm", shm);
 				pMap.put("ehm", ehm);
-				Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(pMap);
+				Map<String, Object> planMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, sabun, pMap, userId);
 				newDayResult.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+"")); 
 				newDayResult.setUpdateId(userId);
 				workDayResultRepo.save(newDayResult);
@@ -476,7 +476,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					String ehm = sdf.format(flxotEdate); 
 					pMap.put("shm", shm);
 					pMap.put("ehm", ehm);
-					Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(pMap);
+					Map<String, Object> planMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, sabun, pMap, userId);
 					newDayResult.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+"")); 
 					newDayResult.setUpdateId(userId);
 					workDayResultRepo.save(newDayResult);
@@ -659,7 +659,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 						if(shm!=null && ehm!=null) {
 							paramMap.put("shm", shm);
 							paramMap.put("ehm", ehm);
-							Map<String, Object> planMinuteMap = flexEmpMapper.calcElasPlanMinuteExceptBreaktime(paramMap);
+							Map<String, Object> planMinuteMap = calcElasPlanMinuteExceptBreaktime(flexibleApplId, paramMap, userId);
 							applDet.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+""));
 						} else {
 							applDet.setPlanMinute(null);
@@ -670,7 +670,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 							paramMap.put("sDate", k+shm );
 							paramMap.put("eDate", k+ehm );
 							paramMap.put("minute", vMap.get("otbMinute"));
-							Map<String, Object> otbMinuteMap = flexEmpMapper.calcElasOtMinuteExceptBreaktime(paramMap);
+							Map<String, Object> otbMinuteMap = calcElasOtMinuteExceptBreaktime(flexibleApplId, paramMap, userId);
 							
 							if(otbMinuteMap!=null) {
 								Date otbSdate = WtmUtil.toDate(otbMinuteMap.get("sDate").toString(), "yyyyMMddHHmmss");
@@ -693,7 +693,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 							paramMap.put("eDate", k+ehm );
 							paramMap.put("minute", vMap.get("otaMinute"));
 							
-							Map<String, Object> otaMinuteMap = flexEmpMapper.calcElasOtMinuteExceptBreaktime(paramMap);
+							Map<String, Object> otaMinuteMap = calcElasOtMinuteExceptBreaktime(flexibleApplId, paramMap, userId);
 							Date otaSdate = WtmUtil.toDate(otaMinuteMap.get("sDate").toString(), "yyyyMMddHHmmss");
 							Date otaEdate = WtmUtil.toDate(otaMinuteMap.get("eDate").toString(), "yyyyMMddHHmmss");
 							
@@ -1089,7 +1089,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					l.put("shm", l.get("planSdate").toString().substring(8,12));
 					l.put("ehm", l.get("planEdate").toString().substring(8,12));
 
-					Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(l);
+					Map<String, Object> planMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, l.get("sabun").toString(), l, userId);
 					l.put("planMinute", (Integer.parseInt(planMinuteMap.get("calcMinute")+"")));
 					l.put("updateId", userId);
 					l.put("tenantId", tenantId);
@@ -1214,7 +1214,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				String ehm = sdf.format(oriEdate); 
 				addMap.put("shm", shm);
 				addMap.put("ehm", ehm);
-				Map<String, Object> addPlanMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(addMap);
+				Map<String, Object> addPlanMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, sabun, addMap, userId);
 				addR.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
 				addR.setTimeTypeCd(WtmApplService.TIME_TYPE_BASE);
 				addR.setUpdateId(userId);
@@ -1227,7 +1227,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				String ehm = sdf.format(r.getPlanEdate()); 
 				pMap.put("shm", shm);
 				pMap.put("ehm", ehm);
-				Map<String, Object> planMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(pMap);
+				Map<String, Object> planMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, sabun, pMap, userId);
 				r.setPlanMinute(Integer.parseInt(planMinuteMap.get("calcMinute")+"")); 
 				workDayResultRepo.save(r);
 			}else {
@@ -1251,7 +1251,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		String ehm = sdf.format(addEdate); 
 		addMap.put("shm", shm);
 		addMap.put("ehm", ehm);
-		Map<String, Object> addPlanMinuteMap = flexEmpMapper.calcMinuteExceptBreaktime(addMap);
+		Map<String, Object> addPlanMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, sabun, addMap, userId);
 		addDayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
 		addDayResult.setTimeTypeCd(addTimeTypeCd);
 		addDayResult.setTaaCd(addTaaCd);
@@ -1548,6 +1548,93 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			e.printStackTrace();
 		}
 		return paramMap;
+	}
+	
+	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
+		
+		//break_type_cd
+		String breakTypeCd = "";
+		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, paramMap.get("ymd").toString());
+		
+		if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
+			Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
+			
+			WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
+			if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
+				breakTypeCd = timeCdMgr.getBreakTypeCd();
+		}
+		
+		Map<String, Object> result = null;
+		if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_MGR)) {
+			result = flexEmpMapper.calcMinuteExceptBreaktime(paramMap);
+		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIME)) {
+			result = flexEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(paramMap);
+		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIMEFIX)) {
+			result = flexEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(paramMap);
+		}
+		
+		return result;
+		
+	}
+	
+	public Map<String, Object> calcElasPlanMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId) {
+		
+		WtmFlexibleAppl flexibleAppl = flexApplRepo.findById(flexibleApplId).get();
+		WtmAppl appl = applRepo.findById(flexibleAppl.getApplId()).get();
+		
+		//break_type_cd
+		String breakTypeCd = "";
+		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(appl.getTenantId(), appl.getEnterCd(), appl.getApplSabun(), paramMap.get("ymd").toString());
+		
+		if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
+			Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
+			
+			WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
+			if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
+				breakTypeCd = timeCdMgr.getBreakTypeCd();
+		}
+		
+		Map<String, Object> result = null;
+		if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_MGR)) {
+			result = flexEmpMapper.calcElasPlanMinuteExceptBreaktime(paramMap);
+		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIME)) {
+			result = flexEmpMapper.calcTimeTypeElasPlanMinuteExceptBreaktime(paramMap);
+		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIMEFIX)) {
+			result = flexEmpMapper.calcTimeTypeFixElasPlanMinuteExceptBreaktime(paramMap);
+		}
+		
+		return result;
+		
+	}
+	
+	public Map<String, Object> calcElasOtMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId) {
+		
+		WtmFlexibleAppl flexibleAppl = flexApplRepo.findById(flexibleApplId).get();
+		WtmAppl appl = applRepo.findById(flexibleAppl.getApplId()).get();
+		
+		//break_type_cd
+		String breakTypeCd = "";
+		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(appl.getTenantId(), appl.getEnterCd(), appl.getApplSabun(), paramMap.get("ymd").toString());
+		
+		if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
+			Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
+			
+			WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
+			if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
+				breakTypeCd = timeCdMgr.getBreakTypeCd();
+		}
+		
+		Map<String, Object> result = null;
+		if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_MGR)) {
+			result = flexEmpMapper.calcElasOtMinuteExceptBreaktime(paramMap);
+		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIME)) {
+			result = flexEmpMapper.calcTimeTypeElasOtMinuteExceptBreaktime(paramMap);
+		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIMEFIX)) {
+			result = flexEmpMapper.calcTimeTypeFixElasOtMinuteExceptBreaktime(paramMap);
+		}
+		
+		return result;
+		
 	}
 
 }

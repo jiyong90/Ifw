@@ -1173,6 +1173,7 @@
   	</select>
   	
   	<select id="calcElasPlanMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
+  		<![CDATA[
   		SELECT BREAK_MINUTE
 		     , F_WTM_CALC_MINUTE(#{shm}, #{ehm}, '','','') - BREAK_MINUTE AS CALC_MINUTE
 		  FROM ( SELECT CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, #{shm}, #{ehm}, '')) IS NULL THEN 0 
@@ -1184,9 +1185,121 @@
 						 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
 					 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
 					   AND D.YMD = #{ymd} ) S
+		]]>
+  	</select>
+  	
+  	<select id="calcTimeTypeElasPlanMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
+  		<![CDATA[
+  		SELECT PRE_BREAK_MINUTE + BREAK_MINUTE AS BREAK_MINUTE
+	  		     , CASE WHEN S.APPR_MINUTE BETWEEN S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE AND S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE + S.BREAK_MINUTE  THEN S.PRE_WORK_MINUTE
+							  WHEN S.APPR_MINUTE < S.BREAK_MINUTE THEN 0
+							  ELSE S.APPR_MINUTE - S.BREAK_MINUTE
+	                          END AS CALC_MINUTE
+		  FROM ( SELECT F_WTM_CALC_MINUTE(#{shm}, #{ehm}, '','','') AS APPR_MINUTE
+		              , MAX(B.WORK_MINUTE) AS PRE_WORK_MINUTE
+						  , MAX(B.BREAK_MINUTE) AS PRE_BREAK_MINUTE
+				        , MIN(BB.WORK_MINUTE) AS WORK_MINUTE
+						  , MIN(BB.BREAK_MINUTE) AS BREAK_MINUTE
+					  FROM WTM_FLEXIBLE_APPL_DET D
+					  JOIN WTM_TIME_CD_MGR T
+						 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+					  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
+					    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+		            AND (B.WORK_MINUTE + B.BREAK_MINUTE) < F_WTM_CALC_MINUTE(#{shm}, #{ehm}, '','','')
+					  LEFT OUTER JOIN WTM_TIME_BREAK_TIME BB
+					    ON T.TIME_CD_MGR_ID = BB.TIME_CD_MGR_ID 
+		            AND (BB.WORK_MINUTE + BB.BREAK_MINUTE) >= F_WTM_CALC_MINUTE(#{shm}, #{ehm}, '','','')
+					 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+					   AND D.YMD = #{ymd}
+						AND T.BREAK_TYPE_CD = 'TIME' ) S		
+		]]> 
+  	</select>
+  	
+  	<select id="calcTimeTypeFixElasPlanMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
+  		<![CDATA[
+  		SELECT B.BREAK_MINUTE AS BREAK_MINUTE
+		    ,  B.WORK_MINUTE AS CALC_MINUTE
+		  FROM WTM_FLEXIBLE_APPL_DET D
+		  JOIN WTM_TIME_CD_MGR T
+			 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+		  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
+		    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+           AND (B.WORK_MINUTE + B.BREAK_MINUTE) <= F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','')
+		 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+		   AND D.YMD = #{ymd}
+		   AND T.BREAK_TYPE_CD = 'TIMEFIX'
+		]]>
   	</select>
   	
   	<select id="calcElasOtMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
+  		SELECT F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(PLAN_SDATE, -CALC_MINUTE,'I') ELSE PLAN_EDATE END, 'YMDHIS') AS S_DATE
+		     , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN PLAN_SDATE ELSE F_WTM_DATE_ADD(PLAN_EDATE, CALC_MINUTE, 'I') END, 'YMDHIS') AS E_DATE
+		     , BREAK_MINUTE
+			 , CALC_MINUTE 
+		  FROM (
+					SELECT PLAN_SDATE
+					      , PLAN_EDATE
+					      , BREAK_MINUTE
+							, F_WTM_CALC_MINUTE(SHM, EHM, '','','') - BREAK_MINUTE AS CALC_MINUTE
+					  FROM ( SELECT PLAN_SDATE
+					              , PLAN_EDATE
+					              , D.SHM
+					              , D.EHM
+					              , CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) IS NULL THEN 0 
+						  				 ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) END AS BREAK_MINUTE
+								  FROM ( SELECT FLEXIBLE_APPL_ID
+								              , YMD
+								              , TIME_CD_MGR_ID
+								              , F_WTM_TO_DATE(#{sDate},'YMDHI') AS PLAN_SDATE
+								              , F_WTM_TO_DATE(#{eDate},'YMDHI') AS PLAN_EDATE
+								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{sDate},'YMDHI'), -#{minute},'I') ELSE F_WTM_TO_DATE(#{eDate},'YMDHI') END, 'HI') AS SHM
+								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_TO_DATE(#{sDate},'YMDHI') ELSE F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eDate},'YMDHI'), #{minute}, 'I') END, 'HI') AS EHM
+								           FROM WTM_FLEXIBLE_APPL_DET) AS D
+								  JOIN WTM_TIME_CD_MGR T
+									 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+								  JOIN WTM_TIME_BREAK_MGR B
+									 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+								 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+								   AND D.YMD = #{ymd}
+								GROUP BY PLAN_SDATE, PLAN_EDATE, D.SHM, D.EHM ) S
+				 ) T
+  	</select>
+  	
+  	<select id="calcTimeTypeElasOtMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
+  		SELECT F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(PLAN_SDATE, -CALC_MINUTE,'I') ELSE PLAN_EDATE END, 'YMDHIS') AS S_DATE
+		     , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN PLAN_SDATE ELSE F_WTM_DATE_ADD(PLAN_EDATE, CALC_MINUTE, 'I') END, 'YMDHIS') AS E_DATE
+		     , BREAK_MINUTE
+			 , CALC_MINUTE 
+		  FROM (
+					SELECT PLAN_SDATE
+					      , PLAN_EDATE
+					      , BREAK_MINUTE
+							, F_WTM_CALC_MINUTE(SHM, EHM, '','','') - BREAK_MINUTE AS CALC_MINUTE
+					  FROM ( SELECT PLAN_SDATE
+					              , PLAN_EDATE
+					              , D.SHM
+					              , D.EHM
+					              , CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) IS NULL THEN 0 
+						  				 ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) END AS BREAK_MINUTE
+								  FROM ( SELECT FLEXIBLE_APPL_ID
+								              , YMD
+								              , TIME_CD_MGR_ID
+								              , F_WTM_TO_DATE(#{sDate},'YMDHI') AS PLAN_SDATE
+								              , F_WTM_TO_DATE(#{eDate},'YMDHI') AS PLAN_EDATE
+								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{sDate},'YMDHI'), -#{minute},'I') ELSE F_WTM_TO_DATE(#{eDate},'YMDHI') END, 'HI') AS SHM
+								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_TO_DATE(#{sDate},'YMDHI') ELSE F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eDate},'YMDHI'), #{minute}, 'I') END, 'HI') AS EHM
+								           FROM WTM_FLEXIBLE_APPL_DET) AS D
+								  JOIN WTM_TIME_CD_MGR T
+									 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+								  JOIN WTM_TIME_BREAK_MGR B
+									 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+								 WHERE D.FLEXIBLE_APPL_ID = #{flexibleApplId}
+								   AND D.YMD = #{ymd}
+								GROUP BY PLAN_SDATE, PLAN_EDATE, D.SHM, D.EHM ) S
+				 ) T
+  	</select>
+  	
+  	<select id="calcTimeTypeFixElasOtMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
   		SELECT F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(PLAN_SDATE, -CALC_MINUTE,'I') ELSE PLAN_EDATE END, 'YMDHIS') AS S_DATE
 		     , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN PLAN_SDATE ELSE F_WTM_DATE_ADD(PLAN_EDATE, CALC_MINUTE, 'I') END, 'YMDHIS') AS E_DATE
 		     , BREAK_MINUTE

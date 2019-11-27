@@ -145,6 +145,8 @@ public interface WtmFlexibleEmpMapper {
 	 * @return
 	 */
 	public Map<String, Object> calcElasPlanMinuteExceptBreaktime(Map<String, Object> paramMap);
+	public Map<String, Object> calcTimeTypeElasPlanMinuteExceptBreaktime(Map<String, Object> paramMap);
+	public Map<String, Object> calcTimeTypeFixElasPlanMinuteExceptBreaktime(Map<String, Object> paramMap);
 	
 	/**
 	 * 탄력 근무제의 휴게시간을 제외한 연장 시간 계산
@@ -152,6 +154,8 @@ public interface WtmFlexibleEmpMapper {
 	 * @return
 	 */
 	public Map<String, Object> calcElasOtMinuteExceptBreaktime(Map<String, Object> paramMap);
+	public Map<String, Object> calcTimeTypeElasOtMinuteExceptBreaktime(Map<String, Object> paramMap);
+	public Map<String, Object> calcTimeTypeFixElasOtMinuteExceptBreaktime(Map<String, Object> paramMap);
 	
 	/**
 	 * 근무제 기간에 대한 정보

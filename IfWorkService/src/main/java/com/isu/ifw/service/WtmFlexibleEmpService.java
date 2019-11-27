@@ -230,6 +230,33 @@ public interface WtmFlexibleEmpService {
 	 * @return
 	 */
 	public Map<String, Object> setChangeFlexible(Map<String, Object> paramMap);
-	
 
+	/**
+	 * 근무시간 계산
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param paramMap ymd, shm, ehm 
+	 * @param userId
+	 * @return
+	 */
+	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId);
+	
+	/**
+	 * 탄근제 근무시간 계산
+	 * @param flexibleApplId
+	 * @param paramMap ymd, shm, ehm 
+	 * @param userId
+	 * @return
+	 */
+	public Map<String, Object> calcElasPlanMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId);
+
+	/**
+	 * 탄근제 연장 근무시간 계산
+	 * @param flexibleApplId
+	 * @param paramMap ymd, shm, ehm 
+	 * @param userId
+	 * @return
+	 */
+	public Map<String, Object> calcElasOtMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId);
 }

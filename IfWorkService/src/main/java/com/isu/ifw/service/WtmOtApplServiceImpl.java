@@ -319,17 +319,6 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				otNightEdate = format.parse(otAppl.getYmd()+n_ehm);
 			}
 			
-			//break_type_cd
-			String breakTypeCd = "";
-			WtmWorkCalendar calendar = wtmWorkCalendarRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, appl.getApplSabun(), otAppl.getYmd());
-			if(calendar!=null && calendar.getTimeCdMgrId()!=null) {
-				Long timeCdMgrId = Long.valueOf(calendar.getTimeCdMgrId());
-				
-				WtmTimeCdMgr timeCdMgr = wtmTimeCdMgrRepo.findById(timeCdMgrId).get();
-				if(timeCdMgr!=null && timeCdMgr.getBreakTypeCd()!=null)
-					breakTypeCd = timeCdMgr.getBreakTypeCd();
-			}
-			
 			//신청부터 야간연장신청이다.
 			if(otAppl.getOtSdate().compareTo(otNightSdate) == 1 ) {
 				//연장야간 종료시간이 야간 종료시간보다 클경우
@@ -352,14 +341,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					reCalc.put("shm", sdf.format(otAppl.getOtSdate()));
 					reCalc.put("ehm", sdf.format(otNightSdate));
 					//Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
-					Map<String, Object> addPlanMinuteMap = null;
-					if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
-						addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
-					} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
-						addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(reCalc);
-					} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
-						addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(reCalc);
-					}
+					Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, reCalc, userId);
 					
 					dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
 					 
@@ -381,13 +363,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 					reCalc.put("shm", sdf.format(otNightSdate));
 					reCalc.put("ehm", sdf.format(otAppl.getOtEdate()));
 					//addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
-					if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
-						addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
-					} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
-						addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(reCalc);
-					} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
-						addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(reCalc);
-					}
+					addPlanMinuteMap = wtmFlexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, appl.getApplSabun(), reCalc, userId);
+					
 					dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+"")); 
 					dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_OT);
 					dayResult.setUpdateId(userId);
@@ -431,14 +408,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				reCalc.put("shm", sdf.format(otAppl.getOtSdate()));
 				reCalc.put("ehm", sdf.format(otNightSdate));
 				//Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
-				Map<String, Object> addPlanMinuteMap = null;
-				if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
-					addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
-				} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
-					addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(reCalc);
-				} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
-					addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(reCalc);
-				}
+				Map<String, Object> addPlanMinuteMap = wtmFlexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, reCalc, userId);
+				
 				dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+""));
 				 
 				dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_OT);
@@ -460,13 +431,8 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 				reCalc.put("shm", sdf.format(otNightSdate));
 				reCalc.put("ehm", sdf.format(otAppl.getOtEdate()));
 				//addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
-				if(breakTypeCd.equals(BREAK_TYPE_MGR)) {
-					addPlanMinuteMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(reCalc);
-				} else if(breakTypeCd.equals(BREAK_TYPE_TIME)) {
-					addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeApprMinuteExceptBreaktime(reCalc);
-				} else if(breakTypeCd.equals(BREAK_TYPE_TIMEFIX)) {
-					addPlanMinuteMap = wtmFlexibleEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(reCalc);
-				}
+				addPlanMinuteMap = wtmFlexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, appl.getApplSabun(), reCalc, userId);
+				
 				dayResult.setPlanMinute(Integer.parseInt(addPlanMinuteMap.get("calcMinute")+"")); 
 				dayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_NIGHT);
 				dayResult.setUpdateId(userId);
@@ -617,7 +583,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 						pMap.put("sabun", appl.getApplSabun());
 						
 						//현재 신청할 연장근무 시간 계산
-						resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(pMap));
+						resultMap.putAll(wtmFlexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, pMap, userId));
 						
 						otSub.setSubsMinute(resultMap.get("calcMinute").toString());
 						otSub.setUpdateId(userId);
@@ -701,7 +667,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		paramMap.put("ehm", eHm);
 		
 		//현재 신청할 연장근무 시간 계산
-		resultMap.putAll(wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap));
+		resultMap.putAll(wtmFlexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, paramMap, sabun));
 		
 		Integer calcMinute = Integer.parseInt(resultMap.get("calcMinute").toString());
 		
@@ -765,7 +731,7 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 						paramMap.put("ehm", subEHm);
 						
 						//현재 신청할 연장근무 시간 계산
-						Map<String, Object> subMap = wtmFlexibleEmpMapper.calcMinuteExceptBreaktime(paramMap);
+						Map<String, Object> subMap =  wtmFlexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, paramMap, sabun);
 						if(subMap != null && !resultMap.get("calcMinute").equals("")) {
 							subCalcMinute += Integer.parseInt(resultMap.get("calcMinute").toString());
 						}
