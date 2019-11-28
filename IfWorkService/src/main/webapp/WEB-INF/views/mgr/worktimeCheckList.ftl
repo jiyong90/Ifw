@@ -38,6 +38,10 @@
 						<table>
 							<tr>
 								<td>
+								    <span class="magnifier"><i class="fas fa-search"></i></span>
+								    <span class="search-title">Search</span>
+								</td>
+								<td>
 									<span class="label">근무 기준 </span>
 									<select id="searchType" name="searchType" class="box">
 										<option value="WEEK">주별</option>

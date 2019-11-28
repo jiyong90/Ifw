@@ -6,6 +6,10 @@
 					<div>
 						<table>
 							<tr>
+								<td>
+								    <span class="magnifier"><i class="fas fa-search"></i></span>
+								    <span class="search-title">Search</span>
+								</td>
 								<td colspan="3">
 									<span class="label">년도 </span>
 									<input type="text" id="sYy" name="sYy" class="required" value="${today?date("yyyy")?string("yyyy")}" />
