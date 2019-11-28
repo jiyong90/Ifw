@@ -93,3 +93,86 @@ a[aria-expanded="true"] {
 .error-page .container a.btn-main {
     background-color: #0f5aa4;
 }
+
+/*근무제 표시 감춤*/
+#sub-nav .sub-info-wrap{
+	height:19px;
+}
+#sub-nav .sub-info-wrap .work-check-wrap{
+	display:none;
+}
+
+/* Layout4HR css custom */
+a.button{
+	background-color:#0f5aa4;
+}
+
+input.required{
+	border:1px solid #0f5aa4 !important;
+}
+
+.sheet_search{
+	border-top: 2px solid #0f5aa4;
+}
+.sheet_search a.button{
+	background-color: #0f5aa4;
+}
+
+.sheet_title_wrap .title:after{
+	color: #0f5aa4;
+}
+/* Layout4HR css custom sheet background */
+.GMFocusRowBackground, .GMCursorBackground{
+	background: #0f5aa4 !important;
+}
+table.default th{
+	background-color:#f5fafd;
+	color: #84939d;
+	border-left: 1px solid #e7edf0;
+    border-right: 1px solid #e7edf0;
+    border-bottom: 1px solid #e7edf0;
+}
+table.default th:first-child {
+    border-left: none;
+}
+.tooltip-st i.far{
+	color: #0f5aa4;
+}
+
+.ui-tabs:not(.sub_top) .ui-tabs-nav li a {
+    display: inline-block;
+    margin-left: -1px;
+    border-bottom: 1px solid #0f5aa4;
+    border-left: 1px solid #e0e2e5;
+    border-right: 1px solid #e0e2e5;
+    border-top: 1px solid #e0e2e5;
+    background-color: #f5fafd;
+    color: #6d90a5;
+    font-size: 12px;
+    padding: 0 20px;
+    height: 28px;
+    line-height: 28px;
+    font-weight: 500;
+    font-weight: bold;
+}
+.ui-tabs:not(.sub_top) .ui-tabs-nav li:first-child a{
+	border-right: 0px solid #e0e2e5;
+}
+.ui-tabs:not(.sub_top) .ui-tabs-nav li a{
+	border-left: 0px solid #e0e2e5;
+}
+.ui-tabs:not(.sub_top) .ui-tabs-nav li:first-child a{
+	border-left: 1px solid #e0e2e5;
+}
+.ui-tabs:not(.sub_top) .ui-tabs-nav li.ui-state-active a {
+    background-color: #FFF;
+    margin: 0 1px 0 0;
+    border-bottom: 1px solid #FFF;
+    border-left: 1px solid #0f5aa4;
+    border-right: 1px solid #0f5aa4;
+    border-top: 1px solid #0f5aa4;
+    color: #0f5aa4 !important;
+    font-weight: 600;
+    font-weight: bold;
+}
+

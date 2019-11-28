@@ -50,6 +50,15 @@ textarea.required { border:1px solid #008fd5 !important; }
     cursor: pointer;
 }
 
+.sheet_search .search-title{
+	color: #3f4145;
+    font-size: 15px;
+    font-weight: bold;
+}
+.sheet_search .search-title::before{
+	
+}
+
 a.button {
     background-color: #008fd5;
 }
@@ -1226,7 +1235,10 @@ table.default th span.required{
     border-radius: 50%;
     }
 table.default td{padding:4px 10px; border-bottom:1px solid #e7edf0; font-size:12px;}
-table.default td input{padding:3px 0 3px 5px; border:1px solid #e0e2e5; text-align:left; height:21px; vertical-align:middle;}
+table.default td input{position:relative; padding:3px 0 3px 5px; border:1px solid #e0e2e5; text-align:left; height:21px; vertical-align:middle;}
+/* date timepicker custom */
+table.default td input div.bootstrap-datetimepicker-widget.dropdown-menu{width:auto;}
+table.default td .bootstrap-datetimepicker-widget table td{border-bottom:0px;}
 table.default td input[type="checkbox"] {
     display: inline-block;
     width: 18px;
