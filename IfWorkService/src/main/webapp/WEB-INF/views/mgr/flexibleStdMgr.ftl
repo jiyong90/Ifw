@@ -56,7 +56,8 @@
 											<tr id="trHoliday">
 												<th>공휴일제외여부</th>
 												<td>
-													<input type="checkbox" id="holExceptYn" name="holExceptYn" /> 체크시 공휴일 근무제외
+													<input type="checkbox" id="holExceptYn" name="holExceptYn" />
+													<label for="holExceptYn">체크시 공휴일 근무제외</label>
 												</td>
 												<th>인정근무 단위시간(분)</th>
 												<td>
@@ -78,7 +79,8 @@
 											<tr id="trBaseCheck">
 												<th>고정OT소진 사용여부</th>
 												<td colspan="3">
-													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" /> 체크시 고정OT 소진기준작성 
+													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" />
+													<label for="defaultWorkUseYn">체크시 고정OT 소진기준작성 </label>	
 												</td>
 											</tr>
 											<tr id="trFixOt">
@@ -111,13 +113,15 @@
 												</td>
 												<th>근태일 근무가능여부</th>
 												<td>
-													<input type="checkbox" id="taaWorkYn" name="taaWorkYn" /> 체크시 근태일 근무가능
+													<input type="checkbox" id="taaWorkYn" name="taaWorkYn" />
+													<label for="taaWorkYn">체크시 근태일 근무가능</label>
 												</td>
 											</tr>
 											<tr id="trCoreChk">
 												<th>코어시간체크여부</th>
 												<td colspan="3">
-													<input type="checkbox" id="coreChkYn" name="coreChkYn" /> 체크시 코어시간 기준작성
+													<input type="checkbox" id="coreChkYn" name="coreChkYn" /> 
+													<label for="coreChkYn">체크시 코어시간 기준작성</label>
 												</td>
 											</tr>
 											<tr id="trCoreTime">
@@ -140,29 +144,42 @@
 											<tr id="trUnplan">
 												<th>계획없이 타각가능여부</th>
 												<td>
-													<input type="checkbox" id="unplannedYn" name="unplannedYn" /> 계획이 없는날 타각수정신청 가능
+													<input type="checkbox" id="unplannedYn" name="unplannedYn" />
+													<label for="unplannedYn">계획이 없는날 타각수정신청 가능</label> 
 												</td>
 											</tr>
 											<tr id="trUsedTerm">
 												<th>사용기간지지정 <span id="Tooltip-7" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td colspan="3">
-													<input type="checkbox" id="usedTermOpt1w" name="usedTermOpt" value="1_week" title="1주"/> 1주
-													<input type="checkbox" id="usedTermOpt2w" name="usedTermOpt" value="2_week" title="2주"/> 2주
-													<input type="checkbox" id="usedTermOpt3w" name="usedTermOpt" value="3_week" title="3주"/> 3주
-													<input type="checkbox" id="usedTermOpt4w" name="usedTermOpt" value="4_week" title="4주"/> 4주
-													<input type="checkbox" id="usedTermOpt1m" name="usedTermOpt" value="1_month" title="1개월"/> 1개월
-													<input type="checkbox" id="usedTermOpt2m" name="usedTermOpt" value="2_month" title="2개월"/> 2개월
-													<input type="checkbox" id="usedTermOpt3m" name="usedTermOpt" value="3_month" title="3개월"/> 3개월
+													<input type="checkbox" id="usedTermOpt1w" name="usedTermOpt" value="1_week" title="1주" /> 
+													<label for="usedTermOpt1w">1주</label>
+													<input type="checkbox" id="usedTermOpt2w" name="usedTermOpt" value="2_week" title="2주"/>
+													<label for="usedTermOpt2w">2주</label>
+													<input type="checkbox" id="usedTermOpt3w" name="usedTermOpt" value="3_week" title="3주"/>
+													<label for="usedTermOpt3w">3주</label>
+													<input type="checkbox" id="usedTermOpt4w" name="usedTermOpt" value="4_week" title="4주"/>
+													<label for="usedTermOpt4w">4주</label>
+													<input type="checkbox" id="usedTermOpt1m" name="usedTermOpt" value="1_month" title="1개월"/> 
+													<label for="usedTermOpt1m">1개월</label>
+													<input type="checkbox" id="usedTermOpt2m" name="usedTermOpt" value="2_month" title="2개월"/>
+													<label for="usedTermOpt2m">2개월</label>
+													<input type="checkbox" id="usedTermOpt3m" name="usedTermOpt" value="3_month" title="3개월"/>
+													<label for="usedTermOpt3m">3개월</label>
 												</td>
 											</tr>
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
 												<td colspan="3">
-													<input type="radio" id="applTermOptday" name="applTermOpt" value="today"  title="당일 이내"/> 당일 이내
-													<input type="radio" id="applTermOpt1w" name="applTermOpt" value="1_week" title="1주일 이내"/> 1주일 이내
-													<input type="radio" id="applTermOpt2w" name="applTermOpt" value="2_week" title="2주일 이내"/> 2주일 이내
-													<input type="radio" id="applTermOpt3w" name="applTermOpt" value="3_week" title="3주일 이내"/> 3주일 이내
-													<input type="radio" id="applTermOpt4w" name="applTermOpt" value="4_week" title="4주일 이내"/> 4주일 이내
+													<input type="radio" id="applTermOptday" name="applTermOpt" value="today"  title="당일 이내"/>
+													<label for="applTermOptday">3당일 이내</label>
+													<input type="radio" id="applTermOpt1w" name="applTermOpt" value="1_week" title="1주일 이내"/> 
+													<label for="applTermOpt1w">1주일 이내</label>
+													<input type="radio" id="applTermOpt2w" name="applTermOpt" value="2_week" title="2주일 이내"/> 
+													<label for="applTermOpt2w">2주일 이내</label>
+													<input type="radio" id="applTermOpt3w" name="applTermOpt" value="3_week" title="3주일 이내"/>
+													<label for="applTermOpt3w">3주일 이내</label>
+													<input type="radio" id="applTermOpt4w" name="applTermOpt" value="4_week" title="4주일 이내"/>
+													<label for="applTermOpt4w">4주일 이내</label> 
 												</td>
 											</tr>
 											<tr>
