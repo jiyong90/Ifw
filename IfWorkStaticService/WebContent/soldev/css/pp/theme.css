@@ -94,14 +94,6 @@ a[aria-expanded="true"] {
     background-color: #0f5aa4;
 }
 
-/*근무제 표시 감춤*/
-#sub-nav .sub-info-wrap{
-	height:19px;
-}
-#sub-nav .sub-info-wrap .work-check-wrap{
-	display:none;
-}
-
 /* Layout4HR css custom */
 a.button{
 	background-color:#0f5aa4;
@@ -135,6 +127,7 @@ table.default th{
 table.default th:first-child {
     border-left: none;
 }
+/* tooltip */
 .tooltip-st i.far{
 	color: #0f5aa4;
 }
@@ -174,5 +167,23 @@ table.default th:first-child {
     color: #0f5aa4 !important;
     font-weight: 600;
     font-weight: bold;
+}
+/* custom check */
+table.default td [type="checkbox"]:checked + label:after,
+table.default td [type="checkbox"]:not(:checked) + label:after {
+    border-color: #0f5aa4;
+}
+/* custom radio */
+table.default td [type="radio"]:checked + label:after,
+table.default td [type="radio"]:not(:checked) + label:after {
+    background: #0f5aa4;
+}
+
+/*근무제 표시 감춤 - 태평양물산만*/
+#sub-nav .sub-info-wrap{
+	height:19px;
+}
+#sub-nav .sub-info-wrap .work-check-wrap{
+	display:none;
 }
 
