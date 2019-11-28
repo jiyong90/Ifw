@@ -142,23 +142,23 @@
 											<tr id="trUsedTerm">
 												<th>사용기간지지정 <span id="Tooltip-7" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td colspan="3">
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="1_week" title="1주"/> 1주
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="2_week" title="2주"/> 2주
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="3_week" title="3주"/> 3주
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="4_week" title="4주"/> 4주
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="1_month" title="1개월"/> 1개월
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="2_month" title="2개월"/> 2개월
-													<input type="checkbox" id="usedTermOpt" name="usedTermOpt" value="3_month" title="3개월"/> 3개월
+													<input type="checkbox" id="usedTermOpt1w" name="usedTermOpt" value="1_week" title="1주"/> 1주
+													<input type="checkbox" id="usedTermOpt2w" name="usedTermOpt" value="2_week" title="2주"/> 2주
+													<input type="checkbox" id="usedTermOpt3w" name="usedTermOpt" value="3_week" title="3주"/> 3주
+													<input type="checkbox" id="usedTermOpt4w" name="usedTermOpt" value="4_week" title="4주"/> 4주
+													<input type="checkbox" id="usedTermOpt1m" name="usedTermOpt" value="1_month" title="1개월"/> 1개월
+													<input type="checkbox" id="usedTermOpt2m" name="usedTermOpt" value="2_month" title="2개월"/> 2개월
+													<input type="checkbox" id="usedTermOpt3m" name="usedTermOpt" value="3_month" title="3개월"/> 3개월
 												</td>
 											</tr>
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
 												<td colspan="3">
-													<input type="radio" id="applTermOpt" name="applTermOpt" value="today"  title="당일 이내"/> 당일 이내
-													<input type="radio" id="applTermOpt" name="applTermOpt" value="1_week" title="1주일 이내"/> 1주일 이내
-													<input type="radio" id="applTermOpt" name="applTermOpt" value="2_week" title="2주일 이내"/> 2주일 이내
-													<input type="radio" id="applTermOpt" name="applTermOpt" value="3_week" title="3주일 이내"/> 3주일 이내
-													<input type="radio" id="applTermOpt" name="applTermOpt" value="4_week" title="4주일 이내"/> 4주일 이내
+													<input type="radio" id="applTermOptday" name="applTermOpt" value="today"  title="당일 이내"/> 당일 이내
+													<input type="radio" id="applTermOpt1w" name="applTermOpt" value="1_week" title="1주일 이내"/> 1주일 이내
+													<input type="radio" id="applTermOpt2w" name="applTermOpt" value="2_week" title="2주일 이내"/> 2주일 이내
+													<input type="radio" id="applTermOpt3w" name="applTermOpt" value="3_week" title="3주일 이내"/> 3주일 이내
+													<input type="radio" id="applTermOpt4w" name="applTermOpt" value="4_week" title="4주일 이내"/> 4주일 이내
 												</td>
 											</tr>
 											<tr>
@@ -576,7 +576,7 @@
 				
 				// 공휴일제외여부
 				if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
-					$("input:checkbox[id='holExceptYn']").prop("checked", true);
+					$("input:checkbox[name='holExceptYn']").prop("checked", true);
 					
 				}
 				$("#dayOpenType").val(sheet1.GetCellValue( NewRow, "dayOpenType")).prop("selected", true);
@@ -591,7 +591,7 @@
 				} else {
 					// 고정ot소진 사용여부
 					if(sheet1.GetCellValue( NewRow, "defaultWorkUseYn") == "Y"){
-						$("input:checkbox[id='defaultWorkUseYn']").prop("checked", true);
+						$("input:checkbox[name='defaultWorkUseYn']").prop("checked", true);
 						setDefaultWorkUseYn(true);
 						$("#trFixOt").show();
 						$("#fixotUseType").val(sheet1.GetCellValue( NewRow, "fixotUseType")).prop("selected", true);
@@ -608,23 +608,23 @@
 					$("#workShm").val(sheet1.GetCellValue( NewRow, "workShm"));
 					$("#workEhm").val(sheet1.GetCellValue( NewRow, "workEhm"));
 					if(sheet1.GetCellValue( NewRow, "taaWorkYn") == "Y"){
-						$("input:checkbox[id='taaWorkYn']").prop("checked", true);
+						$("input:checkbox[name='taaWorkYn']").prop("checked", true);
 					} else {
-						$("input:checkbox[id='taaWorkYn']").prop("checked", false);
+						$("input:checkbox[name='taaWorkYn']").prop("checked", false);
 					}
 					$("#trBaseFirst").show();
 					$("#exhaustionYn").addClass("required");
 					$("#exhaustionYn").val(sheet1.GetCellValue( NewRow, "exhaustionYn")).prop("selected", true);
 					$("#trUnplan").show();
 					if(sheet1.GetCellValue( NewRow, "unplannedYn") == "Y"){
-						$("input:checkbox[id='unplannedYn']").prop("checked", true);
+						$("input:checkbox[name='unplannedYn']").prop("checked", true);
 					} else {
-						$("input:checkbox[id='unplannedYn']").prop("checked", false);
+						$("input:checkbox[name='unplannedYn']").prop("checked", false);
 					}
 					if(workTypeCd == "SELE_C"){
 						$("#trCoreChk").show();
 						if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
-							$("input:checkbox[id='coreChkYn']").prop("checked", true);
+							$("input:checkbox[name='coreChkYn']").prop("checked", true);
 							setCoreChkYn(true);
 						} else {
 							setCoreChkYn(false);
@@ -665,7 +665,7 @@
 					var dataUseTermOpt = JSON.parse(usedTermOpt);
 						for(var i=0; i<dataUseTermOpt.length; i++) {
 							var value = dataUseTermOpt[i].value;
-							$("input:checkbox[id=usedTermOpt][value=" + value + "]").prop("checked", true);
+							$("input:checkbox[name=usedTermOpt][value=" + value + "]").prop("checked", true);
 						}
 					}
 					$("#trApplTerm").show();
@@ -674,7 +674,7 @@
 						var dataApplTermOpt = JSON.parse(applTermOpt);
 						for(var i=0; i<dataApplTermOpt.length; i++) {
 							var value = dataApplTermOpt[i].value;
-							$("input:checkbox[id=applTermOpt][value=" + value + "]").prop("checked", true);
+							$("input:checkbox[name=applTermOpt][value=" + value + "]").prop("checked", true);
 						}
 					}
 				}
@@ -741,7 +741,7 @@
 	}
 	function getCheckYn(objId){
 		var chkYn = "N";
-		if($("input:checkbox[id="+objId+"]").is(":checked")){
+		if($("input:checkbox[name="+objId+"]").is(":checked")){
 			 chkYn = "Y";
 		}
 		return chkYn;
