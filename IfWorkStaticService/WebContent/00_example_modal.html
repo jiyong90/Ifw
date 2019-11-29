@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="fullcalendar-4.2.0/packages/list/main.css" />
     <link rel="stylesheet" href="fullcalendar-4.2.0/packages/list/main.css" />
     <link rel="stylesheet" href="soldev/css/calendar.css">
+    <!-- <link rel="stylesheet" href="soldev/css/pp/theme.css"> -->
+    <link rel="stylesheet" href="soldev/css/scss/theme.css">
     <!-- E : calendar -->
     <!-- for dateTimepicker -->
     <link rel="stylesheet" href="tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.css">
@@ -41,9 +43,10 @@
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#registerModal1">연장근로신청하기</button>
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#registerModal2">휴일근로신청하기</button>
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#registerModal3">휴일근로신청하기_반차</button>
-        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#veiwModal1">연장근로상세보기</button>
-        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#veiwModal2">휴일근로신청_시간신청_상세보기</button>
-        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#veiwModal3">휴일근로신청_반차신청_상세보기</button>
+        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#viewModal1">연장근로상세보기</button>
+        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#viewModal2">휴일근로신청_시간신청_상세보기</button>
+        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#viewModal3">휴일근로신청_반차신청_상세보기</button>
+        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#viewModal4">탄력근무제신청_상세보기</button>
         <!-- modal start -->
         <div class="modal fade show" id="modalExample" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
@@ -569,7 +572,7 @@
         </div>
         <!-- modal end -->
         <!-- modal start -->
-        <div class="modal fade show" id="veiwModal1" tabindex="-1" role="dialog">
+        <div class="modal fade show" id="viewModal1" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
@@ -618,7 +621,7 @@
         </div>
         <!-- modal end -->
         <!-- modal start -->
-        <div class="modal fade show" id="veiwModal2" tabindex="-1" role="dialog" >
+        <div class="modal fade show" id="viewModal2" tabindex="-1" role="dialog" >
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
@@ -699,7 +702,7 @@
         </div>
         <!-- modal end -->
         <!-- modal start -->
-        <div class="modal fade show" id="veiwModal3" tabindex="-1" role="dialog">
+        <div class="modal fade show" id="viewModal3" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
@@ -767,7 +770,269 @@
             </div>
         </div>
         <!-- modal end -->
-
+        <!-- modal start -->
+        <div class="modal fade show" id="viewModal4" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title">탄력근무제신청</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="modal-app-wrap">
+                                <div class="inner-wrap">
+                                    <div class="title">탄력근무제 신청기간</div>
+                                    <div class="desc">2019.06.18 ~ 2019.06.18</div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title">근무기간</div>
+                                    <div class="desc">90</div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title">사유</div>
+                                    <div class="desc">탄력근무가 필요함</div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title">평균근무시간</div>
+                                    <div class="desc">40</div>
+                                </div>
+                                <div class="accordion-wrap inner-wrap">
+                                    <ul id="accordion" class="accordion">
+                                        <li>
+                                            <div class="link">2019.06.18 ~ 2019.06.18<i class="ico arrow-down"></i></div>
+                                            <div class="submenu">
+                                                <ul class="all-time-wrap">
+                                                    <li>
+                                                        <span class="title">근무시간</span>
+                                                        <span class="time bold">40</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="total">
+                                                            <span class="title">연장합산</span>
+                                                            <span class="time bold">40</span>
+                                                        </div>
+                                                        <ul class="time-list">
+                                                            <li>
+                                                                <span class="title">조출시간</span>
+                                                                <span class="time">8</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="title">잔업시간</span>
+                                                                <span class="time">20</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="title">휴일시간</span>
+                                                                <span class="time">12</span>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <p class="title time-desc-title">출,퇴근시간</p>
+                                                <ul class="time-desc-wrap">
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span><span class="time">8시간</span></li>
+                                                            <li><span class="title">조출시간</span><span class="time">1시간</span></li>
+                                                            <li><span class="title">잔업시간</span><span class="time">1시간</span></li>
+                                                            <li><span class="title">휴일시간</span><span class="time">1시간</span></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="link">2019.06.18 ~ 2019.06.18<i class="ico arrow-down"></i>
+                                            </div>
+                                            <div class="submenu">
+                                                <ul class="all-time-wrap">
+                                                    <li>
+                                                        <span class="title">근무시간</span>
+                                                        <span class="time bold">40</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="total">
+                                                            <span class="title">연장합산</span>
+                                                            <span class="time bold">40</span>
+                                                        </div>
+                                                        <ul class="time-list">
+                                                            <li>
+                                                                <span class="title">조출시간</span>
+                                                                <span class="time">8</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="title">잔업시간</span>
+                                                                <span class="time">20</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="title">휴일시간</span>
+                                                                <span class="time">12</span>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <p class="title time-desc-title">출,퇴근시간</p>
+                                                <ul class="time-desc-wrap">
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span><span
+                                                                    class="time">8시간</span></li>
+                                                            <li><span class="title">조출시간</span><span
+                                                                    class="time">1시간</span></li>
+                                                            <li><span class="title">잔업시간</span><span
+                                                                    class="time">1시간</span></li>
+                                                            <li><span class="title">휴일시간</span><span
+                                                                    class="time">1시간</span></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="link">2019.06.18 ~ 2019.06.18<i class="ico arrow-down"></i>
+                                            </div>
+                                            <div class="submenu">
+                                                <ul class="all-time-wrap">
+                                                    <li>
+                                                        <span class="title">근무시간</span>
+                                                        <span class="time bold">40</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="total">
+                                                            <span class="title">연장합산</span>
+                                                            <span class="time bold">40</span>
+                                                        </div>
+                                                        <ul class="time-list">
+                                                            <li>
+                                                                <span class="title">조출시간</span>
+                                                                <span class="time">8</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="title">잔업시간</span>
+                                                                <span class="time">20</span>
+                                                            </li>
+                                                            <li>
+                                                                <span class="title">휴일시간</span>
+                                                                <span class="time">12</span>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                                <p class="title time-desc-title">출,퇴근시간</p>
+                                                <ul class="time-desc-wrap">
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span><span
+                                                                    class="time">8시간</span></li>
+                                                            <li><span class="title">조출시간</span><span
+                                                                    class="time">1시간</span></li>
+                                                            <li><span class="title">잔업시간</span><span
+                                                                    class="time">1시간</span></li>
+                                                            <li><span class="title">휴일시간</span><span
+                                                                    class="time">1시간</span></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>
+                                                        <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                        <ul class="time-desc">
+                                                            <li><span class="title">근무시간</span>8시간</li>
+                                                            <li><span class="title">조출시간</span>1시간</li>
+                                                            <li><span class="title">잔업시간</span>1시간</li>
+                                                            <li><span class="title">휴일시간</span>1시간</li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="btn-wrap text-center">
+                                <button type="button" class="btn btn-default rounded-0">탄력근로신청 취소하기</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal end -->
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -893,6 +1158,32 @@
                 $(".radio-toggle-wrap").hide();
                 $('#replace-wrapper').html('');
             });
+
+            //accordion
+            var Accordion = function (el, multiple) {
+                this.el = el || {};
+                this.multiple = multiple || false;
+
+                // Variables privadas
+                var links = this.el.find('.link');
+                // Evento
+                links.on('click', { el: this.el, multiple: this.multiple }, this.dropdown)
+            }
+
+            Accordion.prototype.dropdown = function (e) {
+                var $el = e.data.el;
+                $this = $(this),
+                $next = $this.next();
+
+                $next.slideToggle();
+                $this.parent().toggleClass('open');
+
+                if (!e.data.multiple) {
+                    $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+                };
+            }
+
+            var accordion = new Accordion($('#accordion'), false);
         });
 
         //validation check
