@@ -7,6 +7,10 @@
 					<table>
 						<tr>
 							<td>
+							    <span class="magnifier"><i class="fas fa-search"></i></span>
+							    <span class="search-title">Search</span>
+							</td>
+							<td>
 								<a href="javascript:doAction1('Search');" class="button">조회</a>
 							</td>
 						</tr>

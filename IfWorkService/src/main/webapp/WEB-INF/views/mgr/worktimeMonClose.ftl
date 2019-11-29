@@ -7,6 +7,10 @@
 						<table>
 							<tr>
 								<td>
+								    <span class="magnifier"><i class="fas fa-search"></i></span>
+								    <span class="search-title">Search</span>
+								</td>
+								<td>
 									<span class="label">마감년월 </span>
 									<input type="text" id="searchYm" name="searchYm" class="date2 required" value="${today?date("yyyy-MM")?string("yyyyMM")}" data-toggle="datetimepicker" data-target="#searchYm" placeholder="연도-월" autocomplete="off"/>
 								</td>
