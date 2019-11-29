@@ -7,6 +7,10 @@
 						<table>
 							<tr>
 								<td>
+								    <span class="magnifier"><i class="fas fa-search"></i></span>
+								    <span class="search-title">Search</span>
+								</td>
+								<td>
 									<span class="label">기준일 </span>
 									<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 								</td>

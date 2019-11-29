@@ -6,13 +6,14 @@
 					<div>
 						<table>
 							<tr>
-								<td colspan="3">
+								<td>
+								    <span class="magnifier"><i class="fas fa-search"></i></span>
+								    <span class="search-title">Search</span>
+								</td>
+								<td>
 									<span class="label">년도 </span>
 									<input type="text" id="sYy" name="sYy" class="required" value="${today?date("yyyy")?string("yyyy")}" />
 								</td>
-							</tr>
-							<tr>
-								
 								<td>
 									<span class="label">소속 </span>
 									<input type="text" id="sOrgNm" name="sOrgNm" class="required"/>

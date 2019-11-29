@@ -7,6 +7,10 @@
 					<table>
 						<tr>
 							<td>
+								<span class="magnifier"><i class="fas fa-search"></i></span>
+								<span class="search-title">Search</span>
+							</td>
+							<td>
 								<span class="label">기준일 </span>
 								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 							</td>
@@ -52,7 +56,8 @@
 											<tr id="trHoliday">
 												<th>공휴일제외여부</th>
 												<td>
-													<input type="checkbox" id="holExceptYn" name="holExceptYn" /> 체크시 공휴일 근무제외
+													<input type="checkbox" id="holExceptYn" name="holExceptYn" />
+													<label for="holExceptYn">체크시 공휴일 근무제외</label>
 												</td>
 												<th>인정근무 단위시간(분)</th>
 												<td>
@@ -74,7 +79,8 @@
 											<tr id="trBaseCheck">
 												<th>고정OT소진 사용여부</th>
 												<td colspan="3">
-													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" /> 체크시 고정OT 소진기준작성 
+													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" />
+													<label for="defaultWorkUseYn">체크시 고정OT 소진기준작성 </label>	
 												</td>
 											</tr>
 											<tr id="trFixOt">
@@ -107,13 +113,15 @@
 												</td>
 												<th>근태일 근무가능여부</th>
 												<td>
-													<input type="checkbox" id="taaWorkYn" name="taaWorkYn" /> 체크시 근태일 근무가능
+													<input type="checkbox" id="taaWorkYn" name="taaWorkYn" />
+													<label for="taaWorkYn">체크시 근태일 근무가능</label>
 												</td>
 											</tr>
 											<tr id="trCoreChk">
 												<th>코어시간체크여부</th>
 												<td colspan="3">
-													<input type="checkbox" id="coreChkYn" name="coreChkYn" /> 체크시 코어시간 기준작성
+													<input type="checkbox" id="coreChkYn" name="coreChkYn" /> 
+													<label for="coreChkYn">체크시 코어시간 기준작성</label>
 												</td>
 											</tr>
 											<tr id="trCoreTime">
@@ -136,29 +144,42 @@
 											<tr id="trUnplan">
 												<th>계획없이 타각가능여부</th>
 												<td>
-													<input type="checkbox" id="unplannedYn" name="unplannedYn" /> 계획이 없는날 타각수정신청 가능
+													<input type="checkbox" id="unplannedYn" name="unplannedYn" />
+													<label for="unplannedYn">계획이 없는날 타각수정신청 가능</label> 
 												</td>
 											</tr>
 											<tr id="trUsedTerm">
 												<th>사용기간지지정 <span id="Tooltip-7" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td colspan="3">
-													<input type="checkbox" id="usedTermOpt1w" name="usedTermOpt" value="1_week" title="1주"/> 1주
-													<input type="checkbox" id="usedTermOpt2w" name="usedTermOpt" value="2_week" title="2주"/> 2주
-													<input type="checkbox" id="usedTermOpt3w" name="usedTermOpt" value="3_week" title="3주"/> 3주
-													<input type="checkbox" id="usedTermOpt4w" name="usedTermOpt" value="4_week" title="4주"/> 4주
-													<input type="checkbox" id="usedTermOpt1m" name="usedTermOpt" value="1_month" title="1개월"/> 1개월
-													<input type="checkbox" id="usedTermOpt2m" name="usedTermOpt" value="2_month" title="2개월"/> 2개월
-													<input type="checkbox" id="usedTermOpt3m" name="usedTermOpt" value="3_month" title="3개월"/> 3개월
+													<input type="checkbox" id="usedTermOpt1w" name="usedTermOpt" value="1_week" title="1주" /> 
+													<label for="usedTermOpt1w">1주</label>
+													<input type="checkbox" id="usedTermOpt2w" name="usedTermOpt" value="2_week" title="2주"/>
+													<label for="usedTermOpt2w">2주</label>
+													<input type="checkbox" id="usedTermOpt3w" name="usedTermOpt" value="3_week" title="3주"/>
+													<label for="usedTermOpt3w">3주</label>
+													<input type="checkbox" id="usedTermOpt4w" name="usedTermOpt" value="4_week" title="4주"/>
+													<label for="usedTermOpt4w">4주</label>
+													<input type="checkbox" id="usedTermOpt1m" name="usedTermOpt" value="1_month" title="1개월"/> 
+													<label for="usedTermOpt1m">1개월</label>
+													<input type="checkbox" id="usedTermOpt2m" name="usedTermOpt" value="2_month" title="2개월"/>
+													<label for="usedTermOpt2m">2개월</label>
+													<input type="checkbox" id="usedTermOpt3m" name="usedTermOpt" value="3_month" title="3개월"/>
+													<label for="usedTermOpt3m">3개월</label>
 												</td>
 											</tr>
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
 												<td colspan="3">
-													<input type="radio" id="applTermOptday" name="applTermOpt" value="today"  title="당일 이내"/> 당일 이내
-													<input type="radio" id="applTermOpt1w" name="applTermOpt" value="1_week" title="1주일 이내"/> 1주일 이내
-													<input type="radio" id="applTermOpt2w" name="applTermOpt" value="2_week" title="2주일 이내"/> 2주일 이내
-													<input type="radio" id="applTermOpt3w" name="applTermOpt" value="3_week" title="3주일 이내"/> 3주일 이내
-													<input type="radio" id="applTermOpt4w" name="applTermOpt" value="4_week" title="4주일 이내"/> 4주일 이내
+													<input type="radio" id="applTermOptday" name="applTermOpt" value="today"  title="당일 이내"/>
+													<label for="applTermOptday">3당일 이내</label>
+													<input type="radio" id="applTermOpt1w" name="applTermOpt" value="1_week" title="1주일 이내"/> 
+													<label for="applTermOpt1w">1주일 이내</label>
+													<input type="radio" id="applTermOpt2w" name="applTermOpt" value="2_week" title="2주일 이내"/> 
+													<label for="applTermOpt2w">2주일 이내</label>
+													<input type="radio" id="applTermOpt3w" name="applTermOpt" value="3_week" title="3주일 이내"/>
+													<label for="applTermOpt3w">3주일 이내</label>
+													<input type="radio" id="applTermOpt4w" name="applTermOpt" value="4_week" title="4주일 이내"/>
+													<label for="applTermOpt4w">4주일 이내</label> 
 												</td>
 											</tr>
 											<tr>
@@ -340,10 +361,17 @@
             {Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
    			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+   			{Header:"subGrp",    	Type:"Int",       	Hidden:1,  	Width:0,    Align:"Left",    ColMerge:0,   SaveName:"subGrp",   KeyField:0,   CalcLogic:"",   Format:"",            PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:20 },
 			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workPattDetId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"upid",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-            {Header:"순서",			Type:"Int",	      	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"seq",	 KeyField:1,	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+            {Header:"순서",			Type:"Int",	      	Hidden:0,	Width:50,	Align:"Center",	 ColMerge:0, SaveName:"seq",	 KeyField:1,	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
             {Header:"근무시간",  		Type:"Combo",     	Hidden:0,   Width:70,  Align:"Center",  ColMerge:0, SaveName:"timeCdMgrId",  KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:0,  InsertEdit:1,  EditLen:100  },
+            {Header:"출근시각",		Type:"Text",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"planShm", 		KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"퇴근시각",		Type:"Text",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"planEhm",		KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"조출시간(분)",	Type:"Int",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otbMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"잔업시간(분)",	Type:"Int",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otaMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"기본시간(분)",	Type:"AutoSum",     Hidden:1,  Width:80,   Align:"Center",  ColMerge:0, SaveName:"planMinute",  KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:3 , ExcludeEmpty:1},
+			{Header:"휴일시간(분)",	Type:"Int",     	Hidden:1,  Width:80,   Align:"Center",  ColMerge:0, SaveName:"otMinute",   KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:3 , ExcludeEmpty:1},
 			{Header:"비고",			Type:"Text",	 	Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 			
         ];
@@ -351,7 +379,7 @@
 		sheet2.SetEditable(true);
 		sheet2.SetVisible(true);
 		sheet2.SetUnicodeByte(3);
-        
+		
 		//근무시간
 		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=",false).DATA, "선택");
 		sheet2.SetColProperty("timeCdMgrId", {ComboText:timeCdMgrIdList[0], ComboCode:timeCdMgrIdList[1]} );
@@ -583,11 +611,23 @@
 				$("#dayCloseType").val(sheet1.GetCellValue( NewRow, "dayCloseType")).prop("selected", true);
 				
 				// 고정OT
-				if(workTypeCd == "ELSE"){
+				if(workTypeCd == "ELAS"){
 					$("#trBase").hide();
 					$("#trFixOt").hide();
 					$("#fixotUseType").val("");
 					$("#fixotUseLimit").val("");
+					
+					sheet2.SetColHidden("planShm", 0);
+		 			sheet2.SetColHidden("planEhm", 0);
+		 			sheet2.SetColHidden("otbMinute", 0);
+		 			sheet2.SetColHidden("otaMinute", 0);
+		 			sheet2.SetColHidden("planMinute", 0);
+		 			sheet2.SetColHidden("otMinute", 0);
+		 			
+		 			var info = [{StdCol:"subGrp" , SumCols:"otbMinute|otaMinute|planMinute|otMinute", ShowCumulate:0, CaptionCol:5}];
+		 			sheet2.ShowSubSum(info);
+		 			sheet2.SetSumRowHidden(0);
+		 			
 				} else {
 					// 고정ot소진 사용여부
 					if(sheet1.GetCellValue( NewRow, "defaultWorkUseYn") == "Y"){
@@ -599,6 +639,17 @@
 					} else {
 						setDefaultWorkUseYn(false);
 					}
+					
+					sheet2.SetColHidden("planShm", 1);
+		 			sheet2.SetColHidden("planEhm", 1);
+		 			sheet2.SetColHidden("otbMinute", 1);
+		 			sheet2.SetColHidden("otaMinute", 1);
+		 			sheet2.SetColHidden("planMinute", 1);
+		 			sheet2.SetColHidden("otMinute", 1);
+		 			
+		 			sheet2.HideSubSum();
+		 			sheet2.SetSumRowHidden(1);
+
 				}
 				
 				// 근무가능시각
@@ -723,6 +774,39 @@
 			doAction2("Search");
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+	
+	function sheet2_OnChange(Row, Col, Value) {  
+		if(sheet2.ColSaveName(Col) == "planShm" || sheet2.ColSaveName(Col) == "planEhm" || sheet2.ColSaveName(Col) == "timeCdMgrId"){
+			var shm = sheet2.GetCellValue(Row, "planShm");
+			var ehm = sheet2.GetCellValue(Row, "planEhm");
+			var timeCdMgrId = sheet2.GetCellValue(Row, "timeCdMgrId");
+			var param = "timeCdMgrId=" + timeCdMgrId
+					  + "&shm=" + shm
+					  + "&ehm=" + ehm;
+			var rtn = ajaxCall("${rc.getContextPath()}/flexibleStd/pattern/workHour", param ,false).DATA;
+			if(rtn != null && rtn != "") {
+				if(shm.length == 4 && ehm.length == 4){
+					if(rtn.holidayYn == "Y"){
+						sheet2.SetCellValue(Row, "otMinute", rtn.calcMinute);
+						sheet2.SetCellValue(Row, "planMinute", "");
+					} else {
+						sheet2.SetCellValue(Row, "otMinute", "");
+						sheet2.SetCellValue(Row, "planMinute", rtn.calcMinute);
+					}
+				} else {
+					sheet2.SetCellValue(Row, "planMinute", "");
+					sheet2.SetCellValue(Row, "otMinute", "");
+				}
+				
+				if(sheet2.ColSaveName(Col) == "timeCdMgrId" && rtn.holidayYn == "Y") {
+					sheet2.SetCellValue(Row, "planShm", "");
+					sheet2.SetCellValue(Row, "planEhm", "");
+					sheet2.SetCellValue(Row, "planMinute", "");
+					sheet2.SetCellValue(Row, "otMinute", "");
+				}
+			}
 		}
 	}
 	

@@ -7,6 +7,10 @@
 						<table>
 							<tr>
 								<td>
+								    <span class="magnifier"><i class="fas fa-search"></i></span>
+								    <span class="search-title">Search</span>
+								</td>
+								<td>
 									<span class="label">근태코드/근태명 </span>
 									<input type="text" id="searchKeyword" name="searchKeyword" class="text" />
 								</td>
