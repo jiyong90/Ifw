@@ -7,6 +7,10 @@
 				<table>
 				<tr>
 					<td>
+					    <span class="magnifier"><i class="fas fa-search"></i></span>
+					    <span class="search-title">Search</span>
+					</td>
+					<td>
 						<span class="label">근무기간 </span>
 						<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 									~
@@ -122,6 +126,7 @@
 			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workDayResultId",		KeyField:1,	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"사번",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sabun",		KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"일자",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ymd",			KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"근무시간",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"시간구분",		Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeTypeCd",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"근태코드",  		Type:"Combo",     	Hidden:0,   Width:70,  	Align:"Center",  ColMerge:0, SaveName:"taaCd",   	 KeyField:0,    Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:100  },
             {Header:"계획시작시각",		Type:"Text",	 	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"planSdate", 	 KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
@@ -173,32 +178,67 @@
 	function doAction2(sAction) {
 		switch (sAction) {
 		case "Search":
-			var param = "ymd="+sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd") + "&sabun="+sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun");
+			var param = "ymd="+sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd") + "&sabun="+sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun") + "&timeCdMgrId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
 			sheet2.DoSearch( "${rc.getContextPath()}/flexibleEmp/caldays" , param);
 			break;
 		
 		case "Save":
         	for(var i=sheet2.HeaderRows();i<sheet2.RowCount()+sheet2.HeaderRows(); i++){
-        		if((sheet2.GetCellValue(i, "sStatus") == "I" || sheet2.GetCellValue(i, "sStatus") == "U") 
-        				&& (sheet2.GetCellValue(i, "timeTypeCd") == "BASE")) {
-					var s = sheet2.GetCellValue(i, "planSdate");
+        		if(sheet2.GetCellValue(i, "sStatus") == "I" || sheet2.GetCellValue(i, "sStatus") == "U"){ 
+        			var s = sheet2.GetCellValue(i, "planSdate");
 					s = s.substring(8, s.length);
 
 					var e = sheet2.GetCellValue(i, "planEdate");
 					e = e.substring(8, e.length);
 					
 					var row = sheet1.GetSelectRow();
-		        	var cores = sheet1.GetCellValue(row, "coreShm");
-		        	var coree = sheet1.GetCellValue(row, "coreEhm");
-
-		        	if(s <= cores && e >= coree) {
-		        		
-		        	} else {
-		        		alert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
-		        		return;
-		        	}
+					
+	        		if(sheet2.GetCellValue(i, "timeTypeCd") == "BASE") {
+						
+			        	var cores = sheet1.GetCellValue(row, "coreShm");
+			        	var coree = sheet1.GetCellValue(row, "coreEhm");
+	
+			        	if(s <= cores && e >= coree) {
+			        	} else {
+			        		alert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
+			        		return;
+			        	}
+	        		}
+	        		if(sheet2.GetCellValue(i, "timeTypeCd") == "OT") {
+						if(s > "2200" || s < "0600"){
+							alert("연장근무시간은 06:00 ~ 22:00시 사이에 등록가능합니다.");
+							sheet2.SetCellValue(i, "planSdate", "");
+							return;
+						}
+						if(e > "2200" || e < "0600"){
+							alert("연장근무시간은 06:00 ~ 22:00시 사이에 등록가능합니다.");
+							sheet2.SetCellValue(i, "planEdate", "");
+							return;
+						}
+	        		}
+	        		if(sheet2.GetCellValue(i, "timeTypeCd") == "NIGHT") {
+	        			var ymd = sheet1.GetCellValue(row, "ymd");
+	        			var symd = sheet2.GetCellValue(i, "planSdate");
+	        			symd = symd.substring(0, 8);
+	        			var eymd = sheet2.GetCellValue(i, "planEdate");
+	        			eymd = eymd.substring(0, 8);
+	        			console.log("ymd : " + ymd);
+	        			console.log("symd : " + symd);
+	        			console.log("eymd : " + eymd);
+						if((ymd == symd && s < "2200") || (ymd != symd && s > "0600")){
+							alert("야간근무시간은 22:00 ~ 익일 06:00시 사이에 등록가능합니다.");
+							sheet2.SetCellValue(i, "planSdate", "");
+							return;
+						}
+						if((ymd == eymd && e < "2200") || (ymd != eymd && e > "0600")){
+							alert("야간근무시간은 22:00 ~ 익일 06:00시 사이에 등록가능합니다.");
+							sheet2.SetCellValue(i, "planEdate", "");
+							return;
+						}
+	        		}
         		}
         	}
+        	
 			IBS_SaveName(document.sheetForm,sheet2);
 			sheet2.DoSave("${rc.getContextPath()}/flexibleEmp/save/caldays", $("#sheetForm").serialize()); break;
 			break;
@@ -222,6 +262,7 @@
 			var row = sheet2.DataInsert(0);
 			sheet2.SetCellValue(row, "sabun", sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun"));
 			sheet2.SetCellValue(row, "ymd", sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd"));
+			sheet2.SetCellValue(row, "timeCdMgrId", sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId"));
 			break;
 		}
 	}
@@ -265,6 +306,18 @@
 		if(OldRow != NewRow){
 			sheet2.RemoveAll();
 			doAction2('Search');
+		}
+	}
+	
+	//셀 값변경 이벤트
+	function sheet2_OnChange(Row, Col, Value) {
+		var colNm = sheet2.ColSaveName(Col);
+		if(colNm == "timeTypeCd"){
+			// 근무시간구분 선택시 체크(기본근무, 연장근무, 야간근무만 입력할수 있음)
+			if(Value != "BASE" && Value != "OT" && Value != "NIGHT"){
+				sheet2.SetCellValue(Row, Col, "", 0);
+				alert("근무시간 변경은 기본근무/연장근무/야간근무만 등록 가능합니다.");
+			}
 		}
 	}
 </script>

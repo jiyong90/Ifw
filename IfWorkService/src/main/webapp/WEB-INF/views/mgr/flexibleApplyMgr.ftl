@@ -38,6 +38,10 @@
 					<table>
 						<tr>
 							<td>
+							    <span class="magnifier"><i class="fas fa-search"></i></span>
+							    <span class="search-title">Search</span>
+							</td>
+							<td>
 								<span class="label">기준일 </span>
 								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 							</td>
@@ -169,8 +173,8 @@
    			{Header:"상태",		Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"id",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleApplyGroupId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"upid",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleApplyId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"소속코드",  Type:"Text",    	Hidden:0, 	Width:100,  Align:"Center", ColMerge:0, SaveName:"orgCd",     			KeyField:0, Format:"",  PointCount:0, UpdateEdit:0, InsertEdit:0, EditLen:100 },
-			{Header:"소속명",    Type:"Text",    	Hidden:0, 	Width:100,  Align:"Center", ColMerge:0, SaveName:"orgNm",     			KeyField:0, Format:"",  PointCount:0, UpdateEdit:0, InsertEdit:1, EditLen:100 },
+			{Header:"소속코드",  Type:"Combo",    	Hidden:0, 	Width:100,  Align:"Center", ColMerge:0, SaveName:"orgCd",     			KeyField:0, Format:"",  PointCount:0, UpdateEdit:0, InsertEdit:1, EditLen:100 },
+			{Header:"소속명",    Type:"Text",    	Hidden:1, 	Width:100,  Align:"Center", ColMerge:0, SaveName:"orgNm",     			KeyField:0, Format:"",  PointCount:0, UpdateEdit:0, InsertEdit:1, EditLen:100 },
 			{Header:"직무코드",	Type:"Combo",		Hidden:1, 	Width:80,	Align:"Center", ColMerge:0, SaveName:"jobCd",				KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"직책",	    Type:"Combo",		Hidden:0, 	Width:80,	Align:"Center", ColMerge:0, SaveName:"dutyCd",				KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"직위",	    Type:"Combo",		Hidden:0, 	Width:80,	Align:"Center", ColMerge:0, SaveName:"posCd",				KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
@@ -195,6 +199,8 @@
 		sheet2.SetColProperty("classCd", {ComboText:"전체|"+classCdList[0], ComboCode:"|"+classCdList[1]} );
 		var workteamCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/workteamMgr/workteamCd", "",false).DATA, "");
 		sheet2.SetColProperty("workteamCd", {ComboText:"전체|"+workteamCdList[0], ComboCode:"|"+workteamCdList[1]} );
+		var orgCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/orgCode/comboList", "",false).DATA, "선택");
+		sheet2.SetColProperty("orgCd", {ComboText:"전체|"+orgCdList[0], ComboCode:"|"+orgCdList[1]} );
 		
 		//조직
         // setSheetAutocompleteOrg("sheet2", "orgNm");
@@ -497,16 +503,11 @@
 	
 	//셀 값변경 이벤트
 	function sheet1_OnChange(Row, Col, Value) {
-		console.log("Row : " + Row);
-		console.log("Col : " + Col);
 		var colNm = sheet1.ColSaveName(Col);
 		var repeatTypeCd = sheet1.GetCellValue(Row, "repeatTypeCd");
-		console.log("111111111111111111");
 		var status = sheet1.GetCellValue(Row, "stauts");
-		console.log(status);
 		if(colNm == "flexibleStdMgrId" && status == "I"){
 			var flexibleStdMgrId = sheet1.GetCellValue(Row, "flexibleStdMgrId");
-			console.log("flexibleStdMgrId : " + flexibleStdMgrId);
    	  		setRepeatSelect(Row, flexibleStdMgrId);
 		}
 		if(colNm == "repeatTypeCd"){
