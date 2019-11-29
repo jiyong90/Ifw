@@ -361,7 +361,7 @@ public class WtmFlexibleEmpController {
 		List<Map<String, Object>> flexibleList = null;
 		
 		try {
-			flexibleList = flexibleEmpService.getEmpDayResults(tenantId, enterCd, paramMap.get("sabun").toString(), paramMap.get("ymd").toString());
+			flexibleList = flexibleEmpService.getEmpDayResults(tenantId, enterCd, paramMap.get("sabun").toString(), paramMap.get("ymd").toString(), Long.valueOf(paramMap.get("timeCdMgrId").toString()));
 			rp.put("DATA", flexibleList);
 		} catch(Exception e) {
 			e.printStackTrace();

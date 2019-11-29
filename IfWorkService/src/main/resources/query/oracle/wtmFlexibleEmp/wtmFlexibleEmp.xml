@@ -1552,6 +1552,7 @@
 	    			, C.APPL_ID 
 	    			, C.YMD
 	    			, C.SABUN 
+	    			, ${timeCdMgrId} AS TIME_CD_MGR_ID
 	    			, C.TIME_TYPE_CD 
 	    			, C.TAA_CD 
 	    			, F_WTM_DATE_FORMAT(C.PLAN_SDATE, 'YMDHI') as PLAN_SDATE

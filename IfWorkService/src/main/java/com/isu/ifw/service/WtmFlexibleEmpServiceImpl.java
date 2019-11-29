@@ -1062,7 +1062,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	 * @return
 	 */
 	@Override
-	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, String sabun, String ymd) {
+	public List<Map<String, Object>> getEmpDayResults(Long tenantId, String enterCd, String sabun, String ymd, Long timeCdMgrId) {
 		List<Map<String, Object>> workDayResult = null;
 		try {
 			Map<String, Object> paramMap = new HashMap();
@@ -1070,6 +1070,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("sabun", sabun);
 			paramMap.put("ymd", ymd);
+			paramMap.put("timeCdMgrId", timeCdMgrId);
 			
 			workDayResult = flexEmpMapper.getWorkDayResultByCalendarId(paramMap);
 		} catch (Exception e) {
@@ -1091,13 +1092,15 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
 			List<Map<String, Object>> iList = (List<Map<String, Object>>) convertMap.get("mergeRows");
 			List<Map<String, Object>> day = new ArrayList();
+			String retMsg = "";
 			if(iList != null && iList.size() > 0) {
 				for(Map<String, Object> l : iList) {
 					
 					l.put("shm", l.get("planSdate").toString().substring(8,12));
 					l.put("ehm", l.get("planEdate").toString().substring(8,12));
-
-					Map<String, Object> planMinuteMap = calcMinuteExceptBreaktime(tenantId, enterCd, l.get("sabun").toString(), l, userId);
+					
+					Map<String, Object> planMinuteMap = calcMinuteExceptBreaktime(Long.parseLong(l.get("timeCdMgrId").toString()), l, userId);
+					
 					l.put("planMinute", (Integer.parseInt(planMinuteMap.get("calcMinute")+"")));
 					l.put("updateId", userId);
 					l.put("tenantId", tenantId);
@@ -1117,31 +1120,47 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					
 					result.setPlanSdate(sdf.parse(l.get("planSdate").toString()));
 					result.setPlanEdate(sdf.parse(l.get("planEdate").toString()));
+					result.setPlanMinute(Integer.parseInt(l.get("planMinute").toString()));
 					result.setUpdateId(userId);	
 				
 					
 					workDayResultRepo.save(result);
-					
-					// 
+
+					// 근무검증
 					String timeTypeCd = l.get("timeTypeCd").toString();
+					ReturnParam rp = new ReturnParam();
+					Map<String, Object> chkMap = new HashMap();
+					
 					if("BASE".equals(timeTypeCd)) {
 						Map<String, Object> result2 = flexEmpMapper.checkBaseWorktimeMgr(l);
 						if(result2!=null && result2.get("isValid")!=null && result2.get("isValid").equals("0")) {
-							throw new RuntimeException(result2.get("totalWorktime").toString() + "시간의 소정근로시간을 넘을 수 없습니다.");
+							retMsg = l.get("sabun").toString() + "," + l.get("ymd").toString() + ", "+ result2.get("totalWorktime").toString() + "시간의 소정근로시간을 넘을 수 없습니다.";
 						}
 					} else {
 						// ot시간검증
-						ReturnParam rp = new ReturnParam();
-						Map<String, Object> chkMap = new HashMap();
 						chkMap.put("ymd", l.get("ymd").toString());
 						chkMap.put("otSdate", l.get("planSdate").toString());
 						chkMap.put("otEdate", l.get("planEdate").toString());
 						rp = applService.validate( tenantId,  enterCd,  l.get("sabun").toString(),  timeTypeCd, chkMap);
 						if(rp.getStatus().equals("FAIL")) {
-							throw new RuntimeException(rp.get("message").toString());
+							retMsg = l.get("sabun").toString() + "," + l.get("ymd").toString() + ", "+ rp.get("message").toString();
 						}
-						
 					}
+					if(!"".equals(retMsg)) {
+						// 오류내용 저장하기
+						throw new RuntimeException(retMsg);
+					}
+					
+					// 문제가 없으면 근무계획시간 합산
+					chkMap.put("tenantId", tenantId);
+					chkMap.put("enterCd", enterCd);
+					chkMap.put("sabun", l.get("sabun").toString());
+					chkMap.put("symd", l.get("ymd").toString());
+					chkMap.put("eymd", l.get("ymd").toString());
+					chkMap.put("pId", userId);
+					flexEmpMapper.createWorkTermBySabunAndSymdAndEymd(chkMap);
+					
+					retMsg = ""; // 메시지초기화
 				}
 			}
 		}
@@ -1577,7 +1596,6 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		} else if(breakTypeCd.equals(WtmApplService.BREAK_TYPE_TIMEFIX)) {
 			result = flexEmpMapper.calcTimeTypeFixMinuteExceptBreaktime(paramMap);
 		}
-		
 		return result;
 		
 	}
