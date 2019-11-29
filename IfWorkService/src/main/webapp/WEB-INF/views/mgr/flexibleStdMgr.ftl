@@ -56,7 +56,8 @@
 											<tr id="trHoliday">
 												<th>공휴일제외여부</th>
 												<td>
-													<input type="checkbox" id="holExceptYn" name="holExceptYn" /> 체크시 공휴일 근무제외
+													<input type="checkbox" id="holExceptYn" name="holExceptYn" />
+													<label for="holExceptYn">체크시 공휴일 근무제외</label>
 												</td>
 												<th>인정근무 단위시간(분)</th>
 												<td>
