@@ -12,13 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.entity.WtmTimeCdMgr;
 import com.isu.ifw.entity.WtmWorkPattDet;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.repository.WtmTimeCdMgrRepository;
 import com.isu.ifw.repository.WtmWorkPattDetRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmFlexibleStdVO;
@@ -37,6 +38,12 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	
 	@Resource
 	WtmWorkPattDetRepository workPattDetRepository;
+	
+	@Autowired
+	WtmTimeCdMgrRepository timeCdMgrRepo;
+	
+	@Autowired
+	WtmFlexibleEmpService flexibleEmpService;
 	
 	@Override
 	public List<WtmFlexibleStdVO> getFlexibleStd(Long tenantId, String enterCd, String userKey) {
@@ -178,16 +185,47 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 	public List<Map<String, Object>> getWorkPattList(Long flexibleStdMgrId) {
 		List<Map<String, Object>> workPattList = new ArrayList();	
 		List<WtmWorkPattDet> list = workPattDetRepository.findByFlexibleStdMgrId(flexibleStdMgrId);
-		
+
 		for(WtmWorkPattDet l : list) {
 			Map<String, Object> workPatt = new HashMap();
 			workPatt.put("workPattDetId", l.getWorkPattDetId());
 			workPatt.put("flexibleStdMgrId", l.getFlexibleStdMgrId());
 			workPatt.put("seq", l.getSeq());
 			workPatt.put("timeCdMgrId", l.getTimeCdMgrId());
+			
+			WtmTimeCdMgr timeCdMgr = timeCdMgrRepo.findById(l.getTimeCdMgrId()).get();
+			
+			double subGrp = l.getSeq()%7==0 ? Math.floor(l.getSeq()/7) : Math.floor(l.getSeq()/7)+1;
+			workPatt.put("subGrp", subGrp);
+			
+			workPatt.put("planShm", l.getPlanShm());
+			workPatt.put("planEhm", l.getPlanEhm());
+
+			if(timeCdMgr.getHolYn()!=null && !"Y".equals(timeCdMgr.getHolYn()))
+				workPatt.put("planMinute", l.getPlanMinute());
+			else 
+				workPatt.put("planMinute", "");
+			
+			workPatt.put("otbMinute", l.getOtbMinute());
+			workPatt.put("otaMinute", l.getOtaMinute());
+			
+			int otMinute = 0;
+			
+			if(timeCdMgr.getHolYn()!=null && "Y".equals(timeCdMgr.getHolYn()) && l.getPlanMinute()!=null) {
+				otMinute = l.getPlanMinute();
+			} 
+			
+			if(otMinute!=0) {
+				workPatt.put("otMinute", otMinute);
+			} else {
+				workPatt.put("otMinute", "");
+			}
+			
 			workPatt.put("note", l.getNote());
 			workPattList.add(workPatt);
+
 		}
+		
 		return workPattList;
 	}
 	
@@ -205,6 +243,37 @@ public class WtmFlexibleStdServiceImpl implements WtmFlexibleStdService {
 						code.setFlexibleStdMgrId(Long.parseLong(l.get("flexibleStdMgrId").toString()));
 						code.setSeq(Integer.parseInt(l.get("seq").toString()));
 						code.setTimeCdMgrId(Long.parseLong(l.get("timeCdMgrId").toString()));
+						
+						WtmTimeCdMgr timeCdMgr = timeCdMgrRepo.findById(Long.parseLong(l.get("timeCdMgrId").toString())).get();
+						code.setHolidayYn(timeCdMgr.getHolYn());
+						
+						String planShm = "";
+						String planEhm = "";
+						if(l.get("planShm")!=null && !"".equals(l.get("planShm"))) {
+							planShm = l.get("planShm").toString();
+							code.setPlanShm(planShm);
+						}
+						if(l.get("planEhm")!=null && !"".equals(l.get("planEhm"))) {
+							planEhm = l.get("planEhm").toString();
+							code.setPlanEhm(planEhm);
+						}
+							
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("shm", planShm);
+						paramMap.put("ehm", planEhm);
+						Map<String, Object> cMap = flexibleEmpService.calcMinuteExceptBreaktime(Long.parseLong(l.get("timeCdMgrId").toString()), paramMap, userId);
+						if(cMap!=null && cMap.get("calcMinute")!=null) {
+							code.setPlanMinute(Integer.parseInt(cMap.get("calcMinute").toString()));
+						}
+						
+						if(l.get("otbMinute")!=null && !"".equals(l.get("otbMinute"))) {
+							code.setOtbMinute(Integer.parseInt(l.get("otbMinute").toString()));
+						}
+						
+						if(l.get("otaMinute")!=null && !"".equals(l.get("otaMinute"))) {
+							code.setOtaMinute(Integer.parseInt(l.get("otaMinute").toString()));
+						}
+						
 						code.setNote(l.get("note").toString());
 						code.setUpdateId(userId);
 						saveList.add(code);

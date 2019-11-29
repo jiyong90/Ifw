@@ -2,7 +2,6 @@ package com.isu.ifw.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.entity.WtmTimeCdMgr;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.repository.WtmTimeCdMgrRepository;
+import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmFlexibleStdService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmFlexibleStdVO;
@@ -32,6 +34,12 @@ public class WtmFlexibleStdController {
 	
 	@Autowired
 	private WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
+	
+	@Autowired
+	private WtmFlexibleEmpService flexibleEmpService;
+	
+	@Autowired
+	WtmTimeCdMgrRepository timeCdMgrRepo;
 
 	@RequestMapping(value="/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam flexibleStdList(HttpServletRequest request) {
@@ -318,6 +326,35 @@ public class WtmFlexibleStdController {
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/pattern/workHour", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getPattWorkHour(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		
+		rp.setSuccess("");
+		
+		Long timeCdMgrId = Long.valueOf(paramMap.get("timeCdMgrId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String userId = sessionData.get("userId").toString();
+		
+		Map<String, Object> workHourMap = null;
+		try {		
+			workHourMap = flexibleEmpService.calcMinuteExceptBreaktime(timeCdMgrId, paramMap, userId);
+			
+			WtmTimeCdMgr timeCdMgr = timeCdMgrRepo.findById(timeCdMgrId).get();
+			if(timeCdMgr!=null && timeCdMgr.getHolYn()!=null) {
+				workHourMap.put("holidayYn", timeCdMgr.getHolYn());
+			}
+			
+			rp.put("DATA", workHourMap);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
 		}
 		
 		return rp;
