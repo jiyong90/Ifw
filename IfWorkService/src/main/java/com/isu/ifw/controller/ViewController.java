@@ -310,6 +310,7 @@ public class ViewController {
 		mv.addObject("pageName", "mgr/"+viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		mv.addObject("mainTitle", tcms.getConfigValue(tenantId, "WTMS.MAIN.TITLE", true, ""));
+		
 		mv.addObject("type","console");
 		mv.addObject("authCd", authCd);
 		
@@ -402,6 +403,8 @@ public class ViewController {
 		mv.addObject("type","hr");
 		mv.addObject("redirectUrl", loginService.getHrInfoUrl(tenantId));
 		mv.addObject("authCd", authCd);
+		mv.addObject("applType", request.getParameter("applType")!=null?request.getParameter("applType"):"01");
+
 //		mv.addObject("tenant", tenantId);
 
 		if("workCalendar".equals(viewPage)){
