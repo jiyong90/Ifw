@@ -1001,6 +1001,141 @@ transition: all 0.4s ease;
 .submenu .time-desc-wrap .time-desc .time{font-size: 12px;font-weight: 700;letter-spacing: -0.36px;}
 
 
+/* settings */
+.setting{
+  width: 100%;
+  height : calc(100vh - 150px);
+  display:block;
+  background-color:#ffffff;
+}
+.setting .card {position: relative;padding: 20px;border-radius: 4px;border: solid 1px #e3e3e3;margin: 6px 0px;box-shadow: 1.5px 2.6px 5px 0 rgba(4, 0, 0, 0.08);}
+.setting .card.on{border:2px solid #4d84fe;}
+.setting .card .title{display: inline-block; width: 80%; overflow: hidden; font-size: 16px; color: #333333; white-space: nowrap; text-overflow: ellipsis;}
+.setting .card .title{margin-top:6px; font-size:14px; color:#6e7f8c;}
+
+/*---- settings check ----*/
+.setting [type="checkbox"]:checked,
+.setting [type="checkbox"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+.setting [type="checkbox"]:checked + label,
+.setting [type="checkbox"]:not(:checked) + label
+{
+    position: relative;
+    padding-left: 24px;
+    margin-right: 10px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+    color: #212529;
+}
+.setting [type="checkbox"]:checked + label:before,
+.setting [type="checkbox"]:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+.setting [type="checkbox"]:checked + label:after,
+.setting [type="checkbox"]:not(:checked) + label:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 7px;
+    width: 6px;
+    height: 14px;
+    border: solid #4d84fe;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg) scale(0, 0);
+    -moz-transform: rotate(45deg) scale(0, 0);
+    -ms-transform: rotate(45deg) scale(0, 0);
+    -o-transform: rotate(45deg) scale(0, 0);
+    transform: rotate(45deg) scale(0, 0);
+    
+    -webkit-transition: all 0.4s cubic-bezier(0.45, 1.8, 0.5, 0.75);
+    -moz-transition: all 0.4s cubic-bezier(0.45, 1.8, 0.5, 0.75);
+    -ms-transition: all 0.4s cubic-bezier(0.45, 1.8, 0.5, 0.75);
+    -o-transition: all 0.4s cubic-bezier(0.45, 1.8, 0.5, 0.75);
+    transition: all 0.4s cubic-bezier(0.45, 1.8, 0.5, 0.75);
+}
+.setting [type="checkbox"]:not(:checked) + label:after {
+    opacity: 0;
+    /* -webkit-transform: scale(0);
+    transform: scale(0); */
+}
+.setting [type="checkbox"]:checked + label:after {
+    /* opacity: 1; */
+    -webkit-transform: rotate(45deg) scale(1, 1);
+    -moz-transform: rotate(45deg) scale(1, 1);
+    -ms-transform: rotate(45deg) scale(1, 1);
+    -o-transform: rotate(45deg) scale(1, 1);
+    transform: rotate(45deg) scale(1, 1);
+}
+
+/*---- settings radio ----*/
+.setting [type="radio"]:checked,
+.setting [type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+.setting [type="radio"]:checked + label,
+.setting [type="radio"]:not(:checked) + label
+{
+    position: relative;
+    padding-left: 24px;
+    margin-right: 10px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+    color: #212529;
+}
+.setting [type="radio"]:checked + label:before,
+.setting [type="radio"]:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    background: #fff;
+}
+.setting [type="radio"]:checked + label:after,
+.setting [type="radio"]:not(:checked) + label:after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #4d84fe;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    border-radius: 50%;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -ms-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+.setting [type="radio"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+}
+.setting [type="radio"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+
+
 
 /* 반응형 */
 /* Extra small devices (portrait phones, less than 576px) 
