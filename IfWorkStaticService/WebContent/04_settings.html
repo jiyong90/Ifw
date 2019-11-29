@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="soldev/img/favicon.ico" />
+    <title>근태관리 시스템</title>
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap-reboot.min.css"> -->
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="soldev/css/NotosansKR.css">
+    <link rel="stylesheet" href="soldev/css/layout.css">
+    <link rel="stylesheet" href="soldev/css/common.css">
+    
+    <link rel="stylesheet" href="fontawesome-free-5.8.2-web/css/all.min.css">
+    <!-- S : calendar -->
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/core/main.css"/>
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/daygrid/main.css"/>
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/timegrid/main.css"/>
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/list/main.css"/>
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/list/main.css"/>
+    <link rel="stylesheet" href="soldev/css/calendar.css">
+    <link rel="stylesheet" href="soldev/css/layout4HR.css">
+    <link rel="stylesheet" href="soldev/css/style.css">
+    <link rel="stylesheet" href="soldev/css/isu/theme.css">
+    <!-- E : calendar -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="jQuery-3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="jQuery-slimScroll-master-1.3.8/jquery.slimscroll.min.js"></script>
+    <script src="popper-1.15.0/popper.min.js"></script>
+    <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+    <script src="moment/moment.js"></script>
+    <!-- <script src="bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script> -->
+    <!-- <script src="bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script> -->
+    <script src='fullcalendar-4.2.0/packages/core/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/core/locales-all.js'></script>
+    <script src='fullcalendar-4.2.0/packages/moment/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/list/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid', 'list', 'bootstrap', 'rrule', 'luxon'],
+                themeSystem: 'bootstrap',
+                height: 'parent',
+                locale: 'ko',
+                eventLimitText: "더보기",
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                defaultView: 'dayGridMonth',
+                defaultDate: '2019-06-19',
+                navLinks: true, // can click day/week names to navigate views
+                selectable: true,
+                selectMirror: true,
+                select: function (arg) {
+                    var title = prompt('시작일 지정');
+                    if (title) {
+                        calendar.addEvent({
+                            title: title,
+                            start: arg.start,
+                            end: arg.end,
+                            allDay: arg.allDay,
+
+                        })
+                    }
+                    calendar.unselect();
+                },
+                // select: function(start, end) {
+                //     // Display the modal.
+                //     // You could fill in the start and end fields based on the parameters
+                //     $('.modal').modal('show');
+                // },
+                eventClick: function (event, element) {
+                    // Display the modal and set the values to the event values.
+                    $('.modal').modal('show');
+                    $('.modal').find('#startDate').val(event.start);
+                },
+                editable: true,
+                eventLimit: true, // allow "more" link when too many events
+                events: [{
+                        title: 'Business Lunch',
+                        start: '2019-06-03T13:00:00',
+                        constraint: 'businessHours'
+                    },
+
+                    {
+                        title: 'Conference',
+                        start: '2019-06-18',
+                        end: '2019-06-20'
+                    },
+                    {
+                        title: 'Party',
+                        start: '2019-06-29T20:00:00'
+                    },
+
+                    // areas where "Meeting" must be dropped
+                    {
+                        groupId: 'availableForMeeting',
+                        start: '2019-06-11T10:00:00',
+                        end: '2019-06-11T16:00:00',
+                        rendering: 'background'
+                    },
+                    {
+
+                        title: '출근',
+                        start: '2019-06-13T10:00:00',
+                        end: '2019-06-13T16:00:00',
+                        rendering: 'background',
+                        color: 'red',
+
+                    },
+
+                    // red areas where no events can be dropped
+                    {
+                        start: '2019-06-24',
+                        end: '2019-06-28',
+                        overlap: true,
+                        rendering: 'background',
+                        color: '#ff9f89'
+                    },
+                    {
+                        title: 'test',
+                        start: '2019-06-06',
+                        end: '2019-06-08',
+                        overlap: false,
+                        rendering: 'background',
+                        color: '#ff9f89'
+                    },
+                    {
+                        title: 'Business Lunch',
+                        start: '2019-06-03T13:00:00',
+                        constraint: 'businessHours'
+                    },
+
+                    {
+                        title: 'Conference',
+                        start: '2019-06-18',
+                        end: '2019-06-20'
+                    },
+                    {
+                        title: 'Party',
+                        start: '2019-06-29T20:00:00'
+                    },
+
+                    // areas where "Meeting" must be dropped
+                    {
+                        groupId: 'availableForMeeting',
+                        start: '2019-06-11T10:00:00',
+                        end: '2019-06-11T16:00:00',
+                        rendering: 'background'
+                    },
+
+                    // red areas where no events can be dropped
+                    {
+                        title: '출근',
+                        start: '2019-06-24',
+                        end: '2019-06-28',
+                        overlap: true,
+                        rendering: 'background',
+                        color: '#ff9f89'
+                    },
+                    {
+                        start: '2019-06-06',
+                        end: '2019-06-08',
+                        overlap: true,
+                        rendering: 'background',
+                        color: '#ff9f89'
+                    }
+                ]
+
+            });
+
+            calendar.render();
+        });
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <!-- collapse button -->
+        <!-- <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <i class="fas fa-bars"></i>
+        </button> -->
+
+        <h1 class="logo">
+            <a href="#">
+                <img src="soldev/img/gnb_logo.png" alt="로고">
+            </a>
+        </h1>
+        <div class="pr-3 d-lg-none">
+            <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <i class="fas fa-align-justify"></i>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto nav-top gnb-nav-wrap">
+                <li class="nav-item">
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span
+                                class="new"></span></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
+                </li> -->
+            </ul>
+        </div>
+    </nav>
+    <div class="wrapper">
+        <nav id="sidebar" class="active">
+            <ul class="list-unstyled components">
+                <!-- <li class="active">
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>
+                    <ul class="collapse list-unstyled" id="homeSubmenu">
+                        <li>
+                            <a href="#">Home 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 2</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 3</a>
+                        </li>
+                    </ul>
+                </li> -->
+                <li class="">
+                    <a href="#">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="title">나의 정보</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="#">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span class="title">결재</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+                </li>
+                <li>
+                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+                </li>
+            </ul> -->
+        </nav>
+        <div id="content">
+            <div class="modal fade" id="alertModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog " role="document">
+                    <div class="modal-content">
+                        <!-- alert 메세지일 경우, header 생략 -->
+                        <!-- <div class="modal-header">
+            	                <h5 class="modal-title"></h5>
+            	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            	                    <span aria-hidden="true">&times;</span>
+            	                </button>
+            	            </div> -->
+                        <div class="modal-body">
+                            <p class="text-center">달력에서 근무제 시작일을 선택해주세요.</p>
+                        </div>
+                        <div class="modal-body text-center">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="workSystemModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">근무제 적용하기</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>사용할 근무제를 선택하세요.</p>
+                            <div class="mt-3">
+                                <!-- <button class="btn btn-outline btn-flat btn-block text-left" type="button" data-toggle="collapse"
+                                    data-target="#collapWork" aria-expanded="false" aria-controls="collapseExample">근무제</button> -->
+                                <div class="" id="collapWork">
+                                    <ul class="list-group select-work-list">
+                                        <li class="list-group-item active">
+                                            <span class="tag ELAS">부분</span>
+                                            <div class="title">이수 선근제 기본</div>
+                                            <div class="desc">근무구간: 08:00 ~ 22:00<span class="bar"></span>코어구간: 10:00 ~ 15:00</div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span class="tag SELE_F">부분</span>
+                                            <div class="title">이수연구직</div>
+                                            <div class="desc">근무구간: 08:00 ~ 22:00<span class="bar"></span>코어구간: 10:00 ~ 15:00</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-default">적용하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container-fluid pt-3 pb-3 bg-white setting">
+                <p class="page-title">권한관리</p>
+                <div class="row no-gutters">
+                    <div class="col-3 pr-3">
+                        <div class="inner">
+                            <div class="sheet_title_wrap clearfix">
+                                <div class="float-left title">근무제도관리</div>
+                                <ul class="float-right btn-wrap">
+                                    <!-- <li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li> -->
+                                    <li><a href="javascript:doAction1('Save')" class="basic authA button">저장</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-list-wrap">
+                            <div class="card">
+                                <p class="title">옵저버</p>
+                            </div>
+                            <div class="card on">
+                                <p class="title">채용담당자</p>
+                            </div>
+                            <div class="card">
+                                <p class="title">IT 담당자</p>
+                            </div>
+                        </div>
+                  </div>
+                  <div class="col-9">
+                      <div class="inner">
+                          <div class="sheet_title_wrap clearfix">
+                              <div class="float-left title">권한별 기능</div>
+                          </div>
+                      </div>
+                      <div class="function-list-wrap">
+                          <div class="title">공고관련</div>
+                          <ul class="fun-list">
+                              <li>
+                                    <input type="checkbox" id="write" name="" value="" title="새 공고 작성">
+                                    <label for="write">새 공고 작성</label>
+                                    <ol class="desc-list">
+                                        <li>메인화면에서 공고 추가 버튼이 보인다.</li>
+                                        <li>설정 - 서류필터관리, 심사항목관리, 평가지관리, Q&amp;A관리, 코드관리</li>
+                                        <li>해당공고의 모든 메뉴를 컨트롤 한다.</li>
+                                    </ol>
+                              </li>
+                              <li>
+                                  <input type="checkbox" id="setting" name="" value="" title="시스템 설정">
+                                  <label for="setting">시스템 설정</label>
+                                  <ol class="desc-list">
+                                      <li>설정 - 지원서양식관리, 사용자관리, 권한관리, 관리정보</li>
+                                  </ol>
+                              </li>
+                          </ul>
+                          <div class="title">조회관련</div>
+                          <ul class="fun-list">
+                              <li>
+                                  <input type="checkbox" id="applicants" name="" value="" title="조회관련">
+                                  <label for="applicants">지원자 조회</label>
+                                  <ol class="desc-list">
+                                      <li>메인화면에서 공고 추가 버튼이 보인다.</li>
+                                      <li>설정 - 서류필터관리, 심사항목관리, 평가지관리, Q&amp;A관리, 코드관리</li>
+                                      <li>해당공고의 모든 메뉴를 컨트롤 한다.</li>
+                                  </ol>
+                              </li>
+                              <li>
+                                  <input type="checkbox" id="result-all" name="" value="" title="모든 단계의 평가결과 조회">
+                                  <label for="result-all">모든 단계의 평가결과 조회</label>
+                                  <ol class="desc-list">
+                                      <li>공고의 상세결과관리, 결과관리 메뉴만 보여진다. (단계별로) 조회 및 출력기능, 다운로드 가능</li>
+                                  </ol>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+              
+              
+              
+            </div>
+            <!-- <footer class="text-center mt-auto pt-4">Copyright © 2019 ISUSYSTEM. All rights reserved</footer> -->
+        </div>
+    </div>
+    
+</body>
+
+</html>
