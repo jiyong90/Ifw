@@ -1011,8 +1011,16 @@ transition: all 0.4s ease;
 .setting .card {position: relative;padding: 20px;border-radius: 4px;border: solid 1px #e3e3e3;margin: 6px 0px;box-shadow: 1.5px 2.6px 5px 0 rgba(4, 0, 0, 0.08);}
 .setting .card.on{border:2px solid #4d84fe;}
 .setting .card .title{display: inline-block; width: 80%; overflow: hidden; font-size: 16px; color: #333333; white-space: nowrap; text-overflow: ellipsis;}
-.setting .card .title{margin-top:6px; font-size:14px; color:#6e7f8c;}
+.setting .card .title{margin-top:6px; font-size:14px; color:#292944;}
 
+.setting .function-list-wrap{font-size:13px; color:#292944; border-bottom:1px solid #e2e5ed;}
+.setting .function-list-wrap .title{padding:5px 10px; background-color:#e2e5ed; font-size: 14px; font-weight:700;}
+.setting .function-list-wrap .fun-list{padding:0px 10px;}
+.setting .function-list-wrap .fun-list>li{padding: 12px 0px; border-top:1px solid #e2e5ed;}
+.setting .function-list-wrap .fun-list>li:first-child{border-top:0px;}
+.setting .function-list-wrap .fun-list ol.desc-list{margin-top:6px;}
+.setting .function-list-wrap .fun-list ol.desc-list li{list-style-type: decimal; 
+   list-style-position: inside; }
 /*---- settings check ----*/
 .setting [type="checkbox"]:checked,
 .setting [type="checkbox"]:not(:checked) {

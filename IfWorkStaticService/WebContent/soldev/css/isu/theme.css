@@ -178,3 +178,5 @@ table.default td [type="radio"]:checked + label:after,
 table.default td [type="radio"]:not(:checked) + label:after {
     background: #4d84fe;
 }
+
+.setting .card.choice{border:2px solid #4d84fe;}
