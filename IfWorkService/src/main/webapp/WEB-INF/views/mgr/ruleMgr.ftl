@@ -160,10 +160,12 @@
    			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ruleId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
             {Header:"조직코드",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"orgCd",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-            {Header:"조직명",  		Type:"Text",     	Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"orgNm",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+            //{Header:"조직명",  		Type:"Text",     	Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"orgNm",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+            {Header:"조직명",  		Type:"Combo",     	Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"orgNm",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
             {Header:"코드",			Type:"Text",	    Hidden:1,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"code",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
             {Header:"코드명",  		Type:"Combo",     	Hidden:1,   Width:70,   Align:"Center", ColMerge:0, SaveName:"codeNm",  	KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
-            {Header:"사번",			Type:"Text",	   	Hidden:1,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"sabun",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+            //{Header:"사번",			Type:"Text",	   	Hidden:1,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"sabun",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+            {Header:"사번",			Type:"Text",	   	Hidden:1,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"sabun",	 	KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
             {Header:"성명",  			Type:"Text",     	Hidden:1,   Width:70,   Align:"Center", ColMerge:0, SaveName:"empNm",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
 			{Header:"비고",			Type:"Text",	 	Hidden:0,	Width:80,	Align:"Left",	ColMerge:0, SaveName:"note",	KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 			
@@ -176,7 +178,7 @@
 
 		
 		//성명
-        setSheetAutocompleteEmp( "sheet2", "empNm", null, getSheet2EmpInfo);
+        //setSheetAutocompleteEmp( "sheet2", "empNm", null, getSheet2EmpInfo);
 		
 		var initdata3 = {};
 		initdata3.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -187,7 +189,8 @@
 			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
    			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ruleId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-            {Header:"사번",			Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"sabun",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+            //{Header:"사번",			Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"sabun",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+            {Header:"사번",			Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"sabun",	 	KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
             {Header:"성명",  			Type:"Text",     	Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"empNm",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
 			{Header:"비고",			Type:"Text",	 	Hidden:0,	Width:80,	Align:"Left",	ColMerge:0, SaveName:"note",	KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 			
@@ -200,7 +203,7 @@
 
 		
 		//성명
-        setSheetAutocompleteEmp( "sheet3", "empNm", null, getSheet3EmpInfo);
+        //setSheetAutocompleteEmp( "sheet3", "empNm", null, getSheet3EmpInfo);
 
 		sheetInit();
 		doAction1("Search");
@@ -236,17 +239,15 @@
 		case "SaveIncludeTarget":
 			var saveJson = sheet2.GetSaveJson(1);
 			
-			//console.log(saveJson);
-			
+			var existValue;
 			var ruleValue = sheet1.GetCellValue( sheet1.GetSelectRow(), "ruleValue");	
-			
 			if(ruleValue!=null && ruleValue!='' && ruleValue!=undefined) {
-				ruleValue = JSON.parse(sheet1.GetCellValue( sheet1.GetSelectRow(), "ruleValue"));	
+				existValue = JSON.parse(ruleValue);	
 			}
 			
 			if(saveJson!=null && saveJson!='' && saveJson!=undefined && saveJson.hasOwnProperty('data')) {
 				var data = saveJson.data;
-				console.log(data);
+				//console.log(data);
 				var selectedTabIdx = $("#includeTab").tabs('option', 'active');
 				var selectedTab = $("#includeTab").find("li:eq("+selectedTabIdx+") a").attr("name");
 				
@@ -281,22 +282,31 @@
 				var rule = {};
 				rule[selectedTab] = targetList;
 				
-				if(ruleValue['INCLUDE']==null || ruleValue['INCLUDE']=='' || ruleValue['INCLUDE']==undefined || !ruleValue.hasOwnProperty('INCLUDE')) {
-					var newRuleValue = {};
+				var newRuleValue = {};
+				if(existValue['EXCLUDE']!=null && existValue.hasOwnProperty('EXCLUDE')) {
+					newRuleValue['EXCLUDE'] = existValue['EXCLUDE']
+				}
+				
+				if(existValue==null || !existValue.hasOwnProperty('INCLUDE') || existValue['INCLUDE']==null || existValue['INCLUDE']=='' || existValue['INCLUDE']==undefined) {
 					newRuleValue['INCLUDE'] = rule;
 					
 					sheet1.SetCellValue( sheet1.GetSelectRow(), "ruleValue", JSON.stringify(newRuleValue));
 					sheet1.SetCellValue( sheet1.GetSelectRow(), "sStatus", "U");
 					
 				} else {
-					ruleValue['INCLUDE'] = rule;
-					sheet1.SetCellValue( sheet1.GetSelectRow(), "ruleValue", JSON.stringify(ruleValue));
+					$.each(existValue['INCLUDE'], function(k, v){
+						if(!rule.hasOwnProperty(k))
+							rule[k] = v;
+					});
+					newRuleValue['INCLUDE'] = rule;
+					
+					sheet1.SetCellValue( sheet1.GetSelectRow(), "ruleValue", JSON.stringify(newRuleValue));
 					sheet1.SetCellValue( sheet1.GetSelectRow(), "sStatus", "U");
 				}
 				
 				
 				doAction1("Save");
-			}
+			} 
 			
 			break;
 			
@@ -306,10 +316,10 @@
 		case "SaveExcludeTarget":
 			var saveJson = sheet3.GetSaveJson(1);
 			
+			var existValue;
 			var ruleValue = sheet1.GetCellValue( sheet1.GetSelectRow(), "ruleValue");	
-			
 			if(ruleValue!=null && ruleValue!='' && ruleValue!=undefined) {
-				ruleValue = JSON.parse(sheet1.GetCellValue( sheet1.GetSelectRow(), "ruleValue"));	
+				existValue = JSON.parse(ruleValue);	
 			}
 			
 			if(saveJson!=null && saveJson!='' && saveJson!=undefined && saveJson.hasOwnProperty('data')) {
@@ -342,16 +352,25 @@
 				var rule = {};
 				rule[selectedTab] = targetList;
 				
-				if(ruleValue['EXCLUDE']==null || ruleValue['EXCLUDE']=='' || ruleValue['EXCLUDE']==undefined || !ruleValue.hasOwnProperty('EXCLUDE')) {
-					var newRuleValue = {};
+				var newRuleValue = {};
+				if(existValue['INCLUDE']!=null && existValue.hasOwnProperty('INCLUDE')) {
+					newRuleValue['INCLUDE'] = existValue['INCLUDE']
+				}
+				
+				if(existValue==null || ruleValue['EXCLUDE']==null || ruleValue['EXCLUDE']=='' || ruleValue['EXCLUDE']==undefined || !ruleValue.hasOwnProperty('EXCLUDE')) {
 					newRuleValue['EXCLUDE'] = rule;
 					
 					sheet1.SetCellValue( sheet1.GetSelectRow(), "ruleValue", JSON.stringify(newRuleValue));
 					sheet1.SetCellValue( sheet1.GetSelectRow(), "sStatus", "U");
 					
 				} else {
-					ruleValue['EXCLUDE'] = rule;
-					sheet1.SetCellValue( sheet1.GetSelectRow(), "ruleValue", JSON.stringify(ruleValue));
+					$.each(existValue['EXCLUDE'], function(k, v){
+						if(!rule.hasOwnProperty(k))
+							rule[k] = v;
+					});
+					newRuleValue['EXCLUDE'] = rule;
+					
+					sheet1.SetCellValue( sheet1.GetSelectRow(), "ruleValue", JSON.stringify(newRuleValue));
 					sheet1.SetCellValue( sheet1.GetSelectRow(), "sStatus", "U");
 				}
 				
@@ -433,12 +452,28 @@
 				classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "DUTY_CD"), "");
 			} else if(selectedTab=='JIKGUB') {
 				classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "CLASS_CD"), "");
-			}
+			} 
 			
 			var codes = classCdList[1].split('|');
 			
 			sheet2.SetCellValue(Row, "code", codes[idx]);
-		}	
+		} else if ( sheet2.ColSaveName(Col) == "orgNm"){
+			var selectedTabIdx = $("#includeTab").tabs('option', 'active');
+			var selectedTab = $("#includeTab").find("li:eq("+selectedTabIdx+") a").attr("name");
+			
+			var orgNm = sheet2.GetCellValue(Row, Col);
+			var orgNms = sheet2.GetComboInfo(Row, Col, "Text").split('|');
+			var idx = orgNms.indexOf(orgNm);
+			
+			var classCdList;
+			if(selectedTab=='ORG') {
+				classCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/orgCode/comboList", "", false).DATA, "");
+			} 
+			
+			var codes = classCdList[1].split('|');
+			
+			sheet2.SetCellValue(Row, "orgCd", codes[idx]);
+		}
 	}
 	
 	function getIncludeTarget(){
@@ -477,8 +512,15 @@
 			sheet2.SetColHidden("codeNm", 1);
 			sheet2.SetColHidden("sabun", 1);
 			sheet2.SetColHidden("empNm", 1);
+			
+			if(selectedTab=='ORG') {
+				classCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/orgCode/comboList", "", false).DATA, "");
+			} 
+			sheet2.SetColProperty("orgNm", {ComboText:"|"+classCdList[0], ComboCode:"|"+classCdList[0]} );
+			
 			sheet2.SetColHidden("orgCd", 0);
 			sheet2.SetColHidden("orgNm", 0);
+			
 		} else if(selectedTab=='JIKWEE' || selectedTab=='JIKCHAK' || selectedTab=='JIKGUB' || selectedTab=='JOB') {
 			sheet2.SetColHidden("sabun", 1);
 			sheet2.SetColHidden("empNm", 1);
