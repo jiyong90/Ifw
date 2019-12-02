@@ -34,6 +34,103 @@
   margin-bottom:18px;
 }
 
+/* 근무제 표시 범례 */
+#calendar-container .fc-header-toolbar .fc-legend-button{
+	color:#292944;
+	background-color:transparent;
+	border-color:transparent;
+	cursor: auto;
+}
+#calendar-container .fc-header-toolbar .fc-legend-button.focus,
+#calendar-container .fc-header-toolbar .fc-legend-button:focus{
+	box-shadow: none;
+}
+.fc-legend-button .sub-info-wrap .title {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b6b80;
+  vertical-align: middle;
+}
+.fc-legend-button .sub-info-wrap .title::after {
+  content:'';
+  display:inline-block;
+  height: 16px;
+  padding-left:12px;
+  border-right: 1px solid #6B6B80;
+  margin-bottom: -4px;
+}
+
+.fc-legend-button .legend-list-wrap{
+  display:inline-block;
+  vertical-align: middle;
+}
+.fc-legend-button .legend-list-wrap::after {
+  content: '';
+  display: table;
+  width: 100%;
+  clear: both;
+}
+.fc-legend-button .legend-list-wrap li {
+  float: left;
+  display: inline-block;
+  margin-left: 22px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #292944;
+}
+
+.fc-legend-button .legend-list-wrap li:first-child {
+  margin-left: 10px;
+}
+
+.fc-legend-button .legend-list-wrap li::before {
+  content: '';
+  display: inline-block;
+  /*
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  */
+  width: 10px;
+  height: 3px;
+  margin-top: -2px;
+  margin-right: 4px;
+  margin-bottom:0px;
+  margin-left: 0px;
+  opacity: 0.5;
+  vertical-align: middle;
+}
+
+
+/* 탄력근무 */
+.fc-legend-button .legend-list-wrap li.ELAS::before {
+  background-color: #ff6f00;
+  /* background-color: rgba(255, 111, 0,0.5); */
+}
+/* 완전선택근무 */
+.fc-legend-button .legend-list-wrap li.SELE_F::before {
+  background-color: #0321b8;
+  /* background-color: rgba(3, 33, 184,0.5); */
+}
+/* 부분선택근무 */
+.fc-legend-button .legend-list-wrap li.SELE_C::before {
+  background-color: #0862bb;
+  /* background-color: rgba(8, 98, 187,0.5); */
+}
+/* 시차출퇴근 */
+.fc-legend-button .legend-list-wrap li.DIFF::before {
+  background-color: #035d18;
+  /* background-color: rgba(3, 93, 24,0.5); */
+}
+/* 자율출퇴근 */
+.fc-legend-button .legend-list-wrap li.AUTO::before {
+  background-color: #080809;
+  /* background-color: rgba(8, 8, 9,0.5); */
+}
+
+
+
+
 #calendar-container .fc-toolbar h2 {
   font-size: 18px;
 }

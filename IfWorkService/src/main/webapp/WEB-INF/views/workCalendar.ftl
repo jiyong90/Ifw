@@ -76,6 +76,7 @@
 	                </div>
 	            </div>
 	            <div class="sub-info-wrap clearfix">
+	            	<!-- 
 	           		<div class="form-inline work-check-wrap">
 	           			<span class="title">근무제 표시</span>
 			            <ul class="legend-list-wrap">
@@ -86,6 +87,7 @@
 			                <li class="AUTO">자율출퇴근</li>
 			            </ul>
 	           		</div>
+	           		 -->
 	            	<!--  
 		            <div class="form-inline work-check-wrap">
 		                <span class="title">캘린더 표시</span>

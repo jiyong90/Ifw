@@ -6,7 +6,7 @@
 		</span>
 	</div>
     <div id='calendar-container'>
-		<full-calendar ref="fullCalendar" :header="header" :navlinks="t" :events="events" @update="renderCallback" @navlinkdayclick="navLinkDayClickCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @dayrender="dayRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
+		<full-calendar ref="fullCalendar" :custombuttons="customButtons" :header="header" :navlinks="t" :events="events" @update="renderCallback" @navlinkdayclick="navLinkDayClickCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @dayrender="dayRenderCallback" @select="selectCallback" @eventrender="eventRenderCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
 </div>
 
@@ -18,10 +18,13 @@
 	    },
 	    data : {
 	    	t: true,
+	    	customButtons: {
+	        	legend: {}
+	       	},
 	    	header: {
 	    		left: 'prev,next',
 	        	center: 'title',
-	        	right: ''
+	        	right: 'legend'
 	    	},
 	    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
 	    	prevEdate: '', //이전 근무제 종료일
@@ -50,6 +53,20 @@
 	    	datesRenderCallback: function(info){
 	    		var $this = this;
 	    		var calendar = this.$refs.fullCalendar.cal;
+	    		
+	    		document.querySelector(".fc-legend-button").innerHTML='<div class="sub-info-wrap clearfix">         '
+	    			+'	<div class="form-inline work-check-wrap"> '
+	    			+'		<span class="title">근무제 표시</span>    '
+	    			+'		<ul class="legend-list-wrap">         '
+	    			+'			<li class="ELAS">탄력근무</li>        '
+	    			+'			<li class="SELE_F">완전선택근무</li>   '
+	    			+'			<li class="SELE_C">부분선택근무</li>   '
+	    			+'			<li class="DIFF">시차출퇴근</li>      '
+	    			+'			<li class="AUTO">자율출퇴근</li>      '
+	    			+'		</ul>                                 '
+	    			+'	</div>                                    '
+	    			+' <div>                                       ';
+	    		
 	    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
 	    			var d = moment(calendar.getDate()).format('YYYY-MM-DD');
 	    			calendar.select(d);
