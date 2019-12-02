@@ -122,7 +122,6 @@ html {
     transform: rotate(-13deg);
   }
 }
-
 /* .navbar .gnb-nav-wrap .sp_ico.calendar{
   background-position: 0 0;
 }
@@ -327,14 +326,14 @@ html {
 
 
 #sidebar.active ul li a {
-  padding: 32px 0px 25px;
+  padding: 22px 0px 18px;
   text-align: center;
   text-decoration: none;
 }
 
 #sidebar.active ul li a i {
   display: block;
-  font-size: 1.8em;
+  font-size: 1.4em;
   margin-right:0px;
   /* font-weight: 500; */
 }
@@ -642,9 +641,11 @@ a.article:hover {
   background-size: 69px auto;
 }
 #sub-nav .work-time-wrap{
+/*
   padding-bottom:16px;
   border-bottom:1px solid #d2d2d2;
-  margin-bottom:29px;
+  margin-bottom:10px;
+*/
 }
 #sub-nav .work-time-wrap .title{
   min-height:18px;
@@ -765,4 +766,3 @@ No media query for `xs` since this is the default in Bootstrap */
     margin-left: 0px;
   }
 }
-
