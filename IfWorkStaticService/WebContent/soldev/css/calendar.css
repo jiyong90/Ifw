@@ -36,6 +36,7 @@
 
 /* 근무제 표시 범례 */
 #calendar-container .fc-header-toolbar .fc-legend-button{
+	padding: 0px;
 	color:#292944;
 	background-color:transparent;
 	border-color:transparent;
