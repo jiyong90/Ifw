@@ -410,14 +410,16 @@
 		   AND C.ENTRY_SDATE <= R.PLAN_EDATE  
 		   AND C.ENTRY_SDATE IS NOT NULL
 		   AND C.ENTRY_EDATE IS NOT NULL
-		   AND C.YMD NOT IN (SELECT DISTINCT SR.YMD 
-							   FROM WTM_WORK_DAY_RESULT SR 
-							   WHERE SR.TENANT_ID = R.TENANT_ID 
-							   AND SR.ENTER_CD = R.ENTER_CD 
-							   AND SR.SABUN = R.SABUN 
-							   AND SR.TIME_TYPE_CD = #{timeTypeCd}
-							   AND SR.TAA_CD = #{taaCd}
-							   AND SR.YMD BETWEEN #{sYmd} AND #{eYmd})
+		   AND C.YMD NOT IN (SELECT S.YMD
+		                       FROM (SELECT DISTINCT SR.YMD 
+									   FROM WTM_WORK_DAY_RESULT SR 
+									   WHERE SR.TENANT_ID = #{tenantId}
+									   AND SR.ENTER_CD = #{enterCd} 
+									   AND SR.SABUN = #{sabun}
+									   AND SR.TIME_TYPE_CD = #{timeTypeCd}
+									   AND SR.TAA_CD = #{taaCd}
+									   AND SR.YMD BETWEEN #{sYmd} AND #{eYmd}) S
+									 ) 
 		   AND (C.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
     ]]>
     </update>
@@ -465,7 +467,7 @@
 									  ELSE XZ.APPR_MINUTE - XZ.BREAK_MINUTE
 			                          END AS CM
 					FROM (
-					SELECT D.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','') AS APPR_MINUTE,  MAX(B.WORK_MINUTE) AS PRE_WORK_MINUTE, MAX(B.BREAK_MINUTE) AS PRE_BREAK_MINUTE
+					SELECT D.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI'), F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '','','') AS APPR_MINUTE,  MAX(B.WORK_MINUTE) AS PRE_WORK_MINUTE, MAX(B.BREAK_MINUTE) AS PRE_BREAK_MINUTE
 						, MIN(BB.WORK_MINUTE) AS WORK_MINUTE, MIN(BB.BREAK_MINUTE) AS BREAK_MINUTE
 						  FROM WTM_FLEXIBLE_EMP E
 						  JOIN WTM_WORK_CALENDAR C
@@ -481,16 +483,16 @@
 						    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 						  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
 						    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
-			              AND (B.WORK_MINUTE + B.BREAK_MINUTE) < F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+			              AND (B.WORK_MINUTE + B.BREAK_MINUTE) < F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI'), F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '','','')
 						  LEFT OUTER JOIN WTM_TIME_BREAK_TIME BB
 						    ON T.TIME_CD_MGR_ID = BB.TIME_CD_MGR_ID 
-			              AND (BB.WORK_MINUTE + BB.BREAK_MINUTE) >= F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+			              AND (BB.WORK_MINUTE + BB.BREAK_MINUTE) >= F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI'), F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '','','')
 						 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 						   AND T.BREAK_TYPE_CD = 'TIME'
-						   AND E.TENANT_ID = ${tenantId}
-						   AND E.ENTER_CD = ${enterCd}
+						   AND E.TENANT_ID = #{tenantId}
+						   AND E.ENTER_CD = #{enterCd}
 			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
-						   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
+						   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 						   AND C.YMD BETWEEN #{symd} AND #{eymd} 
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 					 ) XZ
@@ -504,7 +506,7 @@
     	<![CDATA[
 			 UPDATE WTM_WORK_DAY_RESULT X 
 			   	  JOIN (
-					SELECT D.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','') AS APPR_MINUTE,  MAX(B.WORK_MINUTE) AS CM
+					SELECT D.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI'), F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '','','') AS APPR_MINUTE,  MAX(B.WORK_MINUTE) AS CM
 						  FROM WTM_FLEXIBLE_EMP E
 						  JOIN WTM_WORK_CALENDAR C
 						    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
@@ -519,13 +521,13 @@
 						    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 						  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
 						    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
-			              AND (B.WORK_MINUTE + B.BREAK_MINUTE) <= F_WTM_CALC_MINUTE(D.APPR_SDATE,D.APPR_EDATE, '','','')
+			              AND (B.WORK_MINUTE + B.BREAK_MINUTE) <= F_WTM_CALC_MINUTE(F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI'), F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '','','')
 						 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 						   AND T.BREAK_TYPE_CD = 'TIMEFIX'
 						   AND E.TENANT_ID = ${tenantId}
-						   AND E.ENTER_CD = ${enterCd}
+						   AND E.ENTER_CD = #{enterCd}
 			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
-						   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
+						   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 						   AND C.YMD BETWEEN #{symd} AND #{eymd} 
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 	 				) XX
@@ -1479,7 +1481,7 @@
   	</update>
   	
   	<update id="resetFixOtWtmWorkDayResultByFlexibleEmpId" statementType="CALLABLE"  parameterType="map"  >
-  		{ call P_WTM_WORK_DAY_RESULT_OTFIX_CREATE( #{flexibleEmpId}, #{symd}, #{eymd},#{userId} ) }
+  		{ call P_WTM_WORK_DAY_RESULT_OTFIX_CREATE( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
   	</update>
   	
   	

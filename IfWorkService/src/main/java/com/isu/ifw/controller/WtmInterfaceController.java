@@ -123,6 +123,16 @@ public class WtmInterfaceController {
 		return ;
 	}
 	
+	
+	@RequestMapping(value = "/empHisEtc",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void empHisEtcIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+		//Long tenantId = (long) 38;
+		WtmInterfaceService.getEmpHisEtcIfResult(tenantId); //사원 변경정보 저장 Servie 호출
+		return ;
+	}
+	
 	@RequestMapping(value = "/empAddr",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void empAddrIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원메일정보
@@ -164,6 +174,18 @@ public class WtmInterfaceController {
 		
 		WtmInterfaceService.setWorkTimeCloseIf(reqMap); //근태정보 인터페이스
 		return ;
+	}
+	
+	@RequestMapping(value = "/calcDay",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void setCalcDay(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 
+		System.out.println("setCalcDay start");
+		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+		//Long tenantId = (long) 38;
+		WtmInterfaceService.setCalcDay(tenantId);
+		System.out.println("setCalcDay end");
+		
+		return;
 	}
 	
 	
