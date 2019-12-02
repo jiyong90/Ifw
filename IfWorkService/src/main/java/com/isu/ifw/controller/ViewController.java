@@ -310,6 +310,7 @@ public class ViewController {
 		mv.addObject("pageName", "mgr/"+viewPage);
 		mv.addObject("mainLogoImg", tcms.getConfigValue(tenantId, "WTMS.MAIN.LOGO_IMG", true, ""));
 		mv.addObject("mainTitle", tcms.getConfigValue(tenantId, "WTMS.MAIN.TITLE", true, ""));
+		
 		mv.addObject("type","console");
 		mv.addObject("authCd", authCd);
 		
@@ -323,6 +324,7 @@ public class ViewController {
 			mv.addObject("leaderYn", empHis.getLeaderYn());
 		}
 		
+		mv.addObject("authFunctions", tcms.getConfigValue(tenantId, "WTMS.AUTH.FUNTIONS", true, ""));
 		mv.addObject("isEmbedded",false); // 단독으로 열린것임을 표시
 		
 		return mv;
@@ -402,6 +404,8 @@ public class ViewController {
 		mv.addObject("type","hr");
 		mv.addObject("redirectUrl", loginService.getHrInfoUrl(tenantId));
 		mv.addObject("authCd", authCd);
+		mv.addObject("applType", request.getParameter("applType")!=null?request.getParameter("applType"):"01");
+		mv.addObject("authFunctions", tcms.getConfigValue(tenantId, "WTMS.AUTH.FUNTIONS", true, ""));
 //		mv.addObject("tenant", tenantId);
 
 		if("workCalendar".equals(viewPage)){
@@ -444,6 +448,25 @@ public class ViewController {
 					Map<String, Object> paramMap = new HashMap<String, Object>();
 					paramMap.put("flexibleEmpId", Long.valueOf(request.getParameter("flexibleEmpId")));
 					Map<String, Object> flexibleEmp = flexibleEmpService.getFlexibleEmpForPlan(tenantId, enterCd, empNo, paramMap, userId);
+					if(flexibleEmp!=null) {
+						try {
+							//System.out.println("flexibleEmp::::::"+mapper.writeValueAsString(flexibleEmp));
+							mv.addObject("flexibleEmp", mapper.writeValueAsString(flexibleEmp));
+						} catch (JsonProcessingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							mv.addObject("flexibleEmp", null);
+						}
+					}
+					
+				}
+				
+				//탄근제 근무제패턴 조회
+				//탄근제의 경우 신청 시 바로 근무계획을 작성
+				if(request.getParameter("flexibleApplId")!=null && !"".equals(request.getParameter("flexibleApplId"))) {
+					Map<String, Object> paramMap = new HashMap<String, Object>();
+					paramMap.put("flexibleApplId", Long.valueOf(request.getParameter("flexibleApplId")));
+					Map<String, Object> flexibleEmp = flexibleEmpService.getFlexibleApplDetForPlan(tenantId, enterCd, empNo, paramMap, userId);
 					if(flexibleEmp!=null) {
 						try {
 							mv.addObject("flexibleEmp", mapper.writeValueAsString(flexibleEmp));
