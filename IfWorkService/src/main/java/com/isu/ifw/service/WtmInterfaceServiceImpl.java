@@ -1106,6 +1106,72 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	}
 	
 	@Override
+	public void getEmpHisEtcIfResult(Long tenantId) throws Exception {
+		// TODO Auto-generated method stub
+		// 인터페이스 결과 저장용
+    	String retMsg = null;
+    	int resultCnt = 0;
+    	String ifType = "V_IF_WTM_EMPHIS";
+    	Map<String, Object> ifHisMap = new HashMap<>();
+    	ifHisMap.put("tenantId", tenantId);
+    	ifHisMap.put("ifItem", ifType);
+    	
+    	// 인터페이스용 변수
+    	String lastDataTime = "20191129000000";
+    	String nowDataTime = "20191129000000";
+
+    	ifHisMap.put("updateDate", nowDataTime);
+		ifHisMap.put("ifEndDate", lastDataTime);
+    	HashMap<String, Object> getDateMap = null;
+    	HashMap<String, Object> getIfMap = null;
+    	List<Map<String, Object>> getIfList = null;
+    	/* 대상자 다 돌렸음
+        try {
+        	// temp 저장후 프로시저 호출
+			HashMap<String, Object> setSpRetMap = new HashMap<>();
+			setSpRetMap.put("tenantId", tenantId);
+			setSpRetMap.put("nowDataTime", nowDataTime);
+			setSpRetMap.put("retCode", "");
+			wtmInterfaceMapper.setEmpHis(setSpRetMap);
+			
+			String retCode = setSpRetMap.get("retCode").toString();
+			ifHisMap.put("ifStatus", retCode);
+			if("ERR".equals(retCode)) {
+				retMsg = "사원정보 이관갱신중 오류 오류로그 확인";
+			}
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        */
+        // 4. 기본근무 생성대상자 조회해서 근무를 생성해주자
+		try {
+			System.out.println("base flexible emp add ");
+			// 근무관리 제외차 체크
+			/*
+			List<Long> ruleIds = new ArrayList<Long>();
+			Map<String, Object> ruleMap = null;
+			Long targetRuleId =
+			*/ 
+			List<Map<String, Object>> getEmpBaseList = null;
+			getEmpBaseList = wtmInterfaceMapper.getEmpBaseList(ifHisMap);
+			if(getEmpBaseList != null && getEmpBaseList.size() > 0) {
+				for(int i=0; i<getEmpBaseList.size(); i++) {
+					Map<String, Object> setEmpMap = new HashMap<>();
+					setEmpMap = getEmpBaseList.get(i);
+					// 파라메터 체크 #{tenantId}, #{enterCd}, #{symd}, #{eymd}, #{sabun} , #{userId}
+					setEmpMap.put("pId", setEmpMap.get("userId").toString());
+					// 입사자만? 이력정리용 프로시저 호출하기
+			    	wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(setEmpMap);
+					wtmFlexibleEmpMapper.createWorkTermBySabunAndSymdAndEymd(setEmpMap);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    return;
+	}
+	
+	@Override
 	public void getEmpAddrIfResult(Long tenantId) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("WtmInterfaceServiceImpl getEmpAddrIfResult");
@@ -1401,6 +1467,49 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 			e.printStackTrace();
 		}
         System.out.println("WtmInterfaceServiceImpl setTaaApplIf end");
+		return;
+	}
+	
+	@Override
+	public void setCalcDay(Long tenantId) throws Exception {
+		List<Map<String, Object>> dataList = new ArrayList();
+		String userId = "1";
+		dataList = wtmInterfaceMapper.setCalcDay(tenantId);
+		// dataList = wtmInterfaceMapper.setCalcDayResult(tenantId);
+		
+		if(dataList != null && dataList.size() > 0) {
+			// 일마감처리로 지각조퇴결근, 근무시간계산처리를 완료한다
+			for(Map<String, Object> l : dataList) {
+				// RESULT 생성하기
+				l.put("tenantId", tenantId);
+				/*
+				l.put("shm", l.get("planSdate").toString().substring(8,12));
+				l.put("ehm", l.get("planEdate").toString().substring(8,12));
+				
+				Map<String, Object> planMinuteMap = WtmFlexibleEmpService.calcMinuteExceptBreaktime(Long.parseLong(l.get("timeCdMgrId").toString()), l, userId);
+				l.put("planMinute", (Integer.parseInt(planMinuteMap.get("calcMinute")+"")));
+				wtmInterfaceMapper.insertDayResult(l);
+				
+				// wtmInterfaceMapper.updateDayResult2(l);
+				
+        		String enterCd = l.get("enterCd").toString();
+        		String sabun = l.get("sabun").toString();
+        		String closeYmd = l.get("ymd").toString();
+        		System.out.println("********** sabun : " + sabun + ", ymd : " + closeYmd);
+        		WtmFlexibleEmpService.calcApprDayInfo(tenantId, enterCd, closeYmd, closeYmd, sabun);
+        		*/
+        		// 문제가 없으면 근무계획시간 합산
+				
+				l.put("symd", l.get("ymd").toString());
+				l.put("eymd", l.get("ymd").toString());
+				l.put("pId", userId);
+				for ( String key : l.keySet() ) {
+	    		    System.out.println("key : " + key +" / value : " + l.get(key));
+	    		}
+				wtmFlexibleEmpMapper.createWorkTermBySabunAndSymdAndEymd(l);
+        		
+			}
+		}
 		return;
 	}
 	

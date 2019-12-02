@@ -273,7 +273,7 @@ box-sizing: border-box;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);}
 .white-box-wrap.btn-none{height:calc(100vh - 428px);}
 .white-box-wrap.full-height{height:calc(100vh - 176px);}
-.white-box-wrap.full-height.collapse-height{height:calc(100vh - 138px)}
+.white-box-wrap.full-height.collapse-height{height:calc(100vh - 139px)}
 
 .white-box-wrap.collapse-height{height:calc(100vh - 443px);}
 .white-box-wrap.collapse-height.btn-none{height:calc(100vh - 391px);}

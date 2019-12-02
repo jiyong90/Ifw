@@ -185,6 +185,29 @@ public interface WtmInterfaceMapper {
 	 **/
 	public void setWorkTimeCloseIf(Map<String, Object> paramMap);
 	
+	/**
+	 * 타각자료 갱신
+	 **/
+	public List<Map<String, Object>> setCalcDay(Long tenantId);
+	
+	/**
+	 * 타각자료 갱신
+	 **/
+	public List<Map<String, Object>> setCalcDayResult(Long tenantId);
+	
+	
+	/**
+	 * 타각자료 result 생성
+	 **/
+	public void insertDayResult(Map<String, Object> paramMap);
+	/**
+	 * 타각자료 result 생성
+	 **/
+	public void updateDayResult(Map<String, Object> paramMap);
+	/**
+	 * 타각자료 result 시간갱신
+	 **/
+	public void updateDayResult2(Map<String, Object> paramMap);
 	
 	public List<Map<String, Object>> getExpTableList(Map<String, Object> paramMap);
 	public List<Map<String, Object>> getExpColList(Map<String, Object> paramMap);

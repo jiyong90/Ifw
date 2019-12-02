@@ -93,6 +93,14 @@ public interface WtmInterfaceService {
 	public void getEmpHisIfResult(Long tenantId) throws Exception;
 	
 	/**
+	 * 임직원정보(수동이관) 이관
+	 * @param tenantId - 테넌트 아이디
+	 * @return 
+	 * @throws Exception 
+	 */
+	public void getEmpHisEtcIfResult(Long tenantId) throws Exception;
+	
+	/**
 	 * 임직원정보 이관
 	 * @param tenantId - 테넌트 아이디
 	 * @return 
@@ -115,6 +123,14 @@ public interface WtmInterfaceService {
 	 * @throws Exception 
 	 */
 	public void setWorkTimeCloseIf(HashMap reqMap) throws Exception;
+	
+	/**
+	 * 근태 타각 미갱신자료 정산
+	 * @param tenantId - 테넌트 아이디
+	 * @return 
+	 * @throws Exception 
+	 */
+	public void setCalcDay(Long tenantId) throws Exception;
 	
 	/**
 	 * 데이터이관용

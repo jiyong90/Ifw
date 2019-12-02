@@ -571,6 +571,72 @@
         ]]>
     </select>
     
+    <select id="setCalcDay" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+        	SELECT DISTINCT ENTER_CD AS enterCd
+				  , SABUN AS sabun
+				  , '20191106' AS ymd
+			  FROM WTM_WORK_DAY_RESULT 
+			WHERE TENANT_ID = 38
+			  AND YMD BETWEEN '20191104' AND '20191201'
+  AND PLAN_MINUTE IS NOT NULL
+  AND APPR_MINUTE IS NULL
+        ]]>
+    </select>
+    
+    <select id="setCalcDayResult" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+        	SELECT ENTER_CD AS enterCd
+				  , SABUN AS sabun
+				  , YMD AS ymd
+				  , TIME_TYPE_CD AS time_type_cd
+				  , F_WTM_DATE_FORMAT(PLAN_SDATE, 'YMDHI') AS planSdate
+				  , F_WTM_DATE_FORMAT(PLAN_EDATE, 'YMDHI') AS planEdate
+				  , (SELECT TIME_CD_MGR_ID FROM WTM_WORK_CALENDAR B 
+				      WHERE A.TENANT_ID = B.TENANT_ID
+						  AND A.ENTER_CD = B.ENTER_CD
+						  AND A.SABUN = B.SABUN
+						  AND A.YMD = B.YMD) AS timeCdMgrId
+				  , WORK_DAY_RESULT_ID AS workDayResultId
+			  FROM WTM_WORK_DAY_RESULT A
+			 WHERE TENANT_ID = #{tenantId}
+			   AND PLAN_SDATE IS NOT NULL
+				AND PLAN_EDATE IS NOT NULL
+				AND YMD BETWEEN '20191104' AND '20191201'
+			 ORDER BY ENTER_CD, SABUN
+        ]]>
+    </select>
+    
+    <insert id="insertDayResult" parameterType="map">
+    	<![CDATA[
+    		INSERT INTO WTM_WORK_DAY_RESULT(TENANT_ID, ENTER_CD, YMD, SABUN, TIME_TYPE_CD, PLAN_SDATE, PLAN_EDATE, PLAN_MINUTE, UPDATE_DATE, UPDATE_ID)
+			SELECT C.TENANT_ID, C.ENTER_CD, C.YMD, C.SABUN, 'BASE', C.ENTRY_SDATE, C.ENTRY_EDATE, #{planMinute}, now(), '1'
+				  FROM WTM_WORK_CALENDAR C
+				 WHERE C.TENANT_ID = #{tenantId}
+				   AND C.ENTER_CD = #{enterCd}
+				   AND C.YMD = #{ymd} 
+				   AND C.SABUN = #{sabun}
+    	]]>
+    </insert>
+    <insert id="updateDayResult" parameterType="map">
+    	<![CDATA[
+    		UPDATE WTM_WORK_DAY_RESULT SET 
+				PLAN_MINUTE = ${planMinute}
+				 WHERE TENANT_ID = #{tenantId}
+				   AND ENTER_CD = #{enterCd}
+				   AND YMD = #{ymd} 
+				   AND SABUN = #{sabun}
+				   AND TIME_TYPE_CD = 'BASE'
+    	]]>
+    </insert>
+    <insert id="updateDayResult2" parameterType="map">
+    	<![CDATA[
+    		UPDATE WTM_WORK_DAY_RESULT SET 
+				PLAN_MINUTE = ${planMinute}
+		    WHERE WORK_DAY_RESULT_ID = ${workDayResultId}
+    	]]>
+    </insert>
+    
     <select id="getExpTableList" parameterType="map" resultType="hashmap">
 		SELECT TABLE_NAME as tableName
 		FROM INFORMATION_SCHEMA.TABLES
