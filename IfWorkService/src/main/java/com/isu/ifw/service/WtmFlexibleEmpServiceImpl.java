@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmAppl;
+import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmFlexibleAppl;
 import com.isu.ifw.entity.WtmFlexibleApplDet;
 import com.isu.ifw.entity.WtmFlexibleEmp;
@@ -27,10 +28,13 @@ import com.isu.ifw.entity.WtmTaaCode;
 import com.isu.ifw.entity.WtmTimeCdMgr;
 import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.entity.WtmWorkDayResult;
+import com.isu.ifw.mapper.WtmAuthMgrMapper;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
+import com.isu.ifw.mapper.WtmOrgChartMapper;
 import com.isu.ifw.repository.WtmApplRepository;
+import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmFlexibleApplDetRepository;
 import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
@@ -93,7 +97,17 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	@Qualifier("wtmOtApplService")
 	WtmApplService applService;
 	
+	@Autowired
+	WtmAuthMgrMapper authMgrMapper;
 	
+	@Autowired
+	WtmOrgChartMapper wtmOrgChartMapper;
+	
+	@Autowired
+	WtmEmpHisRepository empHisRepo;
+	
+	@Autowired
+	WtmFlexibleEmpService empService;
 	
 	@Override
 	public List<Map<String, Object>> getFlexibleEmpList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
@@ -1167,10 +1181,21 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 	}	
 	
 	@Override
-	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		// TODO Auto-generated method stub
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
+		
+		String sYmd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+		if(paramMap.containsKey("sYmd") && paramMap.get("sYmd")!=null && !"".equals(paramMap.get("sYmd"))) {
+			sYmd = paramMap.get("sYmd").toString().replaceAll("-", "");
+		}
+		
+		List<String> auths = empService.getAuth(tenantId, enterCd, sabun);
+		if(auths!=null && !auths.contains("FLEX_SETTING") && auths.contains("FLEX_SUB")) {
+			//하위 조직 조회
+			paramMap.put("orgList", empService.getLowLevelOrgList(tenantId, enterCd, sabun, sYmd));
+		}
 		
 		List<Map<String, Object>> flexibleList = flexEmpMapper.getFlexibleEmpWebList(paramMap);
 		
@@ -1565,7 +1590,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return paramMap;
 	}
 	
-
+	@Override
 	public Map<String, Object> calcMinuteExceptBreaktime(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap, String userId) {
 		WtmWorkCalendar calendar = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, paramMap.get("ymd").toString());
 		
@@ -1578,6 +1603,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		return result;
 	}
 	
+	@Override
 	public Map<String, Object> calcMinuteExceptBreaktime(Long timeCdMgrId, Map<String, Object> paramMap, String userId) {
 		//break_type_cd
 		String breakTypeCd = "";
@@ -1600,6 +1626,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 	}
 	
+	@Override
 	public Map<String, Object> calcElasPlanMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId) {
 		//break_type_cd
 		String breakTypeCd = "";
@@ -1626,6 +1653,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 	}
 	
+	@Override
 	public Map<String, Object> calcElasOtMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId) {
 		String breakTypeCd = "";
 		WtmFlexibleApplDet flexApplDet = flexApplDetRepo.findByFlexibleApplIdAndYmd(flexibleApplId, paramMap.get("ymd").toString());
@@ -1649,6 +1677,70 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		
 		return result;
 		
+	}
+	
+	@Override
+	public List<String> getAuth(Long tenantId, String enterCd, String sabun) {
+		Map<String, Object> m = new HashMap<String, Object>();
+        m.put("tenantId", tenantId);
+        m.put("enterCd", enterCd);
+        m.put("sabun", sabun);
+        
+        List<String> rule = null;
+        try {
+	        ObjectMapper mapper = new ObjectMapper();
+	        List<Map<String, Object>> auths = authMgrMapper.findAuthByTenantIdAndEnterCdAndSabun(m);
+
+			if(auths!=null && auths.size()>0) {
+				rule = new ArrayList<String>();
+				for(Map<String, Object> auth : auths) {
+					if(auth.get("ruleText")!=null && !"".equals(auth.get("ruleText"))) {
+						List<String> ruleText = mapper.readValue(auth.get("ruleText").toString(), new ArrayList<String>().getClass());
+						for(String t : ruleText) {
+							if(!rule.contains(t))
+								rule.add(t);
+						}
+					}
+				}
+			}
+			
+			return rule;
+        } catch(Exception e) {
+        	e.printStackTrace();
+        	return null;
+        }
+	}
+	
+	@Override
+	public List<String> getLowLevelOrgList(Long tenantId, String enterCd, String sabun, String ymd) {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		
+		try {
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
+			
+			WtmEmpHis emp = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
+			if(emp!=null && emp.getOrgCd()!=null && !"".equals(emp.getOrgCd()))
+				paramMap.put("orgCd", emp.getOrgCd());
+			//하위 조직 조회
+			List<Map<String, Object>> lowLevelOrgList = wtmOrgChartMapper.getLowLevelOrg(paramMap); 
+			List<String> orgList = null;
+			
+			if(lowLevelOrgList!=null && lowLevelOrgList.size()>0) {
+				orgList = new ArrayList<String>();
+				for(Map<String, Object> orgMap : lowLevelOrgList) {
+					orgList.add(orgMap.get("orgCd").toString());
+				}
+			}
+			
+			return orgList;
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

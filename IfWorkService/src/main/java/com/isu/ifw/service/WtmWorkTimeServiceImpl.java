@@ -22,18 +22,29 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 	@Autowired
 	WtmWorktimeMapper worktimeMapper;
 	
+	@Autowired
+	WtmFlexibleEmpService empService;
+	
 	@Override
-	public List<Map<String, Object>> getWorktimeCheckList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getWorktimeCheckList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		List<Map<String, Object>> WorktimeCheckList = null;
 		try {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
 			
+			String sYmd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
 			if(paramMap.get("sYmd")!=null && !"".equals("sYmd")) {
-				String sYmd = paramMap.get("sYmd").toString();
+				sYmd = paramMap.get("sYmd").toString();
 				Date s = WtmUtil.toDate(sYmd, "yyyy-MM-dd");
 				paramMap.put("sYmd", WtmUtil.parseDateStr(s, "yyyyMMdd"));
 			}
+			
+			List<String> auths = empService.getAuth(tenantId, enterCd, sabun);
+			if(auths!=null && !auths.contains("FLEX_SETTING") && auths.contains("FLEX_SUB")) {
+				//하위 조직 조회
+				paramMap.put("orgList", empService.getLowLevelOrgList(tenantId, enterCd, sabun, sYmd));
+			}
+			
 			
 			WorktimeCheckList = worktimeMapper.getWorktimeCheckList(paramMap);
 		} catch(Exception e) {
@@ -69,14 +80,15 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 	}
 
 	@Override
-	public List<Map<String, Object>> getEntryCheckList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getEntryCheckList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		List<Map<String, Object>> entryCheckList = null;
 		try {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
 			
+			String sYmd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
 			if(paramMap.get("sYmd")!=null && !"".equals("sYmd")) {
-				String sYmd = paramMap.get("sYmd").toString();
+				sYmd = paramMap.get("sYmd").toString();
 				Date s = WtmUtil.toDate(sYmd, "yyyy-MM-dd");
 				paramMap.put("sYmd", WtmUtil.parseDateStr(s, "yyyyMMdd"));
 			}
@@ -85,6 +97,12 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 				String eYmd = paramMap.get("eYmd").toString();
 				Date e = WtmUtil.toDate(eYmd, "yyyy-MM-dd");
 				paramMap.put("eYmd", WtmUtil.parseDateStr(e, "yyyyMMdd"));
+			}
+			
+			List<String> auths = empService.getAuth(tenantId, enterCd, sabun);
+			if(auths!=null && !auths.contains("FLEX_SETTING") && auths.contains("FLEX_SUB")) {
+				//하위 조직 조회
+				paramMap.put("orgList", empService.getLowLevelOrgList(tenantId, enterCd, sabun, sYmd));
 			}
 			
 			entryCheckList = worktimeMapper.getEntryCheckList(paramMap);
@@ -101,14 +119,15 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 	}
 
 	@Override
-	public List<Map<String, Object>> getEntryDiffList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getEntryDiffList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		List<Map<String, Object>> entryDiffList = null;
 		try {
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
 			
+			String sYmd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
 			if(paramMap.get("sYmd")!=null && !"".equals("sYmd")) {
-				String sYmd = paramMap.get("sYmd").toString();
+				sYmd = paramMap.get("sYmd").toString();
 				Date s = WtmUtil.toDate(sYmd, "yyyy-MM-dd");
 				paramMap.put("sYmd", WtmUtil.parseDateStr(s, "yyyyMMdd"));
 			}
@@ -117,6 +136,12 @@ public class WtmWorkTimeServiceImpl implements WtmWorktimeService{
 				String eYmd = paramMap.get("eYmd").toString();
 				Date e = WtmUtil.toDate(eYmd, "yyyy-MM-dd");
 				paramMap.put("eYmd", WtmUtil.parseDateStr(e, "yyyyMMdd"));
+			}
+			
+			List<String> auths = empService.getAuth(tenantId, enterCd, sabun);
+			if(auths!=null && !auths.contains("FLEX_SETTING") && auths.contains("FLEX_SUB")) {
+				//하위 조직 조회
+				paramMap.put("orgList", empService.getLowLevelOrgList(tenantId, enterCd, sabun, sYmd));
 			}
 			
 			entryDiffList = worktimeMapper.getEntryDiffList(paramMap);

@@ -75,8 +75,9 @@
 	                    </div>
 	                </div>
 	            </div>
+	            <!-- 
 	            <div class="sub-info-wrap clearfix">
-	            	<!-- 
+	            	
 	           		<div class="form-inline work-check-wrap">
 	           			<span class="title">근무제 표시</span>
 			            <ul class="legend-list-wrap">
@@ -118,8 +119,9 @@
 			                <li class="AUTO">자율출퇴근</li>
 			            </ul>
 			        </div>
-			        -->
+			        
 	           	</div>
+	           	-->
 	        </form>
 	        <div id="summary-wrap" style="display:none;">
 			    <ul class="summary-list">
@@ -181,7 +183,8 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="btn-wrap row">
+                    <div class="btn-wrap row" v-if="flexCancelBtnYn || workPlanBtnYn || inOutChgBtnYn || otApplBtnYn">
+                    	<!--  
                     	<template v-if="flexCancelBtnYn && workPlanBtnYn">
                     		<div class="col-6 pr-1">
                     			<button type="button" class="btn btn-cancel btn-block" @click="calendarLeftVue.cancelFlexitime">근무제적용취소</button>
@@ -191,11 +194,14 @@
                     		</div>
                     	</template>
                     	<template v-else>
+                    	-->
                     		<div class="col-12">
                     			<button type="button" class="btn btn-cancel btn-block" v-if="flexCancelBtnYn" @click="calendarLeftVue.cancelFlexitime">근무제적용취소</button>
                        			<button type="button" class="btn btn-apply btn-block" v-if="workPlanBtnYn" @click="viewWorkDayCalendar(moment(selectedDate).format('YYYYMMDD'))">근무계획작성</button>
                     		</div>
+                    	<!--  
                     	</template>
+                    	-->
                     	<template v-if="'${calendar}'=='workTimeCalendar'">
                     		<template v-if="inOutChgBtnYn && otApplBtnYn">
 	                    		<div class="col-6 pr-1">
@@ -228,7 +234,7 @@
                     	</template>
                     </div>
                 </div>
-                <div id="workDayInfo" class="white-box-wrap mb-3" style="display:none;">
+                <div id="workDayInfo" class="white-box-wrap mb-3" :class="btnNone" style="display:none;">
                		<a href="#" class="btn-info-wrap">
 	                    <span style="display:none;" id="btn-lbottom-wrap"><span>&#43;&nbsp;</span>자세히 보기</span>
 	                    <span style="display:block;" id="btn-lbottom-simple-wrap"><span>&#8722;&nbsp;</span>간략하게 보기</span>
@@ -617,7 +623,7 @@
 		                </template>
 	                </form>
 	            </div>
-	            <div id="flexibleDayInfo" class="white-box-wrap mb-3" style="display:none;">
+	            <div id="flexibleDayInfo" class="white-box-wrap mb-3" :class="btnNone" style="display:none;">
 	                <div class="work-plan-wrap">
 	                    <ul class="main-wrap">
 	                        <li>
@@ -872,6 +878,11 @@
 	    	inOutChgBtnYn: false,
 	    	otApplBtnYn: false
   		},
+  		computed: {
+	    	btnNone: function(val, oldVal) {
+	    		return this.flexCancelBtnYn || this.workPlanBtnYn || this.inOutChgBtnYn || this.otApplBtnYn?"":"btn-none";
+	    	}
+	    },
   		watch: {
   			rangeInfo : function(val, oldVal) {
   				//총 계획 근무시간,잔여 근무시간 그래프 표기

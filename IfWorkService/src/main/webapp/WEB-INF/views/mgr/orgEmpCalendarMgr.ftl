@@ -169,7 +169,7 @@
 	function doAction2(sAction) {
 		switch (sAction) {
 		case "Search":
-			var param = "ymd="+sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd") + "&sabun="+sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun");
+			var param = "ymd="+sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd") + "&sabun="+sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun") + "&timeCdMgrId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
 			sheet2.DoSearch( "${rc.getContextPath()}/flexibleEmp/caldays" , param);
 			break;
 		

@@ -12,14 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -100,7 +96,7 @@ public class WtmApiController extends TenantSecuredControl {
         String url = "http://10.30.30.188:8380/ifo/oauth/token";
         
         String clientCredentials = "foo:var";
-        String base64ClientCredentials = new String(Base64.encodeBase64(clientCredentials.getBytes()));
+      //  String base64ClientCredentials = new String(Base64.encodeBase64(clientCredentials.getBytes()));
         
         MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
         param.add("code", code); 
@@ -110,7 +106,7 @@ public class WtmApiController extends TenantSecuredControl {
         
         
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Basic "+base64ClientCredentials);
+       // headers.set("Authorization", "Basic "+base64ClientCredentials);
         headers.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         /*
@@ -128,9 +124,9 @@ public class WtmApiController extends TenantSecuredControl {
         */
         
       try {
-          Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-          System.out.println(auth.getName());
-          System.out.println(auth.getPrincipal().toString());
+          //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+          //System.out.println(auth.getName());
+          //System.out.println(auth.getPrincipal().toString());
           HttpSession session = request.getSession();
           
           Enumeration<String> sess = session.getAttributeNames();
@@ -141,8 +137,8 @@ public class WtmApiController extends TenantSecuredControl {
           }
           System.out.println("callback session end");
           
-          DefaultOAuth2ClientContext client = (DefaultOAuth2ClientContext) session.getAttribute("scopedTarget.oauth2ClientContext");
-          System.out.println("client.getAccessToken() : " + client.getAccessToken());
+          //DefaultOAuth2ClientContext client = (DefaultOAuth2ClientContext) session.getAttribute("scopedTarget.oauth2ClientContext");
+          //System.out.println("client.getAccessToken() : " + client.getAccessToken());
           /*
          List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
          authorities.add(new SimpleGrantedAuthority("ROLE_USER"));

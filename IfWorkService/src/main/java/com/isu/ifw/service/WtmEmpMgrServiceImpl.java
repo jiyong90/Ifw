@@ -37,13 +37,26 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 	@Autowired
 	WtmEmpHisMapper wtmEmpHisMapper;
 	
+	@Autowired
+	WtmFlexibleEmpService empService;
+	
 	@Override
-	public List<Map<String, Object>> getEmpHisList(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+	public List<Map<String, Object>> getEmpHisList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		List<Map<String, Object>> empList = new ArrayList();
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
+		
+		String sYmd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
 		if(!paramMap.containsKey("sYmd")) {
 			paramMap.put("sYmd", "");
+		} else {
+			sYmd = paramMap.get("sYmd").toString().replaceAll("-", "");
+		}
+		
+		List<String> auths = empService.getAuth(tenantId, enterCd, sabun);
+		if(auths!=null && !auths.contains("FLEX_SETTING") && auths.contains("FLEX_SUB")) {
+			//하위 조직 조회
+			paramMap.put("orgList", empService.getLowLevelOrgList(tenantId, enterCd, sabun, sYmd));
 		}
 		
 		empList =  wtmEmpHisMapper.getEmpHisList(paramMap);
@@ -75,9 +88,16 @@ public class WtmEmpMgrServiceImpl implements WtmEmpMgrService{
 	}
 
 	@Override
-	public Map<String, Object> getEmpHis(Long tenantId, String enterCd, Map<String, Object> paramMap) {
+	public Map<String, Object> getEmpHis(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap) {
 		
 		Map<String, Object> emp = new HashMap();
+		
+		List<String> auths = empService.getAuth(tenantId, enterCd, sabun);
+		if(auths!=null && !auths.contains("FLEX_SETTING") && auths.contains("FLEX_SUB")) {
+			//하위 조직 조회
+			paramMap.put("orgList", empService.getLowLevelOrgList(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), "yyyyMMdd")));
+		}
+		
 		emp = wtmEmpHisMapper.getEmpHis(paramMap);
 //		WtmEmpHis l = empHisRepository.findByEmpHisId(Long.parseLong(paramMap.get("empHisId").toString()));
 //		emp.put("sabun", l.getSabun());

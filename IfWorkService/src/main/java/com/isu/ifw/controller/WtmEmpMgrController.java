@@ -48,7 +48,7 @@ public class WtmEmpMgrController {
 		
 		List<Map<String, Object>> empList = null;
 		try {		
-			empList = empMgrService.getEmpHisList(tenantId, enterCd, paramMap);
+			empList = empMgrService.getEmpHisList(tenantId, enterCd, empNo, paramMap);
 			
 			rp.put("DATA", empList);
 		} catch(Exception e) {
@@ -73,7 +73,7 @@ public class WtmEmpMgrController {
 		
 		Map<String, Object> emp = null;
 		try {		
-			emp = empMgrService.getEmpHis(tenantId, enterCd, paramMap);
+			emp = empMgrService.getEmpHis(tenantId, enterCd, empNo, paramMap);
 			
 			rp.put("DATA", emp);
 		} catch(Exception e) {

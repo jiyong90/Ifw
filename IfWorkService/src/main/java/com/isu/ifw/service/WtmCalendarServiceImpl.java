@@ -32,6 +32,9 @@ public class WtmCalendarServiceImpl implements WtmCalendarService{
 	@Autowired
 	WtmEmpHisRepository empHisRepo;
 	
+	@Autowired
+	WtmFlexibleEmpService empService;
+	
 	/**
 	 * 달력 조회
 	 * @param tenantId
@@ -84,6 +87,13 @@ public class WtmCalendarServiceImpl implements WtmCalendarService{
 	 * @throws Exception
 	 */
 	public List<Map<String, Object>> getEmpWorkCalendar(Map<String, Object> paramMap) throws Exception {
+		
+		List<String> auths = empService.getAuth(Long.valueOf(paramMap.get("tenantId").toString()), paramMap.get("enterCd").toString(), paramMap.get("sabun").toString());
+		if(auths!=null && !auths.contains("FLEX_SETTING") && auths.contains("FLEX_SUB")) {
+			//하위 조직 조회
+			paramMap.put("orgList", empService.getLowLevelOrgList(Long.valueOf(paramMap.get("tenantId").toString()), paramMap.get("enterCd").toString(), paramMap.get("sabun").toString(), paramMap.get("sYmd").toString()));
+		}
+		
 		return wtmCalendarMapper.getEmpWorkCalendar(paramMap);
 	}
 	
@@ -105,20 +115,10 @@ public class WtmCalendarServiceImpl implements WtmCalendarService{
 			paramMap.put("eYmd", paramMap.get("eYmd").toString().replaceAll("-", ""));
 		}
 		
-		WtmEmpHis emp = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, ymd);
-		if(emp!=null && emp.getOrgCd()!=null && !"".equals(emp.getOrgCd()))
-			paramMap.put("orgCd", emp.getOrgCd());
-		
-		//하위 조직 조회
-		List<Map<String, Object>> lowLevelOrgList = wtmOrgChartMapper.getLowLevelOrg(paramMap); 
-		List<String> orgList = new ArrayList<String>();
-		
-		if(lowLevelOrgList!=null && lowLevelOrgList.size()>0) {
-			for(Map<String, Object> orgMap : lowLevelOrgList) {
-				orgList.add(orgMap.get("orgCd").toString());
-			}
-			
-			paramMap.put("orgList", orgList);
+		List<String> auths = empService.getAuth(tenantId, enterCd, sabun);
+		if(auths!=null && !auths.contains("FLEX_SETTING") && auths.contains("FLEX_SUB")) {
+			//하위 조직 조회
+			paramMap.put("orgList", empService.getLowLevelOrgList(tenantId, enterCd, sabun, ymd));
 		}
 		
 		return wtmCalendarMapper.getOrgEmpWorkCalendar(paramMap);

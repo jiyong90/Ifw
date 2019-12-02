@@ -23,6 +23,13 @@
 				AND CASE WHEN #{sYmd} = '' THEN F_WTM_DATE_FORMAT(now(),'YMD')
 				         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
         ]]>
+        <if test="orgList!=null">
+			   AND ORG_CD IN (NULL, 
+		       <foreach collection="orgList" item="org" separator=", ">
+				   #{org}
+			   </foreach>
+			   )
+			   </if>
     </select>
     <select id="getOrgComboList" parameterType="map" resultType="hashmap">
         <![CDATA[
@@ -33,5 +40,12 @@
 			   AND ENTER_CD = #{enterCd} 
 			   AND F_WTM_DATE_FORMAT(now(),'YMD') BETWEEN SYMD AND EYMD
         ]]>
+        <if test="orgList!=null">
+			   AND ORG_CD IN (NULL, 
+		       <foreach collection="orgList" item="org" separator=", ">
+				   #{org}
+			   </foreach>
+			   )
+			   </if>
     </select>
 </mapper>

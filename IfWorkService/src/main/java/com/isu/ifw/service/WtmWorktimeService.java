@@ -21,7 +21,7 @@ public interface WtmWorktimeService{
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getWorktimeCheckList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+	public List<Map<String, Object>> getWorktimeCheckList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
 	
 	/**
 	 * 근무시간 상세 조회
@@ -39,7 +39,7 @@ public interface WtmWorktimeService{
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getEntryCheckList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+	public List<Map<String, Object>> getEntryCheckList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
 	
 	/**
 	 * 출/퇴근 차이자 조회
@@ -48,6 +48,6 @@ public interface WtmWorktimeService{
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getEntryDiffList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+	public List<Map<String, Object>> getEntryDiffList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
 	
 }

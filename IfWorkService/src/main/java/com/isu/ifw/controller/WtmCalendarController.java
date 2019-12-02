@@ -92,12 +92,14 @@ public class WtmCalendarController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String userId = sessionData.get("userId").toString();
 		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
 		String sYmd = paramMap.get("sYmd").toString();
 		String eYmd = paramMap.get("eYmd").toString();
 		String searchKeyword = paramMap.get("searchKeyword").toString();
 		
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", empNo);
 		paramMap.put("sYmd", sYmd);
 		paramMap.put("eYmd", eYmd);
 		paramMap.put("searchKeyword", searchKeyword);
