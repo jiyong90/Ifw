@@ -29,7 +29,7 @@
                 <span class="title">결재</span>
             </a>
         </li>
-        <li v-if="tsId=='isu' || authCd=='10'" :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'">
+        <li :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'">
         	<a href="javascript:void(0);" onclick="callLnb(this);return false;">
                 <i class="fas fa-laptop"></i>
                 <span class="title">유연근무관리</span>
@@ -85,13 +85,14 @@
                 <li :class="{active: curSubMenu=='sub6'}">
                 	<a href="#submenu-list6" data-toggle="collapse" :aria-expanded="curSubMenu=='sub6'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub6'">근무마감조회</a>
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub6'}" id="submenu-list6">
-                        <li :class="{active: curPageName=='ruleMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeDayClose';">근무마감일별조회</a></li>
-                        <li :class="{active: curPageName=='ruleMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeMonClose';">근무마감월별조회</a></li>
+                        <li :class="{active: curPageName=='worktimeDayClose'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeDayClose';">근무마감일별조회</a></li>
+                        <li :class="{active: curPageName=='worktimeMonClose'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeMonClose';">근무마감월별조회</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub7'}">
                 	<a href="#submenu-list7" data-toggle="collapse" :aria-expanded="curSubMenu=='sub7'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub7'">시스템관리</a>
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub7'}" id="submenu-list7">
+                        <li :class="{active: curPageName=='authMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/authMgr';">권한관리</a></li>
                         <li :class="{active: curPageName=='ruleMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ruleMgr';">규칙관리</a></li>
                     </ul>
                 </li>
@@ -162,6 +163,10 @@ function callLnb (obj) {
 				this.curSubMenu = 'sub4';
 			else if(pageName=='compMgr'||pageName=='compCreateList')
 				this.curSubMenu = 'sub5';
+			else if(pageName=='worktimeDayClose'||pageName=='worktimeMonClose')
+				this.curSubMenu = 'sub6';
+			else if(pageName=='authMgr'||pageName=='ruleMgr')
+				this.curSubMenu = 'sub7';
 					
 			this.curPageName = pageName;
 			

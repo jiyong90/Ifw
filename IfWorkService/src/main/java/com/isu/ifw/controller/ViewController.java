@@ -406,6 +406,7 @@ public class ViewController {
 		mv.addObject("authCd", authCd);
 		mv.addObject("applType", request.getParameter("applType")!=null?request.getParameter("applType"):"01");
 		mv.addObject("authFunctions", tcms.getConfigValue(tenantId, "WTMS.AUTH.FUNTIONS", true, ""));
+
 //		mv.addObject("tenant", tenantId);
 
 		if("workCalendar".equals(viewPage)){

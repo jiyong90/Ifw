@@ -228,6 +228,7 @@
 			sheet1.DataInsert(-1) ;
 			break;
 		case "Save":
+			console.log(document.sheetForm);
 			if(!dupChk(sheet1,"tenantId|enterCd|ruleNm", false, true)){break;}
 			IBS_SaveName(document.sheetForm,sheet1);
 			sheet1.DoSave("${rc.getContextPath()}/rule/save", $("#sheetForm").serialize());
