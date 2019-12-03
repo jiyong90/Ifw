@@ -33,7 +33,10 @@
 		</if>
 	</update>
 	
-	<select id="findAuthByTenantIdAndEnterCdAndSabun" parameterType="map" resultType="wtmGeneral">
+	<resultMap type="wtmGeneral" id="clobResult">
+		<result property="ruleText" column="RULE_TEXT" jdbcType="CLOB" javaType="java.lang.String" />
+	</resultMap>
+	<select id="findAuthByTenantIdAndEnterCdAndSabun" parameterType="map" resultMap="clobResult">
         <![CDATA[
 			SELECT U.AUTH_ID 
 				 , R.RULE_TEXT
