@@ -35,6 +35,7 @@ public class WtmWorktimeController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -46,7 +47,7 @@ public class WtmWorktimeController {
 		
 		List<Map<String, Object>> workTimeCheckList = null;
 		try {		
-			workTimeCheckList = worktimeService.getWorktimeCheckList(tenantId, enterCd, paramMap);
+			workTimeCheckList = worktimeService.getWorktimeCheckList(tenantId, enterCd, sabun, paramMap);
 			
 			rp.put("DATA", workTimeCheckList);
 		} catch(Exception e) {
@@ -93,6 +94,7 @@ public class WtmWorktimeController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -104,7 +106,7 @@ public class WtmWorktimeController {
 		
 		List<Map<String, Object>> entryCheckList = null;
 		try {		
-			entryCheckList = worktimeService.getEntryCheckList(tenantId, enterCd, paramMap);
+			entryCheckList = worktimeService.getEntryCheckList(tenantId, enterCd, sabun, paramMap);
 			
 			rp.put("DATA", entryCheckList);
 		} catch(Exception e) {
@@ -122,6 +124,7 @@ public class WtmWorktimeController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -133,7 +136,7 @@ public class WtmWorktimeController {
 		
 		List<Map<String, Object>> entryDiffList = null;
 		try {		
-			entryDiffList = worktimeService.getEntryDiffList(tenantId, enterCd, paramMap);
+			entryDiffList = worktimeService.getEntryDiffList(tenantId, enterCd, sabun, paramMap);
 			
 			rp.put("DATA", entryDiffList);
 		} catch(Exception e) {

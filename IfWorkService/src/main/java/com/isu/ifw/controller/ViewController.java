@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +31,7 @@ import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.mapper.WtmAuthMgrMapper;
 import com.isu.ifw.repository.WtmCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
@@ -82,7 +83,7 @@ public class ViewController {
 	
 	@Resource
 	WtmPropertieRepository propertieRepo;
-
+	
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
 	 * @param tsId
@@ -206,6 +207,9 @@ public class ViewController {
 		}
 		
 		ObjectMapper mapper = new ObjectMapper();
+		
+		mv.addObject("authRule", mapper.writeValueAsString(flexibleEmpService.getAuth(tenantId, enterCd, empNo)));
+		
 		if("workCalendar".equals(viewPage)){
 			String workday = null;
 			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
@@ -324,6 +328,9 @@ public class ViewController {
 			mv.addObject("leaderYn", empHis.getLeaderYn());
 		}
 		
+		ObjectMapper mapper = new ObjectMapper();
+		mv.addObject("authRule", mapper.writeValueAsString(flexibleEmpService.getAuth(tenantId, enterCd, empNo)));
+		
 		mv.addObject("authFunctions", tcms.getConfigValue(tenantId, "WTMS.AUTH.FUNTIONS", true, ""));
 		mv.addObject("isEmbedded",false); // 단독으로 열린것임을 표시
 		
@@ -406,11 +413,18 @@ public class ViewController {
 		mv.addObject("authCd", authCd);
 		mv.addObject("applType", request.getParameter("applType")!=null?request.getParameter("applType"):"01");
 		mv.addObject("authFunctions", tcms.getConfigValue(tenantId, "WTMS.AUTH.FUNTIONS", true, ""));
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mv.addObject("authRule", mapper.writeValueAsString(flexibleEmpService.getAuth(tenantId, enterCd, empNo)));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 //		mv.addObject("tenant", tenantId);
 
 		if("workCalendar".equals(viewPage)){
-			ObjectMapper mapper = new ObjectMapper();
+			
 			String workday = null;
 			if(request.getParameter("date")!=null && !"".equals(request.getParameter("date"))) {
 				workday = request.getParameter("date");
@@ -513,4 +527,6 @@ public class ViewController {
 	
 		return showView(tsId, viewPage, request);
 	}
+	
+	
 }

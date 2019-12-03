@@ -182,7 +182,7 @@ public interface WtmFlexibleEmpService {
 	 * @param paramMap
 	 * @return
 	 */
-	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, Map<String, Object> paramMap);
+	public List<Map<String, Object>> getFlexibleEmpWebList(Long tenantId, String enterCd, String sabun, Map<String, Object> paramMap);
 	
 	/**
 	 * 타각시간 기준으로 인정시간 계산
@@ -253,4 +253,23 @@ public interface WtmFlexibleEmpService {
 	 * @return
 	 */
 	public Map<String, Object> calcElasOtMinuteExceptBreaktime(Long flexibleApplId, Map<String, Object> paramMap, String userId);
+
+	/**
+	 * 사용자의 권한 조회
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @return
+	 */
+	public List<String> getAuth(Long tenantId, String enterCd, String sabun);
+	
+	/**
+	 * 하위 부서 조회
+	 * @param tenantId
+	 * @param enterCd
+	 * @param sabun
+	 * @param ymd
+	 * @return
+	 */
+	public List<String> getLowLevelOrgList(Long tenantId, String enterCd, String sabun, String ymd);
 }

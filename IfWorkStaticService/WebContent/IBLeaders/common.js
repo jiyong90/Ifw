@@ -2313,6 +2313,7 @@ function autoCompleteInit(opt, sheet, Row, Col, renderItem , callBackFunc) {
                                 statusCd: item.statusCd, // 재직/퇴직
                                 //statusNm: item.statusNm, // 재직/퇴직
                                 value: item.empNm,
+                                empId: item.empId,
                                 callBackFunc : callBackFunctionItem
                             };
                         }));

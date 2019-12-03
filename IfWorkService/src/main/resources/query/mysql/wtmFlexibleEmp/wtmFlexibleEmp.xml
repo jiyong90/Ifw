@@ -1586,6 +1586,13 @@
 		   AND IF(#{searchKeyword}='',1=1,(C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')))
 		   AND IF(#{searchWorkTypeCd}='',1=1,(B.WORK_TYPE_CD = #{searchWorkTypeCd}))
   		]]>
+  		  <if test="orgList!=null">
+		   AND C.ORG_CD IN (NULL, 
+	       <foreach collection="orgList" item="org" separator=", ">
+			   #{org}
+		   </foreach>
+		   )
+		   </if>
   	</select>
   	
     <update id="createWorkTermBySabunAndSymdAndEymd" statementType="CALLABLE"  parameterType="map"  >

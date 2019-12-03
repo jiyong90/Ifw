@@ -49,7 +49,7 @@ public class WtmOrgCodeController {
 		
 		List<Map<String, Object>> searchList = null;
 		try {		
-			searchList = orgCodeService.getOrgCodeList(tenantId, enterCd, paramMap);
+			searchList = orgCodeService.getOrgCodeList(tenantId, enterCd, empNo, paramMap);
 			
 			rp.put("DATA", searchList);
 		} catch(Exception e) {
@@ -80,7 +80,7 @@ public class WtmOrgCodeController {
 		
 		List<Map<String, Object>> searchList = null;
 		try {		
-			searchList = orgCodeService.getOrgComboList(tenantId, enterCd, paramMap);
+			searchList = orgCodeService.getOrgComboList(tenantId, enterCd, empNo, paramMap);
 			
 			rp.put("DATA", searchList);
 		} catch(Exception e) {

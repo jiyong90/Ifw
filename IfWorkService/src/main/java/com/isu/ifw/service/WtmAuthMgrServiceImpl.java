@@ -1,6 +1,7 @@
 package com.isu.ifw.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,12 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.CommAuth;
 import com.isu.ifw.entity.CommAuthRule;
+import com.isu.ifw.entity.WtmUserAuth;
+import com.isu.ifw.mapper.WtmAuthMgrMapper;
 import com.isu.ifw.repository.WtmCommAuthRepository;
 import com.isu.ifw.repository.WtmCommAuthRuleRepository;
+import com.isu.ifw.repository.WtmUserAuthRepository;
+import com.isu.ifw.util.WtmUtil;
 
 @Service
 public class WtmAuthMgrServiceImpl implements WtmAuthMgrService{
@@ -27,6 +32,13 @@ public class WtmAuthMgrServiceImpl implements WtmAuthMgrService{
 	
 	@Autowired
 	WtmCommAuthRuleRepository commAuthRuleRepo;
+	
+	@Autowired
+	WtmAuthMgrMapper authMgrMapper;
+	
+	@Autowired
+	WtmUserAuthRepository userAuthRepo;
+	
 	
 	@Override
 	public List<Map<String, Object>> getAuthList(Long tenantId) {
@@ -130,9 +142,76 @@ public class WtmAuthMgrServiceImpl implements WtmAuthMgrService{
 			e.printStackTrace();
 			logger.warn(e.toString(), e);
 		} finally {
-			logger.debug("saveRule Service End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			logger.debug("saveAuthList Service End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 			MDC.clear();
 		}
 		return cnt;
 	}
+	
+	@Override
+	public List<Map<String, Object>> getAuthUserList(Long tenantId, String enterCd, Map<String, Object> paramMap, String userId) {
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("ymd", WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+		
+		return authMgrMapper.getAuthUserList(paramMap);	
+	}
+	
+	@Override
+	public int saveAuthUserList(Long tenantId, String enterCd, Map<String, Object> convertMap, String userId) {
+		int cnt = 0;
+		try {
+			if(convertMap.containsKey("mergeRows") && ((List)convertMap.get("mergeRows")).size() > 0) {
+				List<Map<String, Object>> mergeList = (List<Map<String, Object>>) convertMap.get("mergeRows");
+				
+				cnt = mergeList.size();
+				List<Long> userAuthIds = new ArrayList<Long>();
+				if(mergeList != null && cnt > 0) {
+					for(Map<String, Object> m : mergeList) {
+						if(m.get("userAuthId")!=null && !"".equals(m.get("userAuthId"))) {
+							Long userAuthId = Long.valueOf(m.get("userAuthId").toString());
+							userAuthIds.add(userAuthId);
+						} 
+					}
+					
+					//권한 삭제 후 다시 넣기
+					if(userAuthIds!=null && userAuthIds.size()>0)
+						userAuthRepo.deleteByUserAuthIdsIn(userAuthIds);
+					
+					convertMap.put("tenantId", tenantId);
+					convertMap.put("enterCd", enterCd);
+					authMgrMapper.saveAuthUser(convertMap);
+				}
+				
+				MDC.put("merge cnt", "" + cnt);
+			}
+			
+			if(convertMap.containsKey("deleteRows") && ((List)convertMap.get("deleteRows")).size() > 0) {
+				List<Map<String, Object>> deleteList = (List<Map<String, Object>>) convertMap.get("deleteRows");
+				List<Long> userAuthIds = new ArrayList<Long>();
+				if(deleteList != null && deleteList.size() > 0) {
+					for(Map<String, Object> d : deleteList) {
+						Long userAuthId = Long.parseLong(d.get("userAuthId").toString());
+						
+						userAuthIds.add(userAuthId);
+					}
+					
+					userAuthRepo.deleteByUserAuthIdsIn(userAuthIds);
+					
+					cnt += userAuthIds.size();
+				}
+				
+				MDC.put("delete cnt", "" + userAuthIds.size());
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			logger.warn(e.toString(), e);
+		} finally {
+			logger.debug("saveAuthUserList Service End", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+			MDC.clear();
+		}
+		return cnt;
+	}
+	
 }

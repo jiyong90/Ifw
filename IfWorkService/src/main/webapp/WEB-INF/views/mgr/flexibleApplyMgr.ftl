@@ -228,7 +228,7 @@
 		sheet3.SetUnicodeByte(3);
 		
 		//이름
-        setSheetAutocompleteEmp( "sheet3", "name" );
+        setSheetAutocompleteEmp( "sheet3", "sabun" );
         
         var initdata4 = {};
 		

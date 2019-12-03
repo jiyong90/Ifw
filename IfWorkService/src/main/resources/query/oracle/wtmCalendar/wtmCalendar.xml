@@ -79,6 +79,13 @@
 			WHERE A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '') 
 				AND #{tenantId} = A.TENANT_ID AND A.ENTER_CD = #{enterCd}
 		]]>
+		<if test="orgList!=null">
+			   AND D.ORG_CD IN (NULL, 
+		       <foreach collection="orgList" item="org" separator=", ">
+				   #{org}
+			   </foreach>
+			   )
+			   </if>
 		<if test="searchKeyword!=null and !searchKeyword.equals('')"> 
 			AND (A.SABUN LIKE #{searchKeyword, jdbcType=VARCHAR} || '%' OR D.EMP_NM LIKE '%' || #{searchKeyword, jdbcType=VARCHAR} || '%')
 		</if>

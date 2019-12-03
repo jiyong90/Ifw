@@ -32,4 +32,21 @@ public interface WtmAuthMgrService{
 	 * @return
 	 */
 	public int saveAuthList(Long tenantId, String enterCd, Map<String, Object> paramMap, String userId);
+	
+	/**
+	 * 권한 대상자 조회
+	 * @param tenantId
+	 * @return
+	 */
+	public List<Map<String, Object>> getAuthUserList(Long tenantId, String enterCd, Map<String, Object> paramMap, String userId);
+	
+	/**
+	 * 권한 대상자 저장
+	 * @param tenantId
+	 * @param enterCd
+	 * @param paramMap
+	 * @param userId
+	 * @return
+	 */
+	public int saveAuthUserList(Long tenantId, String enterCd, Map<String, Object> paramMap, String userId);
 }

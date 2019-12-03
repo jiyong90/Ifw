@@ -422,13 +422,13 @@ public class WtmFlexibleEmpController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		
+		String sabun = sessionData.get("empNo").toString();
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> flexibleList = null;
 		try {		
 			
-			flexibleList = flexibleEmpService.getFlexibleEmpWebList(tenantId, enterCd, paramMap);
+			flexibleList = flexibleEmpService.getFlexibleEmpWebList(tenantId, enterCd, sabun, paramMap);
 			
 			rp.put("DATA", flexibleList);
 		} catch(Exception e) {
