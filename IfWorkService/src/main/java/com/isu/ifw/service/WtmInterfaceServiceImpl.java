@@ -1604,7 +1604,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	}
     	
     	getDateMap = new HashMap();
-    	// ymd = "20191112";
+    	// ymd = "20191202";
     	getDateMap.put("tenantId", tenantId);
     	getDateMap.put("ymd", ymd);
     	getDateMap.put("closeType", closeType);
@@ -1624,6 +1624,16 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         		String closeYmd = closeList.get(i).get("ymd").toString();
         		System.out.println("********** sabun : " + sabun + ", ymd : " + closeYmd);
         		WtmFlexibleEmpService.calcApprDayInfo(tenantId, enterCd, closeYmd, closeYmd, sabun);
+        		
+        		HashMap<String, Object> setTermMap = new HashMap();
+        		setTermMap.put("tenantId", tenantId);
+        		setTermMap.put("enterCd", enterCd);
+        		setTermMap.put("sabun", sabun);
+        		setTermMap.put("symd", closeYmd);
+        		setTermMap.put("eymd", closeYmd);
+        		setTermMap.put("pId", "DAYCLOSE");
+        		wtmFlexibleEmpMapper.createWorkTermBySabunAndSymdAndEymd(setTermMap);
+        		
 			}
 		}
 	}

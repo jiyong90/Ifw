@@ -498,10 +498,10 @@
 						 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 						   AND T.BREAK_TYPE_CD = 'TIME'
 						   AND E.TENANT_ID = ${tenantId}
-						   AND E.ENTER_CD = ${enterCd}
+						   AND E.ENTER_CD = #{enterCd}
 			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
-						   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
-						   AND C.YMD BETWEEN #{symd} AND #{eymd} 
+						   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
+						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 					 ) XZ
 	 			) XX
@@ -534,10 +534,10 @@
 						 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 						   AND T.BREAK_TYPE_CD = 'TIMEFIX'
 						   AND E.TENANT_ID = ${tenantId}
-						   AND E.ENTER_CD = ${enterCd}
+						   AND E.ENTER_CD = #{enterCd}
 			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
-						   AND (E.SABUN = ${sabun} OR ${sabun} = '' OR ${sabun} IS NULL)
-						   AND C.YMD BETWEEN #{symd} AND #{eymd} 
+						   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
+						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 	 				) XX
 	 			ON (X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID)

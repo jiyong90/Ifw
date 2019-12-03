@@ -753,8 +753,8 @@
                       AND A.ENTER_CD = B.ENTER_CD
                       AND A.SABUN = B.SABUN
                       AND A.YMD = B.YMD
-                   WHERE B.TIME_TYPE_CD IN ('BASE', 'REGA', 'OT', 'NIGTH')	-- 간주근무나 기본근무일때)
-                      AND A.TENANT_ID = #{tenantId} 
+                   WHERE B.TIME_TYPE_CD IN ('BASE', 'REGA', 'OT', 'FIXOT', 'NIGTH')	-- 간주근무나 기본근무일때)
+                      AND A.TENANT_ID = #{tenantId}
                       AND A.YMD = TO_CHAR(TO_DATE(#{ymd}, 'YYYYMMDD')-1, 'YYYYMMDD')
                    GROUP BY A.ENTER_CD, A.SABUN, A.YMD
                    ) AA
