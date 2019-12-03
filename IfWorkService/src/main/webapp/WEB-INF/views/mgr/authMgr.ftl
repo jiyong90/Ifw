@@ -78,14 +78,21 @@
    		var authRuleVue = new Vue({
    			el: "#authRule",
    		    data : {
-   		    	functions: []
+   		    	functions: [],
+   				authRule: []
    	  		},
    	  		mounted: function(){
 	   	  		//권한별 기능
-	   	 		var authFunctions;
 	   	 		<#if authFunctions?? && authFunctions!='' && authFunctions?exists >
 	   	 			this.functions = JSON.parse("${authFunctions?js_string}"); 
    	    		</#if>
+   	    		
+   	    		$(".float-right.btn-wrap").hide();
+   	    		<#if authRule?? && authRule!='' && authRule?exists >
+					this.authRule = JSON.parse("${authRule?js_string}");
+					if(this.authRule!=null && this.authRule.length>0)
+						$(".float-right.btn-wrap").show();
+				</#if>
    	  		},
    	  		methods: {
    	  			chkFunc : function(){
@@ -152,7 +159,9 @@
         //setSheetAutocompleteEmp( "sheet2", "empNm", null, getSheetEmpInfo);
 		
 		sheetInit();
-		doAction1("Search");
+		
+		if(authRuleVue.authRule!=null && authRuleVue.authRule.length>0)
+			doAction1("Search");
 	});
 
 	function doAction1(sAction) {
@@ -195,7 +204,17 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
-			$("input:checkbox[name=authFuntion]").prop("checked",false);
+			doAction1("Search");
+		} catch (ex) {
+			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+	
+	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
 			doAction1("Search");
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);
