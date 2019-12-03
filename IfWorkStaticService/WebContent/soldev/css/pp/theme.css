@@ -180,10 +180,7 @@ table.default td [type="radio"]:not(:checked) + label:after {
 }
 
 /*근무제 표시 감춤 - 태평양물산만*/
-#sub-nav .sub-info-wrap{
-	height:19px;
-}
-#sub-nav .sub-info-wrap .work-check-wrap{
+.sub-info-wrap .work-check-wrap{
 	display:none;
 }
 
