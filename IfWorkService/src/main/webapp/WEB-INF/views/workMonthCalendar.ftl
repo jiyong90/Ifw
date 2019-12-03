@@ -54,19 +54,7 @@
 	    		var $this = this;
 	    		var calendar = this.$refs.fullCalendar.cal;
 	    		
-	    		document.querySelector(".fc-legend-button").innerHTML='<div class="sub-info-wrap clearfix">         '
-	    			+'	<div class="form-inline work-check-wrap"> '
-	    			+'		<span class="title">근무제 표시</span>    '
-	    			+'		<ul class="legend-list-wrap">         '
-	    			+'			<li class="ELAS">탄력근무</li>        '
-	    			+'			<li class="SELE_F">완전선택근무</li>   '
-	    			+'			<li class="SELE_C">부분선택근무</li>   '
-	    			+'			<li class="DIFF">시차출퇴근</li>      '
-	    			+'			<li class="AUTO">자율출퇴근</li>      '
-	    			+'		</ul>                                 '
-	    			+'	</div>                                    '
-	    			+' <div>                                       ';
-	    		
+	    		document.querySelector(".fc-legend-button").innerHTML='';
 	    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
 	    			var d = moment(calendar.getDate()).format('YYYY-MM-DD');
 	    			calendar.select(d);

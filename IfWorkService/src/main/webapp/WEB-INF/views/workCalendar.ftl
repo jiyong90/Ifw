@@ -70,7 +70,8 @@
 	                </div>
 	                <div v-if="'${calendar}'=='workMonthCalendar'" class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
 	                    <div class="btn-wrap text-right">
-	                        <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'" @click="getFlexitimeList">근무제 적용하기</button>
+	                    	<button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" data-target="#flexitimeModal" v-if="flexApplYn=='Y'" >근무제 적용하기</button>
+	                        <!--  <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'" @click="getFlexitimeList">근무제 적용하기</button> -->
 	                    	<button type="button" id="planBtn" class="btn btn-write" style="display:none;">근무계획작성</button>
 	                    </div>
 	                </div>
@@ -779,7 +780,29 @@
 					});
 	    		} */
 	    	</#if>
-	    	
+	    	$this.getFlexitimeList();
+	    },
+	    watch: {
+	    	flexitimeList : function(val, oldVal) {
+	    		if(val!=null && val.length>0) {
+	    			var legend = '<div class="sub-info-wrap clearfix">         '
+		    			+'	<div class="form-inline work-check-wrap"> '
+		    			+'		<span class="title">근무제 표시</span>    '
+		    			+'		<ul class="legend-list-wrap">         '
+		    			;
+		    		
+	    			val.map(function(v){
+	    				legend += '			<li class="'+v.workTypeCd+'">'+v.flexibleNm+'</li>        ';
+	    			});
+		    			
+		    		legend += '		</ul>                                 '
+		    			+'	</div>                                    '
+		    			+' <div>                                       '
+		    			;
+		    			
+		    		document.querySelector(".fc-legend-button").innerHTML= legend;
+	    		} 
+	    	}
 	    },
 	    methods : {
 	    	getFlexitimeList : function(){ //사용할 근무제 리스트
@@ -798,7 +821,7 @@
 							$this.flexitimeList = data.wtmFlexibleStd;
 							
 							//사용할 근무제 팝업 띄우기
-							$("#flexitimeModal").modal("show"); 
+							//$("#flexitimeModal").modal("show"); 
 						}
 					},
 					error: function(e) {
