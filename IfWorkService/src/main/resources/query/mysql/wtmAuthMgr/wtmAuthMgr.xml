@@ -40,7 +40,7 @@
 			  FROM WTM_USER_AUTH U
 			  JOIN comm_auth_rule R
 			    ON U.AUTH_ID = R.auth_id
-			 WHERE USER_KEY = F_WTM_SHA_ENCRYPT(CONCAT(${tenantId}, #{enterCd}, #{sabun}));
+			 WHERE USER_KEY = F_WTM_SHA_ENCRYPT(CONCAT(${tenantId}, #{enterCd}, #{sabun}))
         ]]>
    </select>
     
