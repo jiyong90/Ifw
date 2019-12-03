@@ -39,6 +39,13 @@
 				AND CASE WHEN length(#{sYmd, jdbcType=VARCHAR}) > 0 THEN REPLACE(#{sYmd, jdbcType=VARCHAR}, '-', '')
 				         ELSE F_WTM_DATE_FORMAT(SYSDATE,'YMD') END BETWEEN SYMD AND EYMD
         ]]>
+        <if test="orgList!=null">
+			   AND ORG_CD IN (NULL, 
+		       <foreach collection="orgList" item="org" separator=", ">
+				   #{org}
+			   </foreach>
+			   )
+			   </if>
     </select>
     
     <select id="getEmpHis" parameterType="map" resultType="wtmGeneral">
@@ -70,6 +77,13 @@
 			  FROM WTM_EMP_HIS
 			 WHERE EMP_HIS_ID = #{empHisId}
         ]]>
+        <if test="orgList!=null">
+			   AND ORG_CD IN (NULL, 
+		       <foreach collection="orgList" item="org" separator=", ">
+				   #{org}
+			   </foreach>
+			   )
+			   </if>
     </select>
 	
 </mapper>
