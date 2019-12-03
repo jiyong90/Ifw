@@ -1045,7 +1045,7 @@
 			   AND C.YMD = R.YMD
 			   AND C.SABUN = R.SABUN
 			 WHERE #{ymd} BETWEEN E.WEEK_SDATE AND E.WEEK_EDATE
-			   AND R.TIME_TYPE_CD = 'OT'
+			   AND R.TIME_TYPE_CD IN ('OT','FIXOT')
 			   AND E.SABUN = #{sabun}
 			   AND E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}

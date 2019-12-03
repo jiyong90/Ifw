@@ -378,7 +378,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					//고정 OT의 종료시간을 가지고 오자.
 					Date flxotEdate = flexEmpMapper.getIntervalDateTime(pMap);
 					//데이터는 같아야 한다. 설정의 변경으로 인해 데이터가 망가지는건 설정화면에서 변경하지 못하도록 제어한다. 비슷하다는걸로 판단하면 안됨.
-					WtmWorkDayResult otDayResult = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndPlanSdateAndPlanEdate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_OTFIX, maxEdate, flxotEdate);
+					WtmWorkDayResult otDayResult = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndPlanSdateAndPlanEdate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_FIXOT, maxEdate, flxotEdate);
 					if(otDayResult!=null)
 						workDayResultRepo.delete(otDayResult);
 				}
@@ -481,7 +481,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 				//고정 OT의 종료시간을 가지고 오자.
 				Date flxotEdate = flexEmpMapper.getIntervalDateTime(pMap);
 				//데이터는 같아야 한다. 설정의 변경으로 인해 데이터가 망가지는건 설정화면에서 변경하지 못하도록 제어한다. 비슷하다는걸로 판단하면 안됨.
-				WtmWorkDayResult otDayResult = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndPlanSdateAndPlanEdate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_OTFIX, insEdate, flxotEdate);
+				WtmWorkDayResult otDayResult = workDayResultRepo.findByTenantIdAndEnterCdAndSabunAndTimeTypeCdAndPlanSdateAndPlanEdate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_FIXOT, insEdate, flxotEdate);
 				if(otDayResult == null) {
 					//고정 OT 생성
 					WtmWorkDayResult newDayResult = new WtmWorkDayResult();
@@ -490,7 +490,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 					newDayResult.setYmd(ymd);
 					newDayResult.setSabun(sabun);
 					newDayResult.setApplId(null);
-					newDayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_OTFIX);
+					newDayResult.setTimeTypeCd(WtmApplService.TIME_TYPE_FIXOT);
 					newDayResult.setTaaCd(null);
 					newDayResult.setPlanSdate(insEdate);
 					newDayResult.setPlanEdate(flxotEdate);  
