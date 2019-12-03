@@ -724,8 +724,8 @@
         	//window.dispatchEvent(new Event('resize'));
         	fireRefreshEventOnWindow();
         	
-            $('#sub-nav #calendar-top-wrap').toggle();
-            $('#sub-nav #summary-wrap').toggle();
+            $('#sub-nav #calendar-top-wrap').fadeToggle(150);
+            $('#sub-nav #summary-wrap').fadeToggle(150);
             
             $('.calendar-wrap').toggleClass('collapse-height');
             $('.white-box-wrap').toggleClass('collapse-height');
