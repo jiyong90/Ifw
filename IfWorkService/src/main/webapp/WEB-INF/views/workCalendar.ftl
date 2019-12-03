@@ -784,7 +784,7 @@
 	    },
 	    watch: {
 	    	flexitimeList : function(val, oldVal) {
-	    		if(val!=null && val.length>0) {
+	    		if(val!=null && val.length>0 && $(".fc-legend-button").length>0) {
 	    			var legend = '<div class="sub-info-wrap clearfix">         '
 		    			+'	<div class="form-inline work-check-wrap"> '
 		    			+'		<span class="title">근무제 표시</span>    '
