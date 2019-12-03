@@ -42,4 +42,8 @@ public interface WtmFlexibleEmpRepository extends JpaRepository<WtmFlexibleEmp, 
 	@Query("SELECT E FROM WtmFlexibleEmp E JOIN WtmFlexibleStdMgr M ON E.flexibleStdMgrId = M.flexibleStdMgrId WHERE E.tenantId = ?1 AND E.enterCd = ?2 AND ?3 <= E.eymd AND  ?4 >= E.symd AND M.defaultWorkUseYn = 'Y' AND M.fixotUseType = 'ALL' ")
 	public List<WtmFlexibleEmp> findAllTypeFixotByTenantIdAndEnterCdAndSymdAndEymdAnd(Long tenantId, String enterCd, String symd, String eymd);
 	
+	@Query("SELECT E FROM WtmFlexibleEmp E JOIN WtmFlexibleStdMgr M ON E.flexibleStdMgrId = M.flexibleStdMgrId WHERE E.tenantId = ?1 AND E.enterCd = ?2 AND E.sabun = ?3 AND ?4 <= E.eymd AND  ?5 >= E.symd AND M.defaultWorkUseYn = 'Y' AND M.fixotUseType = 'ALL' ")
+	public List<WtmFlexibleEmp> findAllTypeFixotByTenantIdAndEnterCdAndSabunAndSymdAndEymdAnd(Long tenantId, String enterCd, String sabun, String symd, String eymd);
+	
+	
 }
