@@ -262,7 +262,7 @@
   color: inherit;
   background-color: inherit;
 }
-.fc-ltr .fc-dayGrid-view .fc-day-top .fc-holiday{font-size: 13px;}
+.fc-ltr .fc-dayGrid-view .fc-day-top .fc-holiday{padding-left: 2px; font-size: 13px;}
 .fc-day-grid-event .fc-content .fc-title span{font-size: 10px; letter-spacing: -0.5px;}
 
 
