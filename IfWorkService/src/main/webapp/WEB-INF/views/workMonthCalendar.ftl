@@ -350,7 +350,7 @@
 		 		    				if((plan.valueMap.taaCd==undefined || plan.valueMap.taaCd=='') 
 		 		    						&& (plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='')) {
 		 		    					//타이틀 알파벳 순서대로 이벤트가 정렬됨 ㅠㅠ
-		  		    					if(plan.valueMap.hasOwnProperty("timeTypeCd") && (plan.valueMap.timeTypeCd=='OTFIX' || plan.valueMap.timeTypeCd=='OT')) { //고정ot, 조출, 야간은 색 다르게 표기
+		  		    					if(plan.valueMap.hasOwnProperty("timeTypeCd") && (plan.valueMap.timeTypeCd=='FIXOT' || plan.valueMap.timeTypeCd=='OT')) { //고정ot, 조출, 야간은 색 다르게 표기
 		  		    						timeTypeClass = ' later';
 		  		    					} else {
 		  		    						timeTypeClass = ' general';

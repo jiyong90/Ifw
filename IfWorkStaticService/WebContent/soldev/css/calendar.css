@@ -389,7 +389,9 @@
 
 /* 5) OT */
 .fc-time-grid-event.fc-event.ot,
-.fc-time-grid-event.fc-event.OT {
+.fc-time-grid-event.fc-event.OT,
+.fc-time-grid-event.fc-event.fixot,
+.fc-time-grid-event.fc-event.FIXOT {
   background-color: rgba(255, 0, 0, 0.3);
 }
 

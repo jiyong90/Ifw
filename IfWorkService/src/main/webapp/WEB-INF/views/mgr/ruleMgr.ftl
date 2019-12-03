@@ -235,7 +235,11 @@
 			break;
 			
 		case "InsertIncludeTarget":
-			sheet2.DataInsert(-1) ;
+			var status = sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus");	
+			if(status!=-1 && status=='R')
+				sheet2.DataInsert(-1) ;
+			else 
+				alert("규칙관리를 저장 후 대상자를 입력하셔야 합니다.");
 			break;
 		case "SaveIncludeTarget":
 			var saveJson = sheet2.GetSaveJson(1);
@@ -312,7 +316,12 @@
 			break;
 			
 		case "InsertExcludeTarget":
-			sheet3.DataInsert(-1) ;
+			var status = sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus");	
+			if(status!=-1 && status=='R')
+				sheet3.DataInsert(-1) ;
+			else 
+				alert("규칙관리를 저장 후 대상자를 입력하셔야 합니다.");
+			
 			break;	
 		case "SaveExcludeTarget":
 			var saveJson = sheet3.GetSaveJson(1);

@@ -563,7 +563,7 @@
 			  		    				
 		  		    				} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
 		  		    					//클래스명 알파벳 순서대로 이벤트가 정렬됨 ㅠㅠ
-		  		    					if(plan.valueMap.hasOwnProperty("timeTypeCd") && (plan.valueMap.timeTypeCd=='OTFIX' || plan.valueMap.timeTypeCd=='OTA')) //고정ot, 조출, 야간은 색 다르게 표기
+		  		    					if(plan.valueMap.hasOwnProperty("timeTypeCd") && (plan.valueMap.timeTypeCd=='FIXOT' || plan.valueMap.timeTypeCd=='OTA')) //고정ot, 조출, 야간은 색 다르게 표기
 		  		    						timeTypeClass = ' later';
 		  		    					else if(plan.valueMap.hasOwnProperty("timeTypeCd") && plan.valueMap.timeTypeCd=='OTB') //고정ot, 조출, 야간은 색 다르게 표기
 	  		    							timeTypeClass = ' early';
