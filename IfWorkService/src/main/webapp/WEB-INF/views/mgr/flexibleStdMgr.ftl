@@ -71,7 +71,7 @@
 													<select id="dayOpenType"></select>
 													
 												</td>
-												<th>출근퇴근처리기준</th>
+												<th>퇴근자동처리기준</th>
 												<td>
 													<select id="dayCloseType"></select>
 												</td>
