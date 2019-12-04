@@ -258,7 +258,7 @@
 			<choose>
 			    <when test="searchValue=='ALL'">
 			   		<if test="searchCondition=='more'">
-			   		    and PLAN_SDATE IS NOT NULL and ENTRY_SDATE IS NOT NULL and PLAN_EDATE IS NOT NULL and ENTRY_EDATE IS NOT NULL
+			   		    and (PLAN_SDATE IS NOT NULL and ENTRY_SDATE IS NOT NULL or PLAN_EDATE IS NOT NULL and ENTRY_EDATE IS NOT NULL)
 			   			and (DIFF_SMINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y') OR  DIFF_EMINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y'))
 			   		</if>
 			   		<if test="searchCondition=='under'">
