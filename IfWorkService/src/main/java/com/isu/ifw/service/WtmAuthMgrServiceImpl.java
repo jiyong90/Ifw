@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.CommAuth;
 import com.isu.ifw.entity.CommAuthRule;
-import com.isu.ifw.entity.WtmUserAuth;
 import com.isu.ifw.mapper.WtmAuthMgrMapper;
 import com.isu.ifw.repository.WtmCommAuthRepository;
 import com.isu.ifw.repository.WtmCommAuthRuleRepository;
 import com.isu.ifw.repository.WtmUserAuthRepository;
 import com.isu.ifw.util.WtmUtil;
+import com.isu.option.service.TenantConfigManagerService;
 
 @Service
 public class WtmAuthMgrServiceImpl implements WtmAuthMgrService{
@@ -38,6 +38,9 @@ public class WtmAuthMgrServiceImpl implements WtmAuthMgrService{
 	
 	@Autowired
 	WtmUserAuthRepository userAuthRepo;
+	
+	@Autowired
+	private TenantConfigManagerService tcms;
 	
 	
 	@Override
@@ -178,8 +181,11 @@ public class WtmAuthMgrServiceImpl implements WtmAuthMgrService{
 					if(userAuthIds!=null && userAuthIds.size()>0)
 						userAuthRepo.deleteByUserAuthIdsIn(userAuthIds);
 					
+					String encKey = tcms.getConfigValue(tenantId, "SECURITY.AES.KEY", true, "");
+					
 					convertMap.put("tenantId", tenantId);
 					convertMap.put("enterCd", enterCd);
+					convertMap.put("encKey", encKey);
 					authMgrMapper.saveAuthUser(convertMap);
 				}
 				

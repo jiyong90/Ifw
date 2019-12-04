@@ -28,7 +28,7 @@
 		<if test="mergeRows!=null and mergeRows.size()>0">
 		<foreach collection="mergeRows" item="item" separator=";">
 			INSERT INTO WTM_USER_AUTH(USER_KEY, AUTH_ID)
-			VALUES (F_WTM_SHA_ENCRYPT(CONCAT(${tenantId}, #{enterCd}, #{item.sabun})), #{item.authId}) 
+			VALUES (F_WTM_AES_ENCRYPT(CONCAT(${tenantId}, #{enterCd}, #{item.sabun}), #{encKey}), #{item.authId}) 
  		</foreach>
 		</if>
 	</update>
@@ -40,7 +40,7 @@
 			  FROM WTM_USER_AUTH U
 			  JOIN comm_auth_rule R
 			    ON U.AUTH_ID = R.auth_id
-			 WHERE USER_KEY = F_WTM_SHA_ENCRYPT(CONCAT(${tenantId}, #{enterCd}, #{sabun}))
+			 WHERE USER_KEY = F_WTM_AES_ENCRYPT(CONCAT(${tenantId}, #{enterCd}, #{sabun}), #{encKey})
         ]]>
    </select>
     

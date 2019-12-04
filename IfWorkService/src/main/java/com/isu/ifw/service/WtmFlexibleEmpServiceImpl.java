@@ -49,11 +49,15 @@ import com.isu.ifw.repository.WtmWorkteamMgrRepository;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.WtmDayPlanVO;
 import com.isu.ifw.vo.WtmDayWorkVO;
+import com.isu.option.service.TenantConfigManagerService;
 import com.isu.option.vo.ReturnParam;
 
 @Service("flexibleEmpService")
 public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 
+	@Autowired
+	private TenantConfigManagerService tcms;
+	
 	@Autowired
 	WtmFlexibleEmpMapper flexEmpMapper;
 	
@@ -1689,6 +1693,8 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
         List<String> rule = null;
         try {
 	        ObjectMapper mapper = new ObjectMapper();
+	        String encKey = tcms.getConfigValue(tenantId, "SECURITY.AES.KEY", true, "");
+	        m.put("encKey", encKey);
 	        List<Map<String, Object>> auths = authMgrMapper.findAuthByTenantIdAndEnterCdAndSabun(m);
 
 			if(auths!=null && auths.size()>0) {

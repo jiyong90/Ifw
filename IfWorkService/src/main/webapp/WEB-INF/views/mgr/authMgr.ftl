@@ -24,7 +24,7 @@
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">권한관리</div>
-							<ul class="float-right btn-wrap">
+							<ul class="float-right btn-wrap" style="display:none;">
 								<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
 							</ul>
@@ -57,7 +57,7 @@
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">권한 대상자 관리</div>
-							<ul class="float-right btn-wrap">
+							<ul class="float-right btn-wrap" style="display:none;">
 								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 							</ul>
@@ -87,7 +87,6 @@
 	   	 			this.functions = JSON.parse("${authFunctions?js_string}"); 
    	    		</#if>
    	    		
-   	    		$(".float-right.btn-wrap").hide();
    	    		<#if authRule?? && authRule!='' && authRule?exists >
 					this.authRule = JSON.parse("${authRule?js_string}");
 					if(this.authRule!=null && this.authRule.length>0)
