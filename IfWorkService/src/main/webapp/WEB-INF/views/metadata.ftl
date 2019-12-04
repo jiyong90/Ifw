@@ -25,6 +25,7 @@
 
     <!-- for dateTimepicker -->
     <link rel="stylesheet" href="${rc.getContextPath()}/tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/bxslider-4-master/src/css/jquery.bxslider.css">
     
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/customHR/css/style.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/customHR/css/date.css">
