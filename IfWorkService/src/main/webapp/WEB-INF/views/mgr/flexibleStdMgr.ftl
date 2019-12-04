@@ -36,7 +36,7 @@
 				<script type="text/javascript">createIBSheet("sheet1", "100%", fullsheetH,"kr"); </script>
 			</div>
 			<div class="col-7 pt-2">
-				<div class="innertab inner">
+				<div class="innertab inner" style="display:none;">
 					<div id="tabs" class="tab">
 						<ul class="outer tab_bottom">
 							<li><a href="#tabs-1">근무제기준</a></li>
@@ -413,6 +413,7 @@
 		} else if(iframeIdx == 1) {
 			$("#tabs-1").hide();
 			$("#tabs-2").show();
+			sheetResize();
 		}
 	}
 
@@ -563,8 +564,9 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
+			$(".innertab").show();
 			sheet2.RemoveAll();
-			sheetResize();
+			//sheetResize();
 			if(iframeIdx == 0) {
 				showIframe();
 			} else {
