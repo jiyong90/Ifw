@@ -34,6 +34,9 @@
 
 <script src="${rc.getContextPath()}/jBox-1.0.5/dist/jBox.all.min.js" type="text/javascript"></script>
 
+<!-- main guide slide -->
+<script src="${rc.getContextPath()}/bxslider-4-master/src/js/jquery.bxslider.js"></script>
+
 <script type="text/javascript">
     
     var Util = {
