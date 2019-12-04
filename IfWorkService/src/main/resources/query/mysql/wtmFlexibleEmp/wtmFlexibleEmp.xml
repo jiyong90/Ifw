@@ -1486,7 +1486,7 @@
   	
   	
   	<update id="resetNoPlanWtmWorkDayResultByFlexibleEmpIdWithFixOt" statementType="CALLABLE"  parameterType="map"  >
-  		{ call P_WTM_WORK_DAY_RESULT_CREATE_OF_NO_PLAN( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
+  		{ call P_WTM_WORK_DAY_RESULT_CREATE_N( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
   	</update>
   	
   	
