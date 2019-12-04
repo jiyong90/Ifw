@@ -1505,6 +1505,11 @@
   		{ call P_WTM_WORK_DAY_RESULT_OTFIX_CREATE( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
   	</update>
   	
+  	
+  	<update id="resetNoPlanWtmWorkDayResultByFlexibleEmpIdWithFixOt" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_WORK_DAY_RESULT_CREATE_OF_NO_PLAN( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
+  	</update>
+  	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->
   	<select id="getFlexibleEmpListForPlan" parameterType="map" resultType="wtmGeneral">
         <![CDATA[

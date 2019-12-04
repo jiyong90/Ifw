@@ -985,7 +985,7 @@ public class WtmFlexibleEmpServiceImpl implements WtmFlexibleEmpService {
 		if(emps != null && emps.size() >0) {
 			for( WtmFlexibleEmp emp : emps) {
 				paramMap.put("flexibleEmpId", emp.getFlexibleEmpId());
-				flexEmpMapper.resetFixOtWtmWorkDayResultByFlexibleEmpId(paramMap);
+				flexEmpMapper.resetNoPlanWtmWorkDayResultByFlexibleEmpIdWithFixOt(paramMap);
 			}
 		}
 	}
