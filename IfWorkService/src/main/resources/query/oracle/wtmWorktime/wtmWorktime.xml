@@ -119,7 +119,7 @@
   	<select id="getWorktimeDetail" parameterType="map" resultType="wtmGeneral">
   		SELECT C.YMD 
 		     , F_WTM_GET_FLEXIBLE_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS FLEXIBLE_NM
-		      , F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'YMDHI') AS ENTRY_SDATE
+		     , F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'YMDHI') AS ENTRY_SDATE
 			  , F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'YMDHI') AS ENTRY_EDATE 
 			  , R.TIME_TYPE_CD
 			  , R.TAA_CD
@@ -207,18 +207,10 @@
 		     , TIME_CD_MGR_ID
 		     , F_WTM_DATE_FORMAT(PLAN_SDATE, 'YMDHI') AS PLAN_SDATE
 		     , F_WTM_DATE_FORMAT(ENTRY_SDATE, 'YMDHI') AS ENTRY_SDATE
-		     , CASE WHEN DIFF_SSECOND is not null THEN 
-			  					CASE WHEN DIFF_SSECOND&lt;0 THEN '-' || FLOOR(ABS(DIFF_SSECOND)/60) || ':' || LPAD(MOD(ABS(DIFF_SSECOND),60),2,'0')
-			  						  WHEN DIFF_SSECOND=0 THEN NULL
-			  						  ELSE FLOOR(DIFF_SSECOND/60) || ':' || LPAD(MOD(DIFF_SSECOND,60),2,'0') END
-						ELSE '' END AS DIFF_SMINUTE
+		     , DIFF_SMINUTE
 		     , F_WTM_DATE_FORMAT(PLAN_EDATE, 'YMDHI') AS PLAN_EDATE
 		     , F_WTM_DATE_FORMAT(ENTRY_EDATE, 'YMDHI') AS ENTRY_EDATE
-		     , CASE WHEN DIFF_ESECOND is not null THEN 
-			  					CASE WHEN DIFF_ESECOND&gt;0 THEN FLOOR(ABS(DIFF_ESECOND)/60) || ':' || LPAD(MOD(ABS(DIFF_ESECOND),60),2,'0')
-			  						  WHEN DIFF_ESECOND=0 THEN NULL
-			  						  ELSE FLOOR(DIFF_ESECOND/60) || ':' || LPAD(MOD(DIFF_ESECOND,60),2,'0') END
-						ELSE '' END AS DIFF_EMINUTE
+		     , DIFF_EMINUTE
 		     , NOTE
 		  FROM ( SELECT C.TENANT_ID 
 							 , C.ENTER_CD
@@ -266,26 +258,30 @@
 			<choose>
 			    <when test="searchValue=='ALL'">
 			   		<if test="searchCondition=='more'">
-			   			and (DIFF_SMINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y') OR DIFF_EMINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y'))
+			   		    and PLAN_SDATE IS NOT NULL and ENTRY_SDATE IS NOT NULL and PLAN_EDATE IS NOT NULL and ENTRY_EDATE IS NOT NULL
+			   			and (DIFF_SMINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y') OR  DIFF_EMINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y'))
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and (DIFF_SMINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y') OR DIFF_EMINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y'))
+			   			and (PLAN_SDATE IS NULL or ENTRY_SDATE IS NULL or PLAN_EDATE IS NULL or ENTRY_EDATE IS NULL
+			   			or DIFF_SMINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y') OR DIFF_EMINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y'))
 			   		</if>
 			   	</when>
 			   	<when test="searchValue=='IN'">
 			   		<if test="searchCondition=='more'">
+			   		    and PLAN_SDATE IS NOT NULL and ENTRY_SDATE IS NOT NULL
 			   			and DIFF_SMINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y')
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and DIFF_SMINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y')
+			   			and (PLAN_SDATE IS NULL or ENTRY_SDATE IS NULL or DIFF_SMINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y'))
 			   		</if>
 			   	</when>
 			   	<when test="searchValue=='OUT'">
 			   		<if test="searchCondition=='more'">
+			   			and PLAN_EDATE IS NOT NULL and ENTRY_EDATE IS NOT NULL
 			   			and DIFF_EMINUTE &gt;= F_WTM_TO_NUMBER(#{searchMinute},'Y')
 			   		</if>
 			   		<if test="searchCondition=='under'">
-			   			and DIFF_EMINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y')
+			   			and (PLAN_EDATE IS NULL or ENTRY_EDATE IS NULL or DIFF_EMINUTE &lt; F_WTM_TO_NUMBER(#{searchMinute},'Y'))
 			   		</if>
 			   	</when>
 			</choose>
