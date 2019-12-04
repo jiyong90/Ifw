@@ -1,3 +1,35 @@
+<!-- guide modal start -->
+<div class="modal fade show" id="guide" data-backdrop="static"  tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-guide" role="document">
+        <form>
+        <div class="modal-content rounded-0">
+            <ol class="bxslider">
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p01.png" title="달력의 날짜를 선택해서 해당일의 상세정보를 볼 수 있습니다."></li>
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p02.png" title="해당일 화면에서 시간을 선택하면 연장/휴일 근무를 신청할 수 있습니다."></li>
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p03.png" title="결재권한자는 팀원들의 연장/휴일/유연근무 신청서를 결재 메뉴에서 승인합니다."></li>
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p04.png" title="월 근무 캘린더 상단에는 현재 적용되는 근무제와 소정/잔여 근로시간이 표시됩니다."></li>
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p05.png" title="월 근무 캘린더 좌측에는 선택한 날이 포함된 기간의 근무요약정보가 표시됩니다."></li>
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p06.png" title="선택한 날의 근무상세정보는 화면 좌측 하단에 표시됩니다."></li>
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p07.png" title="직원이 직접 유연근무제적용을 선택할 수 있습니다."></li>
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p08.png" title="근무계획작성 버튼을 클릭해 특정기간의 근무계획을 작성할 수 있습니다."></li>
+                <li><img src="${rc.getContextPath()}/soldev/img/guide/p09.png" title="여러 날을 동시에 선택해 근무계획을 입력할 수 있습니다."></li>
+            </ol>
+            <div class="modal-footer rounded-0">
+                <div class="form-element float-left">
+                    <input type="checkbox" id="today-close" name="today-close" value="" title="오늘 하루 이창 열지 않기">
+                    <label for="today-close">오늘 하루 이창 열지 않기</label>
+                </div>
+                <div class="float-right">
+                    <button type="button" class="close">
+                        <span aria-hidden="true" data-dismiss="modal">닫기</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+<!-- guide modal end -->
 <#include "/calendar.ftl">
 <div>
 	<div id="calendar_top" v-cloak>
@@ -711,6 +743,34 @@
 </div>
 <script type="text/javascript">
 	$(function () {
+		//guide slider
+		var guide = $('.bxslider').bxSlider({
+            mode: 'fade',
+            captions: false,
+            slideWidth: 900
+        });
+		
+		if(getCookie("notToday")!="Y"){
+            $("#guide").modal('show');
+            setTimeout(function(){
+            //bxslider reload
+            guide.reloadSlider();
+            },200);
+        }
+		
+		$('#guide .modal-footer .close').click(function(){
+            // 링크의 페이지 이동 속성 강제 차단
+            event.preventDefault();
+
+            if ($('#today-close').is(":checked")){
+                // 쿠키값을 "Y"로 하여 하루동안 저장시킴
+                setCookie('notToday','Y', 1);
+                // $("#guide").modal('hide');
+            }
+
+            // 팝업창 닫기
+            $("#guide").modal('hide');
+        });
 		
 		var fireRefreshEventOnWindow = function () {
 			var evt = document.createEvent("HTMLEvents");
@@ -747,6 +807,32 @@
 	    });
 		
 	});
+	
+	function setCookie(name, value, expiredays) {
+        var today = new Date();
+        today.setDate(today.getDate() + expiredays);
+
+        document.cookie = name + '=' + escape(value) + '; path=/; expires=' + today.toGMTString() + ';'
+    }
+
+    function getCookie(name){
+        var cName = name + "="; 
+        var x = 0; 
+        while ( x <= document.cookie.length ) 
+        { 
+            var y = (x+cName.length); 
+            if ( document.cookie.substring( x, y ) == cName ) 
+            { 
+                if ( (endOfCookie=document.cookie.indexOf( ";", y )) == -1 ) 
+                    endOfCookie = document.cookie.length;
+                return unescape( document.cookie.substring( y, endOfCookie ) ); 
+            } 
+            x = document.cookie.indexOf( " ", x ) + 1; 
+            if ( x == 0 ) 
+                break; 
+        } 
+        return ""; 
+    } 
 	
    	var calendarTopVue = new Vue({
    		el: "#calendar_top",
