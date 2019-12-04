@@ -92,7 +92,7 @@
 		sheet1.SetColProperty("workTypeCd", {ComboText:workTypeList[0], ComboCode:workTypeList[1]} );
 		
 		//근무시간
-		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/list", "",false).DATA, "");
+		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=",false).DATA, "");
 		sheet1.SetColProperty("timeCdMgrId", {ComboText:timeCdMgrIdList[0], ComboCode:timeCdMgrIdList[1]} );
 		
 		sheetInit();
