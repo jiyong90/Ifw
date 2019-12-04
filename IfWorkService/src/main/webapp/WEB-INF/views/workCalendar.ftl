@@ -750,7 +750,8 @@
             slideWidth: 900
         });
 		
-		if(getCookie("notToday")!="Y"){
+		var pathname = window.location.pathname;
+		if(getCookie("notToday")!="Y" && pathname.indexOf("/workCalendar")==-1){
             $("#guide").modal('show');
             setTimeout(function(){
             //bxslider reload
