@@ -535,6 +535,10 @@ a.article:hover {
   background: #e2e5ed;
 }
 
+#content.full-height{
+  min-height: 100vh;
+}
+
 #content .dim {
   position: fixed;
   top: 0;
@@ -831,6 +835,12 @@ a.article:hover {
 No media query for `xs` since this is the default in Bootstrap */
 
 /* Small devices (landscape phones, 576px and up) */
+
+@media only screen and (max-width: 500px) {
+  #navTop {
+    display: none;
+  }
+}
 @media only screen and (max-width: 767px){
   #sub-nav .legend-wrap::before {
     display: none;

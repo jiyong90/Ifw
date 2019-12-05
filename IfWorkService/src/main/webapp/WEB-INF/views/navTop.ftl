@@ -13,7 +13,7 @@
     <div id="navTop" class="ml-auto">
         <ul class="nav gnb-nav-wrap">
         	<li class="nav-item">
-                <a class="" href="#"><span class="ico-wrap"><i class="sp_ico help"></i></span></a>
+                <a class="" href="javascript:void(window.open('${rc.getContextPath()}/console/${tsId}/guide', '관리자 도움말','width=680, height=600, toolbar=no, resizable=yes'))"><span class="ico-wrap"><i class="sp_ico help"></i></span></a>
             </li>
             <li class="nav-item">
                 <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar"></i></span></a>
