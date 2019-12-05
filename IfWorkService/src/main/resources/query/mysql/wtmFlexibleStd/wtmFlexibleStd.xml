@@ -26,6 +26,7 @@
 			   AND S.ENTER_CD = #{enterCd}
 			   AND #{d} BETWEEN S.USE_SYMD AND S.USE_EYMD
 			   AND S.BASE_WORK_YN = 'N'
+			   AND S.APPL_YN = 'Y'
 			 ORDER BY S.USE_SYMD DESC
         ]]>
     </select>
@@ -160,6 +161,7 @@
 				, DAY_OPEN_TYPE = #{item.dayOpenType}
 				, DAY_CLOSE_TYPE = #{item.dayCloseType}
 				, UNPLANNED_YN = #{item.unplannedYn} 
+				, APPL_YN = #{item.applYn} 
 				, NOTE = #{item.note}  
 				, UPDATE_DATE = NOW()
 				, UPDATE_ID = #{item.userId}
@@ -204,6 +206,7 @@
 						WHEN 5 THEN '목요일'
 						WHEN 6 THEN '금요일'
 						WHEN 7 THEN '토요일' END AS baseDay
+				 , APPL_YN AS applYn
 				 , NOTE AS note
 		      FROM WTM_FLEXIBLE_STD_MGR 
 		     WHERE TENANT_ID = #{tenantId}

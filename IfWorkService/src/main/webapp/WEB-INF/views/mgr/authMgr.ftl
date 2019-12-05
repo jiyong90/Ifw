@@ -24,7 +24,7 @@
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">권한관리</div>
-							<ul class="float-right btn-wrap">
+							<ul class="float-right btn-wrap" style="display:none;">
 								<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
 							</ul>
@@ -57,7 +57,7 @@
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">권한 대상자 관리</div>
-							<ul class="float-right btn-wrap">
+							<ul class="float-right btn-wrap" style="display:none;">
 								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 							</ul>
@@ -78,14 +78,20 @@
    		var authRuleVue = new Vue({
    			el: "#authRule",
    		    data : {
-   		    	functions: []
+   		    	functions: [],
+   				authRule: []
    	  		},
    	  		mounted: function(){
 	   	  		//권한별 기능
-	   	 		var authFunctions;
 	   	 		<#if authFunctions?? && authFunctions!='' && authFunctions?exists >
 	   	 			this.functions = JSON.parse("${authFunctions?js_string}"); 
    	    		</#if>
+   	    		
+   	    		<#if authRule?? && authRule!='' && authRule?exists >
+					this.authRule = JSON.parse("${authRule?js_string}");
+					if(this.authRule!=null && this.authRule.length>0)
+						$(".float-right.btn-wrap").show();
+				</#if>
    	  		},
    	  		methods: {
    	  			chkFunc : function(){
@@ -152,7 +158,9 @@
         //setSheetAutocompleteEmp( "sheet2", "empNm", null, getSheetEmpInfo);
 		
 		sheetInit();
-		doAction1("Search");
+		
+		if(authRuleVue.authRule!=null && authRuleVue.authRule.length>0)
+			doAction1("Search");
 	});
 
 	function doAction1(sAction) {
@@ -195,7 +203,17 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
-			$("input:checkbox[name=authFuntion]").prop("checked",false);
+			doAction1("Search");
+		} catch (ex) {
+			alert("OnSaveEnd Event Error " + ex);
+		}
+	}
+	
+	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
+		try {
+			if (Msg != "") {
+				alert(Msg);
+			}
 			doAction1("Search");
 		} catch (ex) {
 			alert("OnSaveEnd Event Error " + ex);

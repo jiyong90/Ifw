@@ -36,7 +36,7 @@
 				<script type="text/javascript">createIBSheet("sheet1", "100%", fullsheetH,"kr"); </script>
 			</div>
 			<div class="col-7 pt-2">
-				<div class="innertab inner">
+				<div class="innertab inner" style="display:none;">
 					<div id="tabs" class="tab">
 						<ul class="outer tab_bottom">
 							<li><a href="#tabs-1">근무제기준</a></li>
@@ -71,7 +71,7 @@
 													<select id="dayOpenType"></select>
 													
 												</td>
-												<th>출근퇴근처리기준</th>
+												<th>퇴근자동처리기준</th>
 												<td>
 													<select id="dayCloseType"></select>
 												</td>
@@ -165,6 +165,13 @@
 													<label for="usedTermOpt2m">2개월</label>
 													<input type="checkbox" id="usedTermOpt3m" name="usedTermOpt" value="3_month" title="3개월"/>
 													<label for="usedTermOpt3m">3개월</label>
+												</td>
+											</tr>
+											<tr id="trApplYn">
+												<th>신청여부</th>
+												<td>
+													<input type="checkbox" id="applYn" name="applYn" />
+													<label for="applYn">체크시 신청가능</label> 
 												</td>
 											</tr>
 											<tr id="trApplTerm">
@@ -332,6 +339,7 @@
 			{Header:"퇴근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayCloseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"기준요일",			Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"baseDay",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"계획없음여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"unplannedYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
+			{Header:"신청여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"비고",				Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 }
 		]; 
 		
@@ -413,6 +421,7 @@
 		} else if(iframeIdx == 1) {
 			$("#tabs-1").hide();
 			$("#tabs-2").show();
+			sheetResize();
 		}
 	}
 
@@ -480,6 +489,10 @@
 				});
 				var usedTermOpt = JSON.stringify(usedTermArr);
 				sheet1.SetCellValue(row, "usedTermOpt", usedTermOpt);
+	        }
+	        if($('#trApplYn').is(':visible')){
+	        	var chkYn = getCheckYn("applYn");
+	        	sheet1.SetCellValue(row, "applYn", chkYn);
 	        }
 	        if($('#trApplTerm').is(':visible')){
 	        	var applTermOptArr = new Array();
@@ -563,8 +576,9 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
+			$(".innertab").show();
 			sheet2.RemoveAll();
-			sheetResize();
+			//sheetResize();
 			if(iframeIdx == 0) {
 				showIframe();
 			} else {
@@ -601,12 +615,14 @@
 				$("input:checkbox[name='coreChkYn']").prop("checked", false);
 				$("input:checkbox[name='usedTermOpt']").prop("checked", false);
 				$("input:checkbox[name='applTermOpt']").prop("checked", false);
+				$("input:checkbox[name='applYn']").prop("checked", false);
 				
 				// 공휴일제외여부
 				if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
 					$("input:checkbox[name='holExceptYn']").prop("checked", true);
 					
 				}
+			
 				$("#dayOpenType").val(sheet1.GetCellValue( NewRow, "dayOpenType")).prop("selected", true);
 				$("#dayCloseType").val(sheet1.GetCellValue( NewRow, "dayCloseType")).prop("selected", true);
 				
@@ -708,6 +724,7 @@
 				// 신청기간
 				if(workTypeCd == "BASE" || workTypeCd == "WORKTEAM"){
 					$("#trUsedTerm").hide();
+					$("#trApplYn").hide();
 					$("#trApplTerm").hide();
 				} else {
 					$("#trUsedTerm").show();
@@ -718,6 +735,10 @@
 							var value = dataUseTermOpt[i].value;
 							$("input:checkbox[name=usedTermOpt][value=" + value + "]").prop("checked", true);
 						}
+					}
+					$("#trApplYn").show();
+					if(sheet1.GetCellValue( NewRow, "applYn") == "Y"){
+						$("input:checkbox[name='applYn']").prop("checked", true);
 					}
 					$("#trApplTerm").show();
 					var applTermOpt = sheet1.GetCellValue( NewRow, "applTermOpt");

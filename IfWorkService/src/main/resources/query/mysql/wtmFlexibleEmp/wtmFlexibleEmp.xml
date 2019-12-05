@@ -1481,7 +1481,12 @@
   	</update>
   	
   	<update id="resetFixOtWtmWorkDayResultByFlexibleEmpId" statementType="CALLABLE"  parameterType="map"  >
-  		{ call P_WTM_WORK_DAY_RESULT_OTFIX_CREATE( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
+  		{ call P_WTM_WORK_DAY_RESULT_OTFIX_C( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
+  	</update>
+  	
+  	
+  	<update id="resetNoPlanWtmWorkDayResultByFlexibleEmpIdWithFixOt" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_WORK_DAY_RESULT_CREATE_N( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
   	</update>
   	
   	

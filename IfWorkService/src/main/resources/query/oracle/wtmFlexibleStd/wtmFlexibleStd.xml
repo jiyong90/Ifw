@@ -9,6 +9,14 @@
 			SELECT C.APPL_NM AS WORK_TYPE_NM 
 			     , S.*
 			     , C.*
+			     , CASE F_WTM_WEEKDAY(use_symd) 
+						WHEN 1 THEN '일요일'
+						WHEN 2 THEN '월요일'
+						WHEN 3 THEN '화요일'
+						WHEN 4 THEN '수요일'
+						WHEN 5 THEN '목요일'
+						WHEN 6 THEN '금요일'
+						WHEN 7 THEN '토요일' END AS WEEK_DAY
 			  FROM WTM_FLEXIBLE_STD_MGR S 
 			  JOIN WTM_APPL_CODE C
 			    ON C.ENTER_CD = S.ENTER_CD
@@ -18,6 +26,7 @@
 			   AND S.ENTER_CD = #{enterCd}
 			   AND #{d} BETWEEN S.USE_SYMD AND S.USE_EYMD
 			   AND S.BASE_WORK_YN = 'N'
+			   AND S.APPL_YN = 'Y'
 			 ORDER BY S.USE_SYMD DESC
         ]]>
     </select>
@@ -152,6 +161,7 @@
 				, DAY_OPEN_TYPE = #{item.dayOpenType, jdbcType=VARCHAR}
 				, DAY_CLOSE_TYPE = #{item.dayCloseType, jdbcType=VARCHAR}
 				, UNPLANNED_YN = #{item.unplannedYn, jdbcType=VARCHAR} 
+				, APPL_YN = #{item.applYn, jdbcType=VARCHAR} 
 				, NOTE = #{item.note, jdbcType=VARCHAR}  
 				, UPDATE_DATE = SYSDATE
 				, UPDATE_ID = #{item.userId, jdbcType=NUMERIC}
@@ -196,6 +206,7 @@
 						WHEN 5 THEN '목요일'
 						WHEN 6 THEN '금요일'
 						WHEN 7 THEN '토요일' END AS BASE_DAY
+				 , APPL_YN
 				 , NOTE 
 		      FROM WTM_FLEXIBLE_STD_MGR 
 		     WHERE TENANT_ID = #{tenantId}

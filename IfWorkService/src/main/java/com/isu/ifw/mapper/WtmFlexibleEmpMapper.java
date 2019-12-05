@@ -224,6 +224,7 @@ public interface WtmFlexibleEmpMapper {
 	 * @param paramMap
 	 */
 	public void resetFixOtWtmWorkDayResultByFlexibleEmpId(Map<String, Object> paramMap);
+	public void resetNoPlanWtmWorkDayResultByFlexibleEmpIdWithFixOt(Map<String, Object> paramMap);
 	
 	public void createWtmWorkteamOfWtmWorkDayResult(Map<String, Object> paramMap);
 	
