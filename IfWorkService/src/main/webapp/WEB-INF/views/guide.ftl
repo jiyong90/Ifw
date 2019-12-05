@@ -7,7 +7,7 @@
 <body class="">
 	<div class="wrapper">
 	    <div id="content" class="full-height">
-	        <div class="container-fluid pop-up">
+	        <div class="container-fluid pb-4 pop-up">
 	            <!-- 제목 -->
 	            <p class="page-title">관리자 도움말</p>
 	            <!-- 내용 -->
@@ -82,9 +82,9 @@
 	            $next.slideToggle();
 	            $this.parent().toggleClass('open');
 	
-	            if (!e.data.multiple) {
+	            /* if (!e.data.multiple) {
 	                $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
-	            };
+	            }; */
 	        }
 	
 	        var accordion = new Accordion($('#accordion'), false);
