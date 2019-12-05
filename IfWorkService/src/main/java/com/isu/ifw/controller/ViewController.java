@@ -219,12 +219,6 @@ public class ViewController {
 			
 			String calendarType = "Month"; //기본은 월달력
 			
-			WtmPropertie flexApplYn = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_APPL_YN");
-			
-			if(flexApplYn!=null) {
-				mv.addObject("flexApplYn", flexApplYn.getInfoValue());
-			}
-			
 			if(request.getParameter("calendarType")!=null) {
 				calendarType = request.getParameter("calendarType").toString();
 				
@@ -435,11 +429,6 @@ public class ViewController {
 				calendarType = request.getParameter("calendarType").toString();
 			} 
 			mv.addObject("calendar", "work"+ calendarType +"Calendar");
-			
-			WtmPropertie flexApplYn = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_APPL_YN");
-			if(flexApplYn!=null) {
-				mv.addObject("flexApplYn", flexApplYn.getInfoValue());
-			}
 			
 			if("Time".equals(calendarType)) {
 				//근태사유서 신청 기간

@@ -167,6 +167,13 @@
 													<label for="usedTermOpt3m">3개월</label>
 												</td>
 											</tr>
+											<tr id="trApplYn">
+												<th>신청여부</th>
+												<td>
+													<input type="checkbox" id="applYn" name="applYn" />
+													<label for="applYn">체크시 신청가능</label> 
+												</td>
+											</tr>
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
 												<td colspan="3">
@@ -332,6 +339,7 @@
 			{Header:"퇴근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayCloseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"기준요일",			Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"baseDay",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"계획없음여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"unplannedYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
+			{Header:"신청여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"비고",				Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 }
 		]; 
 		
@@ -482,6 +490,10 @@
 				var usedTermOpt = JSON.stringify(usedTermArr);
 				sheet1.SetCellValue(row, "usedTermOpt", usedTermOpt);
 	        }
+	        if($('#trApplYn').is(':visible')){
+	        	var chkYn = getCheckYn("applYn");
+	        	sheet1.SetCellValue(row, "applYn", chkYn);
+	        }
 	        if($('#trApplTerm').is(':visible')){
 	        	var applTermOptArr = new Array();
 				$('input[name="applTermOpt"]').each(function() {
@@ -603,12 +615,14 @@
 				$("input:checkbox[name='coreChkYn']").prop("checked", false);
 				$("input:checkbox[name='usedTermOpt']").prop("checked", false);
 				$("input:checkbox[name='applTermOpt']").prop("checked", false);
+				$("input:checkbox[name='applYn']").prop("checked", false);
 				
 				// 공휴일제외여부
 				if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
 					$("input:checkbox[name='holExceptYn']").prop("checked", true);
 					
 				}
+			
 				$("#dayOpenType").val(sheet1.GetCellValue( NewRow, "dayOpenType")).prop("selected", true);
 				$("#dayCloseType").val(sheet1.GetCellValue( NewRow, "dayCloseType")).prop("selected", true);
 				
@@ -710,6 +724,7 @@
 				// 신청기간
 				if(workTypeCd == "BASE" || workTypeCd == "WORKTEAM"){
 					$("#trUsedTerm").hide();
+					$("#trApplYn").hide();
 					$("#trApplTerm").hide();
 				} else {
 					$("#trUsedTerm").show();
@@ -720,6 +735,10 @@
 							var value = dataUseTermOpt[i].value;
 							$("input:checkbox[name=usedTermOpt][value=" + value + "]").prop("checked", true);
 						}
+					}
+					$("#trApplYn").show();
+					if(sheet1.GetCellValue( NewRow, "applYn") == "Y"){
+						$("input:checkbox[name='applYn']").prop("checked", true);
 					}
 					$("#trApplTerm").show();
 					var applTermOpt = sheet1.GetCellValue( NewRow, "applTermOpt");
