@@ -596,7 +596,19 @@ public class WtmOtApplServiceImpl implements WtmApplService {
 		saveWtmApplLine(tenantId, enterCd, Integer.parseInt(applCode.getApplLevelCd()), applId, sabun, userId);
 		paramMap.put("applId", appl.getApplId());
 		//rp.put("flexibleApplId", flexibleAppl.getFlexibleApplId());
-		wtmOtApplMapper.calcOtMinute(paramMap);
+		
+		String otShm = WtmUtil.parseDateStr(WtmUtil.toDate(otSdate, "yyyyMMddHHmm"), "HHmm");
+		String otEhm = WtmUtil.parseDateStr(WtmUtil.toDate(otEdate, "yyyyMMddHHmm"), "HHmm");
+		paramMap.put("shm", otShm);
+		paramMap.put("ehm", otEhm);
+		
+		Map<String, Object> calcOtMap = wtmFlexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, paramMap, userId);
+		if(calcOtMap!=null && calcOtMap.containsKey("calcMinute") && calcOtMap.get("calcMinute")!=null) {
+			otAppl.setOtMinute(calcOtMap.get("calcMinute").toString());
+			wtmOtApplRepo.save(otAppl);
+		}
+		//wtmOtApplMapper.calcOtMinute(paramMap);
+		
 		rp.put("applId", appl.getApplId());
 			
 		return rp;

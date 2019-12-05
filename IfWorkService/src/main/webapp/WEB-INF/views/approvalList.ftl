@@ -46,6 +46,57 @@
                                 	</template>
                                 </div>
                             </div>
+                            <!--  
+                            <template v-if="appl.applCd=='ELAS'">
+                            <div class="accordion-wrap inner-wrap">
+                                <ul id="accordion" class="accordion">
+                                    <li>
+                                        <div class="link">2019.06.18 ~ 2019.06.18<i class="ico arrow-down"></i></div>
+                                        <div class="submenu">
+                                            <ul class="all-time-wrap">
+                                                <li>
+                                                    <span class="title">근무시간</span>
+                                                    <span class="time bold">40</span>
+                                                </li>
+                                                <li>
+                                                    <div class="total">
+                                                        <span class="title">연장합산</span>
+                                                        <span class="time bold">40</span>
+                                                    </div>
+                                                    <ul class="time-list">
+                                                        <li>
+                                                            <span class="title">조출시간</span>
+                                                            <span class="time">8</span>
+                                                        </li>
+                                                        <li>
+                                                            <span class="title">잔업시간</span>
+                                                            <span class="time">20</span>
+                                                        </li>
+                                                        <li>
+                                                            <span class="title">휴일시간</span>
+                                                            <span class="time">12</span>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                            <p class="title time-desc-title">출,퇴근시간</p>
+                                            <ul class="time-desc-wrap">
+                                                <li>
+                                                    <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                    <ul class="time-desc">
+                                                        <li><span class="title">근무시간</span>8시간</li>
+                                                        <li><span class="title">조출시간</span>1시간</li>
+                                                        <li><span class="title">잔업시간</span>1시간</li>
+                                                        <li><span class="title">휴일시간</span>1시간</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                        		</ul>
+                        	</div>
+                            </template>
+                            -->
                         </div>
                         <!--  
                         <div class="btn-wrap text-center">
@@ -148,7 +199,7 @@
                                         <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
                                     </span>
                                 </div>
-                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.sDate).format('HH:mm')}}~{{moment(sub.eDate).format('HH:mm')}} 입니다.</div>
+                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
                                 </template>
                             </div>
                             <div class="inner-wrap" v-if="appl.cancelReason">
@@ -420,6 +471,9 @@
 	    			this.getFlexibleSeleAppl(appr.applId);
 	    		} */
 	    		this.appl = appr.appl;
+	    		this.appl['applCd'] = appr.applCd;
+	    		console.log(this.appl);
+	    		
 	    		if(appr.applCd=='OT' || appr.applCd=='OT_CAN') {
 	    			//연장근무신청서
 	    			$("#otAppl").modal("show"); 
