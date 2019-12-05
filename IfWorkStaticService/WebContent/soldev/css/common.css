@@ -1332,6 +1332,11 @@ transition: all 0.4s ease;
 .pop-up .accordion>li .link {
   padding: 18px 22px;
   border-top:0px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.43;
+  letter-spacing: -0.7px;
+  color: #292944;
 }
 
 .pop-up .accordion>li i.fa-chevron-down{
