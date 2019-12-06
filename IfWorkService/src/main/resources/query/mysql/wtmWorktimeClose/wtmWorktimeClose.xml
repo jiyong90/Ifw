@@ -8,6 +8,7 @@
 	<select id="getDayList" parameterType="map" resultType="hashmap">
         <![CDATA[
         	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, YMD) AS orgNm
+        		  , A.YMD AS ymd
 				  , A.SABUN AS sabun
 				  , B.EMP_NM AS empNm
 				  , WORK_TYPE_CD AS workTypeCd
