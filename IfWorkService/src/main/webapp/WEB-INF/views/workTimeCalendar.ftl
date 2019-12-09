@@ -83,7 +83,7 @@
                                         placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && subsYn">
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && (subsYn || payTargetYn)">
                                 <div class="title mb-2">휴일대체방법</div>
                                 <div class="desc">
                                     <div class="custom-control custom-radio custom-control-inline">
@@ -530,7 +530,7 @@
   		    },
   		    computed: {
   		    	subsRequired: function(val, oldVal) {
-  		    		return this.result.holidayYn=='Y'&&(this.subsYn=='Y'||this.payTypeYn=='Y')?true:false;
+  		    		return this.result.holidayYn=='Y'&&(this.subsYn=='Y'||this.payTargetYn=='Y')?true:false;
   		    	}
   		    },
   		    mounted: function(){
@@ -555,9 +555,6 @@
   		    	renderCallback: function(){
   		    		var calendar = this.$refs.fullCalendar.cal;
   		    		calendarLeftVue.calendar = calendar;
-  		    		
-  		    		//신청서 정보
-  		    		this.getApplCode();
   		    	},
   		    	datesRenderCallback: function(info){
   		    		var $this = this;
@@ -881,6 +878,9 @@
   	         			eYmd = new Date(baseEdate);
   	         		}
   	         		
+  	         		//신청서 정보
+  		    		this.getApplCode();
+  	         		
   	         		if($this.applCode!=null && $this.applCode.timeUnit!=null && $this.applCode.timeUnit!=undefined && $this.applCode.timeUnit!='') {
   	         			var timeUnit = Number($this.applCode.timeUnit);
   	         			eYmd.setMinutes(sYmd.getMinutes()+timeUnit);
@@ -1166,7 +1166,8 @@
   	  	         			$("#eTime").val('');
 		   				}
 		     				
-		     			var time = Number(moment(otEdate).diff(otSdate,'minutes'));
+		     			//var time = Number(moment(otEdate).diff(otSdate,'minutes'));
+		     			var time = $this.overtime.calcMinute;
 		       			// 신청 시간 단위
 		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='') {
 		       				var timeUnit = Number(applCode.timeUnit);
@@ -1200,8 +1201,8 @@
 			         			var holApplTypeCd = Number(applCode.holApplTypeCd);
 			         			
 			         			//휴게시간 차감
-			         			if($this.overtime.breakMinute!=null && $this.overtime.breakMinute!=undefined && $this.overtime.breakMinute!='')
-			         				time = time - Number($this.overtime.breakMinute);
+			         			/* if($this.overtime.breakMinute!=null && $this.overtime.breakMinute!=undefined && $this.overtime.breakMinute!='')
+			         				time = time - Number($this.overtime.breakMinute); */
 			         			
 			         			if(time % holApplTypeCd != 0) {
 			         				isValid = false;
@@ -1435,8 +1436,6 @@
 					
 					if($this.overtimeAppl.hasOwnProperty('otCanAppl') && $this.overtimeAppl.otCanAppl!=null && $this.overtimeAppl.otCanAppl!=undefined) {
 						var otCanAppl = $this.overtimeAppl.otCanAppl;
-						console.log('otCanAppl');
-						console.log(otCanAppl);
 						param = {
 	  	         			applCd : otCanAppl.applCd,
 	  	         			applId : otCanAppl.applId

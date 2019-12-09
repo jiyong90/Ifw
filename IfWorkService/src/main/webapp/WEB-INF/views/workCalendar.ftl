@@ -355,6 +355,7 @@
                                         </li>
                                     </ul>
                                 </li>
+                                <!--  
                                 <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taaNames">
                                     <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <span class="sub-desc"></span>
@@ -366,6 +367,17 @@
                                         <li v-else>
                                             <span class="sub-title">{{workDayInfo.taaNames}}</span>
                                             <span class="sub-desc">{{workDayInfo.taaHour}}</span>
+                                        </li>
+                                    </ul>
+                                </li>
+                                -->
+                                <li v-if="Object.keys(workDayInfo).length>0 && Object.keys(workDayInfo.taa).length>0">
+                                    <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
+                                    <span class="sub-desc"></span>
+                                    <ul class="sub-desc-list">
+                                        <li v-for="(v, k) in workDayInfo.taa">
+                                            <span class="sub-title">{{k}}</span>
+                                            <span class="sub-desc">{{v}}</span>
                                         </li>
                                     </ul>
                                 </li>
