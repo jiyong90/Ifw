@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.auth.config.AuthConfigProvider;
 import com.isu.auth.config.data.AuthConfig;
 import com.isu.auth.dao.TenantDao;
-import com.isu.ifw.StringUtil;
 import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmPropertie;
@@ -41,6 +40,7 @@ import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.StringUtil;
 import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
