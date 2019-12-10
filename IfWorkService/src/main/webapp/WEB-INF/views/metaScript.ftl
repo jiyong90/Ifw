@@ -70,6 +70,31 @@
 	    return shallowEncoded;    
 	};
 	
+	function minuteToHHMM(min, type) {
+		if(min!=null && min!=undefined && min!='') {
+    		if(type==null || type=='')
+	   	    	type='short';
+    		
+	   	    var min = Number(min);
+	   	    var hours   = Math.floor(min / 60);
+	   	    var minutes = Math.floor(min - (hours * 60));
+
+	   	 	if(type=='detail') {
+	   	 		var h = hours==0?'':hours+'시간 ';
+	   	 		var m = minutes==0?'':minutes+'분';
+	   	    	return h+''+m;
+	   	 	}
+	   	    	
+	   	    if (hours   < 10) {hours   = "0"+hours;}
+	   	    if (minutes < 10) {minutes = "0"+minutes;}
+	   	    
+	   	    if(type=='short')
+	   	   		return hours+':'+minutes;
+		} else {
+			return '';
+		}
+   	};
+	
  	$(document).on('show.bs.modal', '.modal', function (event) {
         var zIndex = 1040 + (10 * $('.modal:visible').length);
         $(this).css('z-index', zIndex);

@@ -83,7 +83,7 @@
                                         placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && (subsYn || payTargetYn)">
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && (subsYn=='Y' || payTargetYn)">
                                 <div class="title mb-2">휴일대체방법</div>
                                 <div class="desc">
                                     <div class="custom-control custom-radio custom-control-inline">
@@ -530,7 +530,7 @@
   		    },
   		    computed: {
   		    	subsRequired: function(val, oldVal) {
-  		    		return this.result.holidayYn=='Y'&&(this.subsYn=='Y'||this.payTargetYn=='Y')?true:false;
+  		    		return this.result.holidayYn=='Y'&&(this.subsYn=='Y'||this.payTargetYn)?true:false;
   		    	}
   		    },
   		    mounted: function(){

@@ -87,6 +87,10 @@ public class WtmOtApplController {
 		String sabun = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
+		//연장근무 관리자 화면에서 신청 시에 sabun 이 들어온다.
+		if(paramMap.get("sabun")!=null && !"".equals(paramMap.get("sabun")))
+			sabun = paramMap.get("sabun").toString();
+		
 		String workTypeCd = null;
 		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
 			workTypeCd = paramMap.get("workTypeCd").toString();
