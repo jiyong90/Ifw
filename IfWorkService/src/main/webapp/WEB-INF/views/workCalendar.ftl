@@ -88,15 +88,15 @@
 	            <div class="row no-gutters work-time-wrap">
 	                <div class="col-12 col-sm-3 col-xl-1">
 	                    <div class="title">현재 근무계획</div>
-	                    <div class="desc">{{flexibleStd.flexibleNm}}</div>
+	                    <div class="desc" v-if="flexibleStd">{{flexibleStd.flexibleNm}}</div>
 	                </div>
 	                <div class="col-12 col-sm-2 col-xl-1">
 	                    <div class="title">잔여소정근로</div>
-	                    <div class="desc">{{minuteToHHMM(flexibleStd.restWorkMinute,'detail')}}</div>
+	                    <div class="desc" v-if="flexibleStd">{{minuteToHHMM(flexibleStd.restWorkMinute,'detail')}}</div>
 	                </div>
 	                <div class="col-12 col-sm-2 col-xl-1">
 	                    <div class="title">잔여연장근로</div>
-	                    <div class="desc">{{minuteToHHMM(flexibleStd.restOtMinute,'detail')}}</div>
+	                    <div class="desc" v-if="flexibleStd">{{minuteToHHMM(flexibleStd.restOtMinute,'detail')}}</div>
 	                </div>
 	                <div class="col">
 	                </div>
@@ -158,9 +158,9 @@
 	        </form>
 	        <div id="summary-wrap" style="display:none;">
 			    <ul class="summary-list">
-			        <li><span class="label-title">현재 근무계획</span><span class="desc">{{flexibleStd.flexibleNm}}</span></li>
-			        <li><span class="label-title">잔여소정근로</span><span class="desc">{{minuteToHHMM(flexibleStd.restWorkMinute,'detail')}}</span></li>
-			        <li><span class="label-title">잔여연장근로</span><span class="desc">{{minuteToHHMM(flexibleStd.restOtMinute,'detail')}}</span></li>
+			        <li><span class="label-title">현재 근무계획</span><span class="desc" v-if="flexibleStd">{{flexibleStd.flexibleNm}}</span></li>
+			        <li><span class="label-title">잔여소정근로</span><span class="desc" v-if="flexibleStd">{{minuteToHHMM(flexibleStd.restWorkMinute,'detail')}}</span></li>
+			        <li><span class="label-title">잔여연장근로</span><span class="desc" v-if="flexibleStd">{{minuteToHHMM(flexibleStd.restOtMinute,'detail')}}</span></li>
 			    </ul>
 			</div>
 			<div class="btn-collapse-wrap">
