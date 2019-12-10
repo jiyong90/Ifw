@@ -288,8 +288,8 @@
 				rule[selectedTab] = targetList;
 				
 				var newRuleValue = {};
-				if(existValue['EXCLUDE']!=null && existValue.hasOwnProperty('EXCLUDE')) {
-					newRuleValue['EXCLUDE'] = existValue['EXCLUDE']
+				if(existValue!=null && existValue.hasOwnProperty('EXCLUDE') && existValue['EXCLUDE']!=null) {
+					newRuleValue['EXCLUDE'] = existValue['EXCLUDE'];
 				}
 				
 				if(existValue==null || !existValue.hasOwnProperty('INCLUDE') || existValue['INCLUDE']==null || existValue['INCLUDE']=='' || existValue['INCLUDE']==undefined) {
@@ -363,8 +363,8 @@
 				rule[selectedTab] = targetList;
 				
 				var newRuleValue = {};
-				if(existValue['INCLUDE']!=null && existValue.hasOwnProperty('INCLUDE')) {
-					newRuleValue['INCLUDE'] = existValue['INCLUDE']
+				if(existValue!=null && existValue.hasOwnProperty('INCLUDE') && existValue['INCLUDE']!=null) {
+					newRuleValue['INCLUDE'] = existValue['INCLUDE'];
 				}
 				
 				if(existValue==null || ruleValue['EXCLUDE']==null || ruleValue['EXCLUDE']=='' || ruleValue['EXCLUDE']==undefined || !ruleValue.hasOwnProperty('EXCLUDE')) {

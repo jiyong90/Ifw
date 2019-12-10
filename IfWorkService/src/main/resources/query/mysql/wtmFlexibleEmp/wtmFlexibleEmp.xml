@@ -167,7 +167,7 @@
                  , T.TIME_CD AS timeCd
                  , T.TIME_NM AS timeNm
                  , C.HOLIDAY_YN AS holidayYn
-                 , F_WTM_GET_TAA_NAMES(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD, 2) AS TAA_NAMES
+                 , F_WTM_GET_TAA_NAMES(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD, 2) AS taaNames
                  , MIN(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS') THEN R.PLAN_SDATE ELSE NULL END) AS planSdate
                  , MAX(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS') THEN R.PLAN_EDATE ELSE NULL END) AS planEdate
                  , SUM(CASE WHEN R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD NOT IN ('TAA', 'SUBS') THEN R.PLAN_MINUTE ELSE 0 END) AS planMinute
