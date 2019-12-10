@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +29,6 @@ import com.isu.auth.dao.TenantDao;
 import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmPropertie;
-import com.isu.ifw.mapper.WtmAuthMgrMapper;
 import com.isu.ifw.repository.WtmCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
@@ -38,7 +36,9 @@ import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmEmpMgrService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
+import com.isu.ifw.service.WtmRuleService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.StringUtil;
 import com.isu.option.service.TenantConfigManagerService;
@@ -83,6 +83,12 @@ public class ViewController {
 	
 	@Resource
 	WtmPropertieRepository propertieRepo;
+	
+	@Autowired
+	WtmEmpMgrService empMgrService;
+	
+	@Autowired
+	WtmRuleService ruleService;
 	
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
@@ -328,6 +334,16 @@ public class ViewController {
 		mv.addObject("authFunctions", tcms.getConfigValue(tenantId, "WTMS.AUTH.FUNTIONS", true, ""));
 		mv.addObject("isEmbedded",false); // 단독으로 열린것임을 표시
 		
+		if("otApplMgr".equals(viewPage)) {
+			//연장근무 또는 휴일근무 신청 시 사유
+			List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "REASON_CD");
+			mv.addObject("reasons", mapper.writeValueAsString(reasons));
+		}else if("applCode".equals(viewPage)) {
+			//연장근무 신청서의 휴일대체 선택대상
+			List<Map<String, Object>> rules = ruleService.getRuleList(tenantId, enterCd);
+			mv.addObject("rules",rules);
+		}
+		
 		return mv;
 	}
 	
@@ -491,6 +507,22 @@ public class ViewController {
 				|| viewPage.equals("workMonthCalendar") || viewPage.equals("workTimeCalendar") || viewPage.equals("approvalList")) {
 		
 			mv.addObject("pageName", viewPage);
+		}
+		else if("otApplMgr".equals(viewPage)) {
+			//연장근무 또는 휴일근무 신청 시 사유
+			List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "REASON_CD");
+			try {
+				mv.addObject("reasons", mapper.writeValueAsString(reasons));
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mv.addObject("reasons", null);
+			}
+		} 
+		else if("applCode".equals(viewPage)) {
+			//연장근무 신청서의 휴일대체 선택대상
+			List<Map<String, Object>> rules = ruleService.getRuleList(tenantId, enterCd);
+			mv.addObject("rules", rules);
 		}
 		else
 			mv.addObject("pageName", "mgr/"+viewPage);

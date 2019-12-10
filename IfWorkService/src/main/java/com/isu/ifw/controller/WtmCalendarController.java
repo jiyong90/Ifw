@@ -189,5 +189,36 @@ public class WtmCalendarController {
 
 		return rp;
 	}
+	
+	/**
+	 * 해당 일의 휴일 여부 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/emps",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getEmpsCalendar(@RequestParam Map<String, Object> paramMap
+													    , HttpServletRequest request) throws Exception {
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		try {
+			rp = wtmCalendarService.getEmpsCalendar(tenantId, enterCd, sabun, paramMap);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("휴일 조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 
 }

@@ -192,6 +192,13 @@
                 vertical: 'bottom'
             }
         });
+   		
+   		//휴일대체 사용기간 콤보
+   		<#list rules as rule >
+   			var option = $("<option value='${rule.ruleId}'>${rule.ruleNm}</option>");
+			$("#subsRuleId").append(option);
+		</#list>
+   		
    		//resize
    		$(window).smartresize(sheetResize);
    		
