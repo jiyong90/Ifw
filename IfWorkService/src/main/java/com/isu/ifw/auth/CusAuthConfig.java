@@ -31,7 +31,7 @@ public class CusAuthConfig implements AuthConfig {
 
 	@Override
 	public Endpoint getLoginFormSubmitEndpoint(){
-		RestEndpoint ep = new RestEndpoint("/info/"+tsId+"/140");
+		RestEndpoint ep = new RestEndpoint("/login/certificate/"+tsId);
 		ep.setMethod(RestEndpoint.METHOD_POST);
 		return ep;
 	}
@@ -55,19 +55,33 @@ public class CusAuthConfig implements AuthConfig {
 	@Override
 	public String getCertificateQuery() {
 		//return "select a.*, a.user_id as \"userKey\" from comm_user a where a.login_id = :loginId and a.tenant_id = :tenantId";
-		return " select   a.login_id as \"loginId\"                                           "
-				+ "      , a.user_id as \"userId\"                           "
-				+ "      , F_WTM_AES_DECRYPT(a.login_id,  :enterCd) as \"empNo\" "
-				+ "      , F_WTM_AES_DECRYPT(a.enter_cd, :enterCd) as \"enterCd\" "
-				+ "      , a.* "
-				+ "   from comm_user a                                     "
-				+ "   join comm_management_infomation i                    "
-				+ "     on a.tenant_id = i.tenant_id                       "
-				+ "  where a.tenant_id = :tenantId                                 "
-				+ "    and info_key= 'SECURITY.AES.KEY'                     "
-				+ "    and a.enter_cd = F_WTM_AES_ENCRYPT(:enterCd, :enterCd)    "
-				+ " 	and a.login_id = F_WTM_AES_ENCRYPT(:loginId, :enterCd)   "
-			 ;
+		/*return " select   a.login_id as loginId                                           "
+			+ "      , a.user_id as userId                           "
+			+ "      , F_WTM_AES_DECRYPT(a.login_id, info_data) as empNo "
+			+ "      , F_WTM_AES_DECRYPT(a.enter_cd, info_data) as enterCd "
+			+ "      , a.* "
+			+ "   from comm_user a                                     "
+			+ "   join comm_management_infomation i                    "
+			+ "     on a.tenant_id = i.tenant_id                       "
+			+ "  where a.tenant_id = :tenantId                                 "
+			+ "    and info_key= 'SECURITY.AES.KEY'                     "
+			+ "    and a.enter_cd = F_WTM_AES_ENCRYPT(:enterCd, info_data)    "
+			+ " 	and a.login_id = F_WTM_AES_ENCRYPT(:loginId, info_data)   "
+		 ;*/
+		String sql = " select   a.login_id as \"loginId\"                                           "
+	            + "      , a.user_id as \"userId\"                           "
+	            + "      , F_WTM_AES_DECRYPT(a.login_id, :encKey) as \"empNo\" "
+	            + "      , F_WTM_AES_DECRYPT(a.enter_cd, :encKey) as \"enterCd\" "
+	            + "      , a.* "
+	            + "   from comm_user a                                     "
+	            + "   join comm_management_infomation i                    "
+	            + "     on a.tenant_id = i.tenant_id                       "
+	            + "  where a.tenant_id = :tenantId                                 "
+	            + "    and info_key= 'SECURITY.AES.KEY'                     "
+	            + "    and a.enter_cd = F_WTM_AES_ENCRYPT(:enterCd, :encKey)    "
+	            + "    and a.login_id = F_WTM_AES_ENCRYPT(:loginId, :encKey)   "
+	          ;
+		return sql;
 	}
 
 	@Override
@@ -99,14 +113,14 @@ public class CusAuthConfig implements AuthConfig {
 
 	@Override
 	public Endpoint getLoginPageEndpoint() {
-		RestEndpoint ep = new RestEndpoint("/info/"+tsId+"/140");
+		RestEndpoint ep = new RestEndpoint("/login/"+tsId);
 		ep.setMethod(RestEndpoint.METHOD_GET);
 		return ep;
 	}
 
 	@Override
 	public Endpoint getSessionValidationFailRedirectionPageEndpoint() {
-		RestEndpoint ep = new RestEndpoint("/info/"+tsId+"/140");
+		RestEndpoint ep = new RestEndpoint("/login/"+tsId);
 		ep.setMethod(RestEndpoint.METHOD_GET);
 		return ep;
 	}
@@ -153,7 +167,7 @@ public class CusAuthConfig implements AuthConfig {
 	
 	@Override
 	public int getSetCookieTime() {
-		return 60*60*24; 
+		return 60*30; //30분
 	}
 
 }
