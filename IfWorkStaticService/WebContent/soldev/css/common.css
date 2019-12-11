@@ -794,10 +794,16 @@ box-sizing: border-box;
 /* 결재 페이지 */
 .page-title{
     margin-top: 14px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     line-height: 1.43;
     color: #292944;
+}
+.page-sub-title{
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: -0.6px;
+    color: #6b6b80;
 }
 
 .nav.approval-wrap.nav-pills{
@@ -1196,9 +1202,10 @@ transition: all 0.4s ease;
 .setting .card .title{display: inline-block; width: 80%; overflow: hidden; font-size: 16px; color: #333333; white-space: nowrap; text-overflow: ellipsis;}
 .setting .card .title{margin-top:6px; font-size:14px; color:#292944;}
 
-.function-list-wrap{font-size:13px; color:#292944; border-bottom:1px solid #e2e5ed;}
+.function-list-wrap{position:relative; font-size:13px; color:#292944; border-bottom:1px solid #e2e5ed;}
 .function-list-wrap .title{padding:5px 10px; background-color:#e2e5ed; font-size: 14px; font-weight:700;}
 .function-list-wrap .fun-list{padding:0px 10px;}
+.function-list-wrap .fun-list.over-height{height:calc(100vh - 210px); overflow-y:auto;}
 .function-list-wrap .fun-list>li{padding: 12px 0px; border-top:1px solid #e2e5ed;}
 .function-list-wrap .fun-list>li:first-child{border-top:0px;}
 .function-list-wrap .fun-list ol.desc-list{margin-top:6px;}
@@ -1206,16 +1213,37 @@ transition: all 0.4s ease;
 .function-list-wrap .fun-list span+span{margin-left:5px;}
 .function-list-wrap .fun-list .group,
 .function-list-wrap .fun-list .num{
+  display:inline-block;
+  min-width:10%;
   color:#555555;
 }
 
 
 .select-list-wrap {
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
+
 }
 
+.select-list-wrap .targetor{
+  position:relative;
+  font-size: 14px;
+}
+.select-list-wrap .targetor{
+  word-break: keep-all;
+}
+
+.select-list-wrap .targetor .cancel{
+  cursor: pointer;
+}
+
+.separate-bar{
+  border-top:1px solid #ced4da;
+  margin-top:14px;
+  margin-bottom:14px;
+}
+
+.mng-page .modal-app-wrap{
+  padding: 0px 0px 30px 0px;
+}
 
 
 
@@ -1229,6 +1257,7 @@ transition: all 0.4s ease;
 .setting [type="checkbox"]:not(:checked) + label
 {
     position: relative;
+    width:100%;
     padding-left: 24px;
     margin-right: 10px;
     cursor: pointer;
