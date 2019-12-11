@@ -1220,19 +1220,29 @@ transition: all 0.4s ease;
 
 
 .select-list-wrap {
-
+  margin-top: -9px;
 }
 
 .select-list-wrap .targetor{
-  position:relative;
+  display: inline-block;
+  padding: 2px 4px;
+  border:1px solid #cfcfcf;
+  margin-top: 9px;
+  margin-right: 10px;
   font-size: 14px;
-}
-.select-list-wrap .targetor{
   word-break: keep-all;
+  vertical-align: middle;
+}
+
+.select-list-wrap .targetor .name{
+  vertical-align: middle;
 }
 
 .select-list-wrap .targetor .cancel{
+  padding-left: 2px;
+  font-size:10px;
   cursor: pointer;
+  vertical-align: middle;
 }
 
 .separate-bar{
