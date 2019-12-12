@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/flexibleAppl")

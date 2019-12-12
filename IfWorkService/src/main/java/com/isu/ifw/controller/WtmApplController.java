@@ -29,7 +29,8 @@ import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.util.WtmUtil;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/appl")

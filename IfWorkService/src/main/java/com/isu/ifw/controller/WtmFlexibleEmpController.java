@@ -25,8 +25,9 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmDayWorkVO;
-import com.isu.option.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/flexibleEmp")
