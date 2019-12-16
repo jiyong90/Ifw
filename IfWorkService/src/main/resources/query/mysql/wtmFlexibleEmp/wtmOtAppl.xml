@@ -27,7 +27,7 @@
 		 WHERE O.APPL_ID = #{applId}
 	 </update>
 	 
-	 <select id="otApplfindByApplId" parameterType="Long" resultType="hashmap">
+	 <select id="otApplfindByApplId" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT O.OT_APPL_ID AS otApplId
 			     , O.APPL_ID AS applId
@@ -43,14 +43,15 @@
 			     , O.SUB_YN AS subYn
 			     , O.OLD_OT_APPL_ID AS oldOtApplId
 			     , O.CANCEL_YN AS cancelYn
-			     , A.APPL_SABUN AS sabun
+			     , A.APPL_SABUN AS applSabun
+			     , A.TENANT_ID AS tenantId
+			     , A.ENTER_CD AS enterCd
+			     , O.SABUN AS sabun
+			     , A.APPL_SABUN AS applSabun
 			     , A.APPL_CD AS applCd
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
 			     , R.WORK_DAY_RESULT_ID AS workDayResultId
-			     , C.OT_CAN_APPL_ID AS otCanId
-			     , C.APPL_ID AS otCanApplId
-			     , C.REASON AS cancelReason
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_APPL O
 			    ON A.APPL_ID = O.APPL_ID
@@ -60,9 +61,8 @@
 			   AND A.APPL_SABUN = R.SABUN
 				AND A.APPL_ID = R.APPL_ID
 				AND O.YMD = R.YMD
-			  LEFT OUTER JOIN WTM_OT_CAN_APPL C
-			    ON R.WORK_DAY_RESULT_ID = C.WORK_DAY_RESULT_ID
 			 WHERE O.APPL_ID = #{applId}   
+			   AND (A.APPL_SABUN = #{sabun} OR O.SABUN IS NULL OR O.SABUN = #{sabun})
 			   AND (R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD = 'OT')
 			 ORDER BY O.OT_SDATE
 	        ]]>
@@ -94,7 +94,6 @@
 			   AND A.APPL_SABUN = R.SABUN
 			   AND S.SUB_YMD = R.YMD
 			 WHERE S.OT_APPL_ID = #{otApplId}
-			   AND (S.CANCEL_YN IS NULL OR S.CANCEL_YN = 'N')
 			 GROUP BY S.SUB_YMD, S.OT_SUBS_APPL_ID 
 				     , S.OT_APPL_ID 
 				     , S.APPL_ID

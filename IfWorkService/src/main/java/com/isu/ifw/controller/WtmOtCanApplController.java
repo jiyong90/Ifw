@@ -33,9 +33,23 @@ public class WtmOtCanApplController {
 	@Qualifier("wtmOtCanApplService")
 	WtmApplService otCanApplService;
 	
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getOtAppl(@RequestParam Long applId
+												, HttpServletRequest request) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		return otCanApplService.getAppl(tenantId, enterCd, sabun, applId, userId);
+	}
 	
 	@RequestMapping(value="/request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam requestOtAppl(@RequestBody Map<String, Object> paramMap
+	public @ResponseBody ReturnParam requestOtCanAppl(@RequestBody Map<String, Object> paramMap
 													    , HttpServletRequest request) {
 		
 		validateParamMap(paramMap, "workDayResultId", "status", "workTypeCd", "reason");

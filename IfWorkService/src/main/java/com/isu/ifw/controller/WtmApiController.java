@@ -30,7 +30,8 @@ import com.isu.auth.control.TenantSecuredControl;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmValidatorService;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/api")

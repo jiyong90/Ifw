@@ -17,14 +17,14 @@
                                 <div class="desc">
                                     <span class="date-wrap">
                                         <span class="start-date">
-                                        	<template v-if="appl.symd">
-                                        	{{moment(appl.symd).format('YYYY-MM-DD')}}
+                                        	<template v-if="appl.sYmd">
+                                        	{{moment(appl.sYmd).format('YYYY-MM-DD')}}
                                         	</template>
                                         </span>
                                         <span class="ml-1 mr-1">~</span>
                                         <span class="end-date">
-                                        	<template v-if="appl.eymd">
-                                        	{{moment(appl.eymd).format('YYYY-MM-DD')}}
+                                        	<template v-if="appl.eYmd">
+                                        	{{moment(appl.eYmd).format('YYYY-MM-DD')}}
                                         	</template>
                                         </span>
                                     </span>
@@ -113,7 +113,7 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                    <template v-if="appl.otCanApplId!=null&&appl.otCanApplId!=undefined&&appl.otCanApplId!=''">
+                    <template v-if="appl.applCd=='OT_CAN'">
                 		<h5 class="modal-title">연장근로 취소신청</h5>
                 	</template>
                 	<template v-else="">
@@ -128,6 +128,16 @@
                     <form>
                         <div class="modal-app-wrap">
                             <div class="inner-wrap">
+                            	<template v-if="appl.targetList && appl.targetList!=null && appl.targetList.length>0">
+			                	<p class="page-sub-title mb-1" v-if="appl.holidayYn!='Y'">연장근로 대상자</p>
+			                	<p class="page-sub-title mb-1" v-else>휴일근로 대상자</p>
+					   			<div class="select-list-wrap">
+					   				<span class="targetor" v-for="a in appl.targetList">
+					   					<span class="name">{{a.empNm}}</span>
+					                </span>
+					            </div>
+					            <hr class="separate-bar">
+					            </template>
                                 <div class="title" v-if="appl.holidayYn!='Y'">연장근로시간</div>
                                 <div class="title" v-else>휴일근로시간</div>
                                 <div class="desc">
@@ -180,7 +190,7 @@
                                 	</template>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="appl.holidayYn=='Y' && (appl.subYn=='Y'||appl.payTargetYn=='Y')">
+                            <div class="inner-wrap" v-show="appl.holidayYn=='Y'">
                                 <div class="title">휴일대체방법</div>
                                 <div class="desc">
                                 	<template v-if="appl.subYn">
@@ -202,7 +212,7 @@
                                 <div class="sub-desc">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
                                 </template>
                             </div>
-                            <div class="inner-wrap" v-if="appl.cancelReason">
+                            <div class="inner-wrap" v-if="appl.applCd=='OT_CAN' && appl.cancelReason">
                                 <div class="title">취소사유</div>
                                 <div class="desc">
                                 	{{appl.cancelReason}}
@@ -210,16 +220,78 @@
                             </div>
                             <hr class="bar">
                         </div>
-                        <!--  
-                        <div class="btn-wrap text-center">
+                        <div class="btn-wrap text-center" v-if="applType=='01' && appl.applSabun == appl.sabun">
+                        	<template v-if="(appl.cancelYn==null||appl.cancelYn==undefined||appl.cancelYn!='Y') && appl.applStatusCd=='99'">
+                            	<button type="button" class="btn btn-default rounded-0" v-if="appl.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
+                            	<button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
+                        	</template>
+                        	<template v-else>
+                            	<button type="button" class="btn btn-default rounded-0" v-if="appl.recoveryYn" data-toggle="modal" data-target="#confirmModal">회수하기</button>
+                        	</template>
                         </div>
-                        -->
                     </form>
                 </div>
             </div>
         </div>
     </div>
     <!-- 연장근무신청 상세보기 modal end -->
+    <!-- 연장근무취소사유 modal start -->
+    <div class="modal fade show" id="cancelOpinionModal" tabindex="-1" role="dialog"  data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">취소 사유</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap">
+                            <div class="form-row no-gutters">
+                                <div class="form-group col-12">
+                                    <label for="reason">취소 사유</label>
+                                    <textarea class="form-control" id="cancelOpinion" rows="3" placeholder="취소 사유를 작성해주시기 바랍니다."
+                                        required=""></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-secondary rounded-0"
+                                data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-default rounded-0" @click="otCancelAppl">확인</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 연장근무취소사유 modal end -->
+    <!-- 회수하기 modal start -->
+    <div class="modal fade show" id="confirmModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <!-- <h5 class="modal-title">모달제목이 들어갑니다.</h5> -->
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap">
+                        	회수 시 신청서 데이터가 모두 삭제됩니다.<br>회수하시겠습니까?
+                        </div>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-default rounded-0" @click="recoveryAppl">확인</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 회수하기 modal end -->
     <!-- 근태사유서신청 상세보기 modal start -->
     <div class="modal fade show" id="inOutChangeAppl" tabindex="-1" role="dialog" v-if="appl">
         <div class="modal-dialog modal-md" role="document">
@@ -362,9 +434,14 @@
 							{{moment(a.appl.ymd).format('YYYY.MM.DD')}}~{{moment(a.appl.ymd).format('YYYY.MM.DD')}}
 						</span>
 						<span v-else>
-							{{moment(a.appl.symd).format('YYYY.MM.DD')}}~{{moment(a.appl.eymd).format('YYYY.MM.DD')}}
+							{{moment(a.appl.sYmd).format('YYYY.MM.DD')}}~{{moment(a.appl.eYmd).format('YYYY.MM.DD')}}
 						</span>
+						<template v-if="a.applCd=='OT_CAN'">
+						<span class="sub-desc" v-if="a.appl.cancelReason">{{a.appl.cancelReason}}</span>
+						</template>
+						<template v-else>
 						<span class="sub-desc" v-if="a.appl.reason">{{a.appl.reason}}</span>
+						</template>
 					</div>
 				</div>
 			</div>
@@ -415,6 +492,9 @@
 	    methods : {
 	    	getApprovalList: function(applType){
 	    		var $this = this;
+	    		
+	    		$("#loading").show();
+	    		
 	    		$this.apprList = [];
 	    		$this.applType = applType;
 	    		
@@ -429,11 +509,14 @@
 					data: param,
 					dataType: "json",
 					success: function(data) {
+						$("#loading").hide();
 						if(data.status=='OK' && data!=null && data.apprList!=null) {
 							$this.apprList = data.apprList;
+							//console.log($this.apprList);
 						}
 					},
 					error: function(e) {
+						$("#loading").hide();
 						$this.apprList = [];
 					}
 				});
@@ -539,6 +622,16 @@
 	    			
 	    			param['apprOpinion'] = $this.apprOpinion;
 	    			
+	    			//연장근무신청 대상자
+    				if(appr.appl.hasOwnProperty('targetList') && appr.appl.targetList!=null && appr.appl.targetList!=undefined) {
+    					var applSabuns = [];
+    					appr.appl.targetList.map(function(t){
+    						applSabuns.push(t.sabun);
+    					});
+    					
+    					param['applSabuns'] = JSON.stringify(applSabuns);
+    				}
+	    			
 	    			if(appr.applCd=='OT') {
 	    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
 	    				param['otSdate'] = moment(appr.appl.otSdate).format('YYYYMMDDHHmm');
@@ -572,13 +665,17 @@
     						
     						if(data!=null && data.status=='OK') {
 								$("#alertText").html("결재되었습니다.");
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+									$this.getApprovalList($this.applType);
+								});
 							} else {
 								$("#alertText").html(data.message);
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+								});
 							}
-							$("#alertModal").on('hidden.bs.modal',function(){
-								$("#alertModal").off('hidden.bs.modal');
-								$this.getApprovalList();
-							});
+							
 	  	  	         		$("#alertModal").modal("show"); 
     					},
     					error: function(e) {
@@ -597,7 +694,108 @@
     				});
  	  	         		$("#alertModal").modal("show"); 
     			}
-	    	}
+	    	},
+	    	otCancelAppl: function(){ //연장근무취소신청
+         		var $this = this;
+         	
+         		$("#loading").show();
+         		
+         		var appl = $this.appl;
+         		
+         		var param = {
+         			workDayResultId: appl.workDayResultId,
+         			otApplId: appl.otApplId,
+         			status: appl.applStatusCd,
+   					workTypeCd : 'OT_CAN',
+  		    		reason: $("#cancelOpinion").val()
+   		    	};
+         		
+	         	Util.ajax({
+					url: "${rc.getContextPath()}/otCanAppl/request",
+					type: "POST",
+					contentType: 'application/json',
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: function(data) {
+						$("#loading").hide();
+						if(data!=null && data.status=='OK') {
+							$("#alertText").html("취소요청 되었습니다.");
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+								$("#cancelOpinionModal").modal("hide");
+								$("#otAppl").modal("hide");
+								$this.getApprovalList($this.applType);
+							});
+						} else {
+							$("#alertText").html(data.message);
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+							});
+						}
+						
+  	  	         		$("#alertModal").modal("show"); 
+					},
+					error: function(e) {
+						$("#loading").hide();
+						console.log(e);
+						$("#alertText").html("연장근무 취소 시 오류가 발생했습니다.");
+  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+  	  	         			$("#alertModal").off('hidden.bs.modal');
+  	  	         		});
+  	  	         		$("#alertModal").modal("show"); 
+					}
+				}); 
+	         		
+	         },
+	         recoveryAppl: function(){ //연장근무 회수
+         		var $this = this;
+	         
+         		var appl = $this.appl;
+				
+         		$("#loading").show();
+         		
+				var param = {
+         			applCd : appl.applCd,
+         			applId : appl.applId
+         		};
+				
+         		Util.ajax({
+					url: "${rc.getContextPath()}/appl/delete",
+					type: "POST",
+					contentType: 'application/json',
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: function(data) {
+						$("#loading").hide();
+						if(data!=null && data.status=='OK') {
+							$("#alertText").html("회수되었습니다.");
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+								$("#confirmModal").modal("hide");
+								$("#otAppl").modal("hide");
+								$this.getApprovalList($this.applType);
+							});
+						} else {
+							$("#alertText").html(data.message);
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+							});
+						}
+						
+  	  	         		$("#alertModal").modal("show"); 
+					},
+					error: function(e) {
+						$("#loading").hide();
+						console.log(e);
+						$("#alertText").html("회수 시 오류가 발생했습니다.");
+  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+  	  	         			$("#alertModal").off('hidden.bs.modal');
+  	  	         		});
+  	  	         		$("#alertModal").modal("show"); 
+					}
+				});
+					
+         	}
 	    }
    	});
    	

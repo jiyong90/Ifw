@@ -1,5 +1,5 @@
 <div id="timeCalendar" class="calendar-wrap" v-cloak>
-	<!--confirm modal start -->
+	<!-- 회수하기 modal start -->
     <div class="modal fade show" id="confirmModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content rounded-0">
@@ -23,7 +23,7 @@
             </div>
         </div>
     </div>
-    <!--confirm modal end -->
+    <!-- 회수하기 modal end -->
 	<!-- 연장근무신청 modal start -->
     <div class="modal fade show" id="overtimeAppl" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
@@ -331,7 +331,7 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                	<template v-if="overtimeAppl.otCanApplId!=null&&overtimeAppl.otCanApplId!=undefined&&overtimeAppl.otCanApplId!=''">
+                	<template v-if="overtimeAppl.cancelYn!=null&&overtimeAppl.cancelYn!=undefined&&overtimeAppl.cancelYn=='Y'">
                 		<h5 class="modal-title">연장근로 취소신청</h5>
                 	</template>
                 	<template v-else="">
@@ -407,7 +407,7 @@
                                 	</template>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && (overtimeAppl.subYn=='Y'|| overtimeAppl.payTargetYn=='Y')">
+                            <div class="inner-wrap" v-show="result.holidayYn=='Y'">
                                 <div class="title">휴일대체방법</div>
                                 <div class="desc">
                                 	<template v-if="overtimeAppl.subYn">
@@ -437,8 +437,8 @@
                             </div>
                             <hr class="bar">
                         </div>
-                        <div class="btn-wrap text-center">
-                        	<template v-if="(overtimeAppl.otCanApplId==null||overtimeAppl.otCanApplId==undefined||overtimeAppl.otCanApplId=='') && overtimeAppl.applStatusCd=='99'">
+                        <div class="btn-wrap text-center" v-if="overtimeAppl.applSabun==overtimeAppl.sabun">
+                        	<template v-if="(overtimeAppl.cancelYn==null||overtimeAppl.cancelYn==undefined||overtimeAppl.cancelYn!='Y') && overtimeAppl.applStatusCd=='99'">
                             	<button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
                             	<button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
                         	</template>
@@ -597,8 +597,8 @@
   		    	},
   		    	eventClickCallback : function(info){
   		    		//상세보기
-  		    		if(info.event.extendedProps.timeTypeCd=='OT' || info.event.extendedProps.timeTypeCd=='NIGHT') {
-  		    			this.viewOvertimeApplDetail(info.event.extendedProps.applId);
+  		    		if(info.event.extendedProps.timeTypeCd=='OT' || info.event.extendedProps.timeTypeCd=='OT_CAN' || info.event.extendedProps.timeTypeCd=='NIGHT' ) {
+  		    			this.viewOvertimeApplDetail(info.event.extendedProps.timeTypeCd, info.event.extendedProps.applId);
   		    		}
   		    	},
   		    	dateClickCallback : function(info){
@@ -921,15 +921,20 @@
 					});
 					
   	         	},
-  	         	viewOvertimeApplDetail: function(applId){
+  	         	viewOvertimeApplDetail: function(timeTypeCd, applId){
   	         		var $this = this;
+  	         		
+  	         		var url = "/otAppl";
+  	         		
+  	         		if(timeTypeCd=='OT_CAN')
+  	         			url = "/otCanAppl";
   	         		
   	         		var param = {
   	         			applId: applId	
   	         		};
   	         		
   	         		Util.ajax({
-						url: "${rc.getContextPath()}/otAppl",
+						url: "${rc.getContextPath()}"+url,
 						type: "GET",
 						contentType: 'application/json',
 						data: param,
@@ -938,19 +943,10 @@
 							if(data!=null) {
 								$this.overtimeAppl = data;
 								
-								//결재요청중일 때 회수 버튼 보여주기
-								if(data.hasOwnProperty("applLine") && data.applLine!=null){
-									var isRecovery = false;
-									data.applLine.map(function(line){
-										if(line.apprSeq==1 && line.apprStatusCd=='10')
-											isRecovery = true;
-									});
-									
-									if(isRecovery) {
-										$("#recoveryBtn").show();
-									} else {
-										$("#recoveryBtn").hide();
-									}
+								if(data.recoveryYn) {
+									$("#recoveryBtn").show();
+								} else {
+									$("#recoveryBtn").hide();
 								}
 								
 								
@@ -1041,8 +1037,9 @@
 										classNames.push(vMap.timeTypeCd);
 									
 									var title = vMap.timeTypeNm;
-									if(vMap.otCanApplId!=null && vMap.otCanApplId!=undefined && vMap.otCanApplId!='')
-										title += ' 취소 (결재처리중)';
+									
+									if(vMap.timeTypeCd!=null && vMap.timeTypeCd!=undefined && vMap.timeTypeCd=='OT_CAN')
+										title += ' 취소';
 									
 									if(vMap.applStatusCd!=null && vMap.applStatusCd!=undefined && vMap.applStatusCd!='' && vMap.applStatusCd!='99')
 										title += ' (' + vMap.applStatusNm + ')';
@@ -1381,6 +1378,7 @@
   	         		
   	         		var param = {
   	         			workDayResultId: $this.overtimeAppl.workDayResultId,
+  	         			otApplId: $this.overtimeAppl.otApplId,
   	         			status: $this.overtimeAppl.applStatusCd,
         				workTypeCd : 'OT_CAN',
 	   		    		reason: $("#cancelOpinion").val()
@@ -1434,14 +1432,7 @@
   	         			applId : $this.overtimeAppl.applId
   	         		};
 					
-					if($this.overtimeAppl.hasOwnProperty('otCanAppl') && $this.overtimeAppl.otCanAppl!=null && $this.overtimeAppl.otCanAppl!=undefined) {
-						var otCanAppl = $this.overtimeAppl.otCanAppl;
-						param = {
-	  	         			applCd : otCanAppl.applCd,
-	  	         			applId : otCanAppl.applId
-	  	         		};
-					}
-					
+				
   	         		Util.ajax({
 						url: "${rc.getContextPath()}/appl/delete",
 						type: "POST",
@@ -1516,7 +1507,25 @@
   	 						var sDate = moment(subsInfo.subsSymd+" "+subsInfo.subsShm).format('YYYYMMDD HHmm');
   	 						var eDate = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYYMMDD HHmm');
   	 						
-  	  	           			if(sDate > eDate) {
+  	 						var isValid = true;
+  	 						$this.subYmds.map(function(s, i){
+  	 							var sd = moment(s.subsSymd+" "+s.subsShm).format('YYYYMMDD HHmm');
+  	 							var ed = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYYMMDD HHmm');
+  	 							if(idx!=i 
+  	 								&& (moment(sd).diff(sDate)<=0 && moment(sDate).diff(ed)<=0
+  	 								|| moment(sd).diff(eDate)<=0 && moment(eDate).diff(ed)<=0))
+  	 								isValid = false;
+  	 						})
+  	 						
+  	 						if(!isValid) {
+  	 							$("#alertText").html("이미 근무정보(신청중인 근무 포함)가 존재합니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+		  	  	         			$("#alertModal").off('hidden.bs.modal');
+		  	  	         			subsInfo.subsShm = '';
+		  	  	         			subsInfo.subsEhm = '';
+		  	  	         		});
+		  	  	         		$("#alertModal").modal("show"); 
+  	 						} else if(sDate > eDate) {
 	  	  	           			$("#alertText").html("종료시간이 시작시간보다 작습니다.");
 		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
 		  	  	         			$("#alertModal").off('hidden.bs.modal');
