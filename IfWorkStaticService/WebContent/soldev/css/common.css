@@ -794,10 +794,16 @@ box-sizing: border-box;
 /* 결재 페이지 */
 .page-title{
     margin-top: 14px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     line-height: 1.43;
     color: #292944;
+}
+.page-sub-title{
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: -0.6px;
+    color: #6b6b80;
 }
 
 .nav.approval-wrap.nav-pills{
@@ -1012,6 +1018,7 @@ box-sizing: border-box;
 }
 
 /* Microsoft Edge */
+
 .modal-app-wrap .custom-radio label{font-size: 14px;line-height: 1.5;letter-spacing: 0px;color: #292944;}
 .modal-app-wrap .desc{font-size: 14px;line-height: 1.43;color: #292944;}
 .modal-app-wrap .desc a{
@@ -1136,7 +1143,7 @@ transition: all 0.4s ease;
 }
 
 /**
- * Submenu
+ * accordion inner Submenu
  -----------------------------*/
 .submenu {display: none; padding: 0 26px; font-size: 14px; border-top:1px solid #D2D2D2; background:#f3f3f3; }
 .submenu .title{font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;color: #6b6b80;}
@@ -1175,22 +1182,80 @@ transition: all 0.4s ease;
 /* settings */
 .setting{
   width: 100%;
-  height : calc(100vh - 150px);
   display:block;
   background-color:#ffffff;
 }
+.except150{
+  height : calc(100vh - 150px);
+}
+.except240 {
+  height: calc(100vh - 240px);
+}
+.except70 {
+  height: calc(100vh - 70px);
+}
+.over-height{
+  overflow-y: auto;
+}
 .setting .card {position: relative;padding: 20px;border-radius: 4px;border: solid 1px #e3e3e3;margin: 6px 0px;box-shadow: 1.5px 2.6px 5px 0 rgba(4, 0, 0, 0.08);}
 .setting .card.on{border:2px solid #4d84fe;}
-.setting .card .title{display: inline-block; width: 80%; overflow: hidden; font-size: 16px; color: #333333; white-space: nowrap; text-overflow: ellipsis;}
-.setting .card .title{margin-top:6px; font-size:14px; color:#292944;}
+.setting .card .title{display: inline-block; width: 80%; overflow: hidden; font-size: 14px; color: #292944; white-space: nowrap; text-overflow: ellipsis;}
 
-.setting .function-list-wrap{font-size:13px; color:#292944; border-bottom:1px solid #e2e5ed;}
-.setting .function-list-wrap .title{padding:5px 10px; background-color:#e2e5ed; font-size: 14px; font-weight:700;}
-.setting .function-list-wrap .fun-list{padding:0px 10px;}
-.setting .function-list-wrap .fun-list>li{padding: 12px 0px; border-top:1px solid #e2e5ed;}
-.setting .function-list-wrap .fun-list>li:first-child{border-top:0px;}
-.setting .function-list-wrap .fun-list ol.desc-list{margin-top:6px;}
-.setting .function-list-wrap .fun-list ol.desc-list li{list-style-type: decimal; list-style-position: inside; line-height:1.6; }
+.function-list-wrap{position:relative; font-size:13px; color:#292944; border-bottom:1px solid #e2e5ed;}
+.function-list-wrap .title{padding:5px 10px; background-color:#e2e5ed; font-size: 14px; font-weight:700;}
+.function-list-wrap .fun-list{padding:0px 10px;}
+.function-list-wrap .fun-list.over-height{height:calc(100vh - 210px); overflow-y:auto;}
+.function-list-wrap .fun-list>li{padding: 12px 0px; border-top:1px solid #e2e5ed;}
+.function-list-wrap .fun-list>li:first-child{border-top:0px;}
+.function-list-wrap .fun-list ol.desc-list{margin-top:6px;}
+.function-list-wrap .fun-list ol.desc-list li{list-style-type: decimal; list-style-position: inside; line-height:1.6; }
+.function-list-wrap .fun-list span+span{margin-left:5px;}
+.function-list-wrap .fun-list .group,
+.function-list-wrap .fun-list .num{
+  display:inline-block;
+  min-width:10%;
+  color:#555555;
+}
+
+
+.select-list-wrap {
+  margin-top: -6px;
+}
+
+.select-list-wrap .targetor{
+  display: inline-block;
+  padding: 2px 6px;
+  border:1px solid #cfcfcf;
+  margin-top: 9px;
+  margin-right: 10px;
+  font-size: 14px;
+  word-break: keep-all;
+  vertical-align: middle;
+}
+
+.select-list-wrap .targetor .name{
+  vertical-align: middle;
+}
+
+.select-list-wrap .targetor .cancel{
+  padding-left: 2px;
+  font-size:10px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.separate-bar{
+  border-top:1px solid #ced4da;
+  margin-top:14px;
+  margin-bottom:14px;
+}
+
+.mng-page .modal-app-wrap{
+  padding: 0px 0px 30px 0px;
+}
+
+
+
 /*---- settings check ----*/
 .setting [type="checkbox"]:checked,
 .setting [type="checkbox"]:not(:checked) {
@@ -1201,6 +1266,7 @@ transition: all 0.4s ease;
 .setting [type="checkbox"]:not(:checked) + label
 {
     position: relative;
+    width:100%;
     padding-left: 24px;
     margin-right: 10px;
     cursor: pointer;
@@ -1311,6 +1377,8 @@ transition: all 0.4s ease;
     -webkit-transform: scale(1);
     transform: scale(1);
 }
+
+
 
 .pop-up {padding-right: 20px;padding-left: 20px;}
 .pop-up .page-title{margin-top:20px;}

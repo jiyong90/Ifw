@@ -22,8 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
-import com.isu.option.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/otAppl")
@@ -98,7 +99,8 @@ public class WtmOtApplController {
 	public @ResponseBody ReturnParam requestOtAppl(@RequestBody Map<String, Object> paramMap
 													    , HttpServletRequest request) {
 		
-		validateParamMap(paramMap, "workTypeCd", "flexibleStdMgrId", "otSdate", "otEdate", "reasonCd", "reason");
+		//validateParamMap(paramMap, "workTypeCd", "flexibleStdMgrId", "otSdate", "otEdate", "reasonCd", "reason");
+		validateParamMap(paramMap, "workTypeCd", "otSdate", "otEdate", "reasonCd", "reason");
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
@@ -119,9 +121,31 @@ public class WtmOtApplController {
 				
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			rp = otApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
-			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-				otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+			
+			Map<String, Object> applSabuns = null;
+			if(paramMap.get("applSabuns")!=null && !"".equals(paramMap.get("applSabuns"))) {
+				applSabuns = mapper.readValue(paramMap.get("applSabuns").toString(), new HashMap<String, Object>().getClass());
+				
+				if(applSabuns!=null && applSabuns.keySet().size()>0) {
+					for(String applSabun : applSabuns.keySet()) {
+						rp = otApplService.validate(tenantId, enterCd, applSabun, workTypeCd, paramMap);
+						
+						if(rp!=null && rp.getStatus()!=null && "FAIL".equals(rp.getStatus())) {
+							return rp;
+						}
+					}
+					
+					otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+				} else {
+					rp.setFail("대상자를 선택해 주세요.");
+					return rp;
+				}
+			} else {
+				rp = otApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
+				if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
+					otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+				}
+				
 			}
 			
 		} catch (Exception e) {

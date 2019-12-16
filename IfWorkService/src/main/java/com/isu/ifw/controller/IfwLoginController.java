@@ -276,6 +276,9 @@ public class IfwLoginController {
 				}
 				MDC.put("paramMap", mapper.writeValueAsString(paramMap));
 				
+				String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
+				paramMap.put("encKey", encKey);
+				
 				System.out.println("paramMap : " + mapper.writeValueAsString(paramMap));
 				 
 				try {
@@ -300,7 +303,6 @@ public class IfwLoginController {
 						requestedPassword = rMap.get("encryptStr").toString();
 						System.out.println("requestedPassword : " + requestedPassword);
 					}*/
-					String encKey = authConfig.getEncryptKey();
 					int repeatCount = authConfig.getHashIterationCount();
 
 					requestedPassword = Sha256.getHash(requestedPassword, encKey, repeatCount);
