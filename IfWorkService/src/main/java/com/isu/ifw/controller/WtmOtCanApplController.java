@@ -3,8 +3,6 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,10 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmApplService;
-import com.isu.ifw.vo.WtmApplLineVO;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/otCanAppl")
