@@ -4,26 +4,40 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmOtCanApplMapper"> 
-	 <select id="otCanApplfindByApplId" parameterType="Long" resultType="hashmap">
+	 <select id="otCanApplfindByApplId" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT O.OT_CAN_APPL_ID AS otCanApplId
-			     , O.APPL_ID AS applId
-			     , O.OT_APPL_ID AS otApplId
-			     , O.WORK_DAY_RESULT_ID AS workDayResultId
+			SELECT C.OT_CAN_APPL_ID AS otCanApplId
+			     , C.APPL_ID AS applId
+			     , C.OT_APPL_ID AS otApplId
+			     , C.WORK_DAY_RESULT_ID AS workDayResultId
 			     , O.YMD AS ymd
-			     , O.TIME_TYPE_CD AS timeTypeCd
-			     , O.PLAN_SDATE AS planSdate
-			     , O.PLAN_EDATE AS planEdate
-			     , O.PLAN_MINUTE AS planMinute
-			     , O.APPR_SDATE AS apprSdate
-			     , O.APPR_EDATE AS apprEdate
-			     , O.APPR_MINUTE AS apprMinute
-			     , O.REASON AS reason 
+			     , O.HOLIDAY_YN AS holidayYn
+			     , O.SUB_YN AS subYn
+			     , O.OT_SDATE AS otSdate
+			     , O.OT_EDATE AS otEdate
+			     , O.OT_MINUTE AS otMinute
+			     , O.REASON_CD AS reasonCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS reasonNm
+			     , O.REASON AS reason
+			     , C.TIME_TYPE_CD AS timeTypeCd
+			     , C.PLAN_SDATE AS planSdate
+			     , C.PLAN_EDATE AS planEdate
+			     , C.PLAN_MINUTE AS planMinute
+			     , C.APPR_SDATE AS apprSdate
+			     , C.APPR_EDATE AS apprEdate
+			     , C.APPR_MINUTE AS apprMinute
+			     , C.REASON AS cancelReason 
+			     , A.APPL_CD AS applCd
 			     , A.APPL_STATUS_CD AS applStatusCd
+			     , O.SABUN AS sabun
+			     , A.APPL_SABUN AS applSabun
 			  FROM WTM_APPL A
-			  JOIN WTM_OT_CAN_APPL O
-			    ON A.APPL_ID = O.APPL_ID
-			 WHERE O.APPL_ID = #{applId}    
+			  JOIN WTM_OT_CAN_APPL C
+			    ON A.APPL_ID = C.APPL_ID
+			  JOIN WTM_OT_APPL O
+			    ON C.OT_APPL_ID = O.OT_APPL_ID
+			 WHERE A.APPL_ID = #{applId}
+			   AND (A.APPL_SABUN = #{sabun} OR O.SABUN IS NULL OR O.SABUN = #{sabun})  
 	        ]]>
     </select>
      

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +24,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isu.auth.config.AuthConfigProvider;
-import com.isu.auth.config.data.AuthConfig;
-import com.isu.auth.dao.TenantDao;
+import com.isu.ifw.common.entity.CommTenantModule;
+import com.isu.ifw.common.repository.CommTenantModuleRepository;
+import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmPropertie;
@@ -41,7 +42,6 @@ import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmRuleService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.StringUtil;
-import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
 //@RequestMapping(value="/resource")
@@ -50,21 +50,12 @@ public class ViewController {
 	private StringUtil stringUtil;
 	
 	@Autowired
-	private TenantConfigManagerService tcms;
-	
-	@Autowired
-	AuthConfigProvider authConfigProvider;
-	
-	@Autowired
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
 	
 	@Autowired
 	@Qualifier("flexibleEmpService")
 	WtmFlexibleEmpService flexibleEmpService;
-	
-	@Resource
-	TenantDao tenantDao;
 	
 	@Resource
 	WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
@@ -90,6 +81,17 @@ public class ViewController {
 	@Autowired
 	WtmRuleService ruleService;
 	
+	@Autowired
+	@Qualifier("WtmTenantConfigManagerService")
+	TenantConfigManagerService tcms;
+	
+	@Autowired
+	@Qualifier("WtmTenantModuleRepository")
+	CommTenantModuleRepository tenantModuleRepo;
+	
+	@Autowired
+    StringRedisTemplate redisTemplate;
+	
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
 	 * @param tsId
@@ -97,20 +99,14 @@ public class ViewController {
 	 */
 	@RequestMapping(value="/login/{tsId}", method= {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView viewLogin(@PathVariable String tsId, HttpServletRequest request) throws Exception {
-		Long tenantId = tenantDao.findTenantId(tsId);
-		if(tenantId == null) {
-			ModelAndView mv = new ModelAndView("info");
-			mv.addObject("status", "100");
-			return mv;
-		}
-		
-		System.out.println("call for forward /login/"+tsId);
+
+	    CommTenantModule tm = null;
+	    tm = tenantModuleRepo.findByTenantKey(tsId);
+        Long tenantId = tm.getTenantId();
+
+	    String authorizeUri = tcms.getConfigValue(tenantId, "IFO.LOGIN.URI", true, "");
+	    
 		ModelAndView mv = new ModelAndView("login");
-		
-		// 권한 설정 값을 받는다.
-        AuthConfig authConfig = authConfigProvider.initConfig(tenantId, tsId);
-        
-		mv.addObject("AUTH_CONFIG", authConfig);
 		
 		String company = tcms.getConfigValue(tenantId, "WTMS.LOGIN.COMPANY_LIST", true, "");
         List<Map<String, Object>> companyList = new ArrayList<Map<String, Object>>();
@@ -119,12 +115,17 @@ public class ViewController {
         if(company != null && !"".equals(company)) 
         	companyList = mapper.readValue(company, new ArrayList<Map<String, Object>>().getClass());
         mv.addObject("companyList", companyList);
-        
+        mv.addObject("tsId", tsId);
         mv.addObject("loginBackgroundImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.BACKGROUND_IMG", true, ""));
         mv.addObject("loginLogoImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.LOGO_IMG", true, ""));
         mv.addObject("mainTitle", tcms.getConfigValue(tenantId, "WTMS.MAIN.TITLE", true, ""));
         mv.addObject("copyright", tcms.getConfigValue(tenantId, "WTMS.MAIN.COPYRIGHT", true, ""));
-        
+        mv.addObject("redirect_uri", tcms.getConfigValue(tenantId, "IFO.REDIRECT.URI", true, ""));
+        mv.addObject("access_token", "");
+
+        mv.addObject("Authorization", "");
+        mv.addObject("userAuthorizationUri", authorizeUri);
+         
 		return mv;
 	}
 	
@@ -167,6 +168,7 @@ public class ViewController {
 	public ModelAndView viewPage(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView(viewPage);
 		mv.addObject("tsId", tsId);
+		mv.addObject("access_token", request.getHeader("Authorization"));
 		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -178,6 +180,8 @@ public class ViewController {
 	
 	@RequestMapping(value = "/console/{tsId}/views/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
+		redisTemplate.opsForValue().set("33", "44");
+		
 		ModelAndView mv = new ModelAndView("template");
 		
 		Long tenantId = Long.parseLong(request.getAttribute("tenantId").toString());
@@ -188,6 +192,7 @@ public class ViewController {
 		String userId = sessionData.get("userId").toString();
 		String authCd = (sessionData.containsKey("authCd")?sessionData.get("authCd").toString():"U");
 
+		mv.addObject("access_token", request.getAttribute("access_token") != ""?request.getAttribute("access_token"):"");
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
@@ -224,6 +229,12 @@ public class ViewController {
 			}
 			
 			String calendarType = "Month"; //기본은 월달력
+			
+			WtmPropertie flexApplYn = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_APPL_YN");
+			
+			if(flexApplYn!=null) {
+				mv.addObject("flexApplYn", flexApplYn.getInfoValue());
+			}
 			
 			if(request.getParameter("calendarType")!=null) {
 				calendarType = request.getParameter("calendarType").toString();
@@ -285,12 +296,12 @@ public class ViewController {
 		}
 		
 	}
-	
-	@RequestMapping(value = "/info/{tsId}/{status}", method = RequestMethod.GET)
-	public ModelAndView viewInfo(@PathVariable String tsId, @PathVariable String status, HttpServletRequest request) throws Exception {
+
+	@RequestMapping(value = "/info/{status}", method = RequestMethod.GET)
+	public ModelAndView viewInfo(@PathVariable String status, HttpServletRequest request) throws Exception {
 		ModelAndView mv = new ModelAndView("info");
 		mv.addObject("status", status);
-		mv.addObject("tsId", tsId);
+//		mv.addObject("tsId", tsId);
 		return mv;
 	}
 	
@@ -307,6 +318,7 @@ public class ViewController {
 		String userId = sessionData.get("userId").toString();
 		String authCd = (sessionData.containsKey("authCd")?sessionData.get("authCd").toString():"U");
 
+		mv.addObject("access_token", request.getAttribute("access_token"));
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
@@ -413,6 +425,7 @@ public class ViewController {
 			return mv;
 		}
 
+		mv.addObject("access_token", request.getAttribute("access_token"));
 		mv.addObject("tsId", tsId);
 		mv.addObject("enterCd", enterCd);
 		mv.addObject("empNo", empNo);
@@ -445,6 +458,11 @@ public class ViewController {
 				calendarType = request.getParameter("calendarType").toString();
 			} 
 			mv.addObject("calendar", "work"+ calendarType +"Calendar");
+			
+			WtmPropertie flexApplYn = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_APPL_YN");
+			if(flexApplYn!=null) {
+				mv.addObject("flexApplYn", flexApplYn.getInfoValue());
+			}
 			
 			if("Time".equals(calendarType)) {
 				//근태사유서 신청 기간

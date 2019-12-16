@@ -178,7 +178,7 @@
 												<th>신청기간지정</th>
 												<td colspan="3">
 													<input type="radio" id="applTermOptday" name="applTermOpt" value="today"  title="당일 이내"/>
-													<label for="applTermOptday">3당일 이내</label>
+													<label for="applTermOptday">당일 이내</label>
 													<input type="radio" id="applTermOpt1w" name="applTermOpt" value="1_week" title="1주일 이내"/> 
 													<label for="applTermOpt1w">1주일 이내</label>
 													<input type="radio" id="applTermOpt2w" name="applTermOpt" value="2_week" title="2주일 이내"/> 

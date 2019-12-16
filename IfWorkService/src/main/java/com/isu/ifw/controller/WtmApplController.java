@@ -29,7 +29,8 @@ import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.util.WtmUtil;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/appl")
@@ -86,6 +87,7 @@ public class WtmApplController {
 			
 			rp.put("apprList", apprList);
 		} catch(Exception e) {
+			e.printStackTrace();
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
 		}

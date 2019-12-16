@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmWorktimeCloseService;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/worktimeClose")

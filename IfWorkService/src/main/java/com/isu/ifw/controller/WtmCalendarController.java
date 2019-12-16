@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmCalendarService;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/calendar")
@@ -197,8 +198,8 @@ public class WtmCalendarController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/emps",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getEmpsCalendar(@RequestParam Map<String, Object> paramMap
+	@RequestMapping(value = "/holidayYn",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getHolidayYn(@RequestParam Map<String, Object> paramMap
 													    , HttpServletRequest request) throws Exception {
 		
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
@@ -211,7 +212,7 @@ public class WtmCalendarController {
 		rp.setSuccess("");
 		
 		try {
-			rp = wtmCalendarService.getEmpsCalendar(tenantId, enterCd, sabun, paramMap);
+			rp = wtmCalendarService.getHolidayYn(tenantId, enterCd, sabun, paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("휴일 조회 시 오류가 발생했습니다.");

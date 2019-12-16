@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmOrgCodeService;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/orgCode")

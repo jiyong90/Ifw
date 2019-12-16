@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/flexibleAppl")
@@ -46,7 +47,7 @@ public class WtmFlexibleApplController {
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		return flexibleApplService.getAppl(applId);
+		return flexibleApplService.getAppl(tenantId, enterCd, empNo, applId, userId);
 	}
 	
 	@RequestMapping(value="/imsi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
