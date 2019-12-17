@@ -1124,7 +1124,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.workDayInfo = {};
-						console.log(data);
+						//console.log(data);
 						if(data!=null) {
 							$this.workDayInfo = data;
 						}
