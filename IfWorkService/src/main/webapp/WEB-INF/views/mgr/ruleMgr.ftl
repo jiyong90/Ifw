@@ -159,10 +159,10 @@
 			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
    			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ruleId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-            {Header:"조직코드",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"orgCd",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+            //{Header:"조직코드",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"orgCd",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
             //{Header:"조직명",  		Type:"Text",     	Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"orgNm",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
             {Header:"조직명",  		Type:"Combo",     	Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"orgNm",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
-            {Header:"코드",			Type:"Text",	    Hidden:1,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"code",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+            //{Header:"코드",			Type:"Text",	    Hidden:1,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"code",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
             {Header:"코드명",  		Type:"Combo",     	Hidden:1,   Width:70,   Align:"Center", ColMerge:0, SaveName:"codeNm",  	KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
             //{Header:"사번",			Type:"Text",	   	Hidden:1,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"sabun",	 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
             {Header:"사번",			Type:"Text",	   	Hidden:1,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"sabun",	 	KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
@@ -258,16 +258,34 @@
 				
 				var targetList = [];
 				
+				var codes = "";
+				var codeNames = "";
+				if(selectedTab=='ORG') {
+					codes = sheet2.GetComboInfo(1, "orgNm", "Code");
+					codeNames = sheet2.GetComboInfo(1, "orgNm", "Text");
+				} else if(selectedTab=='JIKWEE' || selectedTab=='JIKCHAK' || selectedTab=='JIKGUB' || selectedTab=='JOB') {
+					codes = sheet2.GetComboInfo(1, "codeNm", "Code");
+					codeNames = sheet2.GetComboInfo(1, "codeNm", "Text");
+				} 
+				var codeArr = [];
+				var codeNmArr = [];
+				if(codes!='') {
+					codeArr= codes.split("|");
+					codeNmArr = codeNames.split("|");
+				}
+				
 				data.map(function(j){
 					if(j.sStatus!='D') {
 						var k;
 						var v;
 						
 						if(selectedTab=='ORG') {
-							k = j.orgCd;
+							//k = j.orgCd;
+							k = codeNmArr[codeArr.indexOf(j.orgNm)];
 							v = j.orgNm;
 						} else if(selectedTab=='JIKWEE' || selectedTab=='JIKCHAK' || selectedTab=='JIKGUB' || selectedTab=='JOB') {
-							k = j.code;
+							//k = j.code;
+							k = codeNmArr[codeArr.indexOf(j.codeNm)];
 							v = j.codeNm;
 						} else if(selectedTab=='EMP') {
 							k = j.sabun;
@@ -447,7 +465,7 @@
 	
 	function sheet2_OnChange(Row, Col, Value) {
 		// 코드 컬럼에 코드값 넣어주기
-		if ( sheet2.ColSaveName(Col) == "codeNm"){
+		/* if ( sheet2.ColSaveName(Col) == "codeNm"){
 			var selectedTabIdx = $("#includeTab").tabs('option', 'active');
 			var selectedTab = $("#includeTab").find("li:eq("+selectedTabIdx+") a").attr("name");
 			
@@ -483,7 +501,7 @@
 			var codes = classCdList[1].split('|');
 			
 			sheet2.SetCellValue(Row, "orgCd", codes[idx]);
-		}
+		} */
 	}
 	
 	function getIncludeTarget(){
@@ -518,7 +536,7 @@
 		}
 		
 		if(selectedTab=='ORG') {
-			sheet2.SetColHidden("code", 1);
+			//sheet2.SetColHidden("code", 1);
 			sheet2.SetColHidden("codeNm", 1);
 			sheet2.SetColHidden("sabun", 1);
 			sheet2.SetColHidden("empNm", 1);
@@ -526,15 +544,16 @@
 			if(selectedTab=='ORG') {
 				classCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/orgCode/comboList", "", false).DATA, "");
 			} 
-			sheet2.SetColProperty("orgNm", {ComboText:"|"+classCdList[0], ComboCode:"|"+classCdList[0]} );
+			//sheet2.SetColProperty("orgNm", {ComboText:"|"+classCdList[0], ComboCode:"|"+classCdList[0]} );
+			sheet2.SetColProperty("orgNm", {ComboText:"|"+classCdList[0], ComboCode:"|"+classCdList[1]} );
 			
-			sheet2.SetColHidden("orgCd", 0);
+			//sheet2.SetColHidden("orgCd", 0);
 			sheet2.SetColHidden("orgNm", 0);
 			
 		} else if(selectedTab=='JIKWEE' || selectedTab=='JIKCHAK' || selectedTab=='JIKGUB' || selectedTab=='JOB') {
 			sheet2.SetColHidden("sabun", 1);
 			sheet2.SetColHidden("empNm", 1);
-			sheet2.SetColHidden("orgCd", 1);
+			//sheet2.SetColHidden("orgCd", 1);
 			sheet2.SetColHidden("orgNm", 1);
 			
 			var classCdList;
@@ -545,14 +564,14 @@
 			} else if(selectedTab=='JIKGUB') {
 				classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "CLASS_CD"), "");
 			}
-			sheet2.SetColProperty("codeNm", {ComboText:"|"+classCdList[0], ComboCode:"|"+classCdList[0]} );
+			sheet2.SetColProperty("codeNm", {ComboText:"|"+classCdList[0], ComboCode:"|"+classCdList[1]} );
 			
-			sheet2.SetColHidden("code", 0);
+			//sheet2.SetColHidden("code", 0);
 			sheet2.SetColHidden("codeNm", 0);
 		} else if(selectedTab=='EMP') {
-			sheet2.SetColHidden("orgCd", 1);
+			//sheet2.SetColHidden("orgCd", 1);
 			sheet2.SetColHidden("orgNm", 1);
-			sheet2.SetColHidden("code", 1);
+			//sheet2.SetColHidden("code", 1);
 			sheet2.SetColHidden("codeNm", 1);
 			sheet2.SetColHidden("sabun", 0);
 			sheet2.SetColHidden("empNm", 0);
@@ -567,10 +586,10 @@
 				var updateDate = t.updateDate;
 				
 				if(selectedTab=='ORG') {
-					sheet2.SetCellValue(row, "orgCd", key);
+					//sheet2.SetCellValue(row, "orgCd", key);
 					sheet2.SetCellValue(row, "orgNm", value);
 				} else if(selectedTab=='JIKWEE' || selectedTab=='JIKCHAK' || selectedTab=='JIKGUB' || selectedTab=='JOB') {
-					sheet2.SetCellValue(row, "code", key);
+					//sheet2.SetCellValue(row, "code", key);
 					sheet2.SetCellValue(row, "codeNm", value);
 				} else if(selectedTab=='EMP') {
 					sheet2.SetCellValue(row, "sabun", key);
