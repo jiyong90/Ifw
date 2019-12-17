@@ -22,8 +22,8 @@ import com.isu.ifw.repository.WtmTimeCdMgrRepository;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmFlexibleStdService;
 import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmFlexibleStdVO;
-import com.isu.option.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/flexibleStd")

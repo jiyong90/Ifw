@@ -190,6 +190,20 @@
         ) }
     </select>
     
+    <select id="updateTimeCard" statementType="CALLABLE" parameterType="java.util.HashMap">
+        { call P_WTM_UPDATE_TIMECARD2( 
+        	#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}, 
+        	#{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{time, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{inoutType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{entryType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{rtnYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT},
+        	#{sqlErrm, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT} 
+        ) }
+    </select>
+    
     <update id="updateEntryDateByAdm" parameterType="map">
 		<if test="insertRows!=null and insertRows.size()>0">
 		<foreach collection="insertRows" item="item" separator=";">

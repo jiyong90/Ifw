@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmPushMgrService;
 import com.isu.ifw.util.WtmUtil;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/pushMgr")

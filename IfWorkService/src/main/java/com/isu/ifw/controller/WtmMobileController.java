@@ -1,7 +1,6 @@
 package com.isu.ifw.controller;
 
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,18 +11,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.isu.ifw.service.WtmInoutService;
-import com.isu.option.util.Aes256;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmMobileService;
+import com.isu.ifw.util.MobileUtil;
+import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.ReturnParam;
 
 
 @RestController
@@ -31,6 +31,14 @@ public class WtmMobileController {
 	
 	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
 	
+	@Autowired
+	WtmMobileService mobileService;
+	
+	@Autowired
+	@Qualifier("wtmOtApplService")
+	WtmApplService otApplService;
+
+
 	/**
 	 * dashboard
 	 * @param tenantKey
@@ -51,9 +59,6 @@ public class WtmMobileController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
-//		String enterCd =  empKey.split("@")[0];
-//		String sabun =  empKey.split("@")[1];
-
         Map statusMap = new HashMap();
         statusMap.put("param1", "선근제");
         statusMap.put("param2", "72:00");
@@ -88,6 +93,203 @@ public class WtmMobileController {
 		dashboards.put("DASHBOARD1", status);
 
 		rp.put("result", dashboards);
+		return rp;
+	}
+	
+	/**
+	 * 부서원 근태현황 (기간 리스트)
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/team/termlist", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getTermList(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = false) String empKey, 
+			@RequestParam(value="id", required = true) String month,
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		try {
+			String userToken = request.getParameter("userToken");
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			logger.debug("/mobile/"+ tenantId+"/team/termlist s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+	
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("month", month);
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			List<Map<String, Object>> l = mobileService.getTermList(paramMap);
+			l = MobileUtil.parseMobileList(l);
+			
+			rp.put("result", l);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/team/termlist s " + rp.toString());
+		return rp;
+	}
+	
+	/**
+	 * 부서원 근태현황 (직원 리스트)
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/team/teamlist", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getTeamList(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = false) String empKey, 
+			@RequestParam(value="id", required = true) String id,
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		try { 
+			String userToken = request.getParameter("userToken");
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			logger.debug("/mobile/"+ tenantId+"/team/teamlist s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+	
+			String sdate = id.split("@")[0];
+			String orgCd = id.split("@")[1];
+			String workTypeCd = id.split("@")[2];
+			
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("sdate", sdate);
+			paramMap.put("orgCd", orgCd);
+			paramMap.put("workTypeCd", workTypeCd);
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			List<Map<String, Object>> l = mobileService.getTeamList(paramMap);
+			l = MobileUtil.parseMobileList(l);
+	
+			rp.put("result", l);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+
+		logger.debug("/mobile/"+ tenantId+"/team/teamlist s " + rp.toString());
+		return rp;
+	}
+	
+	/**
+	 * 부서원 근태현황 (직원 리스트)
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/team/teamdetail", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getTeamDetail(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = false) String empKey, 
+			@RequestParam(value="id", required = true) String id,
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		try {
+			String userToken = request.getParameter("userToken");
+		
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+			logger.debug("/mobile/"+ tenantId+"/team/teamdetail s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+	
+			String targetSabun = id.split("@")[0];
+			String sdate = id.split("@")[1];
+			String edate = id.split("@")[2];
+			
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", targetSabun);
+			paramMap.put("sdate", sdate);
+			paramMap.put("edate", edate);
+			
+			List<Map<String, Object>> l = mobileService.getTeamDetail(paramMap);
+			l = MobileUtil.parseMobileList(l);
+			
+			rp.put("result", l);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/team/teamdetail s " + rp.toString());
+		return rp;
+	}
+	
+	/**
+	 * 연장/휴일 신청서 
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/init", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getOtLoad(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = false) String empKey, 
+			@RequestParam(value="applCd", required = true) String applCd, 
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		try {
+			String userToken = request.getParameter("userToken");
+		
+			//Aes256 aes = new Aes256(userToken);
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+			logger.debug("/mobile/"+ tenantId+"/otload s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+	
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("d", WtmUtil.parseDateStr(new Date(), null));
+
+			//List<Map<String, Object> apprLines = MobileUtil.getApprLines(paramMap);
+			Map<String, Object> result = new HashMap();
+			
+			//result.put("apprLines", apprLines);
+			rp.put("result", result);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/team/teamdetail s " + rp.toString());
 		return rp;
 	}
 }

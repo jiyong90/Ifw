@@ -34,9 +34,9 @@ import com.zaxxer.hikari.HikariDataSource;
 @EnableJpaRepositories(
 		entityManagerFactoryRef = "entityManager", 
 		transactionManagerRef = "jpaTransactionManager", 
-		basePackages = {"com.isu.auth", "com.isu.option", "com.isu.ifw", "com.pb"}
+		basePackages = {"com.isu.auth", "com.isu.option", "com.isu.ifw","com.isu.ifw.common", "com.pb"}
 )
-@MapperScan(	basePackages = {"com.isu.ifw.mapper"})
+@MapperScan(	basePackages = {"com.isu.ifw.mapper", "com.isu.ifw.*.mapper"})
 public class DataSourceConfiguration {
 	 
 	@Value("${mybatis.config-location}")
@@ -62,7 +62,7 @@ public class DataSourceConfiguration {
 	public LocalContainerEntityManagerFactoryBean EntityManagerFactory(EntityManagerFactoryBuilder builder) {
 		return builder
 					.dataSource(dataSource()) 
-					.packages("com.isu.*.entity", "com.isu.*.dao")
+					.packages("com.isu.ifw.*.entity","com.isu.*.entity", "com.isu.*.dao", "com.isu.ifw.*.dao")
 					.build();
 	}
 	

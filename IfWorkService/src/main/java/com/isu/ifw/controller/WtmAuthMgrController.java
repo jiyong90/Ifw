@@ -16,10 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isu.ifw.service.WtmAuthMgrService;
+import com.isu.ifw.common.service.WtmAuthMgrService;
 import com.isu.ifw.util.WtmUtil;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/authMgr")

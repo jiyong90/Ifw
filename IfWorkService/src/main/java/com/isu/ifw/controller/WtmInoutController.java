@@ -1,5 +1,7 @@
 package com.isu.ifw.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.util.Aes256;
+import com.isu.ifw.util.MobileUtil;
 import com.isu.ifw.vo.ReturnParam;
-import com.isu.option.util.Aes256;
-
 
 
 @RestController
@@ -34,7 +36,7 @@ public class WtmInoutController {
 	WtmInoutService inoutService;
 
 	/**
-	 * 현재 맥락정보 반환, 동적으로 변하는 내용에 대한 내용을 처리함
+	 * 출/퇴근 버튼 각각
 	 * @param tenantKey
 	 * @param locale
 	 * @param empKey
@@ -48,13 +50,51 @@ public class WtmInoutController {
 			@RequestParam(value="locale", required = true) String locale, 
 			@RequestParam(value="empKey", required = true) String empKey, HttpServletRequest request) throws Exception {
 		
-		logger.debug("/mobile/{tenantId}/inout/status s " + WtmUtil.paramToString(request));
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
 		String enterCd =  empKey.split("@")[0];
 		String sabun =  empKey.split("@")[1];
 		
+		logger.debug("/mobile/"+ tenantId+"/inout/status s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+
+		
+		Map <String,Object> resultMap = new HashMap<String,Object>();
+		Map <String,Object> returnMap = new HashMap<String,Object>();
+
+		Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
+		
+		resultMap.put("menus", menus);
+		rp.put("result", resultMap);
+		
+		logger.debug("/mobile/"+ tenantId+"/inout/status e " + rp.toString());
+		return rp;
+	}	
+	
+	
+	/**
+	 * 근무계획으로 출/퇴근 타각 현황 
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/inout/checkstatus", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getMyWorkCheckStatus(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey, HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		String enterCd =  empKey.split("@")[0];
+		String sabun =  empKey.split("@")[1];
+
+		logger.debug("/mobile/"+ tenantId+"inout/checkstatus s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+
 		Map <String,Object> resultMap = new HashMap<String,Object>();
 		Map <String,Object> returnMap = new HashMap<String,Object>();
 		//Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
@@ -67,7 +107,7 @@ public class WtmInoutController {
 		
 		//Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
 
-		Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
+		Map<String,Object> menus = inoutService.getMenuContext2(tenantId, enterCd, sabun); 
 		
 //		returnMap.put("D01", menuIn);
 //		returnMap.put("D02", menuOut);
@@ -76,7 +116,7 @@ public class WtmInoutController {
 		resultMap.put("menus", menus);
 		rp.put("result", resultMap);
 		
-		logger.debug("/mobile/{tenantId}/inout/status e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/inout/checkstatus e " + rp.toString());
 		return rp;
 	}
 	
@@ -98,40 +138,36 @@ public class WtmInoutController {
 		String userToken = (String)params.get("userToken");
 		String empKey = (String)params.get("empKey");
 		String ymd = (String)params.get("ymd");
-		String enterCd = null;
-		String sabun = null;
+
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
+		Date now = new Date();
+		String today = format1.format(now);
 		
-		Aes256 aes = new Aes256(userToken);
-		empKey = aes.decrypt(empKey);
-		
-		if(empKey != null && empKey.indexOf("@") >=0 ){
-			String separator = "@";
-			String[] arrEmpKey = empKey.split(separator);
-			if(arrEmpKey.length == 2) {
-				enterCd = arrEmpKey[0];
-				sabun = arrEmpKey[1];
-			}
-		}
+		logger.debug("/mobile/"+ tenantId+"/inout/in s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 		try {
-			//현재 시간으로 다시 데이터 가져와서 비교??
-//			Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
-//			if(menus == null || menus.get("ymd") == null) {
-//				rp.setFail("현재 출퇴근 가능한 상태가 없습니다.");
-//			} else if (!menus.get("ymd").equals(ymd) || !menus.get("inoutType").equals("IN")) {
-//				rp.setFail("근태 정보가 일치하지 않습니다. 앱을 재실행 해주세요.");
-//			} 
-			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "IN", "MO");
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("inoutType", "IN");
+			paramMap.put("ymd", ymd);
+			paramMap.put("time", today);
+			paramMap.put("entryType", "MO");
+			
+			logger.debug("/mobile/"+ tenantId+"/inout/in s2 " + paramMap.toString());
+		
+			rp = inoutService.updateTimecard(paramMap);
 			
 			logger.debug("in : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 
-//			if(cnt == 2) {
-//				rp.setSuccess("출근 체크 하였습니다.");
-//			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("출퇴근 정보 기록 중 오류가 발생했습니다.");
 		}
-		logger.debug("/mobile/{tenantId}/inout/in e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/inout/in e " + rp.toString());
 		return rp;
 	}
 	
@@ -153,40 +189,37 @@ public class WtmInoutController {
 		String userToken = (String)params.get("userToken");
 		String empKey = (String)params.get("empKey");
 		String ymd = (String)params.get("ymd");
-		String enterCd = null;
-		String sabun = null;
 		
-		Aes256 aes = new Aes256(userToken);
-		empKey = aes.decrypt(empKey);
-		
-		if(empKey != null && empKey.indexOf("@") >=0 ){
-			String separator = "@";
-			String[] arrEmpKey = empKey.split(separator);
-			if(arrEmpKey.length == 2) {
-				enterCd = arrEmpKey[0];
-				sabun = arrEmpKey[1];
-			}
-		}
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
+		Date now = new Date();
+		String today = format1.format(now);
+
+		logger.debug("/mobile/"+ tenantId+"/inout/out s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+
 		try {
-			//현재 시간으로 다시 데이터 가져와서 비교??
-//			Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
-//			if(menus == null || menus.get("ymd") == null) {
-//				rp.setFail("현재 출퇴근 가능한 상태가 없습니다.");
-//			} else if (!menus.get("ymd").equals(ymd) || !menus.get("inoutType").equals("OUT")) {
-//				rp.setFail("근태 정보가 일치하지 않습니다. 앱을 재실행 해주세요.");
-//			} 
-			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "OUT", "MO");
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("inoutType", "OUT");
+			paramMap.put("ymd", ymd);
+			paramMap.put("time", today);
+			paramMap.put("entryType", "MO");
+			
+			logger.debug("/mobile/"+ tenantId+"/inout/out s2 " + paramMap.toString());
+			
+			rp = inoutService.updateTimecard(paramMap);
 			
 			logger.debug("out : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 
-//			if(cnt == 2) {
-//				rp.setSuccess("퇴근 체크 하였습니다.");
-//			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("출퇴근 정보 기록 중 오류가 발생했습니다.");
 		}
-		logger.debug("/mobile/{tenantId}/inout/out e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/inout/out e " + rp.toString());
 		return rp;
 	}
 	
@@ -208,26 +241,32 @@ public class WtmInoutController {
 			HttpServletRequest request) throws Exception {		
 
 		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
+		rp.setFail("출퇴근 이력 조회 중 오류가 발생했습니다.");
 
 		String userToken = request.getParameter("userToken");
-		Aes256 aes = new Aes256(userToken);
-		empKey = aes.decrypt(empKey);
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 		
-		String enterCd =  empKey.split("@")[0];
-		String sabun =  empKey.split("@")[1];
-		
+		logger.debug("/mobile/"+ tenantId+"/inout/list s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+
 		try {
-			List<Map <String,Object>> resultMap = inoutService.getMyInoutList(tenantId, enterCd, sabun, month);
-			for(Map<String,Object> temp : resultMap) {
-				temp.put("key", temp.get("key2"));
-			}
-			rp.put("result", resultMap);
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("month", month);
+			
+			List<Map <String,Object>> l = inoutService.getMyInoutList(paramMap);
+			l = MobileUtil.parseMobileList(l);
+			
+			rp.setSuccess("");
+			rp.put("result", l);
 		} catch(Exception e) {
 			e.printStackTrace();
+			rp.setFail("조회 중 오류가 발생하였습니다.");
 		}
 		
-		logger.debug("/mobile/{tenantId}/inout/list e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/inout/list e " + rp.toString());
 		return rp;
 	}
 	
@@ -252,23 +291,27 @@ public class WtmInoutController {
 		rp.setSuccess("");
 
 		String userToken = request.getParameter("userToken");
-		Aes256 aes = new Aes256(userToken);
-		empKey = aes.decrypt(empKey);
-		
-		String enterCd =  empKey.split("@")[0];
-		String sabun =  empKey.split("@")[1];
-		
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+		logger.debug("/mobile/"+ tenantId+"/inout/history s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+
 		try {
-			List<Map <String,Object>> resultMap = inoutService.getMyInoutHistory(tenantId, enterCd, sabun, ymd);
-			for(Map<String,Object> temp : resultMap) {
-				temp.put("key", temp.get("key2"));
-			}
-			rp.put("result", resultMap);
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
+			
+			List<Map <String,Object>> l = inoutService.getMyInoutHistory(paramMap);
+			l = MobileUtil.parseMobileList(l);
+			rp.put("result", l);
 		} catch(Exception e) {
 			e.printStackTrace();
+			rp.setFail("조회 중 오류가 발생하였습니다.");
 		}
 		
-		logger.debug("/mobile/{tenantId}/inout/history e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/inout/history e " + rp.toString());
 
 		return rp;
 	}
@@ -287,24 +330,31 @@ public class WtmInoutController {
 			@RequestParam(value = "tenantKey", required = true) String tenantKey,
 			@RequestParam(value="locale", required = true) String locale, 
 			@RequestParam(value="empKey", required = true) String empKey,
-			@RequestParam(value="id", required = true) String key,
+			@RequestParam(value="id", required = true) String id,
 			HttpServletRequest request) throws Exception {		
 
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
 		String userToken = request.getParameter("userToken");
-		Aes256 aes = new Aes256(userToken);
-		empKey = aes.decrypt(empKey);
-		
-		String enterCd =  empKey.split("@")[0];
-		String sabun =  empKey.split("@")[1];
-		
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+		logger.debug("/mobile/"+ tenantId+"/inout/detail s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+
 		try {
-			String inoutDate = key.split("@")[0];
-			String inoutTypeCd = key.split("@")[1];
+			String inoutDate = id.split("@")[0];
+			String inoutTypeCd = id.split("@")[1];
 			
-			Map <String,Object> data = inoutService.getMyInoutDetail(tenantId, enterCd, sabun, inoutTypeCd, inoutDate);
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("inoutTypeCd", inoutTypeCd);
+			paramMap.put("inoutDate", inoutDate);
+
+			
+			Map <String,Object> data = inoutService.getMyInoutDetail(paramMap);
 			Map <String,Object> resultMap = new HashMap();
 			
 			resultMap.put("data", data);
@@ -312,7 +362,7 @@ public class WtmInoutController {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		logger.debug("/mobile/{tenantId}/inout/detail e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/inout/detail e " + rp.toString());
 
 		return rp;
 	}
@@ -326,14 +376,13 @@ public class WtmInoutController {
 		rp.setSuccess("");
 
 		String userToken = params.get("userToken").toString();
-		Aes256 aes = new Aes256(userToken);
-		empKey = aes.decrypt(empKey);
-		
-		String enterCd =  empKey.split("@")[0];
-		String sabun =  empKey.split("@")[1];
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 
 		Map<String, Object> data = (Map<String, Object>) params.get("data");
 		
+		logger.debug("/mobile/"+ tenantId+"/inout/cancel s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+
 		try {
 			rp = inoutService.cancel(data);
 //			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "OUTC", "MO");
@@ -347,7 +396,7 @@ public class WtmInoutController {
 			rp.setFail(e.getMessage());
 		}
 		
-		logger.debug("/mobile/{tenantId}/inout/cancel e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/inout/cancel e " + rp.toString());
 
 		return rp;
 	}
@@ -369,29 +418,29 @@ public class WtmInoutController {
 		String userToken = (String)params.get("userToken");
 		String empKey = (String)params.get("empKey");
 		String ymd = (String)params.get("ymd");
-		String enterCd = null;
-		String sabun = null;
-		
-		Aes256 aes = new Aes256(userToken);
-		empKey = aes.decrypt(empKey);
-		
-		if(empKey != null && empKey.indexOf("@") >=0 ){
-			String separator = "@";
-			String[] arrEmpKey = empKey.split(separator);
-			if(arrEmpKey.length == 2) {
-				enterCd = arrEmpKey[0];
-				sabun = arrEmpKey[1];
-			}
-		}
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+		logger.debug("/mobile/"+ tenantId+"/inout/goback s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+
+		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
+		Date now = new Date();
+		String today = format1.format(now);
+
 		try {
-			//현재 시간으로 다시 데이터 가져와서 비교??
-//			Map<String,Object> menus = inoutService.getMenuContext(tenantId, enterCd, sabun); 
-//			if(menus == null || menus.get("ymd") == null) {
-//				rp.setFail("현재 출퇴근 가능한 상태가 없습니다.");skeh 
-//			} else if (!menus.get("ymd").equals(ymd) || !menus.get("inoutType").equals("OUT")) {
-//				rp.setFail("근태 정보가 일치하지 않습니다. 앱을 재실행 해주세요.");
-//			} 
-			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "EXCEPT", "MO");
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("inoutType", "EXCEPT");
+			paramMap.put("ymd", ymd);
+			paramMap.put("time", today);
+			paramMap.put("entryType", "MO");
+			
+			logger.debug("/mobile/"+ tenantId+"/inout/goback s2 " + paramMap.toString());
+			
+			
+			rp = inoutService.updateTimecard(paramMap);
 			logger.debug("EXCEPT : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 
 //			if(cnt > 0) {
@@ -401,6 +450,8 @@ public class WtmInoutController {
 			e.printStackTrace();
 			rp.setFail("외출/복귀 기록 중 오류가 발생했습니다.");
 		}
+		
+		logger.debug("/mobile/"+ tenantId+"/inout/goback s " + rp.toString());
 		return rp;
 	}
 	

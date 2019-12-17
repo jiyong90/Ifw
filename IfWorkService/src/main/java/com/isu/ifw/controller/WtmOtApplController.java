@@ -46,7 +46,7 @@ public class WtmOtApplController {
 		String sabun = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		return otApplService.getAppl(applId);
+		return otApplService.getAppl(tenantId, enterCd, sabun, applId, userId);
 	}
 	
 	@RequestMapping(value="/line", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

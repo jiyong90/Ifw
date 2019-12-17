@@ -47,7 +47,7 @@ public class WtmFlexibleApplController {
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		return flexibleApplService.getAppl(applId);
+		return flexibleApplService.getAppl(tenantId, enterCd, empNo, applId, userId);
 	}
 	
 	@RequestMapping(value="/imsi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

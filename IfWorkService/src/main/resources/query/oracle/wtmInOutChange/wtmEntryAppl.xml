@@ -20,4 +20,21 @@
 		) X
 		]]>	
   	</select>
+  	
+  	<select id="findByApplId" parameterType="Long" resultType="wtmGeneral">
+  		<![CDATA[
+  		SELECT ENTRY_APPL_ID
+  		     , APPL_ID
+  		     , YMD
+  		     , F_WTM_DATE_FORMAT(PLAN_SDATE,'YMDHIS') AS PLAN_SDATE
+  		     , F_WTM_DATE_FORMAT(PLAN_EDATE,'YMDHIS') AS PLAN_EDATE
+  		     , F_WTM_DATE_FORMAT(ENTRY_SDATE,'YMDHIS') AS ENTRY_SDATE
+  		     , F_WTM_DATE_FORMAT(ENTRY_EDATE,'YMDHIS') AS ENTRY_EDATE
+  		     , F_WTM_DATE_FORMAT(CHG_SDATE,'YMDHIS') AS CHG_SDATE
+  		     , F_WTM_DATE_FORMAT(CHG_EDATE,'YMDHIS') AS CHG_EDATE
+  		     , REASON
+  		  FROM WTM_ENTRY_APPL
+  		 WHERE APPL_ID = #{applId}
+		]]>	
+  	</select>
 </mapper>

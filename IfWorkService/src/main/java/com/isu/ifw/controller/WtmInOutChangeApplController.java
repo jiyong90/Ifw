@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmApplService;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.vo.ReturnParam;
+
 
 @RestController
 @RequestMapping(value="/inOutChangeAppl")
@@ -42,7 +43,7 @@ public class WtmInOutChangeApplController {
 		String sabun = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		return entryApplService.getAppl(applId);
+		return entryApplService.getAppl(tenantId, enterCd, sabun, applId, userId);
 	}
 	
 	@RequestMapping(value="/request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

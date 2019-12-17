@@ -24,7 +24,6 @@
         <input type="password" id="loginPassword" name="loginPassword" class="form-control" placeholder="비밀번호를 입력해주세요." required="">
         <input type="hidden" id="password" name="password" class="form-control" >
         <input type="text" id="grant_type" name="grant_type" class="form-control" value="password" hidden>
-        <input type="text" id="redirect_uri" name="redirect_uri" class="form-control" value="${redirect_uri}" hidden>
         <div class="checkbox mb-3">
             <label><input type="checkbox" id="keepLogin" value="remember-me"> 아이디 저장</label>
         </div>
@@ -108,11 +107,18 @@
     		  var password = $("#loginPassword").val();
     		  var username = "${tsId}@"+loginEnterCd+"@"+loginUserId;
     		 
+    		  alert("1");
+    		  
     		  $("#password").val($("#loginPassword").val());
     		  $("#username").val(username);
 
+    		  alert("2");
     		  var action = "${userAuthorizationUri}?client_id=${tsId}&redirect_uri=${redirect_uri}&response_type=code&scope=read";
     		  
+    		  alert("3");
+
+    		  alert(action);
+
     		  $("#lForm").attr("action", action);
 
     		  return true;

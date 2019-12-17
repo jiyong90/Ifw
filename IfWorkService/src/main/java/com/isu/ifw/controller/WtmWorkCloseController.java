@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,22 +16,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isu.auth.entity.CommTenantModule;
-import com.isu.auth.repository.CommTenantModuleRepository;
+import com.isu.ifw.common.entity.CommTenantModule;
+import com.isu.ifw.common.repository.CommTenantModuleRepository;
+import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.service.WtmAsyncService;
-import com.isu.option.service.TenantConfigManagerService;
 
 @RestController
 @RequestMapping(value="/close")
 public class WtmWorkCloseController {
 	
 	@Autowired
+	@Qualifier("WtmTenantConfigManagerService")
 	private TenantConfigManagerService tcms;
 	
 	@Autowired
 	WtmAsyncService wymAsyncService;
 	
 	@Autowired
+	@Qualifier("WtmTenantModuleRepository")
 	CommTenantModuleRepository commTenantModulRepo;
 
 	/**

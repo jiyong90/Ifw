@@ -4,26 +4,40 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmOtCanApplMapper"> 
-	 <select id="otCanApplfindByApplId" parameterType="Long" resultType="wtmGeneral">
+	 <select id="otCanApplfindByApplId" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-			SELECT O.OT_CAN_APPL_ID 
-			     , O.APPL_ID 
-			     , O.OT_APPL_ID 
-			     , O.WORK_DAY_RESULT_ID 
-			     , O.YMD 
-			     , O.TIME_TYPE_CD 
-			     , O.PLAN_SDATE 
-			     , O.PLAN_EDATE 
-			     , O.PLAN_MINUTE
-			     , O.APPR_SDATE 
-			     , O.APPR_EDATE 
-			     , O.APPR_MINUTE
-			     , O.REASON 
+			SELECT C.OT_CAN_APPL_ID 
+			     , C.APPL_ID 
+			     , C.OT_APPL_ID 
+			     , C.WORK_DAY_RESULT_ID 
+			     , O.YMD
+			     , O.HOLIDAY_YN
+			     , O.SUB_YN
+			     , O.OT_SDATE 
+			     , O.OT_EDATE
+			     , O.OT_MINUTE 
+			     , O.REASON_CD
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS REASON_NM
+			     , O.REASON
+			     , C.TIME_TYPE_CD 
+			     , C.PLAN_SDATE 
+			     , C.PLAN_EDATE
+			     , C.PLAN_MINUTE 
+			     , C.APPR_SDATE 
+			     , C.APPR_EDATE 
+			     , C.APPR_MINUTE 
+			     , C.REASON AS CANCEL_REASON 
+			     , A.APPL_CD
 			     , A.APPL_STATUS_CD
+			     , O.SABUN
+			     , A.APPL_SABUN 
 			  FROM WTM_APPL A
-			  JOIN WTM_OT_CAN_APPL O
-			    ON A.APPL_ID = O.APPL_ID
-			 WHERE O.APPL_ID = #{applId}    
+			  JOIN WTM_OT_CAN_APPL C
+			    ON A.APPL_ID = C.APPL_ID
+			  JOIN WTM_OT_APPL O
+			    ON C.OT_APPL_ID = O.OT_APPL_ID
+			 WHERE A.APPL_ID = #{applId}
+			   AND (A.APPL_SABUN = #{sabun} OR O.SABUN IS NULL OR O.SABUN = #{sabun})  
 	        ]]>
     </select>
      

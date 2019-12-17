@@ -1,4 +1,4 @@
-<div id="otApplMgr" class="container-fluid pt-3 pb-3 bg-white setting" style="height:calc(100vh - 72px);" v-cloak>
+<div id="otApplMgr" class="container-fluid pt-0 pb-3 bg-white except70 overflow-hidden" v-cloak>
  	<p class="page-title mb-2">연장근로신청</p>
  	<div class="row">
  		<div class="col-6">
@@ -11,7 +11,7 @@
                      </div>
                  </div>
                  <div class="inner-wrap">
-                     <div class="function-list-wrap">
+                     <div class="function-list-wrap form-element">
                          <div class="title">
                          	<input type="checkbox" id="allChk" name="allTarget" value="" @click="allCheck($event.target.checked)">
                          	<label for="allChk">연장근로 대상자 선택</label>
@@ -36,9 +36,9 @@
    				<span class="targetor" v-for="a in applSabuns">
    					<span class="name">{{a.empNm}}</span>
                           <span class="cancel" @click="uncheckTarget(a.sabun)">×</span>
-                   </span>
-               </div>
-               <hr class="separate-bar">
+                </span>
+            </div>
+            <hr class="separate-bar">
    			<form class="needs-validation mng-page" novalidate>
                  <div class="modal-app-wrap">
                      <div class="inner-wrap">
@@ -268,7 +268,6 @@
   		    		Vue.delete(this.applSabuns, sabun);
   		    	},
   		    	isCheck: function(sabun){
-  		    		console.log('sabun : ' + this.applSabuns.hasOwnProperty(sabun))
   		    		if(this.applSabuns.hasOwnProperty(sabun)) 
   		    			return true;
   		    	},
@@ -317,12 +316,17 @@
   	         			eYmd.setHours(sYmd.getHours()+1);
   	         		}
 					
-					$("#sDate").val(moment(sYmd).format('YYYY-MM-DD'));
-					$("#eDate").val(moment(eYmd).format('YYYY-MM-DD'));
-					$("#sTime").val(moment(sYmd).format('HH:mm'));
-					$("#eTime").val(moment(eYmd).format('HH:mm'));
+					if($("#sDate").val()=='')
+						$("#sDate").val(moment(sYmd).format('YYYY-MM-DD'));
+					if($("#eDate").val()=='')
+						$("#eDate").val(moment(eYmd).format('YYYY-MM-DD'));
+					if($("#sTime").val()=='')
+						$("#sTime").val(moment(sYmd).format('HH:mm'));
+					if($("#eTime").val()=='')
+						$("#eTime").val(moment(eYmd).format('HH:mm'));
 					
-					$this.overtime = $this.calcMinute(moment($this.workday).format('YYYYMMDD'), moment(sYmd).format('HHmm'), moment(eYmd).format('HHmm'));
+					console.log($("#sTime").val().replace(/:/gi,""));
+					$this.overtime = $this.calcMinute(date, $("#sTime").val().replace(/:/gi,""), $("#eTime").val().replace(/:/gi,""));
 					
 					//결재라인
 					/* 
@@ -390,6 +394,7 @@
   	         	calcMinute: function(ymd, shm, ehm){
   	         		var $this = this;
   	         		var result = {};
+  	         		
   	         		if(ymd!=null && ymd!=undefined && ymd!=''
   	         				&& shm!=null && shm!=undefined && shm!='' && ehm!=null && ehm!=undefined && ehm!='') {
 	  	         		
@@ -642,7 +647,7 @@
   	         		
   	         		var param = {
         				workTypeCd : 'OT',
-        				ymd: moment($this.workday).format('YYYYMMDD'),
+        				ymd: $this.workday,
         				otSdate : moment(otSdate).format('YYYYMMDDHHmm'),
         				otEdate : moment(otEdate).format('YYYYMMDDHHmm'),
 	   		    		reasonCd : $("#reasonCd").val(),
@@ -682,112 +687,7 @@
 	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
 	  	  	         		$("#alertModal").modal("show"); 
 						}
-					});
-  	         	},
-  	         	otCancelAppl: function(){ //연장근무취소신청
-  	         		var $this = this;
-  	         	
-  	         		$("#loading").show();
-  	         		
-  	         		var param = {
-  	         			workDayResultId: $this.overtimeAppl.workDayResultId,
-  	         			status: $this.overtimeAppl.applStatusCd,
-        				workTypeCd : 'OT_CAN',
-	   		    		reason: $("#cancelOpinion").val()
-	   		    	};
-  	         		
-  	         		Util.ajax({
-						url: "${rc.getContextPath()}/otCanAppl/request",
-						type: "POST",
-						contentType: 'application/json',
-						data: JSON.stringify(param),
-						dataType: "json",
-						success: function(data) {
-							$("#loading").hide();
-							if(data!=null && data.status=='OK') {
-								$("#alertText").html("취소요청 되었습니다.");
-								$("#alertModal").on('hidden.bs.modal',function(){
-									$("#alertModal").off('hidden.bs.modal');
-									$("#cancelOpinionModal").modal("hide");
-									$("#overtimeApplDetail").modal("hide");
-									//location.reload();
-									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
-								});
-							} else {
-								$("#alertText").html(data.message);
-								$("#alertModal").on('hidden.bs.modal',function(){
-									$("#alertModal").off('hidden.bs.modal');
-								});
-							}
-							
-	  	  	         		$("#alertModal").modal("show"); 
-						},
-						error: function(e) {
-							$("#loading").hide();
-							console.log(e);
-							$("#alertText").html("연장근무 취소 시 오류가 발생했습니다.");
-	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
-	  	  	         			$("#alertModal").off('hidden.bs.modal');
-	  	  	         		});
-	  	  	         		$("#alertModal").modal("show"); 
-						}
-					});
-  	         		
-  	         	},
-  	         	recoveryAppl: function(){
-  	         		var $this = this;
-  	         		
-  	         		$("#loading").show();
-					
-					var param = {
-  	         			applCd : $this.overtimeAppl.applCd,
-  	         			applId : $this.overtimeAppl.applId
-  	         		};
-					
-					if($this.overtimeAppl.hasOwnProperty('otCanAppl') && $this.overtimeAppl.otCanAppl!=null && $this.overtimeAppl.otCanAppl!=undefined) {
-						var otCanAppl = $this.overtimeAppl.otCanAppl;
-						param = {
-	  	         			applCd : otCanAppl.applCd,
-	  	         			applId : otCanAppl.applId
-	  	         		};
-					}
-					
-  	         		Util.ajax({
-						url: "${rc.getContextPath()}/appl/delete",
-						type: "POST",
-						contentType: 'application/json',
-						data: JSON.stringify(param),
-						dataType: "json",
-						success: function(data) {
-							$("#loading").hide();
-							if(data!=null && data.status=='OK') {
-								$("#alertText").html("회수되었습니다.");
-								$("#alertModal").on('hidden.bs.modal',function(){
-									$("#alertModal").off('hidden.bs.modal');
-									$("#confirmModal").modal("hide");
-									$("#overtimeApplDetail").modal("hide");
-									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
-								});
-							} else {
-								$("#alertText").html(data.message);
-								$("#alertModal").on('hidden.bs.modal',function(){
-									$("#alertModal").off('hidden.bs.modal');
-								});
-							}
-							
-	  	  	         		$("#alertModal").modal("show"); 
-						},
-						error: function(e) {
-							$("#loading").hide();
-							console.log(e);
-							$("#alertText").html("회수 시 오류가 발생했습니다.");
-	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
-	  	  	         			$("#alertModal").off('hidden.bs.modal');
-	  	  	         		});
-	  	  	         		$("#alertModal").modal("show"); 
-						}
-					});
-						
+					}); 
   	         	}
   	         }
    	});
@@ -799,6 +699,7 @@
    			var eTime = $("#eTime").val().replace(/:/gi,"");
    			
    			var date = moment($("#sDate").val()).format('YYYYMMDD');
+   			otApplMgrVue.workday = date;
    			
    			//시작일자 변경될 때만 휴일여부 조회
    			if($(this).get(0) === $("#sDate").get(0))
