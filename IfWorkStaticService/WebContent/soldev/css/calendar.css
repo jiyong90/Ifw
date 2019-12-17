@@ -391,7 +391,8 @@
 .fc-time-grid-event.fc-event.ot,
 .fc-time-grid-event.fc-event.OT,
 .fc-time-grid-event.fc-event.fixot,
-.fc-time-grid-event.fc-event.FIXOT {
+.fc-time-grid-event.fc-event.FIXOT,
+.fc-time-grid-event.fc-event.OT_CAN{
   background-color: rgba(255, 0, 0, 0.3);
 }
 
