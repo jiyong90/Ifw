@@ -176,6 +176,9 @@
                     	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.sYmd && rangeInfo.eYmd">
                     	{{moment(rangeInfo.sYmd).format("YYYY년 M월 D일")}} ~ {{moment(rangeInfo.eYmd).format("YYYY년 M월 D일")}}
                     	</template>
+                    	<template v-else>
+                    	{{moment(selectedDate).format("YYYY년 M월 D일")}}
+                    	</template>
                     </div>
                     <div class="main-desc">
                     	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.flexibleNm">
@@ -371,7 +374,7 @@
                                     </ul>
                                 </li>
                                 -->
-                                <li v-if="Object.keys(workDayInfo).length>0 && Object.keys(workDayInfo.taa).length>0">
+                                <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.hasOwnProperty('taa')">
                                     <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <span class="sub-desc"></span>
                                     <ul class="sub-desc-list">
@@ -1121,6 +1124,7 @@
 					dataType: "json",
 					success: function(data) {
 						$this.workDayInfo = {};
+						console.log(data);
 						if(data!=null) {
 							$this.workDayInfo = data;
 						}
