@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,12 +26,14 @@ import com.isu.ifw.service.WtmAsyncService;
 public class WtmWorkCloseController {
 	
 	@Autowired
+	@Qualifier("WtmTenantConfigManagerService")
 	private TenantConfigManagerService tcms;
 	
 	@Autowired
 	WtmAsyncService wymAsyncService;
 	
 	@Autowired
+	@Qualifier("WtmTenantModuleRepository")
 	CommTenantModuleRepository commTenantModulRepo;
 
 	/**

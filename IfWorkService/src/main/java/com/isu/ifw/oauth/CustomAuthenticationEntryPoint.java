@@ -98,11 +98,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
     		String k = s.nextElement();
     		System.out.println(s + " : " + request.getParameter(k));
     	}
-    	
     	System.out.println("================================authorizeUri===============================");
-	    
-	    authorizeUri = authorizeUri + "&aaaaa=aaaaaaa";
-	    
 	    System.out.println("authorizeUri : " + authorizeUri);
 	    
 	      response.sendRedirect(authorizeUri);
