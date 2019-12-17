@@ -56,7 +56,6 @@ public class WtmInoutController {
 		String enterCd =  empKey.split("@")[0];
 		String sabun =  empKey.split("@")[1];
 		
-		sabun = "19006";
 		logger.debug("/mobile/"+ tenantId+"/inout/status s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
 		
@@ -93,7 +92,7 @@ public class WtmInoutController {
 
 		String enterCd =  empKey.split("@")[0];
 		String sabun =  empKey.split("@")[1];
-		
+
 		logger.debug("/mobile/"+ tenantId+"inout/checkstatus s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
 		Map <String,Object> resultMap = new HashMap<String,Object>();
@@ -142,8 +141,8 @@ public class WtmInoutController {
 
 		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
-		
-		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+
+		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
 		Date now = new Date();
 		String today = format1.format(now);
 		
@@ -155,7 +154,7 @@ public class WtmInoutController {
 			paramMap.put("sabun", sabun);
 			paramMap.put("inoutType", "IN");
 			paramMap.put("ymd", ymd);
-			paramMap.put("now", today);
+			paramMap.put("time", today);
 			paramMap.put("entryType", "MO");
 			
 			logger.debug("/mobile/"+ tenantId+"/inout/in s2 " + paramMap.toString());
@@ -194,7 +193,7 @@ public class WtmInoutController {
 		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 
-		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
 		Date now = new Date();
 		String today = format1.format(now);
 
@@ -207,7 +206,7 @@ public class WtmInoutController {
 			paramMap.put("sabun", sabun);
 			paramMap.put("inoutType", "OUT");
 			paramMap.put("ymd", ymd);
-			paramMap.put("now", today);
+			paramMap.put("time", today);
 			paramMap.put("entryType", "MO");
 			
 			logger.debug("/mobile/"+ tenantId+"/inout/out s2 " + paramMap.toString());
@@ -294,7 +293,7 @@ public class WtmInoutController {
 		String userToken = request.getParameter("userToken");
 		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
-		
+
 		logger.debug("/mobile/"+ tenantId+"/inout/history s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
 		try {
@@ -340,7 +339,7 @@ public class WtmInoutController {
 		String userToken = request.getParameter("userToken");
 		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
-		
+
 		logger.debug("/mobile/"+ tenantId+"/inout/detail s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
 		try {
@@ -419,24 +418,12 @@ public class WtmInoutController {
 		String userToken = (String)params.get("userToken");
 		String empKey = (String)params.get("empKey");
 		String ymd = (String)params.get("ymd");
-		String enterCd = null;
-		String sabun = null;
-		
-		Aes256 aes = new Aes256(userToken);
-		empKey = aes.decrypt(empKey);
-		
-		if(empKey != null && empKey.indexOf("@") >=0 ){
-			String separator = "@";
-			String[] arrEmpKey = empKey.split(separator);
-			if(arrEmpKey.length == 2) {
-				enterCd = arrEmpKey[0];
-				sabun = arrEmpKey[1];
-			}
-		}
-		
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
 		logger.debug("/mobile/"+ tenantId+"/inout/goback s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
-		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
 		Date now = new Date();
 		String today = format1.format(now);
 
@@ -447,7 +434,7 @@ public class WtmInoutController {
 			paramMap.put("sabun", sabun);
 			paramMap.put("inoutType", "EXCEPT");
 			paramMap.put("ymd", ymd);
-			paramMap.put("now", today);
+			paramMap.put("time", today);
 			paramMap.put("entryType", "MO");
 			
 			logger.debug("/mobile/"+ tenantId+"/inout/goback s2 " + paramMap.toString());

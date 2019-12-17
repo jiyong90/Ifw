@@ -82,7 +82,27 @@
 				AND A.ENTER_CD = #{enterCd}
 				AND A.SABUN = #{sabun}
 				AND F_WTM_DATE_FORMAT(A.YMD,'YM') = #{month}
-				ORDER BY A.YMD DESC
+				ORDER BY A.YMD
+	        ]]>
+    </select>
+    
+     <select id="getInoutListTerm" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT RIGHT(X.YMD, 2) AS title,
+				CONCAT(MAX(WORK_HOUR), '(', MAX(OT_HOUR), ')') as status,
+				--CONCAT(TIME_FORMAT(SEC_TO_TIME(MAX(WORK_HOUR)*60), '%H:%i'), '(', TIME_FORMAT(SEC_TO_TIME(MAX(OT_HOUR)*60), '%H:%i'), ')') as status,
+				F_WTM_DATE_FORMAT(X.ENTRY_SDATE, 'H:I') as caption_lb, 
+				F_WTM_DATE_FORMAT(X.ENTRY_EDATE, 'H:I') as caption_rb
+			FROM ( SELECT R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 
+						CASE WHEN R.TIME_TYPE_CD = 'BASE' THEN R.APPR_MINUTE ELSE 0 END AS WORK_HOUR,
+						CASE WHEN R.TIME_TYPE_CD IN ('OT', 'NIGHT', 'FIXOT') THEN R.APPR_MINUTE ELSE 0 END AS OT_HOUR,
+						C.ENTRY_SDATE, C.ENTRY_EDATE
+					FROM WTM_WORK_DAY_RESULT R
+						JOIN WTM_WORK_CALENDAR C ON C.TENANT_ID=R.TENANT_ID AND C.ENTER_CD=R.ENTER_CD AND C.SABUN=R.SABUN AND C.YMD=R.YMD						
+					WHERE R.TENANT_ID=#{tenantId} AND R.SABUN=#{sabun} AND R.ENTER_CD=#{enterCd} AND R.YMD >= #{sdate} AND R.YMD <= #{edate}
+				) X	
+			GROUP BY X.TENANT_ID, X.ENTER_CD, X.SABUN, X.YMD	
+			ORDER BY X.YMD
 	        ]]>
     </select>
     
