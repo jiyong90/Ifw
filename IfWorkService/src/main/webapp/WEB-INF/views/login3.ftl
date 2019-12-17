@@ -4,7 +4,7 @@
 	<#include "/metadata.ftl">
 </head>
 <body class="login text-center"  style="background-image:URL('${loginBackgroundImg}');">
-    <form id="lForm" class="form-login" method="post" action="${userAuthorizationUri}">
+    <form class="form-login" method="post" >
         <!-- <img class="mb-4 logo" src="soldev/img/bootstrap-solid.svg" alt=""> -->
         <img class="mb-0 logo" src="${loginLogoImg}" alt="기업로고">
         <!-- <h1 class="h3 mb-3 font-weight-normal">이수시스템</h1> -->
@@ -24,11 +24,10 @@
         <input type="password" id="loginPassword" name="loginPassword" class="form-control" placeholder="비밀번호를 입력해주세요." required="">
         <input type="hidden" id="password" name="password" class="form-control" >
         <input type="text" id="grant_type" name="grant_type" class="form-control" value="password" hidden>
-        <input type="text" id="redirect_uri" name="redirect_uri" class="form-control" value="${redirect_uri}" hidden>
         <div class="checkbox mb-3">
             <label><input type="checkbox" id="keepLogin" value="remember-me"> 아이디 저장</label>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit"  onclick="login()">로그인</button>
         <#if certificateError??>
 		<span style="color: red; font-style: italic;">${certificateError}</span><br>
 		</#if>
@@ -101,8 +100,8 @@
     	    return unescape(cookieValue);
     	}
     	
-//    	function login() {
-    	$("form").on("submit", function() {
+    	function login() {
+//    	$("form").on("submit", function() {
     		  var loginUserId = $("#loginUserId").val();
     		  var loginEnterCd = $("#loginEnterCd").val();
     		  var password = $("#loginPassword").val();
@@ -111,11 +110,12 @@
     		  $("#password").val($("#loginPassword").val());
     		  $("#username").val(username);
 
-    		  var action = "${userAuthorizationUri}?client_id=${tsId}&redirect_uri=${redirect_uri}&response_type=code&scope=read";
+    		  //var action = "${userAuthorizationUri}?client_id=${tsId}&redirect_uri=${redirect_uri}&response_type=code&scope=read";
     		  
-    		  $("#lForm").attr("action", action);
 
-    		  return true;
+//    		  $("#lForm").attr("action", action);
+
+//    		  return true;
 //    		  var a = $("#loginEnterCd").val();
 //    		  var b = $("#loginUserId").val();
 //    		  var c = $("#username").val();
@@ -126,13 +126,29 @@
 //    		  console.log(redirect_uri);
 //    		  console.log(tsId);
 
-//    		  $.ajax({
-//		          url: "${userAuthorizationUri}" + "?loginEnterCd="+a+"&loginUserId="+b+"&username="+c+"&password="+d+"&client_id="+tsId+"&redirect_uri"+redirect_uri+"&response_type=code&scope=read&loginPassword="+d,
-//		          type: "POST",
-//		          contentType: "application/x-www-form-urlencoded"
-//			 	});
-   	    	});
-    	//}
+   	      	var param = {
+   	      		loginEnterCd : $("#loginEnterCd").val,
+   	            loginUserId : $("#loginUserId").val,
+   	            username : $("#username").val,
+   	            password : $("#password").val
+   		    	};
+				
+			 $.ajax({
+		          url: "${userAuthorizationUri}",
+		          type: "POST",
+		          contentType: 'application/json',
+		          data: param,
+		          dataType: "json",
+		          beforeSend: function (request)
+		            {
+		                request.setRequestHeader("client_id", "$(tsId)");
+		                request.setRequestHeader("redirect_uri", "$(redirect_uri)");
+		                request.setRequestHeader("response_type", "code");
+		                request.setRequestHeader("scope", "read&write");
+		                request.setRequestHeader("Location", "http://192.168.111.13:8180/ifa/oauth/authorize?client_id=isuamc&redirect_uri=http://cloudhr.pearbranch.com/ifw/login/isuamc/authorize&response_type=code&scope=read%20write");
+		            },
+			 	}});
+   	    });
     </script>
 </body>
 </html>
