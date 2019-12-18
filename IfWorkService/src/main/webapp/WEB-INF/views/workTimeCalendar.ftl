@@ -564,6 +564,9 @@
   		    			var ymd = moment(calendar.getDate()).format('YYYYMMDD');
   		    			$this.workday = moment(calendar.getDate()).format('YYYY-MM-DD');
   		    			
+  		    			//신청서 정보
+  	  		    		$this.getApplCode();
+  		    			/* 
   		    			calendarLeftVue.otApplBtnYn = false;
   		    			if(moment('${today}').diff($this.workday)<=0)
   		  	    			calendarLeftVue.otApplBtnYn = true;
@@ -576,8 +579,7 @@
   		  		    		
   		  		    		if(moment(inoutChgDate).diff($this.workday)<=0 && moment($this.workday).diff('${today}')<=0)
   		  		    			calendarLeftVue.inOutChgBtnYn = true;
-  		  		    	</#if>
-  		  		    	
+  		  		    	</#if> */
   		    			
   		    			//선택한 기간의 근무제 정보(남색 박스)
   		    			calendarLeftVue.getFlexibleRangeInfo(ymd);
@@ -622,38 +624,77 @@
   	         	},
   	         	getApplCode: function(){ //신청서 정보
 					var $this = this;
-		    		
-  					var param = {
+  	         	
+  	   		   		var param = {
   	   		    		applCd : 'OT'
   	   		    	};
   			    		
   			    	Util.ajax({
-  						url: "${rc.getContextPath()}/appl/code",
-  						type: "GET",
+  						url: "${rc.getContextPath()}/applCode/list",
+  						type: "POST",
   						contentType: 'application/json',
   						data: param,
   						dataType: "json",
   						success: function(data) {
   							$this.applCode = {};
-  							if(data!=null) {
-  								$this.applCode = data;
-  								
-  								if($this.result.holidayYn=='Y') {
-  								//휴일연장 시간단위
-  									if(data.holApplTypeCd!=null && data.holApplTypeCd!=undefined && data.holApplTypeCd!=''){
-  	  									var holApplTypeCd = Number(data.holApplTypeCd);
-  										$('#sTime').datetimepicker('stepping', holApplTypeCd);
-  										$('#eTime').datetimepicker('stepping', holApplTypeCd);
-  	  								}
-  								} else {
-  								//연장 시간단위
-  									if(data.timeUnit!=null && data.timeUnit!=undefined && data.timeUnit!=''){
-  	  									var timeUnit = Number(data.timeUnit);
-  										$('#sTime').datetimepicker('stepping', timeUnit);
-  										$('#eTime').datetimepicker('stepping', timeUnit);
-  	  								}
-  								}
-  								
+  							if(data!=null && data.status=='OK') {
+
+  								data.DATA.map(function(d){
+  									$this.applCode[d.applCd] = d;
+  									
+  									if(d.applCd=='OT') {
+  										//연장근무 신청 기간에 따라 버튼 보여줌
+  										var isOtAppl = true;
+  										if(d.otApplSday!=null && d.otApplSday!=undefined && (d.otApplSday!=''||d.otApplSday==0)){
+											var otApplSday = moment(moment().subtract(d.otApplSday, 'd')).format('YYYYMMDD');
+											if(moment($this.workday).diff(otApplSday)<=0) {
+												isOtAppl = false;
+											}
+  										} 
+										if(d.otApplEday!=null && d.otApplEday!=undefined && (d.otApplEday!=''||d.otApplEday==0)){
+											var otApplEday = moment(moment().add(d.otApplEday, 'd')).format('YYYYMMDD');
+											if(moment(otApplEday).diff($this.workday)<=0) {
+												isOtAppl = false;
+											}
+  										} 
+  										
+  										calendarLeftVue.otApplBtnYn = isOtAppl;
+  										
+  										/* if($this.result.holidayYn=='Y') {
+  			  							//휴일연장 시간단위
+		  									if(d.holApplTypeCd!=null && d.holApplTypeCd!=undefined && d.holApplTypeCd!=''){
+		  	  									var holApplTypeCd = Number(d.holApplTypeCd);
+		  										$('#sTime').datetimepicker('stepping', holApplTypeCd);
+		  										$('#eTime').datetimepicker('stepping', holApplTypeCd);
+		  	  								}
+		  								} else {
+		  								//연장 시간단위
+		  									if(d.timeUnit!=null && d.timeUnit!=undefined && d.timeUnit!=''){
+		  	  									var timeUnit = Number(d.timeUnit);
+		  										$('#sTime').datetimepicker('stepping', timeUnit);
+		  										$('#eTime').datetimepicker('stepping', timeUnit);
+		  	  								}
+		  								} */
+		  								
+		  								if($this.result.holidayYn!='Y') {
+		  									if(d.timeUnit!=null && d.timeUnit!=undefined && d.timeUnit!=''){
+		  	  									var timeUnit = Number(d.timeUnit);
+		  										$('#sTime').datetimepicker('stepping', timeUnit);
+		  										$('#eTime').datetimepicker('stepping', timeUnit);
+		  	  								}
+		  								}
+  									} else if(d.applCd=='ENTRY_CHG') {
+  										//근태사유서 신청 기간에 따라 버튼 보여줌
+  		  		  		  		    	if(d.entryLimit!=null && d.entryLimit!=undefined && d.entryLimit!=''){
+  		  		  		  		    		var isInoutAppl = false;
+  		  		  		  		    		var inoutChgDate = moment().subtract(d.entryLimit, 'd');
+  					  		  		  		if(moment(inoutChgDate).diff($this.workday)<=0 && moment($this.workday).diff('${today}')<=0)
+  					  		  		  			isInoutAppl = true;
+  					  		  		    		
+  					  		  		  		calendarLeftVue.inOutChgBtnYn = isInoutAppl;
+  		  		  		  		    	}
+  									}
+  								});
   							}
   						},
   						error: function(e) {
@@ -878,11 +919,10 @@
   	         			eYmd = new Date(baseEdate);
   	         		}
   	         		
-  	         		//신청서 정보
-  		    		this.getApplCode();
+  	         		var applCode = $this.applCode['OT'];
   	         		
-  	         		if($this.applCode!=null && $this.applCode.timeUnit!=null && $this.applCode.timeUnit!=undefined && $this.applCode.timeUnit!='') {
-  	         			var timeUnit = Number($this.applCode.timeUnit);
+  	         		if(applCode!=null && applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='') {
+  	         			var timeUnit = Number(applCode.timeUnit);
   	         			eYmd.setMinutes(sYmd.getMinutes()+timeUnit);
   	         		} else {
   	         			eYmd.setHours(sYmd.getHours()+1);
@@ -1134,7 +1174,7 @@
 			   			var otSdate = moment(sDate+' '+sTime).format('YYYYMMDD HHmm');
 			         	var otEdate = moment(eDate+' '+eTime).format('YYYYMMDD HHmm');
 			         	
-			         	var applCode = $this.applCode;
+			         	var applCode = $this.applCode['OT'];
 			       		//console.log(applCode);
 			         	
 		       			//신청 가능 시간 체크
@@ -1680,13 +1720,13 @@
  				var msg ='';
  				if($("#sDate").val()!='' && $("#eDate").val()!='') {
 	 				//대체휴가 사용 가능일인지 판단
-	         		if(timeCalendarVue.applCode!=null) {
+	         		if(timeCalendarVue.applCode!=null && timeCalendarVue.hasOwnProperty('OT')) {
 	         			var sDate = $("#sDate").val().replace(/-/gi,"");
 	           			var eDate = $("#eDate").val().replace(/-/gi,"");
 	         			var otSdate = moment(sDate).format('YYYYMMDD');
 	                 	var otEdate = moment(eDate).format('YYYYMMDD');
 	                 	
-	         			var applCode = timeCalendarVue.applCode;
+	         			var applCode = timeCalendarVue.applCode['OT'];
 	         			var dayDiff = Number(moment(subDate).diff(sDate,'days'));
 	         			if(dayDiff<0) {
          					var subsSday = Number(applCode.subsSday);

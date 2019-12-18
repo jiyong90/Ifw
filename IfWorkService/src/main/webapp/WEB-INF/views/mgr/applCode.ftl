@@ -73,6 +73,16 @@
 											-->
 										</td>
 									</tr>
+									<tr id="trOtAppl" style="display:none;">
+										<th>연장근무 신청 기간<br>(당일이전)</th>
+										<td>
+											<input type="text" id="otApplSday" name="otApplSday"/>일
+										</td>
+										<th>연장근무 신청 기간<br>(당일이후)</th>
+										<td>
+											<input type="text" id="otApplEday" name="otApplEday"/>일
+										</td>
+									</tr>
 									<tr id="trApplTime" style="display:none;">
 										<th>연장근무 신청 가능 시각</th>
 										<td colspan="3">
@@ -130,6 +140,12 @@
 										<th>휴일대체 사용기간<br>(근무일이후)</th>
 										<td>
 											<input type="text" id="subsEday" name="subsEday" class="required"/>일
+										</td>
+									</tr>
+									<tr id="trEntry" style="display:none;">
+										<th>근태사유서 신청 가능 기간</th>
+										<td colspan="3">
+											<input type="text" id="entryLimit" name="entryLimit"/>일
 										</td>
 									</tr>
 									<tr>
@@ -219,6 +235,8 @@
    			{Header:"수신단계",  		Type:"Combo",     	Hidden:0,   Width:60,  Align:"Center",  ColMerge:0, SaveName:"recLevelCd",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
    			{Header:"신청시간단위",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"timeUnit",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:50  },
    			{Header:"신청사용분",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"useMinutes",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:2000  },
+   			{Header:"연장신청시작",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"otApplSday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
+   			{Header:"연장신청종료",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"otApplEday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
    			{Header:"입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inShm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
    			{Header:"입력종료시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inEhm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
    			{Header:"휴일입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holInShm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
@@ -229,6 +247,7 @@
    			{Header:"대휴선택대상",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsRuleId",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:20  },
    			{Header:"대휴사용시작",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsSday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
    			{Header:"대휴사용종료",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsEday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
+   			{Header:"근태사유서기간",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"entryLimit",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
    			{Header:"비고",  			Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"note",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:2000  }
 		]; 
 		
@@ -275,6 +294,10 @@
 				sheet1.SetCellValue(row, "timeUnit", $("#timeUnit").val());
 				sheet1.SetCellValue(row, "useMinutes", useMinutes);
 			}
+			if($('#trOtAppl').is(':visible')){
+				sheet1.SetCellValue(row, "otApplSday", $("#otApplSday").val());
+				sheet1.SetCellValue(row, "otApplEday", $("#otApplEday").val());
+			}
 			if($('#trApplTime').is(':visible')){
 				sheet1.SetCellValue(row, "inShm", $("#inShm").val());
 				sheet1.SetCellValue(row, "inEhm", $("#inEhm").val());
@@ -294,6 +317,9 @@
 			if($('#trHolBreak').is(':visible')){
 				sheet1.SetCellValue(row, "holApplTypeCd", $("#holApplTypeCd").val());
 				sheet1.SetCellValue(row, "holMaxMinute", $("#holMaxMinute").val());
+			}
+			if($('#trEntry').is(':visible')){
+				sheet1.SetCellValue(row, "entryLimit", $("#entryLimit").val());
 			}
 			sheet1.SetCellValue(row, "note", $("#note").val());
 			doAction1("Save");
@@ -327,6 +353,8 @@
 				$("#trSubs").show();
 				$("#trHolTime").show();
 				$("#trHolBreak").show();
+				$("#trEntry").hide();
+				$("#trOtAppl").show();
 			} else if(applCd == "SUBS_CHG"){
 				// 연장/휴일근무신청서
 				$("#trApplMinute").hide();
@@ -335,6 +363,18 @@
 				$("#trSubs").show();
 				$("#trHolTime").hide();
 				$("#trHolBreak").hide();
+				$("#trEntry").hide();
+				$("#trOtAppl").hide();
+			} else if(applCd == "ENTRY_CHG"){
+				// 근태사유서신청
+				$("#trApplMinute").hide();
+				$("#trApplTime").hide();
+				$("#trHol").hide();
+				$("#trSubs").hide();
+				$("#trHolTime").hide();
+				$("#trHolBreak").hide();
+				$("#trEntry").show();
+				$("#trOtAppl").hide();
 			} else {
 				$("#trApplMinute").hide();
 				$("#trApplTime").hide();
@@ -342,6 +382,8 @@
 				$("#trSubs").hide();
 				$("#trHolTime").hide();
 				$("#trHolBreak").hide();
+				$("#trEntry").hide();
+				$("#trOtAppl").hide();
 			}
 			// 데이터 셋팅
 			if($('#trApplMinute').is(':visible')){
@@ -353,6 +395,10 @@
 					var objId = "useMinutes" + dataUseMinutes[i].value;
 					$("input:checkbox[id="+objId+"]").prop("checked", true);
 				}
+			}
+			if($('#trOtAppl').is(':visible')){
+				$("#otApplSday").val(sheet1.GetCellValue( NewRow, "otApplSday"));
+				$("#otApplEday").val(sheet1.GetCellValue( NewRow, "otApplEday"));
 			}
 			if($('#trApplTime').is(':visible')){
 				$("#inShm").val(sheet1.GetCellValue( NewRow, "inShm"));
@@ -371,8 +417,11 @@
 				$("#holInEhm").val(sheet1.GetCellValue( NewRow, "holInEhm"));
 			}
 			if($('#trHolBreak').is(':visible')){
-				$("#holApplTypeCd").val(sheet1.GetCellValue( NewRow, "holApplTypeCd")).prop("selected", true);;
+				$("#holApplTypeCd").val(sheet1.GetCellValue( NewRow, "holApplTypeCd")).prop("selected", true);
 				$("#holMaxMinute").val(sheet1.GetCellValue( NewRow, "holMaxMinute"));
+			}
+			if($('#trEntry').is(':visible')){
+				$("#entryLimit").val(sheet1.GetCellValue( NewRow, "entryLimit"));
 			}
 			$("#note").val(sheet1.GetCellValue( NewRow, "note"));
 		}
