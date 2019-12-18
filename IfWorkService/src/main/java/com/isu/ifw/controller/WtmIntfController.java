@@ -59,7 +59,7 @@ public class WtmIntfController {
 			String secret = params.get("secret").toString();
 
 			CommTenantModule tm = tenantModuleRepo.findByApiKey(apiKey);
-		
+			logger.debug("tm " + tm.toString());
 			if(tm == null) {
 				rp.setFail("secret 불일치");
 				return rp;
@@ -84,7 +84,7 @@ public class WtmIntfController {
 			paramMap.put("sabun", params.get("emp"));
 			paramMap.put("time", params.get("time"));
 //			paramMap.put("ymd", params.get("ymd"));
-			paramMap.put("type", params.get("type"));
+			paramMap.put("inoutType", params.get("type"));
 			paramMap.put("entryType", params.get("deviceKey"));
 			
 			logger.debug("getParameter s2 " + paramMap.toString());
