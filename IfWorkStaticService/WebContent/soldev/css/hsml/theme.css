@@ -4,111 +4,111 @@
 /* layout.css */
 /* gnb mark */
 .navbar .gnb-nav-wrap .ico-wrap .new {
-    background-color: #0f5aa4;
+    background-color: #002c5c;
 }
 /* sidebar */
 #sidebar {
-  background: #0f5aa4;
+  background: #002c5c;
 }
 
 #sidebar.active ul li.active a span.title {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 
 #sidebar.active ul li a:hover span.title {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 
 #sidebar ul li a:hover {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 
 #sidebar ul li a.dropdown-toggle.collapsed {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 
 #sidebar ul li.active>a,
 a[aria-expanded="true"] {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 
 #sidebar #lnb-sub li.active>a {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 
 /* common.css */
 /* button */
 .btn-write {
-    background-color: #0f5aa4;
-    border-color: #004f9c;
+    background-color: #002c5c;
+    border-color: #001f40;
 }
 .btn-write:hover {
     color: #ffffff;
-    background-color: #2576c6;
-    border-color: #004f9c;
+    background-color: #003c7d;
+    border-color: #001f40;
 }
 .btn-default {
     color: #ffffff;
-    background-color: #0f5aa4;
-    border-color: #004f9c;
+    background-color: #002c5c;
+    border-color: #001f40;
 }
 .btn-default:hover {
     color: #ffffff;
-    background-color: #2576c6;
-    border-color: #004f9c;
+    background-color: #003c7d;
+    border-color: #001f40;
 }
 
 /* 근무계획 */
 .white-box-wrap .btn-info-wrap a {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 .white-box-wrap .btn-info-wrap span {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 .work-plan-wrap .sub-list .sub-title i.fas {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 /* calendar */
 .calendar-wrap {
-    border-top: 3px solid #0f5aa4;
+    border-top: 3px solid #002c5c;
 }
 /* modal */
 .modal-app-wrap .guide {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 .modal-app-wrap i.fas {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 /* error page */
 .error-page .container .icon-wrap i {
-    color: #0f5aa4;
+    color: #002c5c;
 }
 .error-page .container a.btn-main {
-    background-color: #0f5aa4;
+    background-color: #002c5c;
 }
 
 /* Layout4HR css custom */
 a.button{
-	background-color:#0f5aa4;
+	background-color:#002c5c;
 }
 
 input.required{
-	border:1px solid #0f5aa4 !important;
+	border:1px solid #002c5c !important;
 }
 
 .sheet_search{
-	border-top: 2px solid #0f5aa4;
+	border-top: 2px solid #002c5c;
 }
 .sheet_search a.button{
-	background-color: #0f5aa4;
+	background-color: #002c5c;
 }
 
 .sheet_title_wrap .title:after{
-	color: #0f5aa4;
+	color: #002c5c;
 }
 /* Layout4HR css custom sheet background */
 .GMFocusRowBackground, .GMCursorBackground{
-	background: #0f5aa4 !important;
+	background: #002c5c !important;
 }
 table.default th{
 	background-color:#f5fafd;
@@ -122,13 +122,13 @@ table.default th:first-child {
 }
 /* tooltip */
 .tooltip-st i.far{
-	color: #0f5aa4;
+	color: #002c5c;
 }
 
 .ui-tabs:not(.sub_top) .ui-tabs-nav li a {
     display: inline-block;
     margin-left: -1px;
-    border-bottom: 1px solid #0f5aa4;
+    border-bottom: 1px solid #002c5c;
     border-left: 1px solid #e0e2e5;
     border-right: 1px solid #e0e2e5;
     border-top: 1px solid #e0e2e5;
@@ -154,26 +154,20 @@ table.default th:first-child {
     background-color: #FFF;
     margin: 0 1px 0 0;
     border-bottom: 1px solid #FFF;
-    border-left: 1px solid #0f5aa4;
-    border-right: 1px solid #0f5aa4;
-    border-top: 1px solid #0f5aa4;
-    color: #0f5aa4 !important;
+    border-left: 1px solid #002c5c;
+    border-right: 1px solid #002c5c;
+    border-top: 1px solid #002c5c;
+    color: #002c5c !important;
     font-weight: 600;
     font-weight: bold;
 }
 /* custom check */
 table.default td [type="checkbox"]:checked + label:after,
 table.default td [type="checkbox"]:not(:checked) + label:after {
-    border-color: #0f5aa4;
+    border-color: #002c5c;
 }
 /* custom radio */
 table.default td [type="radio"]:checked + label:after,
 table.default td [type="radio"]:not(:checked) + label:after {
-    background: #0f5aa4;
+    background: #002c5c;
 }
-
-/*근무제 표시 감춤 - 태평양물산만*/
-.sub-info-wrap .work-check-wrap{
-	display:none;
-}
-

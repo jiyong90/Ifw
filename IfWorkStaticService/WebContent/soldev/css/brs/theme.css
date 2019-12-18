@@ -57,14 +57,6 @@ a[aria-expanded="true"] {
     background-color: #5780da;
     border-color: #325fc0;
 }
-/* 결재페이지 */
-[type=button].btn-approval.sign {
-    color: #4d84fe;
-}
-.btn-approval.sign:hover {
-    color:#ffffff;
-    background-color: #4d84fe;
-}
 /* 근무계획 */
 .white-box-wrap .btn-info-wrap a {
     color: #4d84fe;
