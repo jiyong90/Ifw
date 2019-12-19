@@ -266,6 +266,8 @@
   		    	uncheckTarget : function(sabun) {
   		    		Vue.delete(this.checklist, sabun);
   		    		Vue.delete(this.applSabuns, sabun);
+  		    		
+  		    		this.preCheck(this.applSabuns, null);
   		    	},
   		    	isCheck: function(sabun){
   		    		if(this.applSabuns.hasOwnProperty(sabun)) 
@@ -325,7 +327,6 @@
 					if($("#eTime").val()=='')
 						$("#eTime").val(moment(eYmd).format('HH:mm'));
 					
-					console.log($("#sTime").val().replace(/:/gi,""));
 					$this.overtime = $this.calcMinute(date, $("#sTime").val().replace(/:/gi,""), $("#eTime").val().replace(/:/gi,""));
 					
 					//결재라인
