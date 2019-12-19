@@ -101,8 +101,11 @@
 				default : function(){
 					return {
 					    dayGrid: {
-					    	eventLimit: 2 //화면에 보여줄 이벤트 개수
-					    	//titleFormat: { year: 'numeric', month: '2-digit', day: '2-digit' }
+					    	eventLimit: 2, //화면에 보여줄 이벤트 개수
+					    	titleFormat: { year: 'numeric', month: '2-digit' }
+					    },
+					    timeGridDay: {
+					    	titleFormat: { year: 'numeric', month: '2-digit', day: '2-digit' }
 					    }
 					};
 				}
@@ -206,9 +209,10 @@
 			        height: this.height,
 			        locale: this.locale,
 			        header: this.header,
+			        //titleFormat: this.titleFormat,
 			        defaultView: this.defaultview,
 			        defaultDate: this.defaultdate,
-			        //views: this.views,
+			        views: this.views,
 			        //validRange: this.validRange,
 			        //navLinks: this.navLinks, 
 			        selectable: this.selectable,
