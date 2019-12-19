@@ -162,6 +162,7 @@
 				, DAY_CLOSE_TYPE = #{item.dayCloseType, jdbcType=VARCHAR}
 				, UNPLANNED_YN = #{item.unplannedYn, jdbcType=VARCHAR} 
 				, APPL_YN = #{item.applYn, jdbcType=VARCHAR} 
+				, TODAY_PLAN_EDIT_YN = #{item.todayPlanEditYn, jdbcType=VARCHAR} 
 				, NOTE = #{item.note, jdbcType=VARCHAR}  
 				, UPDATE_DATE = SYSDATE
 				, UPDATE_ID = #{item.userId, jdbcType=NUMERIC}
@@ -207,6 +208,7 @@
 						WHEN 6 THEN '금요일'
 						WHEN 7 THEN '토요일' END AS BASE_DAY
 				 , APPL_YN
+				 , TODAY_PLAN_EDIT_YN
 				 , NOTE 
 		      FROM WTM_FLEXIBLE_STD_MGR 
 		     WHERE TENANT_ID = #{tenantId}

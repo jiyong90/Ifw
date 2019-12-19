@@ -361,9 +361,14 @@
   		    		eYmd.setDate(eYmd.getDate()+1);
   		    		eYmd = moment(eYmd).format('YYYY-MM-DD');
   		    		
+  		    		//당일 출퇴근 시간 수정여부
+  		    		var todayPlanEditYn = 'N';
+  		    		if(obj.hasOwnProperty('todayPlanEditYn') && obj.todayPlanEditYn!=null && obj.todayPlanEditYn!=undefined)
+  		    			todayPlanEditYn = obj.todayPlanEditYn;
+  		    		
   		    		if( moment(sYmd).diff(startStr)<=0 && moment(startStr).diff(eYmd)<=0
 						&& moment(sYmd).diff(endStr)<=0 && moment(endStr).diff(eYmd)<=0
-   						&& moment($this.today).diff(startStr)<0 && moment($this.today).diff(endStr)<0
+   						&& (todayPlanEditYn=='Y'&&moment($this.today).diff(startStr)<=0 || todayPlanEditYn=='N'&&moment($this.today).diff(startStr)<0) && moment($this.today).diff(endStr)<0
    						&& $this.empHolidays.indexOf(startStr)==-1
    						&& (obj.workTypeCd!='ELAS' || (obj.workTypeCd=='ELAS' && obj.applStatusCd=='11')) //탄근제 임시저장했을 때만 수정 가능하도록
    						//&& (Object.keys(workDaysOpt).length==0 || Object.keys(workDaysOpt).length>0 && workDaysOpt[selYmd.getDay()+1])

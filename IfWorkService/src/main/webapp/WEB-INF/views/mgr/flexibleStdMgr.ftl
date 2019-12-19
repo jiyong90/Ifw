@@ -174,6 +174,13 @@
 													<label for="applYn">체크시 신청가능</label> 
 												</td>
 											</tr>
+											<tr id="trTodayPlanEdit">
+												<th>당일근무변경여부</th>
+												<td>
+													<input type="checkbox" id="todayPlanEditYn" name="todayPlanEditYn" />
+													<label for="todayPlanEditYn">체크시 당일 근무 변경가능</label> 
+												</td>
+											</tr>
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
 												<td colspan="3">
@@ -333,6 +340,7 @@
 			{Header:"사용기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"usedTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
 			{Header:"신청기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
 			{Header:"신청기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
+			{Header:"당일근무변경여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"todayPlanEditYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"근태시간포함여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"taaTimeYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"근태일근무여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"taaWorkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"출근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayOpenType",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
@@ -494,6 +502,10 @@
 	        	var chkYn = getCheckYn("applYn");
 	        	sheet1.SetCellValue(row, "applYn", chkYn);
 	        }
+	        if($('#trTodayPlanEdit').is(':visible')){
+	        	var chkYn = getCheckYn("todayPlanEditYn");
+	        	sheet1.SetCellValue(row, "todayPlanEditYn", chkYn);
+	        }
 	        if($('#trApplTerm').is(':visible')){
 	        	var applTermOptArr = new Array();
 				$('input[name="applTermOpt"]').each(function() {
@@ -616,6 +628,7 @@
 				$("input:checkbox[name='usedTermOpt']").prop("checked", false);
 				$("input:checkbox[name='applTermOpt']").prop("checked", false);
 				$("input:checkbox[name='applYn']").prop("checked", false);
+				$("input:checkbox[name='todayPlanEditYn']").prop("checked", false);
 				
 				// 공휴일제외여부
 				if(sheet1.GetCellValue( NewRow, "holExceptYn") == "Y"){
@@ -703,6 +716,11 @@
 						$("#trCoreChk").hide();
 						$("#trCoreTime").hide();
 					}
+					
+					if(sheet1.GetCellValue( NewRow, "todayPlanEditYn") == "Y"){
+						$("input:checkbox[name='todayPlanEditYn']").prop("checked", true);
+					}
+					$("#trTodayPlanEdit").show();
 				} else {
 					$("#taaTimeYn").val("N");
 					$("#trWorkTime").hide();
@@ -719,6 +737,7 @@
 					$("#exhaustionYn").val("");
 					$("#unplannedYn").val("");
 					$("#taaWorkYn").val("");
+					$("#trTodayPlanEdit").hide();
 				}
 				
 				// 신청기간

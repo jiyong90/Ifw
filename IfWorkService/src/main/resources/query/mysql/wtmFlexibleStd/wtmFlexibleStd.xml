@@ -162,6 +162,7 @@
 				, DAY_CLOSE_TYPE = #{item.dayCloseType}
 				, UNPLANNED_YN = #{item.unplannedYn} 
 				, APPL_YN = #{item.applYn} 
+				, TODAY_PLAN_EDIT_YN = #{item.todayPlanEditYn} 
 				, NOTE = #{item.note}  
 				, UPDATE_DATE = NOW()
 				, UPDATE_ID = #{item.userId}
@@ -207,6 +208,7 @@
 						WHEN 6 THEN '금요일'
 						WHEN 7 THEN '토요일' END AS baseDay
 				 , APPL_YN AS applYn
+				 , TODAY_PLAN_EDIT_YN AS todayPlanEditYn
 				 , NOTE AS note
 		      FROM WTM_FLEXIBLE_STD_MGR 
 		     WHERE TENANT_ID = #{tenantId}
