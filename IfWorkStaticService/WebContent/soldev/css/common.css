@@ -1169,14 +1169,14 @@ transition: all 0.4s ease;
 .submenu .time-desc-wrap .time-desc>li:before{
   content: '|';
   color:#aeaeae;
-  margin: 0 5px;
+  margin: 0 2px;
 }
 .submenu .time-desc-wrap .time-desc>li:first-child:before{
   content: '';
   margin:0px;
 }
 .submenu .time-desc-wrap .time-desc .title{padding-right:3px; font-size: 12px;font-weight: 400;}
-.submenu .time-desc-wrap .time-desc .time{font-size: 12px;font-weight: 700;letter-spacing: -0.36px;}
+.submenu .time-desc-wrap .time-desc .time{display:inline-block; min-width: 53px; font-size: 12px;font-weight: 700;letter-spacing: -1px;}
 
 
 /* settings */
