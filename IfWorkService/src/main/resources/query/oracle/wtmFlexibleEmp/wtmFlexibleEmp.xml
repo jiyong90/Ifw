@@ -9,38 +9,57 @@
 			SELECT E.TENANT_ID 
 			     , E.ENTER_CD 
 			     , E.SABUN 
-			     , E.FLEXIBLE_EMP_ID
-			     , E.SYMD AS S_YMD 
-			     , E.EYMD AS E_YMD
-			     , E.WORK_TYPE_CD
-			     , M.FLEXIBLE_NM 
-			     , NULL AS APPL_ID 
-				 , NULL AS APPL_CD
-				 , NULL AS APPL_STATUS_CD
-				 , NULL AS APPL_STATUS_NM
-				 , M.BASE_WORK_YN 
+			     , E.FLEXIBLE_EMP_ID 
+			     , E.SYMD
+			     , E.EYMD 
+			     , E.WORK_TYPE_CD 
+			     , M.FLEXIBLE_NM
+			     , F.APPL_ID 
+				  , F.APPL_CD 
+				  , F.APPL_STATUS_CD 
+				  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'APPL_STATUS_CD', F.APPL_STATUS_CD, E.SYMD) AS APPL_STATUS_NM 
+				  , M.BASE_WORK_YN 
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
 			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			  LEFT OUTER JOIN ( SELECT A.TENANT_ID
+			                       , A.ENTER_CD
+			                       , A.APPL_ID
+			                       , A.APPL_CD
+			                       , A.APPL_STATUS_CD
+			                       , A.APPL_SABUN
+			                       , F.SYMD
+			                       , F.EYMD
+			                       , F.FLEXIBLE_STD_MGR_ID
+									  FROM WTM_APPL A
+									  JOIN WTM_FLEXIBLE_APPL F
+									    ON A.APPL_ID = F.APPL_ID
+									 WHERE A.TENANT_ID = #{tenantId}
+									   AND A.ENTER_CD = #{enterCd}
+									   AND A.APPL_SABUN = #{sabun} ) F
+			    ON E.TENANT_ID = F.TENANT_ID  
+				AND E.ENTER_CD = F.ENTER_CD
+				AND E.SABUN = F.APPL_SABUN
+				AND E.SYMD = F.SYMD
+				AND E.EYMD = F.EYMD     
 			 WHERE E.TENANT_ID = #{tenantId}
 				AND E.ENTER_CD = #{enterCd}
-				AND E.SABUN = #{sabun}
-				AND M.BASE_WORK_YN = 'Y'
+				AND E.SABUN =  #{sabun}
 				AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(E.EYMD, 'YMD') AND F_WTM_TO_DATE(E.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			UNION
-			SELECT A.TENANT_ID
-			     , A.ENTER_CD
+			SELECT A.TENANT_ID 
+			     , A.ENTER_CD 
 			     , A.APPL_SABUN AS SABUN
 			     , E.FLEXIBLE_EMP_ID 
-			     , FA.SYMD AS S_YMD
-			     , FA.EYMD AS E_YMD
+			     , FA.SYMD 
+			     , FA.EYMD 
 			     , E.WORK_TYPE_CD 
-			     , F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD,A.APPL_SABUN,A.APPL_YMD) AS FLEXIBLE_NM
+			     , F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD,A.APPL_SABUN,FA.SYMD) AS FLEXIBLE_NM
 			     , A.APPL_ID 
 			     , A.APPL_CD 
-			     , A.APPL_STATUS_CD
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
-				 , 'N' AS BASE_WORK_YN
+			     , A.APPL_STATUS_CD 
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, FA.SYMD) AS APPL_STATUS_CD
+				  , M.BASE_WORK_YN 
 			 FROM WTM_APPL A
 			 JOIN WTM_FLEXIBLE_APPL FA
 			   ON A.APPL_ID = FA.APPL_ID
@@ -51,12 +70,14 @@
 			  AND A.APPL_CD = E.WORK_TYPE_CD
 			  AND FA.SYMD = E.SYMD
 			  AND FA.EYMD = E.EYMD
+			 LEFT OUTER JOIN WTM_FLEXIBLE_STD_MGR M
+			   ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
 			WHERE A.TENANT_ID = #{tenantId}
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
-			  AND A.APPL_STATUS_CD NOT IN ('22','32')
+			  AND A.APPL_STATUS_CD NOT IN ('22','32','99')
 			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
-			ORDER BY S_YMD
+			ORDER BY SYMD
         ]]>
     </select>
 
@@ -880,7 +901,7 @@
 		  INNER JOIN WTM_PROPERTIE P
 				    ON P.TENANT_ID = A.TENANT_ID AND P.ENTER_CD = A.ENTER_CD AND P.INFO_KEY = 'OPTION_MAX_WORKTIME_1WEEK'
     </select>
-    
+     
     <select id="getWorktimePlan" parameterType="Long" resultType="wtmGeneral" >
     	<![CDATA[
     	SELECT F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD') AS YMD
@@ -1614,8 +1635,8 @@
 			  , A.NOTE 
 			  , A.FLEXIBLE_STD_MGR_ID
 			  , A.FLEXIBLE_EMP_ID
-			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(SYSDATE, 'YMD') THEN CONCAT('<a class="basic" onClick="setModify(', FLEXIBLE_EMP_ID, ')">근무변경/취소</a>')
-					    ELSE '' END AS MODIFY
+			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(SYSDATE, 'YMD') THEN '<a class="basic" onClick="setModify(' || FLEXIBLE_EMP_ID || ')">근무변경/취소</a>'
+					    ELSE '' END AS FLEX_MODIFY
 		  FROM WTM_FLEXIBLE_EMP A
 		 INNER JOIN WTM_FLEXIBLE_STD_MGR B
 		    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
@@ -1629,10 +1650,10 @@
 		 WHERE A.TENANT_ID = #{tenantId}
 		   AND A.ENTER_CD = #{enterCd}
 		   AND A.SYMD <= REPLACE(#{eYmd}, '-', '') 
-		   AND A.EYMD >= REPLACE(#{sYmd}, '-', '') 
-		   AND IF(#{searchKeyword}='',1=1,(C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')))
-		   AND IF(#{searchWorkTypeCd}='',1=1,(B.WORK_TYPE_CD = #{searchWorkTypeCd}))
-  		]]>
+		   AND A.EYMD >= REPLACE(#{sYmd}, '-', '')
+		   AND (#{searchKeyword, jdbcType=VARCHAR} IS NULL OR #{searchKeyword, jdbcType=VARCHAR} = '' OR (C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE #{searchKeyword} || '%'))
+		   AND (#{searchWorkTypeCd, jdbcType=VARCHAR} IS NULL OR #{searchWorkTypeCd, jdbcType=VARCHAR} = '' OR B.WORK_TYPE_CD = #{searchWorkTypeCd})
+  		]]>  		
   		<if test="orgList!=null">
 		   AND C.ORG_CD IN (NULL, 
 	       <foreach collection="orgList" item="org" separator=", ">
@@ -1723,6 +1744,7 @@
 			     , M.USED_TERM_OPT 
 			     , M.APPL_TERM_OPT 
 			     , M.UNIT_MINUTE 
+			     , M.TODAY_PLAN_EDIT_YN
 			     , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, E.SYMD, 'T', 'WORK') AS TOTAL_WORK_MINUTE
 	 			 , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, E.SYMD, 'P', 'WORK') AS PLAN_WORK_MINUTE
 			  FROM WTM_FLEXIBLE_EMP E

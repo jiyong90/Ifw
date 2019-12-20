@@ -14,18 +14,37 @@
 			     , E.EYMD AS eYmd
 			     , E.WORK_TYPE_CD AS workTypeCd
 			     , M.FLEXIBLE_NM AS flexibleNm
-			     , NULL AS applId 
-				 , NULL AS applCd
-				 , NULL AS applStatusCd
-				 , NULL AS applStatusNm
-				 , M.BASE_WORK_YN AS baseWorkYn
+			     , F.APPL_ID AS applId 
+				  , F.APPL_CD AS applCd
+				  , F.APPL_STATUS_CD AS applStatusCd
+				  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'APPL_STATUS_CD', F.APPL_STATUS_CD, E.SYMD) AS applStatusNm 
+				  , M.BASE_WORK_YN AS baseWorkYn
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
 			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			  LEFT OUTER JOIN ( SELECT A.TENANT_ID
+			                       , A.ENTER_CD
+			                       , A.APPL_ID
+			                       , A.APPL_CD
+			                       , A.APPL_STATUS_CD
+			                       , A.APPL_SABUN
+			                       , F.SYMD
+			                       , F.EYMD
+			                       , F.FLEXIBLE_STD_MGR_ID
+									  FROM WTM_APPL A
+									  JOIN WTM_FLEXIBLE_APPL F
+									    ON A.APPL_ID = F.APPL_ID
+									 WHERE A.TENANT_ID = #{tenantId}
+									   AND A.ENTER_CD = #{enterCd}
+									   AND A.APPL_SABUN = #{sabun} ) F
+			    ON E.TENANT_ID = F.TENANT_ID  
+				AND E.ENTER_CD = F.ENTER_CD
+				AND E.SABUN = F.APPL_SABUN
+				AND E.SYMD = F.SYMD
+				AND E.EYMD = F.EYMD     
 			 WHERE E.TENANT_ID = #{tenantId}
 				AND E.ENTER_CD = #{enterCd}
-				AND E.SABUN = #{sabun}
-				AND M.BASE_WORK_YN = 'Y'
+				AND E.SABUN =  #{sabun}
 				AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(E.EYMD, 'YMD') AND F_WTM_TO_DATE(E.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			UNION
 			SELECT A.TENANT_ID AS tenantId
@@ -35,12 +54,12 @@
 			     , FA.SYMD AS sYmd
 			     , FA.EYMD AS eYmd
 			     , E.WORK_TYPE_CD AS workTypeCd
-			     , F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD,A.APPL_SABUN,A.APPL_YMD) AS flexibleNm
+			     , F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD,A.APPL_SABUN,FA.SYMD) AS flexibleNm
 			     , A.APPL_ID AS applId
 			     , A.APPL_CD AS applCd
 			     , A.APPL_STATUS_CD AS applStatusCd
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
-				 , 'N' AS baseWorkYn
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, FA.SYMD) AS applStatusNm
+				  , M.BASE_WORK_YN AS baseWorkYn
 			 FROM WTM_APPL A
 			 JOIN WTM_FLEXIBLE_APPL FA
 			   ON A.APPL_ID = FA.APPL_ID
@@ -51,10 +70,12 @@
 			  AND A.APPL_CD = E.WORK_TYPE_CD
 			  AND FA.SYMD = E.SYMD
 			  AND FA.EYMD = E.EYMD
+			 LEFT OUTER JOIN WTM_FLEXIBLE_STD_MGR M
+			   ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
 			WHERE A.TENANT_ID = #{tenantId}
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
-			  AND A.APPL_STATUS_CD NOT IN ('22','32')
+			  AND A.APPL_STATUS_CD NOT IN ('22','32','99')
 			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			ORDER BY sYmd
         ]]>
@@ -1706,6 +1727,7 @@
 			     , M.USED_TERM_OPT AS usedTermOpt
 			     , M.APPL_TERM_OPT AS applTermOpt
 			     , M.UNIT_MINUTE AS unitMinute
+			     , M.TODAY_PLAN_EDIT_YN AS todayPlanEditYn
 			     , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, E.SYMD, 'T', 'WORK') AS totalWorkMinute
 	 			 , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, E.SYMD, 'P', 'WORK') AS planWorkMinute
 			  FROM WTM_FLEXIBLE_EMP E
