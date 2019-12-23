@@ -32,6 +32,14 @@
 	    	events: [],
 	    	dayWorks: {}
 	    },
+	    watch: {
+	    	monthFlexitimeList : function(val, oldVal) {
+	    		if(val!=null && val.length>0 && $(".fc-legend-button").length>0) {
+	    			//적용 중인 유연근무제 리스트
+    				calendarTopVue.drawLegend(val);
+	    		} 
+	    	}
+	    },
 	    mounted: function(){
 	    	//근무 계획 작성 화면 전환
 	    	$("#workRangeInfo").show();
@@ -224,10 +232,12 @@
 								eYmd = moment(eYmd).format('YYYY-MM-DD');
 								
 								var classNames = [];
-								classNames.push(f.applCd);
+								//classNames.push(f.applCd);
+								classNames.push(f.workTypeCd);
 								
 								$this.addEvent({
-									id: 'workRange.'+f.applCd+'.'+sYmd,
+									//id: 'workRange.'+f.applCd+'.'+sYmd,
+									id: 'workRange.'+f.workTypeCd+'.'+sYmd,
 									start: sYmd,
 		  		  		        	end: eYmd,
 		  		  		        	rendering: 'background'

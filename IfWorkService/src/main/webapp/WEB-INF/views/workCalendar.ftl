@@ -855,7 +855,8 @@
 	    data : {
 	    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
 	    	flexitimeList: [], //사용할 유연근무제 리스트
-	    	flexibleStd: {} //현재 근무제
+	    	flexibleStd: {}, //현재 근무제
+	    	legendList: []
   		},
 	    mounted: function(){
 	    	var $this = this;
@@ -882,22 +883,10 @@
 	    watch: {
 	    	flexitimeList : function(val, oldVal) {
 	    		if(val!=null && val.length>0 && $(".fc-legend-button").length>0) {
-	    			var legend = '<div class="sub-info-wrap clearfix">         '
-		    			+'	<div class="form-inline work-check-wrap"> '
-		    			+'		<span class="title">근무제 표시</span>    '
-		    			+'		<ul class="legend-list-wrap">         '
-		    			;
-		    		
-	    			val.map(function(v){
-	    				legend += '			<li class="'+v.workTypeCd+'">'+v.flexibleNm+'</li>        ';
-	    			});
-		    			
-		    		legend += '		</ul>                                 '
-		    			+'	</div>                                    '
-		    			+' <div>                                       '
-		    			;
-		    			
-		    		document.querySelector(".fc-legend-button").innerHTML= legend;
+	    			//신청 가능한 유연근무제 리스트
+	    			this.legendList = [];
+	    			
+    				this.drawLegend(val);
 	    		} 
 	    	}
 	    },
@@ -969,7 +958,46 @@
          	},
          	getFlexibleAppl : function(flexibleAppl){
          		calendarLeftVue.flexibleAppl = flexibleAppl;
-         	}
+         	},
+         	drawLegend: function(val){
+         		var $this = this;
+         		
+         		var keys = [];
+         		$this.legendList.map(function(l){
+         			keys.push(l.workTypeCd);
+         		});
+         		
+         		val.map(function(v){
+    				var o = {
+    					workTypeCd : v.workTypeCd,
+    					flexibleNm : v.flexibleNm
+    				};
+    				
+    				if(keys.indexOf(o.workTypeCd)==-1 && (!v.hasOwnProperty('baseWorkYn') || (v.hasOwnProperty('baseWorkYn')&&v.baseWorkYn!='Y'))) {
+    					$this.legendList.push(o);
+    					keys.push(o.workTypeCd);
+    				}
+    			});
+         		
+         		if($this.legendList.length>0) {
+    				var legend = '<div class="sub-info-wrap clearfix">         '
+		    			+'	<div class="form-inline work-check-wrap"> '
+		    			+'		<span class="title">근무제 표시</span>    '
+		    			+'		<ul class="legend-list-wrap">         '
+		    			;
+		    		
+		    		$this.legendList.map(function(v){
+	    				legend += '			<li class="'+v.workTypeCd+'">'+v.flexibleNm+'</li>        ';
+	    			});
+		    			
+		    		legend += '		</ul>                                 '
+		    			+'	</div>                                    '
+		    			+' <div>                                       '
+		    			;
+		    			
+		    		document.querySelector(".fc-legend-button").innerHTML= legend;
+    			}
+         	} 
 	    }
    	});
    	
