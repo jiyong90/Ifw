@@ -72,6 +72,7 @@
 				, CODE_NM 
 				, SYMD 
 				, EYMD 
+				, SEQ
 				, NOTE
 				, UPDATE_DATE
 				, UPDATE_ID
@@ -84,6 +85,7 @@
 	        	, #{item.codeNm}
 	        	, #{item.symd}
 	        	, #{item.eymd}
+	        	, #{item.seq}
 	        	, #{item.note}
 	        	, NOW()
 	        	, '0'
@@ -146,6 +148,7 @@
         	, SUN_YN
         	, FESTIVE_YN
         	, PAY_YN
+        	, NOTE
         	, UPDATE_DATE
         	, UPDATE_ID
         ) VALUES 
@@ -158,6 +161,7 @@
         	, #{item.sunYn}
         	, #{item.festiveYn}
         	, #{item.payYn}
+        	, #{item.note}
         	, NOW()
         	, '0'
         )
@@ -167,6 +171,7 @@
             , SUN_YN = VALUES(SUN_YN)
             , FESTIVE_YN = VALUES(FESTIVE_YN)
             , PAY_YN = VALUES(PAY_YN)
+            , NOTE = VALUES(NOTE)
             , UPDATE_DATE = NOW()
             , UPDATE_ID = '0'
     </insert>
@@ -190,6 +195,8 @@
 			, HOL_INCL_YN 
 			, REQUEST_TYPE_CD 
 			, WORK_YN
+			, PAY_YN
+			, NOTE
 			, UPDATE_DATE
 			, UPDATE_ID
 		) VALUES 
@@ -203,6 +210,8 @@
 			, #{item.holInclYn}
 			, #{item.requestTypeCd}
 			, #{item.workYn}
+        	, #{item.payYn}
+        	, #{item.note}
 			, NOW()
 			, '0'
 			)
@@ -230,6 +239,14 @@
 		  , WORK_YN = CASE 
 		    <foreach collection="list" item="item" separator="">
 		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.workYn}
+		    </foreach> END
+		  , PAY_YN = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.payYn}
+		    </foreach> END
+		  , NOTE = CASE 
+		    <foreach collection="list" item="item" separator="">
+		        when TAA_CODE_ID = #{item.taaCodeId} then #{item.note}
 		    </foreach> END
 		  , UPDATE_DATE = NOW()
 		  , UPDATE_ID = '0'
@@ -394,7 +411,6 @@
 			, JOB_CD
 			, PAY_TYPE_CD
 			, ORG_PATH
-			, LEADER_YN
 			, NOTE
 		) VALUES 
 		<foreach collection="list" item="item" separator=", ">
@@ -416,7 +432,6 @@
 			, #{item.jobCd}
 			, #{item.payTypeCd}
 			, #{item.orgPath}
-			, #{item.leaderYn}
 			, #{item.note}
 			)
 		</foreach>
@@ -469,6 +484,71 @@
 		 ORDER BY enterCd, sabun
     ]]>
     </select>
+    
+    <select id="getOrgConcChk" parameterType="map" resultType="hashmap">
+  	<![CDATA[
+		SELECT A.LEADER_CNT as leaderCnt, B.CONC_CNT as concCnt, C.CONC_CNT as concEndCnt
+		  FROM (SELECT COUNT(*) AS LEADER_CNT
+							  FROM WTM_EMP_HIS
+							 WHERE TENANT_ID = #{tenantId}
+							   AND ENTER_CD = #{enterCd}
+							   AND ORG_CD = #{orgCd}
+							   AND SABUN = #{sabun}
+							   AND LEADER_YN = 'Y'
+							   AND EYMD = #{eymd}) A
+		 INNER JOIN (SELECT COUNT(*) AS CONC_CNT
+					  FROM WTM_ORG_CONC
+					 WHERE TENANT_ID = #{tenantId}
+					   AND ENTER_CD = #{enterCd}
+					   AND ORG_CD = #{orgCd}
+					   AND SABUN = #{sabun}
+					   AND SYMD = #{symd}
+					   AND EYMD = #{eymd}) B
+		INNER JOIN (SELECT COUNT(*) AS CONC_CNT
+					  FROM WTM_ORG_CONC
+					 WHERE TENANT_ID = #{tenantId}
+					   AND ENTER_CD = #{enterCd}
+					   AND ORG_CD = #{orgCd}
+					   AND SABUN = #{sabun}
+					   AND SYMD = #{symd}
+					   AND EYMD <> #{eymd}) C
+		    ON 1=1
+    ]]>
+    </select>
+    
+    <insert id="insertOrgConc" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_ORG_CONC (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, ORG_CD
+        	, SABUN
+        	, SYMD
+        	, EYMD
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES (     
+              #{tenantId}
+        	, #{enterCd}
+        	, #{orgCd}
+        	, #{sabun}
+        	, #{symd}
+        	, #{eymd}
+        	, NOW()
+        	, '0'
+        )
+    </insert>
+    
+    <update id="updateOrgConcEnd" parameterType="java.util.HashMap" >
+        UPDATE WTM_ORG_CONC SET
+        	  EYMD = #{eymd}
+        	, UPDATE_DATE = NOW()
+        	, UPDATE_ID = '0'
+         WHERE TENANT_ID = #{tenantId}
+           AND ENTER_CD = #{enterCd}
+           AND ORG_CD = #{orgCd}
+           AND SABUN = #{sabun}
+           AND SYMD = #{symd}
+    </update>
     
     <insert id="insertWtmEmpAddr" parameterType="java.util.HashMap" >
         INSERT INTO WTM_EMP_ADDR (
@@ -575,12 +655,12 @@
         <![CDATA[
         	SELECT DISTINCT ENTER_CD AS enterCd
 				  , SABUN AS sabun
-				  , '20191106' AS ymd
+				  , YMD AS ymd
 			  FROM WTM_WORK_DAY_RESULT 
-			WHERE TENANT_ID = 38
+			WHERE TENANT_ID = #{tenantId}
 			  AND YMD BETWEEN '20191104' AND '20191201'
-  AND PLAN_MINUTE IS NOT NULL
-  AND APPR_MINUTE IS NULL
+			  AND PLAN_MINUTE IS NOT NULL
+			  AND APPR_MINUTE IS NULL
         ]]>
     </select>
     
@@ -602,7 +682,7 @@
 			 WHERE TENANT_ID = #{tenantId}
 			   AND PLAN_SDATE IS NOT NULL
 				AND PLAN_EDATE IS NOT NULL
-				AND YMD BETWEEN '20191104' AND '20191201'
+				AND YMD BETWEEN '20191201' AND '20191231'
 			 ORDER BY ENTER_CD, SABUN
         ]]>
     </select>
@@ -637,25 +717,4 @@
     	]]>
     </insert>
     
-    <select id="getExpTableList" parameterType="map" resultType="hashmap">
-		SELECT TABLE_NAME as tableName
-		FROM INFORMATION_SCHEMA.TABLES
-		WHERE TABLE_SCHEMA = #{tableSchema} 
-		  AND TABLE_ROWS > 0
-		    AND TABLE_NAME LIKE 'WTM%'
-  AND TABLE_NAME = 'WTM_WORK_PATT_DET'
-  		ORDER BY TABLE_NAME
-    </select>
-    
-    <select id="getExpColList" parameterType="map" resultType="hashmap">
-		SELECT COLUMN_NAME AS colNm, DATA_TYPE as dataType, ORDINAL_POSITION AS colNo
-		FROM INFORMATION_SCHEMA.COLUMNS
-		WHERE TABLE_SCHEMA= #{tableSchema} 
-		  AND TABLE_NAME = #{tableName} 
-		ORDER BY ORDINAL_POSITION
-    </select>
-    <select id="getExpDataList" parameterType="map" resultType="hashmap">
-		SELECT *
-		FROM ${tableName}
-    </select>
 </mapper>

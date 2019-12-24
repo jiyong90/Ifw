@@ -29,11 +29,12 @@ public class WtmInterfaceController {
 		
 		// 공통코드
 		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
-		System.out.println("lastDataTime : " + lastDataTime);
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
 		List<Map<String, Object>> ifCodeList = null;
 		rp.setSuccess("OK");
 		try {
-			ifCodeList = WtmInterfaceService.getCodeIfResult(lastDataTime); //Servie 호출
+			ifCodeList = WtmInterfaceService.getCodeIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifCodeList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -49,11 +50,12 @@ public class WtmInterfaceController {
 		
 		// 공통코드
 		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
-		System.out.println("lastDataTime : " + lastDataTime);
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getHolidayIfResult(lastDataTime); //Servie 호출
+			ifList = WtmInterfaceService.getHolidayIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -69,11 +71,12 @@ public class WtmInterfaceController {
 		
 		// 공통코드
 		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
-		System.out.println("lastDataTime : " + lastDataTime);
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getGntCodeIfResult(lastDataTime); //Servie 호출
+			ifList = WtmInterfaceService.getGntCodeIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -89,11 +92,12 @@ public class WtmInterfaceController {
 		
 		// 공통코드
 		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
-		System.out.println("lastDataTime : " + lastDataTime);
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getOrgCodeIfResult(lastDataTime); //Servie 호출
+			ifList = WtmInterfaceService.getOrgCodeIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -109,11 +113,12 @@ public class WtmInterfaceController {
 		
 		// 공통코드
 		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
-		System.out.println("lastDataTime : " + lastDataTime);
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getOrgChartMgrIfResult(lastDataTime); //Servie 호출
+			ifList = WtmInterfaceService.getOrgChartMgrIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -132,32 +137,12 @@ public class WtmInterfaceController {
 		System.out.println("lastDataTime : " + lastDataTime);
 		String enterCd = paramMap.get("enterCd").toString(); // 회사
 		System.out.println("enterCd : " + enterCd);
-		String sdate = paramMap.get("symd").toString(); // 기준일
-		System.out.println("sdate : " + sdate);
+		String symd = paramMap.get("symd").toString(); // 기준일
+		System.out.println("symd : " + symd);
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getOrgChartDetIfResult(lastDataTime, enterCd, sdate); //Servie 호출
-			rp.put("ifData", ifList);
-		} catch(Exception e) {
-			rp.setFail("조회 시 오류가 발생했습니다.");
-			return rp;
-		}
-		return rp;
-	}
-	
-	@RequestMapping(value = "/orgMapCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ReturnParam orgMapCodeIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
-		System.out.println("WtmInterfaceController orgMapCodeIf start");
-		ReturnParam rp = new ReturnParam();
-		
-		// 공통코드
-		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
-		System.out.println("lastDataTime : " + lastDataTime);
-		List<Map<String, Object>> ifList = null;
-		rp.setSuccess("OK");
-		try {
-			ifList = WtmInterfaceService.getOrgMapCodeIfResult(lastDataTime); //Servie 호출
+			ifList = WtmInterfaceService.getOrgChartDetIfResult(lastDataTime, enterCd, symd); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -173,11 +158,12 @@ public class WtmInterfaceController {
 		
 		// 공통코드
 		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
-		System.out.println("lastDataTime : " + lastDataTime);
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getEmpHisIfResult(lastDataTime); //Servie 호출
+			ifList = WtmInterfaceService.getEmpHisIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -185,6 +171,28 @@ public class WtmInterfaceController {
 		}
 		return rp;
 	}
+
+	@RequestMapping(value = "/orgConc", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam orgConcIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
+		System.out.println("WtmInterfaceController orgConcIf start");
+		ReturnParam rp = new ReturnParam();
+		
+		// 공통코드
+		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
+		List<Map<String, Object>> ifList = null;
+		rp.setSuccess("OK");
+		try {
+			ifList = WtmInterfaceService.getOrgConcIfResult(tenantId, lastDataTime); //Service 호출
+			rp.put("ifData", ifList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		return rp;
+	}
+	
 	@RequestMapping(value = "/empAddr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam empAddrIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
 		System.out.println("WtmInterfaceController empAddrIf start");
@@ -192,11 +200,33 @@ public class WtmInterfaceController {
 		
 		// 공통코드
 		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
-		System.out.println("lastDataTime : " + lastDataTime);
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getEmpAddrIfResult(lastDataTime); //Servie 호출
+			ifList = WtmInterfaceService.getEmpAddrIfResult(tenantId, lastDataTime); //Service 호출
+			rp.put("ifData", ifList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		return rp;
+	}
+	
+	@RequestMapping(value = "/taaAppl", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam taaApplIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
+		System.out.println("WtmInterfaceController taaApplIf start");
+		ReturnParam rp = new ReturnParam();
+		
+		// 공통코드
+		String lastDataTime = paramMap.get("lastDataTime").toString(); // 최종 data 전달data시간
+		String tenantId = paramMap.get("tenantId").toString(); // 회사코드
+		System.out.println("tenantId : " + tenantId + "lastDataTime : " + lastDataTime);
+		List<Map<String, Object>> ifList = null;
+		rp.setSuccess("OK");
+		try {
+			ifList = WtmInterfaceService.getTaaApplIfResult(tenantId, lastDataTime); //Service 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");

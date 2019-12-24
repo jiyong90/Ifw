@@ -35,11 +35,9 @@ public class WtmInterfaceController {
 		// 인터페이스 시작
 		System.out.println("getIf start");
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString()); 
-		//Long tenantId = (long) 38;
+		
 		System.out.println("getCodeIfResult call");
 		WtmInterfaceService.getCodeIfResult(tenantId);
-		
-		WtmInterfaceService.getOrgMapCodeIfResult(tenantId); // 조직관련코드(사업장등)
 		
 		System.out.println("getHolidayIfResult call");
 		WtmInterfaceService.getHolidayIfResult(tenantId);	// 공휴일
@@ -70,7 +68,6 @@ public class WtmInterfaceController {
 		// 공통코드
 		System.out.println("getcodeIf start");
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString()); 
-		//Long tenantId = (long) 38;
 		WtmInterfaceService.getCodeIfResult(tenantId);
 		System.out.println("getcodeIf end");
 		
@@ -81,7 +78,6 @@ public class WtmInterfaceController {
 	public void holidayIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공휴일정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		//Long tenantId = (long) 38;
 		WtmInterfaceService.getHolidayIfResult(tenantId); //Servie 호출
 		return;
 	}
@@ -90,7 +86,6 @@ public class WtmInterfaceController {
 	public void taaCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 근태코드정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		//Long tenantId = (long) 38;
 		WtmInterfaceService.getTaaCodeIfResult(tenantId); //Servie 호출
 		return;
 	}
@@ -99,27 +94,17 @@ public class WtmInterfaceController {
 	public void orgCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 조직코드정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		//Long tenantId = (long) 38;
 		WtmInterfaceService.getOrgCodeIfResult(tenantId); //Servie 호출
 		WtmInterfaceService.getOrgChartIfResult(tenantId); //Servie 호출
 		return;
 	}
-	
-	@RequestMapping(value = "/orgMapCode",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void orgMapCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// 사업장, 근무조 정보
-		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		//Long tenantId = (long) 38;
-		WtmInterfaceService.getOrgMapCodeIfResult(tenantId); //Servie 호출
-		return;
-	}
-	
+		
 	@RequestMapping(value = "/empHis",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void empHisIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		//Long tenantId = (long) 38;
 		WtmInterfaceService.getEmpHisIfResult(tenantId); //사원 변경정보 저장 Servie 호출
+		WtmInterfaceService.getOrgConcIfResult(tenantId); //조직장 변경정보 저장 Service 호출
 		return ;
 	}
 	
@@ -142,6 +127,7 @@ public class WtmInterfaceController {
 		return ;
 	}
 	
+	// 근태API연동용
 	@RequestMapping(value = "/workTimeIf",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setTaaApplIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
@@ -161,6 +147,21 @@ public class WtmInterfaceController {
 		return ;
 	}
 	
+	// 5분간격 배치용
+	@RequestMapping(value = "/workTimeBatch",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void setTaaApplPPIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		try {
+			Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+			
+			WtmInterfaceService.setTaaApplBatchIf(tenantId); //5분간격 근태정보 인터페이스
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return ;
+	}
+	
+	// 
 	@RequestMapping(value = "/workTimeCloseIf",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setWorkTimeCloseIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
@@ -189,17 +190,7 @@ public class WtmInterfaceController {
 	}
 	
 	
-	@RequestMapping(value = "/dataExp",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void getDataExp(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// 사원정보
-		HashMap<String, Object> reqMap = new HashMap<>();
-		reqMap.put("tenantId", Long.parseLong(request.getParameter("tenantId").toString()));
-		
-		WtmInterfaceService.getDataExp(reqMap); //근태정보 인터페이스
-		return ;
-	}
-	
-	@RequestMapping(value = "/colseDayPP",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/colseDay",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setCloseDay(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공통코드
 		System.out.println("setCloseDay start");
