@@ -139,7 +139,9 @@ a.button7 img {
 
 /*---- input ----*/
 .sheet_title input[type="text"],
-.sheet_search input[type="text"] {
+.sheet_title input[type="number"],
+.sheet_search input[type="text"],
+.sheet_search input[type="number"] {
     border: 1px solid #e0e2e5;
     padding: 0 5px;
     height: 28px;
