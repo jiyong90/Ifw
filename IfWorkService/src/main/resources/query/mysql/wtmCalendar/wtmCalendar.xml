@@ -204,22 +204,22 @@
         ) }
     </select>
     
-     <select id="updateTimeCard3" statementType="CALLABLE" parameterType="java.util.HashMap">
+    <select id="updateTimeCard3" statementType="CALLABLE" parameterType="java.util.HashMap">
         { call P_WTM_UPDATE_TIMECARD3( 
-           #{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}, 
-           #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
-           #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
-           #{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
-           #{time, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
-           #{inoutType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
-           #{entryType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
-           #{rtnYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT},
-           #{sqlErrm, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT},
-           #{excetSymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT},
-           #{excetEymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+        	#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}, 
+        	#{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{time, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{inoutType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{entryType, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN},  
+        	#{rtnYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT},
+        	#{sqlErrm, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT},
+        	#{excetSymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT},
+        	#{excetEymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
         ) }
     </select>
-    
+        
     <update id="updateEntryDateByAdm" parameterType="map">
 		<if test="insertRows!=null and insertRows.size()>0">
 		<foreach collection="insertRows" item="item" separator=";">
@@ -243,4 +243,20 @@
 		</if>
    	 </update>
    	 
+    <update id="updateEntryDateCalendar" parameterType="map">
+		UPDATE WTM_WORK_CALENDAR SET
+		<if test="inoutType.equals('IN')">
+			ENTRY_SDATE = #{inoutDateTime},
+			ENTRY_STYPE_CD =#{entryType}
+		</if>
+		<if test="inoutType.equals('OUT')">
+			ENTRY_EDATE = #{inoutDateTime},
+			ENTRY_ETYPE_CD = #{entryType}
+		</if>
+		<if test="inoutType.equals('OUTC')">
+			ENTRY_EDATE = NULL,
+			ENTRY_ETYPE_CD = NULL
+		</if>
+		WHERE TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun} AND YMD = #{stdYmd};
+   	 </update>
 </mapper>

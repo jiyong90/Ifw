@@ -4,7 +4,44 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmInoutHisMapper">
+
+	<select id="getMyUnplannedYn" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT F_WTM_GET_EMP_DAY_OPTION(#{tenantId}, #{enterCd}, #{sabun}, F_WTM_DATE_FORMAT(now(),'YMD'), 'UNPLANNED_YN') as unplannedYn
+        ]]>
+    </select>
+    
 	<select id="getInoutStatus" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT C.YMD AS ymd, 
+			       C.ENTRY_SDATE AS entrySdate, 
+			       C.ENTRY_EDATE AS entryEdate,
+			       C.HOLIDAY_YN AS holydayYn,
+			       F_WTM_GET_EMP_DAY_OPTION(C.TENANT_ID, C.ENTER_CD, C.SABUN, F_WTM_DATE_FORMAT(now(),'YMD'), 'UNPLANNED_YN') as unplanedYn,
+			       X.pSdate, 
+			       X.pEdate,
+			       F_WTM_DATE_FORMAT(X.pSdate,'YMD') AS pSymd, 
+			       F_WTM_DATE_FORMAT(X.pEdate,'YMD') AS pEymd
+			  FROM WTM_WORK_CALENDAR C
+			  LEFT OUTER JOIN (SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS pSdate, 
+			                           MAX(A.PLAN_EDATE) AS pEdate
+			                        FROM WTM_WORK_DAY_RESULT A 
+			                        WHERE A.TENANT_ID = #{tenantId}
+			                           AND A.ENTER_CD = #{enterCd}
+			                           AND A.SABUN = #{sabun}
+			                           AND A.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT') 
+			                           GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
+			                           ORDER BY A.YMD) X
+			    ON X.YMD = C.YMD
+			   AND F_WTM_DATE_FORMAT(X.pSdate, 'YMD') = F_WTM_DATE_FORMAT(now(),'YMD')
+			 WHERE C.TENANT_ID = #{tenantId}
+			      AND C.ENTER_CD = #{enterCd}
+			      AND C.SABUN = #{sabun}
+			      AND F_WTM_TO_DATE(C.YMD,'YMD') BETWEEN F_WTM_DATE_ADD(F_WTM_DATE_FORMAT(now(),'YMD'), -1, 'D') AND F_WTM_DATE_ADD(F_WTM_DATE_FORMAT(now(),'YMD'), 1, 'D')
+        ]]>
+    </select>
+    
+    <select id="getInoutStatus_old" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT X.YMD AS ymd, 
 				X.P_SDATE AS pSdate, 
@@ -34,6 +71,7 @@
         	FROM WTM_INOUT_HIS
         	WHERE INOUT_TYPE_CD IN ('GO', 'BACK')
         		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
+        	    AND DATE_FORMAT(INOUT_DATE, "%Y%c%d") = DATE_FORMAT(now(), "%Y%c%d")
         		ORDER BY INOUT_DATE DESC LIMIT 1)
         	UNION ALL 
         	(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
@@ -59,15 +97,17 @@
 				INOUT_TYPE_CD,
 				ENTRY_TYPE_CD,
 				YMD,
-				INOUT_DATE)
+				INOUT_DATE,
+				ENTRY_NOTE)
 			VALUES
 				(#{tenantId},
 				#{enterCd} ,
 				#{sabun} ,
-				#{inoutTypeCd} ,
-				#{entryTypeCd} ,
+				#{inoutType} ,
+				#{entryType} ,
 				now(), 
-				#{today}
+				#{inoutDate},
+				#{entryNote}
 				)
         ]]>
     </update>
@@ -103,7 +143,7 @@
 				) X	
 			GROUP BY X.TENANT_ID, X.ENTER_CD, X.SABUN, X.YMD	
 			ORDER BY X.YMD
-	        ]]>
+	    ]]>
     </select>
     
     <select id="getMyInoutHistory" parameterType="map" resultType="hashmap">
@@ -135,4 +175,33 @@
 				AND F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHIS') = F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS');
 	        ]]>
     </select>
+    
+   	<select id="getEntryStatus" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT DATE_FORMAT(A.ENTRY_SDATE, "%Y%c%d%H%i%s") as entrySdate
+				, DATE_FORMAT(A.ENTRY_EDATE, "%Y%c%d%H%i%s") as entryEdate
+				, DATE_FORMAT((SELECT max(PLAN_EDATE) as ymd
+					FROM WTM_WORK_DAY_RESULT 
+					WHERE TENANT_ID = P_TENANT_ID AND ENTER_CD = P_ENTER_CD AND SABUN = P_SABUN 
+					AND YMD = DATE_SUB(STR_TO_DATE(_ymd,"%Y%c%d"), interval 1 day)),"%Y%c%d")  AS SUB_YMD
+			FROM WTM_WORK_CALENDAR A
+			WHERE TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun} AND YMD =LEFT(#{inoutDate}, 8);
+	
+        ]]>
+    </select>
+    
+    <select id="getGoBackStatus" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT CASE WHEN INOUT_TYPE_CD = 'GO' THEN 'BACK' ELSE 'GO' END AS inoutType
+        		, DATE_FORMAT(INOUT_DATE, "%Y%c%d%H%i00") AS exceptSYmd
+   	   		FROM WTM_INOUT_HIS 
+       		WHERE TENANT_ID = #{tenantId} 
+            	AND ENTER_CD = #{enterCd} 
+                AND SABUN =  #{sabun}
+                AND DATE_FORMAT(INOUT_DATE, "%Y%c%d") = DATE_FORMAT(now(), "%Y%c%d")
+                AND INOUT_TYPE_CD IN ('GO', 'BACK') ORDER BY INOUT_DATE DESC LIMIT 1
+        ]]>
+    </select>
+ 
+ 
 </mapper>

@@ -151,7 +151,7 @@ public class WtmIntfController {
 			
 			logger.debug("getParameter s2 " + paramMap.toString());
 		
-			rp = inoutService.updateTimecard(paramMap);
+			inoutService.updateTimecard(paramMap);
 			
 			logger.debug("/intf/inoutCheck rp : " + rp.toString());
 

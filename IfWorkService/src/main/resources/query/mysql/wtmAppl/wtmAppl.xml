@@ -102,6 +102,9 @@
 			     , A.APPL_IN_SABUN AS applInSabun
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN) AS applKey
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+             	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -137,6 +140,9 @@
 			     , L.APPR_STATUS_CD AS apprStatusCd
 			     , L.APPR_TYPE_CD AS apprTypeCd
 			     , L.APPR_OPINION AS apprOpinion
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN) AS applKey
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+             	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -170,6 +176,9 @@
 			     , L.APPR_STATUS_CD AS apprStatusCd
 			     , L.APPR_TYPE_CD AS apprTypeCd
 			     , L.APPR_OPINION AS apprOpinion
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN) AS applKey
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+             	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -204,4 +213,56 @@
 			ORDER BY A.APPL_YMD DESC
 		]]>
     </select>
+    
+    <select id="getApplValidation" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT 
+				CASE WHEN X.YMD < F_WTM_DATE_FORMAT(X.SDAY, 'YMD') OR X.YMD > F_WTM_DATE_FORMAT(X.EDAY, 'YMD') THEN 'N' 
+					ELSE 'Y' END AS valDate,
+				CONCAT(STR_TO_DATE(X.SDAY, '%Y-%m-%d'), ' ~ ', STR_TO_DATE(X.EDAY, '%Y-%m-%d')) AS pDate,
+				CASE WHEN X.HOLIDAY_YN = 'Y' AND REPLACE(#{shm},':','') != '' AND REPLACE(#{ehm},':','') != '' AND (REPLACE(#{sHm},':','') < X.HOL_IN_SHM OR REPLACE(#{ehm},':','') > X.HOL_IN_EHM) THEN 'N' 
+					WHEN X.HOLIDAY_YN = 'N' AND REPLACE(#{shm},':','') != '' AND REPLACE(#{ehm},':','') != '' AND (REPLACE(#{shm},':','') < X.IN_SHM OR REPLACE(#{ehm},':','') > X.IN_EHM) THEN 'N'
+					ELSE 'Y' END AS valTime,
+				CASE WHEN X.HOLIDAY_YN = 'Y' THEN CONCAT(LEFT(X.HOL_IN_SHM, 2), ':', RIGHT(X.HOL_IN_SHM, 2), ' ~ ', LEFT(X.HOL_IN_EHM, 2), ':', RIGHT(X.HOL_IN_EHM, 2)) 
+					ELSE CONCAT(LEFT(X.IN_SHM, 2), ':', RIGHT(X.IN_SHM, 2), ' ~ ', LEFT(X.IN_EHM, 2), ':', RIGHT(X.IN_EHM, 2)) END AS pTime,
+				CASE WHEN REPLACE(#{ehm},':','') = '' OR REPLACE(#{shm},':','') = '' OR REPLACE(#{ehm},':','')  IS NULL OR REPLACE(#{shm},':','') IS NULL THEN 'Y' 
+					WHEN X.HOLIDAY_YN = 'N' AND #{calcMinute} % X.TIME_UNIT = 0 THEN 'Y' 
+					WHEN X.HOLIDAY_YN = 'Y' AND #{calcMinute} % X.HOL_APPL_TYPE_CD = 0 THEN 'Y'
+					ELSE 'N' END AS valUnit,
+				CASE WHEN X.HOLIDAY_YN = 'Y' THEN X.HOL_APPL_TYPE_CD ELSE X.TIME_UNIT END AS pUnit,
+				CASE WHEN REPLACE(#{ehm},':','') = '' OR REPLACE(#{shm},':','') = '' THEN 'Y' 
+					WHEN X.HOLIDAY_YN = 'N' THEN 'Y'
+					WHEN X.HOLIDAY_YN = 'Y' AND  #{calcMinute} <= HOL_MAX_MINUTE THEN 'Y'
+					ELSE 'N' END AS valHunit,
+				X.HOL_MAX_MINUTE AS pHunit,
+				CASE WHEN #{subYn} = 'Y' AND REPLACE(#{subsSymd},'.','') < F_WTM_DATE_FORMAT(X.SSDAY, 'YMD') OR REPLACE(#{subsSymd},'.','') > F_WTM_DATE_FORMAT(X.SEDAY, 'YMD') THEN 'N' ELSE 'Y' END AS valSdate,
+				CONCAT(STR_TO_DATE(X.SSDAY, '%Y-%m-%d'), ' ~ ', STR_TO_DATE(X.SEDAY, '%Y-%m-%d')) AS pSdate
+			FROM (SELECT C.HOLIDAY_YN, 
+				C.YMD, 
+				F_WTM_DATE_FORMAT(NOW(), 'YMD'),
+				A.SUBS_SDAY,
+				A.SUBS_EDAY,
+				A.IN_SHM,
+				A.IN_EHM,
+				A.HOL_IN_SHM,
+				A.HOL_IN_EHM,
+				A.TIME_UNIT,
+				A.HOL_APPL_TYPE_CD,
+				A.HOL_MAX_MINUTE,
+				CASE WHEN A.OT_APPL_SDAY IS NOT NULL THEN DATE_ADD(NOW(), INTERVAL -A.OT_APPL_SDAY DAY) ELSE F_WTM_DATE_FORMAT(NOW(), 'YMD') END AS SDAY,
+				CASE WHEN A.OT_APPL_EDAY IS NOT NULL THEN DATE_ADD(NOW(), INTERVAL A.OT_APPL_EDAY DAY) ELSE F_WTM_DATE_FORMAT(NOW(), 'YMD') END AS EDAY,
+				CASE WHEN A.SUBS_SDAY IS NOT NULL THEN DATE_ADD(STR_TO_DATE(C.YMD, '%Y%m%d'), INTERVAL -A.SUBS_SDAY DAY) ELSE F_WTM_DATE_FORMAT(STR_TO_DATE(C.YMD, '%Y%m%d'), 'YMD') END AS SSDAY,
+				CASE WHEN A.SUBS_EDAY IS NOT NULL THEN DATE_ADD(STR_TO_DATE(C.YMD, '%Y%m%d'), INTERVAL A.SUBS_EDAY DAY) ELSE F_WTM_DATE_FORMAT(STR_TO_DATE(C.YMD, '%Y%m%d'), 'YMD') END AS SEDAY
+			FROM WTM_WORK_CALENDAR C
+			JOIN WTM_APPL_CODE A 
+				ON A.TENANT_ID = C.TENANT_ID 
+				AND C.ENTER_CD=A.ENTER_CD 
+				AND A.APPL_CD=#{applCd}
+			WHERE C.TENANT_ID=#{tenantId}
+				AND C.ENTER_CD=#{enterCd}
+				AND C.SABUN=#{sabun}
+				AND C.YMD=REPLACE(#{ymd} ,'.','') ) X
+		]]>
+    </select>
+    
 </mapper>
