@@ -234,10 +234,14 @@
 								var classNames = [];
 								//classNames.push(f.applCd);
 								classNames.push(f.workTypeCd);
+											
+								var workTypeCd = f.workTypeCd;
+								if(f.workTypeCd==null || f.workTypeCd=='' || !f.hasOwnProperty('workTypeCd'))
+									workTypeCd = f.applCd;
 								
 								$this.addEvent({
 									//id: 'workRange.'+f.applCd+'.'+sYmd,
-									id: 'workRange.'+f.workTypeCd+'.'+sYmd,
+									id: 'workRange.'+workTypeCd+'.'+sYmd,
 									start: sYmd,
 		  		  		        	end: eYmd,
 		  		  		        	rendering: 'background'
