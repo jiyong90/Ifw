@@ -41,7 +41,6 @@ public class CustomOauthFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-	
 		System.out.println("== customOauthFilter " + ((HttpServletRequest)request).getRequestURI());
 		
 		if(freePassPath != null && freePassPath.trim().length() != 0){
@@ -72,10 +71,12 @@ public class CustomOauthFilter implements Filter {
 				 if (cookies != null) {
 				      for (Cookie cookie : cookies) {
 				    	  if(cookie.getName().equals("Authorization")) {
+				    		  
 				    		  bearer = cookie.getValue();
 				    		  break;
 				    	  }
 				      }
+				      System.out.println("cookie bearer ::: " + bearer);
 				 }
 			 }
 		}

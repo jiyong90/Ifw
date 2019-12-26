@@ -23,6 +23,8 @@ public class IfWorkServiceApplication {
 	@Autowired
 	@Qualifier("customOauthFilter")
     private javax.servlet.Filter customOauthFilter;
+	
+
 
 //	@Bean
 //	public JedisConnectionFactory connectionFactory()
@@ -52,10 +54,11 @@ public class IfWorkServiceApplication {
 	@Bean 
 	public FilterRegistrationBean getCustomOauthFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(customOauthFilter);
-		registrationBean.addInitParameter("freePassPath", "/login,/we,/info,/mobile,/certificate,/intf");
+		registrationBean.addInitParameter("freePassPath", "/login,/logout,/we,/info,/mobile,/certificate,/intf");
 		return registrationBean;
 	    
 	}
+	
 
 }
 

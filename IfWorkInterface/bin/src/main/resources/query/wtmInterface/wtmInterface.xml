@@ -4,83 +4,88 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.isu.ifw.mapper.WtmInterfaceMapper">
-	<select id="getWtmCodeId" parameterType="map" resultType="hashmap">
+	
+	<select id="getCode" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT CODE_ID
-			  FROM WTM_CODE
-			 WHERE TENANT_ID = #{tenantId}
-			   AND ENTER_CD = #{enterCd}
-			   AND GRP_CODE_CD = #{grpCodeCd}
-			   AND CODE_CD = #{codeCd}
-			   AND CODE_NM = #{codeNm}
-			   AND SYMD = #{symd}
+			SELECT ENTER_CD, GRCODE_CD, CODE, CODE_NM, SYMD, NOTE
+			  FROM V_IF_WTM_CODE
+			 WHERE GRCODE_CD IN ('H20010', 'H20020', 'H20030', 'H10050', 'H10110', 'T10003', 'W20010')
+			   AND CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD, GRCODE_CD
         ]]>
     </select>
     
-    <update id="insertWtmCode" parameterType="hashmap">
-		<![CDATA[
-			INSERT INTO WTM_CODE
-			(
-				  TENANT_ID
-				, ENTER_CD 
-				, GRP_CODE_CD 
-				, CODE_CD 
-				, CODE_NM 
-				, SYMD 
-				, EYMD 
-				, NOTE
-				, UPDATE_DATE
-				, UPDATE_ID
-			) VALUES (
-				  #{tenantId}
-				, #{enterCd}
-				, #{grpCodeCd}
-				, #{codeCd}
-				, #{codeNm}
-				, #{symd}
-				, #{eymd}
-				, #{note}
-				, NOW()
-				, 0
-			)
-		]]>
-	</update>
-	
-	<update id="updateWtmCode" parameterType="hashmap">
-		<![CDATA[
-			UPDATE WTM_CODE SET
-			    NOTE = #{note}
-			  , UPDATE_DATE = NOW()
-			  , UPDATE_ID = 0
-			WHERE CODE_ID = #{codeId}
-		]]>
-	</update>
-	
-	<update id="updateWtmCodeEymd" parameterType="hashmap">
-		<![CDATA[
-			UPDATE WTM_CODE SET
-			    EYMD = DATE_FORMAT(DATE_ADD(STR_TO_DATE(#{symd}, '%Y%m%d'), INTERVAL - 1 DAY), '%Y%m%d')
-			  , UPDATE_DATE = NOW()
-			  , UPDATE_ID = 0
-			WHERE TENANT_ID = #{tenantId}
-			  AND ENTER_CD = #{enterCd}
-			  AND GRP_CODE_CD = #{grpCodeCd}
-			  AND CODE_CD = #{codeCd}
-			  AND SYMD <> #{symd}
-			  AND SYMD < #{symd}
-		]]>
-	</update>
-	
-	<select id="getWtmCodeEymd" parameterType="map" resultType="hashmap">
+    <select id="getHoliday" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT DATE_FORMAT(DATE_ADD(STR_TO_DATE(SYMD, '%Y%m%d'), INTERVAL - 1 DAY), '%Y%m%d') AS EYMD
-			  FROM WTM_CODE
-			 WHERE TENANT_ID = #{tenantId}
-			   AND ENTER_CD = #{enterCd}
-			   AND GRP_CODE_CD = #{grpCodeCd}
-			   AND CODE_CD = #{codeCd}
-			   AND SYMD <> #{symd}
-			   AND SYMD > #{symd}
+			SELECT ENTER_CD, LOCATION_CD, YY||MM||DD AS YMD, HOLIDAY_NM, FESTIVE_YN, PAY_YN
+			  FROM V_IF_WTM_HOLIDAY
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getGnt" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, GNT_CD, GNT_NM, GNT_GUBUN_CD, HOL_INCL_YN, REQUEST_USE_TYPE, WORK_YN
+			  FROM V_IF_TAA_CODE
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getOrg" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, ORG_CD, ORG_NM, SDATE, EDATE, MEMO
+			  FROM V_IF_ORG_CODE
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getOrgChart" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT DISTINCT ENTER_CD, ORG_CHART_NM, SDATE, EDATE, MEMO
+			  FROM V_IF_ORG_CHART
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
+			 ORDER BY SDATE
+        ]]>
+    </select>
+    
+    <select id="getOrgChartDtl" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT ORG_CD, PRIOR_ORG_CD, SEQ, ORG_LEVEL, ORDER_SEQ
+			  FROM V_IF_ORG_CHART
+			 WHERE ENTER_CD = #{enterCd}
+			   AND sdate = #{sdate}
+			 ORDER BY ORDER_SEQ
+        ]]>
+    </select>
+    
+    <select id="getOrgMap" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, MAP_TYPE_CD, MAP_CD, MAP_NM, SDATE, EDATE, NOTE
+			  FROM V_IF_ORG_MAP_CODE
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD, MAP_TYPE_CD
+        ]]>
+    </select>
+    
+    <select id="getEmp" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, SYMD, STATUS_CD, ORG_CD, BUSINESS_PLACE_CD
+			     , DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, ORG_PATH, LEADER_YN
+			  FROM V_IF_WTM_EMPHIS
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
+			 ORDER BY ENTER_CD, SABUN, SYMD
+        ]]>
+    </select>
+    
+    <select id="getEmpAddr" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMAIL, HAND_PHONE, NOTE
+			  FROM V_IF_EMP_ADDR
+			 WHERE CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS') 
+			 ORDER BY ENTER_CD
         ]]>
     </select>
 </mapper>

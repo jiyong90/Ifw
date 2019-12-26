@@ -1,10 +1,13 @@
 package com.isu.ifw.oauth;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.authentication.TokenExtractor;
@@ -21,6 +24,37 @@ class CustomExtractor implements TokenExtractor {
         
     @Override
     public Authentication extract(HttpServletRequest request)  {
+    	
+    	System.out.println("extract ::::::::");
+		
+		HttpServletRequest req = (HttpServletRequest) request;
+		
+		Enumeration<String> er = req.getAttributeNames();
+		System.out.println("extract getAttributeNames::::::::");
+		while(er.hasMoreElements()) {
+			String key = er.nextElement();
+			System.out.println(key + " : " + req.getAttribute(key));
+		}
+		System.out.println("extract getAttributeNames::::::::");
+		
+		Enumeration<String> pr = req.getParameterNames();
+		System.out.println("extract getParameter::::::::");
+		while(pr.hasMoreElements()) {
+			String key = pr.nextElement();
+			System.out.println(key + " : " + req.getParameter(key));
+		}
+		System.out.println("extract getParameter::::::::");
+		
+
+		System.out.println("extract getSession::::::::");
+		Enumeration<String> sess = 
+		req.getSession().getAttributeNames();
+		while(sess.hasMoreElements()) {
+			String ses = sess.nextElement();
+			System.out.println(ses + " : " + req.getSession().getAttribute(ses)); 
+		}
+		System.out.println("extract getSession::::::::");
+		
     	String token = "";
    	
     	if(request.getHeader(TOKEN_KEY_JWT) != null) {
