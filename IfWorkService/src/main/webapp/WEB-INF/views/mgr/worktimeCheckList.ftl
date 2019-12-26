@@ -1,8 +1,8 @@
 <div id="worktimeCheckList">
 	<!-- 근무 상세보기 modal start -->
 	<div class="modal fade" id="worktimeDetailModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
+        <div class="modal-dialog modal-xl-more" role="document">
+            <div class="modal-content rounded-0">
                 <div class="modal-header">
                     <h5 class="modal-title">근무 상세</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -18,19 +18,20 @@
 										<div id="popupTitle" class="float-left title"></div>
 									</div>
 								</div>
-								<script type="text/javascript"> createIBSheet("sheet2", "100%", fullsheetH, "kr"); </script>
+								<script type="text/javascript"> createIBSheet("sheet2", "100%", sheetH90, "kr"); </script>
 							</td>
 						</tr>
 					</table>
+					
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- 결재의견 modal end -->
- 	<div class="container-fluid pt-3 pb-3 bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 	 		<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -44,8 +45,6 @@
 								<td>
 									<span class="label">근무 기준 </span>
 									<select id="searchType" name="searchType" class="box">
-										<option value="WEEK">주별</option>
-										<option value="TERM">기간별</option>
 									</select>
 								</td>
 								<td>
@@ -59,7 +58,7 @@
 										<option value="BASE">기본</option>
 										<option value="OT">연장</option>
 									</select>
-									<input type="text" id="searchMinute" name="searchMinute" />
+									<input type="number" id="searchMinute" name="searchMinute" />
 									<select id="searchCondition" name="searchCondition" class="box">
 										<option value=""></option>
 										<option value="more">이상</option>
@@ -90,6 +89,9 @@
 										<li><span class="flag under"></span><span>미만</span></li>
 									</ul>
 								</div>
+								<ul class="float-right btn-wrap">
+									<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
+								</ul>
 							</div>
 						</div>
 						<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>
@@ -109,6 +111,10 @@
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
+	    
+	  	//근무기준
+		var workSearchTypeCd = convCode(codeList("${rc.getContextPath()}/code/list", "WORK_SEARCH_TYPE_CD"), ""); 
+        $("#searchType").append(workSearchTypeCd[2]);
 		
 		var initdata1 = {};
 		
@@ -193,6 +199,11 @@
 		case "Search":
 			sheet1.DoSearch( "${rc.getContextPath()}/worktime/check/list" , $("#sheetForm").serialize());
 			break;
+		case "Down2Excel":
+			var downcol = makeHiddenSkipCol(sheet1);
+			var param = {DownCols:downcol, SheetDesign:1, Merge:1};
+			sheet1.Down2Excel(param); 
+			break;
 		}
 	}
    	
@@ -228,15 +239,19 @@
 				window.parent.location.href = loginUrl;
 			}
 			var row = sheet1.LastRow();
-			for(var i=2; i<=row; i++){
-				var diffMinute = sheet1.GetCellValue(i,"diffMinute");
-				
-				if (diffMinute > 0){
-					sheet1.SetRowBackColor(i,"#da9694");					
-				} else if (diffMinute < 0){
-					sheet1.SetRowBackColor(i,"#fabf8f");
-				} 
+			
+			if($("#searchCondition").val()!='') {
+				for(var i=2; i<=row; i++){
+					var diffMinute = sheet1.GetCellValue(i,"diffMinute");
+					
+					if (diffMinute > 0){
+						sheet1.SetRowBackColor(i,"#da9694");					
+					} else if (diffMinute < 0){
+						sheet1.SetRowBackColor(i,"#fabf8f");
+					} 
+				}
 			}
+			
 		} catch (ex) {
 			alert("OnSearchEnd Event Error " + ex);
 		}
