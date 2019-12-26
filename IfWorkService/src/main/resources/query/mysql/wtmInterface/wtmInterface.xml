@@ -410,7 +410,7 @@
 			, JOB_GROUP_CD
 			, JOB_CD
 			, PAY_TYPE_CD
-			, ORG_PATH
+			, LEADER_YN
 			, NOTE
 		) VALUES 
 		<foreach collection="list" item="item" separator=", ">
@@ -431,7 +431,7 @@
 			, #{item.jobGroupCd}
 			, #{item.jobCd}
 			, #{item.payTypeCd}
-			, #{item.orgPath}
+			, #{item.leaderYn}
 			, #{item.note}
 			)
 		</foreach>
