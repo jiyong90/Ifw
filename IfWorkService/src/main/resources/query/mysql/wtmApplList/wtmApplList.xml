@@ -10,7 +10,7 @@
 		       , C.SABUN AS sabun
 		       , F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, A.YMD) AS orgNm
 		       , C.EMP_NM AS empNm
-		       , DECODE(A.HOLIDAY_YN, 'Y', '휴일근무', '연장근무') AS applNm
+		       , CASE WHEN A.HOLIDAY_YN = 'Y' THEN '휴일근무' ELSE '연장근무' END AS applNm
 		       , A.YMD AS ymd
 		       , A.OT_SDATE AS otSdate
 		       , A.OT_EDATE AS otEdate
@@ -33,7 +33,7 @@
 		    AND B.ENTER_CD = #{enterCd}
 		    AND A.YMD BETWEEN #{sYmd} AND #{eYmd}
 		  <if test="searchValue!=''">
-		  	AND (C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE #{searchKeyword} || '%')
+		  	AND (C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT(#{searchKeyword}, '%'))
 		  </if>
 		  <if test="orgList!=null">
 		   AND C.ORG_CD IN (NULL, 
