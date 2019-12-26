@@ -7,28 +7,31 @@
 	
 	<select id="getApplyList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT FLEXIBLE_APPLY_ID AS flexibleApplyId
-        		 , FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
-        		 , (SELECT WORK_TYPE_CD FROM WTM_FLEXIBLE_STD_MGR A WHERE A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID) AS workTypeCd
-        		 , TENANT_ID AS tenantId
-        		 , ENTER_CD AS enterCd
-        		 , APPLY_NM AS applyNm
-        		 , USE_SYMD AS useSymd
-        		 , USE_EYMD AS useEymd
-        		 , REPEAT_TYPE_CD AS repeatTypeCd
-        		 , REPEAT_CNT AS repeatCnt
-        		 , WORK_MINUTE AS workMinute
-        		 , OT_MINUTE AS otMinute
+        	SELECT B.FLEXIBLE_APPLY_ID AS flexibleApplyId
+        		 , B.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+        		 , M.WORK_TYPE_CD AS workTypeCd
+        		 , B.TENANT_ID AS tenantId
+        		 , B.ENTER_CD AS enterCd
+        		 , B.APPLY_NM AS applyNm
+        		 , B.USE_SYMD AS useSymd
+        		 , B.USE_EYMD AS useEymd
+        		 , B.REPEAT_TYPE_CD AS repeatTypeCd
+        		 , B.REPEAT_CNT AS repeatCnt
+        		 , B.WORK_MINUTE AS workMinute
+        		 , B.OT_MINUTE AS otMinute
         		 , '0' AS selectImg
-        		 , APPLY_YN as applyYn
-			     , CASE WHEN F_WTM_NVL(APPLY_YN, 'N') = 'Y' THEN '완료'
-					    ELSE CONCAT('<a class="basic" onClick="setEndConfirm(', FLEXIBLE_APPLY_ID, ')">확정</a>') END AS endImg
+        		 , CASE WHEN M.WORK_TYPE_CD='ELAS' THEN '1' ELSE NULL END AS planImg
+        		 , B.APPLY_YN as applyYn
+			     , CASE WHEN F_WTM_NVL(B.APPLY_YN, 'N') = 'Y' THEN '완료'
+					    ELSE CONCAT('<a class="basic" onClick="setEndConfirm(', B.FLEXIBLE_APPLY_ID, ')">확정</a>') END AS endImg
 			     , (SELECT COUNT(*) FROM WTM_FLEXIBLE_APPLY_EMP_TEMP A WHERE B.FLEXIBLE_APPLY_ID = A.FLEXIBLE_APPLY_ID) AS CNT
-        		 , NOTE AS note
+        		 , B.NOTE AS note
 			  FROM WTM_FLEXIBLE_APPLY B
-			 WHERE TENANT_ID = #{tenantId}
-			   AND ENTER_CD = #{enterCd} 
-			   AND REPLACE(#{sYmd}, '-', '') BETWEEN USE_SYMD AND USE_EYMD
+			  JOIN WTM_FLEXIBLE_STD_MGR M
+			    ON B.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			 WHERE B.TENANT_ID = #{tenantId}
+			   AND B.ENTER_CD = #{enterCd} 
+			   AND REPLACE(#{sYmd}, '-', '') BETWEEN B.USE_SYMD AND B.USE_EYMD
         ]]>
     </select>
     

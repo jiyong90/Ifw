@@ -968,8 +968,12 @@
          		});
          		
          		val.map(function(v){
+         			var workTypeCd = v.workTypeCd;
+					if(v.workTypeCd==null || v.workTypeCd=='' || !v.hasOwnProperty('workTypeCd'))
+						workTypeCd = v.applCd;
+         			
     				var o = {
-    					workTypeCd : v.workTypeCd,
+    					workTypeCd : workTypeCd,
     					flexibleNm : v.flexibleNm
     				};
     				

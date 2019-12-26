@@ -46,57 +46,55 @@
                                 	</template>
                                 </div>
                             </div>
-                            <!--  
-                            <template v-if="appl.applCd=='ELAS'">
                             <div class="accordion-wrap inner-wrap">
-                                <ul id="accordion" class="accordion">
-                                    <li>
-                                        <div class="link">2019.06.18 ~ 2019.06.18<i class="ico arrow-down"></i></div>
+                                <ul id="accordion" class="accordion" v-if="appl.hasOwnProperty('elasDetails')">
+                                    <li v-for="e in appl.elasDetails">
+                                        <div class="link" @click="accordionDropdown($event.target)">{{moment(e.startYmd).format('YYYY-MM-DD')}} ~ {{moment(e.endYmd).format('YYYY-MM-DD')}}<i class="ico arrow-down"></i></div>
                                         <div class="submenu">
                                             <ul class="all-time-wrap">
                                                 <li>
                                                     <span class="title">근무시간</span>
-                                                    <span class="time bold">40</span>
+                                                    <span class="time bold">{{minuteToHHMM(e.workMinute, 'detail')}}</span>
                                                 </li>
                                                 <li>
                                                     <div class="total">
                                                         <span class="title">연장합산</span>
-                                                        <span class="time bold">40</span>
+                                                        <span class="time bold">{{minuteToHHMM(e.otMinute, 'detail')}}</span>
                                                     </div>
                                                     <ul class="time-list">
                                                         <li>
                                                             <span class="title">조출시간</span>
-                                                            <span class="time">8</span>
+                                                            <span class="time">{{minuteToHHMM(e.otbMinute, 'detail')}}</span>
                                                         </li>
                                                         <li>
                                                             <span class="title">잔업시간</span>
-                                                            <span class="time">20</span>
+                                                            <span class="time">{{minuteToHHMM(e.otaMinute, 'detail')}}</span>
                                                         </li>
                                                         <li>
                                                             <span class="title">휴일시간</span>
-                                                            <span class="time">12</span>
+                                                            <span class="time">{{minuteToHHMM(e.holidayMinute, 'detail')}}</span>
                                                         </li>
                                                     </ul>
                                                 </li>
                                             </ul>
+                                            <template v-if="e.hasOwnProperty('details')">
                                             <p class="title time-desc-title">출,퇴근시간</p>
                                             <ul class="time-desc-wrap">
-                                                <li>
-                                                    <div class="date">2019.06.18(금) 09:00~18:00</div>
+                                                <li v-for="d in e.details">
+                                                    <div class="date">{{moment(d.ymd).format('YYYY-MM-DD')}}({{d.weekday}}) {{moment(d.ymd+' '+d.planSdate).format('HH:mm')}}~{{moment(d.ymd+' '+d.planEdate).format('HH:mm')}}</div>
                                                     <ul class="time-desc">
-                                                        <li><span class="title">근무시간</span>8시간</li>
-                                                        <li><span class="title">조출시간</span>1시간</li>
-                                                        <li><span class="title">잔업시간</span>1시간</li>
-                                                        <li><span class="title">휴일시간</span>1시간</li>
+                                                        <li><span class="title">근무시간</span><span class="time">{{minuteToHHMM(d.workMinute, 'detail')}}</span></li>
+                                                        <li><span class="title">조출시간</span><span class="time">{{minuteToHHMM(d.otbMinute, 'detail')}}</span></li>
+                                                        <li><span class="title">잔업시간</span><span class="time">{{minuteToHHMM(d.otaMinute, 'detail')}}</span></li>
+                                                        <li><span class="title">휴일시간</span><span class="time">{{minuteToHHMM(d.holidayMinute, 'detail')}}</span></li>
                                                     </ul>
                                                 </li>
                                             </ul>
+                                            </template>
                                         </div>
                                     </li>
                         		</ul>
                         	</div>
-                            </template>
-                            -->
                         </div>
                         <!--  
                         <div class="btn-wrap text-center">
@@ -531,7 +529,7 @@
 	    		} */
 	    		this.appl = appr.appl;
 	    		this.appl['applCd'] = appr.applCd;
-	    		console.log(this.appl);
+	    		//console.log(this.appl);
 	    		
 	    		if(appr.applCd=='OT' || appr.applCd=='OT_CAN') {
 	    			//연장근무신청서
@@ -795,6 +793,17 @@
 					}
 				});
 					
+         	},
+         	accordionDropdown: function(target) {
+         		var $el = $('#accordion');
+         		$this = $(target),
+                $next = $this.next();
+
+                $next.slideToggle();
+                $this.parent().toggleClass('open');
+                
+                $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+
          	}
 	    }
    	});

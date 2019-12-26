@@ -25,7 +25,7 @@
 		     , CONCAT(FLOOR((T.APPR_WORK_MINUTE+T.APPR_OT_MINUTE)/60),':',LPAD(MOD((T.APPR_WORK_MINUTE+T.APPR_OT_MINUTE),60),2,'0')) AS apprMinute
 			<choose>
 			    <when test="searchValue=='ALL'">
-	     		, T.APPR_WORK_MINUTE+T.APPR_OT_MINUTE - T.STD_WORK_MINUTE+T.STD_OT_MINUTE AS diffMinute
+	     		, (T.APPR_WORK_MINUTE+T.APPR_OT_MINUTE) - (T.STD_WORK_MINUTE+T.STD_OT_MINUTE) AS diffMinute
 	     		</when>
 	     		<when test="searchValue=='BASE'">
 	     		, T.APPR_WORK_MINUTE - T.STD_WORK_MINUTE AS diffMinute
@@ -37,38 +37,51 @@
 	     	, 0 AS worktimeDetail
 	     	, T.NOTE AS note
   		  FROM (
-	  		SELECT T.TENANT_ID
-			     , T.ENTER_CD
-			     , F_WTM_GET_EMP_ORG_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, 'YMD')) AS ORG_NM
-			     , T.SABUN
-			     , F_WTM_GET_EMP_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, 'YMD')) AS EMP_NM
-			     , T.WORK_TYPE_CD 
-			     , F_WTM_GET_FLEXIBLE_NM(T.TENANT_ID, T.ENTER_CD, T.SABUN, F_WTM_DATE_FORMAT(T.FLEXIBLE_SDATE, 'YMD')) AS FLEXIBLE_NM
-			     , T.FLEXIBLE_SDATE
-			     , T.FLEXIBLE_EDATE
-			     , CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_SDATE ELSE T.WEEK_SDATE END AS WEEK_SDATE
-			     , CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_EDATE ELSE T.WEEK_EDATE END AS WEEK_EDATE
-			     , CASE WHEN T.WORK_TYPE_CD IN ('SELE_F','SELE_C') THEN E.WORK_MINUTE
-			     			WHEN T.WORK_TYPE_CD = 'ELAS' THEN SUM(T.APPR_WORK_MINUTE)
+	  		SELECT E.TENANT_ID
+			     , E.ENTER_CD
+			     , F_WTM_GET_ORG_NM(E.TENANT_ID, E.ENTER_CD, H.ORG_CD, E.SYMD) AS ORG_NM
+			     , E.SABUN
+			     , H.EMP_NM
+			     , E.WORK_TYPE_CD
+			     , M.FLEXIBLE_NM
+			     , CASE WHEN T.FLEXIBLE_SDATE IS NULL THEN E.SYMD ELSE T.FLEXIBLE_SDATE END AS FLEXIBLE_SDATE
+			     , CASE WHEN T.FLEXIBLE_EDATE IS NULL THEN E.EYMD ELSE T.FLEXIBLE_EDATE END AS FLEXIBLE_EDATE
+			     , CASE WHEN CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_SDATE ELSE T.WEEK_SDATE END IS NULL THEN E.SYMD 
+				  			ELSE CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_SDATE ELSE T.WEEK_SDATE END END AS WEEK_SDATE
+			     , CASE WHEN CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_EDATE ELSE T.WEEK_EDATE END IS NULL THEN E.EYMD 
+				  			ELSE CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_EDATE ELSE T.WEEK_EDATE END END AS WEEK_EDATE
+			     , CASE WHEN E.WORK_TYPE_CD IN ('SELE_F','SELE_C') THEN E.WORK_MINUTE
+			     			WHEN E.WORK_TYPE_CD = 'ELAS' THEN SUM(T.APPR_WORK_MINUTE)
 				  			ELSE 40 * 60 END AS STD_WORK_MINUTE
-			     , CASE WHEN T.WORK_TYPE_CD IN ('SELE_F','SELE_C') THEN E.OT_MINUTE
+			     , CASE WHEN E.WORK_TYPE_CD IN ('SELE_F','SELE_C') THEN E.OT_MINUTE
 				  			ELSE 12 * 60 END AS STD_OT_MINUTE
 			     , SUM(APPR_WORK_MINUTE) AS APPR_WORK_MINUTE
 			     , SUM(APPR_OT_MINUTE) AS APPR_OT_MINUTE
 			     , T.NOTE
-			  FROM WTM_WORK_TERM_TIME T
-			  JOIN WTM_FLEXIBLE_EMP E
-			    ON T.WORK_TYPE_CD = E.WORK_TYPE_CD
-			   AND T.TENANT_ID = E.TENANT_ID
-			   AND T.ENTER_CD = E.ENTER_CD
-			   AND T.SABUN = E.SABUN
-			   AND T.FLEXIBLE_SDATE = E.SYMD
-			   AND T.FLEXIBLE_EDATE = E.EYMD
+			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_EMP_HIS H
 			    ON E.TENANT_ID = H.TENANT_ID
 			   AND E.ENTER_CD = H.ENTER_CD
 			   AND E.SABUN = H.SABUN
 			   AND E.SYMD BETWEEN H.SYMD AND H.EYMD
+			  JOIN WTM_FLEXIBLE_STD_MGR M
+			    ON E.TENANT_ID = M.TENANT_ID
+			   AND E.ENTER_CD = M.ENTER_CD
+			   AND E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			  LEFT OUTER JOIN WTM_WORK_TERM_TIME T
+			    ON T.WORK_TYPE_CD = E.WORK_TYPE_CD
+			   AND T.TENANT_ID = E.TENANT_ID
+			   AND T.ENTER_CD = E.ENTER_CD
+			   AND T.SABUN = E.SABUN
+			   AND (#{searchType}='TERM' AND T.WORK_TYPE_CD IN ('SELE_F','SELE_C') 
+			        AND E.SYMD BETWEEN T.FLEXIBLE_SDATE AND T.FLEXIBLE_EDATE AND E.EYMD BETWEEN T.FLEXIBLE_SDATE AND T.FLEXIBLE_EDATE
+					OR #{searchType}='WEEK' AND T.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') 
+					AND E.SYMD BETWEEN T.FLEXIBLE_SDATE AND T.FLEXIBLE_EDATE 
+					AND E.EYMD BETWEEN T.FLEXIBLE_SDATE AND T.FLEXIBLE_EDATE 
+					AND E.SYMD BETWEEN T.WEEK_SDATE AND T.WEEK_EDATE
+					AND E.EYMD BETWEEN T.WEEK_SDATE AND T.WEEK_EDATE )
+			 WHERE E.TENANT_ID = #{tenantId}
+			   AND E.ENTER_CD = #{enterCd}
 			   <if test="orgList!=null">
 			   AND H.ORG_CD IN (NULL, 
 		       <foreach collection="orgList" item="org" separator=", ">
@@ -76,12 +89,11 @@
 			   </foreach>
 			   )
 			   </if>
-			 WHERE T.TENANT_ID = #{tenantId}
-			   AND T.ENTER_CD = #{enterCd}
-			   AND (#{searchType}='TERM' AND T.WORK_TYPE_CD IN ('SELE_F','SELE_C') AND #{sYmd} BETWEEN T.FLEXIBLE_SDATE AND T.FLEXIBLE_EDATE
-					    OR #{searchType}='WEEK' AND T.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') AND #{sYmd} BETWEEN T.FLEXIBLE_SDATE AND T.FLEXIBLE_EDATE 
-						 AND #{sYmd} BETWEEN T.WEEK_SDATE AND T.WEEK_EDATE )
-			GROUP BY T.TENANT_ID, T.ENTER_CD, T.SABUN, T.WORK_TYPE_CD, T.FLEXIBLE_SDATE, T.FLEXIBLE_EDATE
+			   AND #{sYmd} BETWEEN E.SYMD AND E.EYMD 
+			   AND ( #{searchType}='TERM' AND T.WORK_TYPE_CD IN ('SELE_F','SELE_C') OR #{searchType}='WEEK' AND T.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C'))
+			GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN, H.EMP_NM, E.WORK_TYPE_CD, M.FLEXIBLE_NM, E.SYMD, E.EYMD
+			, T.FLEXIBLE_SDATE, T.FLEXIBLE_EDATE, CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_SDATE ELSE T.WEEK_SDATE END, CASE WHEN #{searchType}='TERM' THEN T.FLEXIBLE_EDATE ELSE T.WEEK_EDATE END
+            , E.WORK_MINUTE, E.OT_MINUTE, T.NOTE
 		) T
 		WHERE 1=1
 		  AND (#{searchKeyword}='' OR #{searchKeyword} IS NULL OR #{searchKeyword}=T.SABUN OR T.EMP_NM LIKE CONCAT(#{searchKeyword}, '%'))
@@ -113,7 +125,7 @@
 			   	</when>
 			</choose>
 		</if>
-		order by flexibleSdate desc
+		order by flexibleSdate desc, apprWorkMinute desc, apprOtMinute desc
   	</select>
   	
   	<select id="getWorktimeDetail" parameterType="map" resultType="map">
@@ -288,4 +300,85 @@
 		</if>
 		ORDER BY ymd desc, sabun, planSdate
   	</select>
+  	
+  	<select id="getTermList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CONCAT(DATE_FORMAT(STR_TO_DATE(SDATE, '%Y%m%d'),'%Y.%m.%d'),' ~ ', DATE_FORMAT(STR_TO_DATE(EDATE, '%Y%m%d'),'%Y.%m.%d')) AS title, 
+				WORK_TYPE_NM AS caption_rb, CONCAT(SDATE, '@', group_concat(org_cd), '@', WORK_TYPE_CD) AS key2
+			FROM(
+				SELECT DISTINCT T.WORK_TYPE_CD, T.SDATE, T.EDATE, WORK_TYPE_NM, H.ORG_CD
+					FROM (SELECT CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_SDATE ELSE WEEK_SDATE END AS SDATE
+				           , CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_EDATE ELSE WEEK_EDATE END AS EDATE
+				           , SABUN
+				           , WORK_TYPE_CD
+				           , TENANT_ID
+				           , ENTER_CD
+				           , F_WTM_GET_CODE_NM(#{tenantId}, #{enterCd},'WORK_TYPE_CD', WORK_TYPE_CD, F_WTM_DATE_FORMAT(NOW(), 'YMD')) AS WORK_TYPE_NM
+				        FROM WTM_WORK_TERM_TIME
+				        WHERE TENANT_ID=#{tenantId} 
+				        AND  ENTER_CD=#{enterCd} ) T
+				  JOIN WTM_EMP_HIS H 
+				   ON H.TENANT_ID = T.TENANT_ID 
+				   AND H.ENTER_CD = T.ENTER_CD 
+				   ]]>
+				    <if test="orgList!=null">
+				   AND H.ORG_CD IN (NULL,
+				       <foreach collection="orgList" item="org" separator=", ">
+						   #{org}
+					   </foreach>	   
+				   )
+				    </if>
+				    <![CDATA[
+				   AND H.SABUN = T.SABUN
+				   AND H.EYMD = '29991231'
+				   AND H.STATUS_CD = 'AA'
+				 WHERE #{month} BETWEEN LEFT(T.SDATE, 6) AND LEFT(T.EDATE, 6)
+				   AND F_WTM_DATE_FORMAT(NOW(), 'YMD') > T.SDATE) X
+		    GROUP BY WORK_TYPE_CD, SDATE, EDATE
+		    ORDER BY KEY2 DESC
+        ]]>
+    </select>
+    
+    <select id="getTeamList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CONCAT(T.SABUN,'@',T.SDATE,'@',T.EDATE) AS key2, 
+				H.EMP_NM AS title, 
+				T.WORK_TYPE_CD as workTypeCd, 
+				T.SDATE as sdate, 
+				T.EDATE as edate, 
+				TIME_FORMAT(SEC_TO_TIME(SUM(T.APPR_WORK_MINUTE)*60), '%H:%i') as caption_rb, 
+				TIME_FORMAT(SEC_TO_TIME(SUM(T.APPR_OT_MINUTE)*60), '%H:%i') as status,
+				H.ORG_CD, F_WTM_GET_ORG_NM(T.TENANT_ID, T.ENTER_CD, H.ORG_CD, F_WTM_DATE_FORMAT(now(), 'YMD')) as caption_lb				FROM (SELECT CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_SDATE ELSE WEEK_SDATE END AS SDATE
+				           , CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_EDATE ELSE WEEK_EDATE END AS EDATE
+				           , SABUN
+				           , WORK_TYPE_CD
+				           , APPR_WORK_MINUTE
+				           , APPR_OT_MINUTE
+				           , TENANT_ID
+				           , ENTER_CD
+				        FROM WTM_WORK_TERM_TIME
+				        WHERE TENANT_ID=#{tenantId}
+				        AND  ENTER_CD=#{enterCd} ) T
+				JOIN WTM_EMP_HIS H 
+				   ON H.TENANT_ID = T.TENANT_ID 
+				   AND H.ENTER_CD = T.ENTER_CD 
+				   ]]>
+				    <if test="orgList!=null">
+				   AND H.ORG_CD IN (NULL,
+				       <foreach collection="orgList" item="org" separator=", ">
+						   #{org}
+					   </foreach>	   
+				   )
+				    </if>
+				    <![CDATA[
+				   AND H.SABUN = T.SABUN
+				   AND H.EYMD = '29991231'
+				   AND H.STATUS_CD = 'AA'
+				WHERE 1=1
+				      AND T.SDATE = #{sdate}
+				      AND T.WORK_TYPE_CD = #{workTypeCd}
+				GROUP BY T.TENANT_ID, T.ENTER_CD, T.SABUN, H.EMP_NM, T.WORK_TYPE_CD, T.SDATE, T.EDATE
+				ORDER BY H.ORG_CD
+        ]]>
+    </select>
 </mapper>

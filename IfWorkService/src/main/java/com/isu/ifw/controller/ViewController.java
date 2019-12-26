@@ -27,9 +27,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
+import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
@@ -91,6 +93,9 @@ public class ViewController {
 	
 	@Autowired
     StringRedisTemplate redisTemplate;
+	
+	@Autowired
+	WtmApplCodeRepository wtmApplCodeRepo;
 	
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
@@ -175,6 +180,12 @@ public class ViewController {
 		String today = sdf.format(date.getTime());
 		mv.addObject("today", today);
 		
+		return mv;
+	}
+	
+	@RequestMapping(value="/jsp/{viewPage}", method= {RequestMethod.GET, RequestMethod.POST})
+	public ModelAndView viewJspPage(@PathVariable String viewPage, HttpServletRequest request) throws Exception {
+		ModelAndView mv = new ModelAndView(viewPage);
 		return mv;
 	}
 	
@@ -344,6 +355,12 @@ public class ViewController {
 			//연장근무 또는 휴일근무 신청 시 사유
 			List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "REASON_CD");
 			mv.addObject("reasons", mapper.writeValueAsString(reasons));
+		}else if("otApplList".equals(viewPage)) {
+			//연장근무 신청서 정보
+			WtmApplCode applCode = wtmApplCodeRepo.findByTenantIdAndEnterCdAndApplCd(tenantId, enterCd, "OT");
+			
+			if(applCode!=null && applCode.getSubsYn()!=null)
+				mv.addObject("subsYn", applCode.getSubsYn());
 		}else if("applCode".equals(viewPage)) {
 			//연장근무 신청서의 휴일대체 선택대상
 			List<Map<String, Object>> rules = ruleService.getRuleList(tenantId, enterCd);
@@ -524,11 +541,22 @@ public class ViewController {
 				e.printStackTrace();
 				mv.addObject("reasons", null);
 			}
+			mv.addObject("pageName", "mgr/"+viewPage);
 		} 
+		else if("otApplList".equals(viewPage)) {
+			//연장근무 신청서 정보
+			WtmApplCode applCode = wtmApplCodeRepo.findByTenantIdAndEnterCdAndApplCd(tenantId, enterCd, "OT");
+			
+			if(applCode!=null && applCode.getSubsYn()!=null)
+				mv.addObject("subsYn", applCode.getSubsYn());
+			
+			mv.addObject("pageName", "mgr/"+viewPage);
+		}
 		else if("applCode".equals(viewPage)) {
 			//연장근무 신청서의 휴일대체 선택대상
 			List<Map<String, Object>> rules = ruleService.getRuleList(tenantId, enterCd);
 			mv.addObject("rules", rules);
+			mv.addObject("pageName", "mgr/"+viewPage);
 		}
 		else
 			mv.addObject("pageName", "mgr/"+viewPage);

@@ -7,28 +7,33 @@
 	
 	<select id="getApplyList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT FLEXIBLE_APPLY_ID
-        		 , FLEXIBLE_STD_MGR_ID
-        		 , (SELECT WORK_TYPE_CD FROM WTM_FLEXIBLE_STD_MGR A WHERE A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID) AS WORK_TYPE_CD 
-        		 , TENANT_ID 
-        		 , ENTER_CD 
-        		 , APPLY_NM 
-        		 , USE_SYMD 
-        		 , USE_EYMD 
-        		 , REPEAT_TYPE_CD
-        		 , REPEAT_CNT
-        		 , WORK_MINUTE 
-        		 , OT_MINUTE 
+        	SELECT B.FLEXIBLE_APPLY_ID
+        		 , B.FLEXIBLE_STD_MGR_ID
+        		 , M.WORK_TYPE_CD 
+        		 , B.TENANT_ID 
+        		 , B.ENTER_CD 
+        		 , B.APPLY_NM 
+        		 , B.USE_SYMD 
+        		 , B.USE_EYMD 
+        		 , B.REPEAT_TYPE_CD
+        		 , B.REPEAT_CNT
+        		 , B.WORK_MINUTE 
+        		 , B.OT_MINUTE 
         		 , '0' AS SELECT_IMG
-        		 , APPLY_YN 
-			     , CASE WHEN F_WTM_NVL(APPLY_YN, 'N') = 'Y' THEN '완료'
-					    ELSE '<a class="basic" onClick="setEndConfirm('|| FLEXIBLE_APPLY_ID|| ')">확정</a>' END AS END_IMG
+        		 , CASE WHEN M.WORK_TYPE_CD='ELAS' THEN '1' ELSE NULL END AS PLAN_IMG
+        		 , B.APPLY_YN 
+			     , CASE WHEN F_WTM_NVL(B.APPLY_YN, 'N') = 'Y' THEN '완료'
+					    ELSE '<a class="basic" onClick="setEndConfirm('|| B.FLEXIBLE_APPLY_ID|| ')">확정</a>' END AS END_IMG
 			     , (SELECT COUNT(*) FROM WTM_FLEXIBLE_APPLY_EMP_TEMP A WHERE B.FLEXIBLE_APPLY_ID = A.FLEXIBLE_APPLY_ID) AS CNT
-        		 , NOTE 
+        		 , B.NOTE 
+        		 , M.USE_SYMD AS symd
+        		 , M.USE_EYMD AS eymd
 			  FROM WTM_FLEXIBLE_APPLY B
-			 WHERE TENANT_ID = #{tenantId}
-			   AND ENTER_CD = #{enterCd} 
-			   AND REPLACE(#{sYmd}, '-', '') BETWEEN USE_SYMD AND USE_EYMD
+			  JOIN WTM_FLEXIBLE_STD_MGR M
+			    ON B.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+			 WHERE B.TENANT_ID = #{tenantId}
+			   AND B.ENTER_CD = #{enterCd} 
+			   AND REPLACE(#{sYmd}, '-', '') BETWEEN B.USE_SYMD AND B.USE_EYMD
         ]]>
     </select>
     

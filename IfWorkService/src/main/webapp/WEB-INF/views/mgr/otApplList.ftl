@@ -1,5 +1,5 @@
 <div id="otApplList">
- 	<div class="container-fluid pt-3 pb-3 bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 	 		<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -53,7 +53,7 @@
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
-        
+   		
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -71,8 +71,8 @@
 			{Header:"신청시간(분)",Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"otMinute",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"사유코드",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"reasonCd",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"사유",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"reason",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"대체휴일시작시각",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"subsSdate",	KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"대체휴일종료시각",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"subsEdate",	KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
+			{Header:"대체휴일시작시각",	Type:"Text",		Hidden:1,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"subsSdate",	KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"대체휴일종료시각",	Type:"Text",		Hidden:1,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"subsEdate",	KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -80,6 +80,13 @@
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
 
+		<#if subsYn?? && subsYn!='' && subsYn?exists >
+			if('${subsYn}'=='Y') {
+				sheet1.SetColHidden("subsSdate", 0);
+				sheet1.SetColHidden("subsEdate", 0);
+			}
+		</#if>
+		
 		//사업장
 		var reasonCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "REASON_CD"), "선택");
 		sheet1.SetColProperty("reasonCd", {ComboText:reasonCdList[0], ComboCode:reasonCdList[1]} );
