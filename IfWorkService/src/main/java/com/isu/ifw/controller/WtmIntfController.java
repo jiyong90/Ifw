@@ -42,10 +42,72 @@ public class WtmIntfController {
 	@Resource
 	CommTenantModuleRepository tenantModuleRepo;
 	
+	@RequestMapping (value="/intf/inoutCheck", method=RequestMethod.POST)
+	public @ResponseBody Map<String,Object> inoutCheck(HttpServletRequest request)throws Exception{
+   
+		System.out.println("/intf/inoutCheck : requestParam type");
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+      
+		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+		Date now = new Date();
+		String today = format1.format(now);
+      
+		logger.debug("/intf/inoutCheck s " + WtmUtil.paramToString(request));
+		try {
+			String apiKey = request.getParameter("apiKey");
+			String secret = request.getParameter("secret");
+
+			CommTenantModule tm = tenantModuleRepo.findByApiKey(apiKey);
+      
+			if(tm == null) {
+				rp.setFail("secret 불일치");
+				return rp;
+			}
+
+         
+			String encryptCode = tm.getTenantKey().toString();
+			if(encryptCode.length() < 12) {
+				encryptCode = String.format("%12s", encryptCode).replaceAll(" ", "o");
+			}
+			String s = Sha256.getHash(secret, encryptCode, 10);
+			logger.debug("sssssssssssssssssssssssssss " + s);
+			if(!s.equals(tm.getSecret()))
+			{
+				rp.setFail("secret 불일치");
+				return rp;
+			}
+         
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tm.getTenantId());
+			paramMap.put("enterCd", request.getParameter("enterCd"));
+			paramMap.put("sabun", request.getParameter("emp"));
+			paramMap.put("inoutDate", request.getParameter("time"));
+//	         paramMap.put("ymd", request.getParameter("ymd"));
+			paramMap.put("inoutType", request.getParameter("type"));
+			paramMap.put("entryNote", request.getParameter("deviceKey"));
+			paramMap.put("entryType", "INTF");
+         
+			logger.debug("getParameter s2 " + paramMap.toString());
+      
+			inoutService.updateTimecard(paramMap);
+         
+			logger.debug("/intf/inoutCheck rp : " + rp.toString());
+
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		logger.debug("/intf/inoutCheck e " + rp.toString());
+		return rp;
+	}
+	
 	@RequestMapping (value="/intf/inoutCheck", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String,Object> inoutCheck(HttpServletRequest request,
 			@RequestBody Map<String,Object> params)throws Exception{
-	
+		
+		System.out.println("/intf/inoutCheck");
+		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
