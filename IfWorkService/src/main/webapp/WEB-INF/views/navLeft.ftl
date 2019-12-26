@@ -60,9 +60,10 @@
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub3'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1">
-                	<a href="#submenu-list3" data-toggle="collapse" :aria-expanded="curSubMenu=='sub3'?true:false" class="dropdown-toggle" @click="curSubMenu='sub3'">연장근로신청</a>
+                	<a href="#submenu-list3" data-toggle="collapse" :aria-expanded="curSubMenu=='sub3'?true:false" class="dropdown-toggle" @click="curSubMenu='sub3'">연장근로관리</a>
                 	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub3'}" id="submenu-list3">
                         <li :class="{active: curPageName=='otApplMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/otApplMgr';">연장근로신청(관리자)</a></li>
+                        <li :class="{active: curPageName=='otApplList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/otApplList';">연장근로 신청내역조회(관리자)</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub4'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1">
@@ -168,7 +169,7 @@ function callLnb (obj) {
 				this.curSubMenu = 'sub1';
 			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
 				this.curSubMenu = 'sub2';
-			else if(pageName=='otApplMgr')
+			else if(pageName=='otApplMgr'||pageName=='otApplList')
 				this.curSubMenu = 'sub3';
 			else if(pageName=='worktimeCheckList'||pageName=='entryCheckList'||pageName=='entryDiffList')
 				this.curSubMenu = 'sub4';

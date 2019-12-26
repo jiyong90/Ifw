@@ -339,4 +339,17 @@ public class WtmFlexibleApplyMgrController {
 		
 		return rp;
 	}
+	
+	@RequestMapping(value="/elasDetail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Map<String, Object>> getElasDetail(@RequestParam Map<String, Object> paramMap
+		    									, HttpServletRequest request) {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		return flexibleApplyService.getElasDetail(tenantId, enterCd, paramMap, userId);
+	}
+	
 }
