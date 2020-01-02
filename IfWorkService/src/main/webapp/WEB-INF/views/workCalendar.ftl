@@ -655,7 +655,8 @@
 	                    	</div>
 			            </template>
 			            <template v-else>
-			            	<div class="sub-wrap">
+			            	<div class="sub-wrap position-relative">
+			            		<div class="loading-spinner" style="display:none;"></div>
 			                    <ul class="time-block-list">
 			                        <li>
 			                            <div class="title">약정 근로 시간</div>

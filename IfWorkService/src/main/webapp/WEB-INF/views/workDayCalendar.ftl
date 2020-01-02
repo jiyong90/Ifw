@@ -827,7 +827,8 @@
 								} else {
 									$("#alertText").html("저장되었습니다.");
 									$("#alertModal").on('hidden.bs.modal',function(){
-										$this.getFlexibleWorktimeInfo();
+										if($this.flexibleEmp.workTypeCd!='ELAS')
+											$this.getFlexibleWorktimeInfo();
 										$("#alertModal").off('hidden.bs.modal');
 										$("#flexibleDayPlan").find("form").removeClass('was-validated');
 									});
@@ -901,7 +902,10 @@
 		        	var symd = moment($this.selectedWorkday.start).format('YYYYMMDD');
 		        	var eymd = moment($this.selectedWorkday.end).format('YYYYMMDD');
 		        
+		        	$(".loading-spinner").show();
+		        	
 					var param = {
+						flexibleEmpId: $this.flexibleEmp.flexibleEmpId,
 	   		    		ymd : moment(symd).format('YYYYMMDD'),
 	   		    		symd : symd,
 	   		    		eymd : eymd
@@ -914,12 +918,14 @@
 						data: JSON.stringify(param),
 						dataType: "json",
 						success: function(data) {
+							$(".loading-spinner").hide();
 							if(data!=null && data.hasOwnProperty('workTermTime')) {
 								calendarLeftVue.flexibleAppl.totalWorkMinute = data.workTermTime.totalWorkMinute;
 								calendarLeftVue.flexibleAppl.planWorkMinute = data.workTermTime.planWorkMinute;
 							}
 						},
 						error: function(e) {
+							$(".loading-spinner").hide();
 							calendarLeftVue.flexibleAppl.totalWorkMinute = '';
 							calendarLeftVue.flexibleAppl.planWorkMinute = '';
 						}
