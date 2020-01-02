@@ -1738,6 +1738,7 @@
 			     , C.APPL_NM 
 			     , M.WORK_SHM 
 			     , M.WORK_EHM 
+			     , M.CORE_CHK_YN
 			     , M.CORE_SHM
 			     , M.CORE_EHM 
 			     , M.WORK_DAYS_OPT 
