@@ -6,27 +6,36 @@
 <mapper namespace="com.isu.ifw.mapper.WtmApplMapper">
 	<select id="getWtmApplLine" parameterType="map" resultType="wtmApplLine">
         <![CDATA[
-			SELECT X.APPR_SEQ, E.SABUN, E.EMP_NM
-			  FROM WTM_EMP_HIS E
-			  JOIN (
-			  			
-						SELECT S.ORG_CD
-			                 , LEVEL AS APPR_SEQ
-			             FROM ( SELECT D.*
-					            FROM WTM_ORG_CHART C
-					            JOIN WTM_ORG_CHART_DET D
-					             ON C.ORG_CHART_ID = D.ORG_CHART_ID
-					            WHERE C.TENANT_ID = #{tenantId}
-					              AND C.ENTER_CD = #{enterCd}
-					              AND F_WTM_DATE_FORMAT(#{d}, 'YMD') BETWEEN C.SYMD AND C.EYMD ) S
-			            START WITH S.ORG_CD = (SELECT ORG_CD FROM WTM_EMP_HIS H WHERE H.TENANT_ID=#{tenantId} AND H.ENTER_CD=#{enterCd} AND H.SABUN=#{sabun} AND #{d} BETWEEN H.SYMD AND H.EYMD)
-			            CONNECT BY PRIOR S.PRIOR_ORG_CD = ORG_CD
-					 ) X
-			    ON E.ORG_CD = X.ORG_CD
-			 WHERE E.ENTER_CD = #{enterCd}
-			   AND E.TENANT_ID = #{tenantId}
-			   AND E.LEADER_YN = 'Y'
-			   AND #{d} BETWEEN E.SYMD AND E.EYMD
+			SELECT X.APPR_SEQ
+			     , CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END AS SABUN
+			    , F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END, #{d}) AS EMP_NM
+						  FROM (
+									SELECT TENANT_ID
+									     , ENTER_CD
+									     , S.ORG_CD
+						                 , LEVEL AS APPR_SEQ
+						             FROM ( SELECT D.*
+								            FROM WTM_ORG_CHART C
+								            JOIN WTM_ORG_CHART_DET D
+								             ON C.ORG_CHART_ID = D.ORG_CHART_ID
+								            WHERE C.TENANT_ID = #{tenantId}
+								              AND C.ENTER_CD = #{enterCd}
+								              AND #{d} BETWEEN C.SYMD AND C.EYMD ) S
+						            START WITH S.ORG_CD = (SELECT ORG_CD FROM WTM_EMP_HIS H WHERE H.TENANT_ID=#{tenantId} AND H.ENTER_CD=#{enterCd} AND H.SABUN=#{sabun} AND #{d} BETWEEN H.SYMD AND H.EYMD)
+						            CONNECT BY PRIOR S.PRIOR_ORG_CD = ORG_CD
+								 ) X
+						 LEFT OUTER JOIN WTM_EMP_HIS H
+			         ON X.TENANT_ID = H.TENANT_ID
+			        AND X.ENTER_CD = H.ENTER_CD
+			        AND X.ORG_CD = H.ORG_CD
+			        AND H.LEADER_YN = 'Y'
+			        AND #{d} BETWEEN H.SYMD AND H.EYMD
+			       LEFT OUTER JOIN WTM_ORG_CONC O
+			         ON X.TENANT_ID = O.TENANT_ID
+			        AND X.ENTER_CD = O.ENTER_CD
+			        AND X.ORG_CD = O.ORG_CD
+			        AND #{d} BETWEEN O.SYMD AND O.EYMD
+				 WHERE (EMP_HIS_ID IS NOT NULL OR ORG_CONC_ID IS NOT NULL)
         ]]>
     </select>
     
@@ -81,7 +90,6 @@
     </select>
     
     <select id="getApprList01" parameterType="map" resultType="wtmGeneral">
-        <![CDATA[
         	SELECT A.APPL_ID
 			     , A.APPL_CD
 			     , C.APPL_NM
@@ -91,6 +99,9 @@
 			     , A.APPL_IN_SABUN 
 			     , A.APPL_STATUS_CD 
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} AS APPL_KEY
+                 , CASE WHEN A.APPL_CD = '171' THEN 'view://W02View' 
+             	     ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -106,11 +117,12 @@
 			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
 			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
 			ORDER BY A.APPL_YMD DESC
-		]]>
+			<if test="startPage!=''">
+			LIMIT #{startPage}, #{pageCount}
+			</if>
     </select>
     
     <select id="getApprList02" parameterType="map" resultType="wtmGeneral">
-        <![CDATA[
         	SELECT A.APPL_ID
 			     , A.APPL_CD
 			     , C.APPL_NM
@@ -126,6 +138,9 @@
 			     , L.APPR_STATUS_CD 
 			     , L.APPR_TYPE_CD 
 			     , L.APPR_OPINION
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} AS APPL_KEY
+                 , CASE WHEN A.APPL_CD = '171' THEN 'view://W02View' 
+             	     ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -139,11 +154,12 @@
 			   AND L.APPR_STATUS_CD = '10'
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			ORDER BY A.APPL_YMD DESC
-		]]>
+			<if test="startPage!=''">
+			LIMIT #{startPage}, #{pageCount}
+			</if>
     </select>
     
     <select id="getApprList03" parameterType="map" resultType="wtmGeneral">
-        <![CDATA[
         	SELECT A.APPL_ID 
 			     , A.APPL_CD 
 			     , C.APPL_NM
@@ -159,6 +175,9 @@
 			     , L.APPR_STATUS_CD
 			     , L.APPR_TYPE_CD 
 			     , L.APPR_OPINION 
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} AS APPL_KEY
+                 , CASE WHEN A.APPL_CD = '171' THEN 'view://W02View' 
+             	     ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -172,7 +191,9 @@
 			   AND L.APPR_DATE IS NOT NULL
 			   AND L.APPR_STATUS_CD IS NOT NULL
 			ORDER BY A.APPL_YMD DESC
-		]]>
+			<if test="startPage!=''">
+			LIMIT #{startPage}, #{pageCount}
+			</if>
     </select>
     
     <select id="countByApprList02" parameterType="map" resultType="int">

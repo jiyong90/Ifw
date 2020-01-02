@@ -6,10 +6,13 @@
 <mapper namespace="com.isu.ifw.mapper.WtmApplMapper">
 	<select id="getWtmApplLine" parameterType="map" resultType="wtmApplLine">
         <![CDATA[
-			SELECT X.APPR_SEQ, E.SABUN, E.EMP_NM
-			  FROM WTM_EMP_HIS E
-			  JOIN (
-						SELECT @r AS ORG_CD
+			SELECT X.APPR_SEQ
+				 , CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END AS SABUN
+	     		 , F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END, #{d}) AS EMP_NM
+			  FROM (
+						SELECT TENANT_ID 
+              				 , ENTER_CD 
+						     , @r AS ORG_CD
 						     , (SELECT @r := PRIOR_ORG_CD 
 							       FROM ( SELECT D.*
 												  FROM WTM_ORG_CHART C
@@ -23,7 +26,7 @@
 						     , (@L := @L + 1) AS APPR_SEQ
 						  FROM ( SELECT @r := (SELECT ORG_CD FROM WTM_EMP_HIS H WHERE H.TENANT_ID=#{tenantId} AND H.ENTER_CD=#{enterCd} AND H.SABUN=#{sabun} AND #{d} BETWEEN H.SYMD AND H.EYMD)
 						              , @L := 0) AS vars,
-						       ( SELECT D.*
+						       ( SELECT C.TENANT_ID, C.ENTER_CD, D.*
 									  FROM WTM_ORG_CHART C
 									  JOIN WTM_ORG_CHART_DET D
 									    ON C.ORG_CHART_ID = D.ORG_CHART_ID
@@ -33,11 +36,19 @@
 								 ) org
 						 WHERE @r IS NOT NULL 
 					 ) X
-			    ON E.ORG_CD = X.ORG_CD
-			 WHERE E.ENTER_CD = #{enterCd}
-			   AND E.TENANT_ID = #{tenantId}
-			   AND E.LEADER_YN = 'Y'
-			   AND #{d} BETWEEN E.SYMD AND E.EYMD
+			  LEFT OUTER JOIN WTM_EMP_HIS H
+		       ON X.TENANT_ID = H.TENANT_ID
+		      AND X.ENTER_CD = H.ENTER_CD
+		      AND X.ORG_CD = H.ORG_CD
+		      AND H.LEADER_YN = 'Y'
+		      AND #{d} BETWEEN H.SYMD AND H.EYMD
+		      LEFT OUTER JOIN WTM_ORG_CONC O
+		       ON X.TENANT_ID = O.TENANT_ID
+		      AND X.ENTER_CD = O.ENTER_CD
+		      AND X.ORG_CD = O.ORG_CD
+		      AND #{d} BETWEEN O.SYMD AND O.EYMD
+			 WHERE _PARENT_ID IS NOT NULL
+       		   AND (EMP_HIS_ID IS NOT NULL OR ORG_CONC_ID IS NOT NULL)
         ]]>
     </select>
     
@@ -102,7 +113,7 @@
 			     , A.APPL_IN_SABUN AS applInSabun
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
-				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN) AS applKey
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
@@ -120,7 +131,10 @@
 			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
 			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
 			ORDER BY A.APPL_YMD DESC
-		]]>
+			]]>
+		   <if test="startPage!=null and !startPage.equals('')">
+				LIMIT #{startPage}, #{pageCount}
+			</if>
     </select>
     
     <select id="getApprList02" parameterType="map" resultType="hashmap">
@@ -140,7 +154,7 @@
 			     , L.APPR_STATUS_CD AS apprStatusCd
 			     , L.APPR_TYPE_CD AS apprTypeCd
 			     , L.APPR_OPINION AS apprOpinion
-				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN) AS applKey
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
@@ -156,8 +170,11 @@
 			   AND L.APPR_STATUS_CD = '10'
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			ORDER BY A.APPL_YMD DESC
-		]]>
-    </select>
+			]]>
+		   <if test="startPage!=null and !startPage.equals('')">
+				LIMIT #{startPage}, #{pageCount}
+			</if>
+	</select>
     
     <select id="getApprList03" parameterType="map" resultType="hashmap">
         <![CDATA[
@@ -176,7 +193,7 @@
 			     , L.APPR_STATUS_CD AS apprStatusCd
 			     , L.APPR_TYPE_CD AS apprTypeCd
 			     , L.APPR_OPINION AS apprOpinion
-				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN) AS applKey
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
@@ -193,6 +210,9 @@
 			   AND L.APPR_STATUS_CD IS NOT NULL
 			ORDER BY A.APPL_YMD DESC
 		]]>
+		    <if test="startPage!=null and !startPage.equals('')">
+				LIMIT #{startPage}, #{pageCount}
+			</if>
     </select>
     
     <select id="countByApprList02" parameterType="map" resultType="int">
