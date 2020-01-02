@@ -1543,8 +1543,8 @@ div.bootstrap-datetimepicker-widget.dropdown-menu{width: auto;}
           animation-play-state: running;
   opacity: 1;
   position: absolute;
-  top: calc(50% - 20px);
-  left: calc(50% - 20px);
+  top: 50%;
+  left: 50%;
   height: inherit;
 }
 @-webkit-keyframes spinner {
@@ -1582,13 +1582,13 @@ div.bootstrap-datetimepicker-widget.dropdown-menu{width: auto;}
   border-bottom-color: #4d84fe;
   border-radius: 50%;
   content: "";
-  height: 40px;
+  height: 30px;
   left: 50%;
   opacity: inherit;
   position: absolute;
   top: 50%;
   -webkit-transform: translate3d(-50%, -50%, 0);
           transform: translate3d(-50%, -50%, 0);
-  width: 40px;
+  width: 30px;
   will-change: transform;
 }
