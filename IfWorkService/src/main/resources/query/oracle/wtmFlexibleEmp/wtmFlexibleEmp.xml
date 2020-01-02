@@ -1603,7 +1603,7 @@
 	    			, C.APPL_ID 
 	    			, C.YMD
 	    			, C.SABUN 
-	    			, ${timeCdMgrId} AS TIME_CD_MGR_ID
+	    			, #{timeCdMgrId} AS TIME_CD_MGR_ID
 	    			, C.TIME_TYPE_CD 
 	    			, C.TAA_CD 
 	    			, F_WTM_GET_TAA_CODE_NM(C.TENANT_ID, C.ENTER_CD, C.TAA_CD, C.YMD) AS TAA_NM
@@ -2048,4 +2048,10 @@
 			END_MSG = #{retMsg}
 	    WHERE FLEXIBLE_CHG_HIS_ID = #{hisId}
 	</update>
+	
+	<select id="getWorkTermMinute" parameterType="map" resultType="map">
+		 SELECT F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'T', 'WORK') AS TOTAL_WORK_MINUTE
+	 		  ,	F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'P', 'WORK') AS PLAN_WORK_MINUTE
+	 	   FROM DUAL
+  	</select>
 </mapper>

@@ -505,7 +505,7 @@
 	         	viewWorkPlan : function(d){
   	         		var $this = this;
   	         		var calendar = $this.$refs.fullCalendar.cal;
-  	         		console.log(d);
+  	         		//console.log(d);
   	         		calendarLeftVue.flexibleAppl = d;
   	         		if(d.hasOwnProperty('reason') && d.reason!=null && d.reason!=undefined)
   	         			calendarLeftVue.applInfo.reason = d.reason;
@@ -764,14 +764,17 @@
   		    			//탄근제 휴일인 경우 계획시간을 지울 수도 있다.
    						$this.dayResult[d] = {
   		    				shm: "",
-		    	  		    ehm: "",
-		    	  		  	otbMinute: "",
-		    	  		    otaMinute: ""
+		    	  		    ehm: ""
   		    			};
   		    			
-   						$("#otbMinute").val('');
-	  	         		$("#otaMinute").val('');
-   						
+  		    			if($("#otbMinute").length>0 ||$("#otbMinute").is(":visible")
+  		    					||$("#otaMinute").length>0 ||$("#otaMinute").is(":visible")) {
+  		    				$this.dayResult[d].otbMinute = '';
+  		    				$this.dayResult[d].otaMinute = '';
+  		    				$("#otbMinute").val('');
+	  	         			$("#otaMinute").val('');
+  		    			}
+   							
    						//이벤트 재생성
  	  	         		$this.changeDayWorks(sDate, eDate, null);
   		    			
@@ -795,7 +798,7 @@
          				param['flexibleApplId'] = $this.flexibleEmp.flexibleApplId;
          				param['reason'] = calendarLeftVue.applInfo.reason;
          			}
-         				
+         			
          			//dayResult는 이런 형식으로 저장 {ymd : {shm: 0900, ehm: 1800, otbMinute: 1, otaMinute:2 } }
          			//console.log($this.dayResult);
    		    		Util.ajax({
@@ -824,6 +827,7 @@
 								} else {
 									$("#alertText").html("저장되었습니다.");
 									$("#alertModal").on('hidden.bs.modal',function(){
+										$this.getFlexibleWorktimeInfo();
 										$("#alertModal").off('hidden.bs.modal');
 										$("#flexibleDayPlan").find("form").removeClass('was-validated');
 									});
@@ -890,7 +894,37 @@
 						$("#alertModal").modal("show");
 	           		}
 	           		
-	           	}
+	           	},
+		        getFlexibleWorktimeInfo : function(){ //해당 근무제의 약정 근로시간, 계획 시간 조회
+		        	var $this = this;
+		        
+		        	var symd = moment($this.selectedWorkday.start).format('YYYYMMDD');
+		        	var eymd = moment($this.selectedWorkday.end).format('YYYYMMDD');
+		        
+					var param = {
+	   		    		ymd : moment(symd).format('YYYYMMDD'),
+	   		    		symd : symd,
+	   		    		eymd : eymd
+	   		    	};
+			    		
+			    	Util.ajax({
+						url: "${rc.getContextPath()}/flexibleEmp/workTermTime",
+						type: "POST",
+						contentType: 'application/json',
+						data: JSON.stringify(param),
+						dataType: "json",
+						success: function(data) {
+							if(data!=null && data.hasOwnProperty('workTermTime')) {
+								calendarLeftVue.flexibleAppl.totalWorkMinute = data.workTermTime.totalWorkMinute;
+								calendarLeftVue.flexibleAppl.planWorkMinute = data.workTermTime.planWorkMinute;
+							}
+						},
+						error: function(e) {
+							calendarLeftVue.flexibleAppl.totalWorkMinute = '';
+							calendarLeftVue.flexibleAppl.planWorkMinute = '';
+						}
+					});
+				}
   		    }
    	});
 </script>

@@ -1586,7 +1586,7 @@
 	    			, C.APPL_ID as applId
 	    			, C.YMD as ymd
 	    			, C.SABUN as sabun
-	    			, ${timeCdMgrId} AS timeCdMgrId
+	    			, #{timeCdMgrId} AS timeCdMgrId
 	    			, C.TIME_TYPE_CD as timeTypeCd
 	    			, C.TAA_CD as taaCd
 	    			, F_WTM_GET_TAA_CODE_NM(C.TENANT_ID, C.ENTER_CD, C.TAA_CD, C.YMD) AS taaNm
@@ -2065,5 +2065,11 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
 			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD ) X
+  	</select>
+  	
+  	<select id="getWorkTermMinute" parameterType="map" resultType="map">
+		 SELECT F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'T', 'WORK') AS totalWorkMinute
+	 		  ,	F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'P', 'WORK') AS planWorkMinute
+	 	   FROM DUAL
   	</select>
 </mapper>
