@@ -1,0 +1,48 @@
+spring.application.name: api-ext
+
+server:
+  port: 8280
+  servlet:
+    context-path: /ife
+ 
+
+
+spring:
+  datasource:
+    #url: jdbc:mysql://pbplena.cx6ag23ztkle.ap-northeast-2.rds.amazonaws.com:3306/worktimemanagement?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    #username: worktime
+    #password: Worktimemanagement1! 
+    url: #jdbc:mysql://db-2o9bg.cdb.ntruss.com:3306/ifclient?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    username: #ifclient
+    password: #if!@client34
+    driver-class-name: #com.mysql.cj.jdbc.Driver 
+    
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      
+  mvc: 
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .ftl
+         
+  freemarker:
+    template-loader-path: /WEB-INF/views/
+    suffix: .ftl
+    request-context-attribute: rc 
+    
+ifw:
+  client-id: hdngv
+  secret: chWQsUbouLFXYYmy5F7k9UFYGprNH1F6uzqsOvt0K9s=
+  token-url: https://cloudhr.pearbranch.com/ifa/oauth/token
+  login-post: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/certificate 
+  valid-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/validate     
+  status-get: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/status
+  in-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/in
+  out-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/out
+  cancel-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/cancel
+  dashboard-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/dashboard
+  edoc-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/edocument/{{function}}
+  team-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/team/{{function}}   
+  apply-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/apply/{{function}}

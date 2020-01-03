@@ -54,7 +54,7 @@ public class IfWorkServiceApplication {
 	@Bean 
 	public FilterRegistrationBean getCustomOauthFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(customOauthFilter);
-		registrationBean.addInitParameter("freePassPath", "/login,/logout,/we,/info,/mobile,/certificate,/intf");
+		registrationBean.addInitParameter("freePassPath", "/login,/logout,/we,/info,/mobile,/certificate,/intf,/api");
 		return registrationBean;
 	    
 	}
