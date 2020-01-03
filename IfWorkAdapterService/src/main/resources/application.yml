@@ -36,7 +36,8 @@ ifw:
   client-id: hdngv
   secret: chWQsUbouLFXYYmy5F7k9UFYGprNH1F6uzqsOvt0K9s=
   token-url: https://cloudhr.pearbranch.com/ifa/oauth/token
-  login-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/certificate   
+  login-post: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/certificate 
+  valid-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/validate     
   status-get: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/status
   in-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/in
   out-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/out

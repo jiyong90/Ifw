@@ -1,5 +1,6 @@
 package com.isu.ifw.controller;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,8 +25,10 @@ import com.isu.ifw.service.ExchangeService;
 public class LoginControllerAdapter {
 	
 
-	@Value("${ifw.login-url}")
+	@Value("${ifw.login-post}")
 	private String loginUrl;
+	@Value("${ifw.valid-get}")
+	private String validUrl;
 	
 	@Autowired
 	private ExchangeService certService;
@@ -45,7 +48,25 @@ public class LoginControllerAdapter {
 		resMap = certService.exchange(url, HttpMethod.POST, null, paramMap);
 		
 		return resMap;
-		 
 
+    }
+	
+	@RequestMapping(value = "/validate/{tsId}", method = RequestMethod.GET)
+	public Map<String, Object> getDashboard(@PathVariable String tsId,
+								HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		
+		String url = validUrl.replace("{{tsId}}", tsId);
+		
+		Map<String, String> paramMap = new HashMap<String, String>();
+		
+		Enumeration<String> er = request.getParameterNames();
+		while(er.hasMoreElements()) {
+			String k = er.nextElement();
+			paramMap.put(k, request.getParameter(k));
+		}
+		resMap = certService.exchange(url, HttpMethod.GET, null, paramMap);
+		return resMap;
     }
 }
