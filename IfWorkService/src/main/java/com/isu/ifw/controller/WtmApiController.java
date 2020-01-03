@@ -1,9 +1,75 @@
 package com.isu.ifw.controller;
 
-//@RestController
-//@RequestMapping(value="/api")
-//public class WtmApiController extends TenantSecuredControl {
-//
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.mapper.WtmInoutHisMapper;
+import com.isu.ifw.repository.WtmEmpHisRepository;
+import com.isu.ifw.service.WtmInoutService;
+import com.isu.ifw.util.MobileUtil;
+import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.ReturnParam;
+
+@RestController
+@RequestMapping(value="/api")
+public class WtmApiController {
+
+	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
+	
+	@Resource
+	WtmEmpHisRepository empRepository;
+	
+	@Autowired
+	WtmInoutService inoutService;
+
+	@RequestMapping(value = "/workstatus", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getMyWorkStatus(
+			@RequestParam(value = "tenantId", required = true) Long tenantId,
+//			@RequestParam(value = "userToken", required = true) String userToken,
+			@RequestParam(value="empKey", required = true) String empKey, 
+			HttpServletRequest request) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd"); 
+		String sabun = MobileUtil.parseEmpKey(empKey, "sabun"); 
+		
+		Map <String,Object> resultMap = new HashMap<String,Object>();
+
+		try {
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+			resultMap = inoutService.getMenuContextWeb(tenantId, enterCd, sabun); 
+		}catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		rp.put("result", resultMap);
+		logger.debug("/api/workstatus e " + rp.toString());
+		return rp;
+	}
+	
 //	@Autowired
 //	@Qualifier(value="flexibleEmpService")
 //	private WtmFlexibleEmpService flexibleEmpService;
@@ -294,4 +360,4 @@ package com.isu.ifw.controller;
 //		return rp;
 //	}
 //	
-//}
+}
