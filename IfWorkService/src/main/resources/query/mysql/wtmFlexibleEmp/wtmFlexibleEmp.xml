@@ -864,8 +864,8 @@
     </select>
     
     <select id="checkBaseWorktimeMgr" parameterType="map" resultType="map">
-    	SELECT ( CEIL( F_WTM_TO_DAYS(A.SDATE, A.EDATE) * P.INFO_VALUE / 7) * 60  >=  SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END)) AS isValid
-    		 , CEIL( F_WTM_TO_DAYS(A.SDATE, A.EDATE) * P.INFO_VALUE / 7) * 60 as totalWorktime
+    	SELECT ( CASE WHEN PP.INFO_VALUE = 'B' THEN F_WTM_TO_DAYS(A.SDATE, A.EDATE) * 8 ELSE CEIL( F_WTM_TO_DAYS(A.SDATE, A.EDATE) * P.INFO_VALUE / 7) * 60 END  >=  SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE R.PLAN_MINUTE END)) AS isValid
+    		 , CASE WHEN PP.INFO_VALUE = 'B' THEN F_WTM_TO_DAYS(A.SDATE, A.EDATE) * 8 ELSE CEIL( F_WTM_TO_DAYS(A.SDATE, A.EDATE) * P.INFO_VALUE / 7) * 60 END as totalWorktime
 		  FROM (SELECT CASE WHEN T.WORK_TYPE_CD = 'ELAS' THEN FLEXIBLE_SDATE ELSE WEEK_SDATE END AS SDATE
 					     , CASE WHEN T.WORK_TYPE_CD = 'ELAS' THEN FLEXIBLE_EDATE ELSE WEEK_EDATE END AS EDATE
 					     , C.TENANT_ID
@@ -889,6 +889,8 @@
 				   AND A.SABUN = R.SABUN
 		  INNER JOIN WTM_PROPERTIE P
 				    ON P.TENANT_ID = A.TENANT_ID AND P.ENTER_CD = A.ENTER_CD AND P.INFO_KEY = 'OPTION_MAX_WORKTIME_1WEEK'
+		  LEFT OUTER JOIN WTM_PROPERTIE PP
+				    ON PP.TENANT_ID = A.TENANT_ID AND PP.ENTER_CD = A.ENTER_CD AND PP.INFO_KEY = 'OPTION_MAX_WORKTIME_1WEEK_CALC_TYPE'
     </select>
     
     <select id="getWorktimePlan" parameterType="Long" resultType="map" >
@@ -1586,7 +1588,7 @@
 	    			, C.APPL_ID as applId
 	    			, C.YMD as ymd
 	    			, C.SABUN as sabun
-	    			, ${timeCdMgrId} AS timeCdMgrId
+	    			, #{timeCdMgrId} AS timeCdMgrId
 	    			, C.TIME_TYPE_CD as timeTypeCd
 	    			, C.TAA_CD as taaCd
 	    			, F_WTM_GET_TAA_CODE_NM(C.TENANT_ID, C.ENTER_CD, C.TAA_CD, C.YMD) AS taaNm
@@ -1721,6 +1723,7 @@
 			     , C.APPL_NM AS workTypeNm
 			     , M.WORK_SHM AS workShm
 			     , M.WORK_EHM AS workEhm
+			     , M.CORE_CHK_YN AS coreChkYn
 			     , M.CORE_SHM AS coreShm
 			     , M.CORE_EHM AS coreEhm
 			     , M.WORK_DAYS_OPT AS workDaysOpt
@@ -2064,5 +2067,11 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
 			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD ) X
+  	</select>
+  	
+  	<select id="getWorkTermMinute" parameterType="map" resultType="map">
+		 SELECT F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'T', 'WORK') AS totalWorkMinute
+	 		  ,	F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'P', 'WORK') AS planWorkMinute
+	 	   FROM DUAL
   	</select>
 </mapper>
