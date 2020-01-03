@@ -49,7 +49,7 @@ public class InoutControllerAdapter {
 			resMap = certService.exchange(url, HttpMethod.POST, null, paramMap);
 			return resMap;
 		}else {
-			resMap.put("status", "fail");
+			resMap.put("status", "FAIL");
 			resMap.put("message", "/api/in out cancel    url is null");
 			return resMap;
 		}

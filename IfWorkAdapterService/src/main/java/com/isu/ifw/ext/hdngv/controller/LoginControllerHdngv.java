@@ -86,7 +86,12 @@ public class LoginControllerHdngv {
 				System.out.println("resultMap : " + mapper.writeValueAsString(hashMap));
 				String empId = hashMap.get("Emp_ID")+"";
 				Map<String, Object> paramMap = new HashMap<>();
-				paramMap.put("empKey", strCompanyCode + "@" + empId);
+				//paramMap.put("empKey", strCompanyCode + "@" + empId);
+				paramMap.put("enterCd", strCompanyCode);
+				paramMap.put("sabun", empId);
+				mv.addObject("enterCd", strCompanyCode);
+				mv.addObject("sabun", empId);
+				
 				Map<String, Object> resMap = exchangeService.exchange(url, HttpMethod.GET, null, paramMap);
 				
 				mv.addAllObjects((Map<String, ?>) resMap.get("result"));
@@ -104,7 +109,9 @@ public class LoginControllerHdngv {
 			paramMap.put("enterCd", "HDNGV");
 			paramMap.put("sabun", "2008856");
 			Map<String, Object> resMap = exchangeService.exchange(url, HttpMethod.GET, null, paramMap);
-			
+
+			mv.addObject("enterCd", "HDNGV");
+			mv.addObject("sabun", "2008856");
 			
 			Map<String, Object> rMap = ((Map<String, Object>) resMap.get("result"));
 			if(!rMap.containsKey("ymd") || !rMap.containsKey("entrySdate") || !rMap.containsKey("entryEdate") || !rMap.containsKey("label") || !rMap.containsKey("desc") || !rMap.containsKey("inoutType")) {

@@ -70,7 +70,9 @@
 			    	entryEdate: '${entryEdate}',
 			    	label: '${label}',
 			    	desc: '${desc}',
-			    	inoutType: '${inoutType}' 
+			    	inoutType: '${inoutType}', 
+			    	empId : '${sabun}',
+		    		enterCd : '${enterCd}'
 		  		},
 			    mounted: function(){
 			    	var $this = this;
@@ -81,8 +83,7 @@
 			    },
 			    methods: {
 			    	clickIn : function(){ 
-			    		var param = {
-			    				
+			    		var param = { 
 			    		};
 			    		
 			    		Util.ajax({
@@ -92,6 +93,7 @@
 							data: JSON.stringify(param),
 							dataType: "json",
 							success: function(data) {
+								alert(JSON.stringify(data));
 								if(data!=null && data.status=='OK') {
 								} else {
 								}
