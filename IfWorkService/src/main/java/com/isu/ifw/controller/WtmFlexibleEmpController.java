@@ -226,7 +226,7 @@ public class WtmFlexibleEmpController {
 		String userId = sessionData.get("userId").toString();
 		
 		Long flexibleEmpId = Long.valueOf(paramMap.get("flexibleEmpId").toString());
-		Map<String, Object> dayResult = new HashMap<String, Object>();
+		/*Map<String, Object> dayResult = new HashMap<String, Object>();
 		String symd = "";
 		String eymd = "";
 		
@@ -250,19 +250,23 @@ public class WtmFlexibleEmpController {
 					i++;
 				}
 			}
-		}
+		}*/
 		
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			rp = flexibleEmpService.save(flexibleEmpId, dayResult, userId);
+			rp = flexibleEmpService.save(flexibleEmpId, (Map<String, Object>)paramMap.get("dayResult"), userId);
 			
 			List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
 			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(plans, userId);
 			rp.put("dayWorks", dayWorks);
 			
+			/*
+			//조회성 데이터는 비동기 호출하지 않음
+			//term을 만들고 해당 근무제의 약정 근로 시간과 계획 시간을 조회해야 하기 때문에
 			if(rp.containsKey("sabun") && !"".equals(symd) && !"".equals(eymd)) {
 				wymAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", symd, eymd, userId);
 			}
+			*/
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -549,6 +553,37 @@ public class WtmFlexibleEmpController {
 		}
 		System.out.println("changeChk controller end");
 		return rp; 
+	}
+	
+	/**
+	 * 근무제의 주별 데이터 생성
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/workTermTime", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam createWorkTermtimeByEmployee(@RequestBody Map<String, Object> paramMap
+														, HttpServletRequest request) {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		try {
+			Map<String, Object> workTermTime = flexibleEmpService.createWorkTermtimeByEmployee(tenantId, enterCd, empNo, paramMap, userId);
+			rp.put("workTermTime", workTermTime);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		return rp;
 	}
 	
 }

@@ -100,6 +100,7 @@ public class WtmMobileApplController {
 			//Aes256 aes = new Aes256(userToken);
 			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
@@ -179,7 +180,7 @@ public class WtmMobileApplController {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
 				return rp;
 			}
-			
+
 			logger.debug("/mobile/"+ tenantId+"/apply/val s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 	
 			dataMap.put("tenantId", tenantId);
@@ -435,6 +436,13 @@ public class WtmMobileApplController {
 
 			Map<String, Object> dataMap = (Map)paramMap.get("data");
 			setData(dataMap);
+			dataMap.put("otSdate", dataMap.get("ymd").toString() + dataMap.get("shm").toString());
+			dataMap.put("otEdate", dataMap.get("ymd").toString() + dataMap.get("ehm").toString());
+			rp =  otApplService.validate(tenantId, enterCd, sabun, dataMap.get("applCd").toString(), dataMap);
+			if(rp!=null && rp.getStatus()!=null && "FAIL".equals(rp.getStatus())) {
+				return rp;
+			}
+			
 			rp = otApplService.requestSync(tenantId, enterCd, dataMap, sabun, emp.getEmpHisId().toString());
 		} catch(Exception e) {
 			logger.debug(e.getMessage());

@@ -171,7 +171,7 @@ public class WtmInoutController {
 			logger.debug("/mobile/"+ tenantId+"/inout/in s2 " + paramMap.toString());
 		
 			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(paramMap);
-			if("Y".equals(yn.get("unplannedYn").toString())) {
+			if(yn != null && yn.get("unplannedYn") != null && "Y".equals(yn.get("unplannedYn").toString())) {
 				inoutService.updateTimecardUnplanned(paramMap);
 			} else {
 				inoutService.updateTimecard(paramMap);
@@ -283,6 +283,11 @@ public class WtmInoutController {
 			paramMap.put("month", month);
 			
 			List<Map <String,Object>> l = inoutService.getMyInoutList(paramMap);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회결과가 없습니다.");
+				return rp;
+			}
+			
 			l = MobileUtil.parseMobileList(l);
 			
 			rp.setSuccess("");
@@ -335,6 +340,10 @@ public class WtmInoutController {
 			paramMap.put("ymd", ymd);
 			
 			List<Map <String,Object>> l = inoutService.getMyInoutHistory(paramMap);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회결과가 없습니다.");
+				return rp;
+			}
 			l = MobileUtil.parseMobileList(l);
 			rp.put("result", l);
 		} catch(Exception e) {

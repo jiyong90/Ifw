@@ -14,6 +14,7 @@
 	<select id="getInoutStatus" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT C.YMD AS ymd, 
+				   F_WTM_DATE_FORMAT(C.YMD, 'Y.M.D') as ymds,
 			       C.ENTRY_SDATE AS entrySdate, 
 			       C.ENTRY_EDATE AS entryEdate,
 			       C.HOLIDAY_YN AS holydayYn,

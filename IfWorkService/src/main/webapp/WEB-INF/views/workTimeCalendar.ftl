@@ -604,8 +604,32 @@
   		    		}
   		    	},
   		    	dateClickCallback : function(info){
-  		    		if(!info.allDay && moment('${today}').diff(this.workday)<=0)
-  		    			this.preCheck(info, false);
+  		    		//if(!info.allDay && moment('${today}').diff(this.workday)<=0)
+  		    		//	this.preCheck(info, false);
+  		    		
+  		    		if(!info.allDay) {
+  		    			var applCode = this.applCode['OT'];
+  									
+						//연장근무 신청 기간에 따라 버튼 보여줌
+						var isOtAppl = true;
+						if(applCode.otApplSday!=null && applCode.otApplSday!=undefined && (applCode.otApplSday!=''||applCode.otApplSday==0)){
+							var otApplSday = moment(moment().subtract(applCode.otApplSday, 'd')).format('YYYYMMDD');
+							if(moment(this.workday).diff(otApplSday)<=0) {
+								isOtAppl = false;
+							}
+						} 
+						
+						if(applCode.otApplEday!=null && applCode.otApplEday!=undefined && (applCode.otApplEday!=''||applCode.otApplEday==0)){
+							var otApplEday = moment(moment().add(applCode.otApplEday, 'd')).format('YYYYMMDD');
+							if(moment(otApplEday).diff(this.workday)<=0) {
+								isOtAppl = false;
+							}
+						} 
+						
+						if(isOtAppl)
+							this.preCheck(info, false);
+  		    		}					
+  		    		
   		    	},
   	         	addEvent : function(Obj){
   	         		if(Obj!=null) {
@@ -906,7 +930,7 @@
   	         			var dayResults = JSON.parse($this.result.dayResults);
   	         		
   	         			dayResults.map(function(dayResult){
-  	         				if(dayResult.timeTypeCd == 'BASE' || dayResult.timeTypeCd == 'OT') {
+  	         				if(dayResult.timeTypeCd == 'BASE' || dayResult.timeTypeCd == 'FIXOT' ||  dayResult.timeTypeCd == 'OT') {
   	         					if(baseEdate==null || baseEdate < dayResult.eDate) {
   	         						baseEdate = dayResult.eDate;
   	         					} 
@@ -915,19 +939,21 @@
   	         		} 
   	         		
   	         		if(baseEdate!=null) {
-  	         			sYmd = new Date(baseEdate);
-  	         			eYmd = new Date(baseEdate);
+  	         			sYmd = moment(baseEdate).format('YYYY-MM-DD HH:mm:ss');
+  	         			eYmd = moment(baseEdate).format('YYYY-MM-DD HH:mm:ss');
   	         		}
   	         		
   	         		var applCode = $this.applCode['OT'];
-  	         		
+  	         		 
   	         		if(applCode!=null && applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='') {
   	         			var timeUnit = Number(applCode.timeUnit);
-  	         			eYmd.setMinutes(sYmd.getMinutes()+timeUnit);
+  	         			//eYmd.setMinutes(sYmd.getMinutes()+timeUnit);
+  	         			eYmd = moment(eYmd).add(timeUnit, 'minutes');
   	         		} else {
-  	         			eYmd.setHours(sYmd.getHours()+1);
-  	         		}
-					
+  	         			//eYmd.setHours(sYmd.getHours()+1);
+  	         			eYmd = moment(eYmd).add(1, 'hours');
+  	         		} 
+  	         		
 					$("#sDate").val(moment(sYmd).format('YYYY-MM-DD'));
 					$("#eDate").val(moment(eYmd).format('YYYY-MM-DD'));
 					$("#sTime").val(moment(sYmd).format('HH:mm'));

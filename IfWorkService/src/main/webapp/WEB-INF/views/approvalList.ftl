@@ -309,13 +309,13 @@
                                     <span class="date-wrap">
                                         <span class="start-date">
                                         	<template v-if="appl.planSdate">
-                                        	{{moment(appl.planSdate).format('YYYY-MM-DD HH:mm')}}
+                                        	{{moment(moment(appl.planSdate, 'YYYYMMDDHHmmss').toDate()).format('YYYY-MM-DD HH:mm')}}
                                         	</template>
                                         </span>
                                         <span class="ml-1 mr-1">~</span>
                                         <span class="end-date">
                                         	<template v-if="appl.planEdate">
-                                        	{{moment(appl.planEdate).format('YYYY-MM-DD HH:mm')}}
+                                        	{{moment(moment(appl.planEdate, 'YYYYMMDDHHmmss').toDate()).format('YYYY-MM-DD HH:mm')}}
                                         	</template>
                                         </span>
                                     </span>
@@ -327,31 +327,31 @@
                                     <span class="date-wrap">
                                         <span class="start-date">
                                         	<template v-if="appl.entrySdate">
-                                        	{{moment(appl.entrySdate).format('YYYY-MM-DD HH:mm')}}
+                                        	{{moment(moment(appl.entrySdate, 'YYYYMMDDHHmmss').toDate()).format('YYYY-MM-DD HH:mm')}}
                                         	</template>
                                         </span>
                                         <span class="ml-1 mr-1">~</span>
                                         <span class="end-date">
                                         	<template v-if="appl.entryEdate">
-                                        	{{moment(appl.entryEdate).format('YYYY-MM-DD HH:mm')}}
+                                        	{{moment(moment(appl.entryEdate, 'YYYYMMDDHHmmss').toDate()).format('YYYY-MM-DD HH:mm')}}
                                         	</template>
                                         </span>
                                     </span>
                                 </div>
                             </div>
                             <div class="inner-wrap">
-                                <div class="title">변경 출/퇴근 시각</div>
+                                <div class="title">변경 출/퇴근 시각</div>{{appl}}
                                 <div class="desc">
                                     <span class="date-wrap">
                                         <span class="start-date">
                                         	<template v-if="appl.chgSdate">
-                                        	{{moment(appl.chgSdate).format('YYYY-MM-DD HH:mm')}}
+                                        	{{moment(moment(appl.chgSdate, 'YYYYMMDDHHmmss').toDate()).format('YYYY-MM-DD HH:mm')}}
                                         	</template>
                                         </span>
                                         <span class="ml-1 mr-1">~</span>
                                         <span class="end-date">
                                         	<template v-if="appl.chgEdate">
-                                        	{{moment(appl.chgEdate).format('YYYY-MM-DD HH:mm')}}
+                                        	{{moment(moment(appl.chgEdate, 'YYYYMMDDHHmmss').toDate()).format('YYYY-MM-DD HH:mm')}}
                                         	</template>
                                         </span>
                                     </span>

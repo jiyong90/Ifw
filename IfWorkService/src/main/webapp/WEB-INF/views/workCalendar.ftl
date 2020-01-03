@@ -610,11 +610,13 @@
 	                        <div class="time-input-form form-row no-gutters">
 	                            <div class="form-group col-6 pr-1">
 	                                <label for="startTime" data-target-input="nearest">출근시간</label>
-	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime" value="" data-toggle="datetimepicker" data-target="#startTime" autocomplete="off" @focusout="changeWorkTime" :required="flexibleAppl.workTypeCd!='ELAS'?true:false">
+	                                <!--<input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime" value="" data-toggle="datetimepicker" data-target="#startTime" autocomplete="off" @focusout="changeWorkTime" :required="flexibleAppl.workTypeCd!='ELAS'?true:false">-->
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime" value="" data-toggle="datetimepicker" data-target="#startTime" autocomplete="off" @focusout="changeWorkTime">
 	                            </div>
 	                            <div class="form-group col-6 pl-1">
 	                                <label for="endTime" data-target-input="nearest">퇴근시간</label>
-	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime" value="" data-toggle="datetimepicker" data-target="#endTime" autocomplete="off" @focusout="changeWorkTime" :required="flexibleAppl.workTypeCd!='ELAS'?true:false">
+	                                <!--<input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime" value="" data-toggle="datetimepicker" data-target="#endTime" autocomplete="off" @focusout="changeWorkTime" :required="flexibleAppl.workTypeCd!='ELAS'?true:false">-->
+	                                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime" value="" data-toggle="datetimepicker" data-target="#endTime" autocomplete="off" @focusout="changeWorkTime">
 	                            </div>
 	                        </div>
 	                        <div id="elasOtTime" class="time-input-form form-row no-gutters" style="display:none;">
@@ -653,7 +655,8 @@
 	                    	</div>
 			            </template>
 			            <template v-else>
-			            	<div class="sub-wrap">
+			            	<div class="sub-wrap position-relative">
+			            		<div class="loading-spinner" style="display:none;"></div>
 			                    <ul class="time-block-list">
 			                        <li>
 			                            <div class="title">약정 근로 시간</div>

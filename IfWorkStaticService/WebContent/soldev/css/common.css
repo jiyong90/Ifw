@@ -1536,3 +1536,59 @@ div.bootstrap-datetimepicker-widget.dropdown-menu{width: auto;}
   font-weight:700;
   text-decoration: none;
 }
+
+/* spinner */
+.loading-spinner {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+  opacity: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: inherit;
+}
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: translate3d(-50%, -50%, 0) rotate(0deg);
+            transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translate3d(-50%, -50%, 0) rotate(360deg);
+            transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: translate3d(-50%, -50%, 0) rotate(0deg);
+            transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translate3d(-50%, -50%, 0) rotate(360deg);
+            transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+}
+.loading-spinner.-paused {
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+  opacity: 0.2;
+  transition: opacity linear 0.1s;
+}
+.loading-spinner::before {
+  -webkit-animation: 1.5s linear infinite spinner;
+          animation: 1.5s linear infinite spinner;
+  -webkit-animation-play-state: inherit;
+          animation-play-state: inherit;
+  border: solid 3px #dedede;
+  border-bottom-color: #4d84fe;
+  border-radius: 50%;
+  content: "";
+  height: 30px;
+  left: 50%;
+  opacity: inherit;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+          transform: translate3d(-50%, -50%, 0);
+  width: 30px;
+  will-change: transform;
+}
