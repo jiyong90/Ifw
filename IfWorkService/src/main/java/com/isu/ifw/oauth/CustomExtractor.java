@@ -73,6 +73,7 @@ class CustomExtractor implements TokenExtractor {
     		
     		token = getTokenFromRequest(request);
     	}
+    	//token = token.replace("Bearer ", "");
 
 //		System.out.println("111111111111111111111111 session id 2 " + request.getSession().getId());
 //		System.out.println("111111111111111111111111 session id 2 " + request.getSession().getAttribute(TOKEN_KEY_JWT));
@@ -83,7 +84,7 @@ class CustomExtractor implements TokenExtractor {
     	}
     	
     	Map<String, Object> t = WtmUtil.parseJwtToken(request, token);
-    	System.out.println("parseJwtToken " + t.toString());
+    	//System.out.println("parseJwtToken " + t.toString());
 //    	if(t.containsKey("user_name")) {
 //    		try {
 //   				redisTemplate.opsForValue().set("11", "22");

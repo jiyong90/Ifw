@@ -57,7 +57,14 @@ a[aria-expanded="true"] {
     background-color: #2576c6;
     border-color: #004f9c;
 }
-
+/* 결재페이지 */
+[type=button].btn-approval.sign {
+    color: #0f5aa4;
+}
+.btn-approval.sign:hover {
+    color:#ffffff;
+    background-color: #0f5aa4;
+}
 /* 근무계획 */
 .white-box-wrap .btn-info-wrap a {
     color: #0f5aa4;
@@ -85,6 +92,10 @@ a[aria-expanded="true"] {
 }
 .error-page .container a.btn-main {
     background-color: #0f5aa4;
+}
+/* spinner */
+.loading-spinner::before {
+    border-bottom-color: #0f5aa4;
 }
 
 /* Layout4HR css custom */
@@ -171,9 +182,3 @@ table.default td [type="radio"]:checked + label:after,
 table.default td [type="radio"]:not(:checked) + label:after {
     background: #0f5aa4;
 }
-
-/*근무제 표시 감춤 - 태평양물산만*/
-.sub-info-wrap .work-check-wrap{
-	display:none;
-}
-
