@@ -53,7 +53,7 @@ textarea.required { border:1px solid #008fd5 !important; }
 	display:inline-block;
 	width:35px;
 	height:35px;
-	margin-right:4px;
+	margin-right:10px;
 	border-radius:50%;
 	background-color:#82bce2;
 	text-align: center;
