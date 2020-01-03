@@ -7,7 +7,7 @@
     <title>근태관리</title>
     <link rel="stylesheet" href="${rc.getContextPath()}/company/hyundaiNGV/assets/css/reset.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/company/hyundaiNGV/assets/css/style.css">
-    <#include "/scriptZip.ftl">
+    <#include "/metaScript.ftl">
     
 </head>
 <body>
@@ -87,7 +87,7 @@
 			    		};
 			    		
 			    		Util.ajax({
-							url: "${rc.getContextPath()}/api/in",
+							url: "${rc.getContextPath()}/api/${tsId}/in",
 							type: "POST",
 							contentType: 'application/json',
 							data: JSON.stringify(param),
