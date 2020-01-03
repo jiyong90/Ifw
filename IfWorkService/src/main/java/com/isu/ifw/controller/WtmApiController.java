@@ -54,7 +54,7 @@ public class WtmApiController {
 	WtmInoutHisMapper inoutHisMapper;
 
 	//출퇴근 상태 정보
-	@RequestMapping(value = "/{tsId}/inoutstatus", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/{tsId}/worktime/status", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyWorkStatus(
 			@PathVariable String tsId, 
 			@RequestParam(value="empKey", required = true) String empKey, 
@@ -94,7 +94,7 @@ public class WtmApiController {
 	}
 	
 	//출근
-	@RequestMapping (value="/{tsId}/in", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping (value="/{tsId}/worktime/in", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String,Object> requestIn(@PathVariable String tsId, 
 			@RequestBody Map<String,Object> params, HttpServletRequest request)throws Exception{
 	
@@ -151,7 +151,7 @@ public class WtmApiController {
 	}
 	
 	//퇴근
-	@RequestMapping (value="/{tsId}/out", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping (value="/{tsId}/worktime/out", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String,Object> requestOut(@PathVariable String tsId, 
 			@RequestBody Map<String,Object> params, HttpServletRequest request)throws Exception{
 		
@@ -206,7 +206,7 @@ public class WtmApiController {
 	}
 	
 	//퇴근취소
-	@RequestMapping(value = "/{tsId}/cancel", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/{tsId}/worktime/cancel", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam cancelOutRequest(@PathVariable String tsId,
 			@RequestBody Map<String,Object> params, HttpServletRequest request) throws Exception {		
 		
