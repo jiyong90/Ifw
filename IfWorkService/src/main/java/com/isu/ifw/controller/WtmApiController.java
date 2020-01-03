@@ -7,18 +7,25 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isu.ifw.common.entity.CommTenantModule;
+import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.mapper.WtmInoutHisMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
@@ -39,10 +46,17 @@ public class WtmApiController {
 	@Autowired
 	WtmInoutService inoutService;
 
-	@RequestMapping(value = "/workstatus", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@Autowired
+	@Qualifier("WtmTenantModuleRepository")
+	CommTenantModuleRepository tenantModuleRepo;
+	
+	@Autowired
+	WtmInoutHisMapper inoutHisMapper;
+
+	//출퇴근 상태 정보
+	@RequestMapping(value = "/{tsId}/inoutstatus", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyWorkStatus(
-			@RequestParam(value = "tenantId", required = true) Long tenantId,
-//			@RequestParam(value = "userToken", required = true) String userToken,
+			@PathVariable String tsId, 
 			@RequestParam(value="empKey", required = true) String empKey, 
 			HttpServletRequest request) throws Exception {
 
@@ -55,6 +69,15 @@ public class WtmApiController {
 		Map <String,Object> resultMap = new HashMap<String,Object>();
 
 		try {
+			CommTenantModule tm = null;
+			tm = tenantModuleRepo.findByTenantKey(tsId);
+			
+			if(tm == null) {
+				rp.setFail("잘못된 호출 url입니다.");
+				return rp;
+			}
+			Long tenantId = tm.getTenantId();
+			
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
@@ -67,6 +90,169 @@ public class WtmApiController {
 		}
 		rp.put("result", resultMap);
 		logger.debug("/api/workstatus e " + rp.toString());
+		return rp;
+	}
+	
+	//출근
+	@RequestMapping (value="/{tsId}/in", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String,Object> requestIn(@PathVariable String tsId, 
+			@RequestBody Map<String,Object> params, HttpServletRequest request)throws Exception{
+	
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("출근 체크 되었습니다.");
+
+		try {
+			logger.debug(tsId + "/api/in s " + params.toString());
+
+			CommTenantModule tm = null;
+			tm = tenantModuleRepo.findByTenantKey(tsId);
+			
+			if(tm == null) {
+				rp.setFail("잘못된 호출 url입니다.");
+				return rp;
+			}
+			Long tenantId = tm.getTenantId();
+			
+			String ymd = (String)params.get("ymd");
+			String enterCd = (String)params.get("enterCd");
+			String sabun = (String)params.get("sabun");
+	
+			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
+			Date now = new Date();
+			String today = format1.format(now);
+			
+			Map<String, Object> paramMap = new HashMap();
+		
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("inoutType", "IN");
+			paramMap.put("ymd", ymd);
+			paramMap.put("inoutDate", today);
+			paramMap.put("entryType", "API");
+			
+			logger.debug(tsId + "/api/in s2 " + paramMap.toString());
+		
+			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(paramMap);
+			if(yn != null && yn.get("unplannedYn") != null && "Y".equals(yn.get("unplannedYn").toString())) {
+				inoutService.updateTimecardUnplanned(paramMap);
+			} else {
+				inoutService.updateTimecard(paramMap);
+			}
+			
+			logger.debug("in : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
+
+		} catch(Exception e) {
+			logger.debug("inexception : " + e.getMessage());
+			rp.setFail(e.getMessage());
+		}
+		logger.debug(tsId + "/api/in e " + rp.toString());
+		return rp;
+	}
+	
+	//퇴근
+	@RequestMapping (value="/{tsId}/out", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String,Object> requestOut(@PathVariable String tsId, 
+			@RequestBody Map<String,Object> params, HttpServletRequest request)throws Exception{
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("퇴근 체크 되었습니다.");
+		
+		Map<String, Object> paramMap = new HashMap();
+		try {
+			logger.debug(tsId + "/api/out s " + params.toString());
+
+			
+			CommTenantModule tm = null;
+			tm = tenantModuleRepo.findByTenantKey(tsId);
+			
+			if(tm == null) {
+				rp.setFail("잘못된 호출 url입니다.");
+				return rp;
+			}
+			Long tenantId = tm.getTenantId();
+			
+			String ymd = (String)params.get("ymd");
+			String enterCd = (String)params.get("enterCd");
+			String sabun = (String)params.get("sabun");
+			
+			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
+			Date now = new Date();
+			String today = format1.format(now);
+
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("inoutType", "OUT");
+			paramMap.put("ymd", ymd);
+			paramMap.put("inoutDate", today);
+			paramMap.put("entryType", "API");
+			
+			logger.debug(tsId + "/api/out s2 " + paramMap.toString());
+			
+			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(paramMap);
+			if(yn != null && yn.get("unplannedYn") != null && "Y".equals(yn.get("unplannedYn").toString())) {
+				inoutService.updateTimecardUnplanned(paramMap);
+			} else {
+				inoutService.updateTimecard(paramMap);
+			}
+
+		} catch(Exception e) {
+			logger.debug("outexception : " + e.getMessage() + paramMap.toString());
+			rp.setFail(e.getMessage());
+		}
+		logger.debug(tsId + "/api/out e " + rp.toString());
+		return rp;
+	}
+	
+	//퇴근취소
+	@RequestMapping(value = "/{tsId}/cancel", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam cancelOutRequest(@PathVariable String tsId,
+			@RequestBody Map<String,Object> params, HttpServletRequest request) throws Exception {		
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("퇴근 정보가 취소되었습니다.");
+
+		Map<String, Object> paramMap = new HashMap();
+
+		try {
+			logger.debug(tsId + "/api/cancel s " + params.toString());
+ 
+			CommTenantModule tm = null;
+			tm = tenantModuleRepo.findByTenantKey(tsId);
+			
+			if(tm == null) {
+				rp.setFail("잘못된 호출 url입니다.");
+				return rp;
+			}
+			Long tenantId = tm.getTenantId();
+			
+			String ymd = (String)params.get("ymd");
+			String enterCd = (String)params.get("enterCd");
+			String sabun = (String)params.get("sabun");
+			
+			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
+			Date now = new Date();
+			String today = format1.format(now);
+			
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("inoutType", "OUTC");
+			paramMap.put("ymd", ymd);
+			paramMap.put("inoutDate", today);
+			paramMap.put("entryType", "API");
+			
+			logger.debug(tsId + "/api/cancel s2 " + paramMap.toString());
+			inoutService.updateTimecardCancel(paramMap);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		
+		logger.debug(tsId + "/api/cancel e " + rp.toString());
+
 		return rp;
 	}
 	
