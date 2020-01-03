@@ -6,10 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -25,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,8 +42,8 @@ import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.mapper.CommUserMapper;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
+import com.isu.ifw.service.LoginService;
 import com.isu.ifw.util.CookieUtil;
-import com.isu.ifw.util.JwtUtil;
 import com.isu.ifw.util.Sha256;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
@@ -77,6 +74,10 @@ public class IfwLoginController {
     @Autowired
     RestTemplate restTemplate;
 
+    @Autowired
+    LoginService loginService;
+
+   
     @RequestMapping(value = "/login/{tsId}/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView ssoLogin(@PathVariable String tsId,
 			@RequestParam(required = true) String username,
@@ -355,7 +356,11 @@ public class IfwLoginController {
 										  HttpServletResponse response) {
 
 		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
 		System.out.println("=================== login");
+		
+		Map<String, Object> userData = null;
 		try {
 			Long tenantId = null;
 			Long tenantModuleId = null;
@@ -375,47 +380,24 @@ public class IfwLoginController {
 			String loginEnterCd = params.get("loginEnterCd").toString();
 			
 			// 사용자 인증 후, 서버에 세션 값으로 채울 데이터를 담을 저장소
-			Map<String, Object> userData = null;
-			String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
+//			String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
 
-			try {
-				Map<String, Object> paramMap = new HashMap();
-				paramMap.put("tenantId", String.valueOf(tenantId));
-				paramMap.put("enterCd", loginEnterCd);
-				paramMap.put("loginId", loginUserId);
-				paramMap.put("encKey", encKey);
-				System.out.println("11111111111111111111111111 1 " + paramMap.toString());
+//				Map<String, Object> paramMap = new HashMap();
+//				paramMap.put("tenantId", String.valueOf(tenantId));
+//				paramMap.put("enterCd", loginEnterCd);
+//				paramMap.put("loginId", loginUserId);
+//				paramMap.put("encKey", encKey);
+//				System.out.println("11111111111111111111111111 1 " + paramMap.toString());
 				
-				userData = commUserMapper.getCommUser(paramMap);
-				
-				System.out.println("11111111111111111111111111 2 " + userData.toString());
-			} catch (Exception e) {
-				e.printStackTrace();
-				rp.setFail("등록된 사용자가 없습니다.");
-				return rp;
-			}
-				
-			// 사용자 비밀번호를 체크한다.
-			if (userData != null) {
-				String password = (String) userData.get("password");
-				System.out.println("11111111111111111111111111 3 " + password);
-
-				int repeatCount = Integer.valueOf(tcms.getConfigValue(tenantId, "SECURITY.SHA.REPEAT", true, ""));
-				
-				// 사용자 비밀번호를 체크한다.
-				String requestedPassword = Sha256.getHash(loginPassword, encKey, repeatCount);
-				System.out.println("11111111111111111111111111 4 " + requestedPassword);
-				if(!requestedPassword.contentEquals(password)) {
-					System.out.println("11111111111111111111111111 5 ");
-					rp.setFail("비밀번호가 일치하지 않습니다.");
-					return rp;
-				}
-				rp.setSuccess("");
-				rp.put("userData", userData);
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
+			userData = loginService.getUserData(tenantId, loginEnterCd, loginUserId, loginPassword);
+		
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail(e.getMessage());
+			return rp;
 		}
+			
+		rp.put("userData", userData);
 		return rp;
 	}
 	

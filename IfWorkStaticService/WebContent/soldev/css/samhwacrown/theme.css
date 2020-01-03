@@ -105,6 +105,10 @@ input.required{
 .sheet_search{
 	border-top: 2px solid #980724;
 }
+.sheet_search .magnifier{
+    background-color: #980724;
+    opacity: 0.5;
+}
 .sheet_search a.button{
 	background-color: #980724;
 }

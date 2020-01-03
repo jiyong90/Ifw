@@ -25,12 +25,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.common.mapper.CommUserMapper;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmToken;
 import com.isu.ifw.mapper.LoginMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmTokenRepository;
+import com.isu.ifw.util.Sha256;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.Login;
 
@@ -46,6 +48,10 @@ public class LoginService{
 
 	@Autowired
 	LoginMapper loginMapper;
+	
+	@Autowired
+	CommUserMapper commUserMapper;
+
 	
 	@Resource
 	WtmTokenRepository tokenRepository;
@@ -195,5 +201,31 @@ public class LoginService{
 	public void deleteAccessToken(ServletRequest request, ServletResponse response, WtmToken token) {
 		tokenRepository.deleteByTenantIdAndEnterCdAndSabun(token.getTenantId(), token.getEnterCd(), token.getSabun());
 		removeTokenCookie(request, response);
+	}
+	
+	public Map<String, Object> getUserData(Long tenantId, String enterCd, String sabun, String password) throws Exception {
+
+		String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
+
+		Map<String, Object> paramMap = new HashMap();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("loginId", sabun);
+		paramMap.put("encKey", encKey);
+		
+		Map<String, Object> userData = commUserMapper.getCommUser(paramMap);
+		if(userData == null) 
+			throw new Exception("등록된 사용자가 없습니다.");
+		
+		String pwd = userData.get("password").toString();
+		int repeatCount = Integer.valueOf(tcms.getConfigValue(tenantId, "SECURITY.SHA.REPEAT", true, ""));
+
+		// 사용자 비밀번호를 체크한다.
+		String requestedPassword = Sha256.getHash(password, encKey, repeatCount);
+
+		if(!requestedPassword.contentEquals(password))
+			throw new Exception("비밀번호가 일치하지 않습니다.");
+
+		return userData;
 	}
 }

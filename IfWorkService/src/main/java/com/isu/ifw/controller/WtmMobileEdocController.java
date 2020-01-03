@@ -118,7 +118,7 @@ public class WtmMobileEdocController {
 	/**
 	 * 신청서 상세 
 	 */
-	@RequestMapping(value = "/mobile/{tenantId}/edocument", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/edocument/init", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam detail(HttpServletRequest request,
 			@PathVariable Long tenantId,
 			@RequestParam(value = "locale", required = true) String locale,
