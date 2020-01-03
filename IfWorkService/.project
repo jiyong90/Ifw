@@ -5,6 +5,7 @@
 	<projects>
 		<project>isu-commons-auth</project>
 		<project>isu-commons-option</project>
+		<project>IfWork</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
