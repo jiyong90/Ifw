@@ -1,5 +1,6 @@
 package com.isu.ifw.util;
 
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class AjaxUtils {
 	 * @param requestMap
 	 * @return
 	 */
-	public static String buildUrl(String url, Map<String, String> requestMap) {
+	public static String buildUrl(String url, Map<String, Object> requestMap) {
 
 		if(requestMap == null)
 			return url;
@@ -47,6 +48,7 @@ public class AjaxUtils {
 			}
 			
 			String key = itor.next();
+			//String value = ""+(requestMap.get(key) == null ? "" :  (key.equals("empKey")?URLEncoder.encode((String) requestMap.get(key)):requestMap.get(key)));
 			String value = ""+(requestMap.get(key) == null ? "" :  requestMap.get(key));
 			
 			// URL로 전달될 파라미터들을 URL 인코딩한다.

@@ -2,21 +2,16 @@ package com.isu.ifw.ext.hdngv.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.tempuri.SitemapWSSoap;
 
@@ -90,7 +85,7 @@ public class LoginControllerHdngv {
 				
 				System.out.println("resultMap : " + mapper.writeValueAsString(hashMap));
 				String empId = hashMap.get("Emp_ID")+"";
-				Map<String, String> paramMap = new HashMap<>();
+				Map<String, Object> paramMap = new HashMap<>();
 				paramMap.put("empKey", strCompanyCode + "@" + empId);
 				Map<String, Object> resMap = exchangeService.exchange(url, HttpMethod.GET, null, paramMap);
 				
@@ -100,9 +95,29 @@ public class LoginControllerHdngv {
 						
 			} else {
 				mv.addObject("message", "Encode is empty.");
-				mv.setViewName("error");
+				//mv.setViewName("error");
 				 
 			}
+			
+
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("enterCd", "HDNGV");
+			paramMap.put("sabun", "2008856");
+			Map<String, Object> resMap = exchangeService.exchange(url, HttpMethod.GET, null, paramMap);
+			
+			
+			Map<String, Object> rMap = ((Map<String, Object>) resMap.get("result"));
+			if(!rMap.containsKey("ymd") || !rMap.containsKey("entrySdate") || !rMap.containsKey("entryEdate") || !rMap.containsKey("label") || !rMap.containsKey("desc") || !rMap.containsKey("inoutType")) {
+				
+			}else {
+				
+			}
+			
+			for(String kk : rMap.keySet()) {
+				System.out.println(kk + " : " + rMap.get(kk));
+				mv.addObject(kk, (rMap.get(kk)==null)?"":rMap.get(kk));
+			}
+			System.out.println(mapper.writeValueAsString(rMap));
 		} 
 		catch (Exception e)
 		{

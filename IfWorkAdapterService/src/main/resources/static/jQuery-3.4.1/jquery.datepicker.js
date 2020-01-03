@@ -1,7 +1,7 @@
 ; (function($) {
     if (!dateFormat || typeof (dateFormat) != "function") {
     	var head = document.getElementsByTagName('head')[0];
-    	$("<script></script>",{type:'text/javascript',src:"/ifw/jQuery-3.4.1/jquery.mask.js"}).appendTo(head);
+    	$("<script></script>",{type:'text/javascript',src:"${rc.getContextPath()}/jQuery-3.4.1/jquery.mask.js"}).appendTo(head);
 
     	/*
     	var script = document.createElement('script');

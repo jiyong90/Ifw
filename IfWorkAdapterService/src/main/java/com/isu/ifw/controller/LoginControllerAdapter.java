@@ -35,7 +35,7 @@ public class LoginControllerAdapter {
 	
 	@RequestMapping(value = "/certificate/{tsId}", method = RequestMethod.POST)
 	public Map<String, Object> certificate(@PathVariable String tsId,
-					@RequestBody Map<String, String> paramMap, HttpServletRequest req, HttpServletResponse res) throws Exception {
+					@RequestBody Map<String, Object> paramMap, HttpServletRequest req, HttpServletResponse res) throws Exception {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		
@@ -45,6 +45,8 @@ public class LoginControllerAdapter {
 			return resMap;
 		}
 		 
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println(mapper.writeValueAsString(paramMap));
 		resMap = certService.exchange(url, HttpMethod.POST, null, paramMap);
 		
 		return resMap;
@@ -59,7 +61,7 @@ public class LoginControllerAdapter {
 		
 		String url = validUrl.replace("{{tsId}}", tsId);
 		
-		Map<String, String> paramMap = new HashMap<String, String>();
+		Map<String, Object> paramMap = new HashMap<String, Object>();
 		
 		Enumeration<String> er = request.getParameterNames();
 		while(er.hasMoreElements()) {

@@ -35,7 +35,7 @@ public class ExchangeService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	public Map<String, Object> exchange(String url, HttpMethod method, String contentType, Map<String, String> paramMap) {
+	public Map<String, Object> exchange(String url, HttpMethod method, String contentType, Map<String, Object> paramMap) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", ""+ this.getAccessToken());
 		if(contentType == null)
@@ -43,15 +43,15 @@ public class ExchangeService {
 		else
 			headers.set("Content-Type", contentType);
 		
-		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
-		param.setAll(paramMap);
+		//MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+		//param.setAll(paramMap);
 		//param.add("code", request.getParameter("code"));
 		//param.add("grant_type", "client_credentials");
 		//param.add("client_id", clientId);
 		//param.add("client_secret", secret);
 		
 		Map<String, Object> result = new HashMap<String, Object>();
-		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(param, headers);
+		HttpEntity<Map<String, Object>> entity = new HttpEntity<>(paramMap, headers);
 
 		try {
 			ResponseEntity<Map> res = null;
@@ -59,6 +59,7 @@ public class ExchangeService {
 			switch (method) {
 				case GET:
 					url = AjaxUtils.buildUrl(url, paramMap);
+					System.out.println("buildUrl : " + url);
 					res = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
 
 					if(res.getStatusCode().value() == HttpServletResponse.SC_OK) {

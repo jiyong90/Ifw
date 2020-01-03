@@ -36,13 +36,29 @@ ifw:
   client-id: hdngv
   secret: chWQsUbouLFXYYmy5F7k9UFYGprNH1F6uzqsOvt0K9s=
   token-url: https://cloudhr.pearbranch.com/ifa/oauth/token
-  login-post: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/certificate 
-  valid-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/validate     
-  status-get: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/status
-  in-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/in
-  out-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/out
-  cancel-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/cancel
-  dashboard-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/dashboard
-  edoc-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/edocument/{{function}}
-  team-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/team/{{function}}   
-  apply-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/apply/{{function}}
+  #login-post: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/certificate 
+  #valid-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/validate     
+  #status-get: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/status
+  #in-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/in
+  #out-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/out
+  #cancel-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/cancel
+  #dashboard-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/dashboard
+  #edoc-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/edocument/{{function}}
+  #team-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/team/{{function}}   
+  #apply-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/apply/{{function}} 
+  #inout-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/inout/{{function}}
+  
+  login-post: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/certificate 
+  valid-get: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/validate    
+  status-get: http://10.30.30.56:8080/ifw/api/{{tsId}}/worktime/status
+  in-post: http://10.30.30.56:8080/ifw/api/{{tsId}}/worktime/in
+  out-post: http://10.30.30.56:8080/ifw/api/{{tsId}}/worktime/out 
+  cancel-post: http://10.30.30.56:8080/ifw/api/{{tsId}}/worktime/cancel 
+  m-status-get: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/worktime/status 
+  
+  
+  dashboard-get: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/dashboard
+  edoc-url: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/edocument/{{function}}
+  team-url: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/team/{{function}}   
+  apply-url: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/apply/{{function}} 
+  inout-url: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/inout/{{function}}

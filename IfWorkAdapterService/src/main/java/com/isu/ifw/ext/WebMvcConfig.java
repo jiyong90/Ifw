@@ -30,8 +30,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Bean
 	public RestTemplate getRestTemplate() {
 		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(); 
-		factory.setReadTimeout(3000); 
-		factory.setConnectTimeout(3000); 
+		factory.setReadTimeout(10000); 
+		factory.setConnectTimeout(10000); 
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build(); 
 		factory.setHttpClient(httpClient); 
 		return new RestTemplate(factory);

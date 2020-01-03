@@ -7,22 +7,119 @@
     <title>근태관리</title>
     <link rel="stylesheet" href="${rc.getContextPath()}/company/hyundaiNGV/assets/css/reset.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/company/hyundaiNGV/assets/css/style.css">
+    <#include "/scriptZip.ftl">
+    
 </head>
 <body>
-    <div class="wrapper work-off">
+	<div id="topDiv">
+    <div class="wrapper work-off" v-if="inoutType=='HOL' || inoutType=='IN' ">
         <div class="inner-wrapper">
             <div class="ico-wrap">
                 <img src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workday.png" alt="">
             </div>
             <div class="contents-wrap">
-                <p class="date">2019.12.01</p>
-                <p class="desc">오늘은 <strong>근무일</strong> 입니다.</p>
+                <p class="date">{{ymd}}</p>
+                <p class="desc">오늘은 <strong>{{desc}}</strong> 입니다.</p>
                 <a href="#" class="link">근무시간 관리 시스템 바로가기</a>
             </div>
             <div class="btn-wrap">
-                <button class="btn btn-on">출근하기</button>
+                <button :class="{ 'btn':true, 'btn-on': !isHol }" @click="clickIn">출근하기</button>
             </div>
         </div>
     </div>
+    
+    <div class="wrapper work-day" v-if="inoutType=='END' || inoutType=='OUT' ">
+        <div class="top-bg">
+            <div class="inner-wrapper">
+                <div class="ico-wrap">
+                    <img src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workon.png" alt="">
+                </div>
+                <div class="info-wrap">
+                    <p class="date">{{ymd}}</p>
+                    <p class="desc"><strong>{{desc}}</strong> 입니다.</p>
+                </div>
+            </div>
+        </div>
+        <div class="inner-wrapper">
+            <div class="contents-wrap" v-if="entrySdate">
+                <span class="title">출근</span>
+                <span class="date">{{entrySdate}}</span>
+                <!-- <span class="time">09:00</span> -->
+            </div>
+            <div class="contents-wrap" v-if="entryEdate">
+                <span class="title">퇴근</span>
+                <span class="date">{{entryEdate}}</span>
+                <!-- <span class="time">18:00</span> -->
+            </div>
+            <!-- <a href="#" class="link">근무시간 관리 시스템 바로가기</a> -->
+            <div class="btn-wrap">
+                <button class="btn btn-off" v-if="inoutType=='OUT'" @click="clickOut">퇴근하기</button>
+                <button class="btn btn-cancel" v-if="inoutType=='END'" @click="clickCancel">퇴근취소</button>
+            </div>
+        </div>
+    </div>
+    </div> <!-- #topDiv end -->
+    <script type="text/javascript">
+		$(function () {
+			var inoutVue = new Vue({
+		   		el: "#topDiv",
+			    data : {
+			    	isHol: true,
+			    	ymd: '${ymd}',
+			    	entrySdate: '${entrySdate}',
+			    	entryEdate: '${entryEdate}',
+			    	label: '${label}',
+			    	desc: '${desc}',
+			    	inoutType: '${inoutType}' 
+		  		},
+			    mounted: function(){
+			    	var $this = this;
+					if(this.inoutType == "IN"){
+						this.isHol = false;	
+					}
+					 
+			    },
+			    methods: {
+			    	clickIn : function(){ 
+			    		var param = {
+			    				
+			    		};
+			    		
+			    		Util.ajax({
+							url: "${rc.getContextPath()}/api/in",
+							type: "POST",
+							contentType: 'application/json',
+							data: JSON.stringify(param),
+							dataType: "json",
+							success: function(data) {
+								if(data!=null && data.status=='OK') {
+								} else {
+								}
+							},
+							error: function(e) {
+								console.log(e);
+								$("#loading").hide();
+								$("#alertText").html("저장 시 오류가 발생했습니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+		  	  	         		$("#alertModal").modal("show"); 
+							}
+						}); 
+			    	},
+			    	clickOut: function(){
+			    		alert("out");
+			    	},
+			    	clickCancel: function(){
+			    		alert("c");
+			    	}
+			    }
+			});
+			
+		});
+	</script>
 </body>
 </html>
+
+<!--
+{"result":{"ymd":"2020.01.03","entryEdate":null,"entrySdate":null,"label":"출근하기","inoutType":"IN","desc":"근무일"},"message":"","status":"OK"}
+ 
+ -->
