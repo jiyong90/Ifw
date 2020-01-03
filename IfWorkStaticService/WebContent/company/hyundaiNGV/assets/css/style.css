@@ -25,6 +25,14 @@ a.link {display: inline-block;font-size: 12px;line-height: 1.5;letter-spacing: -
 .work-off p.date:after{content:'';}
 .work-off p.desc{font-size: 24px;font-weight: 300;line-height: 1.5;letter-spacing: -1.2px;text-align: center;}
 
+.error .inner-wrapper{padding: 50px 20px;}
+.error .contents-wrap {text-align: center;}
+.error .ico-wrap{display:inline-block;}
+.error .ico-wrap .far{color:#ffffff; font-size: 78px; color:#4d84fe;}
+.error p.date{margin-top:10px;font-size: 14px;font-weight: 900;line-height: 1.43;letter-spacing: -0.7px;text-align: center;}
+.error p.date:after{content:'';}
+.error p.desc{font-size: 20px;font-weight: 300;line-height: 1.5;letter-spacing: -1.2px;text-align: center;}
+.error a.link{margin-top:26px;}
 
 .work-off a.link{margin-top:26px;}
 .work-day a.link {margin-top: 53px;}
