@@ -44,7 +44,7 @@ a[aria-expanded="true"] {
 }
 .btn-write:hover {
     color: #ffffff;
-    background-color: #003c7d;
+    background-color: #003c7d; 
     border-color: #001f40;
 }
 .btn-default {
@@ -57,7 +57,14 @@ a[aria-expanded="true"] {
     background-color: #003c7d;
     border-color: #001f40;
 }
-
+/* 결재페이지 */
+[type=button].btn-approval.sign {
+    color: #002c5c;
+}
+.btn-approval.sign:hover {
+    color:#ffffff;
+    background-color: #002c5c;
+}
 /* 근무계획 */
 .white-box-wrap .btn-info-wrap a {
     color: #002c5c;
@@ -85,6 +92,13 @@ a[aria-expanded="true"] {
 }
 .error-page .container a.btn-main {
     background-color: #002c5c;
+}
+/* setting */
+.setting .card.choice{border:2px solid #002c5c;}
+
+/* spinner */
+.loading-spinner::before {
+    border-bottom-color: #002c5c;
 }
 
 /* Layout4HR css custom */

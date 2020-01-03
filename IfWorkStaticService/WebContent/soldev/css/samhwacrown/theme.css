@@ -86,6 +86,12 @@ a[aria-expanded="true"] {
 .error-page .container a.btn-main {
     background-color: #980724;
 }
+/* setting */
+.setting .card.choice{border:2px solid #980724;}
+/* spinner */
+.loading-spinner::before {
+    border-bottom-color: #980724;
+}
 
 /* Layout4HR css custom */
 a.button{
