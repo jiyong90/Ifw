@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,11 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.entity.WtmMobileToken;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
+import com.isu.ifw.repository.WtmMobileTokenRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
+import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmMobileService;
@@ -46,12 +51,18 @@ public class WtmMobileController {
 	WtmMobileService mobileService;
 	
 	@Autowired
+	LoginService loginService;
+
+	@Autowired
 	@Qualifier("wtmOtApplService")
 	WtmApplService otApplService;
 
 	@Resource
 	WtmApplCodeRepository applCodeRepository;
 	
+	@Resource
+	WtmMobileTokenRepository tokenRepository;
+
 	@Autowired
 	WtmApplMapper applMapper;
 
@@ -152,6 +163,111 @@ public class WtmMobileController {
 		}
 		return rp;
 	}
+
+
+	//로그인
+	@RequestMapping(value = "/mobile/{tenantId}/certificate", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam certificate(@PathVariable Long tenantId, 
+			@RequestBody(required = true) Map<String, Object> params,
+			HttpServletRequest request) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String userToken = params.get("userToken").toString();
+			String enterCd = params.get("loginEnterCd").toString();
+			String sabun = params.get("loginUserId").toString();
+			String password = params.get("loginPassword").toString();
+			String tenantKey = params.get("tenantKey").toString();
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보가 존재하지 않습니다.");
+				return rp;
+			}
+			
+			UUID token = UUID.randomUUID();
+				
+			Map<String, Object> userData = loginService.getUserData(tenantId, enterCd, sabun, password);
+			
+			WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
+			if(mobileToken == null) {
+				mobileToken = new WtmMobileToken();
+				mobileToken.setEmpKey(enterCd+"@"+sabun);
+				mobileToken.setTenantId(tenantId);
+			} 
+			mobileToken.setToken(token.toString());
+			mobileToken = tokenRepository.save(mobileToken);
+			
+			Map<String, Object> sessionData = new HashMap();
+			sessionData.put("orgNm", emp.getOrgCd());
+			sessionData.put("authCode", "");
+			sessionData.put("empNm", emp.getEmpNm());
+			sessionData.put("id", enterCd+sabun);
+			sessionData.put("accessToken", token.toString());
+			
+			Map<String, Object> result = new HashMap();
+			result.put("sessionData", sessionData);
+			result.put("empKey", enterCd+"@"+sabun);
+			
+			rp.put("result", result);
+		} catch(Exception e) {
+			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
+	
+	//인증
+	@RequestMapping(value = "/mobile/{tenantId}/validate", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam validate(@PathVariable Long tenantId, 
+					HttpServletRequest request,
+					@RequestParam(value = "locale", required = true) String locale,
+					@RequestParam(value = "empKey", required = true) String empKey,
+					@RequestParam(value = "userToken", required = true) String userToken,
+					@RequestParam(value = "accessToken", required = true) String accessToken) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String enterCd = MobileUtil.parseEmpKey(userToken,  empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken,  empKey, "sabun");
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보가 존재하지 않습니다.");
+				return rp;
+			}
+			WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
+			if(mobileToken == null) {
+				rp.setFail("로그인 정보가 존재하지 않습니다.");
+				return rp;
+			} 
+			
+			if(!mobileToken.getToken().equals(accessToken)) {
+				rp.setFail("사용자 인증이 만료되었습니다.");
+				return rp;
+			}
+			
+//			Map<String, Object> userData = loginService.getUserData(tenantId, enterCd, sabun, password);
+			
+			Map<String, Object> sessionData = new HashMap();
+			sessionData.put("orgNm", emp.getOrgCd());
+			sessionData.put("authCode", "");
+			sessionData.put("empNm", emp.getEmpNm());
+			sessionData.put("id", enterCd+sabun);
+			sessionData.put("accessToken", accessToken);
+			
+			Map<String, Object> result = new HashMap();
+			result.put("sessionData", sessionData);
+			result.put("empKey", enterCd+"@"+sabun);
+			
+			rp.put("result", result);
+		} catch(Exception e) {
+			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
+	
 	
 	/**
 	 * 부서원 근태현황 (기간 리스트)
