@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.tempuri.SitemapWSSoap;
 
+import com.fasterxml.jackson.core.TSFBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.ExchangeService;
 
@@ -43,7 +44,7 @@ public class LoginControllerHdngv {
 				System.out.println("Parameter Name - "+paramName+", Value - "+req.getParameter(paramName));
 			}
 		} */
-		 
+		mv.addObject("tsId", "hdngv"); 
 		
 		String strEncID = req.getParameter("HKMCENC_ID") == null ? "" : req.getParameter("HKMCENC_ID");
 		String strCompanyCode = req.getParameter("CompanyCode") == null ? "" : req.getParameter("CompanyCode");

@@ -32,17 +32,17 @@ public class InoutControllerAdapter {
 	@Autowired
 	private ExchangeService certService;
 	
-	@RequestMapping(value = "/api/{{functionId}}", method = RequestMethod.POST)
-	public Map<String, Object> postInout(@PathVariable String functionId, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping(value = "/api/{tsId}/{functionId}", method = RequestMethod.POST)
+	public Map<String, Object> postInout(@PathVariable String tsId,@PathVariable String functionId, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//System.out.println("clientId : " + clientId);
 		//System.out.println("secret : " + secret);
 		String url = "";
 		if(functionId.equalsIgnoreCase("IN")) {
-			url = inUrl;
+			url = inUrl.replace("{{tsId}}", tsId);
 		}else if(functionId.equalsIgnoreCase("OUT")) {
-			url = outUrl;
+			url = outUrl.replace("{{tsId}}", tsId);
 		}else if(functionId.equalsIgnoreCase("CANCEL")) {
-			url = cancelUrl;
+			url = cancelUrl.replace("{{tsId}}", tsId);
 		}
 		Map<String, Object> resMap = new HashMap<>();
 		if(url != "") {
