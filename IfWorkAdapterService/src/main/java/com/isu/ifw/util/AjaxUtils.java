@@ -59,10 +59,16 @@ public class AjaxUtils {
 					e.printStackTrace();
 				}
 			}*/
-			params = params+key+"="+value;
+			
+			if(key.contains("empKey") && !value.contains("@")) {
+				params = params+key+"="+URLEncoder.encode(value);
+			} else {
+				params = params+key+"="+value;
+			}
 		}
-		if(params != null)
+		if(params != null) {
 			return url+params;
+		}
 		else
 			return url;
 		

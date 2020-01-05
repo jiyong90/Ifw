@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -158,7 +159,7 @@ public class MobileControllerAdapter {
 	
 	@RequestMapping(value = "/m/{tsId}/edocument/{functionId}", method = RequestMethod.POST)
 	public Map<String, Object> postEdoc(@PathVariable String tsId,@PathVariable String functionId,
-								Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		
@@ -169,7 +170,7 @@ public class MobileControllerAdapter {
     }
 	@RequestMapping(value = "/m/{tsId}/team/{functionId}", method = RequestMethod.POST)
 	public Map<String, Object> postTeam(@PathVariable String tsId, @PathVariable String functionId,
-			Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		
@@ -180,7 +181,7 @@ public class MobileControllerAdapter {
     }
 	@RequestMapping(value = "/m/{tsId}/apply/{functionId}", method = RequestMethod.POST)
 	public Map<String, Object> postApply(@PathVariable String tsId,@PathVariable String functionId,
-			Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		
@@ -191,7 +192,7 @@ public class MobileControllerAdapter {
     }
 	@RequestMapping(value = "/m/{tsId}/inout/{functionId}", method = RequestMethod.POST)
 	public Map<String, Object> postInout(@PathVariable String tsId,@PathVariable String functionId,
-			Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		
