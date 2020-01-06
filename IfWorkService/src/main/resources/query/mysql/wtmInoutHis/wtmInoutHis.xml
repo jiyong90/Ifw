@@ -130,7 +130,7 @@
      <select id="getInoutListTerm" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT RIGHT(X.YMD, 2) AS title,
-				CONCAT(MAX(WORK_HOUR), '(', MAX(OT_HOUR), ')') as status,
+				TIME_FORMAT(SEC_TO_TIME((MAX(WORK_HOUR) + MAX(OT_HOUR)) * 60), '%H:%i')    as status,
 				--CONCAT(TIME_FORMAT(SEC_TO_TIME(MAX(WORK_HOUR)*60), '%H:%i'), '(', TIME_FORMAT(SEC_TO_TIME(MAX(OT_HOUR)*60), '%H:%i'), ')') as status,
 				F_WTM_DATE_FORMAT(X.ENTRY_SDATE, 'H:I') as caption_lb, 
 				F_WTM_DATE_FORMAT(X.ENTRY_EDATE, 'H:I') as caption_rb
