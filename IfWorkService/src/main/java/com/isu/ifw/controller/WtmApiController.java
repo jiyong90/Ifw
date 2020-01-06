@@ -139,7 +139,8 @@ public class WtmApiController {
 			}
 			
 			logger.debug("in : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
-
+			Map<String, Object> resultMap = inoutService.getMenuContextWeb(tenantId, enterCd, sabun); 
+			rp.put("result", resultMap);
 		} catch(Exception e) {
 			logger.debug("inexception : " + e.getMessage());
 			rp.setFail(e.getMessage());

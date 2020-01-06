@@ -250,7 +250,7 @@ public class WtmMobileController {
 				rp.setFail("로그인 정보가 존재하지 않습니다.");
 				return rp;
 			} 
-			
+			logger.debug("1111111111 " + mobileToken.getToken() + ", " + accessToken);
 			if(!mobileToken.getToken().equals(accessToken)) {
 				rp.setFail("사용자 인증이 만료되었습니다.");
 				return rp;
