@@ -166,7 +166,7 @@ public class WtmMobileController {
 
 
 	//로그인
-	@RequestMapping(value = "/mobile/{tenantId}/certificate", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/certificate", method = RequestMethod.POST)
 	public @ResponseBody ReturnParam certificate(@PathVariable Long tenantId, 
 			@RequestBody(required = true) Map<String, Object> params,
 			HttpServletRequest request) throws Exception {
@@ -175,11 +175,14 @@ public class WtmMobileController {
 		rp.setSuccess("");
 		try {
 			String userToken = params.get("userToken").toString();
+			System.out.println(params.toString());
 			String enterCd = params.get("loginEnterCd").toString();
 			String sabun = params.get("loginUserId").toString();
 			String password = params.get("loginPassword").toString();
 			String tenantKey = params.get("tenantKey").toString();
+			String empKey = enterCd + "@" + sabun;
 			
+			empKey = MobileUtil.encEmpKey(userToken, empKey);
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보가 존재하지 않습니다.");
@@ -208,8 +211,13 @@ public class WtmMobileController {
 			
 			Map<String, Object> result = new HashMap();
 			result.put("sessionData", sessionData);
-			result.put("empKey", enterCd+"@"+sabun);
 			
+			
+			logger.debug("111111111111111111111111111111111111100 " + empKey);
+//			empKey = empKey.replace("+", "%2B"); 
+
+			result.put("empKey", empKey);
+			logger.debug("111111111111111111111111111111111111101 " + empKey);
 			rp.put("result", result);
 		} catch(Exception e) {
 			rp.setFail(e.getMessage());
@@ -229,8 +237,8 @@ public class WtmMobileController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		try {
-			String enterCd = MobileUtil.parseEmpKey(userToken,  empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken,  empKey, "sabun");
+			String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(empKey, "sabun");
 			
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {

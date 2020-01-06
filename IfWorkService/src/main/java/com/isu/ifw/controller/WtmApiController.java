@@ -57,14 +57,12 @@ public class WtmApiController {
 	@RequestMapping(value = "/{tsId}/worktime/status", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyWorkStatus(
 			@PathVariable String tsId, 
-			@RequestParam(value="empKey", required = true) String empKey, 
+			@RequestParam(value="enterCd", required = true) String enterCd, 
+			@RequestParam(value="sabun", required = true) String sabun, 
 			HttpServletRequest request) throws Exception {
 
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
-		
-		String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd"); 
-		String sabun = MobileUtil.parseEmpKey(empKey, "sabun"); 
 		
 		Map <String,Object> resultMap = new HashMap<String,Object>();
 

@@ -1,6 +1,7 @@
 package com.isu.ifw.controller;
 
 
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +88,11 @@ public class WtmMobileEdocController {
 		
 		try {
 			String userToken = request.getParameter("userToken");
+			logger.debug("111111111111111111111111111111111111111 " + empKey);
+			empKey = URLDecoder.decode(empKey);
+			empKey = empKey.replace(" ", "+");
+			logger.debug("111111111111111111111111111111111111112 " + empKey);
+
 			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
@@ -129,6 +135,12 @@ public class WtmMobileEdocController {
 		Map<String, Object> result = new HashMap();
 		try {
 			String userToken = request.getParameter("userToken");
+			
+			logger.debug("111111111111111111111111111111111111111 " + empKey);
+			empKey = URLDecoder.decode(empKey);
+			empKey = empKey.replace(" ", "+");
+			logger.debug("111111111111111111111111111111111111112 " + empKey);
+
 			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 
