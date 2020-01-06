@@ -100,6 +100,7 @@ public class ExchangeService {
 		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
 		//param.add("code", request.getParameter("code"));
 		param.add("grant_type", "client_credentials");
+		param.add("username", "jyp");
 		//param.add("client_id", clientId);
 		//param.add("client_secret", secret);
 		

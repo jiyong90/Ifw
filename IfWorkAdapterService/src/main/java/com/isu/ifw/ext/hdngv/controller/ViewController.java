@@ -10,9 +10,15 @@ import org.springframework.web.servlet.ModelAndView;
 public class ViewController {
 
 	@RequestMapping(value = "/i", method = RequestMethod.GET)
-	public ModelAndView init(@RequestParam String msg) {
-		ModelAndView mv = new ModelAndView("inout");
-		mv.addObject("result", msg);
+	public ModelAndView init() {
+		ModelAndView mv = new ModelAndView("test");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/err", method = RequestMethod.GET)
+	public ModelAndView errorPage(@RequestParam String msg) {
+		ModelAndView mv = new ModelAndView("error");
+		mv.addObject("message", msg);
 		return mv;
 	}
 }

@@ -203,9 +203,7 @@ public class LoginService{
 		removeTokenCookie(request, response);
 	}
 	
-	public Map<String, Object> getUserData(Long tenantId, String enterCd, String sabun, String password) throws Exception {
-
-		String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
+	public Map<String, Object> findUserData(Long tenantId, String enterCd, String sabun, String encKey) throws Exception {
 
 		Map<String, Object> paramMap = new HashMap();
 		paramMap.put("tenantId", tenantId);
@@ -214,6 +212,18 @@ public class LoginService{
 		paramMap.put("encKey", encKey);
 		
 		Map<String, Object> userData = commUserMapper.getCommUser(paramMap);
+		
+		if(userData == null) 
+			throw new Exception("등록된 사용자가 없습니다.");
+		
+		return userData;
+		
+	}
+	public Map<String, Object> getUserData(Long tenantId, String enterCd, String sabun, String password) throws Exception {
+
+		String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
+		
+		Map<String, Object> userData = findUserData(tenantId, enterCd, sabun, encKey);
 		if(userData == null) 
 			throw new Exception("등록된 사용자가 없습니다.");
 		

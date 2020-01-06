@@ -1,6 +1,9 @@
 package com.isu.ifw.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +27,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +50,7 @@ import com.isu.ifw.common.mapper.CommUserMapper;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.service.LoginService;
+import com.isu.ifw.util.Aes256;
 import com.isu.ifw.util.CookieUtil;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
@@ -77,40 +84,77 @@ public class IfwLoginController {
     @Autowired
     LoginService loginService;
 
+    @Autowired 
+    DefaultTokenServices tokenService;
    
     @RequestMapping(value = "/login/{tsId}/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView ssoLogin(@PathVariable String tsId,
-			@RequestParam(required = true) String username,
-			@RequestParam(required = true) String password,
+			@RequestParam(required = true) String p,
+			@RequestParam(required = true) String accessToken,
 			HttpServletRequest request, HttpServletResponse response) {
+    	
+    	OAuth2AccessToken token = tokenService.readAccessToken(accessToken);
+    	
+    	if (token == null) {
+			throw new InvalidTokenException("Token was not recognised");
+		}
+
+		if (token.isExpired()) {
+			throw new InvalidTokenException("Token has expired");
+		}
+		
+    	//Token token = tokenService.verifyToken(accessToken);
+    	//System.out.println("token.getKey() : token.getKey());
     	
 	    CommTenantModule tm = null;
 	    tm = tenantModuleRepo.findByTenantKey(tsId);
         Long tenantId = tm.getTenantId();
         //sso 사용여부를 판단
-        
-        HttpSession sess = request.getSession();
-        Enumeration<String> sesse = sess.getAttributeNames();
-        System.out.println("session  start");
-        while(sesse.hasMoreElements()) {
-        	String sk = sesse.nextElement();
-        	System.out.println(sk + " :: " + sess.getAttribute(sk));
-        }
-        System.out.println("session  end");
-        
+         
         //로그인 정보를 보낼 URL
 	    String authorizeUri = tcms.getConfigValue(tenantId, "IFO.LOGIN.URI", true, "");
 	     
-	    Map<String, String> requestMap = new HashMap<String, String>();
-	    Enumeration<String> e = request.getParameterNames();
-	    while(e.hasMoreElements()) {
-	    	String key = e.nextElement();
-	    	requestMap.put(key, request.getParameter(key));
-	    }
-	    
+	    Map<String, String> requestMap = new HashMap<String, String>(); 
+	    System.out.println("token.getValue() : " + token.getValue());
+		Map<String, Object> tokenMap = WtmUtil.parseJwtToken(token.getValue());
+		
+		Map<String, Object> hashMap = new HashMap<>();
+		
+		
+		String jwtId = tokenMap.get("jti").toString();
+		
+		
+		Aes256 aes;
+		String decParam = null;
+		try {
+			aes = new Aes256(jwtId);
+			decParam = aes.decrypt(p);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (GeneralSecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("======================= decParam: ::::: " + decParam);
+
+		String decrptVal1[] = decParam.split("___");
+		
+		System.out.println("decrptVal1 :: " + decrptVal1);
+		// Email||1111111@dev-hyundai-ngv.com___User_ID||H133001111111___IP||10.206.34.254___Emp_ID||1111111___ssoTIME||20191127191810
+		for(int i=0; i<decrptVal1.length; i++)
+		{
+			String tmp[]=decrptVal1[i].split("\\|\\|");
+			requestMap.put(tmp[0], tmp[1]);
+		}
+		
 	    requestMap.put("client_id", tsId);
-	    requestMap.put("username", username);
-	    requestMap.put("password", password);
+	    //requestMap.put("username", username);
+	    //requestMap.put("password", password);
 	    
 	    ModelAndView mv = new ModelAndView("ssoLogin");
 	    ObjectMapper mapper = new ObjectMapper();
@@ -207,11 +251,8 @@ public class IfwLoginController {
    				System.out.println("header ::::::: END");
    				if(1==1) {
    					try {
-   						System.out.println("된당?????");
    						redisTemplate.opsForValue().set(data.get("userName").toString(), tokenMap.get("refresh_token").toString());
    						
-   						
-
    				        //String token = JwtUtil.generateToken(signingKey, username);
    				        CookieUtil.create(response, jwtTokenCookieName, accessToken, false, -1, null);
    				        
@@ -359,6 +400,48 @@ public class IfwLoginController {
     	//return mv;
 	}
 	
+
+	@RequestMapping(value = "/certificate/{tsId}/sso", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam ssoLoginForWtm(@PathVariable String tsId, @RequestBody Map<String,Object> params,
+										  HttpServletRequest request,
+										  HttpServletResponse response) {
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		System.out.println("=================== login sso");
+		
+		Map<String, Object> userData = null;
+		try {
+			Long tenantId = null;
+			Long tenantModuleId = null;
+
+			CommTenantModule tm = null;
+			tm = tenantModuleRepo.findByTenantKey(tsId);
+			
+			if(tm == null) {
+				rp.setFail("테넌트 정보가 존재하지 않습니다.");
+				return rp;
+			}
+			
+			tenantId = tm.getTenantId();
+			
+			String loginUserId = params.get("loginUserId").toString();
+			String loginEnterCd = params.get("loginEnterCd").toString();
+			
+
+			String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
+				
+			userData = loginService.findUserData(tenantId, loginEnterCd, loginUserId, encKey);
+		
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail(e.getMessage());
+			return rp;
+		}
+			
+		rp.put("userData", userData);
+		return rp;
+	}
 	@RequestMapping(value = "/certificate/{tsId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam loginForWtm(@PathVariable String tsId, @RequestBody Map<String,Object> params,
 										  HttpServletRequest request,
