@@ -1,5 +1,5 @@
 <div id="flexibleStdMgr">
- 	<div class="container-fluid pt-3 pb-3 bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
  	<div class="ibsheet-wrapper">
 		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
@@ -643,6 +643,7 @@
 				if(workTypeCd == "ELAS"){
 					$("#trBase").hide();
 					$("#trFixOt").hide();
+					$("#trBaseCheck").hide();
 					$("#fixotUseType").val("");
 					$("#fixotUseLimit").val("");
 					
@@ -658,6 +659,7 @@
 		 			sheet2.SetSumRowHidden(0);
 		 			
 				} else {
+					$("#trBaseCheck").show();
 					// 고정ot소진 사용여부
 					if(sheet1.GetCellValue( NewRow, "defaultWorkUseYn") == "Y"){
 						$("input:checkbox[name='defaultWorkUseYn']").prop("checked", true);

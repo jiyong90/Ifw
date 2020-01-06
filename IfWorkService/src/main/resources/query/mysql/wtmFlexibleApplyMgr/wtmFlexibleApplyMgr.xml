@@ -69,6 +69,7 @@
         	SELECT DISTINCT F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(A.USE_SYMD, 'YMD'), -1, 'D'), 'YMD') as useSymd
         		 , F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(A.USE_EYMD, 'YMD'), 1, 'D'), 'YMD') as useEymd 
         		 , B.SABUN AS sabun, C.WORK_TYPE_CD AS workTypeCd
+        		 , A.FLEXIBLE_APPLY_ID AS flexibleApplyId
         		 , A.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
         		 , A.APPLY_NM AS flexibleNm
         		 , A.TENANT_ID AS tenantId

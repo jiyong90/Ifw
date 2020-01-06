@@ -18,19 +18,93 @@
 										<div id="popupTitle" class="float-left title"></div>
 									</div>
 								</div>
-								<script type="text/javascript"> createIBSheet("sheet4", "100%", fullsheetH, "kr"); </script>
+								<script type="text/javascript"> createIBSheet("sheet4", "100%", sheetH90, "kr"); </script>
 							</td>
 						</tr>
 					</table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- 유연근무대상자 보기 modal end -->
- 	<div class="container-fluid pt-3 pb-3 bg-white">
+    <!-- 근무 상세보기 modal start -->
+	<div class="modal fade" id="workPlanModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">근무 계획 조회</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                	<div class="modal-app-wrap">
+                    <div class="accordion-wrap inner-wrap">
+	                    <ul id="accordion" class="accordion" >
+	                        <li v-for="e in elasDetail">
+	                            <div class="link" @click="accordionDropdown($event.target)">{{moment(e.startYmd).format('YYYY-MM-DD')}} ~ {{moment(e.endYmd).format('YYYY-MM-DD')}}<i class="ico arrow-down"></i></div>
+	                            <div class="submenu">
+	                                <ul class="all-time-wrap">
+	                                    <li>
+	                                        <span class="title">근무시간</span>
+	                                        <span class="time bold">{{minuteToHHMM(e.workMinute, 'detail')}}</span>
+	                                    </li>
+	                                    <li>
+	                                        <div class="total">
+	                                            <span class="title">연장합산</span>
+	                                            <span class="time bold">{{minuteToHHMM(e.otMinute, 'detail')}}</span>
+	                                        </div>
+	                                        <ul class="time-list">
+	                                            <li>
+	                                                <span class="title">조출시간</span>
+	                                                <span class="time">{{minuteToHHMM(e.otbMinute, 'detail')}}</span>
+	                                            </li>
+	                                            <li>
+	                                                <span class="title">잔업시간</span>
+	                                                <span class="time">{{minuteToHHMM(e.otaMinute, 'detail')}}</span>
+	                                            </li>
+	                                            <li>
+	                                                <span class="title">휴일시간</span>
+	                                                <span class="time">{{minuteToHHMM(e.holidayMinute, 'detail')}}</span>
+	                                            </li>
+	                                        </ul>
+	                                    </li>
+	                                </ul>
+	                                <template v-if="e.hasOwnProperty('details')">
+	                                <p class="title time-desc-title">출,퇴근시간</p>
+	                                <ul class="time-desc-wrap">
+	                                    <li v-for="d in e.details">
+	                                        <div class="date">{{moment(d.ymd).format('YYYY-MM-DD')}}({{d.weekday}}) 
+	                                        	<template v-if="d.planSdate && d.planEdate">
+	                                        	{{moment(d.ymd+' '+d.planSdate).format('HH:mm')}}~{{moment(d.ymd+' '+d.planEdate).format('HH:mm')}}
+	                                        	</template>
+	                                        </div>
+	                                        <ul class="time-desc">
+	                                            <li><span class="title">근무시간</span><span class="time">{{minuteToHHMM(d.workMinute, 'detail')}}</span></li>
+	                                            <li><span class="title">조출시간</span><span class="time">{{minuteToHHMM(d.otbMinute, 'detail')}}</span></li>
+	                                            <li><span class="title">잔업시간</span><span class="time">{{minuteToHHMM(d.otaMinute, 'detail')}}</span></li>
+	                                            <li><span class="title">휴일시간</span><span class="time">{{minuteToHHMM(d.holidayMinute, 'detail')}}</span></li>
+	                                        </ul>
+	                                    </li>
+	                                </ul>
+	                                </template>
+	                            </div>
+	                        </li>
+	            		</ul>
+            		</div>           
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 근무 상세보기 modal end -->
+ 	<div class="container-fluid bg-white mgr-wrap">
  	<div class="ibsheet-wrapper">
  		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
@@ -112,6 +186,7 @@
 </div>
 
 <script type="text/javascript">
+
    	$(function() {
 		$('#sYmd').datetimepicker({
             format: 'YYYY-MM-DD',
@@ -139,11 +214,13 @@
 			{Header:"소정근무시간(분)",	Type:"Int",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workMinute",	  	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"연장근무시간(분)",	Type:"Int",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"otMinute",		KeyField:0,	Format:"",		PointCount:2,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"대상자조회",		Type:"Image", 	Hidden:0,  	Width:70,  	Align:"Center", ColMerge:0, SaveName:"selectImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:1    },
+			{Header:"근무계획조회",		Type:"Image", 		Hidden:0,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"planImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:100   },
 			{Header:"확정여부",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"applyYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
-			{Header:"근무제도",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"workTypeCd",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },			
 			{Header:"확정상태",		Type:"Html", 		Hidden:0,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"endImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:100   },
 			{Header:"확정상태",		Type:"Int", 		Hidden:1,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"cnt",  			KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:1    },
-			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무제시작요일",	Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"weekDay",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
+			{Header:"근무제유형",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"workTypeCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -154,8 +231,9 @@
 		sheet1.SetCountPosition(8);
 		
 		sheet1.SetImageList(0,"${rc.getContextPath()}/IBLeaders/Sheet/icon/icon_popup.png");
+		sheet1.SetImageList(1,"${rc.getContextPath()}/IBLeaders/Sheet/icon/icon_popup.png");
 		
-		var repeatTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "REPEAT_TYPE_CD"), "선택");		
+		var repeatTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "REPEAT_TYPE_CD"), "선택");	
 		sheet1.SetColProperty("repeatTypeCd", {ComboText:repeatTypeCdList[0], ComboCode:repeatTypeCdList[1]} );
 		
 		
@@ -252,7 +330,61 @@
 		sheetInit();
 		doAction1("Search");
 	});
-	
+   	
+   	var workPlanVue = new Vue({
+		el: "#workPlanModal",
+	    data : {
+	    	elasDetail: []
+  		},
+  		mounted: function(){
+  	  		
+  		},
+  		methods: {
+  			getElasDetail : function(Row){
+  				var $this = this;
+  				
+  				$("#loading").show();
+  				
+  				var flexibleApplyId = sheet1.GetCellValue(Row, "flexibleApplyId");
+  				
+  				var param = {
+  					flexibleApplyId: flexibleApplyId
+	    		};
+	    		
+	    		Util.ajax({
+					url: "${rc.getContextPath()}/flexibleApply/elasDetail",
+					type: "GET",
+					contentType: 'application/json',
+					data: param,
+					dataType: "json",
+					success: function(data) {
+						$("#loading").hide();
+						if(data!=null) {
+							$this.elasDetail = data;
+							$("#workPlanModal").modal("show");
+						}
+					},
+					error: function(e) {
+						$("#loading").hide();
+						$this.apprList = [];
+					}
+				});
+  				
+  			},
+         	accordionDropdown: function(target) {
+         		var $el = $('#accordion');
+         		$this = $(target),
+                $next = $this.next();
+
+                $next.slideToggle();
+                $this.parent().toggleClass('open');
+                
+                $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+
+         	}
+  		}
+	});
+   	
 	var newIframe;
 	var oldIframe;
 	var iframeIdx;
@@ -291,8 +423,11 @@
 			break;
 		case "Save":
 			if(!dupChk(sheet1,"tenantId|enterCd|applyNm|useSymd", false, true)){break;}
-			IBS_SaveName(document.sheetForm,sheet1);
-			sheet1.DoSave("${rc.getContextPath()}/flexibleApply/save", $("#sheetForm").serialize()); break;
+			
+			if(validateFlex()) {
+				IBS_SaveName(document.sheetForm,sheet1);
+				sheet1.DoSave("${rc.getContextPath()}/flexibleApply/save", $("#sheetForm").serialize()); break;
+			}
 			break;
 		}
 	}
@@ -360,7 +495,9 @@
 	
 	function setEndConfirm(flexibleApplyId){
 		var row = sheet1.FindText("flexibleApplyId", flexibleApplyId, 0);
-		var param = "flexibleApplyId=" + flexibleApplyId;
+		var workTypeCd = sheet1.GetCellValue(row, "workTypeCd");
+		var param = "flexibleApplyId=" + flexibleApplyId + "&workTypeCd=" + workTypeCd;
+		
 		if(!confirm("확정하시겠습니까?")) {
 			return;
 		}
@@ -455,7 +592,7 @@
 			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
-
+	
 	// 저장 후 메시지
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
@@ -483,17 +620,20 @@
 	function sheet1_OnClick(Row, Col, Value) {
 		
 		try{
-			if(Row > 0 && sheet1.ColSaveName(Col) == "selectImg" ){
-				
-				var applyNm = sheet1.GetCellValue( Row, "applyNm");
-				var useSymd = sheet1.GetCellValue( Row, "useSymd");
-				var useEymd = sheet1.GetCellValue( Row, "useEymd");
-				
-				$("#popupTitle").text(applyNm + " " + formatDate(useSymd,'-') + "~" + formatDate(useEymd,'-'));
-				
-				sheet4.RemoveAll();
-				doAction4('Search');
-				$("#ApplyEmpPopModal").modal("show");
+			if(Row > 0){
+				if(sheet1.ColSaveName(Col) == "selectImg" ) {
+					var applyNm = sheet1.GetCellValue( Row, "applyNm");
+					var useSymd = sheet1.GetCellValue( Row, "useSymd");
+					var useEymd = sheet1.GetCellValue( Row, "useEymd");
+					
+					$("#popupTitle").text(applyNm + " " + formatDate(useSymd,'-') + "~" + formatDate(useEymd,'-'));
+					
+					sheet4.RemoveAll();
+					doAction4('Search');
+					$("#ApplyEmpPopModal").modal("show");
+				} else if(sheet1.ColSaveName(Col) == "planImg" && sheet1.GetCellValue( Row, "workTypeCd") == 'ELAS' ) {
+					workPlanVue.getElasDetail(Row);
+				}
 				
 			}
 		}catch(ex){
@@ -505,10 +645,13 @@
 	function sheet1_OnChange(Row, Col, Value) {
 		var colNm = sheet1.ColSaveName(Col);
 		var repeatTypeCd = sheet1.GetCellValue(Row, "repeatTypeCd");
-		var status = sheet1.GetCellValue(Row, "stauts");
+		var status = sheet1.GetCellValue(Row, "sStatus");
 		if(colNm == "flexibleStdMgrId" && status == "I"){
 			var flexibleStdMgrId = sheet1.GetCellValue(Row, "flexibleStdMgrId");
    	  		setRepeatSelect(Row, flexibleStdMgrId);
+   	  		
+   	  		//근무제 정보
+   	  		getFlexibleStd(Row, flexibleStdMgrId);
 		}
 		if(colNm == "repeatTypeCd"){
 			if(repeatTypeCd == "NO"){
@@ -527,14 +670,17 @@
 			var symd = sheet1.GetCellValue(Row, "useSymd");
 			var repeatCnt = sheet1.GetCellValue(Row, "repeatCnt");
 			
-			if(symd != "" && repeatTypeCd != "" && repeatCnt > 0){
-				// 종료일 조회
-				var param = "symd=" + symd + "&repeatTypeCd=" + repeatTypeCd + "&repeatCnt=" + repeatCnt;
-				var rtn = ajaxCall("${rc.getContextPath()}/flexibleApply/getEymd", param ,false).DATA;
-				if(rtn != null && rtn != "") {
-					sheet1.SetCellValue(Row, "useEymd", rtn.eymd, 0);
+			if(symd != "") {
+				if(repeatTypeCd != "" && repeatCnt > 0){
+					// 종료일 조회
+					var param = "symd=" + symd + "&repeatTypeCd=" + repeatTypeCd + "&repeatCnt=" + repeatCnt;
+					var rtn = ajaxCall("${rc.getContextPath()}/flexibleApply/getEymd", param ,false).DATA;
+					if(rtn != null && rtn != "") {
+						sheet1.SetCellValue(Row, "useEymd", rtn.eymd, 0);
+					}
 				}
 			}
+			
 		}
 	}
 
@@ -600,5 +746,71 @@
 		} catch (ex) {
 			alert("OnSearchEnd Event Error : " + ex);
 		}
+	}
+	
+	function getFlexibleStd(row, flexibleStdMgrId){
+		var param = {
+			flexibleStdMgrId: flexibleStdMgrId
+		};
+		
+		Util.ajax({
+			url: "${rc.getContextPath()}/flexibleStd",
+			type: "GET",
+			contentType: 'application/json',
+			data: param,
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				if(data!=null) {
+					sheet1.SetCellValue( row, "weekDay", moment(data.useSymd).day());
+					sheet1.SetCellValue( row, "workTypeCd", data.workTypeCd);
+					
+					//탄근제의 경우 반복없음, 종료일 담당자가 입력하게끔
+					if(data.workTypeCd == 'ELAS') {
+						sheet1.SetCellValue( row, "repeatTypeCd", "NO");
+						sheet1.SetCellEditable( row, "repeatTypeCd", 0);
+						sheet1.SetCellEditable( row, "repeatCnt", 0);
+						sheet1.SetCellEditable( row, "useEymd", 1);
+					}
+				}
+			},
+			error: function(e) {
+				console.log(e);
+			}
+		});
+	}
+	
+	function validateFlex(){
+		var isValid = true;
+		var arr = ['일','월','화','수','목','금','토'];
+		
+		//탄근제  패턴 시작일과 신청 시작일의 요일이 같은지 확인
+		for(var i=1; i<=sheet1.LastRow(); i++) {
+			var status = sheet1.GetCellValue( i, "sStatus");
+			var workTypeCd = sheet1.GetCellValue( i, "workTypeCd");
+			
+			if(status=='I' && workTypeCd=='ELAS') {
+				var useSymd = sheet1.GetCellValue( i, "useSymd");
+				var useEymd = sheet1.GetCellValue( i, "useEymd");
+				var weekDay = sheet1.GetCellValue( i, "weekDay");
+				
+				//2주 이상 3개월 이내 탄근제 인지 체크
+				var minYmd = moment(moment(useSymd).add(14, 'days')).subtract(1, 'days');
+				var maxYmd = moment(moment(useSymd).add(3, 'months')).subtract(1, 'days');
+				
+				if(moment(useEymd).format('YYYYMMDD')!=moment(minYmd).format('YYYYMMDD') 
+						&& moment(useEymd).format('YYYYMMDD')!=moment(maxYmd).format('YYYYMMDD')) {
+					alert("탄력근무제는 2주 이내, 3개월 이내만 시행 가능합니다.\n근무제 종료일을 다시 지정해 주세요.");
+					return false;
+				} 
+				
+		  		if(moment(useSymd).day() != weekDay) {
+		  			alert("탄력근무제의 시작 요일은 "+arr[weekDay]+"요일 입니다.\n근무제 시작일을 다시 지정해 주세요.");
+					return false;
+		  		}
+			}
+		}
+		
+		return isValid;
 	}
 </script>
