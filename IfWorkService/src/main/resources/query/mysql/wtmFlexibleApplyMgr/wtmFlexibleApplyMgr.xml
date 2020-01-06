@@ -219,7 +219,7 @@
 				NOTE = #{item.note}
 				, UPDATE_DATE = NOW()
 				, UPDATE_ID = #{item.userId}
-			WHERE FLEXIBLE_APPLY_EMP_ID = #{item.flexibleapplyEmpId}
+			WHERE FLEXIBLE_APPLY_EMP_ID = #{item.flexibleApplyEmpId}
 		</foreach>
 	</update>
     
@@ -227,7 +227,7 @@
 		DELETE FROM WTM_FLEXIBLE_APPLY_EMP 
 		 WHERE FLEXIBLE_APPLY_EMP_ID IN (
 			<foreach collection="list" item="item" separator="," index="index">
-		        ${item.flexibleapplyEmpId}
+		        ${item.flexibleApplyEmpId}
 		    </foreach> 
     		)
 	</update>

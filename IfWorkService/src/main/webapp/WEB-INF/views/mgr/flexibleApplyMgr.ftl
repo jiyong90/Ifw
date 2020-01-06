@@ -98,7 +98,8 @@
                 </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-default rounded-0" @click="createElasPlan">근무 계획 재생성</button>
+                    <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>
@@ -366,10 +367,49 @@
 					},
 					error: function(e) {
 						$("#loading").hide();
-						$this.apprList = [];
+						$this.elasDetail = [];
 					}
 				});
   				
+  			},
+  			createElasPlan: function(){
+				var $this = this;
+  				
+  				$("#loading").show();
+  				
+  				var flexibleApplyId = sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleApplyId");
+  				var row = sheet1.FindText("flexibleApplyId", flexibleApplyId, 0);
+  				
+  				var param = {
+  					flexibleApplyId: flexibleApplyId
+	    		};
+	    		
+	    		Util.ajax({
+					url: "${rc.getContextPath()}/flexibleApply/elasDetail",
+					type: "POST",
+					contentType: 'application/json',
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: function(data) {
+						$("#loading").hide();
+						
+						if(data!=null && data.status=='OK') {
+							$this.getElasDetail(row);
+							$("#alertText").html("생성되었습니다.");
+						} else {
+							$("#alertText").html(data.message);
+						}
+						
+						$("#alertModal").on('hidden.bs.modal',function(){
+	  	         			$("#alertModal").off('hidden.bs.modal');
+	  	         		});
+	  	         		$("#alertModal").modal("show"); 
+					},
+					error: function(e) {
+						$("#loading").hide();
+						$this.elasDetail = [];
+					}
+				});
   			},
          	accordionDropdown: function(target) {
          		var $el = $('#accordion');

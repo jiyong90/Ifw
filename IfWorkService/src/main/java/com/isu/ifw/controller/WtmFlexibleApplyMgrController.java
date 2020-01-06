@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -352,4 +353,15 @@ public class WtmFlexibleApplyMgrController {
 		return flexibleApplyService.getElasDetail(tenantId, enterCd, paramMap, userId);
 	}
 	
+	@RequestMapping(value="/elasDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam createElasPlan(@RequestBody Map<String, Object> paramMap
+		    									, HttpServletRequest request) {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		return flexibleApplyService.createElasPlan(tenantId, enterCd, Long.valueOf(paramMap.get("flexibleApplyId").toString()), userId);
+	}
 }

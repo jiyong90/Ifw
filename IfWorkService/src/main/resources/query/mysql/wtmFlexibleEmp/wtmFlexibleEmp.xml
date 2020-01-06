@@ -1978,7 +1978,7 @@
     	]]>
     </select>
     
-	<select id="getElasWeekHour" parameterType="Long" resultType="wtmGeneral" >
+	<select id="getElasWeekHour" parameterType="map" resultType="map" >
     	<![CDATA[
     		SELECT START_YMD AS startYmd
     		     , SUM(CASE WHEN HOLIDAY_YN = 'N' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END) AS workMinute
@@ -1991,12 +1991,12 @@
 							  , PLAN_MINUTE
 							  , OTB_MINUTE
 							  , OTA_MINUTE
-						  FROM WTM_FLEXIBLE_APPL_DET D
+						  FROM ${tableName} D
 						  JOIN ( SELECT F_WTM_WEEKDAY(MIN(YMD)) AS startWeekDay , MAX(F_WTM_WEEKDAY(YMD)) AS maxWeekDay 
-						           FROM WTM_FLEXIBLE_APPL_DET
-						          WHERE FLEXIBLE_APPL_ID = #{flexibleApplId} ) T  
+						           FROM ${tableName}
+						          WHERE ${key} = ${value} ) T  
 						    ON 1=1
-						 WHERE FLEXIBLE_APPL_ID = #{flexibleApplId} ) S
+						 WHERE ${key} = ${value} ) S
 			GROUP BY START_YMD
     	]]>
     </select>
