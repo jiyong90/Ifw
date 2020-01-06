@@ -18,9 +18,9 @@
                 <img src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workday.png" alt="">
             </div>
             <div class="contents-wrap">
-                <p class="date">{{ymd}}</p>
+                <p class="date">{{formattedYmd}}</p>
                 <p class="desc">오늘은 <strong>{{desc}}</strong> 입니다.</p>
-                <a href="#" class="link">근무시간 관리 시스템 바로가기</a>
+                <!-- <a href="#" class="link">근무시간 관리 시스템 바로가기</a> -->
             </div>
             <div class="btn-wrap">
                 <button :class="{ 'btn':true, 'btn-on': !isHol }" @click="clickIn">출근하기</button>
@@ -35,7 +35,7 @@
                     <img src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workon.png" alt="">
                 </div>
                 <div class="info-wrap">
-                    <p class="date">{{ymd}}</p>
+                    <p class="date">{{formattedYmd}}</p>
                     <p class="desc"><strong>{{desc}}</strong> 입니다.</p>
                 </div>
             </div>
@@ -74,6 +74,16 @@
 			    	empId : '${sabun}',
 		    		enterCd : '${enterCd}'
 		  		},
+		  		computed : {
+		  			formattedYmd : function(){
+		  				var $ymd = this.ymd;
+		  				if($ymd.length == 8){
+		  					return $ymd.substring(0,4) + '.' + $ymd.substring(5,6) + '.' + $ymd.substring(7,8); 
+		  				}else{
+		  					return '';
+		  				}
+		  			}
+		  		},
 			    mounted: function(){
 			    	var $this = this;
 					if(this.inoutType == "IN"){
@@ -82,8 +92,12 @@
 					 
 			    },
 			    methods: {
-			    	clickIn : function(){ 
+			    	clickIn : function(){
+			    		var $this =  this;
 			    		var param = { 
+			    			ymd : $this.ymd,
+			    			enterCd : $this.enterCd,
+			    			sabun : $this.empId
 			    		};
 			    		
 			    		Util.ajax({
@@ -92,10 +106,12 @@
 							contentType: 'application/json',
 							data: JSON.stringify(param),
 							dataType: "json",
-							success: function(data) {
-								alert(JSON.stringify(data));
+							success: function(data) { 
+								console.log(data);
 								if(data!=null && data.status=='OK') {
+									alert(data.message);
 								} else {
+									alert(data.message);
 								}
 							},
 							error: function(e) {
@@ -108,10 +124,66 @@
 						}); 
 			    	},
 			    	clickOut: function(){
-			    		alert("out");
+			    		var $this =  this;
+			    		var param = { 
+			    			ymd : $this.ymd,
+			    			enterCd : $this.enterCd,
+			    			sabun : $this.empId
+			    		};
+			    		
+			    		Util.ajax({
+							url: "${rc.getContextPath()}/api/${tsId}/out",
+							type: "POST",
+							contentType: 'application/json',
+							data: JSON.stringify(param),
+							dataType: "json",
+							success: function(data) {
+								console.log(data);
+								if(data!=null && data.status=='OK') {
+									alert(data.message);
+								} else {
+									alert(data.message);
+								}
+							},
+							error: function(e) {
+								console.log(e);
+								$("#loading").hide();
+								$("#alertText").html("저장 시 오류가 발생했습니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+		  	  	         		$("#alertModal").modal("show"); 
+							}
+						}); 
 			    	},
 			    	clickCancel: function(){
-			    		alert("c");
+			    		var $this =  this;
+			    		var param = { 
+			    			ymd : $this.ymd,
+			    			enterCd : $this.enterCd,
+			    			sabun : $this.empId
+			    		};
+			    		
+			    		Util.ajax({
+							url: "${rc.getContextPath()}/api/${tsId}/cancel",
+							type: "POST",
+							contentType: 'application/json',
+							data: JSON.stringify(param),
+							dataType: "json",
+							success: function(data) { 
+								console.log(data);
+								if(data!=null && data.status=='OK') {
+									alert(data.message);
+								} else {
+									alert(data.message);
+								}
+							},
+							error: function(e) {
+								console.log(e);
+								$("#loading").hide();
+								$("#alertText").html("저장 시 오류가 발생했습니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+		  	  	         		$("#alertModal").modal("show"); 
+							}
+						}); 
 			    	}
 			    }
 			});
