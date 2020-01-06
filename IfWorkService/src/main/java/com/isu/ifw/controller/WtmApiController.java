@@ -239,6 +239,7 @@ public class WtmApiController {
 			paramMap.put("sabun", sabun);
 			paramMap.put("inoutType", "OUTC");
 			paramMap.put("ymd", ymd);
+			paramMap.put("stdYmd", ymd);
 			paramMap.put("inoutDate", today);
 			paramMap.put("entryType", "API");
 			

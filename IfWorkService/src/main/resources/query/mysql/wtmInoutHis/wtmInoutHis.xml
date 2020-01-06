@@ -194,7 +194,7 @@
     <select id="getGoBackStatus" parameterType="map" resultType="hashmap">
         <![CDATA[
         	SELECT CASE WHEN INOUT_TYPE_CD = 'GO' THEN 'BACK' ELSE 'GO' END AS inoutType
-        		, DATE_FORMAT(INOUT_DATE, "%Y%c%d%H%i00") AS exceptSYmd
+        		, CONCAT(F_WTM_DATE_FORMAT(INOUT_DATE, "YMDHI"), '00') AS exceptSYmd
    	   		FROM WTM_INOUT_HIS 
        		WHERE TENANT_ID = #{tenantId} 
             	AND ENTER_CD = #{enterCd} 
