@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -44,7 +45,6 @@ import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.util.CookieUtil;
-import com.isu.ifw.util.Sha256;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.StringUtil;
@@ -88,6 +88,15 @@ public class IfwLoginController {
 	    tm = tenantModuleRepo.findByTenantKey(tsId);
         Long tenantId = tm.getTenantId();
         //sso 사용여부를 판단
+        
+        HttpSession sess = request.getSession();
+        Enumeration<String> sesse = sess.getAttributeNames();
+        System.out.println("session  start");
+        while(sesse.hasMoreElements()) {
+        	String sk = sesse.nextElement();
+        	System.out.println(sk + " :: " + sess.getAttribute(sk));
+        }
+        System.out.println("session  end");
         
         //로그인 정보를 보낼 URL
 	    String authorizeUri = tcms.getConfigValue(tenantId, "IFO.LOGIN.URI", true, "");
