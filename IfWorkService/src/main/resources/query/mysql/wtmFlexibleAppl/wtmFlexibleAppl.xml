@@ -130,8 +130,7 @@
 				),
 				XX.OT_MINUTE = (
 			   		SELECT FLOOR(X.C) + ( ( X.C -  FLOOR(X.C)) * 60 ) FROM (
-						SELECT CASE WHEN PP.INFO_VALUE = 'B' THEN SUM(CASE D.HOLIDAY_YN WHEN 'Y' THEN 0 WHEN 'N' THEN 1 END) * 8
-									ELSE FLOOR(SUM(CASE D.HOLIDAY_YN WHEN 'Y' THEN 0 WHEN 'N' THEN 1 END) * F_WTM_TO_NUMBER(P.INFO_VALUE, 'Y') / 7) * 60 END 
+						SELECT FLOOR(SUM(CASE D.HOLIDAY_YN WHEN 'Y' THEN 0 WHEN 'N' THEN 1 END) * F_WTM_TO_NUMBER(P.INFO_VALUE, 'Y') / 7) * 60 
 							AS C
 						  FROM WTM_FLEXIBLE_EMP E
 				    	  JOIN WTM_FLEXIBLE_STD_MGR M
@@ -179,8 +178,8 @@
         <![CDATA[
 			SELECT D.SUN_YMD AS YMD
 			     , CASE WHEN #{holExceptYn} = 'Y' AND D.HOLIDAY_YN = 'Y' AND T.HOL_YN = 'N' THEN TM.HOL_TIME_CD_MGR_ID ELSE P.TIME_CD_MGR_ID END AS TIME_CD_MGR_ID
-			     , F_WTM_STR_CONCAT(D.SUN_YMD, P.PLAN_SHM) AS PLAN_SDATE
-			     , F_WTM_STR_CONCAT(D.SUN_YMD, P.PLAN_EHM) AS PLAN_EDATE
+			     , CASE WHEN P.PLAN_SHM IS NOT NULL AND P.PLAN_SHM <> '' THEN F_WTM_STR_CONCAT(D.SUN_YMD, P.PLAN_SHM) ELSE NULL END AS PLAN_SDATE
+			     , CASE WHEN P.PLAN_EHM IS NOT NULL AND P.PLAN_EHM <> '' THEN F_WTM_STR_CONCAT(D.SUN_YMD, P.PLAN_EHM) ELSE NULL END AS PLAN_EDATE
 			     , P.PLAN_MINUTE
 			     , P.OTB_MINUTE
 			     , P.OTA_MINUTE
@@ -211,6 +210,70 @@
 				 ON P.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
 			 WHERE P.FLEXIBLE_STD_MGR_ID = #{flexibleStdMgrId}
 			   AND D.SUN_YMD BETWEEN #{sYmd} AND #{eYmd}
+	        ]]>
+    </select>
+    
+    <select id="getElasApplDetail" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT START_YMD AS startYmd
+			     , END_YMD AS endYmd
+			     , YMD AS ymd
+			     , WEEKDAY AS weekday
+			     , PLAN_SDATE AS planSdate
+			     , PLAN_EDATE AS planEdate
+			     , PLAN_MINUTE AS planMinute
+			     , OTB_MINUTE AS otbMinute
+			     , OTA_MINUTE AS otaMinute
+			     , WORK_MINUTE AS workMinute
+			     , OT_MINUTE AS otMinute
+			     , HOLIDAY_MINUTE AS holidayMinute
+			  FROM (
+							SELECT START_YMD
+							     , END_YMD
+							     , YMD
+							     , WEEKDAY
+							     , F_WTM_DATE_FORMAT(PLAN_SDATE, 'HI') AS PLAN_SDATE
+								  , F_WTM_DATE_FORMAT(PLAN_EDATE, 'HI') AS PLAN_EDATE
+								  , SUM(PLAN_MINUTE) AS PLAN_MINUTE
+								  , SUM(OTB_MINUTE) AS OTB_MINUTE
+								  , SUM(OTA_MINUTE) AS OTA_MINUTE
+							     , SUM(WORK_MINUTE) AS WORK_MINUTE
+							     , SUM(OT_MINUTE) AS OT_MINUTE
+							     , SUM(PLAN_MINUTE)-SUM(WORK_MINUTE) AS HOLIDAY_MINUTE
+							  FROM ( SELECT F_WTM_DATE_FORMAT(DATE_SUB(YMD, INTERVAL (CASE WHEN DAYOFWEEK(YMD)<startWeekDay THEN maxWeekDay-DAYOFWEEK(YMD) ELSE DAYOFWEEK(YMD)-startWeekDay END) DAY), 'YMD') AS START_YMD
+										  , F_WTM_DATE_FORMAT(DATE_ADD(YMD, INTERVAL (CASE WHEN DAYOFWEEK(YMD)>endWeekDay THEN maxWeekDay-DAYOFWEEK(YMD)+1 ELSE DAYOFWEEK(YMD)-endWeekDay END) DAY), 'YMD') AS END_YMD
+										  , YMD
+										   , CASE F_WTM_WEEKDAY(YMD) 
+										     WHEN '1' THEN '일' 
+											 WHEN '2' THEN '월' 
+											 WHEN '3' THEN '화' 
+											 WHEN '4' THEN '수' 
+											 WHEN '5' THEN '목' 
+											 WHEN '6' THEN '금' 
+											 WHEN '7' THEN '토' END AS WEEKDAY
+									      , HOLIDAY_YN
+										  , PLAN_SDATE
+										  , PLAN_EDATE
+										  , PLAN_MINUTE
+										  , OTB_MINUTE
+										  , OTA_MINUTE
+										  , CASE WHEN HOLIDAY_YN = 'N' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END AS WORK_MINUTE
+						              , CASE WHEN HOLIDAY_YN = 'Y' AND PLAN_MINUTE IS NOT NULL AND PLAN_MINUTE<>0 THEN PLAN_MINUTE ELSE 0 END
+											     + CASE WHEN OTB_MINUTE IS NOT NULL AND OTB_MINUTE<>0 THEN OTB_MINUTE ELSE 0 END
+											     + CASE WHEN OTA_MINUTE IS NOT NULL AND OTA_MINUTE<>0 THEN OTA_MINUTE ELSE 0 END AS OT_MINUTE
+									  FROM ${tableName} D
+									  JOIN ( SELECT F_WTM_WEEKDAY(MIN(YMD)) AS startWeekDay, F_WTM_WEEKDAY(MAX(YMD)) AS endWeekDay, MAX(F_WTM_WEEKDAY(YMD)) AS maxWeekDay 
+									           FROM ${tableName}
+									          WHERE ${key} = ${value}) T  
+										 ON 1=1
+									 WHERE  ${key} = ${value} ) S
+							GROUP BY S.START_YMD, YMD
+							WITH ROLLUP 
+					) G
+			 WHERE START_YMD IS NOT NULL AND START_YMD<>''
+			   AND ((#{totalYn}='Y' AND (YMD IS NULL OR YMD=''))
+   				OR (#{totalYn}='N' AND START_YMD=#{symd} AND YMD<>''))
+   			 ORDER BY START_YMD, YMD
 	        ]]>
     </select>
 </mapper>

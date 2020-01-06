@@ -1,5 +1,6 @@
 package com.isu.ifw.controller;
 
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,9 +26,8 @@ import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.mapper.WtmInoutHisMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.service.WtmInoutService;
-import com.isu.ifw.util.WtmUtil;
-import com.isu.ifw.util.Aes256;
 import com.isu.ifw.util.MobileUtil;
+import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
 
 
@@ -91,7 +91,7 @@ public class WtmInoutController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/mobile/{tenantId}/inout/checkstatus", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/worktime/status", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyWorkCheckStatus(@PathVariable Long tenantId, 
 			@RequestParam(value = "tenantKey", required = true) String tenantKey,
 			@RequestParam(value="locale", required = true) String locale, 
@@ -100,8 +100,8 @@ public class WtmInoutController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
-		String enterCd =  empKey.split("@")[0];
-		String sabun =  empKey.split("@")[1];
+		String enterCd =  (URLDecoder.decode(empKey)).split("@")[0];
+		String sabun =  (URLDecoder.decode(empKey)).split("@")[1];
 		logger.debug("/mobile/"+ tenantId+"inout/checkstatus s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
 		Map <String,Object> resultMap = new HashMap<String,Object>();
@@ -265,6 +265,10 @@ public class WtmInoutController {
 		rp.setFail("출퇴근 이력 조회 중 오류가 발생했습니다.");
 
 		String userToken = request.getParameter("userToken");
+		logger.debug("111111111111111111111111111111111111111 " + empKey);
+		empKey = URLDecoder.decode(empKey);
+		empKey = empKey.replace(" ", "+");
+		logger.debug("111111111111111111111111111111111111112 " + empKey);
 		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 

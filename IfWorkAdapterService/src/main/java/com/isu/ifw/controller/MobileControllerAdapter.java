@@ -153,6 +153,7 @@ public class MobileControllerAdapter {
 			String k = er.nextElement();
 			paramMap.put(k, request.getParameter(k));
 		}
+		System.out.println("111111111111111111111111111110 " + paramMap.toString());
 		resMap = certService.exchange(url, HttpMethod.GET, null, paramMap);
 		return resMap;
     }

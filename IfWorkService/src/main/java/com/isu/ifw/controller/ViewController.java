@@ -351,6 +351,12 @@ public class ViewController {
 		mv.addObject("authFunctions", tcms.getConfigValue(tenantId, "WTMS.AUTH.FUNTIONS", true, ""));
 		mv.addObject("isEmbedded",false); // 단독으로 열린것임을 표시
 		
+		//hr interface여부
+		WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_HR_INTERFACE_YN");
+		if(propertie!=null) {
+			mv.addObject("interfaceYn", propertie.getInfoValue());
+		}
+		
 		if("otApplMgr".equals(viewPage)) {
 			//연장근무 또는 휴일근무 신청 시 사유
 			List<WtmCode> reasons = codeRepo.findByTenantIdAndEnterCdAndYmdAndGrpCodeCd(tenantId, enterCd, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "REASON_CD");
@@ -453,6 +459,12 @@ public class ViewController {
 			mv.addObject("authRule", mapper.writeValueAsString(flexibleEmpService.getAuth(tenantId, enterCd, empNo)));
 		} catch(Exception e) {
 			e.printStackTrace();
+		}
+		
+		//hr interface여부
+		WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_HR_INTERFACE_YN");
+		if(propertie!=null) {
+			mv.addObject("interfaceYn", propertie.getInfoValue());
 		}
 
 //		mv.addObject("tenant", tenantId);

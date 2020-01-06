@@ -7,7 +7,8 @@
 	
 	<select id="getOrgCodeList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-        	SELECT TENANT_ID 
+        	SELECT ORG_CODE_ID
+        	      , TENANT_ID 
 				  , ENTER_CD 
 				  , ORG_CD 
 				  , ORG_NM 
@@ -18,8 +19,8 @@
 			  FROM WTM_ORG_CODE
 			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd} 
-			   AND (ORG_CD LIKE CONCAT('%', #{orgKeyword}, '%')
-					  OR ORG_NM LIKE CONCAT('%', #{orgKeyword}, '%')) 
+			   AND (ORG_CD LIKE '%'|| #{orgKeyword} || '%'
+					  OR ORG_NM LIKE '%'|| #{orgKeyword} || '%') 
 				AND CASE WHEN #{sYmd} = '' THEN F_WTM_DATE_FORMAT(SYSDATE,'YMD')
 				         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
         ]]>

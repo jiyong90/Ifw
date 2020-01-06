@@ -1,6 +1,7 @@
 package com.isu.ifw.controller;
 
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,6 +99,7 @@ public class WtmMobileApplController {
 			String userToken = request.getParameter("userToken");
 		
 			//Aes256 aes = new Aes256(userToken);
+			empKey = URLDecoder.decode(empKey);
 			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 
@@ -277,9 +279,8 @@ public class WtmMobileApplController {
 			if(!dataMap.get("shm").equals("") && !dataMap.get("ehm").equals("")) {
 				otWorkTime = flexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, dataMap, emp.getEmpHisId().toString());
 				
-				System.out.println("otWorkTime" + otWorkTime.toString()); //{breakMinuteNoPay=30, calcMinute=-30, breakMinutePaid=0, breakMinute=30}
-				
 				if(otWorkTime != null && !otWorkTime.get("breakMinute").equals("")) {
+					System.out.println("otWorkTime" + otWorkTime.toString()); //{breakMinuteNoPay=30, calcMinute=-30, breakMinutePaid=0, breakMinute=30}
 					dataMap.put("desc", "근로시간 : "+otWorkTime.get("calcMinute").toString() + "분 휴게시간 : " + otWorkTime.get("breakMinute").toString() + "분");
 				}
 			}
@@ -287,13 +288,13 @@ public class WtmMobileApplController {
 			dataMap.put("calcMinute", otWorkTime != null ? otWorkTime.get("calcMinute").toString(): "0");
 			
 			Map<String, Object> val = applMapper.getApplValidation(dataMap);
-			logger.debug("applValidationCheck : " + dataMap.toString() + " , " + val.toString());
-			System.out.println("applValidationCheck : " + dataMap.toString() + " , " + val.toString());
 			if(val == null) {
 				throw new Exception("validation check에 실패하였습니다.");
 			}
+			logger.debug("applValidationCheck : " + dataMap.toString() + " , " + val.toString());
+			System.out.println("applValidationCheck : " + dataMap.toString() + " , " + val.toString());
 
-			if(val.get("valDate").equals("N")) {
+			if(val.get("valDate").equals("N") && val.containsKey("pDate")) {
 				dataMap.put("ymd", "");
 				throw new Exception("신청 가능한 기간은 " + val.get("pDate").toString() + " 입니다.");
 				//rp.setFail("신청 가능한 기간은 " + val.get("pDate").toString() + " 입니다.");
