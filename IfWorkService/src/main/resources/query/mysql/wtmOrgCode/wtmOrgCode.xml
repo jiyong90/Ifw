@@ -7,7 +7,8 @@
 	
 	<select id="getOrgCodeList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT TENANT_ID AS tenantId
+        	SELECT ORG_CODE_ID AS orgCodeId
+        	      , TENANT_ID AS tenantId
 				  , ENTER_CD AS enterCd
 				  , ORG_CD AS orgCd
 				  , ORG_NM AS orgNm
