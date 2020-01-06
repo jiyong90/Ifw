@@ -61,7 +61,10 @@ public class AjaxUtils {
 			}*/
 			
 			if(key.contains("empKey") && !value.contains("@")) {
-				params = params+key+"="+URLEncoder.encode(value);
+				System.out.println("111111111111111111111111111111 " + value);
+				value = URLEncoder.encode(value);
+				System.out.println("111111111111111111111111111112 " + value);
+				params = params+key+"="+value;
 			} else {
 				params = params+key+"="+value;
 			}
