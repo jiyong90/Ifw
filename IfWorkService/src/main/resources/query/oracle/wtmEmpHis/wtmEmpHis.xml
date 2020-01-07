@@ -48,7 +48,8 @@
 						   </if>
 			) T
 			WHERE 1=1
-			  AND (SABUN LIKE #{searchKeyword, jdbcType=VARCHAR} || '%'
+			  AND (#{searchKeyword, jdbcType=VARCHAR} IS NULL
+			    OR SABUN LIKE #{searchKeyword, jdbcType=VARCHAR} || '%'
 				OR EMP_NM LIKE '%' ||  #{searchKeyword, jdbcType=VARCHAR} ||'%'
 				OR ORG_NM LIKE '%' ||  #{searchKeyword, jdbcType=VARCHAR} ||'%'
 				OR DUTY_NM LIKE '%' ||  #{searchKeyword, jdbcType=VARCHAR} ||'%'
@@ -78,12 +79,12 @@
 				 , PAY_TYPE_CD
 				 , LEADER_YN
 				 , NOTE
-				 , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS orgNm
-				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'DUTY_CD', DUTY_CD, SYMD) AS dutyNm
-				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'POS_CD', POS_CD, SYMD) AS posNm
-				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'CLASS_CD', CLASS_CD, SYMD) AS classNm
-				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'JOB_CD', JOB_CD, SYMD) AS jobNm
-				 , empId
+				 , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS ORG_NM
+				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'DUTY_CD', DUTY_CD, SYMD) AS DUTY_NM
+				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'POS_CD', POS_CD, SYMD) AS POS_NM
+				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'CLASS_CD', CLASS_CD, SYMD) AS CLASS_NM
+				 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'JOB_CD', JOB_CD, SYMD) AS JOB_NM
+				 , EMP_ID
 			  FROM WTM_EMP_HIS
 			 WHERE EMP_HIS_ID = #{empHisId}
         ]]>
