@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,7 +33,7 @@ public class LoginControllerHdngv {
 	@Autowired
 	private ExchangeService exchangeService;
 	
-	@RequestMapping(value = "/certificate/hdngv") // , method = RequestMethod.POST)
+	@RequestMapping(value = "/certificate/hdngv" , method = RequestMethod.POST)
 	public ModelAndView autowayLogin(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		ModelAndView mv = new ModelAndView("inout");
 
@@ -68,9 +69,9 @@ public class LoginControllerHdngv {
 		{
 			if(!"".equals(strEncText))
 			{
-				//SitemapWSSoap SitemapWSSoap = (new org.tempuri.SitemapWSLocator()).getSitemapWSSoap();
-				//String decrptStr = SitemapWSSoap.getPlainText(strEncID, strCompanyCode, strEncText);
-				String decrptStr = "Emp_ID||2008856___email||askldjlks";
+				SitemapWSSoap SitemapWSSoap = (new org.tempuri.SitemapWSLocator()).getSitemapWSSoap();
+				String decrptStr = SitemapWSSoap.getPlainText(strEncID, strCompanyCode, strEncText);
+				//String decrptStr = "Emp_ID||2008856___email||askldjlks";
 				HashMap<String, String> hashMap = new HashMap<String, String>();
 				System.out.println("decrptStr=   "+decrptStr);
 				
@@ -170,7 +171,7 @@ public class LoginControllerHdngv {
 
     }
 	
-	@RequestMapping(value = "/wtms/hdngv")//, method = RequestMethod.POST)
+	@RequestMapping(value = "/wtms/hdngvsso")//, method = RequestMethod.POST)
 	public void autowaySsoLogin(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		//ModelAndView mv = new ModelAndView("inout");
 
@@ -225,7 +226,8 @@ public class LoginControllerHdngv {
 			String encParam = aes.encrypt(paramStr);
 			//https://cloudhr.pearbranch.com/ifw/login/hdngv/sso?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJyZWFkIiwid3JpdGUiXSwiZXhwIjoxNTgwOTAwOTM2LCJhdXRob3JpdGllcyI6WyJBRE1JTiJdLCJqdGkiOiJlZjI5MTFlNS03OGI2LTRjNjUtOGQzOS03N2JmMzAxMmQyMzciLCJjbGllbnRfaWQiOiJoZG5ndiJ9.9PN95JEorGaxrOE0ZFGJdVBVqrLexjjB-2mJx26Dr_I&p=3w65MARMUvbQDhiX7fBCtyhGz1x0Jr9CuCDVAJJYFhIygdvHvXwNmTqj1yE4+7JODK4JBBhAoJ0SeJWEc5R7bmCRyYhrcwv1wDAkMZ4m0SaCZCHKk32QQE3i3TARHTBfG05qzsuBalwGtEi+JinXxA==
 			System.out.println(jwtId+ " :: encParam : " + encParam);
-			res.sendRedirect("https://cloudhr.pearbranch.com/ifw/login/hdngv/sso?accessToken="+t+"&p="+encParam);
+			//http://cloudhr.pearbranch.com/ifa/oauth/authorize?client_id=hdngv&redirect_uri=http://cloudhr.pearbranch.com/ifw/login/hdngv/authorize&response_type=code&scope=read%20write
+			res.sendRedirect("https://cloudhr.pearbranch.com/ifa/oauth/authorize?client_id=hdngvsso&redirect_uri=http://cloudhr.pearbranch.com/ifw/login/hdngv/authorize&response_type=code&scope=read%20write&accessToken="+t+"&p="+encParam);
 		}catch(Exception e) {
 			res.sendRedirect("/err?mgs="+ e.getMessage());
 		}

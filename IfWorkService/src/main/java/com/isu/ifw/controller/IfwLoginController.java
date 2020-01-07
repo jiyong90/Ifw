@@ -431,6 +431,7 @@ public class IfwLoginController {
 
 			String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
 				
+			
 			userData = loginService.findUserData(tenantId, loginEnterCd, loginUserId, encKey);
 		
 		} catch (Exception e) {
@@ -480,8 +481,16 @@ public class IfwLoginController {
 //				paramMap.put("loginId", loginUserId);
 //				paramMap.put("encKey", encKey);
 //				System.out.println("11111111111111111111111111 1 " + paramMap.toString());
-				
+
+			System.out.println("======================= tenantId : " + tenantId);
+			System.out.println("======================= loginEnterCd : " + loginEnterCd);
+			System.out.println("======================= loginUserId : " + loginUserId);
+			System.out.println("======================= loginPassword : " + loginPassword);
 			userData = loginService.getUserData(tenantId, loginEnterCd, loginUserId, loginPassword);
+			
+			ObjectMapper mapper = new ObjectMapper();
+			System.out.println("======================= userData : " + mapper.writeValueAsString(userData));
+			
 		
 		} catch (Exception e) {
 			logger.debug(e.getMessage());

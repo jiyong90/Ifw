@@ -232,8 +232,7 @@ public class LoginService{
 
 		// 사용자 비밀번호를 체크한다.
 		String requestedPassword = Sha256.getHash(password, encKey, repeatCount);
-
-		if(!requestedPassword.contentEquals(password))
+		if(!requestedPassword.contentEquals(pwd))
 			throw new Exception("비밀번호가 일치하지 않습니다.");
 
 		return userData;
