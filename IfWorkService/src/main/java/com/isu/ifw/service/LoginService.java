@@ -1,5 +1,6 @@
 package com.isu.ifw.service;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,7 +26,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.mapper.CommUserMapper;
+import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmToken;
@@ -63,6 +66,10 @@ public class LoginService{
 	@Resource
 	WtmEmpHisRepository empHisRepository;
 	
+	@Autowired
+	@Qualifier("WtmTenantModuleRepository")
+	CommTenantModuleRepository tenantModuleRepo;
+	
 	public Map<String, String> loginTryCnt(String loginEnterCd, String loginUserId, String loginPassword) throws Exception{
 		return loginMapper.loginTryCnt(loginEnterCd, loginUserId, loginPassword);
 	}
@@ -89,6 +96,27 @@ public class LoginService{
 				cookies[i].setMaxAge(0); // 유효시간을 0으로 설정
 				((HttpServletResponse)response).addCookie(cookies[i]); 
 			}
+		}
+	}
+	
+	public void logout(HttpServletRequest request, HttpServletResponse response, String tsId) {
+		System.out.println("===== tsId " + tsId);
+		CommTenantModule tm = null;
+		tm = tenantModuleRepo.findByTenantKey(tsId);
+		
+		try {
+			if(tm == null) {
+				System.out.println("===== tm null ");
+				response.sendRedirect(request.getContextPath() + "/info/140");
+			}
+			
+			Long tenantId = tm.getTenantId();
+			String logoutUrl = tcms.getConfigValue(tenantId, "IFO.LOGOUT.URI", true, "");
+		
+			response.sendRedirect(logoutUrl); // request.getContextPath() +"/console/" + tsId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	

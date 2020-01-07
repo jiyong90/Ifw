@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
+import com.isu.ifw.service.LoginService;
 import com.isu.ifw.util.WtmUtil;
 
 @Component("customOauthFilter") 
@@ -28,8 +29,8 @@ public class CustomOauthFilter implements Filter {
 	
 	String freePassPath = null;
 
-	//@Autowired
-	//SaasLoginService loginService;	
+	@Autowired
+	LoginService loginService;	
 
 	@Autowired
 	@Qualifier("WtmTenantModuleRepository")
@@ -105,6 +106,18 @@ public class CustomOauthFilter implements Filter {
 			((HttpServletResponse) response).addCookie(cookie);
 			((HttpServletResponse) response).sendRedirect(((HttpServletRequest)request).getContextPath() +"/info/140");
         }
+        
+        String clientId = WtmUtil.getClientId(((HttpServletRequest)request).getRequestURI());
+    	System.out.println("11111111111111111111111 1 " + ((HttpServletRequest)request).getRequestURI());
+    	System.out.println("11111111111111111111111 2 " + clientId);
+    	System.out.println("11111111111111111111111 3 " + sessionData.toString());
+       
+	    if(!clientId.equals("") && !clientId.equals(sessionData.get("tsId").toString())) {
+	    	System.out.println("11111111111111111111111 session data와 tsId 불일치 > 로그아웃 " + clientId + " , " + sessionData.get("tsId").toString());
+	    	loginService.logout((HttpServletRequest)request, (HttpServletResponse)response, sessionData.get("tsId").toString());
+	        return;
+	    }
+	      
         //hr에서 들어올 때 임시로 쿠키에 넣어서 찾아쓰자
         {
             Cookie c1 = new Cookie("enterCd",  sessionData.get("enterCd").toString());
@@ -119,7 +132,6 @@ public class CustomOauthFilter implements Filter {
 
 	      CommTenantModule tm = null;
 	      tm = tenantModuleRepo.findByTenantKey(sessionData.get("tsId").toString());
-
 	      
 	      if(tm == null) {
 	    	  System.out.println("클라이언트가 존재하지 않습니다.");

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
+import com.isu.ifw.util.WtmUtil;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
@@ -39,9 +40,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
 	      
 		 System.out.println("=== " + orgUri + " :: " + ex.getMessage());
 		 
-	      String clientId = getClientId(orgUri);
+	      String clientId = WtmUtil.getClientId(orgUri);
 	      if(clientId.equals("")) {
-	    	  System.out.println("잘못된 주소입니다.");
+	    	  System.out.println("잘못된 호출 URL입니다.");
 //	         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "잘못된 주소입니다."); 
 	         response.sendRedirect(request.getContextPath()+"/info/160");
 	         return;
@@ -101,25 +102,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
     	System.out.println("================================authorizeUri===============================");
 	    System.out.println("authorizeUri : " + authorizeUri);
 	    
-	      response.sendRedirect(authorizeUri);
+	    response.sendRedirect(authorizeUri);
  	}
- 
-	private String getClientId(String uri) {
-	      String clientId = "";
-	      if(uri.contains("/console/")) {
-	         clientId = uri.substring(uri.indexOf("console")+8, uri.length());
-	         clientId.substring(0, clientId.contains("/")?clientId.indexOf("/")-1:clientId.length());
-	         System.out.println(clientId);
-	      } else if(uri.contains("/hr/")) {
-	         clientId = uri.substring(uri.indexOf("hr")+3, uri.length());
-	         clientId.substring(0, clientId.contains("/")?clientId.indexOf("/")-1:clientId.length());
-	         System.out.println(clientId);
-	      } else if(uri.contains("/logout/")) {
-	    	  clientId = uri.substring(uri.indexOf("logout")+7, uri.length());
-		      clientId.substring(0, clientId.contains("/")?clientId.indexOf("/")-1:clientId.length());
-		      System.out.println(clientId);
-	      }
-	      return clientId;
-	   }
-
 }
