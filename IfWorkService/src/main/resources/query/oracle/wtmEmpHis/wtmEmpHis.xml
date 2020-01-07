@@ -48,8 +48,7 @@
 						   </if>
 			) T
 			WHERE 1=1
-			  AND (#{searchKeyword, jdbcType=VARCHAR} IS NULL
-			    OR SABUN LIKE #{searchKeyword, jdbcType=VARCHAR} || '%'
+			  AND (SABUN LIKE #{searchKeyword, jdbcType=VARCHAR} || '%'
 				OR EMP_NM LIKE '%' ||  #{searchKeyword, jdbcType=VARCHAR} ||'%'
 				OR ORG_NM LIKE '%' ||  #{searchKeyword, jdbcType=VARCHAR} ||'%'
 				OR DUTY_NM LIKE '%' ||  #{searchKeyword, jdbcType=VARCHAR} ||'%'
