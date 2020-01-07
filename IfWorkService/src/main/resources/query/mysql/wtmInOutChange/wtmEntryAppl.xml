@@ -32,7 +32,7 @@
   		     , F_WTM_DATE_FORMAT(ENTRY_EDATE,'YMDHIS') AS entryEdate
   		     , F_WTM_DATE_FORMAT(CHG_SDATE,'YMDHIS') AS chgSdate
   		     , F_WTM_DATE_FORMAT(CHG_EDATE,'YMDHIS') AS chgEdate
-  		     , REASON
+  		     , reason
   		  FROM WTM_ENTRY_APPL
   		 WHERE APPL_ID = #{applId}
 		]]>	
