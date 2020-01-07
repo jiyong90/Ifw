@@ -10,9 +10,6 @@
                 <li><img src="${rc.getContextPath()}/soldev/img/guide/p04.png" title="월 근무 캘린더 상단에는 현재 적용되는 근무제와 소정/잔여 근로시간이 표시됩니다."></li>
                 <li><img src="${rc.getContextPath()}/soldev/img/guide/p05.png" title="월 근무 캘린더 좌측에는 선택한 날이 포함된 기간의 근무요약정보가 표시됩니다."></li>
                 <li><img src="${rc.getContextPath()}/soldev/img/guide/p06.png" title="선택한 날의 근무상세정보는 화면 좌측 하단에 표시됩니다."></li>
-                <li><img src="${rc.getContextPath()}/soldev/img/guide/p07.png" title="직원이 직접 유연근무제적용을 선택할 수 있습니다."></li>
-                <li><img src="${rc.getContextPath()}/soldev/img/guide/p08.png" title="근무계획작성 버튼을 클릭해 특정기간의 근무계획을 작성할 수 있습니다."></li>
-                <li><img src="${rc.getContextPath()}/soldev/img/guide/p09.png" title="여러 날을 동시에 선택해 근무계획을 입력할 수 있습니다."></li>
             </ol>
             <div class="modal-footer rounded-0">
                 <div class="form-element float-left">
@@ -761,36 +758,6 @@
 </div>
 <script type="text/javascript">
 	$(function () {
-		//guide slider
-		var guide = $('.bxslider').bxSlider({
-            mode: 'fade',
-            captions: false,
-            slideWidth: 900
-        });
-		
-		var pathname = window.location.pathname;
-		if(getCookie("notToday")!="Y" && pathname.indexOf("/workCalendar")==-1){
-            $("#guide").modal('show');
-            setTimeout(function(){
-            //bxslider reload
-            guide.reloadSlider();
-            },200);
-        }
-		
-		$('#guide .modal-footer .close').click(function(){
-            // 링크의 페이지 이동 속성 강제 차단
-            event.preventDefault();
-
-            if ($('#today-close').is(":checked")){
-                // 쿠키값을 "Y"로 하여 하루동안 저장시킴
-                setCookie('notToday','Y', 1);
-                // $("#guide").modal('hide');
-            }
-
-            // 팝업창 닫기
-            $("#guide").modal('hide');
-        });
-		
 		var fireRefreshEventOnWindow = function () {
 			var evt = document.createEvent("HTMLEvents");
 		    evt.initEvent('resize', true, false);
@@ -1003,8 +970,45 @@
 		    			;
 		    			
 		    		document.querySelector(".fc-legend-button").innerHTML= legend;
-    			}
-         	} 
+		    		
+	                $(".bxslider").append('<li><img src="${rc.getContextPath()}/soldev/img/guide/p07.png" title="직원이 직접 유연근무제적용을 선택할 수 있습니다."></li>');
+	                $(".bxslider").append('<li><img src="${rc.getContextPath()}/soldev/img/guide/p08.png" title="근무계획작성 버튼을 클릭해 특정기간의 근무계획을 작성할 수 있습니다."></li>');
+	                $(".bxslider").append('<li><img src="${rc.getContextPath()}/soldev/img/guide/p09.png" title="여러 날을 동시에 선택해 근무계획을 입력할 수 있습니다."></li>');
+    			} 
+         		
+         		this.loadSlider();
+         	},
+         	loadSlider: function() {
+         		//guide slider
+        		var guide = $('.bxslider').bxSlider({
+                    mode: 'fade',
+                    captions: false,
+                    slideWidth: 900
+                });
+        		
+        		var pathname = window.location.pathname;
+        		if(getCookie("notToday")!="Y" && pathname.indexOf("/workCalendar")==-1){
+                    $("#guide").modal('show');
+                    setTimeout(function(){
+                    //bxslider reload
+                    guide.reloadSlider();
+                    },200);
+                }
+        		
+        		$('#guide .modal-footer .close').click(function(){
+                    // 링크의 페이지 이동 속성 강제 차단
+                    event.preventDefault();
+
+                    if ($('#today-close').is(":checked")){
+                        // 쿠키값을 "Y"로 하여 하루동안 저장시킴
+                        setCookie('notToday','Y', 1);
+                        // $("#guide").modal('hide');
+                    }
+
+                    // 팝업창 닫기
+                    $("#guide").modal('hide');
+                });
+         	}
 	    }
    	});
    	

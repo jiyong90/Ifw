@@ -1,4 +1,4 @@
-<div id="otApplMgr" class="container-fluid pt-0 pb-3 bg-white except70 overflow-hidden" v-cloak>
+<div id="otApplMgr" class="container-fluid bg-white mgr-wrap except70 overflow-hidden" v-cloak>
  	<p class="page-title mb-2">연장근로신청</p>
  	<div class="row">
  		<div class="col-6">
@@ -313,9 +313,11 @@
 
 					if($this.applCode!=null && $this.applCode.timeUnit!=null && $this.applCode.timeUnit!=undefined && $this.applCode.timeUnit!='') {
   	         			var timeUnit = Number($this.applCode.timeUnit);
-  	         			eYmd.setMinutes(sYmd.getMinutes()+timeUnit);
+  	         			//eYmd.setMinutes(sYmd.getMinutes()+timeUnit);
+  	         			eYmd = moment(eYmd).add(timeUnit, 'minutes');
   	         		} else {
-  	         			eYmd.setHours(sYmd.getHours()+1);
+  	         			//eYmd.setHours(sYmd.getHours()+1);
+  	         			eYmd = moment(eYmd).add(1, 'hours');
   	         		}
 					
 					if($("#sDate").val()=='')
@@ -327,7 +329,7 @@
 					if($("#eTime").val()=='')
 						$("#eTime").val(moment(eYmd).format('HH:mm'));
 					
-					$this.overtime = $this.calcMinute(date, $("#sTime").val().replace(/:/gi,""), $("#eTime").val().replace(/:/gi,""));
+					$this.overtime = $this.calcMinute(moment(date).format('YYYYMMDD'), $("#sTime").val().replace(/:/gi,""), $("#eTime").val().replace(/:/gi,""));
 					
 					//결재라인
 					/* 
@@ -710,16 +712,6 @@
    		}
     });
     
-   	
-	$('#timeCalendar [data-dismiss=modal]').on('click', function (e) {
-		var $t = $(this),
-	        target = $t[0].href || $t.data("target") || $t.parents('.modal') || [];
-		
-		$(target).find("input,select,textarea").not('input[name="subYn"]').val('').end();
-	  	$(target).find("input[name='subYn']:checked").prop("checked", "").end();
-	  	$(".radio-toggle-wrap").hide();
-	  	$(target).find(".needs-validation").removeClass('was-validated');
-	});
-	
+
 </script>
 
