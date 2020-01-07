@@ -340,7 +340,7 @@
                                 </div>
                             </div>
                             <div class="inner-wrap">
-                                <div class="title">변경 출/퇴근 시각</div>{{appl}}
+                                <div class="title">변경 출/퇴근 시각</div>
                                 <div class="desc">
                                     <span class="date-wrap">
                                         <span class="start-date">
@@ -638,17 +638,17 @@
 	    				param['ymd'] = moment(appr.appl.ymd).format('YYYYMMDD');
 	    				
 	    				if(appr.appl.planSdate!=null && appr.appl.planSdate!=undefined && appr.appl.planSdate!='')
-	    					param['planSdate'] = moment(appr.appl.planSdate).format('YYYYMMDDHHmm');
+	    					param['planSdate'] = appr.appl.planSdate;
 	    				if(appr.appl.planEdate!=null && appr.appl.planEdate!=undefined && appr.appl.planEdate!='')
-	    					param['planEdate'] = moment(appr.appl.planEdate).format('YYYYMMDDHHmm');
+	    					param['planEdate'] = appr.appl.planEdate;
 	    				if(appr.appl.entrySdate!=null && appr.appl.entrySdate!=undefined && appr.appl.entrySdate!='')
-	    					param['entrySdate'] = moment(appr.appl.entrySdate).format('YYYYMMDDHHmm');
+	    					param['entrySdate'] = appr.appl.entrySdate;
 	    				if(appr.appl.entryEdate!=null && appr.appl.entryEdate!=undefined && appr.appl.entryEdate!='')
-	    					param['entryEdate'] = moment(appr.appl.entryEdate).format('YYYYMMDDHHmm');
+	    					param['entryEdate'] = appr.appl.entryEdate;
 	    				if(appr.appl.chgSdate!=null && appr.appl.chgSdate!=undefined && appr.appl.chgSdate!='')
-	    					param['chgSdate'] = moment(appr.appl.chgSdate).format('YYYYMMDDHHmm');
+	    					param['chgSdate'] = appr.appl.chgSdate;
 	    				if(appr.appl.chgEdate!=null && appr.appl.chgEdate!=undefined && appr.appl.chgEdate!='')
-	    					param['chgEdate'] = moment(appr.appl.chgEdate).format('YYYYMMDDHHmm');
+	    					param['chgEdate'] = appr.appl.chgEdate;
 	    			}
 	    			
     	    		Util.ajax({
