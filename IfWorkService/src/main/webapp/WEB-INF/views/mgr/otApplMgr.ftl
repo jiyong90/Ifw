@@ -212,15 +212,12 @@
   		    		$this.targetList = [];
   		    		
   		    		var searchKeyword = $("#searchKeyword").val();
-  		    		var param = {
-  		    			searchKeyword : searchKeyword	
-  		    		};
   		    		
   		    		Util.ajax({
-						url: "${rc.getContextPath()}/emp/list",
+						url: "${rc.getContextPath()}/emp/list?searchKeyword="+searchKeyword,
 						type: "POST",
 						contentType: 'application/json',
-						data: JSON.stringify(param),
+						//data: param,
 						dataType: "json",
 						success: function(data) {
 							//console.log(data);
