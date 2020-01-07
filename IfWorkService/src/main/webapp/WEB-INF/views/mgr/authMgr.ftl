@@ -1,5 +1,5 @@
 <div>
- 	<div class="container-fluid pt-3 pb-3 bg-white" style="calc(100vh - 72px);">
+ 	<div class="container-fluid pt-3 pb-3 bg-white" style="height: calc(100vh - 72px);">
  		<p class="page-title">권한관리</p>
         <div class="row no-gutters">
         	<div class="col-3 pr-3">
