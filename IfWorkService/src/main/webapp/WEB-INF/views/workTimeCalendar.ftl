@@ -1090,7 +1090,7 @@
 	  	  	   	         					title: vMap.taaNm,
 	  	  	   	         					start: moment(vMap.ymd).format('YYYY-MM-DD'),
 	  	  	  								allDay: true,
-	  	  	  		  		        		color: '#ff9f89'
+	  	  	  		  		        		color: '#ffdbb2'
 	  	  	    	         			};
 									} else {
 										result = {
