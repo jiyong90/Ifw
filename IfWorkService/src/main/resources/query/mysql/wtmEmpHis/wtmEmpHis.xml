@@ -54,7 +54,7 @@
 			    OR dutyNm LIKE CONCAT('%', #{searchKeyword}, '%')
 			    OR posNm LIKE CONCAT('%', #{searchKeyword}, '%')
 			    OR classNm LIKE CONCAT('%', #{searchKeyword}, '%')
-			    OR jobNm LIKE CONCAT('%', #{searchKeyword}, '%')) 
+			    OR jobNm LIKE CONCAT('%', #{searchKeyword}, '%'))
     </select>
     
     <select id="getEmpHis" parameterType="map" resultType="map">

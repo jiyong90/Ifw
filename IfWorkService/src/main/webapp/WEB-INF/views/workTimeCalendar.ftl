@@ -1083,14 +1083,25 @@
 	  	         					classNames = [];
 									classNames.push('TAA');
 	  	         					
-	  	         					var result = {
-  	  	   	         					id: 'TAA.'+vMap.taaCd,
-  	  	   	         					title: vMap.taaNm,
-  	  	  								start: vMap.sDate,
-  	  	  	  		  		        	end: vMap.eDate,
-  	  	  	  		  		        	editable: false,
-  	  	  		  		        		classNames: classNames
-  	  	    	         			};
+									var result;
+									if((vMap.sDate==''||vMap.sDate==undefined) && (vMap.eDate==''||vMap.eDate==undefined)) {
+										result = {
+	  	  	   	         					id: 'TAA.'+vMap.taaCd,
+	  	  	   	         					title: vMap.taaNm,
+	  	  	   	         					start: moment(vMap.ymd).format('YYYY-MM-DD'),
+	  	  	  								allDay: true,
+	  	  	  		  		        		color: '#ffdbb2'
+	  	  	    	         			};
+									} else {
+										result = {
+	  	  	   	         					id: 'TAA.'+vMap.taaCd,
+	  	  	   	         					title: vMap.taaNm,
+	  	  	  								start: vMap.sDate,
+	  	  	  	  		  		        	end: vMap.eDate,
+	  	  	  	  		  		        	editable: false,
+	  	  	  		  		        		classNames: classNames
+	  	  	    	         			};
+									}
 	  	  	         					
 	  	  	    	         		$this.addEvent(result); 
 	  	         				} else {
