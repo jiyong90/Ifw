@@ -28,7 +28,7 @@ a.link {display: inline-block;font-size: 12px;line-height: 1.5;letter-spacing: -
 .work-off .contents-wrap {text-align: center;}
 .work-off p.date{margin-top:10px;font-size: 14px;font-weight: 900;line-height: 1.43;letter-spacing: -0.7px;text-align: center;}
 .work-off p.date:after{content:'';}
-.work-off p.desc{font-size: 24px;font-weight: 300;line-height: 1.5;letter-spacing: -1.2px;text-align: center;}
+.work-off p.desc{font-size: 17px;font-weight: 300;line-height: 1.5;letter-spacing: -1.2px;text-align: center;}
 
 .error .inner-wrapper{padding: 50px 20px;}
 .error .contents-wrap {text-align: center;}
@@ -46,6 +46,7 @@ a.link {display: inline-block;font-size: 12px;line-height: 1.5;letter-spacing: -
 .work-close .inner-wrapper {
     padding: 32px 0 24px;
 }
+.work-day .contents-wrap{min-height:27px;}
 
 
 .top-bg {background-color: #292944;}
@@ -60,8 +61,7 @@ a.link {display: inline-block;font-size: 12px;line-height: 1.5;letter-spacing: -
 .contents-body{position:relative; min-height:172px;}
 .contents-wrap span {vertical-align: middle;}
 .contents-wrap .title{margin:0px;padding:0px;font-weight:500;font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;text-align: left;color: #292944;}
-.contents-wrap .date,
-.contents-wrap .date:after {content:'.';font-size: 18px;font-weight: bold;line-height: 1.5;letter-spacing: -0.9px;color: #292944;}
+.contents-wrap .date{content:'.';font-size: 18px;font-weight: bold;line-height: 1.5;letter-spacing: -0.9px;color: #292944;}
 .contents-wrap .time{font-size: 18px;font-weight: bold;line-height: 1.5;letter-spacing: -0.9px;color: #4d84fe;}
 
 
