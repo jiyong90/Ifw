@@ -98,6 +98,9 @@ public class WtmApiController {
 	
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("출근 체크 되었습니다.");
+		Long tenantId=null;
+		String enterCd=null;
+		String sabun=null;
 
 		try {
 			logger.debug(tsId + "/api/in s " + params.toString());
@@ -109,11 +112,11 @@ public class WtmApiController {
 				rp.setFail("잘못된 호출 url입니다.");
 				return rp;
 			}
-			Long tenantId = tm.getTenantId();
+			tenantId = tm.getTenantId();
 			
 			String ymd = (String)params.get("ymd");
-			String enterCd = (String)params.get("enterCd");
-			String sabun = (String)params.get("sabun");
+			enterCd = (String)params.get("enterCd");
+			sabun = (String)params.get("sabun");
 	
 			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
 			Date now = new Date();
@@ -139,12 +142,14 @@ public class WtmApiController {
 			}
 			
 			logger.debug("in : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
-			Map<String, Object> resultMap = inoutService.getMenuContextWeb(tenantId, enterCd, sabun); 
-			rp.put("result", resultMap);
 		} catch(Exception e) {
 			logger.debug("inexception : " + e.getMessage());
 			rp.setFail(e.getMessage());
+		} finally {
+			Map<String, Object> resultMap = inoutService.getMenuContextWeb(tenantId, enterCd, sabun); 
+			rp.put("result", resultMap);
 		}
+
 		logger.debug(tsId + "/api/in e " + rp.toString());
 		return rp;
 	}
@@ -158,6 +163,9 @@ public class WtmApiController {
 		rp.setSuccess("퇴근 체크 되었습니다.");
 		
 		Map<String, Object> paramMap = new HashMap();
+		Long tenantId=null;
+		String enterCd=null;
+		String sabun=null;
 		try {
 			logger.debug(tsId + "/api/out s " + params.toString());
 
@@ -169,11 +177,11 @@ public class WtmApiController {
 				rp.setFail("잘못된 호출 url입니다.");
 				return rp;
 			}
-			Long tenantId = tm.getTenantId();
+			tenantId = tm.getTenantId();
 			
 			String ymd = (String)params.get("ymd");
-			String enterCd = (String)params.get("enterCd");
-			String sabun = (String)params.get("sabun");
+			enterCd = (String)params.get("enterCd");
+			sabun = (String)params.get("sabun");
 			
 			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
 			Date now = new Date();
@@ -199,6 +207,9 @@ public class WtmApiController {
 		} catch(Exception e) {
 			logger.debug("outexception : " + e.getMessage() + paramMap.toString());
 			rp.setFail(e.getMessage());
+		} finally {
+			Map<String, Object> resultMap = inoutService.getMenuContextWeb(tenantId, enterCd, sabun); 
+			rp.put("result", resultMap);
 		}
 		logger.debug(tsId + "/api/out e " + rp.toString());
 		return rp;
@@ -213,7 +224,10 @@ public class WtmApiController {
 		rp.setSuccess("퇴근 정보가 취소되었습니다.");
 
 		Map<String, Object> paramMap = new HashMap();
-
+		Long tenantId=null;
+		String enterCd=null;
+		String sabun=null;
+		
 		try {
 			logger.debug(tsId + "/api/cancel s " + params.toString());
  
@@ -224,11 +238,11 @@ public class WtmApiController {
 				rp.setFail("잘못된 호출 url입니다.");
 				return rp;
 			}
-			Long tenantId = tm.getTenantId();
+			tenantId = tm.getTenantId();
 			
 			String ymd = (String)params.get("ymd");
-			String enterCd = (String)params.get("enterCd");
-			String sabun = (String)params.get("sabun");
+			enterCd = (String)params.get("enterCd");
+			sabun = (String)params.get("sabun");
 			
 			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
 			Date now = new Date();
@@ -249,6 +263,9 @@ public class WtmApiController {
 		}catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
+		} finally {
+			Map<String, Object> resultMap = inoutService.getMenuContextWeb(tenantId, enterCd, sabun); 
+			rp.put("result", resultMap);
 		}
 		
 		logger.debug(tsId + "/api/cancel e " + rp.toString());
