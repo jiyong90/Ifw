@@ -106,9 +106,12 @@ ul, ol, li{
 /* form-element */
 /*---- settings check ----*/
 .form-element [type="checkbox"]:checked,
-.form-element [type="checkbox"]:not(:checked) {
+/* .form-element [type="checkbox"]:not(:checked) {
     position: absolute;
     left: -9999px;
+} */
+.form-element [type="checkbox"]:not(:checked) {
+    display: none;
 }
 .form-element [type="checkbox"]:checked + label,
 .form-element [type="checkbox"]:not(:checked) + label
