@@ -1,5 +1,10 @@
 @charset "utf-8";
 
+body {
+    /* font Style */
+    font-family: "Malgun Gothic", "Apple SD Gothic Neo", helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
 /* button style */
 .btn{width:100%;padding: 14px;border:0px;border-radius: 24px;font-size:14px;font-weight: 700;line-height: 20px;letter-spacing: -0.7px;background-color: #d8d8d8;color:#ffffff;cursor: default;}
 
@@ -19,7 +24,7 @@ a.link {display: inline-block;font-size: 12px;line-height: 1.5;letter-spacing: -
 .btn-wrap{margin-top: 13px;}
 
 
-.work-off .inner-wrapper{padding: 50px 20px;}
+.work-off .inner-wrapper{padding: 38px 20px;}
 .work-off .contents-wrap {text-align: center;}
 .work-off p.date{margin-top:10px;font-size: 14px;font-weight: 900;line-height: 1.43;letter-spacing: -0.7px;text-align: center;}
 .work-off p.date:after{content:'';}
@@ -34,9 +39,9 @@ a.link {display: inline-block;font-size: 12px;line-height: 1.5;letter-spacing: -
 .error p.desc{font-size: 20px;font-weight: 300;line-height: 1.5;letter-spacing: -1.2px;text-align: center;}
 .error a.link{margin-top:26px;}
 
-.work-off a.link{margin-top:26px;}
-.work-day a.link {margin-top: 53px;}
-.work-close a.link {margin-top: 26px;}
+.work-off a.link{margin-top:15px;}
+.work-day a.link {margin-top: 42px;}
+.work-close a.link {margin-top: 15px;}
 .work-day .inner-wrapper,
 .work-close .inner-wrapper {
     padding: 32px 0 24px;
@@ -44,14 +49,15 @@ a.link {display: inline-block;font-size: 12px;line-height: 1.5;letter-spacing: -
 
 
 .top-bg {background-color: #292944;}
-.top-bg .inner-wrapper{padding: 31px 0px 30px;}
+.top-bg .inner-wrapper{padding: 20px 0px;}
 .top-bg .inner-wrapper:after {content:'';display: table;width: 100%;clear: both;}
 .top-bg .ico-wrap{float:left;}
 .top-bg .info-wrap{float:left;padding:12px 0px 13px;margin-left: 18px;}
 
-.top-bg p.date{text-align:left; color:#ffffff;font-size: 14px;font-weight: 900;line-height: 1.43;letter-spacing: -0.7px;}
-.top-bg p.desc{text-align:left;color:#ffffff;font-size: 22px;font-weight: 300;line-height: 1.5;letter-spacing: -1.1px;}
+.top-bg p.date{text-align:left; color:#ffffff;font-size: 13px;font-weight: 900;line-height: 1.43;letter-spacing: -0.7px;}
+.top-bg p.desc{margin-top:4px; text-align:left;color:#ffffff;font-size: 17px;font-weight: 300;line-height: 1.5;letter-spacing: -1.1px;}
 
+.contents-body{position:relative; min-height:172px;}
 .contents-wrap span {vertical-align: middle;}
 .contents-wrap .title{margin:0px;padding:0px;font-weight:500;font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;text-align: left;color: #292944;}
 .contents-wrap .date,
