@@ -112,6 +112,7 @@ ul, ol, li{
     left: -9999px;
 }
 */
+.form-element [type="checkbox"]:checked,
 .form-element [type="checkbox"]:not(:checked) {
     display: none;
 }
