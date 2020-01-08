@@ -21,7 +21,7 @@
 			   AND #{ymd} BETWEEN C.SYMD AND C.EYMD 
 			   AND C.ENTER_CD= #{enterCd}
 			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD 
-			   AND (E.SABUN like CONCAT('%', #{sData}, '%')  OR C.EMP_NM like CONCAT('%', #{sData}, '%')
+			   AND (E.SABUN like '%' || #{sData} || '%'  OR C.EMP_NM like '%' || #{sData} || '%')
         ]]>
     </select>
     
@@ -42,6 +42,24 @@
 			  WHERE A.SABUN=#{sabun} 
 			    AND (#{sYmd} BETWEEN A.SYMD AND A.EYMD OR #{eYmd} BETWEEN A.SYMD AND A.EYMD) 
 			    AND #{workteamEmpId} != A.WORKTEAM_EMP_ID
+        ]]>
+    </select>
+    
+    <select id="getWorkteamEmp" parameterType="map" resultType="wtmGeneral">
+        <![CDATA[
+			SELECT M.WORKTEAM_MGR_ID
+			     , E.WORKTEAM_EMP_ID
+			     , E.SABUN
+			     , E.SYMD
+			     , E.EYMD
+			     , E.NOTE
+			  FROM WTM_WORKTEAM_MGR M
+		     JOIN WTM_WORKTEAM_EMP E
+		       ON M.WORKTEAM_MGR_ID = E.WORKTEAM_MGR_ID
+		    WHERE M.TENANT_ID = #{tenantId}
+		      AND M.ENTER_CD = #{enterCd}
+		      AND E.SABUN = #{sabun} 
+		      AND #{ymd} BETWEEN E.SYMD AND E.EYMD 
         ]]>
     </select>
 </mapper>

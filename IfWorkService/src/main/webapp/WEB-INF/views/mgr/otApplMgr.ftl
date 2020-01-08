@@ -10,25 +10,25 @@
                          <button class="btn btn-primary rounded-0" type="button" @click="getTargetList"><i class="fas fa-search"></i></button>
                      </div>
                  </div>
-                 <div class="inner-wrap">
-                     <div class="function-list-wrap form-element">
-                         <div class="title">
-                         	<input type="checkbox" id="allChk" name="allTarget" value="" @click="allCheck($event.target.checked)">
-                         	<label for="allChk">연장근로 대상자 선택</label>
-                         </div>
-                         <ul class="fun-list over-height">
-                             <li v-for="t in targetList">
-                                 <input type="checkbox" :id="t.sabun" name="otApplTarget" value="" @click="checkTarget(t,$event)" :checked="isCheck(t.sabun)">
-                                 <label :for="t.sabun">
-                                     <span class="group">{{t.orgNm}}</span>
-                                     <span class="num">{{t.sabun}}</span>
-                                     <span class="name">{{t.empNm}}</span>
-                                 </label>
-                             </li>
-                         </ul>
+             </form>
+             <div class="inner-wrap">
+                 <div class="function-list-wrap form-element">
+                     <div class="title">
+                     	<input type="checkbox" id="allChk" name="allTarget" value="" @click="allCheck($event.target.checked)">
+                     	<label for="allChk">연장근로 대상자 선택</label>
                      </div>
+                     <ul class="fun-list over-height">
+                         <li v-for="t in targetList">
+                             <input type="checkbox" :id="t.sabun" name="otApplTarget" value="" @click="checkTarget(t,$event)" :checked="isCheck(t.sabun)">
+                             <label :for="t.sabun">
+                                 <span class="group">{{t.orgNm}}</span>
+                                 <span class="num">{{t.sabun}}</span>
+                                 <span class="name">{{t.empNm}}</span>
+                             </label>
+                         </li>
+                     </ul>
                  </div>
- 			</form>
+             </div>
 		</div>
    		<div id="overtimeAppl" class="col-6" v-show="Object.keys(applSabuns).length>0">
    			<p class="page-sub-title mb-1">연장근로 대상자</p>

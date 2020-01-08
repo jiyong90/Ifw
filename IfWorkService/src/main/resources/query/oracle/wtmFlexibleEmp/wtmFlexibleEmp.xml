@@ -959,7 +959,7 @@
 		   AND C.YMD = R.YMD
 		   AND C.SABUN = R.SABUN
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
-		 ORDER BY ymd
+		 ORDER BY YMD,SHM
 		 ]]>
     </select>
     
@@ -1561,6 +1561,10 @@
   	
   	<update id="resetNoPlanWtmWorkDayResultByFlexibleEmpIdWithFixOt" statementType="CALLABLE"  parameterType="map"  >
   		{ call P_WTM_WORK_DAY_RESULT_CREATE_N( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
+  	</update>
+  	
+  	<update id="resetWorkDayResult" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_WORK_DAY_RESULT_RESET(#{tenantId}, #{enterCd}, #{pKey}, #{flexibleEmpId}, #{sYmd}, #{eYmd}, #{holExceptYn}, #{maxPattSeq}, #{pType}, #{userId}) }
   	</update>
   	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->

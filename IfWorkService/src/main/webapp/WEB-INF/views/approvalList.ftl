@@ -81,7 +81,9 @@
                                             <p class="title time-desc-title">출,퇴근시간</p>
                                             <ul class="time-desc-wrap">
                                                 <li v-for="d in e.details">
-                                                    <div class="date">{{moment(d.ymd).format('YYYY-MM-DD')}}({{d.weekday}}) {{moment(d.ymd+' '+d.planSdate).format('HH:mm')}}~{{moment(d.ymd+' '+d.planEdate).format('HH:mm')}}</div>
+                                                    <div class="date">{{moment(d.ymd).format('YYYY-MM-DD')}}({{d.weekday}}) 
+                                                    	<template v-if="d.planSdate && d.planEdate">{{moment(d.ymd+' '+d.planSdate).format('HH:mm')}}~{{moment(d.ymd+' '+d.planEdate).format('HH:mm')}}</template>
+                                                    </div>
                                                     <ul class="time-desc">
                                                         <li><span class="title">근무시간</span><span class="time">{{minuteToHHMM(d.workMinute, 'detail')}}</span></li>
                                                         <li><span class="title">조출시간</span><span class="time">{{minuteToHHMM(d.otbMinute, 'detail')}}</span></li>
