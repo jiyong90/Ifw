@@ -86,7 +86,7 @@ public class WtmMobileController {
 	 * @throws Exception
 	 */
 	
-	@RequestMapping(value = "/mobile/{tenantId}/dashboard", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/my/dashboard", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyDashboard(@PathVariable Long tenantId, 
 			@RequestParam(value = "tenantKey", required = true) String tenantKey,
 			@RequestParam(value="locale", required = true) String locale, 
@@ -167,7 +167,7 @@ public class WtmMobileController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/mobile/{tenantId}/mystatus", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/my/status", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyworkStatus(@PathVariable Long tenantId,
 			@RequestParam(value="locale", required = true) String locale, 
 			@RequestParam(value="empKey", required = true) String empKey, 
