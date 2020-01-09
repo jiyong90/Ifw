@@ -407,16 +407,16 @@
 		<p class="page-title">결재 알림</p>
 		<ul class="nav approval-wrap nav-pills" role="tablist">
             <li class="nav-item">
-                <a href="#" class="nav-link active" id="appl_type_request" data-toggle="pill" @click="getApprovalList('01')" role="tab"
-                    aria-controls="pills-home" aria-selected="true">신청서상태</a>
+                <a href="#" class="nav-link" :class="{active: applType=='01'?true:false}" id="appl_type_request" data-toggle="pill" @click="getApprovalList('01')" role="tab"
+                    aria-controls="pills-home" :aria-selected="applType=='01'?true:false">신청서상태</a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link" id="appl_type_pending" data-toggle="pill" @click="getApprovalList('02')" role="tab"
-                    aria-controls="pills-profile" aria-selected="false">미결함</a>
+                <a href="#" class="nav-link" :class="{active: applType=='02'?true:false}" id="appl_type_pending" data-toggle="pill" @click="getApprovalList('02')" role="tab"
+                    aria-controls="pills-profile" :aria-selected="applType=='02'?true:false">미결함</a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link" id="appl_type_complete" data-toggle="pill" @click="getApprovalList('03')" role="tab"
-                    aria-controls="pills-contact" aria-selected="false">기결함</a>
+                <a href="#" class="nav-link" :class="{active: applType=='03'?true:false}" id="appl_type_complete" data-toggle="pill" @click="getApprovalList('03')" role="tab"
+                    aria-controls="pills-contact" :aria-selected="applType=='03'?true:false">기결함</a>
             </li>
         </ul>
 		<template v-if="apprList.length>0">
