@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="soldev/img/favicon.ico" />
+    <title>근태관리 시스템</title>
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap-reboot.min.css"> -->
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="soldev/css/NotosansKR.css">
+    <link rel="stylesheet" href="soldev/css/layout.css">
+    <link rel="stylesheet" href="soldev/css/common.css">
+    
+    <link rel="stylesheet" href="fontawesome-free-5.8.2-web/css/all.min.css">
+    <!-- S : calendar -->
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/core/main.css"/>
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/daygrid/main.css"/>
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/timegrid/main.css"/>
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/list/main.css"/>
+    <link rel="stylesheet" href="fullcalendar-4.2.0/packages/list/main.css"/>
+    <link rel="stylesheet" href="soldev/css/calendar.css">
+    <link rel="stylesheet" href="soldev/css/isu/theme.css">
+    <!-- E : calendar -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="jQuery-3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="jQuery-slimScroll-master-1.3.8/jquery.slimscroll.min.js"></script>
+    <script src="popper-1.15.0/popper.min.js"></script>
+    <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+    <script src="moment/moment.js"></script>
+    <!-- <script src="bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script> -->
+    <!-- <script src="bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script> -->
+    <script src='fullcalendar-4.2.0/packages/core/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/core/locales-all.js'></script>
+    <script src='fullcalendar-4.2.0/packages/moment/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/list/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
+    <script src='fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+
+        });
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <!-- collapse button -->
+        <!-- <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <i class="fas fa-bars"></i>
+        </button> -->
+
+        <h1 class="logo">
+            <a href="#">
+                <img src="soldev/img/gnb_logo.png" alt="로고">
+            </a>
+        </h1>
+        <div class="pr-3 d-lg-none">
+            <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <i class="fas fa-align-justify"></i>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto nav-top gnb-nav-wrap">
+                <li class="nav-item">
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar"></i></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico alarm"></i><span
+                                class="new"></span></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico power"></i></span></a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
+                </li> -->
+            </ul>
+        </div>
+    </nav>
+    <div class="wrapper">
+        <nav id="sidebar" class="active">
+            <ul class="list-unstyled components">
+                <!-- <li class="active">
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>
+                    <ul class="collapse list-unstyled" id="homeSubmenu">
+                        <li>
+                            <a href="#">Home 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 2</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 3</a>
+                        </li>
+                    </ul>
+                </li> -->
+                <li class="">
+                    <a href="#">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="title">나의 정보</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="#">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span class="title">결재</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="#">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span class="title">결재</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+                </li>
+                <li>
+                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+                </li>
+            </ul> -->
+        </nav>
+        <div class="container-fluid bg-white except70 overflow-hidden">
+            <p class="page-title mb-2">근무 계획 변경</p>
+            <div class="row">
+                <div class="col-4 pr-0">
+                    <div class="page-sub-title bg-navy">근무일 선택</div>
+                    <form class="time-input-form" novalidate="">
+                        <div class="form-row no-gutters">
+                            <div class="form-group col-12">
+                                <div id="startDay" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input"
+                                        data-toggle="datetimepicker" data-target="#startDay" placeholder="연도/월/일"
+                                        autocomplete="off" required="">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="page-sub-title bg-navy mt-3 mb-1">근무일 선택</div>
+                    <form>
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control rounded-0" placeholder="대상자를 검색하세요." aria-label="대상자를 검색하세요."
+                                aria-describedby="search">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary rounded-0" type="button"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="inner-wrap">
+                        <div class="function-list-wrap form-element">
+                            <div class="title">
+                                <input type="checkbox" id="all-chk" name="" value="" title="">
+                                <label for="all-chk">전체 선택</label>
+                            </div>
+                            <ul class="fun-list over-height short">
+                                <li>
+                                    <input type="checkbox" id="list1" name="" value="" title="">
+                                    <label for="list1">
+                                        <span class="group">이수시스템</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">김민진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list2" name="" value="" title="">
+                                    <label for="list2">
+                                        <span class="group">경영본부</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">권수진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list3" name="" value="" title="">
+                                    <label for="list3">
+                                        <span class="group">기획관리팀</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">정성성</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list4" name="" value="" title="">
+                                    <label for="list4">
+                                        <span class="group">이수시스템</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">김민진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list5" name="" value="" title="">
+                                    <label for="list5">
+                                        <span class="group">경영본부</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">권수진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list6" name="" value="" title="">
+                                    <label for="list6">
+                                        <span class="group">기획관리팀</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">정성성</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list7" name="" value="" title="">
+                                    <label for="list7">
+                                        <span class="group">이수시스템</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">김민진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list8" name="" value="" title="">
+                                    <label for="list8">
+                                        <span class="group">경영본부</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">권수진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list9" name="" value="" title="">
+                                    <label for="list9">
+                                        <span class="group">기획관리팀</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">정성성</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list10" name="" value="" title="">
+                                    <label for="list10">
+                                        <span class="group">이수시스템</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">김민진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list11" name="" value="" title="">
+                                    <label for="list11">
+                                        <span class="group">경영본부</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">권수진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list12" name="" value="" title="">
+                                    <label for="list12">
+                                        <span class="group">기획관리팀</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">정성성</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list11" name="" value="" title="">
+                                    <label for="list11">
+                                        <span class="group">이수시스템</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">김민진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list12" name="" value="" title="">
+                                    <label for="list12">
+                                        <span class="group">경영본부</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">권수진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list13" name="" value="" title="">
+                                    <label for="list13">
+                                        <span class="group">기획관리팀</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">정성성</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list14" name="" value="" title="">
+                                    <label for="list14">
+                                        <span class="group">이수시스템</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">김민진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list15" name="" value="" title="">
+                                    <label for="list15">
+                                        <span class="group">경영본부</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">권수진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list16" name="" value="" title="">
+                                    <label for="list16">
+                                        <span class="group">기획관리팀</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">정성성</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list17" name="" value="" title="">
+                                    <label for="list17">
+                                        <span class="group">이수시스템</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">김민진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list18" name="" value="" title="">
+                                    <label for="list18">
+                                        <span class="group">경영본부</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">권수진</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="list19" name="" value="" title="">
+                                    <label for="list19">
+                                        <span class="group">기획관리팀</span>
+                                        <span class="num">11010</span>
+                                        <span class="name">정성성</span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="btn-select on">근무 시간 변경자 선택</div>
+                </div>
+                <div class="col-8">
+                    <!-- <div class="page-title mt-0">변경할 대상자</div> -->
+                    <table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
+                        <tr>
+                            <td>
+                                <div class="inner">
+                                    <div class="sheet_title_wrap clearfix">
+                                        <div class="float-left page-title mt-0">변경할 대상자</div>
+                                        <ul class="float-right btn-wrap">
+                                            <!-- li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li -->
+                                        </ul>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                    createIBSheet("sheet1", "100%", halfsheetH, "kr");
+                                </script>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="mt-4">
+                        <p class="page-title mt-0">변경할 근무계획</p>
+
+                    </div>
+                    <hr class="separate-bar mt-4">
+                </div>
+            </div>
+        </div>
+        <!-- <footer class="text-center mt-auto pt-4">Copyright © 2019 ISUSYSTEM. All rights reserved</footer> -->
+    </div>
+    
+</body>
+
+</html>
