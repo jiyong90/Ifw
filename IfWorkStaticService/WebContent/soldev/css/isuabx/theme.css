@@ -120,7 +120,7 @@ input.required{
 }
 
 .sheet_title_wrap .title:after{
-	color: #4d84fe;
+	background-color: #4d84fe;
 }
 /* Layout4HR css custom sheet background */
 .GMFocusRowBackground, .GMCursorBackground{

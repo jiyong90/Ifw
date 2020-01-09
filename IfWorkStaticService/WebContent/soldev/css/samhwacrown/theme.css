@@ -114,7 +114,7 @@ input.required{
 }
 
 .sheet_title_wrap .title:after{
-	color: #980724;
+	background-color: #980724;
 }
 /* Layout4HR css custom sheet background */
 .GMFocusRowBackground, .GMCursorBackground{

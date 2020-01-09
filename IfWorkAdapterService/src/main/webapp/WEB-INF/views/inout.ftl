@@ -15,7 +15,8 @@
     <div class="wrapper work-off" v-if="inoutType=='HOL' || inoutType=='IN' ">
         <div class="inner-wrapper">
             <div class="ico-wrap">
-                <img src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workday.png" alt="">
+                <img v-if="inoutType=='IN'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workday.png" alt="">
+                <img v-if="inoutType=='HOL'" src="assets/img/icon_holiday.png" alt="">
             </div>
             <div class="contents-wrap">
                 <p class="date">{{formattedYmd}}</p>
@@ -32,7 +33,8 @@
         <div class="top-bg">
             <div class="inner-wrapper">
                 <div class="ico-wrap">
-                    <img src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workon.png" alt="">
+                    <img v-if="inoutType=='OUT'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workon.png" alt="">
+                    <img v-if="inoutType=='END'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workoff.png" alt="">
                 </div>
                 <div class="info-wrap">
                     <p class="date">{{formattedYmd}}</p>
@@ -41,15 +43,15 @@
             </div>
         </div>
         <div class="inner-wrapper">
-            <div class="contents-wrap" v-if="entrySdate">
+            <div class="contents-wrap" v-if="entrySymd">
                 <span class="title">출근</span>
-                <span class="date">{{entrySdate}}</span>
-                <!-- <span class="time">09:00</span> -->
+                <span class="date">{{entrySymd}}</span>
+                <span class="time">{{entryStime}}</span>
             </div>
-            <div class="contents-wrap" v-if="entryEdate">
+            <div class="contents-wrap" v-if="entryEymd">
                 <span class="title">퇴근</span>
-                <span class="date">{{entryEdate}}</span>
-                <!-- <span class="time">18:00</span> -->
+                <span class="date">{{entryEymd}}</span>
+                <span class="time">{{entryEtime}}</span>
             </div>
             <a href="/ife/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
             <div class="btn-wrap">
@@ -66,8 +68,10 @@
 			    data : {
 			    	isHol: true,
 			    	ymd: '${ymd}',
-			    	entrySdate: '${entrySdate}',
-			    	entryEdate: '${entryEdate}',
+			    	entrySymd: '${entrySymd}',
+			    	entryStime: '${entryStime}',
+			    	entryEymd: '${entryEymd}',
+			    	entryEtime: '${entryEtime}',
 			    	label: '${label}',
 			    	desc: '${desc}',
 			    	inoutType: '${inoutType}', 
@@ -109,9 +113,19 @@
 							success: function(data) { 
 								console.log(data);
 								if(data!=null && data.status=='OK') {
-									alert(data.message);
 								} else {
 									alert(data.message);
+								}
+								if(data.result != null && data.result != undefined){
+									//{result={ymd=20200108, entryEdate=, entrySdate=2020-01-08 10:22:00, label=퇴근하기, inoutType=OUT, desc=근무중}
+									$this.ymd = data.result.ymd; 
+									$this.entrySymd = data.result.entrySymd;
+									$this.entryStime = data.result.entryStime;
+									$this.entryEymd = data.result.entryEymd;
+									$this.entryEtime = data.result.entryEtime;
+									$this.label = data.result.label;
+									$this.inoutType = data.result.inoutType;
+									$this.desc = data.result.desc;
 								}
 							},
 							error: function(e) {
@@ -140,10 +154,22 @@
 							success: function(data) {
 								console.log(data);
 								if(data!=null && data.status=='OK') {
-									alert(data.message);
+									
 								} else {
 									alert(data.message);
 								}
+								if(data.result != null && data.result != undefined){
+									//{result={ymd=20200108, entryEdate=, entrySdate=2020-01-08 10:22:00, label=퇴근하기, inoutType=OUT, desc=근무중}
+									$this.ymd = data.result.ymd;
+									$this.entrySymd = data.result.entrySymd;
+									$this.entryStime = data.result.entryStime;
+									$this.entryEymd = data.result.entryEymd;
+									$this.entryEtime = data.result.entryEtime;
+									$this.label = data.result.label;
+									$this.inoutType = data.result.inoutType;
+									$this.desc = data.result.desc;
+								}
+								
 							},
 							error: function(e) {
 								console.log(e);
@@ -171,9 +197,20 @@
 							success: function(data) { 
 								console.log(data);
 								if(data!=null && data.status=='OK') {
-									alert(data.message);
+									
 								} else {
 									alert(data.message);
+								}
+								if(data.result != null && data.result != undefined){
+									//{result={ymd=20200108, entryEdate=, entrySdate=2020-01-08 10:22:00, label=퇴근하기, inoutType=OUT, desc=근무중}
+									$this.ymd = data.result.ymd;
+									$this.entrySymd = data.result.entrySymd;
+									$this.entryStime = data.result.entryStime;
+									$this.entryEymd = data.result.entryEymd;
+									$this.entryEtime = data.result.entryEtime;
+									$this.label = data.result.label;
+									$this.inoutType = data.result.inoutType;
+									$this.desc = data.result.desc;
 								}
 							},
 							error: function(e) {

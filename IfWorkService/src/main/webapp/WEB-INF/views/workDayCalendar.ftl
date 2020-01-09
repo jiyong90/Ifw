@@ -547,7 +547,7 @@
  	         			dayWorks.map(function(dayWork){
 	  	         			//휴일 데이터
 	  	         			//탄근제는 휴일이어도 근무시간 작성할 수 있다.
-	  	         			if($this.flexibleEmp.workTypeCd=='ELAS' || dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+	  	         			if($this.flexibleEmp.workTypeCd=='ELAS' || ($this.flexibleEmp.workTypeCd!='ELAS' && dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y')) {
 								dayWork.plans.map(function(plan){
 									var day = moment(plan.key).format('YYYY-MM-DD');
 									

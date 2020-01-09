@@ -345,18 +345,7 @@ public class IfwLoginController {
     		response.addCookie(cookie);
     	}
 */
-		CommTenantModule tm = null;
-		tm = tenantModuleRepo.findByTenantKey(tsId);
-		
-		Long tenantId = tm.getTenantId();
-		String logoutUrl = tcms.getConfigValue(tenantId, "IFO.LOGOUT.URI", true, "");
-		try {
-			response.sendRedirect(logoutUrl); // request.getContextPath() +"/console/" + tsId);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+		loginService.logout(request, response, tsId);
 //		SecurityContextHolder.clearContext();
 ////		
 //		Cookie[] cookies = request.getCookies();

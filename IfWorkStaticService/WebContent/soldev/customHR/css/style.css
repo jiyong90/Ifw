@@ -50,13 +50,13 @@ textarea.required { border:1px solid #008fd5 !important; }
     cursor: pointer;
 }
 .sheet_search .magnifier{
-	display:inline-block;
-	width:35px;
-	height:35px;
-	margin-right:10px;
-	border-radius:50%;
-	background-color:#82bce2;
-	text-align: center;
+    display:inline-block;
+    width:35px;
+    height:35px;
+    margin-right:10px;
+    border-radius:50%;
+    background-color:#82bce2;
+    text-align: center;
 }
 .sheet_search .magnifier i{
 	color : #ffffff;
@@ -258,16 +258,16 @@ a.button7 img {
 }
 
  .sheet_title_wrap .title:after{
-    font-family : "Font Awesome 5 Free";
-    content: "\f111";
-    font-size: 14px;
-    font-weight: 400;
-    /* -webkit-transform: scale(0.4); */
-    color: #008fd5;
-    position: absolute;
-    left: 0;
-    top: 2px;
-}
+ 	content:'';
+ 	position:absolute;
+ 	left:4px;
+ 	top: 10px;
+ 	display:inline-block;
+ 	width:6px;
+ 	height:6px;
+ 	border-radius:50%;
+ 	background-color: #008fd5;
+ }
 
 .sheet_title_wrap .legend-list{
 	overflow : hidden;

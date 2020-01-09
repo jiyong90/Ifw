@@ -959,7 +959,7 @@
 		   AND C.YMD = R.YMD
 		   AND C.SABUN = R.SABUN
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
-		 ORDER BY ymd
+		 ORDER BY YMD,SHM
 		 ]]>
     </select>
     
@@ -1418,7 +1418,7 @@
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
-			   AND C.YMD BETWEEN SUBSTR(#{sdate},1,6) AND SUBSTR(#{edate},1,6)
+			   AND C.YMD BETWEEN SUBSTR(#{sdate},1,8) AND SUBSTR(#{edate},1,8)
 			   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') <= #{edate} ))
 			 UNION ALL
 			SELECT 2 
@@ -1561,6 +1561,10 @@
   	
   	<update id="resetNoPlanWtmWorkDayResultByFlexibleEmpIdWithFixOt" statementType="CALLABLE"  parameterType="map"  >
   		{ call P_WTM_WORK_DAY_RESULT_CREATE_N( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
+  	</update>
+  	
+  	<update id="resetWorkDayResult" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_WORK_DAY_RESULT_RESET(#{tenantId}, #{enterCd}, #{pKey}, #{flexibleEmpId}, #{sYmd}, #{eYmd}, #{holExceptYn}, #{maxPattSeq}, #{pType}, #{userId}) }
   	</update>
   	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->

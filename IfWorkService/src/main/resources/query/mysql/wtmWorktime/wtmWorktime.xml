@@ -346,8 +346,9 @@
 				T.WORK_TYPE_CD as workTypeCd, 
 				T.SDATE as sdate, 
 				T.EDATE as edate, 
-				TIME_FORMAT(SEC_TO_TIME(SUM(T.APPR_WORK_MINUTE)*60), '%H:%i') as caption_rb, 
-				TIME_FORMAT(SEC_TO_TIME(SUM(T.APPR_OT_MINUTE)*60), '%H:%i') as status,
+				F_WTM_SUM_FLEXIBLE_EMP_TIME(T.TENANT_ID, T.ENTER_CD, T.SABUN, T.SDATE, T.EDATE) as caption_rb,
+				TIME_FORMAT(SEC_TO_TIME((SUM(T.APPR_WORK_MINUTE)+SUM(T.APPR_OT_MINUTE))*60), '%H:%i') as status, 
+				TIME_FORMAT(SEC_TO_TIME(SUM(T.APPR_OT_MINUTE)*60), '%H:%i') as test,
 				H.ORG_CD, F_WTM_GET_ORG_NM(T.TENANT_ID, T.ENTER_CD, H.ORG_CD, F_WTM_DATE_FORMAT(now(), 'YMD')) as caption_lb				FROM (SELECT CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_SDATE ELSE WEEK_SDATE END AS SDATE
 				           , CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_EDATE ELSE WEEK_EDATE END AS EDATE
 				           , SABUN
@@ -381,4 +382,49 @@
 				ORDER BY H.ORG_CD
         ]]>
     </select>
+    
+    <select id="getWorkTimeChangeTarget" parameterType="map" resultType="hashmap">
+  		SELECT C.YMD AS ymd
+		     , C.SABUN AS sabun
+		     , F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS orgNm
+			  , F_WTM_GET_EMP_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS empNm
+		     , F_WTM_GET_FLEXIBLE_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS flexibleNm
+		     , F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'YMDHIS') AS entrySdate
+			  , F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'YMDHIS') AS entryEdate 
+			  , C.TIME_CD_MGR_ID AS timeCdMgrId
+			  , R.TIME_TYPE_CD AS timeTypeCd
+			  , F_WTM_DATE_FORMAT(R.PLAN_SDATE, 'YMDHIS') AS planSdate
+			  , F_WTM_DATE_FORMAT(R.PLAN_EDATE, 'YMDHIS') AS planEdate
+			  , CONCAT(FLOOR(R.PLAN_MINUTE/60),':',LPAD(MOD(R.PLAN_MINUTE,60),2,'0')) AS planMinute
+			FROM WTM_FLEXIBLE_EMP E
+			JOIN WTM_WORK_CALENDAR C
+			  ON E.TENANT_ID = C.TENANT_ID
+			 AND E.ENTER_CD = C.ENTER_CD
+			 AND E.SABUN = C.SABUN
+			 AND C.YMD BETWEEN E.SYMD AND E.EYMD
+			JOIN WTM_WORK_DAY_RESULT R
+			  ON C.TENANT_ID = R.TENANT_ID
+			 AND C.ENTER_CD = R.ENTER_CD 
+			 AND C.SABUN = R.SABUN 
+			 AND C.YMD = R.YMD
+			WHERE E.TENANT_ID = ${tenantId}
+			  AND E.ENTER_CD = #{enterCd}
+			  AND E.WORK_TYPE_CD NOT IN ('SELE_C','SELE_F','ELAS')
+			  AND C.YMD = #{ymd}
+			  AND (E.SABUN) IN ( SELECT SABUN
+										  FROM WTM_WORK_DAY_RESULT
+										 WHERE YMD = #{ymd}
+										   AND TENANT_ID = ${tenantId}
+										   AND ENTER_CD = #{enterCd}
+										   AND SABUN IN (NULL
+										   <if test="empList!=null">
+										   <foreach collection="empList" item="sabun" >
+										   ,#{sabun}
+										   </foreach>
+										   </if>
+										   )
+										GROUP BY TENANT_ID, ENTER_CD, YMD, SABUN
+										HAVING SUM(CASE WHEN TIME_TYPE_CD NOT IN ('BASE','FIXOT') THEN 1 ELSE 0 END)=0 )
+		ORDER BY ymd desc, sabun, planSdate
+  	</select>
 </mapper>

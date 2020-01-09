@@ -32,6 +32,14 @@ else if(${status} == "130")
 	result = "사용자 정보가 존재하지 않습니다.";
 else if(${status} == "140")
 	result = "세션이 만료되었습니다.";
+else if(${status} == "150")
+	result = "세션이 만료되었습니다.";
+else if(${status} == "160")
+	result = "잘못된 호출 URL입니다.";
+else if(${status} == "170")
+	result = "클라이언트가 존재하지 않습니다.";
+else if(${status} == "180")
+	result = "인증 URL이 존재하지 않습니다.";
 document.getElementById("message").innerHTML=result;
 </script>
 </body>
