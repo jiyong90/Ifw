@@ -1,13 +1,18 @@
 <div class="container-fluid bg-white mgr-wrap except70 overflow-hidden">
- 	<p class="page-title mb-2"><i class="fas fa-poll-h"></i>근무 시간 변경</p>
+ 	<p class="page-title mb-2">근무 시간 변경 <span id="Tooltip-1" class="tooltip-st"><i class="far fa-question-circle"></i></p>
  	<div class="row">
- 		<div id="workPlanChangeMgr" class="col-4" v-cloak>
- 			<div class="function-list-wrap">
- 				<div class="title">근무일 선택</div>
-	            <div class="col col-md-3 col-lg-3" data-target-input="nearest">
-	                <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="ymd" data-toggle="datetimepicker" data-target="#ymd" placeholder="연도-월-일" autocomplete="off" required>
-	            </div>
-            </div>
+ 		<div id="workPlanChangeMgr" class="col-4 pr-0" v-cloak>
+ 			<div class="page-sub-title bg-navy">근무일 선택</div>
+ 			<form class="time-input-form" novalidate="">
+                <div class="form-row no-gutters">
+                    <div class="form-group col-12">
+                        <div data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="ymd" data-toggle="datetimepicker" data-target="#ymd" placeholder="연도-월-일" autocomplete="off" required>
+                        </div>
+                    </div>
+                </div>
+            </form>
+			<div class="page-sub-title bg-navy mt-3 mb-1">대상자 선택</div>
  			<form>
  				<div class="input-group mb-2">
                      <input id="searchKeyword" type="text" class="form-control rounded-0" placeholder="검색어를 입력해주세요" aria-label="검색어를 입력해주세요"
@@ -21,9 +26,9 @@
                 <div class="function-list-wrap form-element">
                     <div class="title">
                     	<input type="checkbox" id="allChk" name="allTarget" value="" @click="allCheck($event.target.checked)">
-                    	<label for="allChk">대상자 선택</label>
+                    	<label for="allChk">전체 선택</label>
                     </div>
-                    <ul class="fun-list over-height">
+                    <ul class="fun-list over-height short">
                         <li v-for="t in targetList">
                             <input type="checkbox" :id="t.sabun" name="targetChks" value="" @click="checkTarget(t,$event)" :checked="isCheck(t.sabun)">
                             <label :for="t.sabun">
@@ -35,32 +40,30 @@
                     </ul>
                 </div>
             </div>
+            <div class="btn-select" :class="{on: ymd!=''&&applSabuns.length>0?true:false}" @click="getWorkPlanChangeTarget">근무 시간 변경자 선택</div>
 		</div>
 		<div class="col-8">
 			<table border="0" cellspacing="0" cellpadding="0" class="sheet_main">
 				<tr>
 					<td>
 						<div class="inner">
-							<div class="sheet_title_wrap clearfix">
-								<div id="popupTitle" class="float-left">근무 계획</div>
+							<div class="sheet_title_wrap clearfix pt-0 pb-0">
+								<div id="popupTitle" class="float-left title mt-0">변경할 대상자</div>
 							</div>
 						</div>
 						<script type="text/javascript"> createIBSheet("sheet1", "100%", halfsheetH, "kr"); </script>
 					</td>
 				</tr>
 			</table>
-			<div>
-				<div class="inner">
-					<div class="sheet_title_wrap clearfix">
-						<div id="popupTitle" class="float-left">근무 시간 변경</div>
-						<select id="timeCd" class="box">
-						</select>
-					</div>
-					<ul class="float-right btn-wrap">
-						<li><a href="javascript:workPlanChangeMgrVue.changeWorkPlan()" class="basic authR">변경</a></li>
-					</ul>
+			<div class="mt-4">
+				<div class="sheet_title_wrap clearfix pt-0 pb-0">
+					<p id="popupTitle" class="float-left title mt-0">변경할 근무시간</p>
+					<select id="timeCd" class="ml-3 mr-2">
+					</select>
+					<button type="button" class="btn btn-apply btn-sm px-5" onclick="javascript:workPlanChangeMgrVue.changeWorkPlan()">저장</button>
 				</div>
 			</div>
+			<hr class="separate-bar mt-4">
 		</div>
     </div>
 </div>    
@@ -69,6 +72,33 @@
 		$('#ymd').datetimepicker({
             format: 'YYYY-MM-DD',
             language: 'ko'
+        });
+		
+		new jBox('Tooltip', {
+            attach: '#Tooltip-1',
+            target: '#Tooltip-1',
+            theme: 'TooltipBorder',
+            trigger: 'click',
+            adjustTracker: true,
+            closeOnClick: 'body',
+            closeButton: 'box',
+            animation: 'move',
+            position: {
+                x: 'left',
+                y: 'bottom'
+            },
+            outside: 'y',
+            pointer: 'left:20',
+            offset: {
+                x: 25
+            },
+            content: '근무 시간 변경의 경우, 휴일이 아닌 근무일에만 가능합니다.',
+            onOpen: function () {
+                this.source.addClass('active');
+            },
+            onClose: function () {
+                this.source.removeClass('active');
+            }
         });
 		
 		var initdata1 = {};
@@ -114,7 +144,7 @@
 	function doAction1(sAction) {
 		switch (sAction) {
 		case "Search":
-			var ymd = moment($("#ymd").val()).format('YYYYMMDD');
+			var ymd = moment(workPlanChangeMgrVue.ymd).format('YYYYMMDD');
 			var param = "ymd="+ymd+"&sabuns="+JSON.stringify(workPlanChangeMgrVue.applSabuns)+"&timeCdMgrId="+$("#timeCd").val();
 			sheet1.DoSearch( "${rc.getContextPath()}/worktime/change/target" , param);
 			break;
@@ -124,16 +154,17 @@
    	var workPlanChangeMgrVue = new Vue({
    		el: "#workPlanChangeMgr",
   		    data : {
+  		    	ymd:'',
   		    	targetList: [],
   		    	applSabuns: []
   		    },
-  		    watch: {
+  		    /* watch: {
   		    	applSabuns : function(val, oldVal) {
   		    		var $this = this;
-  		    		if($("#ymd").val()!='' && val.length>0) 
+  		    		if($this.ymd!='' && val.length>0) 
   		    			doAction1("Search");
   		    	} 
-  		    },
+  		    }, */
   		    mounted: function(){
   		    	this.getTargetList();
   		    },
@@ -215,7 +246,7 @@
   		    		
   		    		var isSave = true;
   		    		var msg;
-  		    		var ymd = $("#ymd").val();
+  		    		var ymd = $this.ymd;
   		    		var timeCdMgrId = $("#timeCd").val();
   		    		
   		    		if(ymd==null || ymd=='') {
@@ -275,9 +306,10 @@
    	//날짜,시간 변경 시 근로시간 계산
     $('#ymd').unbind("change.datetimepicker").on("change.datetimepicker", function(e){
    		if($("#ymd").val()!='') {
+   			var ymd = $("#ymd").val();
+   			workPlanChangeMgrVue.ymd = ymd;
    			$("#popupTitle").empty();
-   			$("#popupTitle").prepend($("#ymd").val()+"의 근무 계획");
-   			workPlanChangeMgrVue.getWorkPlanChangeTarget();
+   			$("#popupTitle").prepend(ymd+"의 근무 계획");
    		}
     }); 
 	
