@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmInterfaceMapper">
+
+	<select id="getEnterCd" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT 'H133' AS ENTER_CD, #{tenantId} AS TENANT_ID
+			FROM DUAL
+        ]]>
+    </select>
+	
+	<select id="getCode" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT ENTER_CD, GRCODE_CD, CODE, CODE_NM, SYMD, EYMD, SEQ, NOTE
+        	  FROM (SELECT 'H133' AS ENTER_CD
+						 , CASE
+							WHEN CD_FIELD = 'HR_H000002' THEN 'POS_CD' -- 직위
+							WHEN CD_FIELD = 'HR_H000003' THEN 'CLASS_CD' -- 직급
+							WHEN CD_FIELD = 'HR_H000052' THEN 'DUTY_CD' -- 직책
+							WHEN CD_FIELD = 'HR_H000039' THEN 'JOB_CD' --직무
+							WHEN CD_FIELD = 'HR_H000004' THEN 'JOB_TYPE_CD' --직군
+							ELSE '' END AS GRCODE_CD
+						 , CD_SYSDEF AS CODE
+						 , NM_SYSDEF AS CODE_NM
+						 , '20190101' AS SYMD
+						 , '29991231' AS EYMD
+						 , NULL AS SEQ
+						 , '' AS NOTE
+						 , ISNULL(DTS_UPDATE, '20190101000000') AS CHKDATE
+					  FROM MA_CODEDTL
+					 WHERE CD_COMPANY = '1000'
+					   AND  CD_FIELD IN ( 'HR_H000002', -- 직위
+										 'HR_H000003', --직급,
+										 'HR_H000052', -- 직책, 
+										 'HR_H000039', -- 직무, 
+										 'HR_H000004' -- 직군
+										 )
+				  ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND CHKDATE > #{lastDataTime}
+			 ORDER BY ENTER_CD, GRCODE_CD
+        ]]>
+    </select>
+    
+    <select id="getHoliday" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, LOCATION_CD, YMD, HOLIDAY_NM, FESTIVE_YN, PAY_YN
+			  FROM (
+			        ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND CHKDATE > #{lastDataTime}
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getGnt" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, GNT_CD, GNT_NM, GNT_GUBUN_CD, HOL_INCL_YN, REQUEST_USE_TYPE, WORK_YN, PAY_YN, NOTE
+			  FROM (SELECT 'H133' AS ENTER_CD
+						 , A.CD_WCODE AS GNT_CD
+						 , A.NM_WCODE AS GNT_NM
+						 , '' AS GNT_GUBUN_CD
+						 , CASE B.NM_VALUE WHEN '2' THEN 'Y'
+								ELSE 'N' END AS HOL_INCL_YN
+						 , CASE A.CD_WTYPE WHEN '001' THEN 'D'
+										   ELSE 'H' END AS REQUEST_TYPE_CD
+						 , 'N' AS WORK_YN
+						 , 'N' AS PAY_YN
+						 , '' AS NOTE
+						 , ISNULL(A.DTS_UPDATE,'20190101000000') AS CHKDATE
+					  FROM HR_WCODE A
+					 INNER JOIN HR_CONFIG B
+					    ON A.CD_COMPANY = B.CD_COMPANY
+					   AND B.CD_SYS='CON043'
+					 WHERE A.CD_COMPANY = '1000'
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND CHKDATE > #{lastDataTime} 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getOrg" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, ORG_CD, ORG_NM, SYMD, EYMD, ORG_TYPE, NOTE
+			  FROM (SELECT 'H133' AS ENTER_CD
+							, CD_DEPT AS ORG_CD
+							, NM_DEPT AS ORG_NM
+							, ISNULL(DT_START, '20190101') AS SYMD
+							, ISNULL(DT_END, '29991231') AS EYMD
+							, '' AS ORG_TYPE
+							, DC_RMK1 AS NOTE
+							, ISNULL(DTS_UPDATE, '20190101000000') AS CHKDATE
+					FROM MA_DEPT
+					WHERE CD_COMPANY = '1000'
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND CHKDATE > #{lastDataTime} 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getOrgChart" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT DISTINCT ENTER_CD, ORG_CHART_NM, SYMD, EYMD, NOTE
+			  FROM (SELECT 'H133' AS ENTER_CD
+							, '조직도' AS ORG_CHART_NM
+							, ISNULL(DT_START, '20190101') AS SYMD
+							, ISNULL(DT_END, '29991231') AS EYMD
+							, CD_DEPT AS ORG_CD
+							, H_DEPT AS PRIOR_ORG_CD
+							, NO_SORT AS SEQ
+							, LB_DEPT AS ORG_LEVEL
+							, '' AS ORDER_SEQ
+							, DC_RMK1 AS NOTE
+							, ISNULL(DTS_UPDATE, '20190101000000') AS CHKDATE
+					FROM MA_DEPT
+					WHERE CD_COMPANY = '1000'
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND CHKDATE > #{lastDataTime}
+			 ORDER BY SYMD
+        ]]>
+    </select>
+    
+    <select id="getOrgChartDtl" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT ORG_CD, PRIOR_ORG_CD, SEQ, ORG_LEVEL, ORDER_SEQ
+			  FROM (SELECT 'H133' AS ENTER_CD
+							, '조직도' AS ORG_CHART_NM
+							, ISNULL(DT_START, '20190101') AS SYMD
+							, ISNULL(DT_END, '29991231') AS EYMD
+							, CD_DEPT AS ORG_CD
+							, H_DEPT AS PRIOR_ORG_CD
+							, NO_SORT AS SEQ
+							, LB_DEPT AS ORG_LEVEL
+							, '' AS ORDER_SEQ
+							, DC_RMK1 AS NOTE
+							, ISNULL(DTS_UPDATE, '20190101000000') AS CHKDATE
+					FROM MA_DEPT
+					WHERE CD_COMPANY = '1000'
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND SYMD = #{symd}
+			 ORDER BY ORDER_SEQ
+        ]]>
+    </select>
+    
+    <select id="getEmp" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, SYMD, EYMD, STATUS_CD, ORG_CD, LOCATION_CD
+			     , DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, LEADER_YN
+			  FROM (SELECT 'H133' AS ENTER_CD
+							, NO_EMP AS SABUN
+							, NM_KOR AS EMP_NM
+							, NM_ENG AS EMP_ENG_NM
+							, DT_ENTER AS SYMD
+							, REPLACE(DT_RETIRE, '00000000', '29991231') AS EYMD
+							, CASE
+								WHEN CD_INCOM = '001' THEN 'AA' --재직
+								WHEN CD_INCOM = '002' THEN 'CA' --휴직
+								WHEN CD_INCOM = '099' THEN 'RA' --퇴직
+							END AS STATUS_CD
+							, CD_DEPT AS ORG_CD
+							, CD_BIZAREA AS LOCATION_CD
+							, CD_DUTY_RESP AS DUTY_CD
+							, CD_DUTY_RANK AS POS_CD
+							, CD_DUTY_STEP AS JOB_GROUP_CD
+							, CD_DUTY_TYPE AS JOB_GROUP_CD
+							, CD_DUTY_WORK AS JOB_CD
+							, TP_EMP AS PAY_TYPE_CD
+							, ISNULL((SELECT 'Y' FROM MA_DEPT B 
+								WHERE A.CD_COMPANY = B.CD_COMPANY 
+								  AND A.CD_DEPT = B.CD_DEPT 
+								  AND A.NO_EMP = B.NO_EMPMNG 
+								  AND convert(varchar, getdate(), 112) BETWEEN ISNULL(B.DT_START, '20190101') AND ISNULL(B.DT_END, '29991231')), 'N') AS LEADER_YN
+							, DC_RMK AS NOTE
+							, ISNULL(DTS_UPDATE, '20190101000000') AS CHKDATE
+					FROM MA_EMP
+					WHERE CD_COMPANY = '1000'
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND CHKDATE > #{lastDataTime}
+			 ORDER BY ENTER_CD, SABUN, SYMD
+        ]]>
+    </select>
+    
+    <select id="getOrgConc" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, ORG_CD, SABUN, SYMD, EYMD
+			  FROM (SELECT 'H133' AS ENTER_CD
+							, CD_DDEPT AS ORG_CD
+							, NO_EMP AS SABUN
+							, DT_FROM AS SYMD
+							, DT_TO AS EYMD
+							, DTS_UPDATE AS CHKDATE
+					FROM HR_EMP_DDEPT
+					WHERE CD_COMPANY = '1000'
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND CHKDATE > #{lastDataTime}
+        ]]>
+    </select>
+    
+    <select id="getEmpAddr" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMAIL, HAND_PHONE, NOTE
+			  FROM (SELECT 'H133' AS ENTER_CD
+							, NO_EMP AS SABUN
+							, NO_EMAIL AS EMAIL
+							, NO_TEL AS HAND_PHONE
+							, DC_RMK AS NOTE
+							, DTS_UPDATE AS CHKDATE
+					FROM MA_EMP
+					WHERE CD_COMPANY = '1000'
+					  AND (NO_EMAIL != '' OR NO_TEL != '')
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			   AND CHKDATE > #{lastDataTime} 
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getTaaAppl" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT A.ENTER_CD
+			     , B.SABUN
+			     , B.GNT_CD
+			     , B.S_YMD
+			     , B.E_YMD
+			     , B.REQ_S_HM
+			     , B.REQ_E_HM
+			     , A.APPL_SEQ
+			     , A.APPL_STATUS_CD
+			  FROM THRI103 A
+			 INNER JOIN TTIM301 B
+			     ON A.ENTER_CD = B.ENTER_CD 
+			   AND A.APPL_SEQ = B.APPL_SEQ
+			 WHERE A.ENTER_CD = #{enterCd}
+			   AND A.APPL_CD = '22'
+			   AND A.APPL_STATUS_CD <> '11'
+			   AND A.CHKDATE > #{lastDataTime}
+        ]]>
+    </select>
+</mapper>

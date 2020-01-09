@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmScheduleMapper">
+    
+    <select id="getWtmCloseDay" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT AA.ENTER_CD AS enterCd, AA.SABUN AS sabun, AA.YMD AS ymd
+              FROM (SELECT A.ENTER_CD, A.SABUN, A.YMD, MIN(F_WTM_DATE_FORMAT(B.PLAN_SDATE, 'YMD')) AS SDATE, MAX(F_WTM_DATE_FORMAT(B.PLAN_EDATE, 'YMD')) AS EDATE
+                    FROM WTM_WORK_CALENDAR A
+                   INNER JOIN WTM_WORK_DAY_RESULT B
+                       ON A.TENANT_ID = B.TENANT_ID
+                      AND A.ENTER_CD = B.ENTER_CD
+                      AND A.SABUN = B.SABUN
+                      AND A.YMD = B.YMD
+                   WHERE B.TIME_TYPE_CD IN ('BASE', 'REGA', 'OT', 'FIXOT', 'NIGTH', 'TAA')	-- 간주근무나 기본근무일때)
+                      AND A.TENANT_ID = #{tenantId}
+                      AND A.YMD = #{ymd}
+                   GROUP BY A.ENTER_CD, A.SABUN, A.YMD
+                   ) AA
+             WHERE ((#{closeType} = 'A' AND AA.SDATE = AA.EDATE)
+                 OR (#{closeType} = 'B' AND AA.SDATE != AA.EDATE))
+ORDER BY YMD, SABUN
+        ]]>
+    </select>
+
+</mapper>
