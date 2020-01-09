@@ -452,5 +452,4 @@ public class WtmMobileApplController {
 		logger.debug("/mobile/"+ tenantId+"/apply/val e " + rp.toString());
 		return rp;
 	}
-
 }
