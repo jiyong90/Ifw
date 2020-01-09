@@ -120,11 +120,11 @@ ul, ol, li{
 .form-element [type="checkbox"]:not(:checked) + label
 {
     position: relative;
+    display: inline-block;
     padding-left: 24px;
     margin-right: 10px;
     cursor: pointer;
     line-height: 20px;
-    display: inline-block;
     color: #212529;
 }
 .form-element [type="checkbox"]:checked + label:before,
@@ -811,6 +811,14 @@ box-sizing: border-box;
     letter-spacing: -0.6px;
     color: #6b6b80;
 }
+.page-sub-title.bg-navy {
+    padding: 5px 10px;
+    background-color: #292944;
+    font-weight: 700;
+    letter-spacing: -0.7px;
+    font-size: 14px;
+    color:#ffffff;
+}
 
 .nav.approval-wrap.nav-pills{
   margin-top:10px;
@@ -1208,21 +1216,38 @@ transition: all 0.4s ease;
 .setting .card.on{border:2px solid #4d84fe;}
 .setting .card .title{display: inline-block; width: 80%; overflow: hidden; font-size: 14px; color: #292944; white-space: nowrap; text-overflow: ellipsis;}
 
-.function-list-wrap{position:relative; font-size:13px; color:#292944; border-bottom:1px solid #e2e5ed;}
+.function-list-wrap{position:relative; font-size:13px; color:#292944}
 .function-list-wrap .title{padding:5px 10px; background-color:#e2e5ed; font-size: 14px; font-weight:700;}
 .function-list-wrap .fun-list{padding:0px 10px;}
 .function-list-wrap .fun-list.over-height{height:calc(100vh - 210px); overflow-y:auto;}
+.function-list-wrap .fun-list.over-height.short{height:calc(100vh - 374px);}
 .function-list-wrap .fun-list>li{padding: 12px 0px; border-top:1px solid #e2e5ed;}
 .function-list-wrap .fun-list>li:first-child{border-top:0px;}
+
 .function-list-wrap .fun-list ol.desc-list{margin-top:6px;}
 .function-list-wrap .fun-list ol.desc-list li{list-style-type: decimal; list-style-position: inside; line-height:1.6; }
 .function-list-wrap .fun-list span+span{margin-left:5px;}
-.function-list-wrap .fun-list .group,
-.function-list-wrap .fun-list .num{
-  display:inline-block;
-  min-width:10%;
+.function-list-wrap .fun-list>li [type="checkbox"]:checked+label,
+.function-list-wrap .fun-list>li [type="checkbox"]:not(:checked)+label{
+  display: table;
+  width: 100%;
+}
+
+.function-list-wrap .fun-list .group{
+  display: table-cell;
+  width:20%;
   color:#555555;
 }
+.function-list-wrap .fun-list .num,
+.function-list-wrap .fun-list .name{
+  display: table-cell;
+  width:15%;
+  color:#555555;
+}
+.btn-select{padding: 18px 0px;margin-left: -15px;font-size: 16px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.5;letter-spacing: -0.8px;text-align: center;color: #ffffff;
+  background-color:#b8b8b8;
+}
+.btn-select.on{background-color:#292944;}
 
 
 .select-list-wrap {
