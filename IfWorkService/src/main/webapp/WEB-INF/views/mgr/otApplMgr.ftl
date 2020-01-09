@@ -1,34 +1,46 @@
 <div id="otApplMgr" class="container-fluid bg-white mgr-wrap except70 overflow-hidden" v-cloak>
- 	<p class="page-title mb-2">연장근로신청</p>
+ 	<p class="page-title mb-2">연장근로신청 <span id="Tooltip-1" class="tooltip-st"><i class="far fa-question-circle"></i></p>
  	<div class="row">
  		<div class="col-6">
- 			<form>
- 				<div class="input-group mb-2">
-                     <input id="searchKeyword" type="text" class="form-control rounded-0" placeholder="검색어를 입력해주세요" aria-label="검색어를 입력해주세요"
-                         aria-describedby="search" @keyup.enter="getTargetList">
-                     <div class="input-group-append">
-                         <button class="btn btn-primary rounded-0" type="button" @click="getTargetList"><i class="fas fa-search"></i></button>
-                     </div>
-                 </div>
-             </form>
-             <div class="inner-wrap">
-                 <div class="function-list-wrap form-element">
-                     <div class="title">
-                     	<input type="checkbox" id="allChk" name="allTarget" value="" @click="allCheck($event.target.checked)">
-                     	<label for="allChk">연장근로 대상자 선택</label>
-                     </div>
-                     <ul class="fun-list over-height">
-                         <li v-for="t in targetList">
-                             <input type="checkbox" :id="t.sabun" name="otApplTarget" value="" @click="checkTarget(t,$event)" :checked="isCheck(t.sabun)">
-                             <label :for="t.sabun">
-                                 <span class="group">{{t.orgNm}}</span>
-                                 <span class="num">{{t.sabun}}</span>
-                                 <span class="name">{{t.empNm}}</span>
-                             </label>
-                         </li>
-                     </ul>
-                 </div>
-             </div>
+ 			<div class="page-sub-title bg-navy mb-1">연장근로 대상자 선택</div>
+ 			<template v-if="targetList.length>0">
+	 			<form>
+	 				<div class="input-group mb-2">
+	                     <input id="searchKeyword" type="text" class="form-control rounded-0" placeholder="검색어를 입력해주세요" aria-label="검색어를 입력해주세요"
+	                         aria-describedby="search" @keyup.enter="getTargetList">
+	                     <div class="input-group-append">
+	                         <button class="btn btn-primary rounded-0" type="button" @click="getTargetList"><i class="fas fa-search"></i></button>
+	                     </div>
+	                 </div>
+	             </form>
+	             <div class="inner-wrap">
+	                 <div class="function-list-wrap form-element">
+	                     <div class="title">
+	                     	<input type="checkbox" id="allChk" name="allTarget" value="" @click="allCheck($event.target.checked)">
+	                     	<label for="allChk">전체 선택</label>
+	                     </div>
+	                     <ul class="fun-list over-height">
+	                         <li v-for="t in targetList">
+	                             <input type="checkbox" :id="t.sabun" name="otApplTarget" value="" @click="checkTarget(t,$event)" :checked="isCheck(t.sabun)">
+	                             <label :for="t.sabun">
+	                                 <span class="group">{{t.orgNm}}</span>
+	                                 <span class="num">{{t.sabun}}</span>
+	                                 <span class="name">{{t.empNm}}</span>
+	                             </label>
+	                         </li>
+	                     </ul>
+	                 </div>
+	             </div>
+             </template>
+             <template v-else>
+             	<div class="inner-wrap">
+             		<div class="function-list-wrap form-element">
+             			<ul class="fun-list over-height">
+             				<li>대상자가 없습니다.</li>
+             			</ul>
+             		</div>
+             	</div>
+             </template>
 		</div>
    		<div id="overtimeAppl" class="col-6" v-show="Object.keys(applSabuns).length>0">
    			<p class="page-sub-title mb-1">연장근로 대상자</p>
@@ -132,6 +144,32 @@
             }
         }); 
         
+        new jBox('Tooltip', {
+            attach: '#Tooltip-1',
+            target: '#Tooltip-1',
+            theme: 'TooltipBorder',
+            trigger: 'click',
+            adjustTracker: true,
+            closeOnClick: 'body',
+            closeButton: 'box',
+            animation: 'move',
+            position: {
+                x: 'left',
+                y: 'bottom'
+            },
+            outside: 'y',
+            pointer: 'left:20',
+            offset: {
+                x: 25
+            },
+            content: '대상자를 먼저 선택 후 연장근로를 신청합니다.',
+            onOpen: function () {
+                this.source.addClass('active');
+            },
+            onClose: function () {
+                this.source.removeClass('active');
+            }
+        });
 	});
 
    	var otApplMgrVue = new Vue({
@@ -211,7 +249,10 @@
   		    		$("#allChk").prop("checked",false);
   		    		$this.targetList = [];
   		    		
-  		    		var searchKeyword = $("#searchKeyword").val();
+  		    		var searchKeyword = '';
+  		    		
+  		    		if($("#searchKeyword").val()!=null && $("#searchKeyword").val()!=undefined && $("#searchKeyword").val()!='')
+  		    			searchKeyword = $("#searchKeyword").val();
   		    		
   		    		Util.ajax({
 						url: "${rc.getContextPath()}/emp/list?searchKeyword="+searchKeyword,

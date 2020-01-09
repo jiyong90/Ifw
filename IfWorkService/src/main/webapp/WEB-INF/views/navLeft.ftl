@@ -78,7 +78,8 @@
                 	<a href="#submenu-list5" data-toggle="collapse" :aria-expanded="curSubMenu=='sub5'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub5'">근무시간관리</a>
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub5'}" id="submenu-list5">
                         <li :class="{active: curPageName=='empCalendarMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">근무시간관리</a></li>
-                        <li :class="{active: curPageName=='inoutMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutMgr';">근무시간수정</a></li>
+                        <li :class="{active: curPageName=='inoutMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutMgr';">출/퇴근시간 변경</a></li>
+                        <li :class="{active: curPageName=='worktimeChangeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeChangeMgr';">근무시간 변경</a></li>
                         <!-- <li :class="{active: curPageName=='orgEmpCalendarMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/orgEmpCalendarMgr';">팀원근무시간관리</a></li> -->
                     </ul>
                 </li>
@@ -173,7 +174,7 @@ function callLnb (obj) {
 				this.curSubMenu = 'sub3';
 			else if(pageName=='worktimeCheckList'||pageName=='entryCheckList'||pageName=='entryDiffList')
 				this.curSubMenu = 'sub4';
-			else if(pageName=='empCalendarMgr'||pageName=='orgEmpCalendarMgr')
+			else if(pageName=='empCalendarMgr'||pageName=='orgEmpCalendarMgr'||pageName=='inoutMgr'||pageName=='worktimeChangeMgr')
 				this.curSubMenu = 'sub5';
 			else if(pageName=='compMgr'||pageName=='compCreateList')
 				this.curSubMenu = 'sub6';
