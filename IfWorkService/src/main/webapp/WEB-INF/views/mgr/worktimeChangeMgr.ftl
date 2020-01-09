@@ -48,7 +48,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix pt-0 pb-0">
-								<div id="popupTitle" class="float-left title mt-0">변경할 대상자</div>
+								<div id="popupTitle" class="float-left title mt-0">근무 시간 변경 대상자</div>
 							</div>
 						</div>
 						<script type="text/javascript"> createIBSheet("sheet1", "100%", halfsheetH, "kr"); </script>
@@ -69,10 +69,15 @@
 </div>    
 <script type="text/javascript">
 	$(function () {
+		
 		$('#ymd').datetimepicker({
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
+		
+		//오늘 날짜로 set
+		var today = '${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}';
+		$('#ymd').datetimepicker('date', today);
 		
 		new jBox('Tooltip', {
             attach: '#Tooltip-1',
@@ -92,7 +97,7 @@
             offset: {
                 x: 25
             },
-            content: '근무 시간 변경의 경우, 휴일이 아닌 근무일에만 가능합니다.',
+            content: '근무일(휴일 제외)의 기본근무 시간만 변경 가능합니다.',
             onOpen: function () {
                 this.source.addClass('active');
             },
@@ -146,7 +151,7 @@
 		case "Search":
 			var ymd = moment(workPlanChangeMgrVue.ymd).format('YYYYMMDD');
 			var param = "ymd="+ymd+"&sabuns="+JSON.stringify(workPlanChangeMgrVue.applSabuns)+"&timeCdMgrId="+$("#timeCd").val();
-			sheet1.DoSearch( "${rc.getContextPath()}/worktime/change/target" , param);
+			sheet1.DoSearch( "${rc.getContextPath()}/worktime/change/target/workplan" , param);
 			break;
 		}
 	}
@@ -158,15 +163,13 @@
   		    	targetList: [],
   		    	applSabuns: []
   		    },
-  		    /* watch: {
-  		    	applSabuns : function(val, oldVal) {
-  		    		var $this = this;
-  		    		if($this.ymd!='' && val.length>0) 
-  		    			doAction1("Search");
+  		    watch: {
+  		    	ymd : function(val, oldVal) {
+  		    		this.getTargetList();
   		    	} 
-  		    }, */
+  		    },
   		    mounted: function(){
-  		    	this.getTargetList();
+  		    	
   		    },
   		    methods : {
   		    	getTargetList: function(){ //팀원 조회
@@ -177,11 +180,18 @@
   		    		$("#allChk").prop("checked",false);
   		    		$this.targetList = [];
   		    		
-  		    		var searchKeyword = $("#searchKeyword").val();
+  		    		var ymd = '';
+					var searchKeyword = '';
+					
+					if($this.ymd!=null && $this.ymd!=undefined && $this.ymd!='')
+						ymd = moment($this.ymd).format('YYYYMMDD');
+  		    		
+  		    		if($("#searchKeyword").val()!=null && $("#searchKeyword").val()!=undefined && $("#searchKeyword").val()!='')
+  		    			searchKeyword = $("#searchKeyword").val();
   		    		
   		    		Util.ajax({
-  		    			url: "${rc.getContextPath()}/emp/list?searchKeyword="+searchKeyword,
-						type: "POST",
+  		    			url: "${rc.getContextPath()}/worktime/change/target?ymd="+ymd+"&searchKeyword="+searchKeyword,
+						type: "GET",
 						contentType: 'application/json',
 						dataType: "json",
 						success: function(data) {
@@ -236,7 +246,11 @@
   		    	},
   		    	getWorkPlanChangeTarget : function(){
   		    		var $this = this;
+  		    		
   		    		if(Object.keys($this.applSabuns).length>0) {
+  		    			$("#popupTitle").empty();
+  	  		   			$("#popupTitle").prepend($this.ymd+"의 근무 시간 변경 대상자");
+  		    			
   		    			doAction1("Search");
   		    		} 
   		    	},
@@ -308,8 +322,11 @@
    		if($("#ymd").val()!='') {
    			var ymd = $("#ymd").val();
    			workPlanChangeMgrVue.ymd = ymd;
-   			$("#popupTitle").empty();
-   			$("#popupTitle").prepend(ymd+"의 근무 계획");
+   			
+   			//대상자 초기화
+   			workPlanChangeMgrVue.applSabuns = [];
+   			sheet1.RemoveAll();
+
    		}
     }); 
 	

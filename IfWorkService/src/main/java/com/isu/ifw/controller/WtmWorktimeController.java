@@ -152,13 +152,14 @@ public class WtmWorktimeController {
 		return rp;
 	}
 	
-	@RequestMapping(value="/worktime/change/target", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/worktime/change/target", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getWorkTimeChangeTarget(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
 		
 		MDC.put("sessionId", request.getSession().getId());
 		MDC.put("logId", UUID.randomUUID().toString());
@@ -170,9 +171,38 @@ public class WtmWorktimeController {
 		
 		List<Map<String, Object>> getWorkTimeChangeTarget = null;
 		try {		
-			getWorkTimeChangeTarget = worktimeService.getWorkTimeChangeTarget(tenantId, enterCd, paramMap);
+			getWorkTimeChangeTarget = worktimeService.getWorkTimeChangeTarget(tenantId, enterCd, sabun, paramMap);
 			
 			rp.put("DATA", getWorkTimeChangeTarget);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/worktime/change/target/workplan", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getWorkPlan(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		
+		MDC.put("sessionId", request.getSession().getId());
+		MDC.put("logId", UUID.randomUUID().toString());
+		MDC.put("type", "C");
+		logger.debug("getWorkPlan Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+	
+		MDC.put("paramMap", paramMap.toString());
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> workplan = null;
+		try {		
+			workplan = worktimeService.getWorkPlan(tenantId, enterCd, paramMap);
+			
+			rp.put("DATA", workplan);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
