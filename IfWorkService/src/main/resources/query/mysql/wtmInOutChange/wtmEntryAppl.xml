@@ -26,6 +26,10 @@
   		SELECT ENTRY_APPL_ID AS entryApplId
   		     , APPL_ID AS applId
   		     , YMD AS ymd
+  		     , CONCAT(IFNULL(F_WTM_DATE_FORMAT(PLAN_SDATE,'Y.M.D H:I:S'), ''), ' ~ ', IFNULL(F_WTM_DATE_FORMAT(PLAN_EDATE,'Y.M.D H:I:S'), '')) AS planDate
+  		     , CONCAT(IFNULL(F_WTM_DATE_FORMAT(ENTRY_SDATE,'Y.M.D H:I:S'), ''), ' ~ ', IFNULL(F_WTM_DATE_FORMAT(ENTRY_EDATE,'Y.M.D H:I:S'), '')) AS entryDate
+  		     , F_WTM_DATE_FORMAT(CHG_SDATE,'Y.M.D H:I:S') AS chgs
+  		     , F_WTM_DATE_FORMAT(CHG_EDATE,'Y.M.D H:I:S') AS chge
   		     , F_WTM_DATE_FORMAT(PLAN_SDATE,'YMDHIS') AS planSdate
   		     , F_WTM_DATE_FORMAT(PLAN_EDATE,'YMDHIS') AS planEdate
   		     , F_WTM_DATE_FORMAT(ENTRY_SDATE,'YMDHIS') AS entrySdate

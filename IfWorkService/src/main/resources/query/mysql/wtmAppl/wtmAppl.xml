@@ -115,6 +115,7 @@
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -156,6 +157,7 @@
 			     , L.APPR_OPINION AS apprOpinion
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                   	    WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -194,8 +196,9 @@
 			     , L.APPR_TYPE_CD AS apprTypeCd
 			     , L.APPR_OPINION AS apprOpinion
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
-                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
-             	     ELSE NULL END AS urlLink 
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View'
+                   		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+                     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -213,6 +216,22 @@
 		    <if test="startPage!=null and !startPage.equals('')">
 				LIMIT #{startPage}, #{pageCount}
 			</if>
+    </select>
+    
+    <select id="countByApprList01" parameterType="map" resultType="int">
+        <![CDATA[
+        	SELECT count(*)
+			  FROM WTM_APPL A
+			  JOIN WTM_APPL_CODE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.APPL_CD = C.APPL_CD
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.ENTER_CD = #{enterCd} 
+			   AND (APPL_SABUN =#{sabun} OR APPL_IN_SABUN = #{sabun}) 
+			   AND A.APPL_STATUS_CD IN ('21','31', '41')
+			ORDER BY A.APPL_YMD DESC
+		]]>
     </select>
     
     <select id="countByApprList02" parameterType="map" resultType="int">
@@ -233,8 +252,8 @@
 			ORDER BY A.APPL_YMD DESC
 		]]>
     </select>
-    
-        <select id="getEdocCountForMobile" parameterType="map" resultType="map">
+  
+    <select id="getEdocCountForMobile" parameterType="map" resultType="map">
         <![CDATA[
 			SELECT CONCAT('', A.myRequestCnt) as myRequestCnt, CONCAT('', B.requestCnt) as requestCnt, CONCAT('', myRequestcnt+requestCnt) as totRequestCnt 
 			FROM (

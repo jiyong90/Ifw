@@ -14,7 +14,6 @@
 	<select id="getInoutStatus" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT C.YMD AS ymd, 
-				   F_WTM_DATE_FORMAT(C.YMD, 'Y.M.D') as ymds,
 			       C.ENTRY_SDATE AS entrySdate, 
 			       C.ENTRY_EDATE AS entryEdate,
 			       C.HOLIDAY_YN AS holydayYn,
@@ -131,7 +130,6 @@
         <![CDATA[
 			SELECT RIGHT(X.YMD, 2) AS title,
 				TIME_FORMAT(SEC_TO_TIME((MAX(WORK_HOUR) + MAX(OT_HOUR)) * 60), '%H:%i')    as status,
-				--CONCAT(TIME_FORMAT(SEC_TO_TIME(MAX(WORK_HOUR)*60), '%H:%i'), '(', TIME_FORMAT(SEC_TO_TIME(MAX(OT_HOUR)*60), '%H:%i'), ')') as status,
 				F_WTM_DATE_FORMAT(X.ENTRY_SDATE, 'H:I') as caption_lb, 
 				F_WTM_DATE_FORMAT(X.ENTRY_EDATE, 'H:I') as caption_rb
 			FROM ( SELECT R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 
@@ -164,9 +162,10 @@
     
     <select id="getMyInoutDetail" parameterType="map" resultType="hashmap">
         <![CDATA[ 
-			SELECT F_WTM_DATE_FORMAT(INOUT_DATE, 'Y-M-D') as ymd,
-				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd},'INOUT_TYPE_CD', INOUT_TYPE_CD, F_WTM_DATE_FORMAT(INOUT_DATE, 'YMD')) AS inoutTypeCd,
-				F_WTM_DATE_FORMAT(INOUT_DATE, 'HIS') as inoutDate,
+			SELECT F_WTM_DATE_FORMAT(INOUT_DATE, 'Y.M.D') as ymd,
+				INOUT_TYPE_CD as inoutTypeCd,
+				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd},'INOUT_TYPE_CD', INOUT_TYPE_CD, F_WTM_DATE_FORMAT(INOUT_DATE, 'YMD')) AS inoutType,
+				F_WTM_DATE_FORMAT(INOUT_DATE, 'H:I:S') as inoutDate,
 				F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') AS id
 			FROM WTM_INOUT_HIS 
 			WHERE TENANT_ID = #{tenantId}
@@ -194,7 +193,7 @@
     <select id="getGoBackStatus" parameterType="map" resultType="hashmap">
         <![CDATA[
         	SELECT CASE WHEN INOUT_TYPE_CD = 'GO' THEN 'BACK' ELSE 'GO' END AS inoutType
-        		, CONCAT(F_WTM_DATE_FORMAT(INOUT_DATE, "YMDHI"), '00') AS exceptSYmd
+				, CONCAT(F_WTM_DATE_FORMAT(INOUT_DATE, "YMDHI"), '00') AS exceptSYmd
    	   		FROM WTM_INOUT_HIS 
        		WHERE TENANT_ID = #{tenantId} 
             	AND ENTER_CD = #{enterCd} 
