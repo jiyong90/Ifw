@@ -5,6 +5,9 @@ input.required { border:1px solid #008fd5 !important; }
 select.required { border:1px solid #008fd5 !important; }
 textarea.required { border:1px solid #008fd5 !important; }
 
+/* mgr */
+.mgr-wrap{padding-top: 0px; padding-bottom:0px;}
+
 /* search */
 .sheet_search {
     border-top: 2px solid #008fd5;
@@ -169,10 +172,10 @@ a.button7 img {
 .sheet_search span.label:after {
     font-family: "Font Awesome 5 Free";
     content: "\f111";
-    font-size: 4px;
+    font-size: 10px;
     -webkit-transform: scale(0.4);
     position: absolute;
-    left: 0;
+    left: -2px;
     top: 0;
 }
 
@@ -243,7 +246,7 @@ a.button7 img {
 
 .sheet_title_wrap {
     position: relative;
-    padding: 10px 0;
+    padding: 10px 0 7px;
 }
 
 .sheet_title_wrap .title {

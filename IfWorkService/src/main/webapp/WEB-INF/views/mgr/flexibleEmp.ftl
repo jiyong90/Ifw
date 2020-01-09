@@ -67,7 +67,7 @@
             </div>
         </div>
     </div>
- 	<div class="container-fluid pt-3 pb-3 bg-white">
+ 	<div class="container-fluid mgr-wrap bg-white">
 	 	<div class="ibsheet-wrapper">
 	 		<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">

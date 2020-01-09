@@ -12,7 +12,7 @@
   line-height:1.5;
 }
 #calendar_left .white-box-wrap {
-  height: calc(100vh - 452px);
+  height: calc(100vh - 358px);
   padding: 14px;
   /* margin-bottom: 10px; */
   background-color: #ffffff;
@@ -22,7 +22,7 @@
 }
 
 #calendar_left .white-box-wrap.collapse-height{
-  height: calc(100vh - 378px);
+  height: calc(100vh - 332px);
 }
 #calendar_left .white-box-wrap.full-height{
 	height: calc(100vh - 156px);
@@ -35,7 +35,7 @@
 #timeCalendar.calendar-wrap,
 #dayCalendar.calendar-wrap {
   position: relative;
-  height: calc(100vh - 152px);
+  height: calc(100vh - 106px);
   background-color: #ffffff;
   border-top: 3px solid #4d84fe;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
@@ -43,5 +43,8 @@
 #monthCalendar.calendar-wrap.collapse-height,
 #timeCalendar.calendar-wrap.collapse-height,
 #dayCalendar.calendar-wrap.collapse-height{
-  height: calc(100vh - 78px);
+  height: calc(100vh - 80px);
 }
+
+/* mgr */
+.mgr-wrap{padding-top: 0px; padding-bottom:0px;}

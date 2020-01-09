@@ -1,5 +1,5 @@
 <div id="taaCodeMgr">
- 	<div class="container-fluid pt-3 pb-3 bg-white" style="height: calc(100vh - 72px);">
+ 	<div class="container-fluid mgr-wrap bg-white" style="height: calc(100vh - 70px);">
 	 	<div class="ibsheet-wrapper">
 			<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
