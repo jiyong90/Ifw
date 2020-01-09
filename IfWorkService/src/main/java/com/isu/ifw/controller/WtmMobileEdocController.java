@@ -1,7 +1,6 @@
 package com.isu.ifw.controller;
 
 
-import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,12 +14,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.mapper.WtmApplMapper;
@@ -29,11 +30,13 @@ import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmMobileService;
 import com.isu.ifw.util.MobileUtil;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
+import com.isu.ifw.vo.WtmApplLineVO;
 
 
 @RestController
@@ -70,6 +73,18 @@ public class WtmMobileEdocController {
 	@Qualifier(value="flexibleEmpService")
 	private WtmFlexibleEmpService flexibleEmpService;
 	
+	@Autowired
+	@Qualifier("wtmOtApplService")
+	WtmApplService wtmOtApplService;
+
+	@Autowired
+	@Qualifier("wtmEntryApplService")
+	WtmApplService wtmEntryApplService;
+	
+	@Autowired
+	WtmAsyncService wtmAsyncService;
+
+	
 	/**
 	 * 신청서 목록 
 	 */
@@ -88,13 +103,9 @@ public class WtmMobileEdocController {
 		
 		try {
 			String userToken = request.getParameter("userToken");
-			logger.debug("111111111111111111111111111111111111111 " + empKey);
-			empKey = URLDecoder.decode(empKey);
-			empKey = empKey.replace(" ", "+");
-			logger.debug("111111111111111111111111111111111111112 " + empKey);
-
 			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
@@ -124,7 +135,7 @@ public class WtmMobileEdocController {
 	/**
 	 * 신청서 상세 
 	 */
-	@RequestMapping(value = "/mobile/{tenantId}/edocument/init", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/edocument", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam detail(HttpServletRequest request,
 			@PathVariable Long tenantId,
 			@RequestParam(value = "locale", required = true) String locale,
@@ -135,12 +146,6 @@ public class WtmMobileEdocController {
 		Map<String, Object> result = new HashMap();
 		try {
 			String userToken = request.getParameter("userToken");
-			
-			logger.debug("111111111111111111111111111111111111111 " + empKey);
-			empKey = URLDecoder.decode(empKey);
-			empKey = empKey.replace(" ", "+");
-			logger.debug("111111111111111111111111111111111111112 " + empKey);
-
 			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
 			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 
@@ -155,9 +160,170 @@ public class WtmMobileEdocController {
 			logger.debug(e.getMessage());
 			rp.setFail("조회 중 오류가 발생하였습니다.");
 		}
-		
 		logger.debug("/mobile/"+ tenantId+"/edocument/list e " + rp.toString());
 		rp.put("result", result);
+		return rp;
+	}
+	
+	/**
+	 * 신청서 상태 변경(결재, 반려)
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/edocument/status", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam statusChange(HttpServletRequest request, 
+			@PathVariable Long tenantId, @RequestBody Map<String, Object> body)
+			throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("결재가 완료되었습니다.");
+		logger.debug("/mobile/"+ tenantId+"/edocument/status e " + body.toString());
+
+		Map<String, Object> result = new HashMap();
+		try {
+			String empKey = body.get("empKey").toString();
+			String applKey = body.get("applKey").toString();
+			String apprStatCd = body.get("apprStatCd").toString();
+			String userToken = body.get("userToken").toString();
+
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			
+			String applCd = applKey.split("@")[1];
+			String applId = applKey.split("@")[2];
+
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				logger.debug("사용자 정보 조회 중 오류가 발생하였습니다." + emp.toString());
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+		
+			String applSabun = "";
+			List<WtmApplLineVO> lines = applMapper.getWtmApplLineByApplId(Long.parseLong(applId));
+			if(lines == null || lines.size() <= 0) {
+				logger.debug("신청서 조회에 실패했습니다." + lines.toString());
+				rp.setFail("신청서 조회에 실패했습니다.");
+				return rp;
+			}
+			int apprSeq = 0;
+			for(WtmApplLineVO line : lines) {
+				if(line.getApprSeq() == 0) {
+					applSabun = line.getSabun();
+					continue;
+				}
+				if(line.getSabun().equals(sabun) && line.getApprStatusCd().equals("10")) {
+					apprSeq = line.getApprSeq();
+					break;
+				}
+			}
+			
+			if(apprSeq == 0) {
+				logger.debug("결재 상태 확인 중 오류가 발생했습니다." + lines.toString());
+				rp.setFail("결재 상태 확인 중 오류가 발생했습니다.");
+				return rp;
+			}
+			Map<String, Object> paramMap = (Map<String, Object>) body.get("data");
+			paramMap.put("apprOpinion", body.get("returnReason"));
+
+			paramMap.put("applSabun", applSabun);
+			
+			//String ymd = paramMap.get("ymd").toString();
+			//String otSdate = paramMap.get("otSdate").toString();
+			//String otEdate = paramMap.get("otEdate").toString();
+
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				if(applCd!=null && !"".equals(applCd)) {
+					if("OT".equals(applCd)) {
+						paramMap.put("otSdate", paramMap.get("otSdate").toString().replace(".","").replace(":", "").replace(" ", ""));
+						paramMap.put("otEdate", paramMap.get("otEdate").toString().replace(".","").replace(":", "").replace(" ", ""));
+						paramMap.put("ymd", paramMap.get("otEdate").toString().substring(0,8));
+						
+						if(body.get("apprStatCd").toString().equals("02")) {
+							wtmOtApplService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
+							
+						} else if(body.get("apprStatCd").toString().equals("01")) {
+							rp = wtmOtApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
+						} else {
+							rp.setFail("신청서 상태에 오류가 발생했습니다.");
+							return rp;
+						}
+//					else if("OT_CAN".equals(applCd)){
+//						rp = wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					} else if("ENTRY_CHG".equals(applCd)){
+						rp = wtmEntryApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, sabun);
+//					} else {
+//						rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+//						
+//						if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) { 
+//							
+//							//유연근무제 기간 앞뒤로 +1 일
+//							Date sDate = WtmUtil.toDate(rp.get("symd")+"", "yyyyMMdd");
+//							Calendar sYmd = Calendar.getInstance();
+//							sYmd.setTime(sDate);
+//							sYmd.add(Calendar.DATE, -1);
+//							
+//							Date eDate = WtmUtil.toDate(rp.get("eymd")+"", "yyyyMMdd");
+//							Calendar eYmd = Calendar.getInstance();
+//							eYmd.setTime(eDate);
+//							eYmd.add(Calendar.DATE, 1);
+//							wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, sabun, WtmUtil.parseDateStr(sYmd.getTime(), "yyyyMMdd"),  WtmUtil.parseDateStr(eYmd.getTime(), "yyyyMMdd"), userId);
+//						}
+					}
+				}
+				if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {
+					wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", emp.getEmpHisId().toString());
+				}
+			} catch (Exception e) {
+				logger.debug(e.getMessage());
+				rp.setFail(e.getMessage());
+			}
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/edocument/status e " + rp.toString());
+		return rp;
+	}
+
+	/**
+	 * 신청서 갯수(기안 문서 중 완료 되지 않은 건, 결재해야 할 건)
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/edocument/requestCount", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam requestCountHr(HttpServletRequest request,
+			@PathVariable Long tenantId, 
+			@RequestParam(value = "locale", required = true) String locale,
+			@RequestParam(value = "empKey", required = true) String empKey) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Map<String, Object> result = new HashMap();
+		
+		try {
+			String userToken = request.getParameter("userToken");
+			String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(empKey, "sabun");
+
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			result = applMapper.getEdocCountForMobile(paramMap);
+		
+			rp.put("result", result);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/edocument/requestCount e " + rp.toString());
 		return rp;
 	}
 }

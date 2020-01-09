@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,15 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpHis;
-import com.isu.ifw.entity.WtmMobileToken;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
-import com.isu.ifw.repository.WtmMobileTokenRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
-import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmCalendarService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmMobileService;
 import com.isu.ifw.util.Aes256;
@@ -52,18 +48,12 @@ public class WtmMobileController {
 	WtmMobileService mobileService;
 	
 	@Autowired
-	LoginService loginService;
-
-	@Autowired
 	@Qualifier("wtmOtApplService")
 	WtmApplService otApplService;
 
 	@Resource
 	WtmApplCodeRepository applCodeRepository;
 	
-	@Resource
-	WtmMobileTokenRepository tokenRepository;
-
 	@Autowired
 	WtmApplMapper applMapper;
 
@@ -83,6 +73,8 @@ public class WtmMobileController {
 	@Qualifier(value="flexibleEmpService")
 	private WtmFlexibleEmpService flexibleEmpService;
 
+	@Autowired
+	WtmCalendarService wtmCalendarService;
 	
 	/**
 	 * dashboard
@@ -93,6 +85,7 @@ public class WtmMobileController {
 	 * @return
 	 * @throws Exception
 	 */
+	
 	@RequestMapping(value = "/mobile/{tenantId}/dashboard", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyDashboard(@PathVariable Long tenantId, 
 			@RequestParam(value = "tenantKey", required = true) String tenantKey,
@@ -164,118 +157,6 @@ public class WtmMobileController {
 		}
 		return rp;
 	}
-
-
-	//로그인
-	@RequestMapping(value = "/mobile/{tenantId}/certificate", method = RequestMethod.POST)
-	public @ResponseBody ReturnParam certificate(@PathVariable Long tenantId, 
-			@RequestBody(required = true) Map<String, Object> params,
-			HttpServletRequest request) throws Exception {
-
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-		try {
-			String userToken = params.get("userToken").toString();
-			System.out.println(params.toString());
-			String enterCd = params.get("loginEnterCd").toString();
-			String sabun = params.get("loginUserId").toString();
-			String password = params.get("loginPassword").toString();
-			String tenantKey = params.get("tenantKey").toString();
-			String empKey = enterCd + "@" + sabun;
-			
-			empKey = MobileUtil.encEmpKey(userToken, empKey);
-			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
-			if(emp == null) {
-				rp.setFail("사용자 정보가 존재하지 않습니다.");
-				return rp;
-			}
-			
-			UUID token = UUID.randomUUID();
-				
-			Map<String, Object> userData = loginService.getUserData(tenantId, enterCd, sabun, password);
-			
-			WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
-			if(mobileToken == null) {
-				mobileToken = new WtmMobileToken();
-				mobileToken.setEmpKey(enterCd+"@"+sabun);
-				mobileToken.setTenantId(tenantId);
-			} 
-			mobileToken.setToken(token.toString());
-			mobileToken = tokenRepository.save(mobileToken);
-			
-			Map<String, Object> sessionData = new HashMap();
-			sessionData.put("orgNm", emp.getOrgCd());
-			sessionData.put("authCode", "");
-			sessionData.put("empNm", emp.getEmpNm());
-			sessionData.put("id", enterCd+sabun);
-			sessionData.put("accessToken", token.toString());
-			
-			Map<String, Object> result = new HashMap();
-			result.put("sessionData", sessionData);
-			
-			
-			logger.debug("111111111111111111111111111111111111100 " + empKey);
-//			empKey = empKey.replace("+", "%2B"); 
-
-			result.put("empKey", empKey);
-			logger.debug("111111111111111111111111111111111111101 " + empKey);
-			rp.put("result", result);
-		} catch(Exception e) {
-			rp.setFail(e.getMessage());
-		}
-		return rp;
-	}
-	
-	//인증
-	@RequestMapping(value = "/mobile/{tenantId}/validate", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-	public @ResponseBody ReturnParam validate(@PathVariable Long tenantId, 
-					HttpServletRequest request,
-					@RequestParam(value = "locale", required = true) String locale,
-					@RequestParam(value = "empKey", required = true) String empKey,
-					@RequestParam(value = "userToken", required = true) String userToken,
-					@RequestParam(value = "accessToken", required = true) String accessToken) throws Exception {
-
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-		try {
-			String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(empKey, "sabun");
-			
-			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
-			if(emp == null) {
-				rp.setFail("사용자 정보가 존재하지 않습니다.");
-				return rp;
-			}
-			WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
-			if(mobileToken == null) {
-				rp.setFail("로그인 정보가 존재하지 않습니다.");
-				return rp;
-			} 
-			logger.debug("1111111111 " + mobileToken.getToken() + ", " + accessToken);
-			if(!mobileToken.getToken().equals(accessToken)) {
-				rp.setFail("사용자 인증이 만료되었습니다.");
-				return rp;
-			}
-			
-//			Map<String, Object> userData = loginService.getUserData(tenantId, enterCd, sabun, password);
-			
-			Map<String, Object> sessionData = new HashMap();
-			sessionData.put("orgNm", emp.getOrgCd());
-			sessionData.put("authCode", "");
-			sessionData.put("empNm", emp.getEmpNm());
-			sessionData.put("id", enterCd+sabun);
-			sessionData.put("accessToken", accessToken);
-			
-			Map<String, Object> result = new HashMap();
-			result.put("sessionData", sessionData);
-			result.put("empKey", enterCd+"@"+sabun);
-			
-			rp.put("result", result);
-		} catch(Exception e) {
-			rp.setFail(e.getMessage());
-		}
-		return rp;
-	}
 	
 	/**
 	 * 내 근무 대쉬보드
@@ -286,7 +167,7 @@ public class WtmMobileController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/mobile/{tenantId}/my/status", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/mystatus", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyworkStatus(@PathVariable Long tenantId,
 			@RequestParam(value="locale", required = true) String locale, 
 			@RequestParam(value="empKey", required = true) String empKey, 
@@ -323,7 +204,7 @@ public class WtmMobileController {
 			
 			if(statusMap != null) {
 				statusList.add(MobileUtil.getStatusMap("iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBQjk2OEI5ODYyMzcxMUU4QjZDMEVDNEJDNDdBQzZDRCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBQjk2OEI5OTYyMzcxMUU4QjZDMEVDNEJDNDdBQzZDRCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkFCOTY4Qjk2NjIzNzExRThCNkMwRUM0QkM0N0FDNkNEIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkFCOTY4Qjk3NjIzNzExRThCNkMwRUM0QkM0N0FDNkNEIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Pe0TJgAABa9JREFUeNrsXWtsFFUUnuluWdpSuxqVpgg2QaP4JFg1xGgFNagh4uOH+CA+/vj6Qfxh9IchhBj9owYNNv1RFRITCQF8JKBFDdVoQkCDie8IglBKG419xNKWTnf9TnpHzt7MttuZnenc6fmSj3t7Z2f2zDdnzpx79k6w8/m8JQgfFSKBCC1CC0RoEVqEFkSCNP1j27YxBtdv6KpH0wFeYojJObDFRI++yyCR3ajxtIlCV5sYotOGh77d4EMxta0OPFoQow3GaPe6hr6YPksk65D0ToQWiNAitECEFqFFaIEILUILRGgRWoQWiNAitOAMTKxH8x84l9Rv6NocUztnmS70Faw/H3xEQkc4GJTQEQ3+YP0fwbdjamcV+LLJQnMc7l7XsDGOhuHZkeVCS9YhoaMk1MFzFgfYn7xubpFttMLoCOj4PHZtkoS+GTwoWUc46DPQ5lETPXo7eC94VYBjzNZChuPhgBVs24kgIoObbHpZyKTVpGXKCDrQNKs/25G53K5tX4DmEFiphh7DZwLNQAMLfdOyW+nKrwBXgheD5we48j3gt+COr/Z+/kNIIlNc38uGlkLEfR6fa0XzhJtGgpfic860CA2Rb0HzBnh5CJrsBNdC8M4ovTksr64I4Mlr0XwWksiWisMH8T1NZfbmZja0vthnIeoxNO+woRexv+9nWtqnyPej2ajd9lvBT8GToJ+3RKnadRG4GrxRjZ0L7sb3LSmTZ3Nh271Chgaa2T2uvHoh+DC42XfoaF5+2z3oPwlmStgnBV7PbimKX6sgxE/l8jwIuwZNm3Wm1PgX+HOQY45V1mZP18y7+v8TzzlDdt4ZmWy/XCqDiYedGhfLGZ7df3g//GgqjkTf0eoKTRUxPyvpB8DFEPlIueMGxH4UzbsJSXROuTHa7+sKr4UhssIW8LuECF3tFaMpDk1U893GwsaOsCzDBczDqynzuEYNfU0X1n8iW2EPzF16ZT6VqfJ7iMrBk53Vfb+UOnmpAd+b6GG4CyfZV+R2rmUiu/E5TPDa8yjs+jDY4fZ8EJULQ6tskPQupXndcMj2Dhtel0mG8SK0QIQWoUVoQTlQUq0Dqco5aM6ytNU3EcOGHfNV5tMdQcYTndA4MappbAKbYmDrDeAx1XdgG/3S8gwE/8fo0IETWYTmi5iIrOfw5CBU5WuHnWmjhQZeUNNIF/3gWMT2necxgeHlAXKCVaYLfS3rr8EtSlPK5RHbdyHrD4FZ2DHHKqyxNJkuNK/ouUX3P6cxXIxA5BHNHkKV6UILRGgRWiBCi9AzXuhTrL9AtY0R28fz9gwmJ+6v9BdoaZ/RU/AD4CLV34KTfNPS1vxirNSVnSRQJbuwOTX5mGyJ1SwtjevHdzraROqA6UK/At7HTqrO4zN1AfLjGh/7ZazCtSf7wY+NDh2YHPyKZpmHx0zXW1G8WncafB+8A3Y6pns0iU0iX4fb9WzlvUMY68Hf86zCX8OLYbW6Mwh04Wg1FJVbd7Lvpmn9ZGtDqM7yrzW+ppnuhp5ElUmZ4L1oetnfJa1twAXhYvyG/b5U44Ms7PRi/GiJ9nZahkLSu4QI7eh3D7zZtgqLRWMzQeiwi+a82rcCIh9X/TkszTsuHh0c7exBl1YTDT7Z2Fps+ZkIPQVARErD6N2W3z02fwI+JTG6fGLTAvLLwG/Y8KsYvxMcEKHLKzY9FP9mQyesGYayPQzxoHsQzbMTTGQaWf85taK/2OSE3sb6XoT2xlvW+EvspaBBsRjWg3dL6PBGNqbHSnQe/QDYrY29ZI2vNnK9f7u2nV6sfF5i9NSwT69fICbzh+EhbO/QtjfOhKwjx8ZGfR5LL2PqGCnS9xobSoC2XMecK3SLqku0wdP81ptfV8fYhmN0eWxvUxkFvWD0kcf2PSC9FErl0FbTVVY6tilNWmz5P2cTNGERiNAitAgtEKHjjP8EGAApHZTWqLpuNQAAAABJRU5ErkJggg=="
-						,statusMap.get("param1") == null? "-" : statusMap.get("param1").toString(), "~" + statusMap.get("param3") == null? "-" : statusMap.get("param3").toString(),"", ""));
+						,statusMap.get("param1") == null? "-" : statusMap.get("param1").toString(), statusMap.get("param3") == null? "-" :  "~" + statusMap.get("param3").toString(),"", ""));
 				statusList.add(MobileUtil.getStatusMap("iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCNDgyNzE2MTYyMzcxMUU4OEIxOTk0OEVFRTA0MEY4QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCNDgyNzE2MjYyMzcxMUU4OEIxOTk0OEVFRTA0MEY4QiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkI0ODI3MTVGNjIzNzExRTg4QjE5OTQ4RUVFMDQwRjhCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkI0ODI3MTYwNjIzNzExRTg4QjE5OTQ4RUVFMDQwRjhCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+cuXoBwAAA9VJREFUeNrsnUtoE1EUhie2WhVNFBfWau2iQhERH+DCVzRSBYUiiCgo1CCIiBARK7qxalduCj4gUncKVZT6QNz4wEcXVhAVq9BCRSRorS98pSqKjf8hNziMbXpnMqlD5v/h595OZiaTL3fOnHM7SQKpVMqg8q9hREDQBE0RtGdVrLNSIBDI6UnCkepGNDG4ufXWjahXXjyO6ySaDfARHFddLvsaLKkYqhEdU2/qJry4MR6BLMdRq45rR6GEjmK7Z1GhHRNjNC+GBE0RtHcV0JnrWLJs+T6VOQx3+DwhU/+LZENeeO1w0PT3Z4f76YUb7ty83pRzHg3th4tceoFBjw66UA7bHYWb3AgdRTz5s2qEK5WhRbPU6e93yZn52NUS3KIEytVPfqeMynIcsw6mdwRNETRBUwRN0ARNEXRByEll2I6qqI/o7A1SJ6DLyZiho6BCRxj+SnTGWLg1n6CfcPaOs3eM0QRNETRBUwRN0ARNETRBUwRN0P7Wf/s8SWlDdwWa8TY3e9ZTX5bU2PcUNGfhSfBGbNPmS9AAsR7NGSN9j7IdJbDtdID7Ngjk23ClWiT3dbf5NXQscgBZNBWusAFZNMrPoUNu3J5tZP+3mHy6oMyy7DTcaQOyv2M0Tv0uNIuzjEy5sbvFAlog12LbVD/rT/QyZE9mHYA2Gs0VuKYfyL8H2CxmgXyfI1oPcsQGZFG7amW0b4dL4Hkc0e5CllAkqdxceCb6xxmj8wDZBPsRK0P7kAWufO4vqrIJVoYuqM4CWSQft9um+n2AfQntTozaBOc6nOuXxjGugZ8C+FKOaOdqVGFC7vx5qzIHyRqq4BXwDLWePH5RleA9BG2/ePmJJp4lhq9Fc0qV0nJ30G54F0OH+29Ei4Kb0WrG6PzpnKlfiVFeQtD6ad0ceJrmqH5nWRQkaD3IUTQP4U70F2isb57lk4tlkqD1NN+UL9dorL/O1O/CCP9O0HoyzylvkZQty2iWr604YFp0gRdDfTUbf7/zYwL8AEAPwVUmwJPhenTvwZkvJZR8+zBB66dsUphslvJaLZIceY+K2R/h1+i/hA/CIzOluJGeZHpD0PZgn0ezEn5leUiKklLLsm54Fba5zLkOZ7CvoZEUbyt810jP2pnVAe+Fpey+amPXvQP0fV2C/0BzQoyQIbG4XM1rPMdj7x3uVi6YUXVmHCPof6En1SjOdT8f0Cxk6PChCJqgCZoiaIImaCIgaIKmCJqgCZoaEjmZVAqFI9UkZ/M3AZyAfkHG+Qsd/ELBHPnogo4TdlbI8cFWCvDHfZl1EDRF0ATtd/0RYAD/ZwKJUzMmhwAAAABJRU5ErkJggg=="
 						,"총 근무 가능",""+statusMap.get("param4") == null? "-" : statusMap.get("param4").toString(), "", ""));
 				statusList.add(MobileUtil.getStatusMap("iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpDMzIyODFFOTYyMzcxMUU4QjVDNUZBNkU2NjZENkVCNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpDMzIyODFFQTYyMzcxMUU4QjVDNUZBNkU2NjZENkVCNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkMzMjI4MUU3NjIzNzExRThCNUM1RkE2RTY2NkQ2RUI0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkMzMjI4MUU4NjIzNzExRThCNUM1RkE2RTY2NkQ2RUI0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8++6xboAAADFlJREFUeNrsXQuUVlUVvsPDeE0IqJgZrpJGAgEDp+lhzPBwRuOhwtKWpajkGIzoOMtYoUmB2Qqt5UIalcgoMTFdQpAGmDTM+EgFgRAbSR6VgKnhKDBopEHf179v7Dnc+//3+c//z9y91l73/ufOPffs7+67zz777HOm4MiRI1ZC8VOHBIIE6ATohBKgE6AToBNKgE6ATsg3dTILCgoKPN04YuSYIhwuAJeBB4I/Du4MPgx+G/wK+EXw4+Cnn1q75sNcBAByEINS8FfAxeAB4D6ihB+A94AbwQ3gFZDjL17qNQeCBccUZAAaDRuPw7fBX/Ihzy5wLfgnaOj7OQJwVxyuA08Hf8LHrc+Cb4ccj8UCNBp2Og4LwGNCyEfAq9DIxz2CQa3qB/4kuKdwD7ncDN4n/Ffwa6j3sMd6x+Fwj0+ATVoDnopn7ogMaDRsAg4PgD/q8HaXg18Abwe/L58cBfgsuFzMSzfjvh+BZ5rA4DkEdRR4pNxP8/QRj4IfAr8K3giuB9eh/tccXtxc8Azj3vdoFsC/B28ShWDbuoA/DS4BX+jwFe8HX47n/DY00GjcVTjcZ3Scy8Cz8IBGD9pzPA41IlxXdWkJeDL4NDleKsBGSa/Kc6gkfwcvBn9NXadi3AGeB1ne9SAL+6LvgyeqYr6Qq3H/LwIDjYovEFBtkJsICir9XQCb+Ckcfi0djk3/AH8sw63/lq/ln6JBzVJeKHwiuD/4uAz1mM9ax5cLWXYGkGWsvLTeCuyJqGuFb6DFJm9U5oIaMQaVbQ/RAdG+bhUPxYkOy6dbL/xnPjeT7UW9HcWWnykeBD2hYRTH5RZ6EgNQb3MIWfqLnT5NmZHhNj5+gK4TW2lrcklIkK+k16E6M00viIY8gmfsjcirOAGHS8BXgD/n8CcE+To875chwX5e3EHSWvBo1HnEE9CogIb/N6p4XBBzoQT+A3iIw+Vt4K+i7k0xu3LsWB+Wjs2klwScvQHrHitjBZsuQl3LTVzdRoYz1fnSECBfjMNuB5D5ZXwB9RbFDTKJz+CzcPpFebYmtm23tDVI3cTmUVV0s9PfHaPRpaPOHSi20aZBXrwLB5DvpZ9pFLOXv9bsoVthsDJFBlBdjUsL0LZpAeo7BrOGuicbM2n0BO0nBwS53gFk2q9erQ2yaOEitkU6XE1Tpe1+62uUMYUThs6xDum1bVrhE+AOYvMGGZ5ENRpTm0sxDrSHA5yRaDOH4HcppStF2cs0KV5HmkLL1YCmTAZGaTX6M4av6Yc2GyDTVBTnGsgG4LXi2+sYzCCRxQ+tc8HQFehT1PlOH9q8VvxYm97hSA+CbMz1EKa0sUjabNOZIpNX2umCoSvQndX5AY8gz5fPxaZ3BeTdVp6QtLVI2m5TGWS7y2MVzelMcgeXIa9N3TyAPEnCjdpcDI5q4JFlsPeKu6fNyPWQcaKH27u5YOgK9NvqvF8GkHtL0EZ3fKX5pMkOYO8Sh0B3hA9B1l4ZbtVYNXkBeos6H56h8tVGMGcGGrreynMSGXQolTI+meG24S4YugKte8+xabT5ciMSx+mqO602QiLL0xpIyDw5zS1jjdhNRqCXq/NyCcabIDPydLcq+hf4PKvt0fkim021IruJBzEqd8HQGWi8yQ1WamKVxPDjTQ4NuM1KxYJt+hbuey9f0Dv51te7gReCN4Er0mj1QcqmigpFdpNuEqxIrwiGnoJKt6vzSryxEkOba9R1ztXdnUcg95PhciX4LCs1Y5LOhFA2PSVWo7VasKlU1+9wqscNaE79/ElpNXvdE9Xb08GYb+YRyIzerReA/4+lh1u1jF3tr1wwWaK0maPJxU4VpAv8nyWNsp1vjp74mTEO0FfKduGN98sTkDn3+VNjQPYD8Kw3vntKxmx84EG371T5+ZYM01crb+NDCTf8T0G9xqMtuWG6KuLU0AYFMmlOHgDcEUwPYpECmQOSSwHwLV5AdpD1JCuVHKRduuk2yL40Wr3J7+Ew2+HeQ6i4S46DzBn4hw2PgIOpCwHwBr/1AQt6IE7pD7OBRQul86zRSrNZQZUxUiI1hADgZHApuHOMIJ8h/qwGmfN7xUFAdrHnxKTKBNlPZ2iCfa/YZ8uwb0EA4LCdsxH1tPf4fX4MIFcIyDpPhJ1UGUB+I0TVtxq/KwQbKxKgVW9r05t4wFNBcbCO5kMQiJUAZhV4QEQg0/VcaaXSx2ytmwGArwAfCjlafIayqyLPptMP0CONGEcggrCN0rF8oIo5qtwCkOaBewUE+DgwO7w7lVzMtRiPZ/44wg/mCRdMIgNaB/X/GKalEHy21KczMulGVoO3AbBp4E4+QKYnxCD9VaqYs90leNbKiC3Tsy6YpKVOPh5whjrfGra1AIB5cRPEnlILB8olJqMw07MK16rxd3XUVvy+xkolwwy2UhlI9uCAtpjT/dqfZx7Jxbj3nRj62a0umKQlr9mkDGofVEV9Ya/eirDz4gufKp2NaTpWWakUsiEutx82vkxmQ9UA5P/E4c0Ai5OUnSZ43Z1yvoOm7TL1aZv8PIiKe8TkkvUWn71KDWu9Em3+tQD4Z3H758CD01bd5Wd/pxxp3360ilrZ1BSXAACpCXw9TodaqVxlk2rlc2Vm6nzj2sxsgOyAQWGUNrqnOj8QtxQAjH52BTR8tfLfl6Jcz01W4zpNyiTlKmaL9ETs8VF6HfqtZTPuXGDYasvBftuUzeCWtsk9ogRaV9w5iwLtU+dOOdWnqvP9WWxXRxdsQgN9wMWMxE3PqPMbYCqGqo6TYdwbXPzbuMm3KfVqo5v9fioR0WLxQnoJrwfA9aIgZUqzmI/xqyy2q9AFm9AarZNh+sC9yUp4FJ0fs4YuU8N1mq1zwaMVyAy4T45pcOLk2nVRsRoTm3BAw098U9nAgmz28DKEJrAvO1xm/gQjcquyqM1FqpPe53Xg5mcIzqW5xephL2URbOZXDIbZGCZDcDs9eKOPGZIogdaYRB7r2KqAHma1XE6QLcA5b9na2anDg8R8/ETvdMRulNV+SYdGn4sD6Dp1fjY6hZ7tDWGRWafBrYkcaBh9hjX3KIe9vB1qc4XCbI+fdZd+N0bR6+kmt0OgtcyP+bnRL9A6C+c8ic22F7PR12o5Qb04NqDxqbBD3K48lm+0I22eory0bcDiuTg1mqRjvjfiTXdvB9rMsMONqug+v3UEAZr5a3ZUjfN7le1AmyutowvrKfuC2IHGJ8MHzVNFt+CN92nD2sxNA76jiriJyv5saDSp1tDquW1Ym+cqbWaQa36QSgIBLcvEZquiq/Hmz2mD2nyO0eHPgexNWQNaabVOU10iy+HaCsjm0r5NIrOVVaBlw0BmBtmLF7kz2P1Oi2nyEGTKcL91dLs2yjglzCaJobbMlMRrvREI95Ob0wYUeo7IYtPN6ZLMYwdaiOlcelugWdCIaXmszWz7LFW0TGQMRb63zEzj0DM4by/CcdwLLg9A5ujv54ZdHhFkN7GgmUqZTAgbwpWjO1S9i9DwmjwCucYAmbKMC7NlW+QarRrLPUTrrZbJLBxJVsuOL7kIMNekcKsIvcSNe/yVoc1/C1pv6N12PTScSS1Mm9Vza5x+usRtw9RWBJmbKD5ipabmbGLcfXTYHRpiB1r5oFwP/WVVzGErt0Ne6HOvojgApmljvjU3o9V5KlwuclHQQUnsNtrBZrOho43hKrfe5MKadRC0uBVB5q6O66QtGmS2dUwUIMduo10E46CGoVUz35lbAf8Qgj2fJYA/Lz7/eOMSE9Yro/aQsmI6DHvNzvH0NH9WL6OwR6Pq4dXzmbrFtN4rrZbbzJm0Qzq/3XkHtKwS4AIenfHJ1VElhu22ienAnIfjzPLaoB2nPLfMSqWOcXTntC8UfX6ufdFbRHBX9fIwG922RmfYXzRVp9pW2YsfcZ1AcP/TijTVULu4VI5JKlzWwYghNd7O3iwUG3uCeDhcCTDQeLEmPSHmqkGNAu9R1/eIZm/PeaAzgWz8LdO7uGXQ1y2HveIiotfBD4IfQBu2uAy5Iwc7VqDFrdustIpu3PRMy3hlo+0RVipXhJlAZ1v+Fwvpzu1FMVtcB9PgYaNvE2x+TUPDeCBxA8394ZYqkLlN/YMB6qErOESZBC4Osv9jhf6vFfZ/rtipTMxmPPNAgGdeJp2y7fJOQj3Lclmj6fRzO/Zr0NCH8iyoxH/osFCG4CNi1eiE4qHkf2UlQCdAJ5QAnQCdAJ1AkB36rwADAF+gtvjRmarkAAAAAElFTkSuQmCC"
@@ -332,6 +213,55 @@ public class WtmMobileController {
 						,"잔여(연장)", ""+statusMap.get("param6") == null? "-" : statusMap.get("param6").toString(), "", ""));
 			}
 			rp.put("result", statusList);
+		} catch(Exception e) {
+			rp.put("result", null);
+			logger.debug(e.getMessage());
+		}
+		return rp;
+	}	
+	
+	/**
+	 * 내 근무상태 정보
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/myinfo", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getMyworkInfo(@PathVariable Long tenantId,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey, 
+			@RequestParam(value="id", required = true) String ymd, 
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String userToken = request.getParameter("userToken");
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+			logger.debug("/mobile/{tenantId}/dashboard " + empKey);
+			
+			Map<String, Object> resultMap = new HashMap();
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId" , tenantId);
+			paramMap.put("enterCd" , enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
+			
+			
+			Map<String, Object> data = wtmCalendarService.getEmpWorkCalendarDayInfo(paramMap);
+			resultMap.put("data", data);
+			rp.put("result", resultMap);
 		} catch(Exception e) {
 			rp.put("result", null);
 			logger.debug(e.getMessage());
@@ -380,7 +310,11 @@ public class WtmMobileController {
 			paramMap.put("sabun", sabun);
 			
 			List<Map<String, Object>> l = mobileService.getTermList(paramMap);
-			l = MobileUtil.parseMobileList(l);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회 결과가 없습니다.");
+				return rp;
+			}
+ 			l = MobileUtil.parseMobileList(l);
 			
 			rp.put("result", l);
 		} catch(Exception e) {
@@ -438,6 +372,10 @@ public class WtmMobileController {
 			paramMap.put("sabun", sabun);
 			
 			List<Map<String, Object>> l = mobileService.getTeamList(paramMap);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회 결과가 없습니다.");
+				return rp;
+			}
 			l = MobileUtil.parseMobileList(l);
 	
 			rp.put("result", l);
@@ -495,6 +433,10 @@ public class WtmMobileController {
 			paramMap.put("edate", edate);
 			
 			List<Map<String, Object>> l = mobileService.getTeamDetail(paramMap);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회 결과가 없습니다.");
+				return rp;
+			}
 			l = MobileUtil.parseMobileList(l);
 			
 			rp.put("result", l);
