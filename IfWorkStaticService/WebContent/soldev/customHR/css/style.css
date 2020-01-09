@@ -44,7 +44,7 @@ textarea.required { border:1px solid #008fd5 !important; }
     line-height: 12px;
     font-weight: 600;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 9px 20px 10px;
     letter-spacing: 0;
     cursor: pointer;
