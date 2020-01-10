@@ -290,14 +290,14 @@
 							success: function(data) {
 								$("#loading").hide();
 								if(data!=null && data.status=='OK') {
-									console.log(data);
+									$("#alertText").html("변경되었습니다.");
 								} else {
 									$("#alertText").html(data.message);
-									$("#alertModal").on('hidden.bs.modal',function(){
-										$("#alertModal").off('hidden.bs.modal');
-									});
-									$("#alertModal").modal("show"); 
 								}
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+								});
+								$("#alertModal").modal("show"); 
 								
 							},
 							error: function(e) {
