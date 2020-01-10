@@ -42,6 +42,9 @@ public class MobileControllerAdapter {
 	@Value("${ifw.inout-url}")
 	private String inoutUrl;
 	
+	@Value("${ifw.my-url}")
+	private String myUrl;
+
 	@Autowired
 	private ExchangeService certService;
 
@@ -157,7 +160,25 @@ public class MobileControllerAdapter {
 		resMap = certService.exchange(url, HttpMethod.GET, null, paramMap);
 		return resMap;
     }
-	
+	@RequestMapping(value = "/m/{tsId}/my/{functionId}", method = RequestMethod.GET)
+	public Map<String, Object> getMy(@PathVariable String tsId,@PathVariable String functionId,
+								HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		
+		String url = myUrl.replace("{{tsId}}", tsId).replace("{{function}}", functionId);
+		
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		
+		Enumeration<String> er = request.getParameterNames();
+		while(er.hasMoreElements()) {
+			String k = er.nextElement();
+			paramMap.put(k, request.getParameter(k));
+		}
+		System.out.println("111111111111111111111111111110 " + paramMap.toString());
+		resMap = certService.exchange(url, HttpMethod.GET, null, paramMap);
+		return resMap;
+    }
 	@RequestMapping(value = "/m/{tsId}/edocument/{functionId}", method = RequestMethod.POST)
 	public Map<String, Object> postEdoc(@PathVariable String tsId,@PathVariable String functionId,
 			@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -198,6 +219,17 @@ public class MobileControllerAdapter {
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		
 		String url = inoutUrl.replace("{{tsId}}", tsId).replace("{{function}}", functionId);
+		
+		resMap = certService.exchange(url, HttpMethod.POST, null, paramMap);
+		return resMap;
+    }
+	@RequestMapping(value = "/m/{tsId}/my/{functionId}", method = RequestMethod.POST)
+	public Map<String, Object> postMy(@PathVariable String tsId,@PathVariable String functionId,
+			@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		
+		String url = myUrl.replace("{{tsId}}", tsId).replace("{{function}}", functionId);
 		
 		resMap = certService.exchange(url, HttpMethod.POST, null, paramMap);
 		return resMap;

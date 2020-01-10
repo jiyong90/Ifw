@@ -239,11 +239,15 @@ public class LoginService{
 		paramMap.put("loginId", sabun);
 		paramMap.put("encKey", encKey);
 		
+		logger.debug("findUserData " + paramMap.toString());
 		Map<String, Object> userData = commUserMapper.getCommUser(paramMap);
 		
-		if(userData == null) 
+		if(userData == null) {
+			logger.debug("findUserData 등록된 사용자가 없습니다.");
 			throw new Exception("등록된 사용자가 없습니다.");
+		}
 		
+		logger.debug("UserData " + userData.toString());
 		return userData;
 		
 	}

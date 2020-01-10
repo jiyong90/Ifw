@@ -103,8 +103,8 @@ public class WtmMobileEdocController {
 		
 		try {
 			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
@@ -135,7 +135,7 @@ public class WtmMobileEdocController {
 	/**
 	 * 신청서 상세 
 	 */
-	@RequestMapping(value = "/mobile/{tenantId}/edocument", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/edocument/detail", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam detail(HttpServletRequest request,
 			@PathVariable Long tenantId,
 			@RequestParam(value = "locale", required = true) String locale,
@@ -146,8 +146,8 @@ public class WtmMobileEdocController {
 		Map<String, Object> result = new HashMap();
 		try {
 			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
@@ -184,8 +184,8 @@ public class WtmMobileEdocController {
 			String apprStatCd = body.get("apprStatCd").toString();
 			String userToken = body.get("userToken").toString();
 
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			
 			String applCd = applKey.split("@")[1];
 			String applId = applKey.split("@")[2];

@@ -74,17 +74,19 @@
         	    AND DATE_FORMAT(INOUT_DATE, "%Y%c%d") = DATE_FORMAT(now(), "%Y%c%d")
         		ORDER BY INOUT_DATE DESC LIMIT 1)
         	UNION ALL 
-        	(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
-        	FROM WTM_INOUT_HIS
-        	WHERE INOUT_TYPE_CD IN ('IN')
-        		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
-        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        	(SELECT F_WTM_DATE_FORMAT(H.INOUT_DATE,'Y-M-D H:I') as inoutDate, H.INOUT_TYPE_CD as inoutTypeCd
+        	FROM WTM_INOUT_HIS H
+        	   	JOIN WTM_WORK_CALENDAR C ON C.YMD =F_WTM_DATE_FORMAT(now(), 'YMD') AND C.TENANT_ID=H.TENANT_ID AND C.ENTER_CD=H.ENTER_CD AND C.SABUN=H.SABUN AND F_WTM_DATE_FORMAT(C.ENTRY_SDATE,'YMDHI') =F_WTM_DATE_FORMAT(H.INOUT_DATE,'YMDHI') 
+        	WHERE H.INOUT_TYPE_CD IN ('IN')
+        		AND H.TENANT_ID = #{tenantId} AND H.ENTER_CD = #{enterCd} AND H.SABUN = #{sabun}
+        		)
         	UNION ALL 
-        	(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
-        	FROM WTM_INOUT_HIS
-        	WHERE INOUT_TYPE_CD IN ('OUT')
-        		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
-        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        	(SELECT F_WTM_DATE_FORMAT(H.INOUT_DATE,'Y-M-D H:I') as inoutDate, H.INOUT_TYPE_CD as inoutTypeCd
+        	FROM WTM_INOUT_HIS H
+        	   	JOIN WTM_WORK_CALENDAR C ON C.YMD =F_WTM_DATE_FORMAT(now(), 'YMD') AND C.TENANT_ID=H.TENANT_ID AND C.ENTER_CD=H.ENTER_CD AND C.SABUN=H.SABUN AND F_WTM_DATE_FORMAT(C.ENTRY_EDATE,'YMDHI') =F_WTM_DATE_FORMAT(H.INOUT_DATE,'YMDHI')
+        	WHERE H.INOUT_TYPE_CD IN ('OUT')
+        		AND H.TENANT_ID = #{tenantId} AND H.ENTER_CD = #{enterCd} AND H.SABUN = #{sabun}
+        		)
         ]]>
     </select>
     

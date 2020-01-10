@@ -165,5 +165,29 @@
 		) X
 	]]>
     </select>
-   
+    
+   	 <select id="otApplDetailByApplId" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT 	DATE_FORMAT(O.OT_SDATE, '%Y.%m.%d %H:%i') AS otSdate
+			     , DATE_FORMAT(O.OT_EDATE, '%Y.%m.%d %H:%i') AS otEdate
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS reasonNm
+			     , O.REASON AS reason
+			     , CASE WHEN O.SUB_YN = 'Y' THEN '휴일대체' ELSE '위로금/시급지급' END AS subYn
+			     , CASE WHEN O.SUB_YN = 'Y' THEN 
+			     	(select group_concat(CONCAT(DATE_FORMAT(SUBS_SDATE, '%Y.%m.%d %H:%i'), ' ~ ', DATE_FORMAT(SUBS_EDATE, '%H:%i'))) from WTM_OT_SUBS_APPL where APPL_ID = '734') 
+			      ELSE '-' END AS subsYmd
+			  FROM WTM_APPL A
+			  JOIN WTM_OT_APPL O
+			    ON A.APPL_ID = O.APPL_ID
+			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+			    ON A.TENANT_ID = R.TENANT_ID
+			   AND A.ENTER_CD = R.ENTER_CD
+			   AND A.APPL_SABUN = R.SABUN
+				AND A.APPL_ID = R.APPL_ID
+				AND O.YMD = R.YMD
+			 WHERE O.APPL_ID = #{applId}   
+			   AND (R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD = 'OT')
+			 ORDER BY O.OT_SDATE
+	        ]]>
+    </select>
 </mapper>

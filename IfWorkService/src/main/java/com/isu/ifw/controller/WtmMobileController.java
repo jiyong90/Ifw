@@ -1,12 +1,14 @@
 package com.isu.ifw.controller;
 
 
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,11 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.entity.WtmMobileToken;
 import com.isu.ifw.mapper.WtmApplMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
+import com.isu.ifw.repository.WtmMobileTokenRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
+import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmCalendarService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
@@ -48,12 +54,18 @@ public class WtmMobileController {
 	WtmMobileService mobileService;
 	
 	@Autowired
+	LoginService loginService;
+
+	@Autowired
 	@Qualifier("wtmOtApplService")
 	WtmApplService otApplService;
 
 	@Resource
 	WtmApplCodeRepository applCodeRepository;
 	
+	@Resource
+	WtmMobileTokenRepository tokenRepository;
+
 	@Autowired
 	WtmApplMapper applMapper;
 
@@ -97,8 +109,8 @@ public class WtmMobileController {
 		rp.setSuccess("");
 		try {
 			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			
 			
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
@@ -157,6 +169,138 @@ public class WtmMobileController {
 		}
 		return rp;
 	}
+
+
+	//로그인
+	@RequestMapping(value = "/mobile/{tenantId}/certificate", method = RequestMethod.POST)
+	public @ResponseBody ReturnParam certificate(@PathVariable Long tenantId, 
+			@RequestBody(required = true) Map<String, Object> params,
+			HttpServletRequest request) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String userToken = params.get("userToken").toString();
+			System.out.println(params.toString());
+			String enterCd = params.get("loginEnterCd").toString();
+			String sabun = params.get("loginUserId").toString();
+			String password = params.get("loginPassword").toString();
+			String tenantKey = params.get("tenantKey").toString();
+			String empKey = enterCd + "@" + sabun;
+
+			logger.debug("1111111111111 0" + empKey);
+
+			empKey = MobileUtil.encEmpKey(userToken, empKey);
+			logger.debug("1111111111111 1" + empKey);
+
+			
+			 //{"deviceType":"android","osVersion":28,"tenantKey":"hdngv","loginPassword":"20000101","loginUserId":"20000101","deviceModel":"SM-G965N","locale":"ko_KR","pushToken":"cZoiIYlt5ew:APA91bHZsjQ42zSKByHVCKELzQkA_nRs1L7k0qqg3lxbTTrhahPTW8Vfj-hlRdWEae4Eaz-3oOeqY7nlg3uslRDWgiGX3oe-1LSNV7CjUoRmVclkvk8box5jxjXN84qJbXMYtQ7IpUKN","deviceId":"051e0704-45e6-42bf-94f6-7760afac1e0a","loginEnterCd":"H133","userToken":"26577433-1626-4d32-87f5-cb26a1891efc"}"
+
+			 
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				logger.debug("1111111111111 2");
+				rp.setFail("사용자 정보가 존재하지 않습니다.");
+				return rp;
+			}
+			logger.debug("1111111111111 3 " + emp.toString());
+			
+			UUID token = UUID.randomUUID();
+				
+			Map<String, Object> userData = loginService.getUserData(tenantId, enterCd, sabun, password);
+
+			logger.debug("1111111111111 4 " + userData.toString());
+
+			WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
+			if(mobileToken == null) {
+				mobileToken = new WtmMobileToken();
+				mobileToken.setEmpKey(enterCd+"@"+sabun);
+				mobileToken.setTenantId(tenantId);
+			} 
+			mobileToken.setToken(token.toString());
+			mobileToken = tokenRepository.save(mobileToken);
+			logger.debug("1111111111111 5 ");
+			
+			Map<String, Object> sessionData = new HashMap();
+			sessionData.put("orgNm", emp.getOrgCd());
+			sessionData.put("authCode", "");
+			sessionData.put("empNm", emp.getEmpNm());
+			sessionData.put("id", enterCd+sabun);
+			sessionData.put("accessToken", token.toString());
+			
+			logger.debug("1111111111111 6 ");
+			Map<String, Object> result = new HashMap();
+			result.put("sessionData", sessionData);
+			
+			
+			logger.debug("1111111111111 7 ");
+//			empKey = empKey.replace("+", "%2B"); 
+
+			result.put("empKey", empKey);
+			logger.debug("1111111111111 8 ");
+			rp.put("result", result);
+		} catch(Exception e) {
+			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
+	
+	//인증
+	@RequestMapping(value = "/mobile/{tenantId}/validate", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam validate(@PathVariable Long tenantId, 
+					HttpServletRequest request,
+					@RequestParam(value = "locale", required = true) String locale,
+					@RequestParam(value = "empKey", required = true) String empKey,
+					@RequestParam(value = "userToken", required = true) String userToken,
+					@RequestParam(value = "accessToken", required = true) String accessToken) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		try {
+			String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(empKey, "sabun");
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				logger.debug("사용자 정보가 존재하지 않습니다.");
+
+//				rp.setFail("사용자 정보가 존재하지 않습니다.");
+				return rp;
+			}
+			WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
+			if(mobileToken == null) {
+				logger.debug("로그인 정보가 존재하지 않습니다.");
+//				rp.setFail("로그인 정보가 존재하지 않습니다.");
+				return rp;
+			} 
+			logger.debug("1111111111 " + mobileToken.getToken() + ", " + accessToken);
+			if(!mobileToken.getToken().equals(accessToken)) {
+//				rp.setFail("사용자 인증이 만료되었습니다.");
+				logger.debug("1111111111 validate " + rp.toString());
+				return rp;
+			}
+			
+//			Map<String, Object> userData = loginService.getUserData(tenantId, enterCd, sabun, password);
+			
+			Map<String, Object> sessionData = new HashMap();
+			sessionData.put("orgNm", emp.getOrgCd());
+			sessionData.put("authCode", "");
+			sessionData.put("empNm", emp.getEmpNm());
+			sessionData.put("id", enterCd+sabun);
+			sessionData.put("accessToken", accessToken);
+			
+			Map<String, Object> result = new HashMap();
+			result.put("sessionData", sessionData);
+			result.put("empKey", enterCd+"@"+sabun);
+			
+			rp.put("result", result);
+		} catch(Exception e) {
+			logger.debug("1111111 dddd " + e.getMessage());
+			//			rp.setFail(e.getMessage());
+		}
+		logger.debug("1111111111 validate " + rp.toString());
+		rp.setSuccess("");
+		return rp;
+	}
 	
 	/**
 	 * 내 근무 대쉬보드
@@ -177,8 +321,8 @@ public class WtmMobileController {
 		rp.setSuccess("");
 		try {
 			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			
 			
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
@@ -221,55 +365,6 @@ public class WtmMobileController {
 	}	
 	
 	/**
-	 * 내 근무상태 정보
-	 * @param tenantKey
-	 * @param locale
-	 * @param empKey
-	 * @param request
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/mobile/{tenantId}/myinfo", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-	public @ResponseBody ReturnParam getMyworkInfo(@PathVariable Long tenantId,
-			@RequestParam(value="locale", required = true) String locale, 
-			@RequestParam(value="empKey", required = true) String empKey, 
-			@RequestParam(value="id", required = true) String ymd, 
-			HttpServletRequest request) throws Exception {
-		
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-		try {
-			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
-			
-			
-			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
-			if(emp == null) {
-				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
-				return rp;
-			}
-			logger.debug("/mobile/{tenantId}/dashboard " + empKey);
-			
-			Map<String, Object> resultMap = new HashMap();
-			Map<String, Object> paramMap = new HashMap();
-			paramMap.put("tenantId" , tenantId);
-			paramMap.put("enterCd" , enterCd);
-			paramMap.put("sabun", sabun);
-			paramMap.put("ymd", ymd);
-			
-			
-			Map<String, Object> data = wtmCalendarService.getEmpWorkCalendarDayInfo(paramMap);
-			resultMap.put("data", data);
-			rp.put("result", resultMap);
-		} catch(Exception e) {
-			rp.put("result", null);
-			logger.debug(e.getMessage());
-		}
-		return rp;
-	}	
-	
-	/**
 	 * 부서원 근태현황 (기간 리스트)
 	 * @param tenantKey
 	 * @param locale
@@ -291,8 +386,8 @@ public class WtmMobileController {
 
 		try {
 			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
@@ -348,8 +443,8 @@ public class WtmMobileController {
 		
 		try { 
 			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
@@ -411,9 +506,8 @@ public class WtmMobileController {
 		try {
 			String userToken = request.getParameter("userToken");
 		
-			Aes256 aes = new Aes256(userToken);
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");

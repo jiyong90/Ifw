@@ -1,6 +1,7 @@
 package com.isu.ifw.controller;
 
 
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -101,10 +102,9 @@ public class WtmMobileApplController {
 
 		try {
 			String userToken = request.getParameter("userToken");
-		
-			//Aes256 aes = new Aes256(userToken);
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
@@ -181,8 +181,8 @@ public class WtmMobileApplController {
 		try {
 			String userToken = paramMap.get("userToken").toString();
 			String empKey = paramMap.get("empKey").toString();
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
@@ -193,16 +193,14 @@ public class WtmMobileApplController {
 	
 			dataMap = (Map<String, Object>)paramMap.get("data");
 			if("OT".equals(dataMap.get("applCd").toString())) {
-				resultMap = mobileApplService.validateOtAppl(paramMap.get("eventSource").toString(), tenantId, enterCd, sabun, dataMap);
+				rp = mobileApplService.validateOtAppl(paramMap.get("eventSource").toString(), tenantId, enterCd, sabun, dataMap);
 			} else if("ENTRY_CHG".equals(dataMap.get("applCd").toString())) {
-				dataMap  = mobileApplService.validateEntryChgAppl(tenantId, enterCd, sabun, dataMap);
-				resultMap.put("data", dataMap);
+				rp  = mobileApplService.validateEntryChgAppl(tenantId, enterCd, sabun, dataMap);
 			}
 		} catch(Exception e) {
 			logger.debug(e.getMessage());
 			rp.setFail(e.getMessage());
-		}
-		rp.put("result", resultMap);
+		} 
 		logger.debug("/mobile/"+ tenantId+"/apply/val e " + rp.toString());
 		return rp;
 	}
@@ -227,8 +225,8 @@ public class WtmMobileApplController {
 		try {
 			String userToken = paramMap.get("userToken").toString();
 			String empKey = paramMap.get("empKey").toString();
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
