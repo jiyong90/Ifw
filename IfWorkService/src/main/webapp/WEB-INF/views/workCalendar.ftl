@@ -371,7 +371,7 @@
                                     </ul>
                                 </li>
                                 -->
-                                <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taa">
+                                <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.taa && Object.keys(workDayInfo.taa).length>0">
                                     <span class="sub-title"><i class="fas fa-file-alt"></i>근태현황</span>
                                     <span class="sub-desc"></span>
                                     <ul class="sub-desc-list">

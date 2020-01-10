@@ -150,7 +150,7 @@ public class WtmApplController {
 						Calendar eYmd = Calendar.getInstance();
 						eYmd.setTime(eDate);
 						eYmd.add(Calendar.DATE, 1);
-						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, sabun, WtmUtil.parseDateStr(sYmd.getTime(), "yyyyMMdd"),  WtmUtil.parseDateStr(eYmd.getTime(), "yyyyMMdd"), userId);
+						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, rp.get("sabun")+"", WtmUtil.parseDateStr(sYmd.getTime(), "yyyyMMdd"),  WtmUtil.parseDateStr(eYmd.getTime(), "yyyyMMdd"), userId);
 					}
 				}
 			}
