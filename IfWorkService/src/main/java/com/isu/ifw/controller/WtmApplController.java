@@ -141,7 +141,7 @@ public class WtmApplController {
 					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) { 
 						
 						//유연근무제 기간 앞뒤로 +1 일
-						Date sDate = WtmUtil.toDate(rp.get("symd")+"", "yyyyMMdd");
+						/*Date sDate = WtmUtil.toDate(rp.get("symd")+"", "yyyyMMdd");
 						Calendar sYmd = Calendar.getInstance();
 						sYmd.setTime(sDate);
 						sYmd.add(Calendar.DATE, -1);
@@ -149,8 +149,8 @@ public class WtmApplController {
 						Date eDate = WtmUtil.toDate(rp.get("eymd")+"", "yyyyMMdd");
 						Calendar eYmd = Calendar.getInstance();
 						eYmd.setTime(eDate);
-						eYmd.add(Calendar.DATE, 1);
-						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, sabun, WtmUtil.parseDateStr(sYmd.getTime(), "yyyyMMdd"),  WtmUtil.parseDateStr(eYmd.getTime(), "yyyyMMdd"), userId);
+						eYmd.add(Calendar.DATE, 1);*/
+						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId);
 					}
 				}
 			}

@@ -63,8 +63,12 @@ public class WtmInoutController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
-		String enterCd =  empKey.split("@")[0];
-		String sabun =  empKey.split("@")[1];
+		String userToken = request.getParameter("userToken");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
+
+//		String enterCd =  empKey.split("@")[0];
+//		String sabun =  empKey.split("@")[1];
 		
 		logger.debug("/mobile/"+ tenantId+"/inout/status s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
@@ -100,9 +104,12 @@ public class WtmInoutController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
-		String enterCd =  (URLDecoder.decode(empKey)).split("@")[0];
-		String sabun =  (URLDecoder.decode(empKey)).split("@")[1];
-		logger.debug("/mobile/"+ tenantId+"inout/checkstatus s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+//		String userToken = request.getParameter("userToken");
+//		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+//		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(empKey, "sabun");
+//		logger.debug("/mobile/"+ tenantId+"inout/checkstatus s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
 		Map <String,Object> resultMap = new HashMap<String,Object>();
 		Map <String,Object> returnMap = new HashMap<String,Object>();
@@ -148,8 +155,8 @@ public class WtmInoutController {
 		String empKey = (String)params.get("empKey");
 		String ymd = (String)params.get("ymd");
 
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
 		Date now = new Date();
@@ -206,8 +213,8 @@ public class WtmInoutController {
 		String empKey = (String)params.get("empKey");
 		String ymd = (String)params.get("ymd");
 		
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
 		Date now = new Date();
@@ -265,12 +272,8 @@ public class WtmInoutController {
 		rp.setFail("출퇴근 이력 조회 중 오류가 발생했습니다.");
 
 		String userToken = request.getParameter("userToken");
-		logger.debug("111111111111111111111111111111111111111 " + empKey);
-		empKey = URLDecoder.decode(empKey);
-		empKey = empKey.replace(" ", "+");
-		logger.debug("111111111111111111111111111111111111112 " + empKey);
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 		if(emp == null) {
@@ -326,8 +329,8 @@ public class WtmInoutController {
 		rp.setSuccess("");
 
 		String userToken = request.getParameter("userToken");
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		logger.debug("/mobile/"+ tenantId+"/inout/history s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
@@ -381,8 +384,8 @@ public class WtmInoutController {
 		rp.setSuccess("");
 
 		String userToken = request.getParameter("userToken");
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		logger.debug("/mobile/"+ tenantId+"/inout/detail s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
@@ -425,8 +428,8 @@ public class WtmInoutController {
 		rp.setSuccess("퇴근 정보가 취소되었습니다.");
 
 		String userToken = params.get("userToken").toString();
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		Map<String, Object> data = (Map<String, Object>) params.get("data");
 		
@@ -466,11 +469,13 @@ public class WtmInoutController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("체크에 성공하였습니다.");
 		
+		
 		String userToken = (String)params.get("userToken");
 		String empKey = (String)params.get("empKey");
+
 		String ymd = (String)params.get("ymd");
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		logger.debug("/mobile/"+ tenantId+"/inout/goback s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
