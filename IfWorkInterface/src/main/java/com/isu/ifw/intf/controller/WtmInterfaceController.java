@@ -1,4 +1,4 @@
-package com.isu.ifw.controller;
+package com.isu.ifw.intf.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -8,19 +8,30 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.isu.ifw.service.WtmInterfaceService;
-import com.isu.option.vo.ReturnParam;
+import com.isu.ifw.intf.service.WtmInterfaceService;
+import com.isu.ifw.intf.vo.ReturnParam;
 
 @RestController
 public class WtmInterfaceController {
 	
 	@Autowired
-	private WtmInterfaceService WtmInterfaceService;
+	private WtmInterfaceService wtmInterfaceService;
+	
+	@RequestMapping(value="/s/code", method = RequestMethod.POST)
+	public void sendMaCodedtl(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			wtmInterfaceService.sendCode(paramMap);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	@RequestMapping(value = "/code",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam codeIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {
@@ -34,7 +45,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifCodeList = null;
 		rp.setSuccess("OK");
 		try {
-			ifCodeList = WtmInterfaceService.getCodeIfResult(tenantId, lastDataTime); //Servie 호출
+			ifCodeList = wtmInterfaceService.getCodeIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifCodeList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -55,7 +66,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getHolidayIfResult(tenantId, lastDataTime); //Servie 호출
+			ifList = wtmInterfaceService.getHolidayIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -76,7 +87,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getGntCodeIfResult(tenantId, lastDataTime); //Servie 호출
+			ifList = wtmInterfaceService.getGntCodeIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -97,7 +108,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getOrgCodeIfResult(tenantId, lastDataTime); //Servie 호출
+			ifList = wtmInterfaceService.getOrgCodeIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -118,7 +129,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getOrgChartMgrIfResult(tenantId, lastDataTime); //Servie 호출
+			ifList = wtmInterfaceService.getOrgChartMgrIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -142,7 +153,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getOrgChartDetIfResult(lastDataTime, enterCd, symd); //Servie 호출
+			ifList = wtmInterfaceService.getOrgChartDetIfResult(lastDataTime, enterCd, symd); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -163,7 +174,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getEmpHisIfResult(tenantId, lastDataTime); //Servie 호출
+			ifList = wtmInterfaceService.getEmpHisIfResult(tenantId, lastDataTime); //Servie 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -184,7 +195,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getOrgConcIfResult(tenantId, lastDataTime); //Service 호출
+			ifList = wtmInterfaceService.getOrgConcIfResult(tenantId, lastDataTime); //Service 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -205,7 +216,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getEmpAddrIfResult(tenantId, lastDataTime); //Service 호출
+			ifList = wtmInterfaceService.getEmpAddrIfResult(tenantId, lastDataTime); //Service 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
@@ -226,7 +237,7 @@ public class WtmInterfaceController {
 		List<Map<String, Object>> ifList = null;
 		rp.setSuccess("OK");
 		try {
-			ifList = WtmInterfaceService.getTaaApplIfResult(tenantId, lastDataTime); //Service 호출
+			ifList = wtmInterfaceService.getTaaApplIfResult(tenantId, lastDataTime); //Service 호출
 			rp.put("ifData", ifList);
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");

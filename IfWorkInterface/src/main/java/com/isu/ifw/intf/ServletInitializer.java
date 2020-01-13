@@ -1,4 +1,4 @@
-package com.isu.ifw;
+package com.isu.ifw.intf;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

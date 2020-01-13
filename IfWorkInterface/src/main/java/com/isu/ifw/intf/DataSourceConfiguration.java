@@ -1,4 +1,4 @@
-package com.isu.ifw;
+package com.isu.ifw.intf;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;

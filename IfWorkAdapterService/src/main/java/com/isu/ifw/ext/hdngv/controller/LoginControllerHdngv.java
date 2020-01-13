@@ -20,6 +20,7 @@ import org.tempuri.SitemapWSSoap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.ExchangeService;
 import com.isu.ifw.util.Aes256;
+import com.isu.ifw.util.CookieUtil;
 import com.isu.ifw.util.WtmUtil;
 
 @RestController
@@ -86,6 +87,17 @@ public class LoginControllerHdngv {
 					hashMap.put(tmp[0], tmp[1]);
 				}
 				
+				
+
+				Cookie[] cookies = req.getCookies();
+				if (cookies != null) {
+					
+					for (Cookie cookie : cookies) {
+						CookieUtil.clear(res, cookie.getName());
+					}
+						 
+				}
+   			 
 				Cookie c = new Cookie("sessiondata_____"+strCompanyCode,decrptStr);
 				c.setPath("/");
 				c.setMaxAge(60*60*24); //하루

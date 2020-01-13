@@ -1,19 +1,29 @@
-package com.isu.ifw.service;
+package com.isu.ifw.intf.service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import com.isu.ifw.mapper.WtmInterfaceMapper;
+import com.isu.ifw.intf.mapper.WtmInterfaceMapper;
 
 @Service
 public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 
+
+	@Value("${ifw.code-post}")
+	private String codeUrl;
+	
 	@Autowired
 	WtmInterfaceMapper wtmInterfaceMapper;
+	
+	@Autowired
+	ExchangeService exchangeService;
 	
 	public String enterCd = "";
 	
@@ -54,6 +64,21 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
             e.printStackTrace();
         }
 		return ifCodeList;
+	}
+	
+	@Override
+	public void sendCode(Map<String, Object> paramMap) throws Exception{
+		System.out.println("WtmInterfaceServiceImpl getCode");
+		List<Map<String, Object>> ifCodeList = null;
+        try {
+        	ifCodeList = wtmInterfaceMapper.findMaCodedtlAll(paramMap);
+        	Map<String, Object> eParam = new HashMap<>();
+        	eParam.put("data", ifCodeList);
+        	exchangeService.exchange(codeUrl, HttpMethod.POST, null, eParam);
+        	
+        } catch(Exception e){
+            e.printStackTrace();
+        }
 	}
 	
 	@Override

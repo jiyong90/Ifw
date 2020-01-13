@@ -8,12 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import com.isu.ifw.common.entity.CommTenantModule;
+import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.service.WtmInterfaceService;
 
 @RestController
@@ -21,14 +25,11 @@ import com.isu.ifw.service.WtmInterfaceService;
 public class WtmInterfaceController {
 	
 	@Autowired
-	private WtmInterfaceService WtmInterfaceService;
-	
-	private RestTemplate restTemplate;
+	private WtmInterfaceService wtmInterfaceService;
 	
 	@Autowired
-	public void setRestTemplate(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
-	}
+	@Qualifier("WtmTenantModuleRepository")
+	CommTenantModuleRepository tenantModuleRepo;
 	
 	@RequestMapping(value = "/ifAll", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -37,25 +38,25 @@ public class WtmInterfaceController {
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString()); 
 		
 		System.out.println("getCodeIfResult call");
-		WtmInterfaceService.getCodeIfResult(tenantId);
+		wtmInterfaceService.getCodeIfResult(tenantId);
 		
 		System.out.println("getHolidayIfResult call");
-		WtmInterfaceService.getHolidayIfResult(tenantId);	// 공휴일
+		wtmInterfaceService.getHolidayIfResult(tenantId);	// 공휴일
 		
 		System.out.println("getTaaCodeIfResult call");
-		WtmInterfaceService.getTaaCodeIfResult(tenantId);	// 근태코드
+		wtmInterfaceService.getTaaCodeIfResult(tenantId);	// 근태코드
 		
 		System.out.println("getOrgCodeIfResult call");
-		WtmInterfaceService.getOrgCodeIfResult(tenantId); // 조직코드
+		wtmInterfaceService.getOrgCodeIfResult(tenantId); // 조직코드
 		
 		System.out.println("getOrgChartIfResult call");
-		WtmInterfaceService.getOrgChartIfResult(tenantId); // 조직도
+		wtmInterfaceService.getOrgChartIfResult(tenantId); // 조직도
 		
 		System.out.println("getEmpHisIfResult call");
-		WtmInterfaceService.getEmpHisIfResult(tenantId); //사원이력
+		wtmInterfaceService.getEmpHisIfResult(tenantId); //사원이력
 		
 		System.out.println("getEmpAddrIfResult call");
-		WtmInterfaceService.getEmpAddrIfResult(tenantId); //사원 주소
+		wtmInterfaceService.getEmpAddrIfResult(tenantId); //사원 주소
 		
 		System.out.println("getIf end");
 		
@@ -68,8 +69,24 @@ public class WtmInterfaceController {
 		// 공통코드
 		System.out.println("getcodeIf start");
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString()); 
-		WtmInterfaceService.getCodeIfResult(tenantId);
+		wtmInterfaceService.getCodeIfResult(tenantId);
 		System.out.println("getcodeIf end");
+		
+		return;
+	}
+	
+	@RequestMapping(value = "/{tsId}/code",method = RequestMethod.POST)
+	public void postCode(@PathVariable String tsId, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		CommTenantModule tm = null;
+	    tm = tenantModuleRepo.findByTenantKey(tsId);
+        Long tenantId = tm.getTenantId();
+        
+		// 공통코드
+		System.out.println("postCode start");
+		List<Map<String, Object>> dataList = (List<Map<String, Object>>) paramMap.get("data");
+		wtmInterfaceService.saveCodeIntf(tenantId, dataList); 
+		System.out.println("postCode end");
 		
 		return;
 	}
@@ -78,7 +95,7 @@ public class WtmInterfaceController {
 	public void holidayIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공휴일정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		WtmInterfaceService.getHolidayIfResult(tenantId); //Servie 호출
+		wtmInterfaceService.getHolidayIfResult(tenantId); //Servie 호출
 		return;
 	}
 	
@@ -86,7 +103,7 @@ public class WtmInterfaceController {
 	public void taaCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 근태코드정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		WtmInterfaceService.getTaaCodeIfResult(tenantId); //Servie 호출
+		wtmInterfaceService.getTaaCodeIfResult(tenantId); //Servie 호출
 		return;
 	}
 	
@@ -94,8 +111,8 @@ public class WtmInterfaceController {
 	public void orgCodeIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 조직코드정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		WtmInterfaceService.getOrgCodeIfResult(tenantId); //Servie 호출
-		WtmInterfaceService.getOrgChartIfResult(tenantId); //Servie 호출
+		wtmInterfaceService.getOrgCodeIfResult(tenantId); //Servie 호출
+		wtmInterfaceService.getOrgChartIfResult(tenantId); //Servie 호출
 		return;
 	}
 		
@@ -103,8 +120,8 @@ public class WtmInterfaceController {
 	public void empHisIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
-		WtmInterfaceService.getEmpHisIfResult(tenantId); //사원 변경정보 저장 Servie 호출
-		WtmInterfaceService.getOrgConcIfResult(tenantId); //조직장 변경정보 저장 Service 호출
+		wtmInterfaceService.getEmpHisIfResult(tenantId); //사원 변경정보 저장 Servie 호출
+		wtmInterfaceService.getOrgConcIfResult(tenantId); //조직장 변경정보 저장 Service 호출
 		return ;
 	}
 	
@@ -114,7 +131,7 @@ public class WtmInterfaceController {
 		// 사원정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
-		WtmInterfaceService.getEmpHisEtcIfResult(tenantId); //사원 변경정보 저장 Servie 호출
+		wtmInterfaceService.getEmpHisEtcIfResult(tenantId); //사원 변경정보 저장 Servie 호출
 		return ;
 	}
 	
@@ -123,7 +140,7 @@ public class WtmInterfaceController {
 		// 사원메일정보
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
-		WtmInterfaceService.getEmpAddrIfResult(tenantId); //사원 변경정보 저장 Servie 호출
+		wtmInterfaceService.getEmpAddrIfResult(tenantId); //사원 변경정보 저장 Servie 호출
 		return ;
 	}
 	
@@ -143,7 +160,7 @@ public class WtmInterfaceController {
 		reqMap.put("ifApplNo", Long.parseLong(request.getParameter("applNo").toString()));
 		reqMap.put("status", request.getParameter("status").toString());
 		
-		WtmInterfaceService.setTaaApplIf(reqMap); //근태정보 인터페이스
+		wtmInterfaceService.setTaaApplIf(reqMap); //근태정보 인터페이스
 		return ;
 	}
 	
@@ -154,7 +171,7 @@ public class WtmInterfaceController {
 		try {
 			Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 			
-			WtmInterfaceService.setTaaApplBatchIf(tenantId); //5분간격 근태정보 인터페이스
+			wtmInterfaceService.setTaaApplBatchIf(tenantId); //5분간격 근태정보 인터페이스
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -173,7 +190,7 @@ public class WtmInterfaceController {
 		reqMap.put("eYmd", request.getParameter("endYmd").toString());
 		reqMap.put("sabun", request.getParameter("sabun").toString());
 		
-		WtmInterfaceService.setWorkTimeCloseIf(reqMap); //근태정보 인터페이스
+		wtmInterfaceService.setWorkTimeCloseIf(reqMap); //근태정보 인터페이스
 		return ;
 	}
 	
@@ -183,7 +200,7 @@ public class WtmInterfaceController {
 		System.out.println("setCalcDay start");
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
-		WtmInterfaceService.setCalcDay(tenantId);
+		wtmInterfaceService.setCalcDay(tenantId);
 		System.out.println("setCalcDay end");
 		
 		return;
@@ -196,7 +213,7 @@ public class WtmInterfaceController {
 		System.out.println("setCloseDay start");
 		Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 		//Long tenantId = (long) 38;
-		WtmInterfaceService.setCloseDay(tenantId);
+		wtmInterfaceService.setCloseDay(tenantId);
 		System.out.println("setCloseDay end");
 		
 		return;
