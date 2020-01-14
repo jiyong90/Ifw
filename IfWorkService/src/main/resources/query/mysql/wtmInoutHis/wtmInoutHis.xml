@@ -67,28 +67,37 @@
     
     <select id="getContext" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
+			(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
         	FROM WTM_INOUT_HIS
-        	WHERE INOUT_TYPE_CD IN ('GO', 'BACK')
+        	WHERE INOUT_TYPE_CD IN ('GO', 'BACK') AND CANCEL_DATE IS NULL
         		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
         	    AND DATE_FORMAT(INOUT_DATE, "%Y%c%d") = DATE_FORMAT(now(), "%Y%c%d")
         		ORDER BY INOUT_DATE DESC LIMIT 1)
         	UNION ALL 
-        	(SELECT F_WTM_DATE_FORMAT(H.INOUT_DATE,'Y-M-D H:I') as inoutDate, H.INOUT_TYPE_CD as inoutTypeCd
-        	FROM WTM_INOUT_HIS H
-        	   	JOIN WTM_WORK_CALENDAR C ON C.YMD =F_WTM_DATE_FORMAT(now(), 'YMD') AND C.TENANT_ID=H.TENANT_ID AND C.ENTER_CD=H.ENTER_CD AND C.SABUN=H.SABUN AND F_WTM_DATE_FORMAT(C.ENTRY_SDATE,'YMDHI') =F_WTM_DATE_FORMAT(H.INOUT_DATE,'YMDHI') 
-        	WHERE H.INOUT_TYPE_CD IN ('IN')
-        		AND H.TENANT_ID = #{tenantId} AND H.ENTER_CD = #{enterCd} AND H.SABUN = #{sabun}
-        		)
+        	(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
+        	FROM WTM_INOUT_HIS
+        	WHERE INOUT_TYPE_CD IN ('IN') AND CANCEL_DATE IS NULL
+        		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
+        		ORDER BY INOUT_DATE DESC LIMIT 1)
         	UNION ALL 
-        	(SELECT F_WTM_DATE_FORMAT(H.INOUT_DATE,'Y-M-D H:I') as inoutDate, H.INOUT_TYPE_CD as inoutTypeCd
-        	FROM WTM_INOUT_HIS H
-        	   	JOIN WTM_WORK_CALENDAR C ON C.YMD =F_WTM_DATE_FORMAT(now(), 'YMD') AND C.TENANT_ID=H.TENANT_ID AND C.ENTER_CD=H.ENTER_CD AND C.SABUN=H.SABUN AND F_WTM_DATE_FORMAT(C.ENTRY_EDATE,'YMDHI') =F_WTM_DATE_FORMAT(H.INOUT_DATE,'YMDHI')
-        	WHERE H.INOUT_TYPE_CD IN ('OUT')
-        		AND H.TENANT_ID = #{tenantId} AND H.ENTER_CD = #{enterCd} AND H.SABUN = #{sabun}
-        		)
+        	(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
+        	FROM WTM_INOUT_HIS
+        	WHERE INOUT_TYPE_CD IN ('OUT') AND CANCEL_DATE IS NULL
+        		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
+        		ORDER BY INOUT_DATE DESC LIMIT 1)
         ]]>
     </select>
+    
+    <update id="updateWtmInoutHis" parameterType="map">
+        <![CDATA[ 
+			UPDATE WTM_INOUT_HIS SET CANCEL_DATE = now(), 
+				CANCEL_TYPE_CD = #{inoutType} 
+			WHERE #{tenantId} = TENANT_ID 
+				AND #{enterCd} = ENTER_CD 
+				AND #{sabun} = SABUN 
+				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') = F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHIS')
+        ]]>
+    </update>
     
 	<update id="saveWtmInoutHis" parameterType="map">
         <![CDATA[ 
@@ -150,7 +159,7 @@
     <select id="getMyInoutHistory" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CONCAT_WS('@',F_WTM_DATE_FORMAT(A.INOUT_DATE, 'YMDHIS'),A.INOUT_TYPE_CD) AS key2,  
-				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'INOUT_TYPE_CD', A.INOUT_TYPE_CD, #{ymd}) AS title,
+				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'INOUT_TYPE_CD', IF(A.CANCEL_TYPE_CD IS NULL, A.INOUT_TYPE_CD, A.CANCEL_TYPE_CD), #{ymd}) AS title,
 			 	F_WTM_DATE_FORMAT(A.INOUT_DATE, 'H:I') as caption_lb,
 			 	F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'ENTRY_TYPE_CD', A.ENTRY_TYPE_CD, #{ymd}) AS caption_rb
 			FROM WTM_INOUT_HIS A
@@ -165,9 +174,11 @@
     <select id="getMyInoutDetail" parameterType="map" resultType="hashmap">
         <![CDATA[ 
 			SELECT F_WTM_DATE_FORMAT(INOUT_DATE, 'Y.M.D') as ymd,
-				INOUT_TYPE_CD as inoutTypeCd,
-				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd},'INOUT_TYPE_CD', INOUT_TYPE_CD, F_WTM_DATE_FORMAT(INOUT_DATE, 'YMD')) AS inoutType,
-				F_WTM_DATE_FORMAT(INOUT_DATE, 'H:I:S') as inoutDate,
+				IF(CANCEL_TYPE_CD IS NULL, INOUT_TYPE_CD, CANCEL_TYPE_CD) as inoutTypeCd,
+				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd},'INOUT_TYPE_CD', IF(CANCEL_TYPE_CD IS NULL, INOUT_TYPE_CD, CANCEL_TYPE_CD), F_WTM_DATE_FORMAT(INOUT_DATE, 'YMD')) AS inoutType,
+				CASE WHEN CANCEL_TYPE_CD = 'OUTC' AND CANCEL_DATE IS NOT NULL 
+					THEN CONCAT('퇴근 ', F_WTM_DATE_FORMAT(CANCEL_DATE, 'H:I:S'), ' 취소 ', F_WTM_DATE_FORMAT(INOUT_DATE, 'H:I:S'))
+				 	ELSE F_WTM_DATE_FORMAT(INOUT_DATE, 'H:I:S') END as inoutDate,
 				F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') AS id
 			FROM WTM_INOUT_HIS 
 			WHERE TENANT_ID = #{tenantId}
