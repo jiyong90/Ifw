@@ -2060,11 +2060,13 @@
 			, TIME_FORMAT(SEC_TO_TIME(totalWorkMinute*60), '%H:%i') as param4
 			, TIME_FORMAT(SEC_TO_TIME(restWorkMinute*60), '%H:%i') as param5
 			, TIME_FORMAT(SEC_TO_TIME(restOtMinute*60), '%H:%i') as param6
+			, TIME_FORMAT(SEC_TO_TIME(usedWorkMinute*60), '%H:%i') as param10   
 			FROM (SELECT  M.FLEXIBLE_NM AS flexibleNm
 				  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END AS sYmd
 				  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END AS eYmd
 				  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
 				  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
+				  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, '20200115', 'U', 'WORK') AS usedWorkMinute
 				  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
 				  , E.WORK_TYPE_CD
 			  FROM WTM_FLEXIBLE_EMP E

@@ -74,31 +74,34 @@
         	    AND DATE_FORMAT(INOUT_DATE, "%Y%c%d") = DATE_FORMAT(now(), "%Y%c%d")
         		ORDER BY INOUT_DATE DESC LIMIT 1)
         	UNION ALL 
-        	(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
-        	FROM WTM_INOUT_HIS
-        	WHERE INOUT_TYPE_CD IN ('IN') AND CANCEL_DATE IS NULL
+        	(SELECT F_WTM_DATE_FORMAT(ENTRY_SDATE,'Y-M-D H:I') as inoutDate, 'IN' as inoutTypeCd
+        	FROM WTM_WORK_CALENDAR
+        	WHERE ENTRY_SDATE IS NOT NULL
         		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
-        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        		ORDER BY YMD DESC LIMIT 1)
         	UNION ALL 
-        	(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_TYPE_CD as inoutTypeCd
-        	FROM WTM_INOUT_HIS
-        	WHERE INOUT_TYPE_CD IN ('OUT') AND CANCEL_DATE IS NULL
+        	(SELECT F_WTM_DATE_FORMAT(ENTRY_EDATE,'Y-M-D H:I') as inoutDate, 'OUT' as inoutTypeCd
+        	FROM WTM_WORK_CALENDAR
+        	WHERE ENTRY_EDATE IS NOT NULL
         		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
-        		ORDER BY INOUT_DATE DESC LIMIT 1)
+        		ORDER BY YMD DESC LIMIT 1)
         ]]>
     </select>
     
     <update id="updateWtmInoutHis" parameterType="map">
-        <![CDATA[ 
-			UPDATE WTM_INOUT_HIS SET CANCEL_DATE = now(), 
-				CANCEL_TYPE_CD = #{inoutType} 
-			WHERE #{tenantId} = TENANT_ID 
-				AND #{enterCd} = ENTER_CD 
-				AND #{sabun} = SABUN 
+		UPDATE WTM_INOUT_HIS SET CANCEL_DATE = now(), 
+			CANCEL_TYPE_CD = #{inoutType} 
+		WHERE #{tenantId} = TENANT_ID 
+			AND #{enterCd} = ENTER_CD 
+			AND #{sabun} = SABUN 
+			<if test="inoutDate!=null">
+				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') = F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHIS')
+			</if>
+			<if test="inoutDate==null">
 				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMD') = #{ymd}
-				AND INOUT_TYPE_CD='OUT'
-				AND CANCEL_DATE IS NULL
-        ]]>
+			</if>
+			AND INOUT_TYPE_CD='OUT'
+			AND CANCEL_DATE IS NULL
     </update>
     
 	<update id="saveWtmInoutHis" parameterType="map">

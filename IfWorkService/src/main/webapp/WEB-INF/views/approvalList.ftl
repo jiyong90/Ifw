@@ -1,3 +1,4 @@
+<#include "/applLineComponent.ftl">
 <div id="approval" v-cloak>
 	<!-- 유연근무제신청 상세보기 modal start -->
     <div class="modal fade show" id="flexibleAppl" tabindex="-1" role="dialog" v-if="appl">
@@ -97,6 +98,7 @@
                                     </li>
                         		</ul>
                         	</div>
+                        	<appl-line :bind-data="appl.applLine"></appl-line>
                         </div>
                         <!--  
                         <div class="btn-wrap text-center">
@@ -218,6 +220,7 @@
                                 	{{appl.cancelReason}}
                                 </div>
                             </div>
+                            <appl-line :bind-data="appl.applLine"></appl-line>
                             <hr class="bar">
                         </div>
                         <div class="btn-wrap text-center" v-if="applType=='01' && appl.applSabun == appl.sabun">
@@ -367,6 +370,7 @@
                                 	</template>
                                 </div>
                             </div>
+                            <appl-line :bind-data="appl.applLine"></appl-line>
                         </div>
                         <!--  
                         <div class="btn-wrap text-center">
@@ -478,6 +482,9 @@
 <script type="text/javascript">
    	var approvalVue = new Vue({
    		el: "#approval",
+   		components: {
+			'appl-line': applLine
+		},
    		data : {
    			apprList: [],
    			apprType: '', // 승인 or 반려

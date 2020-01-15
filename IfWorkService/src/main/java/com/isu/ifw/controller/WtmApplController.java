@@ -2,9 +2,7 @@ package com.isu.ifw.controller;
 
 import java.security.InvalidParameterException;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +26,8 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
-import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
+import com.isu.ifw.vo.WtmApplLineVO;
 
 
 @RestController
@@ -86,6 +84,32 @@ public class WtmApplController {
 			apprList = applService.getApprList(tenantId, enterCd, empNo, paramMap, userId);
 			
 			rp.put("apprList", apprList);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/line", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getApprLine(@RequestParam String applCd, HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		rp.setSuccess("");
+		
+		List<WtmApplLineVO> applLine = null;
+		try {		
+			applLine = applService.getApplLine(tenantId, enterCd, empNo, applCd, userId);
+			
+			rp.put("applLine", applLine);
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("조회 시 오류가 발생했습니다.");

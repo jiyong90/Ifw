@@ -150,6 +150,7 @@ public class WtmMobileController {
 			data.put("param4", statusMap.get("param4") == null? "-" : statusMap.get("param4").toString());
 			data.put("param5", statusMap.get("param5") == null? "-" : statusMap.get("param5").toString());
 			data.put("param6", statusMap.get("param6") == null? "-" : statusMap.get("param6").toString());
+			data.put("param10", statusMap.get("param10") == null? "-" : statusMap.get("param10").toString());
 			status.put("part3", data);
 	
 			String adapter = tcms.getConfigValue(tenantId, "HR.ADAPTER_URL", true, "");

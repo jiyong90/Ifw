@@ -6,7 +6,17 @@
 <mapper namespace="com.isu.ifw.mapper.WtmApplMapper">
 	<select id="getWtmApplLine" parameterType="map" resultType="wtmApplLine">
         <![CDATA[
-			SELECT X.APPR_SEQ
+       		 SELECT S.*
+			     , ROWNUM AS APPR_SEQ
+			  FROM (
+        	SELECT 1 AS APPR_TYPE_CD
+			    , 1 AS SEQ 
+			    , #{sabun} AS SABUN
+			    , F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, #{sabun}, #{d}) AS EMP_NM
+			  FROM DUAL
+			UNION ALL
+			SELECT 2 AS APPR_TYPE_CD
+			     , X.APPR_SEQ AS SEQ
 			     , CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END AS SABUN
 			    , F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END, #{d}) AS EMP_NM
 						  FROM (
@@ -36,23 +46,22 @@
 			        AND X.ORG_CD = O.ORG_CD
 			        AND #{d} BETWEEN O.SYMD AND O.EYMD
 				 WHERE (EMP_HIS_ID IS NOT NULL OR ORG_CONC_ID IS NOT NULL)
+		UNION ALL
+		SELECT 3 AS APPR_TYPE_CD
+		     , SEQ
+		     , RL.SABUN AS SABUN
+		     , F_WTM_GET_EMP_NM(AC.TENANT_ID, AC.ENTER_CD, RL.SABUN, #{d}) AS EMP_NM
+		  FROM WTM_APPL_REC_LINE RL
+		  JOIN WTM_APPL_CODE AC
+		    ON RL.APPL_CODE_ID = AC.APPL_CODE_ID
+		 WHERE (AC.TENANT_ID, AC.ENTER_CD, AC.APPL_CD) IN (SELECT #{tenantId}, #{enterCd}, #{applCd} FROM dual)
+		ORDER BY APPR_TYPE_CD, SEQ                                                          
+		) S
         ]]>
     </select>
     
     <select id="getWtmApplLineByApplId" parameterType="Long" resultType="wtmApplLine">
         <![CDATA[
-			SELECT '1' AS APPR_TYPE_CD
-			     , 0 AS APPR_SEQ
-			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPR_TYPE_CD', 1, A.APPL_YMD) AS APPR_TYPE_NM
-			     , A.APPL_SABUN AS SABUN
-			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD) AS EMP_NM
-			     , F_WTM_DATE_FORMAT(A.APPL_YMD, 'YMD') AS APPR_DATE
-			     , NULL AS APPR_STATUS_CD
-			     , NULL AS APPR_STATUS_NM
-			     , NULL AS APPR_OPINION
-			  FROM WTM_APPL A
-			 WHERE A.APPL_ID = #{applId}
-			UNION ALL
 			SELECT L.APPR_TYPE_CD
 			     , L.APPR_SEQ
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPR_TYPE_CD', L.APPR_TYPE_CD, A.APPL_YMD) AS APPR_TYPE_NM

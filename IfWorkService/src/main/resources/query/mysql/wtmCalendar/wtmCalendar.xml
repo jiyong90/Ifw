@@ -203,7 +203,7 @@
 		</if>
    	 </update>
    	 
-    <update id="updateEntryDateCalendar" parameterType="map">
+   <update id="updateEntryDateCalendar" parameterType="map">
 		UPDATE WTM_WORK_CALENDAR SET
 		<if test="inoutType.equals('IN')">
 			ENTRY_SDATE = #{inoutDateTime},
@@ -213,10 +213,21 @@
 			ENTRY_EDATE = #{inoutDateTime},
 			ENTRY_ETYPE_CD = #{entryType}
 		</if>
-		<if test="inoutType.equals('OUTC')">
+		WHERE TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun} AND YMD = #{stdYmd}
+   	 </update>
+   	 
+     <update id="cancelEntryDateCalendar" parameterType="map">
+		UPDATE WTM_WORK_CALENDAR SET
 			ENTRY_EDATE = NULL,
 			ENTRY_ETYPE_CD = NULL
+		WHERE TENANT_ID = #{tenantId} 
+			AND ENTER_CD = #{enterCd} 
+			AND SABUN = #{sabun} 
+		<if test="inoutDate != null">
+			AND F_WTM_DATE_FORMAT(ENTRY_EDATE,'YMDHIS') = CONCAT(F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHI'), '00')
 		</if>
-		WHERE TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun} AND YMD = #{stdYmd};
+		<if test="inoutDate == null">
+			AND YMD = #{ymd}
+		</if>
    	 </update>
 </mapper>

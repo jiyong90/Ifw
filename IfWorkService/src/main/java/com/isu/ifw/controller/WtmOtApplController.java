@@ -49,18 +49,6 @@ public class WtmOtApplController {
 		return otApplService.getAppl(tenantId, enterCd, sabun, applId, userId);
 	}
 	
-	@RequestMapping(value="/line", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<WtmApplLineVO> getApplLine(@RequestParam Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
-		
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
-		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd").toString();
-		String empNo = sessionData.get("empNo").toString();
-		String userId = sessionData.get("userId").toString();
-		
-		return otApplService.getApplLine(tenantId, enterCd, empNo, paramMap, userId);
-	}
-	
 	/*@RequestMapping(value="/subs/prev", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> getPrevOtSubsAppl(@RequestParam Map<String, Object> paramMap
 												, HttpServletRequest request) {
