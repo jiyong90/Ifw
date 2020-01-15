@@ -95,7 +95,9 @@
 			WHERE #{tenantId} = TENANT_ID 
 				AND #{enterCd} = ENTER_CD 
 				AND #{sabun} = SABUN 
-				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') = F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHIS')
+				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMD') = #{ymd}
+				AND INOUT_TYPE_CD='OUT'
+				AND CANCEL_DATE IS NULL
         ]]>
     </update>
     
