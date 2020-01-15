@@ -9,13 +9,16 @@
         <img class="mb-0 logo" src="${loginLogoImg}" alt="기업로고">
         <!-- <h1 class="h3 mb-3 font-weight-normal">이수시스템</h1> -->
         <#if companyList?exists && companyList?has_content>
-        	<select id="loginEnterCd" name="loginEnterCd" class="form-control" style="margin:0 0 20px;">
+        <div class="select-wrap mb-3">
+        	<label for="loginEnterCd" class="sr-only">회사명을 선택해주세요.</label>
+        	<select id="loginEnterCd" name="loginEnterCd" class="form-control">
         		<#list companyList as company>
         			<#list company?keys as key>
         			<option value="${key}">${company[key]}</option>
         			</#list>
         		</#list>
         	</select>
+        </div>
        	</#if>
         <label for="inputEmail" class="sr-only">아이디를 입력해주세요.</label>
         <input type="text" id="username" name="username" class="form-control" value="" hidden>

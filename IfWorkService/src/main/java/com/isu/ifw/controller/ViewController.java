@@ -130,6 +130,9 @@ public class ViewController {
 
         mv.addObject("Authorization", "");
         mv.addObject("userAuthorizationUri", authorizeUri);
+        
+        //hr interface여부
+  		mv.addObject("interfaceYn", tcms.getConfigValue(tenantId, "WTMS.HR.INTERFACE_YN", true, ""));
          
 		return mv;
 	}
