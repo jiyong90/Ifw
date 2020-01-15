@@ -27,8 +27,9 @@
     <!-- alert modal end -->
     <form class="form-changePW" id="changPw">
     	<h1 class="h3 mb-3 title">비밀번호 변경하기</h1>
-    	<label for="enterCd" class="sr-only">회사명을 선택해주세요.</label>
     	<#if companyList?exists && companyList?has_content>
+    	<div class="select-wrap mb-3">
+        	<label for="enterCd" class="sr-only">회사명을 선택해주세요.</label>
         	<select id="enterCd" class="form-control">
         		<#list companyList as company>
         			<#list company?keys as key>
@@ -36,6 +37,7 @@
         			</#list>
         		</#list>
         	</select>
+        </div>
        	</#if>
     	<div class="row no-gutters">
             <#if passwordCertificate?? && passwordCertificate?exists && passwordCertificate=='PHONE' >
