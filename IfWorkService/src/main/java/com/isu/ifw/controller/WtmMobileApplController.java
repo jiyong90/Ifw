@@ -136,7 +136,7 @@ public class WtmMobileApplController {
 				result.put("itemAttributesMap", itemPropertiesMap);
 			} else if(applCd.equals("ENTRY_CHG")) {
 				if(!ymd.equals("")) {
-					dataMap = mobileApplService.validateEntryChgAppl(tenantId, enterCd, sabun, paramMap);
+					dataMap = mobileApplService.init(tenantId, enterCd, sabun, paramMap);
 				}
 			}
 			
