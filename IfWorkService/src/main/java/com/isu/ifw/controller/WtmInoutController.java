@@ -242,6 +242,8 @@ public class WtmInoutController {
 			}
 			
 			logger.debug("out : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
+			//퇴근일때만 인정시간 계산
+			inoutService.inoutPostProcess(paramMap, yn.get("unplannedYn").toString());
 
 		} catch(Exception e) {
 			logger.debug("outexception : " + e.getMessage() + paramMap.toString());
@@ -451,7 +453,8 @@ public class WtmInoutController {
 			data.put("tenantId", tenantId);
 			data.put("stdYmd", data.get("ymd").toString().replace(".", ""));
 			
-			inoutService.updateTimecardCancel(data);
+			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(data);
+			inoutService.updateTimecardCancel(data, yn.get("unplannedYn").toString());
 //			rp = inoutService.cancel(data);
 //			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "OUTC", "MO");
 
@@ -508,13 +511,7 @@ public class WtmInoutController {
 			paramMap.put("entryType", "MO");
 			
 			logger.debug("/mobile/"+ tenantId+"/inout/goback s2 " + paramMap.toString());
-			
-			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(paramMap);
-			if("Y".equals(yn.get("unplannedYn").toString())) {
-				inoutService.updateTimecardUnplanned(paramMap);
-			} else {
-				inoutService.updateTimecard(paramMap);
-			}
+			inoutService.updateTimecardExcept(paramMap);
 			logger.debug("EXCEPT : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 
 		} catch(Exception e) {
