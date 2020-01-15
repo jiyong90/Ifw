@@ -1,6 +1,5 @@
 package com.isu.ifw.intf;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.apache.camel.component.mybatis.MyBatisComponent;
@@ -8,21 +7,14 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,14 +22,17 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement 
-@EnableJpaRepositories(
+/*@EnableJpaRepositories(
 		entityManagerFactoryRef = "entityManager", 
 		transactionManagerRef = "jpaTransactionManager", 
 		basePackages = {"com.isu"}
-)
-@MapperScan(	basePackages = {"com.isu.ifw.mapper"})
+)*/
+@MapperScan(	basePackages = {"com.isu.ifw.intf.mapper"})
 public class DataSourceConfiguration {
-	 
+
+	@Value("${mybatis.config-location}")
+	private String quertPath;
+	
 	@Bean(name= {"authDataSource","dataSource"}, destroyMethod="close")
 	@ConfigurationProperties(prefix = "spring.datasource.hikari")
 	public DataSource dataSource() {
@@ -52,7 +47,7 @@ public class DataSourceConfiguration {
 		return builder.build();
 	}
 	
-	
+	/*
 	@Bean(name = "entityManager")
 	@Primary
 	public LocalContainerEntityManagerFactoryBean EntityManagerFactory(EntityManagerFactoryBuilder builder) {
@@ -61,11 +56,12 @@ public class DataSourceConfiguration {
 					.packages("com.isu.*.entity", "com.isu.*.dao")
 					.build();
 	}
-	
+	*/
 	/**
 	 * @param entityManagerFactory
 	 * @return
 	 */
+	/*
 	@Bean(name="jpaTransactionManager")
 	@Primary
 	public PlatformTransactionManager jpaTransactionManager(@Qualifier("entityManager") EntityManagerFactory entityManagerFactory) {
@@ -78,14 +74,15 @@ public class DataSourceConfiguration {
         transactionManager.setGlobalRollbackOnParticipationFailure(false);
         return transactionManager;
     }
-  
+  	*/
+	
 	@Bean 
 	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception{
 		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 		sqlSessionFactoryBean.setDataSource(dataSource);
 		sqlSessionFactoryBean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource("classpath:config/mybatis-config.xml"));
 		Resource[] arrResource = new PathMatchingResourcePatternResolver()
-	           .getResources("classpath:query/**/*.xml"); 
+	           .getResources(quertPath); 
 		sqlSessionFactoryBean.setMapperLocations(arrResource);
 		 
 		 return sqlSessionFactoryBean.getObject();

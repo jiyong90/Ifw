@@ -1,13 +1,14 @@
 spring:
   datasource:
-    hikari:
-      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      jdbc-url: jdbc:sqlserver://10.10.239.155:1433;databaseName=NEOE
-      username: NEOE
-      password: NEOE
-      pool-name: ifwiPool
-      maximum-pool-size: 20 
-      connection-timeout: 60000
+    #url: dbc:log4jdbc:mysql://db-2o9bg.cdb.ntruss.com:3306/worktimemanagement?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    #username: worktime
+    #password: dnjzmxkdla!2
+    #driver-class-name: com.mysql.cj.jdbc.Driver 
+    url: jdbc:sqlserver://10.10.239.155:1433;databaseName=NEOE
+    username: NEOE
+    password: NEOE
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      
     tomcat:
       max-active: 50
       max-wait: 20000
@@ -22,7 +23,7 @@ spring:
     show-sql: true
     
 mybatis:
-  config-location: classpath:query/**/*.xml
+  config-location: classpath:query/isuhr/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
 

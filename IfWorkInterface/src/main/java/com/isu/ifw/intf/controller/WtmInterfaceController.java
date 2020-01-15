@@ -23,7 +23,7 @@ public class WtmInterfaceController {
 	@Autowired
 	private WtmInterfaceService wtmInterfaceService;
 	
-	@RequestMapping(value="/s/code", method = RequestMethod.POST)
+	@RequestMapping(value="/s/code", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void sendMaCodedtl(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			wtmInterfaceService.sendCode(paramMap);
