@@ -203,6 +203,8 @@ public class WtmApiController {
 			} else {
 				inoutService.updateTimecard(paramMap);
 			}
+			//퇴근일때만 인정시간 계산
+			inoutService.inoutPostProcess(paramMap, yn.get("unplannedYn").toString());
 
 		} catch(Exception e) {
 			logger.debug("outexception : " + e.getMessage() + paramMap.toString());

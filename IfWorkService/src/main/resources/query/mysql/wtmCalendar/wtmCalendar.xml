@@ -223,6 +223,11 @@
 		WHERE TENANT_ID = #{tenantId} 
 			AND ENTER_CD = #{enterCd} 
 			AND SABUN = #{sabun} 
+		<if test="inoutDate != null">
 			AND F_WTM_DATE_FORMAT(ENTRY_EDATE,'YMDHIS') = CONCAT(F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHI'), '00')
+		</if>
+		<if test="inoutDate == null">
+			AND YMD = #{ymd}
+		</if>
    	 </update>
 </mapper>
