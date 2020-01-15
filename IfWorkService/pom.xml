@@ -243,6 +243,7 @@
 		</dependency> 
 
  -->		 
+ 
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-security</artifactId>
@@ -259,9 +260,35 @@
 	    	<artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
 	    	<version>1.16</version>
 		</dependency> 
-
+		
+		<dependency>
+            <groupId>pb-commons</groupId>
+            <artifactId>pb-msg-gabia</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/org.apache.xmlrpc/xmlrpc-client -->
+		<dependency>
+		    <groupId>org.apache.xmlrpc</groupId>
+		    <artifactId>xmlrpc-client</artifactId>
+		    <version>3.1.3</version>
+		</dependency>
+						
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlrpc/xmlrpc-common -->
+		<dependency>
+		    <groupId>org.apache.xmlrpc</groupId>
+		    <artifactId>xmlrpc-common</artifactId>
+		    <version>3.1.3</version>
+		</dependency>
+		
 	</dependencies>
  
+ 	<repositories>
+		<repository>
+			<id>thirdparty</id>
+			<url>http://hatch.pearbranch.com:8081/content/repositories/thirdparty</url>
+		</repository> 
+	</repositories>
 
 	<build>
 		<plugins>

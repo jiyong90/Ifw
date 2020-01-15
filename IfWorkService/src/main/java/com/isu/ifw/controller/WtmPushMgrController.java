@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -89,6 +90,34 @@ public class WtmPushMgrController {
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/save/msg", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam saveMsg(HttpServletRequest request, @RequestBody Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		MDC.put("sessionId", request.getSession().getId());
+		MDC.put("logId", UUID.randomUUID().toString());
+		MDC.put("type", "C");
+		MDC.put("param", paramMap.toString());
+		logger.debug("saveMsg Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+
+		try {		
+			pushMgrService.saveMsg(tenantId, enterCd, paramMap, userId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("저장 시 오류가 발생했습니다.");
 		}
 		
 		return rp;

@@ -8,10 +8,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.security.auth.message.config.AuthConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -50,6 +50,8 @@ import com.isu.ifw.common.mapper.CommUserMapper;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.service.LoginService;
+import com.isu.ifw.service.WtmEmpMgrService;
+import com.isu.ifw.service.WtmMsgService;
 import com.isu.ifw.util.Aes256;
 import com.isu.ifw.util.CookieUtil;
 import com.isu.ifw.util.WtmUtil;
@@ -86,6 +88,12 @@ public class IfwLoginController {
 
     @Autowired 
     DefaultTokenServices tokenService;
+    
+    @Autowired
+	WtmEmpMgrService empMgrService;
+	
+	@Autowired
+	WtmMsgService msgService;
    
     @RequestMapping(value = "/login/{tsId}/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView ssoLogin(@PathVariable String tsId,
@@ -494,5 +502,72 @@ public class IfwLoginController {
 	@RequestMapping(value = "/certificate/all", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void loginForWtm(HttpServletRequest request, HttpServletResponse response) {
 
+	}
+	
+	@RequestMapping(value = "/login/{tsId}/check/user/info", method = RequestMethod.GET)
+	public @ResponseBody boolean checkPasswordCertificate(@PathVariable String tsId
+														,@RequestParam String enterCd
+														,@RequestParam String userInfo
+														,HttpServletRequest request) throws Exception {
+		CommTenantModule tm = tenantModuleRepo.findByTenantKey(tsId);
+	    Long tenantId = tm.getTenantId();
+		
+		return empMgrService.checkPasswordCertificate(tenantId, enterCd, userInfo);
+	}
+	
+	@RequestMapping(value = "/login/{tsId}/sendCertificateCodeForChangePw", method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam sendCertificateCodeForChangePw(@PathVariable String tsId, @RequestBody Map<String, Object> paramMap
+			, HttpServletRequest request) throws Exception {
+		//validateParamMap(paramMap, "tenantId", "locale", "recruitId", "recruitNm", "data");
+		Map sessionData = (Map)request.getSession().getAttribute("sessionData");
+		//Long applicantId = new Long(sessionData.get("applicant_id")+"");
+		CommTenantModule tm = tenantModuleRepo.findByTenantKey(tsId);
+	    Long tenantId = tm.getTenantId();
+		String enterCd = paramMap.get("enterCd").toString();
+		String userInfo = paramMap.get("userInfo").toString();
+		
+		ReturnParam rp = new ReturnParam();
+		try{
+			rp = msgService.sendCertificateCodeForChangePw(tenantId, enterCd, userInfo);
+		}catch(Exception e){
+			e.printStackTrace();
+			rp.setMessage(e.getMessage());
+		}
+		return rp;
+	}
+	
+	@RequestMapping(value = "/login/{tsId}/changePassword", method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam changePassword(@PathVariable String tsId, @RequestBody Map<String, Object> paramMap
+			, HttpServletRequest request) throws Exception {
+		Map sessionData = (Map)request.getSession().getAttribute("sessionData");
+		CommTenantModule tm = tenantModuleRepo.findByTenantKey(tsId);
+	    Long tenantId = tm.getTenantId();
+		String enterCd = paramMap.get("enterCd").toString();
+		String userInfo = paramMap.get("userInfo").toString();
+		String otp = paramMap.get("otp").toString();
+		
+		ReturnParam rp = new ReturnParam();
+		try{
+			rp = empMgrService.codeCheck(tenantId, enterCd, otp, userInfo);
+			
+			if(rp.containsKey("status") && rp.get("status")!=null && "OK".equals(rp.get("status"))) {
+				
+				String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
+				int repeatCount = Integer.valueOf(tcms.getConfigValue(tenantId, "SECURITY.SHA.REPEAT", true, ""));
+				
+				paramMap.put("encKey", encKey);
+				paramMap.put("repeatCount", repeatCount);
+				
+				empMgrService.changePw(tenantId, tsId, enterCd, paramMap);
+				rp.setSuccess("비밀번호 재설정이 완료되었습니다.");
+			} else {
+				return rp;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			rp.setFail("비밀번호 설정 시 오류가 발생했습니다.");
+		}
+		return rp;
 	}
 }

@@ -27,6 +27,9 @@
         <input type="text" id="redirect_uri" name="redirect_uri" class="form-control" value="${redirect_uri}" hidden>
         <div class="checkbox mb-3">
             <label><input type="checkbox" id="keepLogin" value="remember-me"> 아이디 저장</label>
+        	<#if interfaceYn?? && interfaceYn?exists && interfaceYn=='Y' >
+            <a href="#" class="find-pw" onclick="location.href='${rc.getContextPath()}/login/${tsId}/findPassword';">비밀번호 재설정</a>
+        	</#if>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
         <#if certificateError??>

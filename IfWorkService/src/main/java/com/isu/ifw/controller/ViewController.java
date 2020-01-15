@@ -351,11 +351,8 @@ public class ViewController {
 		mv.addObject("authFunctions", tcms.getConfigValue(tenantId, "WTMS.AUTH.FUNTIONS", true, ""));
 		mv.addObject("isEmbedded",false); // 단독으로 열린것임을 표시
 		
-		//hr interface여부
-		WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_HR_INTERFACE_YN");
-		if(propertie!=null) {
-			mv.addObject("interfaceYn", propertie.getInfoValue());
-		}
+		 //hr interface여부
+  		mv.addObject("interfaceYn", tcms.getConfigValue(tenantId, "WTMS.HR.INTERFACE_YN", true, ""));
 		
 		if("otApplMgr".equals(viewPage)) {
 			//연장근무 또는 휴일근무 신청 시 사유
@@ -371,6 +368,9 @@ public class ViewController {
 			//연장근무 신청서의 휴일대체 선택대상
 			List<Map<String, Object>> rules = ruleService.getRuleList(tenantId, enterCd);
 			mv.addObject("rules",rules);
+		}else if("pushMgr".equals(viewPage)) {
+			//비밀 번호 인증방식(email or phone)
+	  		mv.addObject("passwordCertificate", tcms.getConfigValue(tenantId, "WTMS.LOGIN.PASSWORD_CERTIFICATE", true, ""));
 		}
 		
 		return mv;
@@ -462,10 +462,7 @@ public class ViewController {
 		}
 		
 		//hr interface여부
-		WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_HR_INTERFACE_YN");
-		if(propertie!=null) {
-			mv.addObject("interfaceYn", propertie.getInfoValue());
-		}
+		mv.addObject("interfaceYn", tcms.getConfigValue(tenantId, "WTMS.HR.INTERFACE_YN", true, ""));
 
 //		mv.addObject("tenant", tenantId);
 
@@ -595,5 +592,40 @@ public class ViewController {
 		return showView(tsId, viewPage, request);
 	}
 	
+	@RequestMapping(value="/login/{tsId}/findPassword", method= {RequestMethod.GET, RequestMethod.POST})
+	public ModelAndView viewFindPassword(@PathVariable String tsId, HttpServletRequest request) throws Exception {
+		
+		ModelAndView mv= new ModelAndView("findPassword");
+		CommTenantModule tm = tenantModuleRepo.findByTenantKey(tsId);
+	    Long tenantId = tm.getTenantId();
+        
+	    String authorizeUri = tcms.getConfigValue(tenantId, "IFO.LOGIN.URI", true, "");
+	    
+		String company = tcms.getConfigValue(tenantId, "WTMS.LOGIN.COMPANY_LIST", true, "");
+        List<Map<String, Object>> companyList = new ArrayList<Map<String, Object>>();
+        
+        ObjectMapper mapper = new ObjectMapper();
+        if(company != null && !"".equals(company)) 
+        	companyList = mapper.readValue(company, new ArrayList<Map<String, Object>>().getClass());
+        mv.addObject("companyList", companyList);
+        mv.addObject("tsId", tsId);
+        mv.addObject("loginBackgroundImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.BACKGROUND_IMG", true, ""));
+        mv.addObject("loginLogoImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.LOGO_IMG", true, ""));
+        mv.addObject("mainTitle", tcms.getConfigValue(tenantId, "WTMS.MAIN.TITLE", true, ""));
+        mv.addObject("copyright", tcms.getConfigValue(tenantId, "WTMS.MAIN.COPYRIGHT", true, ""));
+        mv.addObject("redirect_uri", tcms.getConfigValue(tenantId, "IFO.REDIRECT.URI", true, ""));
+        mv.addObject("access_token", "");
+
+        mv.addObject("Authorization", "");
+        mv.addObject("userAuthorizationUri", authorizeUri);
+	    
+        //hr interface여부
+  		mv.addObject("interfaceYn", tcms.getConfigValue(tenantId, "WTMS.HR.INTERFACE_YN", true, ""));
+  		
+  		//비밀 번호 인증방식(email or phone)
+  		mv.addObject("passwordCertificate", tcms.getConfigValue(tenantId, "WTMS.LOGIN.PASSWORD_CERTIFICATE", true, ""));
+			
+        return mv;
+	}
 	
 }

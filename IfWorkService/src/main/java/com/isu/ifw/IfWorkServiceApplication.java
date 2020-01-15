@@ -14,7 +14,7 @@ import org.springframework.web.filter.CorsFilter;
 
 
 @Configuration 
-@ComponentScan(basePackages = {"com.isu"} 
+@ComponentScan(basePackages = {"com.isu", "com.pb"} 
 	, includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CorsFilter.class)
 )
 @SpringBootApplication
