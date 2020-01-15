@@ -30,6 +30,7 @@ import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.mapper.WtmInoutHisMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.service.WtmInoutService;
+import com.isu.ifw.service.WtmInterfaceService;
 import com.isu.ifw.util.MobileUtil;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
@@ -53,6 +54,27 @@ public class WtmApiController {
 	@Autowired
 	WtmInoutHisMapper inoutHisMapper;
 
+
+	@Autowired
+	private WtmInterfaceService wtmInterfaceService;
+
+	@RequestMapping(value = "/{tsId}/code",method = RequestMethod.POST)
+	public void postCode(@PathVariable String tsId, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		CommTenantModule tm = null;
+	    tm = tenantModuleRepo.findByTenantKey(tsId);
+        Long tenantId = tm.getTenantId();
+        
+		// 공통코드
+		System.out.println("postCode start");
+		List<Map<String, Object>> dataList = (List<Map<String, Object>>) paramMap.get("data");
+		wtmInterfaceService.saveCodeIntf(tenantId, dataList); 
+		System.out.println("postCode end");
+		
+		return;
+	}
+	
+	
 	//출퇴근 상태 정보
 	@RequestMapping(value = "/{tsId}/worktime/status", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyWorkStatus(

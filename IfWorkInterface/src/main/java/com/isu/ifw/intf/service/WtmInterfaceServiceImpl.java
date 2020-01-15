@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.intf.mapper.WtmInterfaceMapper;
 
 @Service
@@ -67,18 +68,31 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	}
 	
 	@Override
-	public void sendCode(Map<String, Object> paramMap) throws Exception{
+	public Map<String, Object> sendCode(Map<String, Object> paramMap) throws Exception{
 		System.out.println("WtmInterfaceServiceImpl getCode");
 		List<Map<String, Object>> ifCodeList = null;
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println("================================");
+		System.out.println(mapper.writeValueAsString(paramMap));
+		System.out.println("================================");
         try {
+        	
         	ifCodeList = wtmInterfaceMapper.findMaCodedtlAll(paramMap);
         	Map<String, Object> eParam = new HashMap<>();
         	eParam.put("data", ifCodeList);
+    		System.out.println("================================");
+    		System.out.println(mapper.writeValueAsString(ifCodeList));
+    		System.out.println("================================");
         	exchangeService.exchange(codeUrl, HttpMethod.POST, null, eParam);
-        	
+
+            return eParam;
         } catch(Exception e){
             e.printStackTrace();
+            Map<String, Object> eParam = new HashMap<>();
+            eParam.put("message", e.getMessage());
+            return eParam;
         }
+        
 	}
 	
 	@Override

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.intf.service.WtmInterfaceService;
 import com.isu.ifw.intf.vo.ReturnParam;
 
@@ -24,13 +25,17 @@ public class WtmInterfaceController {
 	private WtmInterfaceService wtmInterfaceService;
 	
 	@RequestMapping(value="/s/code", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void sendMaCodedtl(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+	public String sendMaCodedtl(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			wtmInterfaceService.sendCode(paramMap);
+			ObjectMapper mapper = new ObjectMapper();
+			Map<String, Object> resMap = wtmInterfaceService.sendCode(paramMap);
+			return mapper.writeValueAsString(resMap);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return e.getMessage();
 		}
+		 
 	}
 	
 	@RequestMapping(value = "/code",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
