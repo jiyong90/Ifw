@@ -1,4 +1,4 @@
-package com.isu.option.vo;
+package com.isu.ifw.intf.vo;
 
 import java.util.HashMap;
 

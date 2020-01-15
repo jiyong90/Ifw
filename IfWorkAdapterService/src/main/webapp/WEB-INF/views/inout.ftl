@@ -44,14 +44,18 @@
         </div>
         <div class="inner-wrapper">
             <div class="contents-wrap" v-if="entrySymd">
-                <span class="title">출근</span>
-                <span class="date">{{entrySymd}}</span>
-                <span class="time">{{entryStime}}</span>
+            	<template  v-if="entrySymd">
+	                <span class="title">출근</span>
+	                <span class="date">{{entrySymd}}</span>
+	                <span class="time">{{entryStime}}</span>
+                </template>
             </div>
-            <div class="contents-wrap" v-if="entryEymd">
-                <span class="title">퇴근</span>
-                <span class="date">{{entryEymd}}</span>
-                <span class="time">{{entryEtime}}</span>
+            <div class="contents-wrap" >
+            	<template  v-if="entryEymd">
+	                <span class="title">퇴근</span>
+	                <span class="date">{{entryEymd}}</span>
+	                <span class="time">{{entryEtime}}</span>
+                </template>
             </div>
             <a href="/ife/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
             <div class="btn-wrap">

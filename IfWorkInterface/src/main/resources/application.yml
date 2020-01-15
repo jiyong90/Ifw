@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    hikari:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      jdbc-url: jdbc:sqlserver://10.10.239.155:1433;databaseName=NEOE
+      username: NEOE
+      password: NEOE
+      pool-name: ifwiPool
+      maximum-pool-size: 20 
+      connection-timeout: 60000
+    tomcat:
+      max-active: 50
+      max-wait: 20000
+      max-idle: 20
+      min-idle: 15
+      test-on-borrow: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 3600000 
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    
+mybatis:
+  config-location: classpath:query/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+ifw:
+  client-id: hdngv
+  secret: chWQsUbouLFXYYmy5F7k9UFYGprNH1F6uzqsOvt0K9s=
+  token-url: https://cloudhr.pearbranch.com/ifw/oauth/token
+  code-post: https://cloudhr.pearbranch.com/ifw/interface/hdngv/code
+  

@@ -542,4 +542,53 @@ public class WtmMobileController {
 		logger.debug("/mobile/"+ tenantId+"/team/teamdetail s " + rp.toString());
 		return rp;
 	}
+	
+	/**
+	 * 내 근무상태 정보
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/my/info", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getMyworkInfo(@PathVariable Long tenantId,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey, 
+			@RequestParam(value="id", required = true) String ymd, 
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String userToken = request.getParameter("userToken");
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+			logger.debug("/mobile/{tenantId}/dashboard " + empKey);
+			
+			Map<String, Object> resultMap = new HashMap();
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId" , tenantId);
+			paramMap.put("enterCd" , enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
+			
+			
+			Map<String, Object> data = wtmCalendarService.getEmpWorkCalendarDayInfo(paramMap);
+			resultMap.put("data", data);
+			rp.put("result", resultMap);
+		} catch(Exception e) {
+			rp.put("result", null);
+			logger.debug(e.getMessage());
+		}
+		return rp;
+	}
 }

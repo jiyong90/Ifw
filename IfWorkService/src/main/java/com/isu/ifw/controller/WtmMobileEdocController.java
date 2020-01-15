@@ -115,9 +115,10 @@ public class WtmMobileEdocController {
 			logger.debug("/mobile/"+ tenantId+"/edocument/list s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 	
 			// 직원의 신청서 내역 조회
-			List<?> list = mobileService.getApplList(tenantId, enterCd, sabun, typeCd, startPage, pageCount);
-
+			List<Map<String, Object>> list = mobileService.getApplList(tenantId, enterCd, sabun, typeCd, startPage, pageCount);
+			
 			if (list.size() > 0) {
+//				list = MobileUtil.parseApprList(list);
 				rp.setSuccess("");
 				rp.put("result", list);
 			} else {

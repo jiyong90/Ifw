@@ -422,22 +422,36 @@ public class WtmInoutController {
 	@RequestMapping(value = "/mobile/{tenantId}/inout/cancel", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam cancelOutRequest(@PathVariable Long tenantId,
 			@RequestBody Map<String,Object> params, HttpServletRequest request) throws Exception {		
-		
 		String empKey = params.get("empKey").toString();
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("퇴근 정보가 취소되었습니다.");
 
 		String userToken = params.get("userToken").toString();
-		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
 
 		Map<String, Object> data = (Map<String, Object>) params.get("data");
 		
 		logger.debug("/mobile/"+ tenantId+"/inout/cancel s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
 		try {
+			if(!data.get("inoutTypeCd").equals("OUT")) {
+				rp.setFail("취소 가능한 상태가 아닙니다.");
+				return rp;
+			}
+			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmmss");
+			Date now = new Date();
+			String today = format1.format(now);
+
+			data.put("inoutType", "OUTC");
+			data.put("inoutDate", format1.parse(data.get("id").toString()));
+			data.put("entryType", "MO");
+			data.put("enterCd", enterCd);
+			data.put("sabun", sabun);
+			data.put("tenantId", tenantId);
+			data.put("stdYmd", data.get("ymd").toString().replace(".", ""));
 			
-			inoutService.updateTimecard(data);
+			inoutService.updateTimecardCancel(data);
 //			rp = inoutService.cancel(data);
 //			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "OUTC", "MO");
 

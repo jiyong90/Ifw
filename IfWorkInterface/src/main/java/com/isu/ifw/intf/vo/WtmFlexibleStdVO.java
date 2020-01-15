@@ -1,4 +1,4 @@
-package com.isu.ifw.vo;
+package com.isu.ifw.intf.vo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

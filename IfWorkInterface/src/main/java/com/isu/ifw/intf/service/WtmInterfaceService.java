@@ -1,9 +1,9 @@
-package com.isu.ifw.service;
+package com.isu.ifw.intf.service;
 
 import java.util.List;
 import java.util.Map;
 
-import com.isu.ifw.vo.WtmFlexibleStdVO;
+import com.isu.ifw.intf.vo.WtmFlexibleStdVO;
 
 /**
  * 인사자료 이관용 인터페이스
@@ -19,6 +19,7 @@ public interface WtmInterfaceService {
 	 * @throws Exception 
 	 */
 	public List<Map<String, Object>> getCodeIfResult(String tenantId, String lastDataTime) throws Exception;
+	public void sendCode(Map<String, Object> paramMap) throws Exception;
 	
 	/**
 	 * 공휴일정보 이관
