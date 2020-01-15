@@ -1223,6 +1223,7 @@
          			
          			$this.calendar.gotoDate($this.applInfo.useSymd);
          		} 
+         		
          		$("#flexibleAppl").show();
          	},
          	viewElasFlexitimeAppl : function(){ //탄근제 신청서
@@ -1560,10 +1561,40 @@
          		timeCalendarVue.preCheck(info, true);
          	},
          	viewInOutChangeAppl: function(){
+         		timeCalendarVue.applLine = this.getApplLine('ENTRY_CHG');
          		$("#inOutChangeModal").modal("show"); 
          	},
          	planElasWorkDay: function(flexibleApplId){
          		location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Day&flexibleApplId='+flexibleApplId;
+         	},
+         	getApplLine: function(applCd) {
+         		var $this = this;
+         		var applLine = [];
+         		var param = {
+					applCd: applCd
+				};
+				
+				//결재라인
+				Util.ajax({
+					url: "${rc.getContextPath()}/appl/line",
+					type: "GET",
+					contentType: 'application/json',
+					data: param,
+					dataType: "json",
+					async: false,
+					success: function(data) {
+						if(data!=null && data.status=='OK') {
+							applLine = data.applLine;
+						}
+						
+					},
+					error: function(e) {
+						console.log(e);
+					}
+				});
+				
+				return applLine;
+			
          	}
 	    }
    	});

@@ -1,3 +1,4 @@
+<#include "/applLineComponent.ftl">
 <div id="timeCalendar" class="calendar-wrap" v-cloak>
 	<!-- 회수하기 modal start -->
     <div class="modal fade show" id="confirmModal" tabindex="-1" role="dialog">
@@ -212,6 +213,7 @@
                                 </div>
                             </div>
                             -->
+                            <appl-line :bind-data="applLine"></appl-line>
                         </div>
                         <div class="btn-wrap text-center">
                             <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
@@ -314,6 +316,7 @@
                                         required=""></textarea>
                                 </div>
                             </div>
+                            <appl-line :bind-data="applLine"></appl-line>
                         </div>
                         <div class="btn-wrap text-center">
                             <button type="button" class="btn btn-secondary rounded-0"
@@ -345,15 +348,6 @@
                 <div class="modal-body">
                     <form>
                         <div class="modal-app-wrap">
-                        	<div class="inner-wrap">
-                        		<div class="row">
-	                        		<div class="col-4 col-sm-4 col-xl-4" v-for="l in overtimeAppl.applLine">
-					                    <div class="title">{{l.apprTypeNm}}</div>
-					                    <div class="desc">{{l.empNm}}({{l.sabun}})</div>
-					                </div>
-				                </div>
-                        	</div>
-                        	<hr class="bar">
                             <div class="inner-wrap">
                                 <div class="title" v-if="result.holidayYn!='Y'">연장근로시간</div>
                                 <div class="title" v-else>휴일근로시간</div>
@@ -435,6 +429,7 @@
                                 	{{overtimeAppl.cancelReason}}
                                 </div>
                             </div>
+                            <appl-line :bind-data="overtimeAppl.applLine"></appl-line>
                             <hr class="bar">
                         </div>
                         <div class="btn-wrap text-center" v-if="overtimeAppl.applSabun==overtimeAppl.sabun">
@@ -498,7 +493,8 @@
    	var timeCalendarVue = new Vue({
    		el: "#timeCalendar",
   			components : {
-  				FullCalendar : fullCalendarComponent
+  				FullCalendar : fullCalendarComponent,
+  				'appl-line': applLine
   		    },
   		    data : {
   		    	t: true,
@@ -525,7 +521,8 @@
   		    	applCode: {}, //신청서 정보
   		    	subsYn: false, //대체휴가 사용 여부
   		    	payTargetYn: false, //수당 지급 대상자
-  		    	inOutChangeAppl: {}
+  		    	inOutChangeAppl: {},
+  		    	applLine: []
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    },
   		    computed: {
@@ -967,24 +964,9 @@
 						$this.getOtSubs(moment(sYmd).format('YYYYMMDD'));
 					} */
 					
-					var param = {
-						d : moment($this.workday).format('YYYYMMDD')
-					};
+					this.applLine = calendarLeftVue.getApplLine('OT');
 					
-					//결재라인
-					Util.ajax({
-						url: "${rc.getContextPath()}/otAppl/line",
-						type: "GET",
-						contentType: 'application/json',
-						data: param,
-						dataType: "json",
-						success: function(data) {
-							$("#overtimeAppl").modal("show"); 
-						},
-						error: function(e) {
-							console.log(e);
-						}
-					});
+					$("#overtimeAppl").modal("show"); 
 					
   	         	},
   	         	viewOvertimeApplDetail: function(timeTypeCd, applId){
