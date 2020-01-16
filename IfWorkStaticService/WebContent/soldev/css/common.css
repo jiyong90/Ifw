@@ -1213,7 +1213,8 @@ box-sizing: border-box;
 
 /* modal inner accordion */
 /* accordion menu */
-.accordion-wrap{margin-right:-26px; margin-left:-26px; margin-bottom: -10px;}
+.accordion-wrap{margin-right:-26px; margin-left:-26px;}
+.modal-app-wrap> div.accordion-wrap:last-child{margin-bottom:-10px;}
 .accordion {width: 100%; background: #FFF; border-top: 1px solid #cfcfcf; border-bottom: 1px solid #cfcfcf;}
 .accordion li:last-child .link {border-bottom: 0; }
 .accordion li:first-child .link{border-top:0px;}
