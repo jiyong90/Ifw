@@ -58,8 +58,8 @@ public class WtmApiController {
 	@Autowired
 	private WtmInterfaceService wtmInterfaceService;
 
-	@RequestMapping(value = "/{tsId}/code",method = RequestMethod.POST)
-	public void postCode(@PathVariable String tsId, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping(value = "/{tsId}/d/{gubun}",method = RequestMethod.POST)
+	public void postCode(@PathVariable String tsId,@PathVariable String gubun, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		CommTenantModule tm = null;
 	    tm = tenantModuleRepo.findByTenantKey(tsId);
@@ -68,7 +68,23 @@ public class WtmApiController {
 		// 공통코드
 		System.out.println("postCode start");
 		List<Map<String, Object>> dataList = (List<Map<String, Object>>) paramMap.get("data");
-		wtmInterfaceService.saveCodeIntf(tenantId, dataList); 
+		if(gubun.equalsIgnoreCase("CODE")) {
+			wtmInterfaceService.saveCodeIntf(tenantId, dataList);
+		}else if (gubun.equalsIgnoreCase("EMP")) {
+			wtmInterfaceService.saveEmpIntf(tenantId, dataList);
+		}else if (gubun.equalsIgnoreCase("EMPADDR")) {
+			wtmInterfaceService.saveEmpAddrIntf(tenantId, dataList);
+		}else if (gubun.equalsIgnoreCase("GNT")) {
+			wtmInterfaceService.saveGntIntf(tenantId, dataList);
+		}else if (gubun.equalsIgnoreCase("HOLIDAY")) {
+			wtmInterfaceService.saveHolidayIntf(tenantId, dataList);
+		}else if (gubun.equalsIgnoreCase("ORG")) {
+			wtmInterfaceService.saveOrgIntf(tenantId, dataList);
+		}else if (gubun.equalsIgnoreCase("ORGCONC")) {
+			wtmInterfaceService.saveOrgConcIntf(tenantId, dataList);
+		}else if (gubun.equalsIgnoreCase("TAAAPPL")) {
+			wtmInterfaceService.saveTaaApplIntf(tenantId, dataList);
+		}
 		System.out.println("postCode end");
 		
 		return;

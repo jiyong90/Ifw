@@ -16,7 +16,7 @@
         <div class="inner-wrapper">
             <div class="ico-wrap">
                 <img v-if="inoutType=='IN'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workday.png" alt="">
-                <img v-if="inoutType=='HOL'" src="assets/img/icon_holiday.png" alt="">
+                <img v-if="inoutType=='HOL'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_holiday.png" alt="">
             </div>
             <div class="contents-wrap">
                 <p class="date">{{formattedYmd}}</p>
@@ -42,8 +42,8 @@
                 </div>
             </div>
         </div>
-        <div class="inner-wrapper">
-            <div class="contents-wrap" v-if="entrySymd">
+        <div class="contents-outer-wrap">
+            <div class="contents-wrap">
             	<template  v-if="entrySymd">
 	                <span class="title">출근</span>
 	                <span class="date">{{entrySymd}}</span>
@@ -57,9 +57,19 @@
 	                <span class="time">{{entryEtime}}</span>
                 </template>
             </div>
-            <a href="/ife/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
+            <div class="contents-wrap" >
+            	<template  v-if="exceptYmd">
+	                <span class="title" v-if="exceptType=='BACK'">휴식중</span>
+	                <span class="title" v-if="exceptType=='GO'">휴식종료</span>
+	                <span class="date">{{exceptYmd}}</span>
+	                <span class="time">{{exceptTime}}</span>
+                </template>
+            </div>
             <div class="btn-wrap">
+            <a href="/ife/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
                 <button class="btn btn-off" v-if="inoutType=='OUT'" @click="clickOut">퇴근하기</button>
+                <button class="btn btn-go" v-if="inoutType=='OUT' && exceptType=='GO'" @click="clickExcept">휴식</button>
+                <button class="btn btn-back" v-if="inoutType=='OUT' && exceptType=='BACK'" @click="clickExcept">휴식취소</button>
                 <button class="btn btn-cancel" v-if="inoutType=='END'" @click="clickCancel">퇴근취소</button>
             </div>
         </div>
@@ -79,6 +89,9 @@
 			    	label: '${label}',
 			    	desc: '${desc}',
 			    	inoutType: '${inoutType}', 
+			    	exceptType: '${exceptType}',
+			    	exceptYmd: '${exceptYmd}',
+			    	exceptTime: '${exceptTime}',
 			    	empId : '${sabun}',
 		    		enterCd : '${enterCd}'
 		  		},
@@ -129,6 +142,9 @@
 									$this.entryEtime = data.result.entryEtime;
 									$this.label = data.result.label;
 									$this.inoutType = data.result.inoutType;
+									$this.exceptType = data.result.exceptType;
+									$this.exceptYmd = data.result.exceptYmd;
+									$this.exceptTime = data.result.exceptTime; 
 									$this.desc = data.result.desc;
 								}
 							},
@@ -171,6 +187,9 @@
 									$this.entryEtime = data.result.entryEtime;
 									$this.label = data.result.label;
 									$this.inoutType = data.result.inoutType;
+									$this.exceptType = data.result.exceptType;
+									$this.exceptYmd = data.result.exceptYmd;
+									$this.exceptTime = data.result.exceptTime;  
 									$this.desc = data.result.desc;
 								}
 								
@@ -214,6 +233,54 @@
 									$this.entryEtime = data.result.entryEtime;
 									$this.label = data.result.label;
 									$this.inoutType = data.result.inoutType;
+									$this.exceptType = data.result.exceptType;
+									$this.exceptYmd = data.result.exceptYmd;
+									$this.exceptTime = data.result.exceptTime;  
+									$this.desc = data.result.desc;
+								}
+							},
+							error: function(e) {
+								console.log(e);
+								$("#loading").hide();
+								$("#alertText").html("저장 시 오류가 발생했습니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+		  	  	         		$("#alertModal").modal("show"); 
+							}
+						}); 
+			    	},
+			    	clickExcept: function(){
+			    		var $this =  this;
+			    		var param = { 
+			    			ymd : $this.ymd,
+			    			enterCd : $this.enterCd,
+			    			sabun : $this.empId
+			    		};
+			    		
+			    		Util.ajax({
+							url: "${rc.getContextPath()}/api/${tsId}/except",
+							type: "POST",
+							contentType: 'application/json',
+							data: JSON.stringify(param),
+							dataType: "json",
+							success: function(data) { 
+								console.log(data);
+								if(data!=null && data.status=='OK') {
+									
+								} else {
+									alert(data.message);
+								}
+								if(data.result != null && data.result != undefined){
+									//{result={ymd=20200108, entryEdate=, entrySdate=2020-01-08 10:22:00, label=퇴근하기, inoutType=OUT, desc=근무중}
+									$this.ymd = data.result.ymd;
+									$this.entrySymd = data.result.entrySymd;
+									$this.entryStime = data.result.entryStime;
+									$this.entryEymd = data.result.entryEymd;
+									$this.entryEtime = data.result.entryEtime;
+									$this.label = data.result.label;
+									$this.inoutType = data.result.inoutType;
+									$this.exceptType = data.result.exceptType;
+									$this.exceptYmd = data.result.exceptYmd;
+									$this.exceptTime = data.result.exceptTime;  
 									$this.desc = data.result.desc;
 								}
 							},

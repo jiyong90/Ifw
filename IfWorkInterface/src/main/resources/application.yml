@@ -4,6 +4,11 @@ spring:
     #username: worktime
     #password: dnjzmxkdla!2
     #driver-class-name: com.mysql.cj.jdbc.Driver 
+    hikari:
+      jdbc-url: jdbc:sqlserver://10.10.239.155:1433;databaseName=NEOE
+      username: NEOE
+      password: NEOE
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     url: jdbc:sqlserver://10.10.239.155:1433;databaseName=NEOE
     username: NEOE
     password: NEOE
@@ -23,13 +28,20 @@ spring:
     show-sql: true
     
 mybatis:
-  config-location: classpath:query/isuhr/**/*.xml
+  config-location: classpath:query/iuerp/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
 
 ifw:
   client-id: hdngv
   secret: chWQsUbouLFXYYmy5F7k9UFYGprNH1F6uzqsOvt0K9s=
-  token-url: https://cloudhr.pearbranch.com/ifw/oauth/token
-  code-post: https://cloudhr.pearbranch.com/ifw/interface/hdngv/code
+  token-url: https://cloudhr.pearbranch.com/ifa/oauth/token
+  code-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/code
+  emp-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/emp
+  empaddr-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/empaddr
+  gnt-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/gnt
+  holiday-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/holiday
+  org-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/org
+  orgconc-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/orgconc
+  taaappl-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/taaappl
   

@@ -42,13 +42,14 @@ ifw:
   in-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/in
   out-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/out
   cancel-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/cancel
+  except-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/except
   m-status-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/worktime/status
   dashboard-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/dashboard
   edoc-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/edocument/{{function}}
   team-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/team/{{function}}   
   apply-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/apply/{{function}} 
   inout-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/inout/{{function}}
-  
+  my-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/my/{{function}}
   #login-post: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/certificate 
   #valid-get: http://10.30.30.56:8080/ifw/mobile/{{tsId}}/validate    
   #status-get: http://10.30.30.56:8080/ifw/api/{{tsId}}/worktime/status

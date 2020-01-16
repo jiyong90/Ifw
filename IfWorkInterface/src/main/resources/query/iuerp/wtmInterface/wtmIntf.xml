@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.intf.mapper.WtmIntfMapper">
+ 
+	<select id="getWtmCode" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT #{convEnterCd} AS ENTER_CD,
+					CASE
+						WHEN CD_FIELD = 'HR_H000002' THEN 'POS_CD' -- 직위
+						WHEN CD_FIELD = 'HR_H000003' THEN 'CLASS_CD' -- 직급
+						WHEN CD_FIELD = 'HR_H000052' THEN 'DUTY_CD' -- 직책
+						WHEN CD_FIELD = 'HR_H000039' THEN 'JOB_CD' --직무
+						WHEN CD_FIELD = 'HR_H000004' THEN 'JOB_TYPE_CD' --직군
+						ELSE '' END AS GRCODE_CD
+				, CD_SYSDEF AS CODE
+				, NM_SYSDEF AS CODE_NM
+				, '20190101' AS SYMD
+				, '29991231' AS EYMD
+				, NULL AS SEQ
+				, '' AS NOTE 
+			FROM MA_CODEDTL
+			WHERE CD_COMPANY = #{cdCompany}
+			AND  CD_FIELD IN ( 'HR_H000002', -- 직위
+								'HR_H000003', --직급,
+								'HR_H000052', -- 직책, 
+								'HR_H000039', -- 직무, 
+								'HR_H000004' -- 직군
+								)
+		]]>
+	</select>
+	 
+    <select id="getWtmHoliday" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT #{convEnterCd} AS ENTER_CD, LOCATION_CD, YMD, HOLIDAY_NM, FESTIVE_YN, PAY_YN
+			  FROM (
+			        ) A
+			 WHERE ENTER_CD = #{enterCd}
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getWtmGnt" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, GNT_CD, GNT_NM, GNT_GUBUN_CD, HOL_INCL_YN, REQ_USE_TYPE, WORK_YN, PAY_YN, NOTE
+			  FROM (SELECT #{convEnterCd} AS ENTER_CD
+						 , A.CD_WCODE AS GNT_CD
+						 , A.NM_WCODE AS GNT_NM
+						 , '' AS GNT_GUBUN_CD
+						 , CASE B.NM_VALUE WHEN '2' THEN 'Y'
+								ELSE 'N' END AS HOL_INCL_YN
+						 , CASE A.CD_WTYPE WHEN '001' THEN 'D'
+										   ELSE 'H' END AS REQ_TYPE_CD
+						 , 'N' AS WORK_YN
+						 , 'N' AS PAY_YN
+						 , '' AS NOTE
+						 , ISNULL(A.DTS_UPDATE,'20190101000000') AS CHKDATE
+					  FROM HR_WCODE A
+					 INNER JOIN HR_CONFIG B
+					    ON A.CD_COMPANY = B.CD_COMPANY
+					   AND B.CD_SYS='CON043'
+					 WHERE A.CD_COMPANY = ${cdCompany}
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getWtmOrg" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, ORG_CD, ORG_NM,  PRIOR_ORG_CD, SEQ, ORG_LEVEL, SYMD, EYMD, ORG_TYPE, NOTE
+			  FROM (SELECT #{convEnterCd} AS ENTER_CD
+							, CD_DEPT AS ORG_CD
+							, NM_DEPT AS ORG_NM
+							, H_DEPT AS PRIOR_ORG_CD
+							, NO_SORT AS SEQ
+							, LB_DEPT AS ORG_LEVEL
+							, ISNULL(DT_START, '20190101') AS SYMD
+							, ISNULL(DT_END, '29991231') AS EYMD
+							, '' AS ORG_TYPE
+							, DC_RMK1 AS NOTE 
+					FROM MA_DEPT
+					WHERE CD_COMPANY = ${cdCompany}
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+        ]]>
+    </select>
+    
+    
+    <select id="getWtmEmp" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, SYMD, EYMD, STATUS_CD, ORG_CD, LOCATION_CD
+			     , DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, LEADER_YN
+			  FROM (SELECT #{convEnterCd} AS ENTER_CD
+							, NO_EMP AS SABUN
+							, NM_KOR AS EMP_NM
+							, NM_ENG AS EMP_ENG_NM
+							, DT_ENTER AS SYMD
+							, REPLACE(DT_RETIRE, '00000000', '29991231') AS EYMD
+							, CASE
+								WHEN CD_INCOM = '001' THEN 'AA' --재직
+								WHEN CD_INCOM = '002' THEN 'CA' --휴직
+								WHEN CD_INCOM = '099' THEN 'RA' --퇴직
+							END AS STATUS_CD
+							, CD_DEPT AS ORG_CD
+							, CD_BIZAREA AS LOCATION_CD
+							, CD_DUTY_RESP AS DUTY_CD
+							, CD_DUTY_RANK AS POS_CD
+							, CD_DUTY_STEP AS JOB_GROUP_CD
+							, CD_DUTY_TYPE AS JOB_GROUP_CD
+							, CD_DUTY_WORK AS JOB_CD
+							, TP_EMP AS PAY_TYPE_CD
+							, ISNULL((SELECT 'Y' FROM MA_DEPT B 
+								WHERE A.CD_COMPANY = B.CD_COMPANY 
+								  AND A.CD_DEPT = B.CD_DEPT 
+								  AND A.NO_EMP = B.NO_EMPMNG 
+								  AND convert(varchar, getdate(), 112) BETWEEN ISNULL(B.DT_START, '20190101') AND ISNULL(B.DT_END, '29991231')), 'N') AS LEADER_YN
+							, DC_RMK AS NOTE
+							, ISNULL(DTS_UPDATE, '20190101000000') AS CHKDATE
+					FROM MA_EMP
+					WHERE CD_COMPANY = #{cdCompany}
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+			 ORDER BY `SABUN, SYMD
+        ]]>
+    </select>
+    
+    <select id="getWtmOrgConc" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, ORG_CD, SABUN, SYMD, EYMD
+			  FROM (SELECT #{convEnterCd} AS ENTER_CD
+							, CD_DDEPT AS ORG_CD
+							, NO_EMP AS SABUN
+							, DT_FROM AS SYMD
+							, DT_TO AS EYMD
+							, DTS_UPDATE AS CHKDATE
+					FROM HR_EMP_DDEPT
+					WHERE CD_COMPANY = #{cdCompany}
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+        ]]>
+    </select>
+    
+    <select id="getWtmEmpAddr" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMAIL, PHONE, NOTE
+			  FROM (SELECT #{convEnterCd} AS ENTER_CD
+							, NO_EMP AS SABUN
+							, NO_EMAIL AS EMAIL
+							, NO_TEL AS PHONE
+							, DC_RMK AS NOTE
+							, DTS_UPDATE AS CHKDATE
+					FROM MA_EMP
+					WHERE CD_COMPANY = #{cdCompany}
+					  AND (NO_EMAIL != '' OR NO_TEL != '')
+			       ) A
+			 WHERE ENTER_CD = #{enterCd}
+        ]]>
+    </select>
+    
+    <select id="getWtmTaaAppl" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT #{convEnterCd} AS ENTER_CD
+			     , B.SABUN
+			     , B.GNT_CD
+			     , B.S_YMD AS SYMD
+			     , B.E_YMD AS EYMD
+			     , B.REQ_S_HM AS SHM
+			     , B.REQ_E_HM AS EHM
+			     , A.APPL_SEQ
+			     , A.APPL_STATUS_CD
+			  FROM THRI103 A
+			 INNER JOIN TTIM301 B
+			     ON A.ENTER_CD = B.ENTER_CD 
+			   AND A.APPL_SEQ = B.APPL_SEQ
+			 WHERE A.ENTER_CD = #{enterCd}
+			   AND A.APPL_CD = '22'
+			   AND A.APPL_STATUS_CD <> '11'
+        ]]>
+    </select>
+</mapper>

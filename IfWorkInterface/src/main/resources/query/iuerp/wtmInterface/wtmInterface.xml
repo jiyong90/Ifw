@@ -12,33 +12,6 @@
         ]]>
     </select>
 	
-	<select id="findMaCodedtlAll" parameterType="map" resultType="hashmap">
-		<![CDATA[ 
-			SELECT #{enterCd} AS ENTER_CD,
-					CASE
-						WHEN CD_FIELD = 'HR_H000002' THEN 'POS_CD' -- 직위
-						WHEN CD_FIELD = 'HR_H000003' THEN 'CLASS_CD' -- 직급
-						WHEN CD_FIELD = 'HR_H000052' THEN 'DUTY_CD' -- 직책
-						WHEN CD_FIELD = 'HR_H000039' THEN 'JOB_CD' --직무
-						WHEN CD_FIELD = 'HR_H000004' THEN 'JOB_TYPE_CD' --직군
-						ELSE '' END AS GRCODE_CD
-				, CD_SYSDEF AS CODE
-				, NM_SYSDEF AS CODE_NM
-				, '20190101' AS SYMD
-				, '29991231' AS EYMD
-				, NULL AS SEQ
-				, '' AS NOTE 
-			FROM MA_CODEDTL
-			WHERE CD_COMPANY = #{cdCompany}
-			AND  CD_FIELD IN ( 'HR_H000002', -- 직위
-								'HR_H000003', --직급,
-								'HR_H000052', -- 직책, 
-								'HR_H000039', -- 직무, 
-								'HR_H000004' -- 직군
-								)
-		]]>
-	</select>
-	
 	<select id="getCode" parameterType="map" resultType="hashmap">
         <![CDATA[
         	SELECT ENTER_CD, GRCODE_CD, CODE, CODE_NM, SYMD, EYMD, SEQ, NOTE

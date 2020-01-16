@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.intf.mapper.WtmInterfaceMapper;
+import com.isu.ifw.intf.mapper.WtmIntfMapper;
 
 @Service
 public class WtmInterfaceServiceImpl implements WtmInterfaceService {
@@ -19,14 +20,87 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 
 	@Value("${ifw.code-post}")
 	private String codeUrl;
+	@Value("${ifw.emp-post}")
+	private String empUrl;
+	@Value("${ifw.empaddr-post}")
+	private String empaddrUrl;
+	@Value("${ifw.gnt-post}")
+	private String gntUrl;
+	@Value("${ifw.holiday-post}")
+	private String holidayUrl;
+	@Value("${ifw.org-post}")
+	private String orgUrl;
+	@Value("${ifw.orgconc-post}")
+	private String orgConcUrl;
+	@Value("${ifw.taaappl-post}")
+	private String taaApplUrl;
 	
 	@Autowired
 	WtmInterfaceMapper wtmInterfaceMapper;
 	
 	@Autowired
+	WtmIntfMapper intfMapper;
+	
+	@Autowired
 	ExchangeService exchangeService;
 	
 	public String enterCd = "";
+	
+	@Override
+	public void sendData(String T, Map<String, Object> paramMap) throws Exception{
+		System.out.println("WtmInterfaceServiceImpl getCode");
+		List<Map<String, Object>> dataList = null;
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println("================================");
+		System.out.println(mapper.writeValueAsString(paramMap));
+		
+		System.out.println("================================");
+		
+		String url = "";
+        try {
+        	if(T.equalsIgnoreCase("CODE")) {
+        		dataList = intfMapper.getWtmCode(paramMap);
+        		url = codeUrl;
+        	}else if(T.equalsIgnoreCase("EMP")) {
+        		dataList = intfMapper.getWtmEmp(paramMap);
+        		url = empUrl;
+        	}else if(T.equalsIgnoreCase("EMPADDR")) {
+        		dataList = intfMapper.getWtmEmpAddr(paramMap);
+        		url = empaddrUrl;
+        	}else if(T.equalsIgnoreCase("GNT")) {
+        		dataList = intfMapper.getWtmGnt(paramMap);
+        		url = gntUrl;
+        	}else if(T.equalsIgnoreCase("HOLIDAY")) {
+        		dataList = intfMapper.getWtmHoliday(paramMap);
+        		url = holidayUrl;
+        	}else if(T.equalsIgnoreCase("ORG")) {
+        		dataList = intfMapper.getWtmOrg(paramMap);
+        		url = orgUrl;
+        	}else if(T.equalsIgnoreCase("ORGCONC")) {
+        		dataList = intfMapper.getWtmOrgConc(paramMap);
+        		url = orgConcUrl;
+        	}else if(T.equalsIgnoreCase("TAAAPPL")) {
+        		dataList = intfMapper.getWtmTaaAppl(paramMap);
+        		url = taaApplUrl;
+        	}else {
+        		dataList = null;
+        	}
+        	if(dataList != null) {
+	        	Map<String, Object> eParam = new HashMap<>();
+	        	eParam.put("data", dataList);
+	    		System.out.println("================================");
+	    		System.out.println(mapper.writeValueAsString(dataList));
+	    		System.out.println("================================");
+	        	exchangeService.exchange(url, HttpMethod.POST, null, eParam);
+        	}else {
+        		System.out.println(T + " is no data. " + mapper.writeValueAsString(paramMap));
+        	}
+
+        } catch(Exception e){
+            e.printStackTrace(); 
+        }
+        
+	}
 	
 	@Override
 	public String getEnterCd(String tenantId) throws Exception {
@@ -67,33 +141,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		return ifCodeList;
 	}
 	
-	@Override
-	public Map<String, Object> sendCode(Map<String, Object> paramMap) throws Exception{
-		System.out.println("WtmInterfaceServiceImpl getCode");
-		List<Map<String, Object>> ifCodeList = null;
-		ObjectMapper mapper = new ObjectMapper();
-		System.out.println("================================");
-		System.out.println(mapper.writeValueAsString(paramMap));
-		System.out.println("================================");
-        try {
-        	
-        	ifCodeList = wtmInterfaceMapper.findMaCodedtlAll(paramMap);
-        	Map<String, Object> eParam = new HashMap<>();
-        	eParam.put("data", ifCodeList);
-    		System.out.println("================================");
-    		System.out.println(mapper.writeValueAsString(ifCodeList));
-    		System.out.println("================================");
-        	exchangeService.exchange(codeUrl, HttpMethod.POST, null, eParam);
-
-            return eParam;
-        } catch(Exception e){
-            e.printStackTrace();
-            Map<String, Object> eParam = new HashMap<>();
-            eParam.put("message", e.getMessage());
-            return eParam;
-        }
-        
-	}
+	
 	
 	@Override
 	public List<Map<String, Object>> getHolidayIfResult(String tenantId, String lastDataTime) throws Exception {

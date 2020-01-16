@@ -13,11 +13,9 @@ public interface WtmInterfaceMapper {
 	 **/
 	public Map<String, Object> getEnterCd(String tenantId);
 	
-	
 	/**
 	 * 공통코드 조회
 	 **/
-	public List<Map<String, Object>> findMaCodedtlAll(Map<String, Object> paramMap);
 	public List<Map<String, Object>> getCode(Map<String, Object> paramMap);
 	
 	/**

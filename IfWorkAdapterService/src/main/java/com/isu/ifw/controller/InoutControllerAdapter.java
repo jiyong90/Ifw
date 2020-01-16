@@ -28,6 +28,9 @@ public class InoutControllerAdapter {
 	
 	@Value("${ifw.cancel-post}")
 	private String cancelUrl;
+	
+	@Value("${ifw.except-post}")
+	private String exceptUrl;
 
 	@Autowired
 	private ExchangeService certService;
@@ -43,6 +46,8 @@ public class InoutControllerAdapter {
 			url = outUrl.replace("{{tsId}}", tsId);
 		}else if(functionId.equalsIgnoreCase("CANCEL")) {
 			url = cancelUrl.replace("{{tsId}}", tsId);
+		}else if(functionId.equalsIgnoreCase("EXCEPT")) {
+			url = exceptUrl.replace("{{tsId}}", tsId);
 		}
 		Map<String, Object> resMap = new HashMap<>();
 		if(url != "") {
