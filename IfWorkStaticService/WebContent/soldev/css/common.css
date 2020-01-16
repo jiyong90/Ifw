@@ -585,7 +585,7 @@ box-sizing: border-box;
 
 /* 결재 approval 과 제목 */
 .white-box-wrap .approval .item .level .name{width:100%;}
-.white-box-wrap .inner-wrap{margin-top:6px;}
+.white-box-wrap .inner-wrap{margin-top:14px;}
 .white-box-wrap .inner-wrap .title{font-size: 12px;line-height: 1.5;letter-spacing: -0.5px;color: #6b6b80;}
 
 .white-box-wrap .btn-wrap {
