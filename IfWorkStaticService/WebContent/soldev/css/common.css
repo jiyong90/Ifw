@@ -1044,7 +1044,7 @@ box-sizing: border-box;
 /* modal style */
 .modal-xl-more{max-width:1220px;}
 .modal-header{border-bottom:1px solid #5a5d65;}
-.modal-app-wrap {padding: 0px 10px 30px 10px; margin-top:-2px;}
+.modal-app-wrap {padding: 0px 10px 20px 10px; margin-top:-2px;}
 /* .modal-app-wrap>.form-row{margin-top:-4px;} */
 .modal-app-wrap .form-group{margin-top:4px; margin-bottom: 0px; 
   /* border:1px solid red; */
@@ -1367,7 +1367,7 @@ transition: all 0.4s ease;
 }
 
 .mng-page .modal-app-wrap{
-  padding: 0px 0px 30px 0px;
+  padding: 0px 0px 20px 0px;
 }
 
 
