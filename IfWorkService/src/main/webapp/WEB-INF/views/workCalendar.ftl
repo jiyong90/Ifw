@@ -29,6 +29,7 @@
 <!-- guide modal end -->
 <#include "/calendar.ftl">
 <div>
+	<#include "/applLineComponent.ftl">
 	<div id="calendar_top" v-cloak>
 		<!-- 근무제 적용 modal start -->
 	    <div class="modal fade" id="flexitimeModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
@@ -515,6 +516,7 @@
                                     <label for="reason">사유</label>
                                     <textarea class="form-control" id="reason" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason" required></textarea>
                                 </div>
+                                <appl-line :bind-data="applLine"></appl-line>
                             </div>
                             <div class="btn-wrap mt-5">
 	                            <button id="apprBtn" type="button" class="btn btn-apply btn-block btn-lg" @click="validateFlexitimeAppl(calendarTopVue.selectedFlexibleStd)">확인요청</button>
@@ -641,6 +643,7 @@
 		                                <textarea class="form-control" id="reason" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason"></textarea>
 		                            </div>
 	                            </div>
+	                            <appl-line :bind-data="applLine"></appl-line>
 			                </div>
 		                	<div class="btn-wrap row no-gutters" v-if="flexibleAppl.applStatusCd=='11'">
 			                	<div class="col-6 pr-1">
@@ -1014,6 +1017,9 @@
    	
    	var calendarLeftVue = new Vue({
    		el: "#calendar_left",
+   		components : {
+			'appl-line': applLine
+	    },
 	    data : {
 	    	calendar: {},
 	    	rangeInfo: {}, //선택한 기간의 근무제 정보
@@ -1035,7 +1041,8 @@
 	    	flexCancelBtnYn: false,
 	    	workPlanBtnYn: false,
 	    	inOutChgBtnYn: false,
-	    	otApplBtnYn: false
+	    	otApplBtnYn: false,
+	    	applLine: []
   		},
   		computed: {
 	    	btnNone: function(val, oldVal) {
