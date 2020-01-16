@@ -519,6 +519,10 @@
 		
 		if(!isExist) {
 			calendarLeftVue.applInfo.useSymd = selectedDay;
+			
+			//결재라인
+			calendarLeftVue.applLine = calendarLeftVue.getApplLine(calendarTopVue.selectedFlexibleStd.workTypeCd);
+			
 			$("#flexibleAppl").find(".sub-wrap").show();
 			
 			//신청 화면 전환
