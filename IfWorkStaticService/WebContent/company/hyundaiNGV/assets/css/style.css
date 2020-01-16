@@ -12,9 +12,12 @@ body {
 /* 출근하기 */
 .btn-on{background-color: #4d84fe;box-shadow: 0 6px 10px 0 rgba(2, 43, 113, 0.26);cursor: pointer;}
 /* 퇴근하기 */
-.btn-off {background-color: #32c9b6;box-shadow: 0 6px 10px 0 rgba(14, 72, 65, 0.26);cursor: pointer;}
+.btn-off {width:48%!important; background-color: #32c9b6;box-shadow: 0 6px 10px 0 rgba(14, 72, 65, 0.26);cursor: pointer;}
 /* 퇴근취소 */
 .btn-cancel{background-color: #7b5df6;box-shadow: 0 6px 10px 0 rgba(33, 14, 94, 0.26);cursor: pointer;}
+/* 휴식 */
+.btn-go{width:48%!important;background-color: #FF4E78;box-shadow: 0 6px 10px 0 rgba(33, 14, 94, 0.26);cursor: pointer;}
+.btn-back{width:48%!important;background-color: #FF4E78;box-shadow: 0 6px 10px 0 rgba(33, 14, 94, 0.26);cursor: pointer;}
 
 .wrapper{position: relative;width:100%;text-align:center;}
 
@@ -40,24 +43,30 @@ a.link {display: inline-block;font-size: 12px;line-height: 1.5;letter-spacing: -
 .error a.link{margin-top:26px;}
 
 .work-off a.link{margin-top:15px;}
-.work-day a.link {margin-top: 42px;}
-.work-close a.link {margin-top: 15px;}
-.work-day .inner-wrapper,
+/*
+a.link {margin-top: 42px;}
+.work-close a.link {margin-top: 15px;} */
+/* .work-day .inner-wrapper,
 .work-close .inner-wrapper {
     padding: 32px 0 24px;
-}
-.work-day .contents-wrap{min-height:27px;}
+} */
+/* .work-day .contents-wrap{min-height:27px;} */
 
 
 .top-bg {background-color: #292944;}
 .top-bg .inner-wrapper{padding: 20px 0px;}
 .top-bg .inner-wrapper:after {content:'';display: table;width: 100%;clear: both;}
 .top-bg .ico-wrap{float:left;}
-.top-bg .info-wrap{float:left;padding:12px 0px 13px;margin-left: 18px;}
+.top-bg .info-wrap{float:left;padding:16px 0px 14px;margin-left: 18px;}
 
 .top-bg p.date{text-align:left; color:#ffffff;font-size: 13px;font-weight: 900;line-height: 1.43;letter-spacing: -0.7px;}
 .top-bg p.desc{margin-top:4px; text-align:left;color:#ffffff;font-size: 17px;font-weight: 300;line-height: 1.5;letter-spacing: -1.1px;}
 
+
+.contents-outer-wrap{width:304px; min-height:200px; margin: 0 auto; padding: 20px 0 0;}
+.contents-outer-wrap .btn-wrap{position: absolute; bottom:20px; display:table; table-layout: fixed; width:304px; }
+.contents-outer-wrap .btn-wrap a.link{display:block; margin-bottom:12px;}
+.contents-outer-wrap .btn-wrap button+button{margin-left:6px;}
 .contents-body{position:relative; min-height:172px;}
 .contents-wrap span {vertical-align: middle;}
 .contents-wrap .title{margin:0px;padding:0px;font-weight:500;font-size: 12px;line-height: 1.5;letter-spacing: -0.6px;text-align: left;color: #292944;}
