@@ -1651,7 +1651,7 @@
   	         			form.classList.add('was-validated');
   	         		});
   	         		
-  	         		if($("#chgSdate").val()=='' && $("#chgEdate").val()=='') {
+  	         		if( ($("#chgSdate").val()=='' && $("#chgEdate").val()=='') || ($("#chgSdate").val()=='00:00' && $("#chgEdate").val()=='00:00')) {
   	         			applYn = false;
   	         			msg = '변경 할 출근/퇴근 시간을 입력해 주세요.';
   	         		}

@@ -26,6 +26,7 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
+import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
 
@@ -63,6 +64,9 @@ public class WtmApplController {
 	
 	@Autowired
 	WtmFlexibleEmpMapper wtmFlexibleEmpMapper;
+	
+	@Autowired
+	WtmInoutService inoutService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(@RequestParam String applType, HttpServletRequest request) throws Exception {
@@ -159,6 +163,16 @@ public class WtmApplController {
 					rp = wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else if("ENTRY_CHG".equals(applCd)){
 					rp = wtmEntryApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					
+					if(rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
+						Map<String, Object> pMap = new HashMap<String, Object>();
+						pMap.put("tenantId", tenantId);
+						pMap.put("enterCd", enterCd);
+						pMap.put("stdYmd", rp.get("stdYmd")+"");
+						pMap.put("sabun", rp.get("sabun")+"");
+						inoutService.inoutPostProcess(pMap, rp.get("unplannedYn").toString());
+					}
+					
 				} else {
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
