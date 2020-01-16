@@ -13,9 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,6 +44,17 @@ public class WtmIntfController {
 	@Resource
 	CommTenantModuleRepository tenantModuleRepo;
 	
+	@RequestMapping(value = "/intf/abcd", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public void abcd(HttpServletRequest request) throws Exception {
+		Map<String, Object> paramMap = new HashMap();
+		paramMap.put("tenantId", request.getParameter("tenantId"));
+		paramMap.put("enterCd", request.getParameter("enterCd"));
+		paramMap.put("sabun", request.getParameter("sabun"));
+		paramMap.put("stdYmd", request.getParameter("stdYmd"));
+		
+		inoutService.inoutPostProcess(paramMap, "N");
+	}
+
 	@RequestMapping (value="/intf/inoutCheck", method=RequestMethod.POST)
 	public @ResponseBody Map<String,Object> inoutCheck(HttpServletRequest request)throws Exception{
    
@@ -93,7 +106,10 @@ public class WtmIntfController {
 			inoutService.updateTimecard(paramMap);
          
 			logger.debug("/intf/inoutCheck rp : " + rp.toString());
-
+			if(request.getParameter("type").toString().equals("OUT")) {
+				//퇴근일때만 인정시간 계산
+				inoutService.inoutPostProcess(paramMap, "N");
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
@@ -142,18 +158,24 @@ public class WtmIntfController {
 			
 			Map<String, Object> paramMap = new HashMap();
 			paramMap.put("tenantId", tm.getTenantId());
-			paramMap.put("enterCd", params.get("enterCd"));
-			paramMap.put("sabun", params.get("emp"));
-			paramMap.put("time", params.get("time"));
-//			paramMap.put("ymd", params.get("ymd"));
-			paramMap.put("inoutType", params.get("type"));
-			paramMap.put("entryType", params.get("deviceKey"));
+			paramMap.put("enterCd", request.getParameter("enterCd"));
+			paramMap.put("sabun", request.getParameter("emp"));
+			paramMap.put("inoutDate", request.getParameter("time"));
+//	         paramMap.put("ymd", request.getParameter("ymd"));
+			paramMap.put("inoutType", request.getParameter("type"));
+			paramMap.put("entryNote", request.getParameter("deviceKey"));
+			paramMap.put("entryType", "INTF");
 			
 			logger.debug("getParameter s2 " + paramMap.toString());
 		
 			inoutService.updateTimecard(paramMap);
 			
 			logger.debug("/intf/inoutCheck rp : " + rp.toString());
+			logger.debug("/intf/inoutCheck rp : " + rp.toString());
+			if(request.getParameter("type").toString().equals("OUT")) {
+				//퇴근일때만 인정시간 계산
+				inoutService.inoutPostProcess(paramMap, "N");
+			}
 
 		} catch(Exception e) {
 			e.printStackTrace();
