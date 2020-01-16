@@ -3,8 +3,6 @@ package com.isu.ifw.intf.service;
 import java.util.List;
 import java.util.Map;
 
-import com.isu.ifw.intf.vo.WtmFlexibleStdVO;
-
 /**
  * 인사자료 이관용 인터페이스
  * @author lhj
@@ -12,6 +10,8 @@ import com.isu.ifw.intf.vo.WtmFlexibleStdVO;
  */
 public interface WtmInterfaceService {
 
+	public void sendData(String T, Map<String, Object> paramMap) throws Exception;
+	
 	/**
 	 * 공통코드 이관
 	 * @param lastDataTime - 최종 이관데이터 시간
@@ -19,7 +19,7 @@ public interface WtmInterfaceService {
 	 * @throws Exception 
 	 */
 	public List<Map<String, Object>> getCodeIfResult(String tenantId, String lastDataTime) throws Exception;
-	public void sendCode(Map<String, Object> paramMap) throws Exception;
+	
 	
 	/**
 	 * 공휴일정보 이관

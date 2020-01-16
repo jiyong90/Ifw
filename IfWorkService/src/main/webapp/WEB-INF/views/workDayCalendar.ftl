@@ -72,8 +72,9 @@
 	    			$this.flexibleEmp = JSON.parse("${flexibleEmp?js_string}"); 
 	    			
 	    			//탄력근무제는 조출/잔업 show
-	    			if($this.flexibleEmp.hasOwnProperty('workTypeCd') && $this.flexibleEmp.workTypeCd!=null && $this.flexibleEmp.workTypeCd=='ELAS')
+	    			if($this.flexibleEmp.hasOwnProperty('workTypeCd') && $this.flexibleEmp.workTypeCd!=null && $this.flexibleEmp.workTypeCd=='ELAS') {
 	    				$("#elasOtTime").show();
+	    			}
 	  		    		
 		    	</#if>
 		    	
@@ -509,6 +510,10 @@
   	         		calendarLeftVue.flexibleAppl = d;
   	         		if(d.hasOwnProperty('reason') && d.reason!=null && d.reason!=undefined)
   	         			calendarLeftVue.applInfo.reason = d.reason;
+  	         		
+  	         		//결재라인
+  	         		if(d.workTypeCd == 'ELAS')
+	             		calendarLeftVue.applLine = calendarLeftVue.getApplLine(d.workTypeCd);
   	         		
          			var eDate = new Date(moment(d.eYmd).format('YYYY-MM-DD'));
          			eDate.setDate(eDate.getDate()+1);
