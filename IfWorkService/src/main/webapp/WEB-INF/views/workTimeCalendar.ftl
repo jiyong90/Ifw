@@ -1213,6 +1213,11 @@
 		       				}
 		       			}
 		       			
+		       			//시작 시간이 크면
+		       			if(inShm!=null && inEhm!=null && moment(inShm).diff(inEhm)>0) {
+		       				inEhm = moment(inEhm).add(1, 'days');
+		       			}
+		       			
 		     			if(inShm!=null && inEhm!=null && (moment(otSdate).diff(inShm)<0 || moment(otEdate).diff(inEhm)>0)) {
 		     				isValid = false;
 		       				var shm =  moment(inShm).format('HH:mm');
@@ -1322,6 +1327,11 @@
 			  	  	         					var workEdate = moment(sub.subsSymd+" "+sub.workEhm).format('YYYY-MM-DD HH:mm');
 				  	  	         				var subSdate = moment(sub.subsSymd+" "+sub.subsShm).format('YYYY-MM-DD HH:mm');
 			  	  	         					var subEdate = moment(sub.subsSymd+" "+sub.subsEhm).format('YYYY-MM-DD HH:mm');
+			  	  	         					
+				  	  	         				//시작 시간이 크면
+				  	  			       			if(moment(workSdate).diff(workEdate)>0) {
+				  	  			       				workEdate = moment(workEdate).add(1, 'days');
+				  	  			       			}
 			  	  	         					
 			  	  	         					if(!(moment(workSdate).diff(subSdate)<=0 && moment(subSdate).diff(workEdate)<=0 
 			  	  	         							&& moment(workSdate).diff(subEdate)<=0 && moment(subEdate).diff(workEdate)<=0)) {
