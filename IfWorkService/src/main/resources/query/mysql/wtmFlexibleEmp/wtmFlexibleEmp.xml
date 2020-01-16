@@ -158,6 +158,7 @@
 		   AND C.YMD = #{ymd}
 		   AND (F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE) IS NULL OR #{ymd} BETWEEN F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE), 'YMD') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE), 'YMD')) 
 		   AND (O.CANCEL_YN IS NULL OR O.CANCEL_YN <> 'Y')
+		   AND (R.APPR_MINUTE IS NULL OR R.APPR_MINUTE<>0)
 		ORDER BY ymd, sDate
 		]]>
     </select>
@@ -298,6 +299,7 @@
 			     , M.FIXOT_USE_LIMIT AS fixotUseLimit
 			     , M.TAA_TIME_YN AS taaTimeYn
 			     , M.TAA_WORK_YN AS taaWorkYn
+			     , M.UNPLANNED_YN AS unplannedYn
 			     , E.SABUN AS sabun
 			     , E.SYMD AS sYmd
 			     , E.EYMD AS eYmd
@@ -309,7 +311,7 @@
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
 			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
-			 WHERE E.TENANT_ID = #{tenantId}
+			 WHERE E.TENANT_ID = #{tenantId} 
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun}
 			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD

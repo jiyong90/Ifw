@@ -1507,7 +1507,7 @@
 					data: JSON.stringify(param),
 					dataType: "json",
 					success: function(data) {
-						$("loading").hide();
+						$("#loading").hide();
 						if(data!=null && data.status=='OK') {
 							$("#alertText").html("취소되었습니다.");
 							$("#alertModal").on('hidden.bs.modal',function(){
@@ -1526,7 +1526,7 @@
 	 	  	         	$("#alertModal").modal("show"); 
 					},
 					error: function(e) {
-						$("loading").hide();
+						$("#loading").hide();
 						console.log(e);
 						$("#alertText").html("취소 시 오류가 발생했습니다.");
 	 	  	         		$("#alertModal").on('hidden.bs.modal',function(){

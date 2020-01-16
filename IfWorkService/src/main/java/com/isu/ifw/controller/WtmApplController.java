@@ -267,11 +267,7 @@ public class WtmApplController {
 					flexibleApplService.delete(applId);
 					
 					if(paramMap.containsKey("sabun") && paramMap.containsKey("sYmd") && paramMap.containsKey("eYmd")) {
-						paramMap.put("tenantId", tenantId);
-						paramMap.put("enterCd", enterCd);
-						paramMap.put("userId", userId);
-						wtmFlexibleEmpMapper.initWtmFlexibleEmpOfWtmWorkDayResult(paramMap);
-						
+						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
 						wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
 					}
 					

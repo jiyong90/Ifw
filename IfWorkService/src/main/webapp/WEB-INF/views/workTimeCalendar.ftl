@@ -420,7 +420,7 @@
                                         <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
                                     </span>
                                 </div>
-                                <div class="sub-desc">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
+                                <div class="sub-desc" v-if="sub.workSDate && sub.workEDate">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
                                 </template>
                             </div>
                             <div class="inner-wrap" v-if="overtimeAppl.cancelReason">
@@ -887,8 +887,14 @@
 									//근무 시간 세팅
 									//var workShm = moment(data.sDate).format('HH:mm');
 									//var workEhm = moment(data.eDate).format('HH:mm');
-									var workShm = moment(data.planSdate).format('HH:mm');
-									var workEhm = moment(data.planEdate).format('HH:mm');
+									var workShm;
+									var workEhm;
+									
+									if(data.planSdate!=null && data.planSdate!=undefined && data.planSdate!='')
+										workShm = moment(data.planSdate).format('HH:mm');
+									if(data.planEdate!=null && data.planEdate!=undefined && data.planEdate!='')
+										workEhm = moment(data.planEdate).format('HH:mm');
+									
 									if(id.indexOf('subsSymd')!=-1) {
 										//$("#"+id).closest(".form-row").children("div.guide.pl-1").children(":eq(0)").text("*해당일 근무시간은 " + workShm+ "~" + workEhm + " 입니다.");
 										
@@ -898,6 +904,7 @@
 					  	 					idx = key[1];
 					  	 				
 					  	 				if(idx!=null && idx!='' && idx!=undefined) {
+					  	 					$this.subYmds[idx]['unplannedYn'] = data.unplannedYn;
 					  	 					$this.subYmds[idx]['workShm'] = workShm;
 					  	 					$this.subYmds[idx]['workEhm'] = workEhm;
 					  	 				}
@@ -1322,22 +1329,30 @@
 		  	  	         				
 		  	  	         				if(isValid) {
 			  	  	         				//대체 시간이 근무시간에 포함되는지 확인
-			  	  	         				if(sub.hasOwnProperty("workShm") && sub.hasOwnProperty("workEhm")) {
-			  	  	         					var workSdate = moment(sub.subsSymd+" "+sub.workShm).format('YYYY-MM-DD HH:mm');
-			  	  	         					var workEdate = moment(sub.subsSymd+" "+sub.workEhm).format('YYYY-MM-DD HH:mm');
-				  	  	         				var subSdate = moment(sub.subsSymd+" "+sub.subsShm).format('YYYY-MM-DD HH:mm');
-			  	  	         					var subEdate = moment(sub.subsSymd+" "+sub.subsEhm).format('YYYY-MM-DD HH:mm');
-			  	  	         					
-				  	  	         				//시작 시간이 크면
-				  	  			       			if(moment(workSdate).diff(workEdate)>0) {
-				  	  			       				workEdate = moment(workEdate).add(1, 'days');
-				  	  			       			}
-			  	  	         					
-			  	  	         					if(!(moment(workSdate).diff(subSdate)<=0 && moment(subSdate).diff(workEdate)<=0 
-			  	  	         							&& moment(workSdate).diff(subEdate)<=0 && moment(subEdate).diff(workEdate)<=0)) {
-			  	  	         						isValid = false;
-			  	  	         						msg = sub.subsSymd+' 의 대체 근무 가능 시간은 '+sub.workShm+'~'+sub.workEhm+' 입니다.';
+			  	  	         				if(sub.unplannedYn!='Y' && sub.hasOwnProperty("workShm") && sub.hasOwnProperty("workEhm")) {
+			  	  	         				
+			  	  	         					if(sub.workShm==undefined || sub.workEhm==undefined) {
+				  	  	         					isValid = false;
+			  	  	         						msg = sub.subsSymd+' 의 대체 근무 가능 시간이 없습니다.';
+			  	  	         						
+			  	  	         					} else {
+				  	  	         					var workSdate = moment(sub.subsSymd+" "+sub.workShm).format('YYYY-MM-DD HH:mm');
+				  	  	         					var workEdate = moment(sub.subsSymd+" "+sub.workEhm).format('YYYY-MM-DD HH:mm');
+					  	  	         				var subSdate = moment(sub.subsSymd+" "+sub.subsShm).format('YYYY-MM-DD HH:mm');
+				  	  	         					var subEdate = moment(sub.subsSymd+" "+sub.subsEhm).format('YYYY-MM-DD HH:mm');
+				  	  	         					
+					  	  	         				//시작 시간이 크면
+					  	  			       			if(moment(workSdate).diff(workEdate)>0) {
+					  	  			       				workEdate = moment(workEdate).add(1, 'days');
+					  	  			       			}
+				  	  	         					
+				  	  	         					if(!(moment(workSdate).diff(subSdate)<=0 && moment(subSdate).diff(workEdate)<=0 
+				  	  	         							&& moment(workSdate).diff(subEdate)<=0 && moment(subEdate).diff(workEdate)<=0)) {
+				  	  	         						isValid = false;
+				  	  	         						msg = sub.subsSymd+' 의 대체 근무 가능 시간은 '+sub.workShm+'~'+sub.workEhm+' 입니다.';
+				  	  	         					}
 			  	  	         					}
+			  	  	         					
 			  	  	         				}
 		  	  	         				}
 		  	  	         			});
