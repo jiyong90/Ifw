@@ -205,9 +205,9 @@ public class WtmMobileEdocController {
 				rp.setFail("신청서 조회에 실패했습니다.");
 				return rp;
 			}
-			int apprSeq = 0;
+			int apprSeq = 1;
 			for(WtmApplLineVO line : lines) {
-				if(line.getApprSeq() == 0) {
+				if(line.getApprSeq() == 1) {
 					applSabun = line.getSabun();
 					continue;
 				}

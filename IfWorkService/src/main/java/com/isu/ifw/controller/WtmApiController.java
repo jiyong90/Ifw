@@ -66,26 +66,26 @@ public class WtmApiController {
         Long tenantId = tm.getTenantId();
         
 		// 공통코드
-		System.out.println("postCode start");
-		List<Map<String, Object>> dataList = (List<Map<String, Object>>) paramMap.get("data");
-		if(gubun.equalsIgnoreCase("CODE")) {
-			wtmInterfaceService.saveCodeIntf(tenantId, dataList);
-		}else if (gubun.equalsIgnoreCase("EMP")) {
-			wtmInterfaceService.saveEmpIntf(tenantId, dataList);
-		}else if (gubun.equalsIgnoreCase("EMPADDR")) {
-			wtmInterfaceService.saveEmpAddrIntf(tenantId, dataList);
-		}else if (gubun.equalsIgnoreCase("GNT")) {
-			wtmInterfaceService.saveGntIntf(tenantId, dataList);
-		}else if (gubun.equalsIgnoreCase("HOLIDAY")) {
-			wtmInterfaceService.saveHolidayIntf(tenantId, dataList);
-		}else if (gubun.equalsIgnoreCase("ORG")) {
-			wtmInterfaceService.saveOrgIntf(tenantId, dataList);
-		}else if (gubun.equalsIgnoreCase("ORGCONC")) {
-			wtmInterfaceService.saveOrgConcIntf(tenantId, dataList);
-		}else if (gubun.equalsIgnoreCase("TAAAPPL")) {
-			wtmInterfaceService.saveTaaApplIntf(tenantId, dataList);
-		}
-		System.out.println("postCode end");
+//		System.out.println("postCode start");
+//		List<Map<String, Object>> dataList = (List<Map<String, Object>>) paramMap.get("data");
+//		if(gubun.equalsIgnoreCase("CODE")) {
+//			wtmInterfaceService.saveCodeIntf(tenantId, dataList);
+//		}else if (gubun.equalsIgnoreCase("EMP")) {
+//			wtmInterfaceService.saveEmpIntf(tenantId, dataList);
+//		}else if (gubun.equalsIgnoreCase("EMPADDR")) {
+//			wtmInterfaceService.saveEmpAddrIntf(tenantId, dataList);
+//		}else if (gubun.equalsIgnoreCase("GNT")) {
+//			wtmInterfaceService.saveGntIntf(tenantId, dataList);
+//		}else if (gubun.equalsIgnoreCase("HOLIDAY")) {
+//			wtmInterfaceService.saveHolidayIntf(tenantId, dataList);
+//		}else if (gubun.equalsIgnoreCase("ORG")) {
+//			wtmInterfaceService.saveOrgIntf(tenantId, dataList);
+//		}else if (gubun.equalsIgnoreCase("ORGCONC")) {
+//			wtmInterfaceService.saveOrgConcIntf(tenantId, dataList);
+//		}else if (gubun.equalsIgnoreCase("TAAAPPL")) {
+//			wtmInterfaceService.saveTaaApplIntf(tenantId, dataList);
+//		}
+//		System.out.println("postCode end");
 		
 		return;
 	}
