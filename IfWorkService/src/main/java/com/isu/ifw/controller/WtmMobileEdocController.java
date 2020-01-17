@@ -205,9 +205,9 @@ public class WtmMobileEdocController {
 				rp.setFail("신청서 조회에 실패했습니다.");
 				return rp;
 			}
-			int apprSeq = 0;
+			int apprSeq = 1;
 			for(WtmApplLineVO line : lines) {
-				if(line.getApprSeq() == 0) {
+				if(line.getApprSeq() == 1) {
 					applSabun = line.getSabun();
 					continue;
 				}
@@ -248,27 +248,16 @@ public class WtmMobileEdocController {
 							rp.setFail("신청서 상태에 오류가 발생했습니다.");
 							return rp;
 						}
-//					else if("OT_CAN".equals(applCd)){
-//						rp = wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
-					} else if("ENTRY_CHG".equals(applCd)){
-						rp = wtmEntryApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, sabun);
-//					} else {
-//						rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
-//						
-//						if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) { 
-//							
-//							//유연근무제 기간 앞뒤로 +1 일
-//							Date sDate = WtmUtil.toDate(rp.get("symd")+"", "yyyyMMdd");
-//							Calendar sYmd = Calendar.getInstance();
-//							sYmd.setTime(sDate);
-//							sYmd.add(Calendar.DATE, -1);
-//							
-//							Date eDate = WtmUtil.toDate(rp.get("eymd")+"", "yyyyMMdd");
-//							Calendar eYmd = Calendar.getInstance();
-//							eYmd.setTime(eDate);
-//							eYmd.add(Calendar.DATE, 1);
-//							wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, sabun, WtmUtil.parseDateStr(sYmd.getTime(), "yyyyMMdd"),  WtmUtil.parseDateStr(eYmd.getTime(), "yyyyMMdd"), userId);
-//						}
+					} else {
+						if(body.get("apprStatCd").toString().equals("02")) {
+							wtmEntryApplService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
+							
+						} else if(body.get("apprStatCd").toString().equals("01")) {
+							rp = wtmEntryApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
+						} else {
+							rp.setFail("신청서 상태에 오류가 발생했습니다.");
+							return rp;
+						}
 					}
 				}
 				if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {

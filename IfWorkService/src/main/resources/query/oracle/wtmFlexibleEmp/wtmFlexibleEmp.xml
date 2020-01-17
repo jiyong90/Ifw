@@ -12,7 +12,7 @@
 			     , E.FLEXIBLE_EMP_ID 
 			     , E.SYMD
 			     , E.EYMD 
-			     , E.WORK_TYPE_CD 
+			     , E.WORK_TYPE_CD
 			     , M.FLEXIBLE_NM
 			     , F.APPL_ID 
 				  , F.APPL_CD 
@@ -299,6 +299,7 @@
 			     , M.FIXOT_USE_LIMIT
 			     , M.TAA_TIME_YN 
 			     , M.TAA_WORK_YN 
+			     , M.UNPLANNED_YN
 			     , E.SABUN 
 			     , E.SYMD AS S_YMD
 			     , E.EYMD AS E_YMD
