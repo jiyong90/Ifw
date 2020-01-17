@@ -564,8 +564,8 @@ public class WtmMobileController {
 		rp.setSuccess("");
 		try {
 			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			
 			
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
