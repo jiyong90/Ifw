@@ -2089,4 +2089,8 @@
 	 		  ,	F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'P', 'WORK') AS planWorkMinute
 	 	   FROM DUAL
   	</select>
+  	
+  	<select id="calcMinute" parameterType="map" resultType="map">
+  		SELECT F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') AS calcMinute, 0 as breakMinute
+  	</select>
 </mapper>
