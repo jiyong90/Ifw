@@ -1574,7 +1574,7 @@
   	</update>
   	
   	<update id="createWorkDayResultOfTimeType" statementType="CALLABLE"  parameterType="map"  >
-  		{ call P_WTM_WORK_DAY_RESULT_TIME_C(#{tenantId}, #{enterCd}, #{sabun} , #{symd}, #{eymd} , #{type} , #{userId}   ) }
+  		{ call P_WTM_WORK_DAY_RESULT_TIME_C(#{tenantId}, #{enterCd}, #{sabun} , #{sYmd}, #{eYmd} , #{type} , #{userId}   ) }
   	</update>
   	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->
