@@ -293,6 +293,7 @@ public class WtmFlexibleStdController {
 			
 			rp.put("DATA", stdList);
 		} catch(Exception e) {
+			e.printStackTrace();
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
 		}
