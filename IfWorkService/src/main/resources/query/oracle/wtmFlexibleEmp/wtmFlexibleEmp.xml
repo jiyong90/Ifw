@@ -1573,6 +1573,10 @@
   		{ call P_WTM_WORK_DAY_RESULT_RESET(#{tenantId}, #{enterCd}, #{pKey}, #{flexibleEmpId}, #{sYmd}, #{eYmd}, #{holExceptYn}, #{maxPattSeq}, #{pType}, #{userId}) }
   	</update>
   	
+  	<update id="createWorkDayResultOfTimeType" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_WORK_DAY_RESULT_TIME_C(#{tenantId}, #{enterCd}, #{sabun} , #{symd}, #{eymd} , #{type} , #{userId}   ) }
+  	</update>
+  	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->
   	<select id="getFlexibleEmpListForPlan" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
@@ -2074,5 +2078,9 @@
 		 SELECT F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'T', 'WORK') AS TOTAL_WORK_MINUTE
 	 		  ,	F_WTM_GET_WORK_MINUTE(${tenantId}, #{enterCd}, #{sabun}, #{ymd}, 'P', 'WORK') AS PLAN_WORK_MINUTE
 	 	   FROM DUAL
+  	</select>
+  	
+  	<select id="calcMinute" parameterType="map" resultType="wtmGeneral">
+  		SELECT F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') AS CALC_MINUTE, 0 as BREAK_MINUTE
   	</select>
 </mapper>
