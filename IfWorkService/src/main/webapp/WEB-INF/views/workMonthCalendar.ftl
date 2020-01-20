@@ -263,8 +263,8 @@
 						         		if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
 											dayWork.plans.map(function(plan){
 												var day = moment(plan.key).format('YYYY-MM-DD');
-											
-					 		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='') {
+												
+					 		    				if(plan.valueMap.hasOwnProperty("taaCd") && plan.valueMap.taaCd!='' && plan.valueMap.hasOwnProperty("timeTypeCd") && plan.valueMap.timeTypeCd!='EXCEPT') {
 					 		    					//개인 근태
 					  		    					/* var taaEvent = {
 														id: day,

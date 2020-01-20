@@ -967,6 +967,7 @@
 		   AND C.YMD = R.YMD
 		   AND C.SABUN = R.SABUN
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+		   AND (R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD <> 'EXCEPT')
 		 ORDER BY YMD,SHM
 		 ]]>
     </select>
@@ -1229,185 +1230,6 @@
 		]]>	
   	</select>
   	
-  	<select id="calcElasPlanMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
-  		<![CDATA[
-  		SELECT BREAK_MINUTE
-		     , F_WTM_CALC_MINUTE(#{shm}, #{ehm}, '','','') - BREAK_MINUTE AS CALC_MINUTE
-		  FROM ( SELECT CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, #{shm}, #{ehm}, '')) IS NULL THEN 0 
-			  				 ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, #{shm}, #{ehm}, '')) END AS BREAK_MINUTE
-					  FROM #{tableName} D
-					  JOIN WTM_TIME_CD_MGR T
-						 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-					  JOIN WTM_TIME_BREAK_MGR B
-						 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
-					 WHERE ${key} = ${value}
-					   AND D.YMD = #{ymd} ) S
-		]]>
-  	</select>
-  	
-  	<select id="calcTimeTypeElasPlanMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
-  		<![CDATA[
-  		SELECT CASE WHEN S.APPR_MINUTE BETWEEN S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE AND S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE + S.BREAK_MINUTE  THEN PRE_BREAK_MINUTE ELSE PRE_BREAK_MINUTE+BREAK_MINUTE END AS BREAK_MINUTE
-	  		     , CASE WHEN S.APPR_MINUTE BETWEEN S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE AND S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE + S.BREAK_MINUTE  THEN S.PRE_WORK_MINUTE
-							  WHEN S.APPR_MINUTE < S.BREAK_MINUTE THEN 0
-							  ELSE S.APPR_MINUTE - S.BREAK_MINUTE
-	                          END AS CALC_MINUTE
-		  FROM ( SELECT F_WTM_CALC_MINUTE(#{shm}, #{ehm}, '','','') AS APPR_MINUTE
-		              , MAX(B.WORK_MINUTE) AS PRE_WORK_MINUTE
-						  , MAX(B.BREAK_MINUTE) AS PRE_BREAK_MINUTE
-				        , MIN(BB.WORK_MINUTE) AS WORK_MINUTE
-						  , MIN(BB.BREAK_MINUTE) AS BREAK_MINUTE
-					  FROM ${tableName} D
-					  JOIN WTM_TIME_CD_MGR T
-						 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-					  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
-					    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
-		            AND (B.WORK_MINUTE + B.BREAK_MINUTE) < F_WTM_CALC_MINUTE(#{shm}, #{ehm}, '','','')
-					  LEFT OUTER JOIN WTM_TIME_BREAK_TIME BB
-					    ON T.TIME_CD_MGR_ID = BB.TIME_CD_MGR_ID 
-		            AND (BB.WORK_MINUTE + BB.BREAK_MINUTE) >= F_WTM_CALC_MINUTE(#{shm}, #{ehm}, '','','')
-					 WHERE ${key} = ${value}
-					   AND D.YMD = #{ymd}
-						AND T.BREAK_TYPE_CD = 'TIME' ) S		
-		]]> 
-  	</select>
-  	
-  	<select id="calcTimeTypeFixElasPlanMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
-  		<![CDATA[
-  		SELECT (SELECT BREAK_MINUTE 
-		           FROM WTM_TIME_BREAK_TIME 
-					 WHERE TIME_CD_MGR_ID = T.TIME_CD_MGR_ID 
-					   AND T.BREAK_TYPE_CD = 'TIMEFIX' 
-						AND WORK_MINUTE = MAX(B.WORK_MINUTE) ) AS BREAK_MINUTE
-		    , MAX(B.WORK_MINUTE) AS CALC_MINUTE
-		  FROM ${tableName} D
-		  JOIN WTM_TIME_CD_MGR T
-			 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-		  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
-		    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
-           AND (B.WORK_MINUTE + B.BREAK_MINUTE) <= F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','')
-		 WHERE ${key} = ${value}
-		   AND D.YMD = #{ymd}
-		   AND T.BREAK_TYPE_CD = 'TIMEFIX'
-		]]>
-  	</select>
-  	
-  	<select id="calcElasOtMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
-  		<![CDATA[
-  		SELECT F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(PLAN_SDATE, -CALC_MINUTE,'I') ELSE PLAN_EDATE END, 'YMDHIS') AS S_DATE
-		     , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN PLAN_SDATE ELSE F_WTM_DATE_ADD(PLAN_EDATE, CALC_MINUTE, 'I') END, 'YMDHIS') AS E_DATE
-		     , BREAK_MINUTE
-			 , CALC_MINUTE 
-		  FROM (
-					SELECT PLAN_SDATE
-					      , PLAN_EDATE
-					      , BREAK_MINUTE
-							, F_WTM_CALC_MINUTE(SHM, EHM, '','','') - BREAK_MINUTE AS CALC_MINUTE
-					  FROM ( SELECT PLAN_SDATE
-					              , PLAN_EDATE
-					              , D.SHM
-					              , D.EHM
-					              , CASE WHEN SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) IS NULL THEN 0 
-						  				 ELSE SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, D.SHM, D.EHM, '')) END AS BREAK_MINUTE
-								  FROM ( SELECT ${key}
-								              , YMD
-								              , TIME_CD_MGR_ID
-								              , F_WTM_TO_DATE(#{sDate},'YMDHI') AS PLAN_SDATE
-								              , F_WTM_TO_DATE(#{eDate},'YMDHI') AS PLAN_EDATE
-								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{sDate},'YMDHI'), -#{minute},'I') ELSE F_WTM_TO_DATE(#{eDate},'YMDHI') END, 'HI') AS SHM
-								              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_TO_DATE(#{sDate},'YMDHI') ELSE F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eDate},'YMDHI'), #{minute}, 'I') END, 'HI') AS EHM
-								           FROM ${tableName}) AS D
-								  JOIN WTM_TIME_CD_MGR T
-									 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-								  JOIN WTM_TIME_BREAK_MGR B
-									 ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
-								 WHERE ${key} = ${value}
-								   AND D.YMD = #{ymd}
-								GROUP BY PLAN_SDATE, PLAN_EDATE, D.SHM, D.EHM ) S
-				 ) T
-		]]>
-  	</select>
-  	
-  	<select id="calcTimeTypeElasOtMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
-  		<![CDATA[
-  		SELECT F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(PLAN_SDATE, -CALC_MINUTE,'I') ELSE PLAN_EDATE END,'YMDHIS') AS S_DATE
-		  , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN PLAN_SDATE ELSE F_WTM_DATE_ADD(PLAN_EDATE, CALC_MINUTE, 'I') END,'YMDHIS') AS E_DATE
-		  , BREAK_MINUTE
-		  , CALC_MINUTE
-	  	FROM (
-			SELECT PLAN_SDATE
-			     , PLAN_EDATE
-			     , CASE WHEN S.APPR_MINUTE BETWEEN S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE AND S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE + S.BREAK_MINUTE  THEN PRE_BREAK_MINUTE ELSE PRE_BREAK_MINUTE+BREAK_MINUTE END AS BREAK_MINUTE
-		  		  , CASE WHEN S.APPR_MINUTE BETWEEN S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE AND S.PRE_WORK_MINUTE + S.PRE_BREAK_MINUTE + S.BREAK_MINUTE  THEN S.PRE_WORK_MINUTE
-							WHEN S.APPR_MINUTE < S.BREAK_MINUTE THEN 0
-							ELSE S.APPR_MINUTE - S.BREAK_MINUTE
-		               END AS CALC_MINUTE
-				  FROM (	SELECT PLAN_SDATE
-						        , PLAN_EDATE
-								  , F_WTM_CALC_MINUTE(D.SHM, D.EHM, '','','') AS APPR_MINUTE
-						        , MAX(B.WORK_MINUTE) AS PRE_WORK_MINUTE
-								  , MAX(B.BREAK_MINUTE) AS PRE_BREAK_MINUTE
-						        , MIN(BB.WORK_MINUTE) AS WORK_MINUTE
-								  , MIN(BB.BREAK_MINUTE) AS BREAK_MINUTE
-							  FROM ( SELECT ${key}
-							              , YMD
-							              , TIME_CD_MGR_ID
-							              , F_WTM_TO_DATE(#{sDate},'YMDHI') AS PLAN_SDATE
-							              , F_WTM_TO_DATE(#{eDate},'YMDHI') AS PLAN_EDATE
-							              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{sDate},'YMDHI'), -#{minute},'I') ELSE F_WTM_TO_DATE(#{eDate},'YMDHI') END, 'HI') AS SHM
-							              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_TO_DATE(#{sDate},'YMDHI') ELSE F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eDate},'YMDHI'), #{minute}, 'I') END, 'HI') AS EHM
-							           FROM ${tableName}) AS D
-							  JOIN WTM_TIME_CD_MGR T
-								 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-							  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
-							    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
-						      AND (B.WORK_MINUTE + B.BREAK_MINUTE) < F_WTM_CALC_MINUTE(SHM, EHM, '','','')
-							  LEFT OUTER JOIN WTM_TIME_BREAK_TIME BB
-							    ON T.TIME_CD_MGR_ID = BB.TIME_CD_MGR_ID 
-						      AND (BB.WORK_MINUTE + BB.BREAK_MINUTE) >= F_WTM_CALC_MINUTE(SHM, EHM, '','','')
-							 WHERE ${key} = ${value}
-							   AND D.YMD =  #{ymd}
-							   AND T.BREAK_TYPE_CD = 'TIME' 
-							GROUP BY PLAN_SDATE, PLAN_EDATE, D.SHM, D.EHM ) S
-		]]>
-  	</select>
-  	
-  	<select id="calcTimeTypeFixElasOtMinuteExceptBreaktime" parameterType="map" resultType="wtmGeneral">
-  		<![CDATA[
-  		SELECT F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(PLAN_SDATE, -CALC_MINUTE,'I') ELSE PLAN_EDATE END,'YMDHIS') AS S_DATE
-		     , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN PLAN_SDATE ELSE F_WTM_DATE_ADD(PLAN_EDATE, CALC_MINUTE, 'I') END,'YMDHIS') AS E_DATE
-		     , BREAK_MINUTE 
-			 , CALC_MINUTE
-		  FROM (
-					SELECT PLAN_SDATE
-		              , PLAN_EDATE
-		              , (SELECT BREAK_MINUTE 
-				           FROM WTM_TIME_BREAK_TIME 
-							 WHERE TIME_CD_MGR_ID = T.TIME_CD_MGR_ID 
-							   AND T.BREAK_TYPE_CD = 'TIMEFIX' 
-								AND WORK_MINUTE = MAX(B.WORK_MINUTE) ) AS BREAK_MINUTE
-		              , MAX(B.WORK_MINUTE) AS CALC_MINUTE
-					  FROM ( SELECT ${key}
-					              , YMD
-					              , TIME_CD_MGR_ID
-					              , F_WTM_TO_DATE(#{sDate},'YMDHI') AS PLAN_SDATE
-					              , F_WTM_TO_DATE(#{eDate},'YMDHI') AS PLAN_EDATE
-					              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{sDate},'YMDHI'), -#{minute},'I') ELSE F_WTM_TO_DATE(#{eDate},'YMDHI') END, 'HI') AS SHM
-					              , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_TO_DATE(#{sDate},'YMDHI') ELSE F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eDate},'YMDHI'), #{minute}, 'I') END, 'HI') AS EHM
-					           FROM ${tableName}) AS D
-					  JOIN WTM_TIME_CD_MGR T
-						 ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-					  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
-					    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
-			         AND (B.WORK_MINUTE + B.BREAK_MINUTE) <= F_WTM_CALC_MINUTE(SHM,EHM, '','','')
-					 WHERE ${key} = ${value}
-					   AND D.YMD = #{ymd}
-					   AND T.BREAK_TYPE_CD = 'TIMEFIX'
-					 GROUP BY PLAN_SDATE, PLAN_EDATE
-				 ) T
-		]]>
-  	</select>
-  	
   	<select id="checkDuplicateWorktime" parameterType="map" resultType="wtmGeneral">
   		<![CDATA[
   		SELECT COUNT(*) AS WORK_CNT FROM (
@@ -1427,8 +1249,9 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
 			   AND C.YMD BETWEEN SUBSTR(#{sdate},1,8) AND SUBSTR(#{edate},1,8)
-			   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') <= #{edate} ))
-			 UNION ALL
+			  AND (#{sdate} BETWEEN F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.APPR_EDATE),'YMDHI')
+ 				OR #{edate} BETWEEN F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.APPR_EDATE),'YMDHI'))
+			UNION ALL
 			SELECT 2 
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_APPL O
@@ -1438,7 +1261,8 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND ((F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') < #{edate}) OR (F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') > #{sdate} AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') <= #{edate}))
+			   AND (#{sdate} BETWEEN F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI')
+ 				OR #{edate} BETWEEN F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI'))
 			 UNION ALL
 			SELECT 3 
 			  FROM WTM_APPL A
@@ -1449,7 +1273,8 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND ((F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') < #{edate}) OR (F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI') > #{sdate} AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI') <= #{edate}))
+			   AND (#{sdate} BETWEEN F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI')
+ 				OR #{edate} BETWEEN F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI'))
 			) X
 		]]>	
   	</select>
@@ -1823,6 +1648,7 @@
 		   AND C.YMD = R.YMD
 		   AND C.SABUN = R.SABUN
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+		   AND (R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD <> 'EXCEPT')
 		 ORDER BY ymd, shm
 		 ]]>
     </select>
@@ -2034,6 +1860,18 @@
 			GROUP BY START_YMD
     	]]>
     </select>
+    
+     <select id="getElasOtHm" parameterType="map" resultType="wtmGeneral" >
+    	<![CDATA[
+			SELECT YMD
+			     , TIME_CD_MGR_ID
+			     , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_DATE_ADD(F_WTM_TO_DATE(#{sDate},'YMDHI'), -#{minute},'I') ELSE F_WTM_TO_DATE(#{eDate},'YMDHI') END, 'YMDHIS') AS S_DATE
+				 , F_WTM_DATE_FORMAT(CASE WHEN #{otType} = 'OTB' THEN F_WTM_TO_DATE(#{sDate},'YMDHI') ELSE F_WTM_DATE_ADD(F_WTM_TO_DATE(#{eDate},'YMDHI'), #{minute}, 'I') END, 'YMDHIS') AS E_DATE
+			  FROM ${tableName} D
+			 WHERE ${key} = ${value}
+			   AND D.YMD = #{ymd}
+    	]]>
+    </select>
 
     <select id="getChangeChk" statementType="CALLABLE" parameterType="map" >
   		{ call P_WTM_FLEXIBLE_MODIFY_CHK( 
@@ -2085,4 +1923,49 @@
   	<select id="calcMinute" parameterType="map" resultType="wtmGeneral">
   		SELECT F_WTM_CALC_MINUTE(#{shm},#{ehm}, '','','') AS CALC_MINUTE, 0 as BREAK_MINUTE
   	</select>
+  	
+  	<select id="calcTimeBreakMinute" parameterType="map" resultType="wtmGeneral">
+  		<![CDATA[
+  		SELECT APPR_MINUTE  - 
+	    CASE WHEN XZ.APPR_MINUTE BETWEEN XZ.PRE_WORK_MINUTE + XZ.PRE_BREAK_MINUTE AND XZ.PRE_WORK_MINUTE + IFNULL(XZ.BREAK_MINUTE,0)  THEN XZ.PRE_WORK_MINUTE
+				  WHEN (XZ.APPR_MINUTE ) < IFNULL(XZ.BREAK_MINUTE,0) THEN 0
+				  ELSE (XZ.APPR_MINUTE ) - IFNULL(XZ.BREAK_MINUTE,0)
+                    END  AS BREAK_MINUTE
+			FROM (
+			SELECT XX.APPR_MINUTE
+			     , MAX(B.WORK_MINUTE) AS PRE_WORK_MINUTE, MAX(B.BREAK_MINUTE) AS PRE_BREAK_MINUTE
+				  , MIN(BB.WORK_MINUTE) AS WORK_MINUTE, MIN(BB.BREAK_MINUTE) AS BREAK_MINUTE
+			FROM (
+			SELECT T.TIME_CD_MGR_ID
+				,SUM(F_WTM_CALC_MINUTE(D.SHM, D.EHM, '','','') )AS APPR_MINUTE
+				  FROM WTM_FLEXIBLE_EMP E
+				  JOIN WTM_WORK_CALENDAR C
+				    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
+				   AND E.SABUN = C.SABUN
+			       AND C.YMD BETWEEN E.SYMD AND E.EYMD
+				  JOIN (SELECT #{shm} AS SHM
+				             , #{ehm} AS EHM
+				         FROM DUAL) D 
+				    ON 1=1
+				  JOIN WTM_TIME_CD_MGR T
+				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
+				   AND T.BREAK_TYPE_CD = #{breakTypeCd}
+				   AND E.TENANT_ID = #{tenantId}
+				   AND E.ENTER_CD = #{enterCd}
+			       AND D.SHM IS NOT NULL AND D.EHM IS NOT NULL
+				   AND E.SABUN = #{sabun}
+				   AND C.YMD = #{ymd}
+				   GROUP BY T.TIME_CD_MGR_ID
+				   ) XX
+				  LEFT OUTER JOIN WTM_TIME_BREAK_TIME B
+				    ON XX.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			        AND (B.WORK_MINUTE + B.BREAK_MINUTE) < XX.APPR_MINUTE
+				  LEFT OUTER JOIN WTM_TIME_BREAK_TIME BB
+				    ON XX.TIME_CD_MGR_ID = BB.TIME_CD_MGR_ID 
+			        AND (BB.WORK_MINUTE + BB.BREAK_MINUTE) >= XX.APPR_MINUTE
+			 ) XZ
+		]]>
+  	</select>
+  	
 </mapper>
