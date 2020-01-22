@@ -234,7 +234,7 @@ ul, ol, li{
 
 /* 필수 */
 .require{position:relative; color:#DC3545;}
-.require::after{content:'*'; position:absolute; top:0px; left:-10px;display:inline-block;}
+.require:after{content:'*'; position:absolute; top:0px; left:-10px;display:inline-block;}
 
 /* application-form */
 .inner-wrap .application-form .modal-header button{display:none;}
@@ -250,14 +250,18 @@ ul, ol, li{
 .application-form .btn-wrap{padding-top: 40px;}
 
 /* login Page */
-.login {display: -ms-flexbox; display: flex; height:100%;-ms-flex-align: center;align-items: center;padding-top: 40px;padding-bottom: 40px;background-color: #f5f5f5;}
+.login {display: -ms-flexbox; display: flex; height:100%;-ms-flex-align: center;align-items: center;padding-top: 40px;padding-bottom: 40px;background-color: #f5f5f5;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position : center;
+}
 .form-login {width: 100%;max-width: 330px;padding: 15px;margin: auto;}
 .form-login .logo{width:auto; height:60px;}
 .form-login .checkbox {font-weight: 400}
 .form-login .checkbox label{float:left; color:#141414;}
 .form-login .checkbox .find-pw{float:right; display:inline-block; margin-left:auto; color:#141414;}
 .form-login .checkbox a.find-pw:hover{text-decoration: underline; color:#141414;}
-.form-login .checkbox::after {content:''; clear: both; display: table;}
+.form-login .checkbox:after {content:''; clear: both; display: table;}
 .form-login .form-control {position: relative;box-sizing: border-box;height: auto;padding: 10px;font-size: 16px; 
   appearance: none; 
   -webkit-appearance:none; 
@@ -416,7 +420,7 @@ box-sizing: border-box;
   margin-top:2px;
 }
 
-.work-info-wrap .legend-wrap::after{
+.work-info-wrap .legend-wrap:after{
   content:'';
   display:table;
   width: 100%;
@@ -435,7 +439,7 @@ box-sizing: border-box;
 .work-info-wrap .legend-wrap li:first-child {
   margin-left:0px;
 }
-.work-info-wrap .legend-wrap li::before{ 
+.work-info-wrap .legend-wrap li:before{ 
   content: '';
   display: inline-block;
   width: 6px;
@@ -446,8 +450,8 @@ box-sizing: border-box;
   margin-bottom: 2px;
   margin-left: 0px;
 }
-.work-info-wrap .legend-wrap li.work-time::before{background-color:#29dbff;}
-.work-info-wrap .legend-wrap li.over-time::before {background-color:#fff70e;}
+.work-info-wrap .legend-wrap li.work-time:before{background-color:#29dbff;}
+.work-info-wrap .legend-wrap li.over-time:before {background-color:#fff70e;}
 
 .work-info-wrap .btn-wrap{margin-top:13px;}
 
@@ -552,7 +556,7 @@ box-sizing: border-box;
   margin-top:3px;
 }
 
-.white-box-wrap .legend-wrap::after{
+.white-box-wrap .legend-wrap:after{
   content:'';
   display:table;
   width: 100%;
@@ -570,7 +574,7 @@ box-sizing: border-box;
 .white-box-wrap .legend-wrap li:first-child {
   margin-left:0px;
 }
-.white-box-wrap .legend-wrap li::before{ 
+.white-box-wrap .legend-wrap li:before{ 
   content: '';
   display: inline-block;
   width: 6px;
@@ -580,8 +584,8 @@ box-sizing: border-box;
   margin-right: 4px;
   margin-left: 0px;
 }
-.white-box-wrap .legend-wrap li.work-time::before{background-color:#dcdfe7;}
-.white-box-wrap .legend-wrap li.core-time::before {background-color:#7b5df6;}
+.white-box-wrap .legend-wrap li.work-time:before{background-color:#dcdfe7;}
+.white-box-wrap .legend-wrap li.core-time:before {background-color:#7b5df6;}
 
 /* 결재 approval 과 제목 */
 .white-box-wrap .approval .item .level .name{width:100%;}
@@ -1033,7 +1037,7 @@ box-sizing: border-box;
   color: #6b6b80;
 }
 
-.notice-card .desc span.sub-desc::before{
+.notice-card .desc span.sub-desc:before{
   content:'';
   display: inline-block;
   height: 12px; 
@@ -1074,7 +1078,7 @@ box-sizing: border-box;
   color: #495057;
 }
 
-.modal-app-wrap .form-control::-webkit-input-placeholder {
+.modal-app-wrap .form-control:-webkit-input-placeholder {
   color: #cfcfcf;
 }
 /* WebKit, Blink, Edge */
@@ -1083,7 +1087,7 @@ box-sizing: border-box;
 }
 
 /* Mozilla Firefox 4 to 18 */
-.modal-app-wrap .form-control::-moz-placeholder {
+.modal-app-wrap .form-control:-moz-placeholder {
   color: #cfcfcf;
 }
 
@@ -1093,7 +1097,7 @@ box-sizing: border-box;
 }
 
 /* Internet Explorer 10-11 */
-.modal-app-wrap .form-control::-ms-input-placeholder {
+.modal-app-wrap .form-control:-ms-input-placeholder {
   color: #cfcfcf;
 }
 
@@ -1115,9 +1119,9 @@ box-sizing: border-box;
 .modal-app-wrap .date-wrap{font-size:0px;}
 .modal-app-wrap .date-wrap span{font-size:14px; letter-spacing: 0px;}
 .modal-app-wrap .date-wrap .sub-time{font-weight: bold; letter-spacing: -1px;}
-.modal-app-wrap .date-wrap .start-time::before,
-.modal-app-wrap .date-wrap .end-time::before,
-.modal-app-wrap .date-wrap .sub-time::before{
+.modal-app-wrap .date-wrap .start-time:before,
+.modal-app-wrap .date-wrap .end-time:before,
+.modal-app-wrap .date-wrap .sub-time:before{
   content:'';
   display:inline-block;
   height: 10px;
@@ -1161,19 +1165,20 @@ box-sizing: border-box;
 .modal-app-wrap .btn-wrap .btn-plus{padding:7px 25px; border-radius:17px; background-color:#1f3b78; color:#ffffff;font-size: 14px;letter-spacing: -0.7px;}
 .modal-app-wrap .btn-wrap .btn-plus i.fas{color: #ffffff;}
 
-.modal-app-wrap i.fas{
+.time-wrap i.fas {
     display: inline-block;
     margin-right: 5px;
     color: #4d84fe;
     font-size:14px;
 }
-.modal-app-wrap .time{
+.time-wrap .time {
     font-size: 16px;
     font-weight: bold;
     line-height: 1.5;
     letter-spacing: -0.8px;
     color: #292944;
 }
+.time-wrap .time.point{color:#4d84fe;}
 
 /* guide modal pop */
 .modal-guide{max-width:900px;}
@@ -1362,10 +1367,18 @@ transition: all 0.4s ease;
 }
 
 .select-list-wrap .targetor .cancel{
+  display:inline-block;
   padding-left: 2px;
   font-size:10px;
   cursor: pointer;
   vertical-align: middle;
+}
+
+.select-list-wrap .targetor .time{
+  display: block;
+  text-align:left;
+  font-size: 12px;
+  color:#4d84fe;
 }
 
 .separate-bar{
@@ -1696,7 +1709,7 @@ div.bootstrap-datetimepicker-widget.dropdown-menu{width: auto;}
   opacity: 0.2;
   transition: opacity linear 0.1s;
 }
-.loading-spinner::before {
+.loading-spinner:before {
   -webkit-animation: 1.5s linear infinite spinner;
           animation: 1.5s linear infinite spinner;
   -webkit-animation-play-state: inherit;

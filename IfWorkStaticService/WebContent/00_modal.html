@@ -45,6 +45,8 @@
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#registerModal1">연장근로신청하기</button>
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#registerModal2">휴일근로신청하기</button>
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#registerModal3">휴일근로신청하기_반차</button>
+        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#registerModal4">휴일근로신청하기_연장근로대상자</button>
+        <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#registerModal5">휴일근로신청하기_잔여근로시간</button>
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#viewModal1">연장근로상세보기</button>
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#viewModal2">휴일근로신청_시간신청_상세보기</button>
         <button type="button" class="btn btn-apply" data-toggle="modal" data-target="#viewModal3">휴일근로신청_반차신청_상세보기</button>
@@ -498,6 +500,407 @@
                     <div class="modal-body">
                         <form class="needs-validation" novalidate>
                             <div class="modal-app-wrap">
+                                <div class="inner-wrap">
+                                    <div class="desc row">
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="title">연장근로시간</div>
+                                            <span class="time-wrap">
+                                                <i class="fas fa-clock"></i>
+                                                <span class="time">1시간</span>
+                                            </span>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+                                            <div class="form-row">
+                                                <div class="d-sm-none d-lg-block ml-md-auto"></div>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate" data-toggle="datetimepicker" data-target="#startDate" placeholder="연도/월/일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime3" data-toggle="datetimepicker" data-target="#startTime3" autocomplete="off" required>
+                                                </div>
+                                                <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1">~</span>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate" data-toggle="datetimepicker" data-target="#endDate" placeholder="연도/월/일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime3" data-toggle="datetimepicker" data-target="#endTime3" autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="inner-wrap">
+                                    <div class="desc  clearfix">
+                                        <div class="float-sm-left float-md-left float-lg-left">
+                                            <div class="title">휴일근로시간</div>
+                                            <span class="time-wrap">
+                                                <i class="fas fa-clock"></i>
+                                                <span class="time">1시간</span>
+                                            </span>
+                                        </div>
+                                        <div
+                                            class="form-group mt-sm-1 mt-md-3 mt-lg-3 xl-mt-3 float-sm-right float-md-right float-lg-right clearfix">
+                                            <div class="form-row float-md-none float-lg-left">
+                                                <div class="col-7">
+                                                    <input type="date" class="form-control form-control-sm mr-2"
+                                                        id="inlineFormInputName2" placeholder="">
+                                                </div>
+                                                <div class="col-5">
+                                                    <input type="time" class="form-control form-control-sm mr-2"
+                                                        id="inlineFormInputName2" placeholder="">
+                                                </div>
+                                            </div>
+                                            <span
+                                                class="d-sm-block d-md-block d-lg-inline-block text-center pl-1 pr-2 mt-1">~</span>
+                                            <div class="form-row float-md-none float-lg-right">
+                                                <div class="col-7">
+                                                    <input type="date" class="form-control form-control-sm mr-2"
+                                                        id="inlineFormInputName2" placeholder="">
+                                                </div>
+                                                <div class="col-5">
+                                                    <input type="time" class="form-control form-control-sm mr-2"
+                                                        id="inlineFormInputName2" placeholder="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="form-row no-gutters">
+                                    <div class="form-group col-12">
+                                        <label for="workTime">사유구분</label>
+                                        <select id="workTime" class="form-control" required>
+                                            <option value="" disabled selected hidden>사유를 선택해주세요.</option>
+                                            <option value="">일반작업</option>
+                                            <option>...</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="reson">설명</label>
+                                        <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다."></textarea>
+                                    </div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title mb-2">휴일대체방법</div>
+                                    <div class="desc">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="replaceHoliday2" name="customRadioInline1" class="custom-control-input" value="holiday" required>
+                                            <label class="custom-control-label" for="replaceHoliday2">휴일대체</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="givepayment2" name="customRadioInline1" class="custom-control-input" required value="payback">
+                                            <label class="custom-control-label" for="givepayment2">위로금/시급지급</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="radio-toggle-wrap" style="display:none;">
+                                    <hr>
+                                    <div class="big-title">8시간의 대체 휴일을 지정하세요.</div>
+                                    <div class="info-box clearfix mt-2">
+                                        <div class="title">이전에 신청한 휴일</div>
+                                        <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간
+                                                09:00~12:00</span></div>
+                                        <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간
+                                                09:00~12:00</span></div>
+                                    </div>
+                                    <div class="inner-wrap">
+                                        <div class="title">대체일자</div>
+                                        <div class="desc">
+                                            <div class="form-group clearfix">
+                                                <div class="form-row ">
+                                                    <div class="col-md-6 col-lg" data-target-input="nearest">
+                                                        <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="replaceDay" data-toggle="datetimepicker" data-target="#replaceDay" placeholder="연도/월/일" autocomplete="off" required>
+                                                    </div>
+                                                    <div class="col-md-6 col-lg mt-xs-1 mt-sm-0 mt-md-1 mt-lg-0 float-right">
+                                                        <div class="custom-control custom-radio custom-control-inline mt-sm-1 mt-md-0 mt-lg-1">
+                                                            <input type="radio" id="customRadioInline3" name="customRadioInline1"
+                                                                class="custom-control-input">
+                                                            <label class="custom-control-label" for="customRadioInline3">오전반차</label>
+                                                        </div>
+                                                        <div class="custom-control custom-radio custom-control-inline mt-sm-1 mt-md-0 mt-lg-1">
+                                                            <input type="radio" id="customRadioInline4" name="customRadioInline1"
+                                                                class="custom-control-input">
+                                                            <label class="custom-control-label" for="customRadioInline4">오후반차</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="guide">*해당일 근무시간은 09:00~18:00 입니다.</div>
+                                        </div>
+                                    </div>
+                                    <div class="inner-wrap">
+                                        <div class="title mb-2">결재선</div>
+                                        <ul class="info-box approval">
+                                            <div class="item">
+                                                <p class="title">신청자</p>
+                                                <div class="level">
+                                                    <span class="name">김이수</span>
+                                                    <span class="status complete">결재완료</span>
+                                                </div>
+                                            </div>
+                                            <div class="item">
+                                                <p class="title">발신</p>
+                                                <div class="level">
+                                                    <span class="name">박나운</span>
+                                                    <span class="status complete">결재완료</span>
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">전종찬</span>
+                                                    <span class="status ing">결재중</span>
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">신성호</span>
+                                                    <span class="status cancel">반려</span>
+                                                </div>
+                                            </div>
+                                            <div class="item">
+                                                <p class="title">수신</p>
+                                                <div class="level">
+                                                    <span class="name">남종진</span>
+                                                    <span class="status complete">결재완료</span>
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">장영훈</span>
+                                                    <span class="status ing">결재중</span>
+                                                </div>
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-wrap text-center">
+                                <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
+                                 <button type="submit" class="btn btn-default rounded-0">확인요청</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal end -->
+        <!-- modal end -->
+        <div class="modal fade show" id="registerModal4" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title">휴일근로신청</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="modal-app-wrap">
+                                <div class="inner-wrap">
+                                    <p class="page-sub-title mb-1">연장근로 대상자</p>
+                                    <div class="select-list-wrap">
+                                        <div class="targetor"><span class="name">김성성</span>
+                                            <!--span class="cancel">×</span-->
+                                            <span class="time">잔여 08:30</span></div>
+                                        <div class="targetor"><span class="name">김성성</span><span class="cancel">×</span>
+                                            <span class="time">잔여 08:30</span>
+                                        </div>
+                                        <span class="targetor"><span class="name">윤민용</span><span class="cancel">×</span></span>
+                                        <span class="targetor"><span class="name">임병용</span><span class="cancel">×</span></span>
+                                    </div>
+                                    <hr class="separate-bar">
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="desc row">
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="title">연장근로시간</div>
+                                            <span class="time-wrap">
+                                                <i class="fas fa-clock"></i>
+                                                <span class="time">1시간</span>
+                                            </span>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+                                            <div class="form-row">
+                                                <div class="d-sm-none d-lg-block ml-md-auto"></div>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="startDate" data-toggle="datetimepicker" data-target="#startDate" placeholder="연도/월/일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="startTime3" data-toggle="datetimepicker" data-target="#startTime3" autocomplete="off" required>
+                                                </div>
+                                                <span class="d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1">~</span>
+                                                <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control  datetimepicker-input form-control-sm mr-2" id="endDate" data-toggle="datetimepicker" data-target="#endDate" placeholder="연도/월/일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col col-md col-lg" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="endTime3" data-toggle="datetimepicker" data-target="#endTime3" autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="inner-wrap">
+                                    <div class="desc  clearfix">
+                                        <div class="float-sm-left float-md-left float-lg-left">
+                                            <div class="title">휴일근로시간</div>
+                                            <span class="time-wrap">
+                                                <i class="fas fa-clock"></i>
+                                                <span class="time">1시간</span>
+                                            </span>
+                                        </div>
+                                        <div
+                                            class="form-group mt-sm-1 mt-md-3 mt-lg-3 xl-mt-3 float-sm-right float-md-right float-lg-right clearfix">
+                                            <div class="form-row float-md-none float-lg-left">
+                                                <div class="col-7">
+                                                    <input type="date" class="form-control form-control-sm mr-2"
+                                                        id="inlineFormInputName2" placeholder="">
+                                                </div>
+                                                <div class="col-5">
+                                                    <input type="time" class="form-control form-control-sm mr-2"
+                                                        id="inlineFormInputName2" placeholder="">
+                                                </div>
+                                            </div>
+                                            <span
+                                                class="d-sm-block d-md-block d-lg-inline-block text-center pl-1 pr-2 mt-1">~</span>
+                                            <div class="form-row float-md-none float-lg-right">
+                                                <div class="col-7">
+                                                    <input type="date" class="form-control form-control-sm mr-2"
+                                                        id="inlineFormInputName2" placeholder="">
+                                                </div>
+                                                <div class="col-5">
+                                                    <input type="time" class="form-control form-control-sm mr-2"
+                                                        id="inlineFormInputName2" placeholder="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="form-row no-gutters">
+                                    <div class="form-group col-12">
+                                        <label for="workTime">사유구분</label>
+                                        <select id="workTime" class="form-control" required>
+                                            <option value="" disabled selected hidden>사유를 선택해주세요.</option>
+                                            <option value="">일반작업</option>
+                                            <option>...</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="reson">설명</label>
+                                        <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다."></textarea>
+                                    </div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title mb-2">휴일대체방법</div>
+                                    <div class="desc">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="replaceHoliday2" name="customRadioInline1" class="custom-control-input" value="holiday" required>
+                                            <label class="custom-control-label" for="replaceHoliday2">휴일대체</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="givepayment2" name="customRadioInline1" class="custom-control-input" required value="payback">
+                                            <label class="custom-control-label" for="givepayment2">위로금/시급지급</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="radio-toggle-wrap" style="display:none;">
+                                    <hr>
+                                    <div class="big-title">8시간의 대체 휴일을 지정하세요.</div>
+                                    <div class="info-box clearfix mt-2">
+                                        <div class="title">이전에 신청한 휴일</div>
+                                        <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간
+                                                09:00~12:00</span></div>
+                                        <div class="desc">2019.06.18(금) 13:00~17:00(4시간) <span class="guide d-sm-block">해당일 근무시간
+                                                09:00~12:00</span></div>
+                                    </div>
+                                    <div class="inner-wrap">
+                                        <div class="title">대체일자</div>
+                                        <div class="desc">
+                                            <div class="form-group clearfix">
+                                                <div class="form-row ">
+                                                    <div class="col-md-6 col-lg" data-target-input="nearest">
+                                                        <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="replaceDay" data-toggle="datetimepicker" data-target="#replaceDay" placeholder="연도/월/일" autocomplete="off" required>
+                                                    </div>
+                                                    <div class="col-md-6 col-lg mt-xs-1 mt-sm-0 mt-md-1 mt-lg-0 float-right">
+                                                        <div class="custom-control custom-radio custom-control-inline mt-sm-1 mt-md-0 mt-lg-1">
+                                                            <input type="radio" id="customRadioInline3" name="customRadioInline1"
+                                                                class="custom-control-input">
+                                                            <label class="custom-control-label" for="customRadioInline3">오전반차</label>
+                                                        </div>
+                                                        <div class="custom-control custom-radio custom-control-inline mt-sm-1 mt-md-0 mt-lg-1">
+                                                            <input type="radio" id="customRadioInline4" name="customRadioInline1"
+                                                                class="custom-control-input">
+                                                            <label class="custom-control-label" for="customRadioInline4">오후반차</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="guide">*해당일 근무시간은 09:00~18:00 입니다.</div>
+                                        </div>
+                                    </div>
+                                    <div class="inner-wrap">
+                                        <div class="title mb-2">결재선</div>
+                                        <ul class="info-box approval">
+                                            <div class="item">
+                                                <p class="title">신청자</p>
+                                                <div class="level">
+                                                    <span class="name">김이수</span>
+                                                    <span class="status complete">결재완료</span>
+                                                </div>
+                                            </div>
+                                            <div class="item">
+                                                <p class="title">발신</p>
+                                                <div class="level">
+                                                    <span class="name">박나운</span>
+                                                    <span class="status complete">결재완료</span>
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">전종찬</span>
+                                                    <span class="status ing">결재중</span>
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">신성호</span>
+                                                    <span class="status cancel">반려</span>
+                                                </div>
+                                            </div>
+                                            <div class="item">
+                                                <p class="title">수신</p>
+                                                <div class="level">
+                                                    <span class="name">남종진</span>
+                                                    <span class="status complete">결재완료</span>
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">장영훈</span>
+                                                    <span class="status ing">결재중</span>
+                                                </div>
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-wrap text-center">
+                                <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
+                                 <button type="submit" class="btn btn-default rounded-0">확인요청</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal end -->
+        <!-- modal end -->
+        <div class="modal fade show" id="registerModal5" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title">휴일근로신청</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="modal-app-wrap">
+                                <div class="inner-wrap">
+                                    <p class="page-sub-title mb-0">잔여근로시간</p>
+                                    <span class="time-wrap">
+                                        <i class="fas fa-clock"></i><span class="time point">1시간</span>
+                                    </span>
+                                    <hr class="separate-bar">
+                                </div>
                                 <div class="inner-wrap">
                                     <div class="desc row">
                                         <div class="col-sm-12 col-md-12 col-lg-2">
@@ -1253,7 +1656,7 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="inner-wrap mt-4">
+                                <div class="inner-wrap">
                                     <div class="title mb-2">결재선</div>
                                     <ul class="info-box approval">
                                         <div class="item">
@@ -1537,6 +1940,7 @@
             guide.reloadSlider();
             },200);
         }
+        */
 
         $('.btn.btn-guide').click(function(){
             setTimeout(function(){
@@ -1544,7 +1948,7 @@
                 guide.reloadSlider();
             },200);
         });
-        */
+        
 
             
         });
