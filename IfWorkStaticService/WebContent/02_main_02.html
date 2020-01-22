@@ -47,17 +47,17 @@
     <script src="tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.js"></script>
     <!-- <script src="bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script> -->
     <!-- <script src="bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script> -->
-    <script src='fullcalendar-4.2.0/packages/core/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/core/locales-all.js'></script>
-    <script src='fullcalendar-4.2.0/packages/moment/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/list/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/core/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/core/locales-all.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/moment/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/list/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
     <script type="text/javascript">
         $(function () {
             $('#sidebarCollapse').on('click', function () {
@@ -551,6 +551,44 @@
                                             <label for="reson">사유</label>
                                             <textarea class="form-control" id="reson" rows="3" placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                         </div>
+                                    </div>
+                                    <div class="inner-wrap">
+                                        <div class="title mb-2">결재선</div>
+                                        <ul class="info-box approval">
+                                            <div class="item">
+                                                <p class="title">신청자</p>
+                                                <div class="level">
+                                                    <span class="name">김이수</span>
+                                                    <!-- <span class="status complete">결재완료</span> -->
+                                                </div>
+                                            </div>
+                                            <div class="item">
+                                                <p class="title">발신</p>
+                                                <div class="level">
+                                                    <span class="name">박나운</span>
+                                                    <!-- <span class="status complete">결재완료</span> -->
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">전종찬</span>
+                                                    <!-- <span class="status ing">결재중</span> -->
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">신성호</span>
+                                                    <!-- <span class="status cancel">반려</span> -->
+                                                </div>
+                                            </div>
+                                            <div class="item">
+                                                <p class="title">수신</p>
+                                                <div class="level">
+                                                    <span class="name">남종진</span>
+                                                    <!-- <span class="status complete">결재완료</span> -->
+                                                </div>
+                                                <div class="level">
+                                                    <span class="name">장영훈</span>
+                                                    <!-- <span class="status ing">결재중</span> -->
+                                                </div>
+                                            </div>
+                                        </ul>
                                     </div>
                                     <div class="btn-wrap">
                                         <button type="submit" class="btn btn-apply btn-block btn-lg">확인요청</button>

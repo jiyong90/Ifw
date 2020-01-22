@@ -47,17 +47,17 @@
     <script src="tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.js"></script>
     <!-- <script src="bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script> -->
     <!-- <script src="bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.ko.js"></script> -->
-    <script src='fullcalendar-4.2.0/packages/core/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/core/locales-all.js'></script>
-    <script src='fullcalendar-4.2.0/packages/moment/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/list/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
-    <script src='fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/core/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/core/locales-all.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/moment/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/moment-timezone/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/bootstrap/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/interaction/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/daygrid/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/timegrid/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/list/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/luxon/main.min.js'></script>
+    <script src='../../commonPlugin/fullcalendar-4.2.0/packages/rrule/main.min.js'></script>
     <script type="text/javascript">
         $(function () {
             $('#sidebarCollapse').on('click', function () {
@@ -286,14 +286,14 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="nav navbar-nav ml-auto nav-top gnb-nav-wrap">
                 <li class="nav-item">
-                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar">&#xe900;</i></span></a>
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar"></i></span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico alarm">&#xe802;</i><span
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico alarm"></i><span
                                 class="new"></span></span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico power">&#xe801;</i></span></a>
+                    <a class="" href="#"><span class="ico-wrap"><i class="sp_ico power"></i></span></a>
                 </li>
                 <!-- <li class="nav-item">
                     <a class="nav-link" href="#"><i class="fas fa-power-off"></i></a>
@@ -528,19 +528,58 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="sub-wrap">
+                                <div class="sub-wrap position-relative">
+                                    <div class="loading-spinner"></div>
                                     <ul class="time-block-list">
-                                        <li>
+                                        <li class="">
                                             <div class="title">총 소정 근로 시간</div>
                                             <div class="desc">120시간</div>
                                         </li>
-                                        <li>
+                                        <li class="position-relative">
                                             <div class="title">계획 시간</div>
                                             <div class="desc">42시간</div>
                                         </li>
                                     </ul>
                                 </div>
                                 <div class="sub-desc">*연차는 표준근무시간 8시간 인정</div>
+                                <div class="inner-wrap">
+                                    <div class="title mb-2">결재선</div>
+                                    <ul class="info-box approval">
+                                        <div class="item">
+                                            <p class="title">신청자</p>
+                                            <div class="level">
+                                                <span class="name">김이수</span>
+                                                <!-- <span class="status complete">결재완료</span> -->
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <p class="title">발신</p>
+                                            <div class="level">
+                                                <span class="name">박나운</span>
+                                                <!-- <span class="status complete">결재완료</span> -->
+                                            </div>
+                                            <div class="level">
+                                                <span class="name">전종찬</span>
+                                                <!-- <span class="status ing">결재중</span> -->
+                                            </div>
+                                            <div class="level">
+                                                <span class="name">신성호</span>
+                                                <!-- <span class="status cancel">반려</span> -->
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <p class="title">수신</p>
+                                            <div class="level">
+                                                <span class="name">남종진</span>
+                                                <!-- <span class="status complete">결재완료</span> -->
+                                            </div>
+                                            <div class="level">
+                                                <span class="name">장영훈</span>
+                                                <!-- <span class="status ing">결재중</span> -->
+                                            </div>
+                                        </div>
+                                    </ul>
+                                </div>
                                 <div class="btn-wrap">
                                     <button type="submit" class="btn btn-apply btn-block btn-lg">저장</button>
                                 </div>
