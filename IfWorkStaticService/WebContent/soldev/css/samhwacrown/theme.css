@@ -76,7 +76,13 @@ a[aria-expanded="true"] {
 .modal-app-wrap .guide {
     color: #980724;
 }
-.modal-app-wrap i.fas {
+.select-list-wrap .targetor .time {
+    color: #980724;
+}
+.time-wrap i.fas {
+    color: #980724;
+}
+.time-wrap .time.point {
     color: #980724;
 }
 /* error page */
