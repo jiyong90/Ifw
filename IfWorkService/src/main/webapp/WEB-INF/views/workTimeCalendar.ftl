@@ -39,6 +39,14 @@
                 <div class="modal-body">
                     <form class="needs-validation" novalidate>
                         <div class="modal-app-wrap">
+                        	<div class="inner-wrap position-relative">
+			                	<div class="loading-spinner" style="display:none;"></div>
+			                	<p class="page-sub-title mb-0">잔여 연장근로시간</p>
+			                    <span class="time-wrap">
+			                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(targets['${empNo}'], 'detail')}}</span>
+			                    </span>
+			                    <hr class="separate-bar">
+		                    </div>
                             <div class="inner-wrap">
                                 <div class="desc row">
                                     <div class="col-sm-12 col-md-12 col-lg-2 pr-lg-0">
@@ -348,6 +356,14 @@
                 <div class="modal-body">
                     <form>
                         <div class="modal-app-wrap">
+                        	<div class="inner-wrap position-relative">
+			                	<div class="loading-spinner" style="display:none;"></div>
+			                	<p class="page-sub-title mb-0">잔여 연장근로시간</p>
+			                    <span class="time-wrap">
+			                        <i class="fas fa-clock"></i><span class="time point"></span>
+			                    </span>
+			                    <hr class="separate-bar">
+		                    </div>
                             <div class="inner-wrap">
                                 <div class="title" v-if="result.holidayYn!='Y'">연장근로시간</div>
                                 <div class="title" v-else>휴일근로시간</div>
@@ -522,7 +538,8 @@
   		    	subsYn: false, //대체휴가 사용 여부
   		    	payTargetYn: false, //수당 지급 대상자
   		    	inOutChangeAppl: {},
-  		    	applLine: []
+  		    	applLine: [],
+  		    	targets: {} //대상자 잔여 연장근로시간
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    },
   		    computed: {
@@ -971,6 +988,8 @@
 						$this.getOtSubs(moment(sYmd).format('YYYYMMDD'));
 					} */
 					
+					$this.getRestOtMinute();
+					
 					this.applLine = calendarLeftVue.getApplLine('OT');
 					
 					$("#overtimeAppl").modal("show"); 
@@ -997,6 +1016,11 @@
 						success: function(data) {
 							if(data!=null) {
 								$this.overtimeAppl = data;
+								
+								if($this.overtimeAppl.hasOwnProperty('targetList')) {
+									var emp = $this.overtimeAppl.targetList['${empNo}'];
+									$("#overtimeApplDetail").find(".time.point").text(emp.restOtMinute);
+								}
 								
 								if(data.recoveryYn) {
 									$("#recoveryBtn").show();
@@ -1729,6 +1753,36 @@
   		         		$("#alertModal").modal("show"); 
   	         		}
   	         		
+  	         	},
+  	         	getRestOtMinute : function() { //잔여 연장근로시간 조회
+  	         		var $this = this;
+  	         		$(".loading-spinner").show();
+  	         	
+  	         		var param = {
+  	         			ymd: moment(this.workday).format('YYYYMMDD')
+  	         		};
+  	         		
+  	         		Util.ajax({
+						url: "${rc.getContextPath()}/flexibleEmp/otMinute",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						async: false,
+						success: function(data) {
+							$(".loading-spinner").hide();
+							
+							if(data!=null) {
+								//잔여연장근로시간
+								if(data.hasOwnProperty('targetList')) 
+									$this.targets = data.targetList;
+							} 
+						},
+						error: function(e) {
+							$(".loading-spinner").hide();
+							$this.targets = {};
+						}
+					});
   	         	}
   		    }
    	});
@@ -1868,9 +1922,15 @@
  			}
  		});
    	})
-
+   	
    	//날짜,시간 변경 시 근로시간 계산
-   	$('#sDate, #eDate, #sTime, #eTime').off("change.datetimepicker").on("change.datetimepicker", function(e){
+    $('#sDate, #eDate, #sTime, #eTime').off("change.datetimepicker").on("change.datetimepicker", function(e){
+    	
+    	//시작일자 변경될 때만 휴일여부 조회
+		if($(this).get(0) === $("#sDate").get(0)) {
+			timeCalendarVue.getRestOtMinute();
+		}
+    	
    		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
    			var sTime = $("#sTime").val().replace(/:/gi,"");
    			var eTime = $("#eTime").val().replace(/:/gi,"");
@@ -1878,7 +1938,6 @@
        		timeCalendarVue.overtime = timeCalendarVue.calcMinute(moment(timeCalendarVue.workday).format('YYYYMMDD'), sTime, eTime);
    		}
     });
-    
    	
 	$('#inOutChangeModal').on('hidden.bs.modal',function(){
 		$(this).find("input,select,textarea").val('').end();

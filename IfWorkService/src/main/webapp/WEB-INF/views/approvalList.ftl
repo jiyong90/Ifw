@@ -130,15 +130,24 @@
                     <form>
                         <div class="modal-app-wrap">
                             <div class="inner-wrap">
-                            	<template v-if="appl.targetList && appl.targetList!=null && appl.targetList.length>0">
-			                	<p class="page-sub-title mb-1" v-if="appl.holidayYn!='Y'">연장근로 대상자</p>
-			                	<p class="page-sub-title mb-1" v-else>휴일근로 대상자</p>
-					   			<div class="select-list-wrap">
-					   				<span class="targetor" v-for="a in appl.targetList">
-					   					<span class="name">{{a.empNm}}</span>
-					                </span>
-					            </div>
-					            <hr class="separate-bar">
+                            	<template v-if="appl.targetList && appl.targetList!=null && Object.keys(appl.targetList).length>1">
+				                	<p class="page-sub-title mb-1" v-if="appl.holidayYn!='Y'">연장근로 대상자</p>
+				                	<p class="page-sub-title mb-1" v-else>휴일근로 대상자</p>
+						   			<div class="select-list-wrap position-relative">
+						   				<div class="loading-spinner" style="display:none;"></div>
+						   				<span class="targetor" v-for="(v, k) in appl.targetList">
+						   					<span class="name">{{v.empNm}}</span>
+						   					<span class="time">잔여 {{minuteToHHMM(v.restOtMinute, 'short')}}</span>
+						                </span>
+						            </div>
+						            <hr class="separate-bar">
+					            </template>
+					            <template  v-if="appl.targetList && appl.targetList!=null && Object.keys(appl.targetList).length==1">
+				                	<p class="page-sub-title mb-0">잔여 연장근로시간</p>
+				                    <span class="time-wrap"  v-for="(v, k) in appl.targetList">
+				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(v.restOtMinute, 'short')}}</span>
+				                    </span>
+				                    <hr class="separate-bar">
 					            </template>
                                 <div class="title" v-if="appl.holidayYn!='Y'">연장근로시간</div>
                                 <div class="title" v-else>휴일근로시간</div>
@@ -616,7 +625,9 @@
 	    		var $this = this;
 	    		
     			var saveYn = true;
-    			if($this.apprOpinion=='') {
+    			
+    			//반려일 때만 결재의견 체크
+    			if($this.apprType=='reject' && $this.apprOpinion=='') {
     				saveYn = false;
     				$("#alertText").html("의견을 입력해 주세요.");
     			}
@@ -627,7 +638,8 @@
     				var appr = $this.appr;
 	    			var param = appr;
 	    			
-	    			param['apprOpinion'] = $this.apprOpinion;
+	    			if($this.apprOpinion!='')
+	    				param['apprOpinion'] = $this.apprOpinion;
 	    			
 	    			//연장근무신청 대상자
     				if(appr.appl.hasOwnProperty('targetList') && appr.appl.targetList!=null && appr.appl.targetList!=undefined) {

@@ -586,4 +586,25 @@ public class WtmFlexibleEmpController {
 		return rp;
 	}
 	
+
+	/**
+	 * 해당 일의 잔여 연장근무 시간 조회
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/otMinute",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getOtMinute(@RequestParam Map<String, Object> paramMap
+													    			, HttpServletRequest request) throws Exception {
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		return flexibleEmpService.getOtMinute(tenantId, enterCd, sabun, paramMap, userId);
+	}
+	
 }

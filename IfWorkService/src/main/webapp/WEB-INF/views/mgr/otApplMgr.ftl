@@ -1,3 +1,4 @@
+<#include "/applLineComponent.ftl">
 <div id="otApplMgr" class="container-fluid bg-white mgr-wrap except70 overflow-hidden" v-cloak>
  	<p class="page-title mb-2">연장근로신청 <span id="Tooltip-1" class="tooltip-st"><i class="far fa-question-circle"></i></p>
  	<div class="row">
@@ -43,12 +44,14 @@
              </template>
 		</div>
    		<div id="overtimeAppl" class="col-6" v-show="Object.keys(applSabuns).length>0">
-   			<p class="page-sub-title mb-1">연장근로 대상자</p>
-   			<div class="select-list-wrap">
-   				<span class="targetor" v-for="a in applSabuns">
+  			<p class="page-sub-title mb-1">연장근로 대상자</p>
+   			<div class="select-list-wrap position-relative">
+   				<div class="loading-spinner" style="display:none;"></div>
+  				<div class="targetor" v-for="a in applSabuns">
    					<span class="name">{{a.empNm}}</span>
-                          <span class="cancel" @click="uncheckTarget(a.sabun)">×</span>
-                </span>
+                    <span class="cancel" @click="uncheckTarget(a.sabun)">×</span>
+                    <span class="time">잔여 {{minuteToHHMM(targets[a.sabun], 'short')}}</span>
+                </div>
             </div>
             <hr class="separate-bar">
    			<form class="needs-validation mng-page" novalidate>
@@ -106,6 +109,7 @@
                              </div>
                          </div>
                      </div>
+                     <appl-line :bind-data="applLine"></appl-line>
                  </div>
                  <div class="btn-wrap text-center">
                      <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
@@ -174,6 +178,9 @@
 
    	var otApplMgrVue = new Vue({
    		el: "#otApplMgr",
+   			components : {
+				'appl-line': applLine
+		    },
   		    data : {
   		    	holidayYn: 'N',
   		    	workday: '${today}', //근무일
@@ -185,12 +192,14 @@
   		    	payTargetYn: false, //수당 지급 대상자
   		    	targetList: [],
   		    	applSabuns: {},
-  		    	checklist: {} //연장근무 신청 전 체크해야될 대상자
+  		    	checklist: {}, //연장근무 신청 전 체크해야될 대상자
+  		    	targets: {}, //대상자 잔여 연장근로시간
+  		    	applLine: []
   		    },
   		    watch: {
   		    	applSabuns : function(val, oldVal) {
   		    		var $this = this;
-  		    		if(Object.keys(val).length>0) 
+  		    		if(Object.keys(val).length>0) {}
   		    			$this.viewOvertimeAppl($this.workday);
   		    	}
   		    },
@@ -369,6 +378,10 @@
 					
 					$this.overtime = $this.calcMinute(moment(date).format('YYYYMMDD'), $("#sTime").val().replace(/:/gi,""), $("#eTime").val().replace(/:/gi,""));
 					
+					$this.getRestOtMinute();
+					
+					$this.getApplLine('OT');
+					
 					//결재라인
 					/* 
 					var param = {
@@ -390,6 +403,35 @@
 					}); 
 					*/
 					
+  	         	},
+  	         	getApplLine: function(applCd) {
+  	         		var $this = this;
+  	         		var param = {
+  						applCd: applCd
+  					};
+  					
+  					//결재라인
+  					Util.ajax({
+  						url: "${rc.getContextPath()}/appl/line",
+  						type: "GET",
+  						contentType: 'application/json',
+  						data: param,
+  						dataType: "json",
+  						async: false,
+  						success: function(data) {
+  							if(data!=null && data.status=='OK') {
+  								$this.applLine = data.applLine;
+  							}
+  							
+  						},
+  						error: function(e) {
+  							console.log(e);
+  							$this.applLine = [];
+  						}
+  					});
+  					
+  					return applLine;
+  				
   	         	},
   	         	getApplCode: function(){ //신청서 정보
 					var $this = this;
@@ -729,6 +771,41 @@
 	  	  	         		$("#alertModal").modal("show"); 
 						}
 					}); 
+  	         	},
+  	         	getRestOtMinute : function() { //잔여 연장근로시간 조회
+  	         		var $this = this;
+  	         		$(".loading-spinner").show();
+  	         	
+  	         		var sabuns = [];
+  	         		$.each($this.applSabuns, function(s){
+  	         			sabuns.push(s);
+  	         		});
+  	         		
+  	         		var param = {
+  	         			ymd: moment($this.workday).format('YYYYMMDD'),
+  	         			applSabuns: JSON.stringify(sabuns)
+  	         		};
+  	         		
+  	         		Util.ajax({
+						url: "${rc.getContextPath()}/flexibleEmp/otMinute",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						async: false,
+						success: function(data) {
+							$(".loading-spinner").hide();
+							if(data!=null) {
+								//잔여연장근로시간
+								if(data.hasOwnProperty('targetList')) 
+									$this.targets = data.targetList;
+							} 
+						},
+						error: function(e) {
+							$(".loading-spinner").hide();
+							$this.targets = {};
+						}
+					});
   	         	}
   	         }
    	});
@@ -743,8 +820,11 @@
    			otApplMgrVue.workday = date;
    			
    			//시작일자 변경될 때만 휴일여부 조회
-   			if($(this).get(0) === $("#sDate").get(0))
+   			if($(this).get(0) === $("#sDate").get(0)) {
    				otApplMgrVue.getHolidayYn(date, otApplMgrVue.applSabuns);
+   				otApplMgrVue.getRestOtMinute();
+   			}
+   				
    			
    			otApplMgrVue.overtime = otApplMgrVue.calcMinute(date, sTime, eTime);
    		}
