@@ -160,12 +160,12 @@
 			 WHERE R.TENANT_ID = #{tenantId}
 			   AND R.ENTER_CD = #{enterCd}
 			   AND R.YMD BETWEEN #{symd} AND #{eymd}
-			   AND R.TIME_TYPE_CD = 'OT'
+			   AND R.TIME_TYPE_CD IN ('OT','FIXOT')
 			   AND R.SABUN = #{sabun}
 		) X
 	]]>
     </select>
-    
+   
    	 <select id="otApplDetailByApplId" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT 	DATE_FORMAT(O.OT_SDATE, '%Y.%m.%d %H:%i') AS otSdate
@@ -190,4 +190,31 @@
 			 ORDER BY O.OT_SDATE
 	        ]]>
     </select>
+    
+    <select id="getRestOtMinute" parameterType="map" resultType="map">
+		 SELECT E.TENANT_ID AS tenantId
+		     , E.ENTER_CD AS enterCd
+		     , E.SABUN AS sabun
+		     , E.EMP_NM AS empNm
+		     , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS orgNm
+			  , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'DUTY_CD', DUTY_CD, SYMD) AS dutyNm
+			  , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'POS_CD', POS_CD, SYMD) AS posNm
+			  , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'CLASS_CD', CLASS_CD, SYMD) AS classNm
+			  , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'JOB_CD', JOB_CD, SYMD) AS jobNm
+		     , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
+		  FROM WTM_EMP_HIS E
+		 WHERE E.TENANT_ID = #{tenantId}
+		   AND E.ENTER_CD = #{enterCd}
+		   <if test="sabuns!=null">
+		   AND E.SABUN IN (NULL, 
+	       <foreach collection="sabuns" item="sabun" separator=", ">
+			   #{sabun}
+		   </foreach>
+		   )
+		   </if>
+		   <if test="sabuns==null">
+		   AND E.SABUN = NULL
+		   </if>
+		   AND #{ymd} BETWEEN E.SYMD AND E.EYMD
+  	</select>
 </mapper>

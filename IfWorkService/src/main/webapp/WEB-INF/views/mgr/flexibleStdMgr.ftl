@@ -169,16 +169,28 @@
 											</tr>
 											<tr id="trApplYn">
 												<th>신청여부</th>
-												<td>
+												<td colspan="3">
 													<input type="checkbox" id="applYn" name="applYn" />
 													<label for="applYn">체크시 신청가능</label> 
 												</td>
 											</tr>
 											<tr id="trTodayPlanEdit">
 												<th>당일근무변경여부</th>
-												<td>
+												<td colspan="3">
 													<input type="checkbox" id="todayPlanEditYn" name="todayPlanEditYn" />
 													<label for="todayPlanEditYn">체크시 당일 근무 변경가능</label> 
+												</td>
+											</tr>
+											<tr id="trApplyEntry">
+												<th>출근타각인정여부</th>
+												<td>
+													<input type="checkbox" id="applyEntrySdateYn" name="applyEntrySdateYn" />
+													<label for="applyEntrySdateYn">체크시 출근 타각시간으로 인정</label> 
+												</td>
+												<th>퇴근타각인정여부</th>
+												<td>
+													<input type="checkbox" id="applyEntryEdateYn" name="applyEntryEdateYn" />
+													<label for="applyEntryEdateYn">체크시 퇴근 타각시간으로 인정</label> 
 												</td>
 											</tr>
 											<tr id="trApplTerm">
@@ -341,6 +353,8 @@
 			{Header:"신청기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
 			{Header:"신청기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
 			{Header:"당일근무변경여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"todayPlanEditYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
+			{Header:"출근타각인정여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applyEntrySdateYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
+			{Header:"퇴근타각인정여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applyEntryEdateYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"근태시간포함여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"taaTimeYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"근태일근무여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"taaWorkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"출근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayOpenType",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
@@ -484,6 +498,12 @@
 	        if($('#trUnplan').is(':visible')){
 	        	var chkYn = getCheckYn("unplannedYn");
 	        	sheet1.SetCellValue(row, "unplannedYn", chkYn);
+	        }
+	        if($('#trApplyEntry').is(':visible')){
+	        	var applyEntrySdateYn = getCheckYn("applyEntrySdateYn");
+	        	var applyEntryEdateYn = getCheckYn("applyEntryEdateYn");
+	        	sheet1.SetCellValue(row, "applyEntrySdateYn", applyEntrySdateYn);
+	        	sheet1.SetCellValue(row, "applyEntryEdateYn", applyEntryEdateYn);
 	        }
 	        if($('#trUsedTerm').is(':visible')){
 	        	var usedTermArr = new Array();
@@ -639,6 +659,8 @@
 				$("#dayOpenType").val(sheet1.GetCellValue( NewRow, "dayOpenType")).prop("selected", true);
 				$("#dayCloseType").val(sheet1.GetCellValue( NewRow, "dayCloseType")).prop("selected", true);
 				
+				$("#trApplyEntry").hide();
+				
 				// 고정OT
 				if(workTypeCd == "ELAS"){
 					$("#trBase").hide();
@@ -717,6 +739,8 @@
 					} else {
 						$("#trCoreChk").hide();
 						$("#trCoreTime").hide();
+						
+						$("#trApplyEntry").show();
 					}
 					
 					if(sheet1.GetCellValue( NewRow, "todayPlanEditYn") == "Y"){
