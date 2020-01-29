@@ -1019,7 +1019,7 @@
 								
 								if($this.overtimeAppl.hasOwnProperty('targetList')) {
 									var emp = $this.overtimeAppl.targetList['${empNo}'];
-									$("#overtimeApplDetail").find(".time.point").text(emp.restOtMinute);
+									$("#overtimeApplDetail").find(".time.point").text(minuteToHHMM(emp.restOtMinute, 'detail'));
 								}
 								
 								if(data.recoveryYn) {
@@ -1320,20 +1320,23 @@
 			         	if(isValid) {
 	  	  	         		if($this.result.hasOwnProperty('dayResults') && $this.result.dayResults!=null && $this.result.dayResults!='') {
 		         				var dayResults = JSON.parse($this.result.dayResults);
-	     						dayResults.map(function(dayResult){
-		  	  	         			//if(dayResult.timeTypeCd == 'BASE'){
-			  	  	         			var workSdate = moment(dayResult.sDate).format('YYYY-MM-DD HH:mm');
-				  	         			var workEdate = moment(dayResult.eDate).format('YYYY-MM-DD HH:mm');
-				  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
-				  	         					|| moment(workSdate).diff(otEdate)<0 && moment(otEdate).diff(workEdate)<0 ) {
-				  	         				isValid = false;
-				  	         				msg = '이미 근무정보(신청중인 근무 포함)가 존재합니다.';
-				  	         				$("#sTime").val('');
-				  	  	         			$("#eTime").val('');
-				  	         			}
-				  	         				
-		  	  	         			//}
-		  	  	         		});
+		         				if(dayResults.length>0) {
+		         					dayResults.map(function(dayResult){
+			  	  	         			//if(dayResult.timeTypeCd == 'BASE'){
+				  	  	         			var workSdate = moment(dayResult.sDate).format('YYYY-MM-DD HH:mm');
+					  	         			var workEdate = moment(dayResult.eDate).format('YYYY-MM-DD HH:mm');
+					  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
+					  	         					|| moment(workSdate).diff(otEdate)<0 && moment(otEdate).diff(workEdate)<0 ) {
+					  	         				isValid = false;
+					  	         				msg = '이미 근무정보(신청중인 근무 포함)가 존재합니다.';
+					  	         				$("#sTime").val('');
+					  	  	         			$("#eTime").val('');
+					  	         			}
+					  	         				
+			  	  	         			//}
+			  	  	         		});
+		         				}
+	     						
 	  	  	         		}
 			         	}
   	  	         		
@@ -1618,11 +1621,11 @@
   	 						var isValid = true;
   	 						$this.subYmds.map(function(s, i){
   	 							var sd = moment(s.subsSymd+" "+s.subsShm).format('YYYYMMDD HHmm');
-  	 							var ed = moment(subsInfo.subsSymd+" "+subsInfo.subsEhm).format('YYYYMMDD HHmm');
-  	 							if(idx!=i 
-  	 								&& (moment(sd).diff(sDate)<=0 && moment(sDate).diff(ed)<=0
-  	 								|| moment(sd).diff(eDate)<=0 && moment(eDate).diff(ed)<=0))
+  	 							var ed = moment(s.subsSymd+" "+s.subsEhm).format('YYYYMMDD HHmm');
+  	 							if(idx!=i && (moment(sd).diff(sDate)<=0 && moment(sDate).diff(ed)<=0 || moment(sd).diff(eDate)<=0 && moment(eDate).diff(ed)<=0)) {
   	 								isValid = false;
+  	 							}
+  	 								
   	 						})
   	 						
   	 						if(!isValid) {

@@ -145,7 +145,7 @@
 					            <template  v-if="appl.targetList && appl.targetList!=null && Object.keys(appl.targetList).length==1">
 				                	<p class="page-sub-title mb-0">잔여 연장근로시간</p>
 				                    <span class="time-wrap"  v-for="(v, k) in appl.targetList">
-				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(v.restOtMinute, 'short')}}</span>
+				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(v.restOtMinute, 'detail')}}</span>
 				                    </span>
 				                    <hr class="separate-bar">
 					            </template>
@@ -644,8 +644,12 @@
 	    			//연장근무신청 대상자
     				if(appr.appl.hasOwnProperty('targetList') && appr.appl.targetList!=null && appr.appl.targetList!=undefined) {
     					var applSabuns = [];
-    					appr.appl.targetList.map(function(t){
+    					/* appr.appl.targetList.map(function(t){
     						applSabuns.push(t.sabun);
+    					}); */
+    					
+    					$.each(appr.appl.targetList, function(k,v){
+    						applSabuns.push(k);
     					});
     					
     					param['applSabuns'] = JSON.stringify(applSabuns);
