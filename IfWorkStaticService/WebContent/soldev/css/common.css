@@ -301,7 +301,8 @@ ul, ol, li{
 .changePW {display: -ms-flexbox; display: flex; height:74%;-ms-flex-align: center;align-items: center;padding-top: 40px;padding-bottom: 40px;background-color: #f5f5f5;
 background-repeat: no-repeat;
 background-size: cover;
-background-position : center;}
+background-position : center;
+}
 .form-changePW .title{font-size: 24px;font-weight: bold;line-height: 1.5;letter-spacing: -1.2px; color: #141414;}
 .form-changePW {width: 100%;max-width: 380px;padding: 15px;margin: auto;}
 .form-changePW .logo{width:auto; height:60px;}
@@ -776,11 +777,11 @@ box-sizing: border-box;
 }
 .select-work-list .list-group-item .tag{
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0px;
+  right: -1px;
   display:inline-block;
   min-width: 38px;
-  padding: 1px 8px;
+  /* padding: 1px 8px; */
   font-size: 12px;
   line-height: 1.5;
   text-align: center;
@@ -789,24 +790,30 @@ box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
+.select-work-list .list-group-item .tag span{
+  padding: 1px 8px;
+}
+.select-work-list .list-group-item .tmp-save {
+  background-color: #292944;
+}
 /* 탄력근무 */
-.select-work-list .list-group-item .tag.ELAS {
-  background-color:#ffc421;
+.select-work-list .list-group-item .ELAS {
+  background-color: #ffc421;
 }
 /* 완전선택근무 */
-.select-work-list .list-group-item .tag.SELE_F {
+.select-work-list .list-group-item .SELE_F {
   background-color: #4d84fe;
 }
 /* 부분선택근무 */
-.select-work-list .list-group-item .tag.SELE_C {
+.select-work-list .list-group-item .SELE_C {
   background-color: #85d1f2;
 }
 /* 시차출퇴근 */
-.select-work-list .list-group-item .tag.DIFF {
+.select-work-list .list-group-item .DIFF {
   background-color: #1fc486;
 }
 /* 자율출퇴근 */
-.select-work-list .list-group-item .tag.AUTO {
+.select-work-list .list-group-item .AUTO {
   background-color: #6b6b80;
 }
 .select-work-list .list-group-item:first-child {
@@ -852,6 +859,12 @@ box-sizing: border-box;
   border-right: 0.5px solid #3e3e4c;
   margin-right: 5px;
   margin-left: 5px;
+}
+
+.select-work-list .list-group-item button.close {
+  position: absolute;
+  top: 25px;
+  right: 8px;
 }
 
   /* calendar */
