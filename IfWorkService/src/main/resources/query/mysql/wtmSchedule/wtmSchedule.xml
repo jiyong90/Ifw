@@ -22,8 +22,71 @@
                    ) AA
              WHERE ((#{closeType} = 'A' AND AA.SDATE = AA.EDATE)
                  OR (#{closeType} = 'B' AND AA.SDATE != AA.EDATE))
-ORDER BY YMD, SABUN
+			ORDER BY YMD, SABUN
         ]]>
     </select>
 
+	<select id="getOtList" parameterType="map" resultType="hashmap">
+		<![CDATA[
+	    	SELECT CONCAT(X.ENTER_CD, '@', X.SABUN) AS EMP,
+	    		CASE WHEN F_WTM_GET_LEADER_SABUN(X.TENANT_ID, X.ENTER_CD,  X.SABUN) != '' THEN  
+    	 			CONCAT(X.ENTER_CD, '@', F_WTM_GET_LEADER_SABUN(X.TENANT_ID, X.ENTER_CD, X.SABUN)) ELSE '' END AS LEADER,
+    	 		X.REST_WORK_MINUTE, 
+    	 		X.REST_OT_MINUTE, 
+    	 		X.SABUN, 
+    	 		X.EMP_NM
+	    	FROM (
+					SELECT H.TENANT_ID, H.ENTER_CD, H.SABUN, H.EMP_NM 
+					  ,	F_WTM_GET_WORK_MINUTE(H.TENANT_ID, H.ENTER_CD, H.SABUN, #{ymd}, 'T', 'WORK') AS TOTAL_WORK_MINUTE
+					  , F_WTM_GET_WORK_MINUTE(H.TENANT_ID, H.ENTER_CD, H.SABUN, #{ymd}, 'T', 'OT') AS TOTAL_OT_MINUTE
+					  , F_WTM_GET_WORK_MINUTE(H.TENANT_ID, H.ENTER_CD, H.SABUN, #{ymd}, 'R', 'WORK') AS REST_WORK_MINUTE
+					  , F_WTM_GET_WORK_MINUTE(H.TENANT_ID, H.ENTER_CD, H.SABUN, #{ymd}, 'R', 'OT') AS REST_OT_MINUTE
+				FROM WTM_EMP_HIS H 
+				JOIN WTM_WORK_CALENDAR C ON H.TENANT_ID=C.TENANT_ID 
+						AND H.ENTER_CD=C.ENTER_CD
+						AND H.SABUN = C.SABUN AND C.YMD=#{ymd}
+				WHERE H.TENANT_ID=#{tenantId}
+				AND H.ENTER_CD = #{enterCd}
+				AND H.STATUS_CD = 'AA'
+				AND H.BUSINESS_PLACE_CD = #{businessPlaceCd}
+				AND H.SYMD < #{ymd} 
+				AND H.EYMD >= #{ymd}
+			) X 
+			]]>
+			<if test="stdType.equals('R_OT')">
+				<![CDATA[
+					WHERE X.REST_OT_MINUTE <= #{stdOtTime}
+				]]>
+			</if>
+			<if test="stdType.equals('R_WORK')">
+				<![CDATA[
+					WHERE X.REST_WORK_MINUTE <= #{stdOtTime}
+				]]>
+			</if>
+	</select>
+	
+	<select id="getInoutCheckList" parameterType="map" resultType="hashmap">
+		<![CDATA[
+				SELECT CONCAT(X.ENTER_CD, '@', X.SABUN) AS EMP_KEY
+				FROM (
+				SELECT MIN(W.PLAN_SDATE) AS PLAN_SADTE
+					, MAX(W.PLAN_EDATE) AS PLAN_EDATE
+					, C.ENTRY_SDATE
+					, C.ENTRY_EDATE
+					, C.ENTER_CD
+					, C.SABUN
+					FROM WTM_WORK_DAY_RESULT W 
+					JOIN WTM_WORK_CALENDAR C 
+						ON W.TENANT_ID=C.TENANT_ID 
+							AND W.ENTER_CD=C.ENTER_CD
+							AND W.SABUN = C.SABUN
+						    AND W.YMD = C.YMD 
+					WHERE W.YMD= F_WTM_DATE_FORMAT(NOW(), 'YMD')  
+						AND (ENTRY_SDATE IS NULL OR ENTRY_EDATE IS NULL)
+						AND W.ENTER_CD=#{enterCd}
+				GROUP BY W.TENANT_ID, W.ENTER_CD, W.SABUN, W.YMD) X
+				WHERE (#{stdType} = 'B_IN' AND TIMESTAMPDIFF(MINUTE, X.PLAN_SADTE,  NOW()) = #{stdMinute}) 
+					OR (#{stdType} = 'A_OUT' AND TIMESTAMPDIFF(MINUTE, X.PLAN_SADTE,  NOW()) = #{stdMinute}) 
+		]]>
+	</select>
 </mapper>

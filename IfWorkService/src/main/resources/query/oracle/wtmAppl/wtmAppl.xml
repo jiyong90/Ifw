@@ -24,7 +24,7 @@
 									     , ENTER_CD
 									     , S.ORG_CD
 						                 , LEVEL AS APPR_SEQ
-						             FROM ( SELECT D.*
+						             FROM ( SELECT C.TENANT_ID, C.ENTER_CD, D.*
 								            FROM WTM_ORG_CHART C
 								            JOIN WTM_ORG_CHART_DET D
 								             ON C.ORG_CHART_ID = D.ORG_CHART_ID
