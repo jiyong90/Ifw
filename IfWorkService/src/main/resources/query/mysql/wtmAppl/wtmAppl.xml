@@ -24,7 +24,7 @@
               				 , ENTER_CD 
 						     , @r AS ORG_CD
 						     , (SELECT @r := PRIOR_ORG_CD 
-							       FROM ( SELECT D.*
+							       FROM ( SELECT C.TENANT_ID, C.ENTER_CD, D.*
 												  FROM WTM_ORG_CHART C
 												  JOIN WTM_ORG_CHART_DET D
 												    ON C.ORG_CHART_ID = D.ORG_CHART_ID
