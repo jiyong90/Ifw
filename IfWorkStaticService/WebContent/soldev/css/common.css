@@ -861,12 +861,13 @@ box-sizing: border-box;
   margin-left: 5px;
 }
 
-.select-work-list .list-group-item button.close {
-  opacity: 1;
+.select-work-list .list-group-item button.delete {
   position: absolute;
-  top: 33px;
+  top: 29px;
   right: 8px;
   text-decoration: underline;
+  border:0px;
+  background: transparent;
   color: #d54b1b;
   font-size: 14px;
   font-weight: 400;
