@@ -239,14 +239,23 @@
 								if(f.workTypeCd==null || f.workTypeCd=='' || !f.hasOwnProperty('workTypeCd'))
 									workTypeCd = f.applCd;
 								
-								$this.addEvent({
-									//id: 'workRange.'+f.applCd+'.'+sYmd,
-									id: 'workRange.'+workTypeCd+'.'+sYmd,
-									start: sYmd,
-		  		  		        	end: eYmd,
-		  		  		        	rendering: 'background'
-		  		  		        	//classNames: classNames
-								});
+								//console.log('-----------------------------------'+sYmd);
+								//console.log(calendarLeftVue.applInfo.useSymd!=sYmd);
+								//console.log(!f.hasOwnProperty('applStatusCd'));
+								//console.log(f.applStatusCd!='11');
+								
+								//현재 선택된 임시저장건만 빼고 그리기
+								if(calendarLeftVue.applInfo.useSymd!=sYmd 
+										|| !f.hasOwnProperty('applStatusCd') || f.applStatusCd!='11') {
+									$this.addEvent({
+										//id: 'workRange.'+f.applCd+'.'+sYmd,
+										id: 'workRange.'+workTypeCd+'.'+sYmd,
+										start: sYmd,
+			  		  		        	end: eYmd,
+			  		  		        	rendering: 'background'
+			  		  		        	//classNames: classNames
+									});
+								}
 								
 								//근무계획
 								//if(f.hasOwnProperty('flexibleEmp') && ($this.dayWorks[f.sYmd]==null || $this.dayWorks[f.sYmd]==undefined)) {
@@ -500,6 +509,65 @@
 	       			if(calendarTopVue.selectedFlexibleStd.workTypeCd!='ELAS')
 	       				calendarLeftVue.flexitimeApplImsi();
          		}
+         	},
+         	startDaySelect: function(selectedDay){
+         		var $this = this;
+         		
+         		var flexStd = calendarTopVue.selectedFlexibleStd;
+         	
+         		calendarLeftVue.applInfo.useSymd = selectedDay;
+    			
+    			//결재라인
+    			calendarLeftVue.applLine = calendarLeftVue.getApplLine(flexStd.workTypeCd);
+    			
+    			$("#flexibleAppl").find(".sub-wrap").show();
+    			
+    			//신청 화면 전환
+    			//calendarLeftVue.setUsedTermOpt();
+    			
+    	   		if(flexStd.hasOwnProperty("usedTermOpt") && flexStd.usedTermOpt!=null) {
+    	   			if(!flexStd.hasOwnProperty("applId") || flexStd.applId==null || flexStd.applId=='') {
+    	   				//적용기간은 첫번째 항목으로 기본 세팅
+    	   				var workDateRangeItem = flexStd.usedTermOpt[0]; 
+        	   			
+        	   			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null) {
+        	   				calendarLeftVue.applInfo.workRange = workDateRangeItem.value;
+        	   				monthCalendarVue.changeWorkRange();
+        	   			}
+    	   			} else {
+    	   				//임시저장된 근무제 보여주기
+    	   				calendarLeftVue.applInfo.applId = flexStd.applId;
+    	   			
+    	   				//종료일자 세팅	
+    	   				if(flexStd.hasOwnProperty("eYmd")&&flexStd.eYmd!=null&&flexStd.eYmd!='') {
+    	   					calendarLeftVue.applInfo.useEymd = moment(flexStd.eYmd).format('YYYY-MM-DD');
+    	   					
+    	   					var usedTermOpt = JSON.parse(flexStd.usedTermOpt);
+    	   					flexStd.usedTermOpt = usedTermOpt;
+        	   				
+    	   					usedTermOpt.map(function(u){
+    	   						var eYmd = new Date(selectedDay);
+    	   						var value = u.value.split('_');
+    	   						
+            	       			if(value[1]=='week') {
+            	       				eYmd.setDate(eYmd.getDate()+ (value[0]*7));
+            	       			} else if(value[1]=='month') {
+            	         			eYmd.setMonth(eYmd.getMonth()+ (Number(value[0])));
+            	       			}
+            	       			
+            	       			eYmd.setDate(eYmd.getDate()-1);
+            	       			
+            	       			if(calendarLeftVue.applInfo.useEymd == moment(eYmd).format('YYYY-MM-DD')) {
+            	       				calendarLeftVue.applInfo.workRange = u.value;
+            	       				monthCalendarVue.changeWorkRange();
+            	       			}
+            	       				
+    	   					});
+    	   				}
+    	   			}
+    	   			
+    	   		}
+         	
          	}
     	}
    	});
@@ -518,25 +586,7 @@
 		});
 		
 		if(!isExist) {
-			calendarLeftVue.applInfo.useSymd = selectedDay;
-			
-			//결재라인
-			calendarLeftVue.applLine = calendarLeftVue.getApplLine(calendarTopVue.selectedFlexibleStd.workTypeCd);
-			
-			$("#flexibleAppl").find(".sub-wrap").show();
-			
-			//신청 화면 전환
-			//calendarLeftVue.setUsedTermOpt();
-			
-			//적용기간은 첫번째 항목으로 기본 세팅
-	   		if(calendarTopVue.selectedFlexibleStd.hasOwnProperty("usedTermOpt") && calendarTopVue.selectedFlexibleStd.usedTermOpt!=null) {
-	   			var workDateRangeItem = calendarTopVue.selectedFlexibleStd.usedTermOpt[0]; 
-	   			
-	   			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null) {
-	   				calendarLeftVue.applInfo.workRange = workDateRangeItem.value;
-	   				monthCalendarVue.changeWorkRange();
-	   			}
-	   		}
+			monthCalendarVue.startDaySelect(selectedDay);
 		} else {
 			$("#alertText").html("신청중인 또는 이미 적용된 근무정보가 있습니다.<br>시작일을 다시 지정하세요.");
        		$("#alertModal").on('hidden.bs.modal',function(){

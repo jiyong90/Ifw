@@ -43,14 +43,27 @@
 	                </div>
 	                <div class="modal-body">
 	                	<div class="modal-app-wrap">
-		                    <p>사용할 근무제를 선택하세요.</p>
+		                    <ul class="nav approval-wrap nav-pills" role="tablist">
+		                    	<li class="nav-item">
+					                <a href="#" class="nav-link" :class="{active: flexStatus=='02'?true:false}" data-toggle="pill" role="tab" @click="changeFlexStatus('02')"
+					                    aria-controls="pills-profile" :aria-selected="flexStatus=='02'?true:false">임시저장한 근무제</a>
+					            </li>
+					            <li class="nav-item">
+					                <a href="#" class="nav-link" :class="{active: flexStatus=='01'?true:false}" data-toggle="pill" role="tab" @click="changeFlexStatus('01')"
+					                    aria-controls="pills-home" :aria-selected="flexStatus=='01'?true:false">신규 근무제</a>
+					            </li>
+					        </ul>
 		                    <div class="mt-3">
 			                	<!-- <button class="btn btn-outline btn-flat btn-block text-left" type="button" data-toggle="collapse" data-target="#collapWork" aria-expanded="false" aria-controls="collapseExample">근무제</button> -->
 		                        <!-- <div class="collapse" id="collapWork"> -->
-		                       	<div>
+		                       	<div v-if="flexStatus=='01'">
 		                            <ul class="list-group select-work-list">
-		                                <li class="list-group-item" v-for="(f, fIdx) in flexitimeList" @click="selectFlexitime(fIdx)">
-		                                    <span :class="['tag ' + f.workTypeCd]">{{f.workTypeNm}}</span>
+		                                <li class="list-group-item new-flex" v-for="(f, fIdx) in flexitimeList" @click="selectFlexitime(fIdx)">
+		                                    <span class="tag">
+			                                    <span :class="f.workTypeCd">
+			                                    	{{f.workTypeNm}}
+			                                    </span>
+		                                    </span>
 		                                    <div class="title">{{f.flexibleNm}}</div>
 		                                    <div class="desc">
 		                                    	<template v-if="f.workShm && f.workEhm"> 
@@ -70,11 +83,34 @@
 		                                </li>
 		                            </ul>
 		                        </div>
+		                        <div v-if="flexStatus=='02'">
+		                             <ul class="list-group select-work-list" v-if="imsiFlexitimeList.length>0">
+		                                <li class="list-group-item imsi-flex" v-for="(i, iIdx) in imsiFlexitimeList" @click="selectImsiFlexitime(iIdx)">
+		                                    <span class="tag">
+			                                    <span :class="i.workTypeCd">
+			                                    {{i.workTypeNm}}
+			                                    </span>
+			                                    <span class="tmp-save">임시저장</span>
+		                                    </span>
+		                                    <div class="title">{{i.flexibleNm}}</div>
+		                                    <div class="desc" v-if="i.sYmd && i.eYmd">
+		                                    	근무기간: {{moment(i.sYmd).format('YYYY-MM-DD')}} ~ {{moment(i.eYmd).format('YYYY-MM-DD')}}
+		                                    </div>
+		                                    <button type="button" class="delete" @click="calendarLeftVue.cancelFlexitime(i)">
+                                                <span>삭제</span>
+                                            </button>
+		                                </li>
+		                            </ul>
+                                	<div class="desc" v-else>
+                                    	임시저장한 근무제가 없습니다.
+                                    </div>
+		                        </div>
 			                </div>
 		                </div>
 		                <div class="btn-wrap text-center">
 		                    <button type="button" class="btn btn-secondary  rounded-0" data-dismiss="modal">취소</button>
 		                    <button type="button" id="applyFlexBtn" class="btn btn-default rounded-0" style="display:none;" @click="applyFlexitime">적용하기</button>
+		                    <button type="button" id="rewriteBtn" class="btn btn-default rounded-0" style="display:none;" @click="rewriteFlexitime">재작성하기</button>
 		                </div>
 	                </div>
 	            </div>
@@ -98,7 +134,7 @@
 	                </div>
 	                <div class="col">
 	                </div>
-	                <div v-if="'${calendar}'=='workMonthCalendar'" class="col-12 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+	                <div v-if="'${calendar}'=='workMonthCalendar'" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
 	                    <div class="btn-wrap text-right">
 	                    	<button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" data-target="#flexitimeModal" v-if="flexitimeList.length>0" >근무제 적용하기</button>
 	                        <!--  <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'" @click="getFlexitimeList">근무제 적용하기</button> -->
@@ -512,7 +548,7 @@
                                         <option v-for="term in calendarTopVue.selectedFlexibleStd.usedTermOpt" :value="term.value">{{term.lable}}</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-12">
+                                <div class="form-group col-12" >
                                     <label for="reason">사유</label>
                                     <textarea class="form-control" id="reason" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason" required></textarea>
                                 </div>
@@ -639,8 +675,8 @@
 			                    </ul>
 			                    <div class="form-row no-gutters">
 				                    <div class="form-group col-12">
-		                                <label for="reason">사유</label>
-		                                <textarea class="form-control" id="reason" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason"></textarea>
+		                                <label for="opinion">사유</label>
+		                                <textarea class="form-control" id="opinion" rows="3" placeholder="팀장 확인 시에 필요합니다." v-model="applInfo.reason"></textarea>
 		                            </div>
 	                            </div>
 	                            <appl-line :bind-data="applLine"></appl-line>
@@ -827,13 +863,17 @@
    		el: "#calendar_top",
 	    data : {
 	    	today: '${today?date("yyyy-MM-dd")?string("yyyyMMdd")}',
+	    	flexStatus: '',
 	    	flexitimeList: [], //사용할 유연근무제 리스트
 	    	flexibleStd: {}, //현재 근무제
-	    	legendList: []
+	    	legendList: [],
+	    	imsiFlexitimeList: [], //재작성할 근무제 리스트
+	    	selectedFlexibleStd: {},
+	    	selectedImsiFlexibleStd: {}
   		},
 	    mounted: function(){
 	    	var $this = this;
-			
+	    	
 	    	<#if flexibleStdMgr?? && flexibleStdMgr!='' && flexibleStdMgr?exists >
 				$this.flexibleStd = JSON.parse("${flexibleStdMgr?js_string}");
 			</#if>
@@ -852,6 +892,7 @@
 	    		} */
 	    	</#if>
 	    	$this.getFlexitimeList();
+	    	$this.getImsiFlexitimeList();
 	    },
 	    watch: {
 	    	flexitimeList : function(val, oldVal) {
@@ -889,11 +930,40 @@
 					}
 				});
 	         },
+		     getImsiFlexitimeList : function(){ //임시저장된 유연근무제 신청서 리스트
+	         	var $this = this;
+		     
+	         	$this.flexStatus = '02';
+		     
+	        	var param = {
+	        		applStatusCd : '11'
+	        	};
+         	
+		    	Util.ajax({
+					url: "${rc.getContextPath()}/flexibleAppl/list",
+					type: "GET",
+					contentType: 'application/json',
+					data: param,
+					dataType: "json",
+					success: function(data) {
+						$this.imsiFlexitimeList = [];
+						if(data!=null && data!=undefined && data.length>0) {
+							$this.imsiFlexitimeList = data;
+						} else {
+							$this.flexStatus = '01';
+						}
+					},
+					error: function(e) {
+						console.log(e);
+						$this.imsiFlexitimeList = [];
+					}
+				});
+		     },
 	         selectFlexitime : function(idx){ //사용할 근무제 선택
          		var $this = this;
          		
-         		$("#flexitimeModal .list-group-item").not(idx).removeClass("active");
-         		$("#flexitimeModal .list-group-item").eq(idx).addClass("active");
+         		$("#flexitimeModal .list-group-item.new-flex").not(idx).removeClass("active");
+         		$("#flexitimeModal .list-group-item.new-flex").eq(idx).addClass("active");
          		 
          		//선택한 근무제 적용
          		$this.selectedFlexibleStd = $this.flexitimeList[idx];
@@ -1011,6 +1081,40 @@
                     // 팝업창 닫기
                     $("#guide").modal('hide');
                 });
+         	},
+         	changeFlexStatus: function(flexStatus){
+         		this.flexStatus=flexStatus; 
+         		
+         		if(flexStatus=='01') {
+         			$("#rewriteBtn").hide();
+         		} else if(flexStatus=='02') {
+         			$("#applyFlexBtn").hide();
+         		}
+         		
+         	},
+         	selectImsiFlexitime: function(idx) {
+				var $this = this;
+         		
+         		$("#flexitimeModal .list-group-item.imsi-flex").not(idx).removeClass("active");
+         		$("#flexitimeModal .list-group-item.imsi-flex").eq(idx).addClass("active");
+         		 
+         		//선택한 근무제 적용
+         		$this.selectedFlexibleStd = $this.imsiFlexitimeList[idx];
+         		$("#rewriteBtn").show();
+         	},
+         	rewriteFlexitime: function() {
+         		var $this = this;
+             	
+         		$('#flexitimeModal').on('hidden.bs.modal',function(){
+         			$('#flexitimeModal').off('hidden.bs.modal');
+         			$(".list-group-item").removeClass("active");
+
+	         		calendarLeftVue.useYn='Y';
+         			
+         			//신청화면 전환
+         			calendarLeftVue.viewFlexitimeAppl($this.selectedFlexibleStd);
+         		});
+         		$('#flexitimeModal .close').click();
          	}
 	    }
    	});
@@ -1217,11 +1321,7 @@
 				$("#workRangeInfo").hide();
 	         	$("#workDayInfo").hide();
 
-         		if(obj!=null) {
-         			$this.applInfo = obj;
-         			$this.applInfo.useSymd = moment(obj.sYmd).format('YYYY-MM-DD');
-         			$this.applInfo.useEymd = moment(obj.eYmd).format('YYYY-MM-DD');
-         			$this.flexibleAppl = obj;
+         		/* if(obj!=null) {
          			
          			if(obj.applStatusCd!='11') { //결재요청
          				$("#apprBtn").hide();
@@ -1229,7 +1329,11 @@
          			}
          			
          			$this.calendar.gotoDate($this.applInfo.useSymd);
-         		} 
+         		} */
+         		
+         		if(obj!=null) {
+         			monthCalendarVue.startDaySelect(moment(obj.sYmd).format('YYYY-MM-DD'));
+         		}
          		
          		$("#flexibleAppl").show();
          	},
@@ -1491,14 +1595,19 @@
 	         	//	$("#flexibleAppl").hide();
 	         	//}
 	        },
-	        cancelFlexitime: function(){ //근무제 적용 취소
+	        cancelFlexitime: function(obj){ //근무제 적용 취소
 	        	
 	        	var $this = this;
 	        
 	        	$("#loading").show();
 				
-	        	var param = $this.rangeInfo;
-	        	param.applCd = $this.rangeInfo.workTypeCd;
+				var param;
+				if(obj!=null) {
+					param = obj;
+				} else {
+					param = $this.rangeInfo;
+		        	param.applCd = $this.rangeInfo.workTypeCd;
+				}
 	        
          		Util.ajax({
 					url: "${rc.getContextPath()}/appl/delete",
@@ -1610,6 +1719,12 @@
    		$(".list-group-item").removeClass("active");
    		monthCalendarVue.prevEdate = '';
    		$("#applyFlexBtn").hide();
+   		$("#rewriteBtn").hide();
+   		
+   		if(calendarTopVue.imsiFlexitimeList!=null && calendarTopVue.imsiFlexitimeList.length>0)
+   			calendarTopVue.flexStatus='02';
+   		else
+   			calendarTopVue.flexStatus='01';
    	});
    	
     $("#useSymd").off("change.datetimepicker").on("change.datetimepicker", function(e){
