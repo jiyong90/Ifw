@@ -862,9 +862,14 @@ box-sizing: border-box;
 }
 
 .select-work-list .list-group-item button.close {
+  opacity: 1;
   position: absolute;
-  top: 25px;
+  top: 33px;
   right: 8px;
+  text-decoration: underline;
+  color: #d54b1b;
+  font-size: 14px;
+  font-weight: 400;
 }
 
   /* calendar */
