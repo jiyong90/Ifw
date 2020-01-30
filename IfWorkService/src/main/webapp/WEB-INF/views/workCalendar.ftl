@@ -900,7 +900,7 @@
 	    			//신청 가능한 유연근무제 리스트
 	    			this.legendList = [];
 	    			
-    				this.drawLegend(val);
+    				this.drawLegend(val, true);
 	    		} 
 	    	}
 	    },
@@ -1002,7 +1002,7 @@
          	getFlexibleAppl : function(flexibleAppl){
          		calendarLeftVue.flexibleAppl = flexibleAppl;
          	},
-         	drawLegend: function(val){
+         	drawLegend: function(val, isGuide){
          		var $this = this;
          		
          		var keys = [];
@@ -1049,7 +1049,8 @@
 	                $(".bxslider").append('<li><img src="${rc.getContextPath()}/soldev/img/guide/p09.png" title="여러 날을 동시에 선택해 근무계획을 입력할 수 있습니다."></li>');
     			} 
          		
-         		this.loadSlider();
+         		if(isGuide)
+         			this.loadSlider();
          	},
          	loadSlider: function() {
          		//guide slider

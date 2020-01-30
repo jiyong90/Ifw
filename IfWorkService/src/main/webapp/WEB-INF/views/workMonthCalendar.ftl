@@ -36,7 +36,7 @@
 	    	monthFlexitimeList : function(val, oldVal) {
 	    		if(val!=null && val.length>0 && $(".fc-legend-button").length>0) {
 	    			//적용 중인 유연근무제 리스트
-    				calendarTopVue.drawLegend(val);
+    				calendarTopVue.drawLegend(val, false);
 	    		} 
 	    	}
 	    },
