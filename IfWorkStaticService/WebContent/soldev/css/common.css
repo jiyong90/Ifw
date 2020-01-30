@@ -1069,6 +1069,7 @@ box-sizing: border-box;
 
 
 /* modal style */
+.modal{overflow-y: auto;}
 .modal-xl-more{max-width:1220px;}
 .modal-header{border-bottom:1px solid #5a5d65;}
 .modal-app-wrap {padding: 0px 10px 20px 10px; margin-top:-2px;}
