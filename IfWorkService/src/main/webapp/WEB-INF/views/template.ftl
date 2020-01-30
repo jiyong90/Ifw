@@ -92,7 +92,6 @@
 			el: "#planWorkDayModal",
 		    data : {
 		    	flexibleEmpId: '',
-		    	selectedFlexibleStd: {},
 		    	planFlexitimeList: [] //근무계획을 작성할 유연근무제 리스트
 		    },
 		    mounted: function(){

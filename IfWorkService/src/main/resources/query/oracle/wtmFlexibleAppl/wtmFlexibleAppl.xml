@@ -206,4 +206,51 @@
 			   AND D.SUN_YMD BETWEEN #{sYmd} AND #{eYmd}
 	        ]]>
     </select>
+    
+    <select id="getImsiFlexAppl" parameterType="map" resultType="wtmGeneral">
+    	<![CDATA[
+    	SELECT A.APPL_ID
+		     , A.TENANT_ID
+		     , A.ENTER_CD
+		     , A.APPL_SABUN
+		     , A.APPL_CD
+		     , A.APPL_STATUS_CD
+		     , F.FLEXIBLE_APPL_ID
+		     , F.FLEXIBLE_STD_MGR_ID
+		     , F.SYMD AS S_YMD
+		     , F.EYMD AS E_YMD
+		     , F.WORK_DAY
+		     , F.REASON
+		     , M.WORK_TYPE_CD
+		     , (SELECT APPL_NM FROM WTM_APPL_CODE WHERE TENANT_ID = A.TENANT_ID AND ENTER_CD = A.ENTER_CD AND APPL_CD = A.APPL_CD) AS WORK_TYPE_NM
+		     , M.FLEXIBLE_NM
+		     , M.USE_SYMD 
+		     , M.USE_EYMD
+		     , M.WORK_SHM
+		     , M.WORK_EHM
+		     , M.CORE_SHM
+		     , M.CORE_EHM
+		     , M.USED_TERM_OPT
+		     , CASE F_WTM_WEEKDAY(USE_SYMD) 
+				WHEN 1 THEN '일요일'
+				WHEN 2 THEN '월요일'
+				WHEN 3 THEN '화요일'
+				WHEN 4 THEN '수요일'
+				WHEN 5 THEN '목요일'
+				WHEN 6 THEN '금요일'
+				WHEN 7 THEN '토요일' END AS WEEK_DAY
+		  FROM WTM_APPL A
+		  JOIN WTM_FLEXIBLE_APPL F
+		    ON A.APPL_ID = F.APPL_ID
+		  JOIN WTM_FLEXIBLE_STD_MGR M
+		    ON A.TENANT_ID = M.TENANT_ID
+		   AND A.ENTER_CD = M.ENTER_CD
+		   AND F.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+		 WHERE A.TENANT_ID = #{tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.APPL_SABUN = #{sabun}
+		   AND A.APPL_STATUS_CD = #{applStatusCd}
+		 ORDER BY A.APPL_YMD DESC
+    	]]>
+    </select>
 </mapper>

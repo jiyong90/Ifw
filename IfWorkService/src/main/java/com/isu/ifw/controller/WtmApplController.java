@@ -266,7 +266,11 @@ public class WtmApplController {
 				} else {
 					flexibleApplService.delete(applId);
 					
-					if(paramMap.containsKey("sabun") && paramMap.containsKey("sYmd") && paramMap.containsKey("eYmd")) {
+					String applStatusCd = null;
+					if(paramMap.containsKey("applStatusCd") && paramMap.get("applStatusCd")!=null && !"".equals(paramMap.get("applStatusCd")))
+						applStatusCd = paramMap.get("applStatusCd").toString();
+						
+					if((applStatusCd==null || !WtmApplService.APPL_STATUS_IMSI.equals(applStatusCd)) && paramMap.containsKey("sabun") && paramMap.containsKey("sYmd") && paramMap.containsKey("eYmd")) {
 						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
 						wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
 					}

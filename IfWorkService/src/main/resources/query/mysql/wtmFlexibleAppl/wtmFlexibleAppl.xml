@@ -130,7 +130,7 @@
 				),
 				XX.OT_MINUTE = (
 			   		SELECT FLOOR(X.C) + ( ( X.C -  FLOOR(X.C)) * 60 ) FROM (
-						SELECT FLOOR(SUM(CASE D.HOLIDAY_YN WHEN 'Y' THEN 1 WHEN 'N' THEN 1 END) * F_WTM_TO_NUMBER(P.INFO_VALUE, 'Y') / 7) * 60 
+						SELECT FLOOR(SUM(CASE D.HOLIDAY_YN WHEN 'Y' THEN 1k WHEN 'N' THEN 1 END) * F_WTM_TO_NUMBER(P.INFO_VALUE, 'Y') / 7) * 60 
 							AS C
 						  FROM WTM_FLEXIBLE_EMP E
 				    	  JOIN WTM_FLEXIBLE_STD_MGR M
@@ -275,5 +275,52 @@
    				OR (#{totalYn}='N' AND START_YMD=#{symd} AND YMD<>''))
    			 ORDER BY START_YMD, YMD
 	        ]]>
+    </select>
+    
+    <select id="getImsiFlexAppl" parameterType="map" resultType="hashmap">
+    	<![CDATA[
+    	SELECT A.APPL_ID AS applId
+		     , A.TENANT_ID AS tenantId
+		     , A.ENTER_CD AS enterCd
+		     , A.APPL_SABUN AS applSabun
+		     , A.APPL_CD AS applCd
+		     , A.APPL_STATUS_CD AS applStatusCd
+		     , F.FLEXIBLE_APPL_ID AS flexibleApplId
+		     , F.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+		     , F.SYMD AS sYmd
+		     , F.EYMD AS eYmd
+		     , F.WORK_DAY AS workDay
+		     , F.REASON AS reason
+		     , M.WORK_TYPE_CD AS workTypeCd
+		     , (SELECT APPL_NM FROM WTM_APPL_CODE WHERE TENANT_ID = A.TENANT_ID AND ENTER_CD = A.ENTER_CD AND APPL_CD = A.APPL_CD) AS workTypeNm
+		     , M.FLEXIBLE_NM AS flexibleNm
+		     , M.USE_SYMD AS useSymd
+		     , M.USE_EYMD AS useEymd
+		     , M.WORK_SHM AS workShm
+		     , M.WORK_EHM AS workEhm
+		     , M.CORE_SHM AS coreShm
+		     , M.CORE_EHM AS coreEhm
+		     , M.USED_TERM_OPT AS usedTermOpt
+		     , CASE F_WTM_WEEKDAY(USE_SYMD) 
+				WHEN 1 THEN '일요일'
+				WHEN 2 THEN '월요일'
+				WHEN 3 THEN '화요일'
+				WHEN 4 THEN '수요일'
+				WHEN 5 THEN '목요일'
+				WHEN 6 THEN '금요일'
+				WHEN 7 THEN '토요일' END AS weekDay
+		  FROM WTM_APPL A
+		  JOIN WTM_FLEXIBLE_APPL F
+		    ON A.APPL_ID = F.APPL_ID
+		  JOIN WTM_FLEXIBLE_STD_MGR M
+		    ON A.TENANT_ID = M.TENANT_ID
+		   AND A.ENTER_CD = M.ENTER_CD
+		   AND F.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+		 WHERE A.TENANT_ID = #{tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.APPL_SABUN = #{sabun}
+		   AND A.APPL_STATUS_CD = #{applStatusCd}
+		 ORDER BY A.APPL_YMD DESC
+    	]]>
     </select>
 </mapper>

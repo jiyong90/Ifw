@@ -3,6 +3,8 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.vo.ReturnParam;
@@ -34,6 +37,9 @@ public class WtmFlexibleApplController {
 	@Autowired
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService flexibleApplService;
+	
+	@Autowired
+	WtmFlexibleApplMapper flexibleApplMaper;
 	
 	@Autowired
 	WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
@@ -111,6 +117,25 @@ public class WtmFlexibleApplController {
 		}
 		return rp;
 	}
+	
+	@RequestMapping(value="/list", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> getImsiFlexibleAppl(@RequestParam String applStatusCd
+																		,HttpServletRequest request) {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", empNo);
+		paramMap.put("applStatusCd", applStatusCd);
+		
+		return flexibleApplMaper.getImsiFlexAppl(paramMap);
+	}
+	
 	
 	/**
 	 * 파라미터 맵의 유효성을 검사한다.
