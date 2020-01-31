@@ -1234,8 +1234,7 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
 			   AND C.YMD BETWEEN SUBSTR(#{sdate},1,8) AND SUBSTR(#{edate},1,8)
-			  AND (#{sdate} BETWEEN F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.APPR_EDATE),'YMDHI')
- 				OR #{edate} BETWEEN F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.APPR_EDATE),'YMDHI'))
+			   AND (#{sdate} < F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.APPR_EDATE),'YMDHI') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate})
 			UNION ALL
 			SELECT 2 
 			  FROM WTM_APPL A
@@ -1246,8 +1245,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND (#{sdate} BETWEEN F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI')
- 				OR #{edate} BETWEEN F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI'))
+			   AND (#{sdate} < F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') < #{edate})
 			 UNION ALL
 			SELECT 3 
 			  FROM WTM_APPL A
@@ -1258,8 +1256,7 @@
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
-			   AND (#{sdate} BETWEEN F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI')
- 				OR #{edate} BETWEEN F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI'))
+			   AND (#{sdate} < F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI') < #{edate})
 			) X
 		]]>	
   	</select>
@@ -1386,7 +1383,7 @@
   	</update>
   	
   	<update id="createWorkDayResultOfTimeType" statementType="CALLABLE"  parameterType="map"  >
-  		{ call P_WTM_WORK_DAY_RESULT_TIME_C(#{tenantId}, #{enterCd}, #{sabun} , #{sYmd}, #{eYmd} , #{type} , #{userId}   ) }
+  		{ call P_WTM_WORK_DAY_RESULT_TIME_C(#{tenantId}, #{enterCd}, #{sabun} , #{sYmd}, #{eYmd} , #{taaInfoCd}, #{type} , #{userId}   ) }
   	</update>
   	
   	<!-- 계획을 작성 해야 하는 유연근무제 리스트 -->
