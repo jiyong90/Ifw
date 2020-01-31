@@ -737,6 +737,7 @@
 				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
 				   AND C.ENTRY_SDATE IS NULL
 				   AND C.ENTRY_EDATE IS NULL  
+				   AND T.ABSENCE_CHK_YN = 'Y'
 				   AND (C.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL) 
     	]]>
     </insert>
