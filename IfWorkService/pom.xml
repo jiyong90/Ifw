@@ -261,6 +261,26 @@
 	    	<version>1.16</version>
 		</dependency> 
 		
+		<!-- POI EXCEL Download -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>3.9</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.9</version>
+		</dependency>
+				
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml-schemas</artifactId>
+		    <version>3.9</version>
+		</dependency>
+		
+		<!-- gabia sms library -->
 		<dependency>
             <groupId>pb-commons</groupId>
             <artifactId>pb-msg-gabia</artifactId>
