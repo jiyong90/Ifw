@@ -87,8 +87,8 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-12">
-                                    <label for="reason">설명</label>
-                                    <textarea class="form-control" id="reason" rows="3"
+                                    <label for="otReason">설명</label>
+                                    <textarea class="form-control" id="otReason" rows="3"
                                         placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@
                         <div class="modal-app-wrap">
                             <div class="form-row no-gutters">
                                 <div class="form-group col-12">
-                                    <label for="reason">취소 사유</label>
+                                    <label for="cancelOpinion">취소 사유</label>
                                     <textarea class="form-control" id="cancelOpinion" rows="3" placeholder="취소 사유를 작성해주시기 바랍니다."
                                         required=""></textarea>
                                 </div>
@@ -319,7 +319,7 @@
 	                        </div>
                             <div class="form-row no-gutters">
                                 <div class="form-group col-12">
-                                    <label for="reason">사유</label>
+                                    <label for="chgReason">사유</label>
                                     <textarea class="form-control" id="chgReason" rows="3" placeholder="사유를 반드시 입력해 주시기 바랍니다."
                                         required=""></textarea>
                                 </div>
@@ -1422,7 +1422,7 @@
         				otSdate : moment(otSdate).format('YYYYMMDDHHmm'),
         				otEdate : moment(otEdate).format('YYYYMMDDHHmm'),
 	   		    		reasonCd : $("#reasonCd").val(),
-	   		    		reason: $("#reason").val(),
+	   		    		reason: $("#otReason").val(),
 	   		    		holidayYn: holidayYn,
 	   		    		subYn: subYn
 	   		    	};

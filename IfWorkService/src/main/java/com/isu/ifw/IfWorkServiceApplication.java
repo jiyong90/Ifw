@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,7 +18,7 @@ import org.springframework.web.filter.CorsFilter;
 @ComponentScan(basePackages = {"com.isu", "com.pb"} 
 	, includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CorsFilter.class)
 )
-@SpringBootApplication
+@SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
 public class IfWorkServiceApplication {
 	
 	@Autowired

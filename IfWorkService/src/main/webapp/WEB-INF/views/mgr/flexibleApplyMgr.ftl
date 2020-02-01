@@ -838,8 +838,8 @@
 				var minYmd = moment(moment(useSymd).add(14, 'days')).subtract(1, 'days');
 				var maxYmd = moment(moment(useSymd).add(3, 'months')).subtract(1, 'days');
 				
-				if(moment(useEymd).format('YYYYMMDD')!=moment(minYmd).format('YYYYMMDD') 
-						&& moment(useEymd).format('YYYYMMDD')!=moment(maxYmd).format('YYYYMMDD')) {
+				if( moment(useEymd).format('YYYYMMDD') < moment(minYmd).format('YYYYMMDD')
+						|| moment(maxYmd).format('YYYYMMDD') < moment(useEymd).format('YYYYMMDD')) {
 					alert("탄력근무제는 2주 이내, 3개월 이내만 시행 가능합니다.\n근무제 종료일을 다시 지정해 주세요.");
 					return false;
 				} 
