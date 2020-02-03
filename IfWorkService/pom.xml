@@ -280,6 +280,13 @@
 		    <version>3.9</version>
 		</dependency>
 		
+		<!-- ibSheet pdf download -->
+		<dependency>
+		    <groupId>com.lowagie</groupId>
+		    <artifactId>itext</artifactId>
+		    <version>2.1.7</version>
+		</dependency>
+		
 		<!-- gabia sms library -->
 		<dependency>
             <groupId>pb-commons</groupId>
