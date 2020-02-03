@@ -16,7 +16,7 @@
 			  FROM DUAL
 			UNION ALL
 			SELECT 2 AS APPR_TYPE_CD
-			     , X.APPR_SEQ AS SEQ
+			     , ROW_NUMBER() OVER(ORDER BY APPR_SEQ) AS SEQ
 			     , CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END AS SABUN
 			    , F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END, #{d}) AS EMP_NM
 						  FROM (
@@ -40,6 +40,7 @@
 			        AND X.ORG_CD = H.ORG_CD
 			        AND H.LEADER_YN = 'Y'
 			        AND #{d} BETWEEN H.SYMD AND H.EYMD
+			        AND H.SABUN <> #{sabun}
 			       LEFT OUTER JOIN WTM_ORG_CONC O
 			         ON X.TENANT_ID = O.TENANT_ID
 			        AND X.ENTER_CD = O.ENTER_CD
@@ -99,6 +100,9 @@
     </select>
     
     <select id="getApprList01" parameterType="map" resultType="wtmGeneral">
+		<if test="startPage!=''">
+			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
+		</if>
         	SELECT A.APPL_ID
 			     , A.APPL_CD
 			     , C.APPL_NM
@@ -108,8 +112,8 @@
 			     , A.APPL_IN_SABUN 
 			     , A.APPL_STATUS_CD 
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
-				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} AS APPL_KEY
-                 , CASE WHEN A.APPL_CD = '171' THEN 'view://W02View' 
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
              	     ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -127,11 +131,16 @@
 			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
 			ORDER BY A.APPL_YMD DESC
 			<if test="startPage!=''">
-			LIMIT #{startPage}, #{pageCount}
+			<![CDATA[
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+			]]>
 			</if>
     </select>
     
     <select id="getApprList02" parameterType="map" resultType="wtmGeneral">
+		<if test="startPage!=''">
+			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
+		</if>
         	SELECT A.APPL_ID
 			     , A.APPL_CD
 			     , C.APPL_NM
@@ -147,7 +156,7 @@
 			     , L.APPR_STATUS_CD 
 			     , L.APPR_TYPE_CD 
 			     , L.APPR_OPINION
-				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} AS APPL_KEY
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
                  , CASE WHEN A.APPL_CD = '171' THEN 'view://W02View' 
              	     ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
@@ -164,11 +173,16 @@
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			ORDER BY A.APPL_YMD DESC
 			<if test="startPage!=''">
-			LIMIT #{startPage}, #{pageCount}
+			<![CDATA[
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+			]]>
 			</if>
     </select>
     
     <select id="getApprList03" parameterType="map" resultType="wtmGeneral">
+		<if test="startPage!=''">
+			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
+		</if>
         	SELECT A.APPL_ID 
 			     , A.APPL_CD 
 			     , C.APPL_NM
@@ -184,7 +198,7 @@
 			     , L.APPR_STATUS_CD
 			     , L.APPR_TYPE_CD 
 			     , L.APPR_OPINION 
-				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} AS APPL_KEY
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
                  , CASE WHEN A.APPL_CD = '171' THEN 'view://W02View' 
              	     ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
@@ -201,7 +215,9 @@
 			   AND L.APPR_STATUS_CD IS NOT NULL
 			ORDER BY A.APPL_YMD DESC
 			<if test="startPage!=''">
-			LIMIT #{startPage}, #{pageCount}
+			<![CDATA[
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+			]]>
 			</if>
     </select>
     
@@ -221,6 +237,89 @@
 			   AND L.APPR_STATUS_CD = '10'
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			ORDER BY A.APPL_YMD DESC
+		]]>
+    </select>
+    
+      <select id="getEdocCountForMobile" parameterType="map" resultType="map">
+        <![CDATA[
+			SELECT ''|| A.myRequestCnt as myRequestCnt, ''|| B.requestCnt as requestCnt, ''|| myRequestcnt+requestCnt as totRequestCnt 
+			FROM (
+			   	SELECT count(*) myRequestCnt
+				  FROM WTM_APPL A
+				  JOIN WTM_APPL_CODE C
+				    ON A.TENANT_ID = C.TENANT_ID
+				   AND A.ENTER_CD = C.ENTER_CD
+				   AND A.APPL_CD = C.APPL_CD
+				 WHERE A.TENANT_ID = #{tenantId}
+				   AND A.ENTER_CD = #{enterCd} 
+				   AND (APPL_SABUN = #{sabun} OR APPL_IN_SABUN = #{sabun})
+				   AND A.APPL_STATUS_CD IN ('21','31', '41')
+			) A
+			inner join ( SELECT count(*) as requestCnt
+				  FROM WTM_APPL A
+				  JOIN WTM_APPL_CODE C
+				    ON A.TENANT_ID = C.TENANT_ID
+				   AND A.ENTER_CD = C.ENTER_CD
+				   AND A.APPL_CD = C.APPL_CD
+				  JOIN WTM_APPL_LINE L
+				    ON L.APPL_ID = A.APPL_ID
+				 WHERE A.TENANT_ID = #{tenantId}
+				   AND A.ENTER_CD = #{enterCd} 
+				   AND APPR_SABUN = #{sabun}
+				   AND L.APPR_STATUS_CD = '10'
+				   AND A.APPL_STATUS_CD IN ('21','31')) B
+			ON 1=1
+		]]>
+    </select>
+    
+    <select id="getApplValidation" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT 
+				CASE WHEN X.YMD < F_WTM_DATE_FORMAT(X.SDAY, 'YMD') OR X.YMD > F_WTM_DATE_FORMAT(X.EDAY, 'YMD') THEN 'N' 
+					ELSE 'Y' END AS valDate,
+				(TO_CHAR(TO_DATE(X.SDAY, 'yyyy-MM-dd'), 'yyyy-MM-dd')|| ' ~ '|| TO_CHAR(TO_DATE(X.EDAY, 'yyyy-MM-dd'), 'yyyy-MM-dd')) AS pDate,
+				CASE WHEN X.HOLIDAY_YN = 'Y' AND REPLACE(#{shm},':','') != '' AND REPLACE(#{ehm},':','') != '' AND (REPLACE(#{sHm},':','') < X.HOL_IN_SHM OR REPLACE(#{ehm},':','') > X.HOL_IN_EHM) THEN 'N' 
+					WHEN X.HOLIDAY_YN = 'N' AND REPLACE(#{shm},':','') != '' AND REPLACE(#{ehm},':','') != '' AND (REPLACE(#{shm},':','') < X.IN_SHM OR REPLACE(#{ehm},':','') > X.IN_EHM) THEN 'N'
+					ELSE 'Y' END AS valTime,
+				CASE WHEN X.HOLIDAY_YN = 'Y' THEN (SUBSTR(X.HOL_IN_SHM, 1,2)|| ':'|| SUBSTR(X.HOL_IN_SHM, 3,4)|| ' ~ '|| SUBSTR(X.HOL_IN_EHM, 1,2)|| ':'|| SUBSTR(X.HOL_IN_EHM, 3,4)) 
+					ELSE (SUBSTR(X.IN_SHM, 1,2)|| ':'|| SUBSTR(X.IN_SHM, 3,4)|| ' ~ '|| SUBSTR(X.IN_EHM, 1,2)|| ':'|| SUBSTR(X.IN_EHM, 3,4)) END AS pTime,
+				CASE WHEN REPLACE(#{ehm},':','') = '' OR REPLACE(#{shm},':','') = '' OR REPLACE(#{ehm},':','')  IS NULL OR REPLACE(#{shm},':','') IS NULL THEN 'Y' 
+					WHEN X.HOLIDAY_YN = 'N' AND MOD(#{calcMinute}, X.TIME_UNIT) = 0 THEN 'Y' 
+					WHEN X.HOLIDAY_YN = 'Y' AND MOD(#{calcMinute}, X.HOL_APPL_TYPE_CD) = 0 THEN 'Y'
+					ELSE 'N' END AS valUnit,
+				CASE WHEN X.HOLIDAY_YN = 'Y' THEN X.HOL_APPL_TYPE_CD ELSE X.TIME_UNIT END AS pUnit,
+				CASE WHEN REPLACE(#{ehm},':','') = '' OR REPLACE(#{shm},':','') = '' THEN 'Y' 
+					WHEN X.HOLIDAY_YN = 'N' THEN 'Y'
+					WHEN X.HOLIDAY_YN = 'Y' AND  #{calcMinute} <= HOL_MAX_MINUTE THEN 'Y'
+					ELSE 'N' END AS valHunit,
+				X.HOL_MAX_MINUTE AS pHunit,
+				CASE WHEN #{subYn} = 'Y' AND REPLACE(#{subsSymd},'.','') < F_WTM_DATE_FORMAT(X.SSDAY, 'YMD') OR REPLACE(#{subsSymd},'.','') > F_WTM_DATE_FORMAT(X.SEDAY, 'YMD') THEN 'N' ELSE 'Y' END AS valSdate,
+				(TO_CHAR(TO_DATE(X.SSDAY, 'yyyy-MM-dd'), 'yyyy-MM-dd')||' ~ '|| TO_CHAR(TO_DATE(X.SEDAY, 'yyyy-MM-dd'), 'yyyy-MM-dd')) AS pSdate
+			FROM (SELECT C.HOLIDAY_YN, 
+				C.YMD, 
+				F_WTM_DATE_FORMAT(SYSDATE, 'YMD'),
+				A.SUBS_SDAY,
+				A.SUBS_EDAY,
+				A.IN_SHM,
+				A.IN_EHM,
+				A.HOL_IN_SHM,
+				A.HOL_IN_EHM,
+				A.TIME_UNIT,
+				A.HOL_APPL_TYPE_CD,
+				A.HOL_MAX_MINUTE,
+				CASE WHEN A.OT_APPL_SDAY IS NOT NULL THEN TO_CHAR(SYSDATE-A.OT_APPL_SDAY, 'yyyyMMdd') ELSE F_WTM_DATE_FORMAT(SYSDATE, 'YMD') END AS SDAY,
+				CASE WHEN A.OT_APPL_EDAY IS NOT NULL THEN TO_CHAR(SYSDATE+A.OT_APPL_EDAY, 'yyyyMMdd') ELSE F_WTM_DATE_FORMAT(SYSDATE, 'YMD') END AS EDAY,
+				CASE WHEN A.SUBS_SDAY IS NOT NULL THEN TO_CHAR(TO_DATE(C.YMD, 'yyyyMMdd')-A.SUBS_SDAY, 'yyyyMMdd') ELSE C.YMD END AS SSDAY,
+				CASE WHEN A.SUBS_EDAY IS NOT NULL THEN TO_CHAR(TO_DATE(C.YMD, 'yyyyMMdd')+A.SUBS_EDAY, 'yyyyMMdd') ELSE C.YMD END AS SEDAY
+			FROM WTM_WORK_CALENDAR C
+			JOIN WTM_APPL_CODE A 
+				ON A.TENANT_ID = C.TENANT_ID 
+				AND C.ENTER_CD=A.ENTER_CD 
+				AND A.APPL_CD=#{applCd}
+			WHERE C.TENANT_ID=#{tenantId}
+				AND C.ENTER_CD=#{enterCd}
+				AND C.SABUN=#{sabun}
+				AND C.YMD=REPLACE(#{ymd} ,'.','') ) X
 		]]>
     </select>
 </mapper>

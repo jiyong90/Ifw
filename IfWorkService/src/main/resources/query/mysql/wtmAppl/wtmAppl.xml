@@ -16,14 +16,14 @@
 			  FROM DUAL
 			UNION ALL
 			SELECT 2 AS APPR_TYPE_CD
-			     , X.APPR_SEQ AS SEQ
+			     , (@seq := @seq + 1) AS SEQ
 				 , CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END AS SABUN
 	     		 , F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END, #{d}) AS EMP_NM
 			  FROM (
 						SELECT TENANT_ID 
               				 , ENTER_CD 
-						     , @r AS ORG_CD
-						     , (SELECT @r := PRIOR_ORG_CD 
+						     , @org_cd AS ORG_CD
+						     , (SELECT @org_cd := PRIOR_ORG_CD 
 							       FROM ( SELECT C.TENANT_ID, C.ENTER_CD, D.*
 												  FROM WTM_ORG_CHART C
 												  JOIN WTM_ORG_CHART_DET D
@@ -32,10 +32,17 @@
 												   AND C.ENTER_CD = #{enterCd}
 												   AND #{d} BETWEEN C.SYMD AND C.EYMD
 											) S
-									WHERE ORG_CD = @r limit 1) AS _PARENT_ID
-						     , (@L := @L + 1) AS APPR_SEQ
-						  FROM ( SELECT @r := (SELECT ORG_CD FROM WTM_EMP_HIS H WHERE H.TENANT_ID=#{tenantId} AND H.ENTER_CD=#{enterCd} AND H.SABUN=#{sabun} AND #{d} BETWEEN H.SYMD AND H.EYMD)
-						              , @L := 0) AS vars,
+									WHERE ORG_CD = @org_cd limit 1) AS _PARENT_ID
+						     , @seq := 0
+						     , EMP_ORG
+						     , LEADER_YN
+						  FROM ( SELECT @org_cd := ORG_CD 
+					              	  , ORG_CD AS EMP_ORG
+					                  , LEADER_YN AS LEADER_YN
+								   FROM WTM_EMP_HIS H 
+								  WHERE H.TENANT_ID=#{tenantId} 
+								    AND H.ENTER_CD=#{enterCd} 
+								    AND H.SABUN=#{sabun} AND #{d} BETWEEN H.SYMD AND H.EYMD) AS vars,
 						       ( SELECT C.TENANT_ID, C.ENTER_CD, D.*
 									  FROM WTM_ORG_CHART C
 									  JOIN WTM_ORG_CHART_DET D
@@ -44,7 +51,7 @@
 									   AND C.ENTER_CD = #{enterCd}
 									   AND #{d} BETWEEN C.SYMD AND C.EYMD
 								 ) org
-						 WHERE @r IS NOT NULL 
+						 WHERE @org_cd IS NOT NULL 
 					 ) X
 			  LEFT OUTER JOIN WTM_EMP_HIS H
 		       ON X.TENANT_ID = H.TENANT_ID
@@ -59,6 +66,7 @@
 		      AND #{d} BETWEEN O.SYMD AND O.EYMD
 			 WHERE _PARENT_ID IS NOT NULL
        		   AND (EMP_HIS_ID IS NOT NULL OR ORG_CONC_ID IS NOT NULL)
+       		   AND (X.LEADER_YN = 'N' OR (X.LEADER_YN = 'Y' AND EMP_ORG <> X.ORG_CD))
        	UNION ALL
 		SELECT 3 AS APPR_TYPE_CD
 		     , SEQ
