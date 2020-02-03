@@ -353,4 +353,24 @@
 		]]>
     </select>
     
+    <select id="getRecLine" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT L.SABUN AS sabun
+				 , EMP_NM AS empNm
+				 , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS orgNm
+				 , EMP_ID AS empId
+				 , APPL_REC_LINE_ID AS applRecLineId
+				 , APPL_CODE_ID AS applCodeId
+				 , SEQ AS seq
+				 , L.NOTE AS note
+			  FROM WTM_APPL_REC_LINE L
+			  JOIN WTM_EMP_HIS H
+			    ON L.SABUN = H.SABUN
+			   AND #{d} BETWEEN H.SYMD AND H.EYMD
+			 WHERE H.TENANT_ID = ${tenantId}
+			   AND H.ENTER_CD = #{enterCd}
+			   AND L.APPL_CODE_ID = ${applCodeId}
+		]]>
+    </select>
+    
 </mapper>
