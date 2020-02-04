@@ -174,7 +174,7 @@
 			     , O.REASON AS reason
 			     , CASE WHEN O.SUB_YN = 'Y' THEN '휴일대체' ELSE '위로금/시급지급' END AS subYn
 			     , CASE WHEN O.SUB_YN = 'Y' THEN 
-			     	(select group_concat(CONCAT(DATE_FORMAT(SUBS_SDATE, '%Y.%m.%d %H:%i'), ' ~ ', DATE_FORMAT(SUBS_EDATE, '%H:%i'))) from WTM_OT_SUBS_APPL where APPL_ID = '734') 
+			     	(select group_concat(CONCAT(DATE_FORMAT(SUBS_SDATE, '%Y.%m.%d %H:%i'), ' ~ ', DATE_FORMAT(SUBS_EDATE, '%H:%i'))) from WTM_OT_SUBS_APPL where APPL_ID =#{applId}) 
 			      ELSE '-' END AS subsYmd
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_APPL O

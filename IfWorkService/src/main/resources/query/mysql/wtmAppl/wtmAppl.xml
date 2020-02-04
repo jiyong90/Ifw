@@ -235,6 +235,125 @@
 			</if>
     </select>
     
+           <select id="getMobileApprList01" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.APPL_ID AS applId
+			     , A.APPL_CD AS applCd
+			     , C.APPL_NM AS applNm
+			     , A.APPL_SABUN AS applSabun
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+			     , A.APPL_YMD AS applYmd
+			     , A.APPL_IN_SABUN AS applInSabun
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+             	     ELSE NULL END AS urlLink 
+			  FROM WTM_APPL A
+			  JOIN WTM_APPL_CODE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.APPL_CD = C.APPL_CD
+			  LEFT OUTER JOIN (SELECT * FROM WTM_OT_APPL WHERE SABUN = #{empNo}) O 
+			    ON A.APPL_ID = O.APPL_ID 
+			  LEFT OUTER JOIN (SELECT * FROM WTM_OT_CAN_APPL WHERE SABUN = #{empNo}) OC 
+			    ON A.APPL_ID = OC.APPL_ID 
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
+ 			   AND A.ENTER_CD = #{enterCd} 
+			   AND (A.APPL_SABUN = #{empNo} 
+			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
+			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
+			ORDER BY A.APPL_YMD DESC
+			]]>
+		   <if test="startPage!=null and !startPage.equals('')">
+				LIMIT #{startPage}, #{pageCount}
+			</if>
+    </select>
+    
+    <select id="getMobileApprList02" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.APPL_ID AS applId
+			     , A.APPL_CD AS applCd
+			     , C.APPL_NM AS applNm
+			     , A.APPL_SABUN AS applSabun
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+			     , A.APPL_YMD AS applYmd
+			     , A.APPL_IN_SABUN AS applInSabun
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+			     , L.APPR_SEQ AS apprSeq
+			     , L.APPR_SABUN AS apprSabun
+			     , L.APPR_DATE AS apprDate
+			     , L.APPR_STATUS_CD AS apprStatusCd
+			     , L.APPR_TYPE_CD AS apprTypeCd
+			     , L.APPR_OPINION AS apprOpinion
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                   	    WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+             	     ELSE NULL END AS urlLink 
+			  FROM WTM_APPL A
+			  JOIN WTM_APPL_CODE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.APPL_CD = C.APPL_CD
+			  JOIN WTM_APPL_LINE L
+			    ON L.APPL_ID = A.APPL_ID
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
+			   AND A.ENTER_CD = #{enterCd} 
+			   AND APPR_SABUN = #{empNo}
+			   AND L.APPR_STATUS_CD = '10'
+			   AND A.APPL_STATUS_CD IN ('21','31')
+			ORDER BY A.APPL_YMD DESC
+			]]>
+		   <if test="startPage!=null and !startPage.equals('')">
+				LIMIT #{startPage}, #{pageCount}
+			</if>
+	</select>
+    
+    <select id="getMobileApprList03" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.APPL_ID AS applId
+			     , A.APPL_CD AS applCd
+			     , C.APPL_NM AS applNm
+			     , A.APPL_SABUN AS applSabun
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+			     , A.APPL_YMD AS applYmd
+			     , A.APPL_IN_SABUN AS applInSabun
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+			     , L.APPR_SEQ AS apprSeq
+			     , L.APPR_SABUN AS apprSabun
+			     , L.APPR_DATE AS apprDate
+			     , L.APPR_STATUS_CD AS apprStatusCd
+			     , L.APPR_TYPE_CD AS apprTypeCd
+			     , L.APPR_OPINION AS apprOpinion
+				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View'
+                   		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+                     ELSE NULL END AS urlLink 
+			  FROM WTM_APPL A
+			  JOIN WTM_APPL_CODE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.APPL_CD = C.APPL_CD
+			  JOIN WTM_APPL_LINE L
+			    ON L.APPL_ID = A.APPL_ID
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
+			   AND A.ENTER_CD = #{enterCd} 
+			   AND APPR_SABUN = #{empNo}
+			   AND L.APPR_DATE IS NOT NULL
+			   AND L.APPR_STATUS_CD IS NOT NULL
+			ORDER BY A.APPL_YMD DESC
+		]]>
+		    <if test="startPage!=null and !startPage.equals('')">
+				LIMIT #{startPage}, #{pageCount}
+			</if>
+    </select>
+    
     <select id="countByApprList01" parameterType="map" resultType="int">
         <![CDATA[
         	SELECT count(*)
