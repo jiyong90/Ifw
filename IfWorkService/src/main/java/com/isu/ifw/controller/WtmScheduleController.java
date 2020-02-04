@@ -68,9 +68,9 @@ public class WtmScheduleController {
 			@RequestParam(value = "tenantId", required = false) Long tenantId,
 			@RequestParam(value="enterCd", required = false) String enterCd) {
 		
-		logger.debug("================push/send s " + tenantId + ", " + enterCd);
+		logger.debug("================push/min s " + tenantId + ", " + enterCd);
 		wtmScheduleService.sendPushMessageMin(tenantId, enterCd);
-		logger.debug("================push/send e");
+		logger.debug("================push/min e");
 	}
 	
 	//근무시간 관련 알림은 하루에 몇번 돌지 정해야 하지만 일단 한번
@@ -79,8 +79,8 @@ public class WtmScheduleController {
 			@RequestParam(value = "tenantId", required = false) Long tenantId,
 			@RequestParam(value="enterCd", required = false) String enterCd) {
 		
-		logger.debug("================push/send s " + tenantId + ", " + enterCd);
+		logger.debug("================push/day s " + tenantId + ", " + enterCd);
 		wtmScheduleService.sendPushMessageDay(tenantId, enterCd);
-		logger.debug("================push/send e");
+		logger.debug("================push/day e");
 	}
 }
