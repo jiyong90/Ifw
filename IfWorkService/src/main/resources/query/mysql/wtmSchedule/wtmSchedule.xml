@@ -69,7 +69,7 @@
 		<![CDATA[
 				SELECT CONCAT(X.ENTER_CD, '@', X.SABUN) AS EMP_KEY
 				FROM (
-				SELECT MIN(W.PLAN_SDATE) AS PLAN_SADTE
+				SELECT MIN(W.PLAN_SDATE) AS PLAN_SDATE
 					, MAX(W.PLAN_EDATE) AS PLAN_EDATE
 					, C.ENTRY_SDATE
 					, C.ENTRY_EDATE
@@ -85,8 +85,10 @@
 						AND (ENTRY_SDATE IS NULL OR ENTRY_EDATE IS NULL)
 						AND W.ENTER_CD=#{enterCd}
 				GROUP BY W.TENANT_ID, W.ENTER_CD, W.SABUN, W.YMD) X
-				WHERE (#{stdType} = 'B_IN' AND TIMESTAMPDIFF(MINUTE, X.PLAN_SADTE,  NOW()) = #{stdMinute}) 
-					OR (#{stdType} = 'A_OUT' AND TIMESTAMPDIFF(MINUTE, X.PLAN_SADTE,  NOW()) = #{stdMinute}) 
+				WHERE 
+					(#{stdType} = 'B_IN' AND now() BETWEEN F_WTM_DATE_ADD(X.PLAN_SDATE, (#{stdMinute}*-1),'I') AND F_WTM_DATE_ADD(X.PLAN_SDATE,-1,'I'))
+					OR 
+					(#{stdType} = 'A_OUT' AND now() BETWEEN F_WTM_DATE_ADD(X.PLAN_EDATE, #{stdMinute}-2,'I') AND F_WTM_DATE_ADD(X.PLAN_EDATE, #{stdMinute},'I'))
 		]]>
 	</select>
 </mapper>

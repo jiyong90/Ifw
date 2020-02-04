@@ -84,6 +84,9 @@ public class WtmMobileEdocController {
 	@Autowired
 	WtmAsyncService wtmAsyncService;
 
+	@Autowired
+	@Qualifier("wtmApplService")
+	WtmApplService applService;
 	
 	/**
 	 * 신청서 목록 
@@ -250,8 +253,8 @@ public class WtmMobileEdocController {
 						}
 					} else {
 						if(body.get("apprStatCd").toString().equals("02")) {
-							wtmEntryApplService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
-							
+							applService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, sabun);
+							//wtmEntryApplService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
 						} else if(body.get("apprStatCd").toString().equals("01")) {
 							rp = wtmEntryApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
 						} else {

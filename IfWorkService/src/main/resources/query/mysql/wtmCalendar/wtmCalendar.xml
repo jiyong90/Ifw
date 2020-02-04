@@ -230,4 +230,30 @@
 			AND YMD = #{ymd}
 		</if>
    	 </update>
+   	 
+   	<select id="getEmpWorkDayResult" parameterType="map" resultType="hashmap">
+        <![CDATA[
+		     SELECT A.TENANT_ID as tenantId, 
+				A.ENTER_CD as enterCd, 
+				A.YMD as ymd, 
+				A.SABUN as sabun, 
+				A.TIME_TYPE_CD as timeTypeCd, 
+				A.TAA_CD as taaCd, 
+				A.PLAN_SDATE as planSdate, 
+				A.PLAN_EDATE as planEdate,
+				A.APPR_SDATE as apprSdate,
+				A.APPR_EDATE as apprEdate,
+				A.APPR_MINUTE as apprMinute				
+			FROM WTM_WORK_DAY_RESULT  A 
+			INNER JOIN WTM_WORK_CALENDAR B
+				ON A.YMD = B.YMD 
+					AND A.TENANT_ID = B.TENANT_ID 
+					AND A.ENTER_CD = B.ENTER_CD 
+					AND A.SABUN = B.SABUN
+			WHERE A.YMD = #{stdYmd} 
+				AND A.SABUN = #{sabun} 
+				AND A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+        ]]>
+    </select>
 </mapper>
