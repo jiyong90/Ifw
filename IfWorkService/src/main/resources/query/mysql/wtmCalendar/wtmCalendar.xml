@@ -233,27 +233,24 @@
    	 
    	<select id="getEmpWorkDayResult" parameterType="map" resultType="hashmap">
         <![CDATA[
-		     SELECT A.TENANT_ID as tenantId, 
-				A.ENTER_CD as enterCd, 
-				A.YMD as ymd, 
-				A.SABUN as sabun, 
-				A.TIME_TYPE_CD as timeTypeCd, 
-				A.TAA_CD as taaCd, 
-				A.PLAN_SDATE as planSdate, 
-				A.PLAN_EDATE as planEdate,
-				A.APPR_SDATE as apprSdate,
-				A.APPR_EDATE as apprEdate,
-				A.APPR_MINUTE as apprMinute				
+  			SELECT CONCAT(E.EMP_NM, '(', E.SABUN, ')') as emp,
+  		    	CONCAT(F_WTM_DATE_FORMAT(MIN(A.PLAN_SDATE), 'Y.M.D H:I'), ' ~ ', F_WTM_DATE_FORMAT(MIN(A.PLAN_EDATE), 'Y.M.D H:I')) as plan
 			FROM WTM_WORK_DAY_RESULT  A 
+			INNER JOIN WTM_EMP_HIS E
+				ON E.TENANT_ID = A.TENANT_ID
+					AND A.ENTER_CD = E.ENTER_CD 
+					AND A.SABUN = E.SABUN
+					AND F_WTM_DATE_FORMAT(now(), 'YMD') BETWEEN E.SYMD AND E.EYMD
 			INNER JOIN WTM_WORK_CALENDAR B
 				ON A.YMD = B.YMD 
 					AND A.TENANT_ID = B.TENANT_ID 
 					AND A.ENTER_CD = B.ENTER_CD 
 					AND A.SABUN = B.SABUN
-			WHERE A.YMD = #{stdYmd} 
-				AND A.SABUN = #{sabun} 
-				AND A.TENANT_ID = #{tenantId}
-				AND A.ENTER_CD = #{enterCd}
+			WHERE A.YMD = REPLACE(#{ymd}, '.', '') 
+				AND (A.SABUN like CONCAT('%', #{sabun}, '%') OR E.EMP_NM like CONCAT('%', #{sabun}, '%'))
+				AND A.TENANT_ID = #{tenantId} 
+				AND A.ENTER_CD = #{enterCd} 
+			GROUP BY A.TENANT_ID, A.ENTER_CD, A.YMD, A.SABUN;
         ]]>
     </select>
 </mapper>

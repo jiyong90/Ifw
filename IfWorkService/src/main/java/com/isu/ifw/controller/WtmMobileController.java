@@ -592,4 +592,98 @@ public class WtmMobileController {
 		}
 		return rp;
 	}
+	
+	/**
+	 * 근무계획시간 조회
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/team/plan", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public @ResponseBody Map<String, Object> applyValidate(@PathVariable Long tenantId, 
+			@RequestBody Map<String, Object> paramMap
+			,HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		try {
+			String userToken = paramMap.get("userToken").toString();
+			String empKey = paramMap.get("empKey").toString();
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+
+			logger.debug("/mobile/"+ tenantId+"/team/plan s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+	
+			Map<String, Object> result = new HashMap();
+			Map<String, Object> data = (Map<String, Object>) paramMap.get("data");
+			data.put("tenantId", tenantId);
+			data.put("enterCd", enterCd);
+			Map<String,Map<String,Object>> itemPropertiesMap = new HashMap<String,Map<String,Object>>();
+			
+			if(paramMap.get("eventSource").equals("ymd") || paramMap.get("eventSource").equals("sabun")) {
+				if(data.containsKey("ymd") && !data.get("ymd").toString().equals("")
+						&& data.containsKey("sabun") && !data.get("sabun").toString().equals("")) {
+					if(data.get("sabun").toString().length() < 2 ) {
+						rp.setFail("두글자 이상 입력해주세요.");
+						return rp;
+					}
+					
+					List<Map<String, Object>> l = mobileService.getPlan(data);
+					if(l == null || l.size() <= 0) {
+						data.put("plan", "");
+						data.put("emp", "");
+						itemPropertiesMap.put("emp", null);
+						
+						result.put("data", data);
+						result.put("itemAttributesMap", itemPropertiesMap);
+						rp.setFail("조회 결과가 없습니다.");
+						return rp;
+					}
+					
+					int cnt = 0;
+					
+					List<Map<String,Object>> itemCollection = new ArrayList<Map<String,Object>>();
+					for(Map<String, Object> row : l) {
+						if(cnt == 0) {
+							data.put("emp", row.get("plan").toString());
+							data.put("plan", row.get("plan").toString());
+						}
+						String value = row.get("plan").toString();
+						String text = row.get("emp").toString();
+						Map<String,Object> item = new HashMap<String,Object>();
+						item.put("text", text);
+						item.put("value", value);
+						itemCollection.add(item);
+					}
+					
+					Map<String,Object> item = new HashMap<String,Object>();
+					item.put("collection", itemCollection);
+					
+					itemPropertiesMap.put("emp", item);
+					result.put("itemAttributesMap", itemPropertiesMap);
+				}
+			} else {
+				data.put("plan", data.get("emp"));
+			}
+
+			result.put("data", data);
+			rp.put("result", result);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/team/plan e " + rp.toString());
+		return rp;
+	}
+	
 }
