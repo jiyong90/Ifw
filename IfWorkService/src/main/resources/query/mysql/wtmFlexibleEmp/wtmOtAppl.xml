@@ -174,7 +174,7 @@
 			     , O.REASON AS reason
 			     , CASE WHEN O.SUB_YN = 'Y' THEN '휴일대체' ELSE '위로금/시급지급' END AS subYn
 			     , CASE WHEN O.SUB_YN = 'Y' THEN 
-			     	(select group_concat(CONCAT(DATE_FORMAT(SUBS_SDATE, '%Y.%m.%d %H:%i'), ' ~ ', DATE_FORMAT(SUBS_EDATE, '%H:%i'))) from WTM_OT_SUBS_APPL where APPL_ID =#{applId}) 
+			     	(select group_concat(CONCAT(DATE_FORMAT(SUBS_SDATE, '%Y.%m.%d %H:%i'), ' ~ ', DATE_FORMAT(SUBS_EDATE, '%H:%i'))) from WTM_OT_SUBS_APPL where APPL_ID =  #{applId}  ) 
 			      ELSE '-' END AS subsYmd
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_APPL O
@@ -216,5 +216,38 @@
 		   AND E.SABUN = NULL
 		   </if>
 		   AND #{ymd} BETWEEN E.SYMD AND E.EYMD
+  	</select>
+  	
+  	<select id="subsCreateTarget" parameterType="map" resultType="hashmap">
+  		<![CDATA[
+		 SELECT distinct O.OT_APPL_ID as otApplId
+		  FROM WTM_OT_APPL O
+		  JOIN WTM_OT_SUBS_APPL S
+		    ON O.OT_APPL_ID = S.OT_APPL_ID
+		  JOIN WTM_APPL A
+		    ON O.APPL_ID = A.APPL_ID
+		  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+		    ON A.APPL_ID = R.APPL_ID
+		   AND A.TENANT_ID = R.TENANT_ID
+		   AND A.ENTER_CD = R.ENTER_CD
+		   AND R.TIME_TYPE_CD = 'SUBS'
+		   AND R.YMD = S.SUB_YMD
+		  LEFT OUTER JOIN WTM_WORK_DAY_RESULT T
+		    ON A.APPL_ID = T.APPL_ID
+		   AND A.TENANT_ID = T.TENANT_ID
+		   AND A.ENTER_CD = T.ENTER_CD
+		   AND T.TIME_TYPE_CD IN ('OT','NIGHT')
+		   AND T.YMD = O.YMD
+		   AND T.APPR_SDATE IS NOT NULL AND T.APPR_EDATE IS NOT NULL
+		 WHERE A.TENANT_ID = ${tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.APPL_STATUS_CD = '99'
+		   AND O.SABUN = #{sabun}
+		   AND O.HOLIDAY_YN = 'Y'
+			AND O.SUB_YN = 'Y'
+			AND (O.CANCEL_YN IS NULL OR O.CANCEL_YN <> 'Y')
+			AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMD') BETWEEN #{sYmd} AND #{eYmd}
+			AND R.WORK_DAY_RESULT_ID IS NULL
+		]]>
   	</select>
 </mapper>

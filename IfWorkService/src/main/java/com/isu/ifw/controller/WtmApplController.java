@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmApplCode;
+import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.service.WtmApplService;
@@ -159,6 +160,20 @@ public class WtmApplController {
 			if(applCd!=null && !"".equals(applCd)) {
 				if("OT".equals(applCd)) {
 					rp = wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					
+					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("otApplList")) { 
+						
+						if(rp.get("otApplList")!=null && !"".equals(rp.get("otApplList"))) {
+							List<WtmOtAppl> otApplList = (List<WtmOtAppl>)rp.get("otApplList");
+							
+							if(otApplList!=null && otApplList.size()>0) {
+								//소급의 경우 인정시간과 연장근로시간을 비교하여 다른 경우 대체휴일 정보를 생성하지 않는다.
+								//미래의 연장근로시간의 경우 인정시간계산 서비스에서 대체휴일 정보를 생성한다.
+								wtmAsyncService.applyOtSubs(tenantId, enterCd, otApplList, true, userId);
+							}
+							
+						}
+					}
 				} else if("OT_CAN".equals(applCd)){
 					rp = wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else if("ENTRY_CHG".equals(applCd)){

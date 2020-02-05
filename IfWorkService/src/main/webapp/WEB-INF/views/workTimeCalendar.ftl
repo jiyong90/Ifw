@@ -1091,32 +1091,36 @@
   	         				var dayResults = JSON.parse($this.result.dayResults);
   	         				//console.log(dayResults);
          					dayResults.map(function(vMap){
+         						
          						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='') {
 	  	         					//근태
 	  	         					classNames = [];
 									classNames.push('TAA');
 	  	         					
-									var result;
-									if((vMap.sDate==''||vMap.sDate==undefined) && (vMap.eDate==''||vMap.eDate==undefined)) {
-										result = {
-	  	  	   	         					id: 'TAA.'+vMap.taaCd,
-	  	  	   	         					title: vMap.taaNm,
-	  	  	   	         					start: moment(vMap.ymd).format('YYYY-MM-DD'),
-	  	  	  								allDay: true,
-	  	  	  		  		        		color: '#ffdbb2'
-	  	  	    	         			};
-									} else {
-										result = {
-	  	  	   	         					id: 'TAA.'+vMap.taaCd,
-	  	  	   	         					title: vMap.taaNm,
-	  	  	  								start: vMap.sDate,
-	  	  	  	  		  		        	end: vMap.eDate,
-	  	  	  	  		  		        	editable: false,
-	  	  	  		  		        		classNames: classNames
-	  	  	    	         			};
+									if(vMap.taaCd!='BREAK') {
+										var result;
+										if((vMap.sDate==''||vMap.sDate==undefined) && (vMap.eDate==''||vMap.eDate==undefined)) {
+											result = {
+		  	  	   	         					id: 'TAA.'+vMap.taaCd,
+		  	  	   	         					title: vMap.taaNm,
+		  	  	   	         					start: moment(vMap.ymd).format('YYYY-MM-DD'),
+		  	  	  								allDay: true,
+		  	  	  		  		        		color: '#ffdbb2'
+		  	  	    	         			};
+										} else {
+											result = {
+		  	  	   	         					id: 'TAA.'+vMap.taaCd,
+		  	  	   	         					title: vMap.taaNm,
+		  	  	  								start: vMap.sDate,
+		  	  	  	  		  		        	end: vMap.eDate,
+		  	  	  	  		  		        	editable: false,
+		  	  	  		  		        		classNames: classNames
+		  	  	    	         			};
+										}
+		  	  	         					
+		  	  	    	         		$this.addEvent(result); 
 									}
-	  	  	         					
-	  	  	    	         		$this.addEvent(result); 
+									
 	  	         				} else {
 	  	         					//근무
 	  	         					classNames = [];

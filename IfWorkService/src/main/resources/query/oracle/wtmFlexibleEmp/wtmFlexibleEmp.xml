@@ -2047,5 +2047,21 @@
         ]]>	
     </select>
   	
+  	<select id="sumResultMinuteByTimeTypeCd" parameterType="map" resultType="wtmGeneral">
+		 SELECT SUM(CASE WHEN PLAN_MINUTE IS NULL OR PLAN_MINUTE='' THEN 0 ELSE PLAN_MINUTE END) AS PLAN_MINUTE
+		      , SUM(CASE WHEN APPR_MINUTE IS NULL OR APPR_MINUTE='' THEN 0 ELSE APPR_MINUTE END) AS APPR_MINUTE
+		  FROM WTM_WORK_DAY_RESULT R
+		 WHERE R.TENANT_ID = #{tenantId}
+		   AND R.ENTER_CD = #{enterCd}
+		   AND R.SABUN = #{sabun}
+		   AND R.YMD BETWEEN #{sYmd} AND #{eYmd}
+		   <if test="timeTypeCds!=null">
+		   AND R.TIME_TYPE_CD IN (NULL,
+		   <foreach collection="timeTypeCds" item="timeTypeCd" separator=", ">
+			   #{timeTypeCd}
+		   </foreach>
+		   )
+		   </if>
+  	</select>
 	
 </mapper>

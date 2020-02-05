@@ -71,6 +71,9 @@
 	    		<#if flexibleEmp?? && flexibleEmp!='' && flexibleEmp?exists >
 	    			$this.flexibleEmp = JSON.parse("${flexibleEmp?js_string}"); 
 	    			
+	    			if($this.flexibleEmp.hasOwnProperty("holidays"))
+	    				$this.empHolidays = $this.flexibleEmp.holidays;
+	    			
 	    			//탄력근무제는 조출/잔업 show
 	    			if($this.flexibleEmp.hasOwnProperty('workTypeCd') && $this.flexibleEmp.workTypeCd!=null && $this.flexibleEmp.workTypeCd=='ELAS') {
 	    				$("#elasOtTime").show();
@@ -370,7 +373,7 @@
   		    		if( moment(sYmd).diff(startStr)<=0 && moment(startStr).diff(eYmd)<=0
 						&& moment(sYmd).diff(endStr)<=0 && moment(endStr).diff(eYmd)<=0
    						&& (todayPlanEditYn=='Y'&&moment($this.today).diff(startStr)<=0 || todayPlanEditYn=='N'&&moment($this.today).diff(startStr)<0) && moment($this.today).diff(endStr)<0
-   						&& $this.empHolidays.indexOf(startStr)==-1
+   						&& $this.empHolidays.indexOf(moment(startStr).format('YYYYMMDD'))==-1
    						&& (obj.workTypeCd!='ELAS' || (obj.workTypeCd=='ELAS' && obj.applStatusCd=='11')) //탄근제 임시저장했을 때만 수정 가능하도록
    						//&& (Object.keys(workDaysOpt).length==0 || Object.keys(workDaysOpt).length>0 && workDaysOpt[selYmd.getDay()+1])
    					) {
@@ -543,10 +546,8 @@
   	         		var $this = this;
   	         		
   	         		//휴일, 반차가 아닌 근태(연차, 교육, 출장 등)
-     				$this.empHolidays=[];
-  	         		
   	         		var events = [];
-  	         	
+  	         		
   	         		if($this.flexibleEmp!=null && Object.keys($this.flexibleEmp).length>0) {
   	         			var dayWorks = $this.flexibleEmp.dayWorks;
  	         			dayWorks.map(function(dayWork){
@@ -568,7 +569,7 @@
 			  		    				
 			  		    				//반차가 아닌 근태(연차, 교육, 출장 등)
 			  		    				if(plan.valueMap.taaCd!='102' && plan.valueMap.taaCd!='103') {
-			  		    					$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
+			  		    					$this.empHolidays.push(moment(dayWork.day).format('YYYYMMDD'));
 			  		    				}
 			  		    				
 		  		    				} else if(plan.valueMap.hasOwnProperty("shm") && plan.valueMap.shm!='' || plan.valueMap.hasOwnProperty("ehm") && plan.valueMap.ehm!='') {
@@ -591,8 +592,6 @@
 		  		    				}
 		  		    			
 								});
-	  	         			} else {
-	  	         				$this.empHolidays.push(moment(dayWork.day).format('YYYY-MM-DD'));
 	  	         			}
 						});
  	         			
@@ -699,9 +698,10 @@
   		    					&& (coreChkYn=='N' || coreChkYn=='Y' && (coreStime==''&&coreEtime=='' || moment(sTime).diff(coreStime)<=0 && moment(coreStime).diff(eTime)<=0 && moment(sTime).diff(coreEtime)<=0 && moment(coreEtime).diff(eTime)<=0))) {
   		    		    
 	  		    			var d = new Date(sDate);
+	  		    			
 	  		    			while(moment(d).diff(eDate, 'days')<=0) {
 	  		    				if( //workDaysOpt[d.getDay()+1] && 
-	  		    						$this.empHolidays.indexOf(moment(d).format("YYYY-MM-DD"))==-1) { //근무요일이고, 신청기간이면
+	  		    						$this.empHolidays.indexOf(moment(d).format("YYYYMMDD"))==-1) { //근무요일이고, 신청기간이면
 		  		    				if($this.dayResult.hasOwnProperty(moment(d).format("YYYYMMDD"))) {
 		  		    					$this.dayResult[moment(d).format("YYYYMMDD")].shm = moment(sDate+' '+$("#startTime").val()).format('HHmm');
 		  		    					$this.dayResult[moment(d).format("YYYYMMDD")].ehm = moment(sDate+' '+$("#endTime").val()).format('HHmm');
