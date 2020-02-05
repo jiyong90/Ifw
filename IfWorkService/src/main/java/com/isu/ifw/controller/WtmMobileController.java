@@ -654,15 +654,16 @@ public class WtmMobileController {
 					List<Map<String,Object>> itemCollection = new ArrayList<Map<String,Object>>();
 					for(Map<String, Object> row : l) {
 						if(cnt == 0) {
-							data.put("emp", data.get("emp") +"@"+ row.get("plan").toString());
+							data.put("emp", row.get("emp") +"@"+ row.get("plan").toString());
 							data.put("plan", row.get("plan").toString());
 						}
-						String value = data.get("emp") +"@"+ row.get("plan").toString();
+						String value = row.get("emp") +"@"+ row.get("plan").toString();
 						String text = row.get("emp").toString();
 						Map<String,Object> item = new HashMap<String,Object>();
 						item.put("text", text);
 						item.put("value", value);
 						itemCollection.add(item);
+						cnt++;
 					}
 					
 					
