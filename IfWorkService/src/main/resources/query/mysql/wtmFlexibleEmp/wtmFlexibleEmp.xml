@@ -1988,25 +1988,6 @@
 		   AND TIME_TYPE_CD != ('GOBACK')
 	</update>
   	
-   	<update id="deleteResult" parameterType="hashmap">
-		DELETE FROM WTM_WORK_DAY_RESULT 
-		WHERE TENANT_ID = #{tenantId}
-		   AND ENTER_CD = #{enterCd}
-		   AND SABUN = #{sabun}
-		   AND YMD = #{stdYmd}
-		   AND TIME_TYPE_CD IN ('BASE', 'FIXOT', 'EXCEPT')
-	</update>
-	
-	<update id="updateResultAppr" parameterType="hashmap">
-		UPDATE WTM_WORK_DAY_RESULT 
-		SET APPR_SDATE = NULL, APPR_EDATE = NULL, APPR_MINUTE = NULL
-		WHERE TENANT_ID = #{tenantId}
-		   AND ENTER_CD = #{enterCd}
-		   AND SABUN = #{sabun}
-		   AND YMD = #{stdYmd}
-		   AND TIME_TYPE_CD != ('GOBACK')
-	</update>
-	
 	<select id="getResultBySabunAndYmdAndTimeTypeCds" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT F_WTM_GET_EMP_DAY_OPTION(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD, 'UNPLANNED_YN') as unplannedYn, 
