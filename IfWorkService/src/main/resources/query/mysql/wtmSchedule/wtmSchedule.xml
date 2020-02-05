@@ -81,14 +81,13 @@
 							AND W.ENTER_CD=C.ENTER_CD
 							AND W.SABUN = C.SABUN
 						    AND W.YMD = C.YMD 
-					WHERE W.YMD= F_WTM_DATE_FORMAT(NOW(), 'YMD')  
-						AND (ENTRY_SDATE IS NULL OR ENTRY_EDATE IS NULL)
+					WHERE W.YMD=DATE_FORMAT(now(), '%Y%m%d')
 						AND W.ENTER_CD=#{enterCd}
 				GROUP BY W.TENANT_ID, W.ENTER_CD, W.SABUN, W.YMD) X
 				WHERE 
-					(#{stdType} = 'B_IN' AND now() BETWEEN F_WTM_DATE_ADD(X.PLAN_SDATE, (#{stdMinute}*-1),'I') AND F_WTM_DATE_ADD(X.PLAN_SDATE,-1,'I'))
+					(#{stdType} = 'B_IN' AND DATE_FORMAT(now(), '%Y%m%d%H%i') = DATE_FORMAT(DATE_SUB(X.PLAN_SDATE, INTERVAL #{stdMinute} MINUTE), '%Y%m%d%H%i') AND X.ENTRY_SDATE IS NULL)
 					OR 
-					(#{stdType} = 'A_OUT' AND now() BETWEEN F_WTM_DATE_ADD(X.PLAN_EDATE, #{stdMinute}-2,'I') AND F_WTM_DATE_ADD(X.PLAN_EDATE, #{stdMinute},'I'))
+					(#{stdType} = 'A_OUT' AND DATE_FORMAT(now(), '%Y%m%d%H%i') = DATE_FORMAT(DATE_ADD(X.PLAN_EDATE, INTERVAL #{stdMinute} MINUTE), '%Y%m%d%H%i') AND X.ENTRY_EDATE IS NULL)
 		]]>
 	</select>
 </mapper>
