@@ -654,16 +654,17 @@ public class WtmMobileController {
 					List<Map<String,Object>> itemCollection = new ArrayList<Map<String,Object>>();
 					for(Map<String, Object> row : l) {
 						if(cnt == 0) {
-							data.put("emp", row.get("plan").toString());
+							data.put("emp", data.get("emp") +"@"+ row.get("plan").toString());
 							data.put("plan", row.get("plan").toString());
 						}
-						String value = row.get("plan").toString();
+						String value = data.get("emp") +"@"+ row.get("plan").toString();
 						String text = row.get("emp").toString();
 						Map<String,Object> item = new HashMap<String,Object>();
 						item.put("text", text);
 						item.put("value", value);
 						itemCollection.add(item);
 					}
+					
 					
 					Map<String,Object> item = new HashMap<String,Object>();
 					item.put("collection", itemCollection);
@@ -672,7 +673,8 @@ public class WtmMobileController {
 					result.put("itemAttributesMap", itemPropertiesMap);
 				}
 			} else {
-				data.put("plan", data.get("emp"));
+				String temp = data.get("emp").toString().split("@")[1];
+				data.put("plan", temp);
 			}
 
 			result.put("data", data);
@@ -685,5 +687,4 @@ public class WtmMobileController {
 		logger.debug("/mobile/"+ tenantId+"/team/plan e " + rp.toString());
 		return rp;
 	}
-	
 }
