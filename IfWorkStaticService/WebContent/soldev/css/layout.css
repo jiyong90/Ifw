@@ -532,9 +532,11 @@ a.article:hover {
   width: 100%;
   min-height: calc(100vh - 70px);
   transition: all 0.3s;
-  background: #e2e5ed;
+  background: #ffffff;
 }
-
+.bg-light-blue{
+	background: #e2e5ed !important;
+}
 #content.full-height{
   min-height: 100vh;
 }
@@ -657,7 +659,6 @@ a.article:hover {
   background-size: 69px auto;
 }
 #sub-nav .work-time-wrap{
-	min-height:38px;
 /*
   padding-bottom:16px;
   border-bottom:1px solid #d2d2d2;

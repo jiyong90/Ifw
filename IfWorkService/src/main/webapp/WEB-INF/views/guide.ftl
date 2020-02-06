@@ -6,7 +6,7 @@
 </head>
 <body class="">
 	<div class="wrapper">
-	    <div id="content" class="full-height">
+	    <div id="content" class="full-height bg-light-blue">
 	        <div class="container-fluid pb-4 pop-up">
 	            <!-- 제목 -->
 	            <p class="page-title">관리자 도움말</p>
@@ -92,4 +92,3 @@
 	</script>
 	</body>
 </html>
-	

@@ -1,5 +1,5 @@
 <#include "/applLineComponent.ftl">
-<div id="approval" v-cloak>
+<div id="approval" v-cloak class="bg-light-blue">
 	<!-- 유연근무제신청 상세보기 modal start -->
     <div class="modal fade show" id="flexibleAppl" tabindex="-1" role="dialog" v-if="appl">
         <div class="modal-dialog modal-md" role="document">
@@ -416,7 +416,7 @@
         </div>
     </div>
     <!-- 결재의견 modal end -->
-	<div class="container-fluid">
+	<div class="container-fluid except70">
 		<p class="page-title">결재 알림</p>
 		<ul class="nav approval-wrap nav-pills" role="tablist">
             <li class="nav-item">
