@@ -199,18 +199,28 @@
 			     , L.APPR_TYPE_CD 
 			     , L.APPR_OPINION 
 				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
-                 , CASE WHEN A.APPL_CD = '171' THEN 'view://W02View' 
-             	     ELSE NULL END AS URL_LINK 
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+             	   ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
 			   AND A.ENTER_CD = C.ENTER_CD
 			   AND A.APPL_CD = C.APPL_CD
-			  JOIN WTM_APPL_LINE L
+			  JOIN (SELECT *
+					  FROM WTM_APPL_LINE
+					 WHERE (APPL_ID, APPR_SABUN, APPR_SEQ) IN ( SELECT APPL_ID, APPR_SABUN, MAX(APPR_SEQ)
+																  FROM WTM_APPL_LINE
+																 WHERE APPR_TYPE_CD <> 1
+																   AND APPR_SABUN = #{empNo}
+																   AND APPR_DATE IS NOT NULL
+																   AND APPR_STATUS_CD IS NOT NULL
+																GROUP BY APPL_ID, APPR_SABUN )) L
 			    ON L.APPL_ID = A.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd} 
 			   AND APPR_SABUN = #{empNo}
+			   AND L.APPR_TYPE_CD <> 1
 			   AND L.APPR_DATE IS NOT NULL
 			   AND L.APPR_STATUS_CD IS NOT NULL
 			ORDER BY A.APPL_YMD DESC
