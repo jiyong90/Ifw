@@ -242,6 +242,13 @@ public class WtmInoutController {
 			}
 			
 			logger.debug("out : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
+			
+			//퇴근일때만 인정시간 계산
+			//unplanned이고 holyday인데 OT, NIGHT가 없으면 return;
+			if("Y".equals(yn.get("unplannedYn").toString()) && "Y".equals(yn.get("holidayYn").toString()) && yn.get("cnt").equals("0")) {
+				logger.debug("휴일근무 신청서가 없음. PostProcess 안탐. ");
+				return rp;
+			}
 			//퇴근일때만 인정시간 계산
 			inoutService.inoutPostProcess(paramMap, yn.get("unplannedYn").toString());
 
