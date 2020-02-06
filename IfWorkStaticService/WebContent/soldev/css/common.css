@@ -884,7 +884,7 @@ box-sizing: border-box;
 
 /* 결재 페이지 */
 .page-title{
-    margin-top: 14px;
+    padding-top: 14px;
     font-size: 20px;
     font-weight: bold;
     line-height: 1.43;
@@ -1538,7 +1538,7 @@ transition: all 0.4s ease;
 
 
 .pop-up {padding-right: 20px;padding-left: 20px;}
-.pop-up .page-title{margin-top:20px;}
+.pop-up .page-title{padding-top:20px;}
 .pop-up .contents-wrap{margin-top:10px;}
 
 .pop-up .accordion{border-top:0px;border-bottom:0px; background-color:transparent;}
@@ -1552,7 +1552,9 @@ transition: all 0.4s ease;
 }
 .pop-up .accordion>li:first-child{
   margin-top:0px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+}
+.pop-up .accordion>li{
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
 }
 .pop-up .accordion>li .link {
   padding: 18px 22px;
