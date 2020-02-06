@@ -1,4 +1,4 @@
-<div id="applCode">
+<div id="applCode" style="height: calc(100vh - 70px);">
  	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 			<form id="sheetForm" name="sheetForm">
@@ -41,7 +41,7 @@
 					</div>
 					<script type="text/javascript"> createIBSheet("sheet2", "100%", halfsheetH, "kr"); </script>
 				</div>
-				<div class="col-7 pr-3">
+				<div class="col-7">
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">신청서별 기준</div>
