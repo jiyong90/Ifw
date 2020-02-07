@@ -256,7 +256,11 @@ public class WtmFlexibleEmpController {
 			ObjectMapper mapper = new ObjectMapper();
 			rp = flexibleEmpService.save(flexibleEmpId, (Map<String, Object>)paramMap.get("dayResult"), userId);
 			
-			List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(flexibleEmpId);
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", empNo);
+			
+			List<Map<String, Object>> plans = flexEmpMapper.getWorktimePlan(paramMap);
 			List<WtmDayWorkVO> dayWorks = flexibleEmpService.getDayWorks(plans, userId);
 			rp.put("dayWorks", dayWorks);
 			

@@ -1,3 +1,4 @@
+<div class="bg-light-blue">
 <!-- guide modal start -->
 <div class="modal fade show" id="guide" data-backdrop="static"  tabindex="-1" role="dialog">
     <div class="modal-dialog modal-guide" role="document">
@@ -1738,4 +1739,4 @@
     });
   	
 </script>
-
+</div>

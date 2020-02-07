@@ -29,7 +29,8 @@
         <input type="text" id="grant_type" name="grant_type" class="form-control" value="password" hidden>
         <input type="text" id="redirect_uri" name="redirect_uri" class="form-control" value="${redirect_uri}" hidden>
         <div class="checkbox mb-3">
-            <label><input type="checkbox" id="keepLogin" value="remember-me"> 아이디 저장</label>
+            <input type="checkbox" value="remember-me" id="keepLogin">
+            <label for="keepLogin">아이디 저장</label>
         	<#if interfaceYn?? && interfaceYn?exists && interfaceYn=='Y' >
             <a href="#" class="find-pw" onclick="location.href='${rc.getContextPath()}/login/${tsId}/findPassword';">비밀번호 재설정</a>
         	</#if>
