@@ -1414,6 +1414,11 @@
 								$this.planElasWorkDay(data.flexibleApplId);
 						} else {
 							$("#loading").hide();
+							$("#alertText").html(data.message);
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+	  	  	         			$("#alertModal").off('hidden.bs.modal');
+	  	  	         		});
+	  	  	         		$("#alertModal").modal("show"); 
 						}
 					},
 					error: function(e) {
