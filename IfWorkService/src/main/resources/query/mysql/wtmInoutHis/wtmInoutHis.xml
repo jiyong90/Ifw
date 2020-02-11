@@ -45,7 +45,8 @@
 			 WHERE C.TENANT_ID = #{tenantId}
 			      AND C.ENTER_CD = #{enterCd}
 			      AND C.SABUN = #{sabun}
-			      AND F_WTM_TO_DATE(C.YMD,'YMD') BETWEEN F_WTM_DATE_ADD(F_WTM_DATE_FORMAT(now(),'YMD'), -1, 'D') AND F_WTM_DATE_ADD(F_WTM_DATE_FORMAT(now(),'YMD'), 1, 'D')
+      			  AND C.YMD BETWEEN F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(now(), -1, 'D'),'YMD') AND F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(now(), 1, 'D'),'YMD')
+		     ORDER BY C.YMD
         ]]>
     </select>
     
