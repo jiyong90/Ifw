@@ -10,6 +10,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -27,6 +29,7 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
+import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
@@ -36,6 +39,7 @@ import com.isu.ifw.vo.WtmApplLineVO;
 @RequestMapping(value="/appl")
 public class WtmApplController {
 	
+	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
 
 	@Autowired
 	WtmAsyncService wtmAsyncService;
@@ -69,6 +73,10 @@ public class WtmApplController {
 	@Autowired
 	WtmInoutService inoutService;
 	
+	@Autowired
+	@Qualifier(value="flexibleEmpService")
+	WtmFlexibleEmpService wtmflexibleEmpService;
+	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(@RequestParam String applType, HttpServletRequest request) throws Exception {
 		
@@ -80,6 +88,9 @@ public class WtmApplController {
 		String userId = sessionData.get("userId").toString();
 		
 		rp.setSuccess("");
+		
+		System.out.println(">>>>>>>>>>>>>>>>["+empNo+"] approvalList applType: "+ applType);
+		logger.debug(">>>>>>>>>>>>>>>>["+empNo+"] approvalList applType: "+ applType);
 		
 		List<Map<String, Object>> apprList = null;
 		try {		
@@ -174,6 +185,7 @@ public class WtmApplController {
 							
 						}
 					}
+					
 				} else if("OT_CAN".equals(applCd)){
 					rp = wtmOtCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 				} else if("ENTRY_CHG".equals(applCd)){

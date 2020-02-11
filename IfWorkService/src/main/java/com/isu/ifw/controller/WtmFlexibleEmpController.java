@@ -297,6 +297,9 @@ public class WtmFlexibleEmpController {
 		Long flexibleApplId = Long.valueOf(paramMap.get("flexibleApplId").toString());
 		
 		try {
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", empNo);
 			rp = flexibleEmpService.saveElasPlan(flexibleApplId, paramMap, userId);
 			
 			List<Map<String, Object>> plans = flexEmpMapper.getElasPlanByFlexibleApplId(paramMap);
@@ -590,7 +593,6 @@ public class WtmFlexibleEmpController {
 		return rp;
 	}
 	
-
 	/**
 	 * 해당 일의 잔여 연장근무 시간 조회
 	 * @param paramMap
