@@ -1058,9 +1058,9 @@
 		                        , SUM(PLAN_MINUTE) AS PLAN_MINUTE
 										, SUM(APPR_MINUTE) AS APPR_MINUTE
 		                      FROM WTM_WORK_DAY_RESULT 
-									WHERE TENANT_ID = 1
-									  AND ENTER_CD = 'ISU'
-									  AND SABUN = '11014'
+									WHERE TENANT_ID = #{tenantId}
+									  AND ENTER_CD = #{enterCd}
+									  AND SABUN = #{sabun}
 									  AND TIME_TYPE_CD = 'EXCEPT'
 		                       AND TAA_CD IN ('BREAK','BREAK_FIXOT') 
 								  GROUP BY TENANT_ID, ENTER_CD, SABUN, YMD, TIME_TYPE_CD, TAA_CD) B
@@ -1408,6 +1408,9 @@
   		{ call P_WTM_WORK_DAY_RESULT_OTFIX_C( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }
   	</update>
   	
+  	<update id="calcFlexApplyEntryDatetimeByFlexibleEmpId" statementType="CALLABLE"  parameterType="map"  >
+  		{ call P_WTM_WORK_DAY_RESULT_CREATE_F( #{tenantId}, #{enterCd}, #{sabun}, #{sYmd}, #{eYmd},#{userId} ) }
+  	</update>
   	
   	<update id="resetNoPlanWtmWorkDayResultByFlexibleEmpIdWithFixOt" statementType="CALLABLE"  parameterType="map"  >
   		{ call P_WTM_WORK_DAY_RESULT_CREATE_N( #{flexibleEmpId}, #{sYmd}, #{eYmd},#{userId} ) }

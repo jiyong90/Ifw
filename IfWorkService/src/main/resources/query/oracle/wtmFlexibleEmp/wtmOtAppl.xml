@@ -244,6 +244,7 @@
 			AND (O.CANCEL_YN IS NULL OR O.CANCEL_YN <> 'Y')
 			AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMD') BETWEEN #{sYmd} AND #{eYmd}
 			AND R.WORK_DAY_RESULT_ID IS NULL
+			AND (#{otApplId, jdbcType=VARCHAR} IS NULL OR O.OT_APPL_ID = #{otApplId, jdbcType=VARCHAR})
 		]]>
   	</select>
     
