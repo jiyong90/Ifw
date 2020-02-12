@@ -180,7 +180,7 @@ public class WtmApplController {
 							if(otApplList!=null && otApplList.size()>0) {
 								//소급의 경우 인정시간과 연장근로시간을 비교하여 다른 경우 대체휴일 정보를 생성하지 않는다.
 								//미래의 연장근로시간의 경우 인정시간계산 서비스에서 대체휴일 정보를 생성한다.
-								wtmAsyncService.applyOtSubs(tenantId, enterCd, otApplList, true, userId);
+								wtmflexibleEmpService.applyOtSubs(tenantId, enterCd, otApplList, true, userId);
 							}
 							
 						}

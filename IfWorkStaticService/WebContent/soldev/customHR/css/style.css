@@ -324,7 +324,6 @@ table.sheet_main {
 }
 
 
-
 /* -----------------------------------------------------------------------*/
 /* ----------------- "Main" IBSheet style definition ---------------------*/
 /* -----------------------------------------------------------------------*/
@@ -559,43 +558,43 @@ u.GMEnumRight {padding-right:0; padding-left:17px}
 
 .GridMain1 .GridMain2 .GMRadio0Left,.GridMain1 .GridMain2 .GMRadio1Left,.GridMain1 .GridMain2 .GMRadio2Left,.GridMain1 .GridMain2 .GMRadio3Left,.GridMain1 .GridMain2 .GMRadioRO0Left,.GridMain1 .GridMain2 .GMRadioRO1Left,.GridMain1 .GridMain2 .GMRadioRO2Left,.GridMain1 .GridMain2 .GMRadioRO3Left { padding-left:17px; padding-right:10px; line-height:20px; background-repeat:no-repeat; background-position:3px 50%;}
 .GridMain1 .GridMain2 .GMRadio0Right,.GridMain1 .GridMain2 .GMRadio1Right,.GridMain1 .GridMain2 .GMRadio2Right,.GridMain1 .GridMain2 .GMRadio3Right,.GridMain1 .GridMain2 .GMRadioRO0Right,.GridMain1 .GridMain2 .GMRadioRO1Right,.GridMain1 .GridMain2 .GMRadioRO2Right,.GridMain1 .GridMain2 .GMRadioRO3Right {line-height:20px; padding-right:17px; padding-left:10px; background-repeat:no-repeat; background-position:3px 50%;}
-.GridMain1 .GridMain2 .GMRadio0Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk2.png); }
-.GridMain1 .GridMain2 .GMRadioRO0Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk2R.png); }
-.GridMain1 .GridMain2 .GMRadio1Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk3.png); }
-.GridMain1 .GridMain2 .GMRadioRO1Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk3R.png); }
-.GridMain1 .GridMain2 .GMRadio2Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk0.png); }
-.GridMain1 .GridMain2 .GMRadioRO2Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk0R.png); }
-.GridMain1 .GridMain2 .GMRadio3Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk1.png); }
-.GridMain1 .GridMain2 .GMRadioRO3Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk1R.png); }
-.GridMain1 .GridMain2 .GMRadio0Right { background-image:url(/IBLeaders/Sheet/js/Main/chk2.png); }
-.GridMain1 .GridMain2 .GMRadioRO0Right { background-image:url(/IBLeaders/Sheet/js/Main/chk2R.png); }
-.GridMain1 .GridMain2 .GMRadio1Right { background-image:url(/IBLeaders/Sheet/js/Main/chk3.png); }
-.GridMain1 .GridMain2 .GMRadioRO1Right { background-image:url(/IBLeaders/Sheet/js/Main/chk3R.png); }
-.GridMain1 .GridMain2 .GMRadio2Right { background-image:url(/IBLeaders/Sheet/js/Main/chk0.png); }
-.GridMain1 .GridMain2 .GMRadioRO2Right { background-image:url(/IBLeaders/Sheet/js/Main/chk0R.png); }
-.GridMain1 .GridMain2 .GMRadio3Right { background-image:url(/IBLeaders/Sheet/js/Main/chk1.png); }
-.GridMain1 .GridMain2 .GMRadioRO3Right { background-image:url(/IBLeaders/Sheet/js/Main/chk1R.png); }
+.GridMain1 .GridMain2 .GMRadio0Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk2.gif); }
+.GridMain1 .GridMain2 .GMRadioRO0Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk2R.gif); }
+.GridMain1 .GridMain2 .GMRadio1Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk3.gif); }
+.GridMain1 .GridMain2 .GMRadioRO1Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk3R.gif); }
+.GridMain1 .GridMain2 .GMRadio2Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk0.gif); }
+.GridMain1 .GridMain2 .GMRadioRO2Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk0R.gif); }
+.GridMain1 .GridMain2 .GMRadio3Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk1.gif); }
+.GridMain1 .GridMain2 .GMRadioRO3Left  { background-image:url(/IBLeaders/Sheet/js/Main/chk1R.gif); }
+.GridMain1 .GridMain2 .GMRadio0Right { background-image:url(/IBLeaders/Sheet/js/Main/chk2.gif); }
+.GridMain1 .GridMain2 .GMRadioRO0Right { background-image:url(/IBLeaders/Sheet/js/Main/chk2R.gif); }
+.GridMain1 .GridMain2 .GMRadio1Right { background-image:url(/IBLeaders/Sheet/js/Main/chk3.gif); }
+.GridMain1 .GridMain2 .GMRadioRO1Right { background-image:url(/IBLeaders/Sheet/js/Main/chk3R.gif); }
+.GridMain1 .GridMain2 .GMRadio2Right { background-image:url(/IBLeaders/Sheet/js/Main/chk0.gif); }
+.GridMain1 .GridMain2 .GMRadioRO2Right { background-image:url(/IBLeaders/Sheet/js/Main/chk0R.gif); }
+.GridMain1 .GridMain2 .GMRadio3Right { background-image:url(/IBLeaders/Sheet/js/Main/chk1.gif); }
+.GridMain1 .GridMain2 .GMRadioRO3Right { background-image:url(/IBLeaders/Sheet/js/Main/chk1R.gif); }
 
 u.GMFilter0,u.GMFilter1 { padding-left:16px; }
 .GridMain1 .GridMain2 .GMBool0,.GridMain1 .GridMain2 .GMBool0RO,.GridMain1 .GridMain2 .GMBool1,.GridMain1 .GridMain2 .GMBool1RO,.GridMain1 .GridMain2 .GMBool2,.GridMain1 .GridMain2 .GMBool2RO,.GridMain1 .GridMain2 .GMBool3,.GridMain1 .GridMain2 .GMBool3RO {background-position:center center; background-repeat:no-repeat;}
 
 .GridMain1 .GridMain2 .GMCheck0Left, .GridMain1 .GridMain2 .GMCheck1Left, .GridMain1 .GridMain2 .GMCheckRO0Left, .GridMain1 .GridMain2 .GMCheckRO1Left { background-repeat:no-repeat; padding-left:20px!important; background-position:3px 50%;}
-.GridMain1 .GridMain2 .GMCheck0Left   { background-image:url(/IBLeaders/Sheet/js/Main/chk0.png); }
-.GridMain1 .GridMain2 .GMCheck1Left   { background-image:url(/IBLeaders/Sheet/js/Main/chk1.png); }
-.GridMain1 .GridMain2 .GMCheckRO0Left { background-image:url(/IBLeaders/Sheet/js/Main/chk0R.png); }
-.GridMain1 .GridMain2 .GMCheckRO1Left { background-image:url(/IBLeaders/Sheet/js/Main/chk1R.png); }
+.GridMain1 .GridMain2 .GMCheck0Left   { background-image:url(/IBLeaders/Sheet/js/Main/chk0.gif); }
+.GridMain1 .GridMain2 .GMCheck1Left   { background-image:url(/IBLeaders/Sheet/js/Main/chk1.gif); }
+.GridMain1 .GridMain2 .GMCheckRO0Left { background-image:url(/IBLeaders/Sheet/js/Main/chk0R.gif); }
+.GridMain1 .GridMain2 .GMCheckRO1Left { background-image:url(/IBLeaders/Sheet/js/Main/chk1R.gif); }
 
-.GridMain1 .GridMain2 .GMBool0   { background-image:url(/IBLeaders/Sheet/js/Main/chk0.png);  }
-.GridMain1 .GridMain2 .GMBool0RO { background-image:url(/IBLeaders/Sheet/js/Main/chk0R.png); }
+.GridMain1 .GridMain2 .GMBool0   { background-image:url(/IBLeaders/Sheet/js/Main/chk0.gif);  }
+.GridMain1 .GridMain2 .GMBool0RO { background-image:url(/IBLeaders/Sheet/js/Main/chk0R.gif); }
 
-.GridMain1 .GridMain2 .GMBool1   { background-image:url(/IBLeaders/Sheet/js/Main/chk1.png);  }
-.GridMain1 .GridMain2 .GMBool1RO { background-image:url(/IBLeaders/Sheet/js/Main/chk1R.png); }
+.GridMain1 .GridMain2 .GMBool1   { background-image:url(/IBLeaders/Sheet/js/Main/chk1.gif);  }
+.GridMain1 .GridMain2 .GMBool1RO { background-image:url(/IBLeaders/Sheet/js/Main/chk1R.gif); }
 
-.GridMain1 .GridMain2 .GMBool2   { background-image:url(/IBLeaders/Sheet/js/Main/chk2.png);  }
-.GridMain1 .GridMain2 .GMBool2RO { background-image:url(/IBLeaders/Sheet/js/Main/chk2R.png); }
+.GridMain1 .GridMain2 .GMBool2   { background-image:url(/IBLeaders/Sheet/js/Main/chk2.gif);  }
+.GridMain1 .GridMain2 .GMBool2RO { background-image:url(/IBLeaders/Sheet/js/Main/chk2R.gif); }
 
-.GridMain1 .GridMain2 .GMBool3   { background-image:url(/IBLeaders/Sheet/js/Main/chk3.png);  }
-.GridMain1 .GridMain2 .GMBool3RO { background-image:url(/IBLeaders/Sheet/js/Main/chk3R.png); }
+.GridMain1 .GridMain2 .GMBool3   { background-image:url(/IBLeaders/Sheet/js/Main/chk3.gif);  }
+.GridMain1 .GridMain2 .GMBool3RO { background-image:url(/IBLeaders/Sheet/js/Main/chk3R.gif); }
 
 /* Filter images  */
 .GridMain1 .GridMain2 .GMFilter0Left,.GridMain1 .GridMain2 .GMFilter1Left,.GridMain1 .GridMain2 .GMFilter2Left,.GridMain1 .GridMain2 .GMFilter3Left,.GridMain1 .GridMain2 .GMFilter4Left,.GridMain1 .GridMain2 .GMFilter5Left,.GridMain1 .GridMain2 .GMFilter6Left,.GridMain1 .GridMain2 .GMFilter7Left,
@@ -632,7 +631,7 @@ u.GMFilter0,u.GMFilter1 { padding-left:16px; }
  { .GridMain1 .GridMain2 .GMKeyfield{  background-position: center 3px;padding: 0 2px 0 4px; }}
 
 /* CheckBox Header Image */
-.GridMain1 .GridMain2 .GMCheckHeader0 {background-image:url(/IBLeaders/Sheet/js/Main/chk0.png); line-height:22px; display:inline-block; vertical-align:middle; background-repeat:no-repeat; background-position:5px 1px; padding:0 7px 0 13px !important; margin:0 2px 0 0;}
+.GridMain1 .GridMain2 .GMCheckHeader0 {background-image:url(/IBLeaders/Sheet/js/Main/chk0.gif); line-height:22px; display:inline-block; vertical-align:middle; background-repeat:no-repeat; background-position:5px 1px; padding:0 7px 0 13px !important; margin:0 2px 0 0;}
 
 /* GMCheckHeader0 : hack CR,SF*/
 @media screen and (-webkit-min-device-pixel-ratio:0)
@@ -645,7 +644,7 @@ u.GMFilter0,u.GMFilter1 { padding-left:16px; }
  @media all and (-webkit-min-device-pixel-ratio:10000), not all and (-webkit-min-device-pixel-ratio:0)
  { .GridMain1 .GridMain2 .GMCheckHeader0{ background-position:7px center ; padding:1px  17px 0 0; }}
 
-.GridMain1 .GridMain2 .GMCheckHeader1 {background-image:url(/IBLeaders/Sheet/js/Main/chk1.png); display:inline-block; vertical-align:middle; background-repeat:no-repeat; background-position:4px 1px ; padding:2px 6px 0 6px; margin:0 2px 0 0}
+.GridMain1 .GridMain2 .GMCheckHeader1 {background-image:url(/IBLeaders/Sheet/js/Main/chk1.gif); display:inline-block; vertical-align:middle; background-repeat:no-repeat; background-position:4px 1px ; padding:2px 6px 0 6px; margin:0 2px 0 0}
 
 /* GMCheckHeader1 : hack CR,SF*/
 @media screen and (-webkit-min-device-pixel-ratio:0)
@@ -774,8 +773,8 @@ u.GMFilter0,u.GMFilter1 { padding-left:16px; }
 .GridMain1 .GridMain2 .GMMenuClose {float:right; width:14px; cursor:pointer; _cursor:hand; display:none;}
 .GridMain1 .GridMain2 .GMMenuBody {cursor:default; background-color:#fff;margin-bottom:-1px;}
 .GridMain1 .GridMain2 .GMMenuShadow {position:absolute;margin:2px 0 0 2px;z-index:257;background-color:#eef1f3; opacity:0.5; filter:alpha(opacity=50);}
-.GridMain1 .GridMain2 .GMMenuCheckedIconRight {padding-right:17px; background:url(/IBLeaders/Sheet/js/Main/chk1.png) no-repeat 96% center; }
-.GridMain1 .GridMain2 .GMMenuUncheckedIconRight { padding-right:17px;background:url(/IBLeaders/Sheet/js/Main/chk0.png) no-repeat 96% center ; }
+.GridMain1 .GridMain2 .GMMenuCheckedIconRight {padding-right:17px; background:url(/IBLeaders/Sheet/js/Main/chk1.gif) no-repeat 96% center; }
+.GridMain1 .GridMain2 .GMMenuUncheckedIconRight { padding-right:17px;background:url(/IBLeaders/Sheet/js/Main/chk0.gif) no-repeat 96% center ; }
 
 .GridMain1 .GridMain2 .GMMenuCursorIcon {background-image:url(/IBLeaders/Sheet/js/Main/d_gray_right.gif); background-repeat:no-repeat; background-position: 3px center;_background-color:#fff}
 .GridMain1 .GridMain2 .GMMenuHoverIcon {background-image:url(/IBLeaders/Sheet/js/Main/d_right.gif); background-repeat:no-repeat; background-position: 3px center; _background-color:#fdffd8 }

@@ -189,7 +189,11 @@
 		<if test="startPage!=''">
 			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
 		</if>
+<<<<<<< HEAD
 			<![CDATA[
+=======
+		<![CDATA[
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
         	SELECT A.APPL_ID 
 			     , A.APPL_CD 
 			     , C.APPL_NM
