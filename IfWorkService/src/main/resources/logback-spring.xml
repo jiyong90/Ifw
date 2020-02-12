@@ -62,6 +62,10 @@
 	<logger name="ifwFileLog" level="DEBUG">
 		<appender-ref ref="FILE" />
 	</logger>
+	
+	<logger name="ifwDbLog" level="DEBUG">
+		<appender-ref ref="DB" />
+	</logger>
 <!-- 
   	<logger name="jdbc" level="WARN"/>
 

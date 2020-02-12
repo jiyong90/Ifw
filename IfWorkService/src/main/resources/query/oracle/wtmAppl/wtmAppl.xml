@@ -99,10 +99,11 @@
         ]]>
     </select>
     
-    <select id="getApprList01" parameterType="map" resultType="wtmGeneral">
+   <select id="getApprList01" parameterType="map" resultType="wtmGeneral">
 		<if test="startPage!=''">
 			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
 		</if>
+        <![CDATA[
         	SELECT A.APPL_ID
 			     , A.APPL_CD
 			     , C.APPL_NM
@@ -114,7 +115,8 @@
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
 				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
-             	     ELSE NULL END AS URL_LINK 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+             	   ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -130,6 +132,7 @@
 			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
 			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
 			ORDER BY A.APPL_YMD DESC
+			]]>
 			<if test="startPage!=''">
 			<![CDATA[
              ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
@@ -141,6 +144,7 @@
 		<if test="startPage!=''">
 			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
 		</if>
+		<![CDATA[
         	SELECT A.APPL_ID
 			     , A.APPL_CD
 			     , C.APPL_NM
@@ -157,8 +161,9 @@
 			     , L.APPR_TYPE_CD 
 			     , L.APPR_OPINION
 				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
-                 , CASE WHEN A.APPL_CD = '171' THEN 'view://W02View' 
-             	     ELSE NULL END AS URL_LINK 
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+             	   ELSE NULL END AS URL_LINK 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -172,6 +177,7 @@
 			   AND L.APPR_STATUS_CD = '10'
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			ORDER BY A.APPL_YMD DESC
+			]]>
 			<if test="startPage!=''">
 			<![CDATA[
              ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
@@ -183,6 +189,7 @@
 		<if test="startPage!=''">
 			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
 		</if>
+			<![CDATA[
         	SELECT A.APPL_ID 
 			     , A.APPL_CD 
 			     , C.APPL_NM
@@ -224,6 +231,49 @@
 			   AND L.APPR_DATE IS NOT NULL
 			   AND L.APPR_STATUS_CD IS NOT NULL
 			ORDER BY A.APPL_YMD DESC
+			]]>
+			<if test="startPage!=''">
+			<![CDATA[
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+			]]>
+			</if>
+    </select>    
+    
+    <select id="getMobileApprList01" parameterType="map" resultType="wtmGeneral">
+		<if test="startPage!=''">
+			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
+		</if>
+		<![CDATA[
+        	SELECT A.APPL_ID
+			     , A.APPL_CD
+			     , C.APPL_NM
+			     , A.APPL_SABUN
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS EMP_NM
+			     , A.APPL_YMD 
+			     , A.APPL_IN_SABUN 
+			     , A.APPL_STATUS_CD 
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+             	   ELSE NULL END AS URL_LINK 
+			  FROM WTM_APPL A
+			  JOIN WTM_APPL_CODE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.APPL_CD = C.APPL_CD
+              LEFT OUTER JOIN (SELECT * FROM WTM_OT_APPL WHERE SABUN = #{empNo}) O 
+			    ON A.APPL_ID = O.APPL_ID 
+			  LEFT OUTER JOIN (SELECT * FROM WTM_OT_CAN_APPL WHERE SABUN = #{empNo}) OC 
+			    ON A.APPL_ID = OC.APPL_ID 
+			 WHERE A.TENANT_ID = #{tenantId}
+			 AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
+			   AND A.ENTER_CD = #{enterCd} 
+			   AND (A.APPL_SABUN = #{empNo} 
+			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
+			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
+			ORDER BY A.APPL_YMD DESC
+			]]>
 			<if test="startPage!=''">
 			<![CDATA[
              ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
@@ -231,6 +281,97 @@
 			</if>
     </select>
     
+    <select id="getMobileApprList02" parameterType="map" resultType="wtmGeneral">
+		<if test="startPage!=''">
+			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
+		</if>
+		<![CDATA[
+        	SELECT A.APPL_ID
+			     , A.APPL_CD
+			     , C.APPL_NM
+			     , A.APPL_SABUN
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS EMP_NM
+			     , A.APPL_YMD
+			     , A.APPL_IN_SABUN 
+			     , A.APPL_STATUS_CD
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
+			     , L.APPR_SEQ 
+			     , L.APPR_SABUN
+			     , L.APPR_DATE
+			     , L.APPR_STATUS_CD 
+			     , L.APPR_TYPE_CD 
+			     , L.APPR_OPINION
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+             	   ELSE NULL END AS URL_LINK 
+			  FROM WTM_APPL A
+			  JOIN WTM_APPL_CODE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.APPL_CD = C.APPL_CD
+			  JOIN WTM_APPL_LINE L
+			    ON L.APPL_ID = A.APPL_ID
+			 WHERE A.TENANT_ID = #{tenantId}
+			 AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
+			   AND A.ENTER_CD = #{enterCd} 
+			   AND APPR_SABUN = #{empNo}
+			   AND L.APPR_STATUS_CD = '10'
+			   AND A.APPL_STATUS_CD IN ('21','31')
+			ORDER BY A.APPL_YMD DESC
+			]]>
+			<if test="startPage!=''">
+			<![CDATA[
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+			]]>
+			</if>
+    </select>
+    
+    <select id="getMobileApprList03" parameterType="map" resultType="wtmGeneral">
+		<if test="startPage!=''">
+			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
+		</if>
+		<![CDATA[
+        	SELECT A.APPL_ID 
+			     , A.APPL_CD 
+			     , C.APPL_NM
+			     , A.APPL_SABUN 
+			     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS EMP_NM
+			     , A.APPL_YMD 
+			     , A.APPL_IN_SABUN 
+			     , A.APPL_STATUS_CD 
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
+			     , L.APPR_SEQ 
+			     , L.APPR_SABUN
+			     , L.APPR_DATE 
+			     , L.APPR_STATUS_CD
+			     , L.APPR_TYPE_CD 
+			     , L.APPR_OPINION 
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
+                 , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+             	   ELSE NULL END AS URL_LINK 
+			  FROM WTM_APPL A
+			  JOIN WTM_APPL_CODE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.APPL_CD = C.APPL_CD
+			  JOIN WTM_APPL_LINE L
+			    ON L.APPL_ID = A.APPL_ID
+			 WHERE A.TENANT_ID = #{tenantId}
+			 AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
+			   AND A.ENTER_CD = #{enterCd} 
+			   AND APPR_SABUN = #{empNo}
+			   AND L.APPR_DATE IS NOT NULL
+			   AND L.APPR_STATUS_CD IS NOT NULL
+			ORDER BY A.APPL_YMD DESC
+			]]>
+			<if test="startPage!=''">
+			<![CDATA[
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+			]]>
+			</if>
+    </select>    
     <select id="countByApprList02" parameterType="map" resultType="int">
         <![CDATA[
         	SELECT count(*)
