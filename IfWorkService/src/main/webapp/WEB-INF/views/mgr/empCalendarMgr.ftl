@@ -1,5 +1,5 @@
 <div id="empCalendarMgr">
- 	<div class="container-fluid mgr-wrap bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
  	<div class="ibsheet-wrapper">
  		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
@@ -36,6 +36,7 @@
 						<div class="float-left title">근무캘린더</div>
 							<ul class="float-right btn-wrap">
 								<!-- li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li -->
+								<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
 							</ul>
 						</div>
 					</div>
@@ -82,6 +83,7 @@
 			{Header:"사번",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sabun",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"성명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"empNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"근무일",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ymd",				KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"근태코드",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"taaNms",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"근무제도",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"근무시간",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCdMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
 			{Header:"근무합산시간",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"totTime",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
@@ -171,6 +173,11 @@
 	*/
 		case "Insert":
 			sheet1.DataInsert(0) ;
+			break;
+		case "Down2Excel":
+			var downcol = makeHiddenSkipCol(sheet1);
+			var param = {DownCols:downcol, SheetDesign:1, Merge:1};
+			sheet1.Down2Excel(param); 
 			break;
 		}
 	}

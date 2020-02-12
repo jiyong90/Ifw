@@ -1,5 +1,5 @@
 <div id="entryCheckList">
- 	<div class="container-fluid mgr-wrap bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 	 		<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -30,6 +30,9 @@
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
 								<div class="float-left title">출/퇴근 미타각자 조회</div>
+								<ul class="float-right btn-wrap">
+									<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
+								</ul>
 							</div>
 						</div>
 						<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>
@@ -97,6 +100,11 @@
 		switch (sAction) {
 		case "Search":
 			sheet1.DoSearch( "${rc.getContextPath()}/entry/check/list" , $("#sheetForm").serialize());
+			break;
+		case "Down2Excel":
+			var downcol = makeHiddenSkipCol(sheet1);
+			var param = {DownCols:downcol, SheetDesign:1, Merge:1};
+			sheet1.Down2Excel(param); 
 			break;
 		}
 	}

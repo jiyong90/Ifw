@@ -131,6 +131,7 @@
 										<th>휴일대체 사용여부</th>
 										<td>
 											<select id="subsYn">
+												<option value="">선택</option>
 			                                    <option value="Y">사용</option>
 			                                    <option value="N">사용안함</option>
 			                                </select>
@@ -324,8 +325,12 @@
 				    }
 				    
 				});
-				var useMinutes = JSON.stringify(useMinutesArr);//json으로 바꿈
-				sheet1.SetCellValue(row, "timeUnit", $("#timeUnit").val());
+				var useMinutes;
+				if(useMinutesArr!=null && useMinutesArr.length>0)
+					useMinutes = JSON.stringify(useMinutesArr);//json으로 바꿈
+					
+				if( $("#timeUnit").val()!=null)
+					sheet1.SetCellValue(row, "timeUnit", $("#timeUnit").val());
 				sheet1.SetCellValue(row, "useMinutes", useMinutes);
 			}
 			if($('#trOtAppl').is(':visible')){
@@ -444,10 +449,12 @@
 				$("#timeUnit").val(sheet1.GetCellValue( NewRow, "timeUnit")).prop("selected", true);
 				$("input:checkbox[name='useMinutes']").prop("checked", false);
 				var useMinutes = sheet1.GetCellValue( NewRow, "useMinutes");
-				var dataUseMinutes = JSON.parse(useMinutes);
-				for(var i=0; i<dataUseMinutes.length; i++) {
-					var objId = "useMinutes" + dataUseMinutes[i].value;
-					$("input:checkbox[id="+objId+"]").prop("checked", true);
+				if(useMinutes!=null && useMinutes!='' && useMinutes!=undefined) {
+					var dataUseMinutes = JSON.parse(useMinutes);
+					for(var i=0; i<dataUseMinutes.length; i++) {
+						var objId = "useMinutes" + dataUseMinutes[i].value;
+						$("input:checkbox[id="+objId+"]").prop("checked", true);
+					}
 				}
 			}
 			if($('#trOtAppl').is(':visible')){
@@ -497,11 +504,14 @@
 	function getRuleList(NewRow, id){
 		
 		if($('#'+id+' > option').length<=1) {
+			var param = {};
+			
 			Util.ajax({
 				url: "${rc.getContextPath()}/rule/list",
-				type: "GET",
+				type: "POST",
 				contentType: 'application/json',
 				dataType: "json",
+				data : param,
 				success: function(data) {
 					if(data!=null && data.status=='OK') {
 						var rules = data.DATA;

@@ -488,6 +488,7 @@
 		</template>
 	</div>
 </div>
+
 <script type="text/javascript">
    	var approvalVue = new Vue({
    		el: "#approval",
@@ -547,7 +548,6 @@
 	    		} */
 	    		this.appl = appr.appl;
 	    		this.appl['applCd'] = appr.applCd;
-	    		//console.log(this.appl);
 	    		
 	    		if(appr.applCd=='OT' || appr.applCd=='OT_CAN') {
 	    			//연장근무신청서

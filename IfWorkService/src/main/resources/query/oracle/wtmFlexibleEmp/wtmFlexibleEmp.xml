@@ -1158,7 +1158,7 @@
 			 WHERE A.APPL_STATUS_CD IN ('21','31')
 			   AND A.APPL_IN_SABUN = #{sabun}
 			   AND O.YMD BETWEEN #{symd} AND #{eymd}
-			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '') 
+			   AND (A.APPL_ID <> #{applId, jdbcType=BIGINT} OR #{applId, jdbcType=BIGINT} IS NULL OR #{applId, jdbcType=BIGINT} = '') 
 			 ) X
 		]]>	
   	</select>

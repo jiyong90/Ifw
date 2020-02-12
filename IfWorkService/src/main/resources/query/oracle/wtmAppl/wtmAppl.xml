@@ -100,7 +100,7 @@
     </select>
     
    <select id="getApprList01" parameterType="map" resultType="wtmGeneral">
-		<if test="startPage!=''">
+		<if test="startPage!=null and startPage!=''">
 			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
 		</if>
         <![CDATA[
@@ -113,7 +113,7 @@
 			     , A.APPL_IN_SABUN 
 			     , A.APPL_STATUS_CD 
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS APPL_STATUS_NM
-				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd, jdbcType=VARCHAR} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
                 		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
              	   ELSE NULL END AS URL_LINK 
@@ -133,15 +133,15 @@
 			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
 			ORDER BY A.APPL_YMD DESC
 			]]>
-			<if test="startPage!=''">
+			<if test="startPage!=null and startPage!=''">
 			<![CDATA[
-             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage, jdbcType=VARCHAR}+1) * #{pageCount, jdbcType=INTEGER}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage, jdbcType=VARCHAR}*#{pageCount, jdbcType=INTEGER})+1)  AND  ((#{startPage, jdbcType=VARCHAR}+1) * #{pageCount, jdbcType=INTEGER}) 
 			]]>
 			</if>
     </select>
     
     <select id="getApprList02" parameterType="map" resultType="wtmGeneral">
-		<if test="startPage!=''">
+		<if test="startPage!=null and startPage!=''">
 			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
 		</if>
 		<![CDATA[
@@ -160,7 +160,7 @@
 			     , L.APPR_STATUS_CD 
 			     , L.APPR_TYPE_CD 
 			     , L.APPR_OPINION
-				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd, jdbcType=VARCHAR} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
                 		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
              	   ELSE NULL END AS URL_LINK 
@@ -178,18 +178,18 @@
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			ORDER BY A.APPL_YMD DESC
 			]]>
-			<if test="startPage!=''">
+			<if test="startPage!=null and startPage!=''">
 			<![CDATA[
-             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage, jdbcType=VARCHAR}+1) * #{pageCount, jdbcType=INTEGER}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage, jdbcType=VARCHAR}*#{pageCount, jdbcType=INTEGER})+1)  AND  ((#{startPage, jdbcType=VARCHAR}+1) * #{pageCount, jdbcType=INTEGER}) 
 			]]>
 			</if>
     </select>
     
     <select id="getApprList03" parameterType="map" resultType="wtmGeneral">
-		<if test="startPage!=''">
+		<if test="startPage!=null and startPage!=''">
 			SELECT * FROM ( SELECT   INNER_TABLE.* , ROWNUM AS ROW_SEQ FROM ( 
 		</if>
-			<![CDATA[
+		<![CDATA[
         	SELECT A.APPL_ID 
 			     , A.APPL_CD 
 			     , C.APPL_NM
@@ -205,7 +205,7 @@
 			     , L.APPR_STATUS_CD
 			     , L.APPR_TYPE_CD 
 			     , L.APPR_OPINION 
-				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
+				 , A.ENTER_CD || '@' || A.APPL_CD || '@' || A.APPL_ID || '@' || #{typeCd, jdbcType=VARCHAR} || '@' || A.APPL_SABUN || '@WTM' AS APPL_KEY
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
                 		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
              	   ELSE NULL END AS URL_LINK 
@@ -232,9 +232,9 @@
 			   AND L.APPR_STATUS_CD IS NOT NULL
 			ORDER BY A.APPL_YMD DESC
 			]]>
-			<if test="startPage!=''">
+			<if test="startPage!=null and startPage!=''">
 			<![CDATA[
-             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage}+1) * #{pageCount}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage}*#{pageCount})+1)  AND  ((#{startPage}+1) * #{pageCount}) 
+             ) INNER_TABLE WHERE TO_NUMBER(ROWNUM) <=  ((#{startPage, jdbcType=VARCHAR}+1) * #{pageCount, jdbcType=INTEGER}) )  WHERE ROW_SEQ BETWEEN  ((#{startPage, jdbcType=VARCHAR}*#{pageCount, jdbcType=INTEGER})+1)  AND  ((#{startPage, jdbcType=VARCHAR}+1) * #{pageCount, jdbcType=INTEGER}) 
 			]]>
 			</if>
     </select>    

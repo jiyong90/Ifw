@@ -176,7 +176,7 @@
 		  FROM WTM_EMP_HIS E
 		 WHERE E.TENANT_ID = #{tenantId}
 		   AND E.ENTER_CD = #{enterCd}
-		   <if test="orgList!=null">
+		   <if test="sabuns!=null">
 		   AND E.SABUN IN (NULL, 
 	       <foreach collection="sabuns" item="sabun" separator=", ">
 			   #{sabun}

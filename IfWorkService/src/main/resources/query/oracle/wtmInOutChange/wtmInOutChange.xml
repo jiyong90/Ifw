@@ -70,4 +70,36 @@
 			</foreach>
 		</if>
     </update>
+    
+    <update id="setInOutChange" parameterType="map">
+        INSERT INTO WTM_INOUT_CHG_HIS 
+			(TENANT_ID,
+			ENTER_CD, 
+			SABUN, 
+			YMD, 
+			ENTRY_SDATE, 
+			ENTRY_STYPE_CD, 
+			ENTRY_EDATE, 
+			ENTRY_ETYPE_CD, 
+			CHG_SDATE, 
+			CHG_EDATE, 
+			REASON, 
+			UPDATE_DATE, 
+			UPDATE_ID)
+		VALUES 
+			(#{tenantId}, 
+			#{enterCd}, 
+			#{sabun}, 
+			#{ymd},
+			CASE WHEN #{entrySdate, jdbcType=VARCHAR} IS NULL THEN NULL ELSE F_WTM_TO_DATE(#{entrySdate, jdbcType=VARCHAR}, 'YMDHI') END, 
+			#{entryStypeCd, jdbcType=VARCHAR},
+			CASE WHEN #{entryEdate, jdbcType=VARCHAR} IS NULL THEN NULL ELSE F_WTM_TO_DATE(#{entryEdate, jdbcType=VARCHAR}, 'YMDHI') END,
+			#{entryEtypeCd, jdbcType=VARCHAR},
+			CASE WHEN #{chgSdate, jdbcType=VARCHAR} IS NULL THEN NULL ELSE F_WTM_TO_DATE(#{chgSdate, jdbcType=VARCHAR}, 'YMDHI') END,
+			CASE WHEN #{chgEdate, jdbcType=VARCHAR} IS NULL THEN NULL ELSE F_WTM_TO_DATE(#{chgEdate, jdbcType=VARCHAR}, 'YMDHI') END,
+			#{reason}, 
+			SYSDATE, 
+			#{userId})	
+    </update>
+    
 </mapper>
