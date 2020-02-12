@@ -1373,6 +1373,8 @@ transition: all 0.4s ease;
 
 .select-list-wrap .targetor{
   display: inline-block;
+  min-width:63px;
+  max-width:63px;
   padding: 2px 6px;
   border:1px solid #cfcfcf;
   margin-top: 9px;
