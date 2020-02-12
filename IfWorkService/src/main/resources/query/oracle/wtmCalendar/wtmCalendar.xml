@@ -49,7 +49,7 @@
 				A.ENTER_CD, 
 				A.SABUN , 
 				F_WTM_GET_EMP_ORG_NM(#{tenantId}, #{enterCd}, A.SABUN, F_WTM_DATE_FORMAT(SYSDATE,'YMD')) AS ORG_NM,
-				F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, A.SABUN, F_WTM_DATE_FORMAT(SYSDATE,'YMD')) AS EMP_NM,
+				D.EMP_NM AS EMP_NM,
 				A.YMD, 
 				A.TIME_CD_MGR_ID ,
 				F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'HI') as ENTRY_SDATE,
@@ -61,16 +61,32 @@
 				A.NOTE,
 				B.FLEXIBLE_STD_MGR_ID,
 				D.EMP_NM,
-				CASE WHEN A.YMD > F_WTM_DATE_FORMAT(SYSDATE,'YMD') THEN SUM(PLAN_MINUTE)
-					 WHEN A.YMD < F_WTM_DATE_FORMAT(SYSDATE,'YMD') THEN SUM(APPR_MINUTE)
-					 WHEN (A.YMD = F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND A.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
-					 ELSE SUM(PLAN_MINUTE) END AS TOT_TIME,
+				SUM(CASE WHEN A.YMD > F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND C.TIME_TYPE_CD != 'EXCEPT' THEN PLAN_MINUTE
+					 WHEN A.YMD < F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND C.TIME_TYPE_CD != 'EXCEPT' THEN APPR_MINUTE
+					 WHEN (A.YMD = F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND A.ENTRY_EDATE IS NOT NULL) AND C.TIME_TYPE_CD != 'EXCEPT' THEN APPR_MINUTE
+					 WHEN (A.YMD = F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND A.ENTRY_EDATE IS NULL) AND C.TIME_TYPE_CD != 'EXCEPT' THEN PLAN_MINUTE
+					 ELSE 0 END)
+				- SUM(CASE WHEN A.YMD > F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND C.TIME_TYPE_CD = 'EXCEPT' THEN PLAN_MINUTE
+					 WHEN A.YMD < F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND C.TIME_TYPE_CD = 'EXCEPT' THEN APPR_MINUTE
+					 WHEN (A.YMD = F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND A.ENTRY_EDATE IS NOT NULL) AND C.TIME_TYPE_CD = 'EXCEPT' THEN APPR_MINUTE
+					 WHEN (A.YMD = F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND A.ENTRY_EDATE IS NULL) AND C.TIME_TYPE_CD = 'EXCEPT' THEN PLAN_MINUTE
+					 ELSE 0 END) AS TOT_TIME,
 				E.CORE_SHM,
-				E.CORE_EHM
+				E.CORE_EHM,
+				LISTAGG(CASE WHEN C.TIME_TYPE_CD IN ('TAA','REGA','SUBS','LLA') THEN C.TAA_NM ELSE NULL END , ',') WITHIN GROUP (ORDER BY C.APPR_SDATE) AS TAA_NMS
 			FROM WTM_WORK_CALENDAR A
 			JOIN WTM_FLEXIBLE_EMP B
 				ON B.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=B.ENTER_CD AND A.SABUN=B.SABUN AND A.YMD BETWEEN B.SYMD AND B.EYMD
-			LEFT JOIN WTM_WORK_DAY_RESULT C
+			LEFT JOIN ( SELECT R.*
+	                 , T.TAA_NM
+	              FROM WTM_WORK_DAY_RESULT R
+	              JOIN WTM_TAA_CODE T
+	                ON R.TENANT_ID = T.TENANT_ID
+	               AND R.ENTER_CD = T.ENTER_CD
+	               AND R.TAA_CD = T.TAA_CD
+					 WHERE R.TENANT_ID = #{tenantId}
+					   AND R.ENTER_CD = #{enterCd}
+						AND R.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '') ) C
 				ON C.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=C.ENTER_CD AND A.SABUN=C.SABUN AND C.YMD = A.YMD 
 			JOIN WTM_EMP_HIS D
 				ON D.TENANT_ID=A.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN=D.SABUN AND F_WTM_DATE_FORMAT(SYSDATE,'YMD') BETWEEN D.SYMD AND D.EYMD 
@@ -99,7 +115,7 @@
         <![CDATA[
         	SELECT *
         	  FROM (
-			        SELECT C.WORK_CALENDAR_ID, 
+			         SELECT C.WORK_CALENDAR_ID, 
 							C.TENANT_ID, 
 							C.ENTER_CD, 
 							C.SABUN, 
@@ -109,15 +125,15 @@
 							C.TIME_CD_MGR_ID,
 							F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'HI') as ENTRY_SDATE,
 							C.ENTRY_STYPE_CD,
-							F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'HI') as ENTRY_SDATE,
+							F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'HI') as ENTRY_EDATE,
 							C.ENTRY_ETYPE_CD,
 							C.WORK_CLOSE_YN,
-							C.HOLIDAY_YNn,
+							C.HOLIDAY_YN,
 							C.NOTE,
 							E.FLEXIBLE_STD_MGR_ID,
-							CASE WHEN C.YMD > F_WTM_DATE_FORMAT(SYSDATE,'YMD') THEN SUM(PLAN_MINUTE)
-								 WHEN C.YMD < F_WTM_DATE_FORMAT(SYSDATE,'YMD') THEN SUM(APPR_MINUTE)
-								 WHEN (C.YMD = F_WTM_DATE_FORMAT(SYSDATE,'YMD') && C.ENTRY_EDATE IS NOT NULL) THEN SUM(APPR_MINUTE)
+							CASE WHEN C.YMD > F_WTM_DATE_FORMAT(SYSDATE,'YMD') THEN SUM(R.PLAN_MINUTE)
+								 WHEN C.YMD < F_WTM_DATE_FORMAT(SYSDATE,'YMD') THEN SUM(R.APPR_MINUTE)
+								 WHEN (C.YMD = F_WTM_DATE_FORMAT(SYSDATE,'YMD') AND C.ENTRY_EDATE IS NOT NULL) THEN SUM(R.APPR_MINUTE)
 								 ELSE SUM(PLAN_MINUTE) END AS TOT_TIME
 					  FROM WTM_WORK_CALENDAR C
 					  JOIN WTM_FLEXIBLE_EMP E
@@ -138,13 +154,15 @@
 					 WHERE C.TENANT_ID = #{tenantId}
 					   AND C.ENTER_CD = #{enterCd}
 					   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
-					   AND H.ORG_CD IN (NULL, 
 		]]>
-					   <foreach collection="orgList" item="org" separator=", ">
-					   #{org}
-					   </foreach>
-					   )
-					GROUP BY C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD
+		<if test="orgList!=null">
+			   AND H.ORG_CD IN (NULL, 
+		       <foreach collection="orgList" item="org" separator=", ">
+				   #{org}
+			   </foreach>
+			   )
+		</if>
+					GROUP BY C.WORK_CALENDAR_ID, C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD, C.TIME_CD_MGR_ID, C.ENTRY_SDATE,C.ENTRY_STYPE_CD,C.ENTRY_EDATE,C.ENTRY_ETYPE_CD, C.WORK_CLOSE_YN, C.HOLIDAY_YN, C.NOTE,	 E.FLEXIBLE_STD_MGR_ID
 			) T
 			<if test="searchKeyword!=null and !searchKeyword.equals('')">
 				WHERE (T.SABUN LIKE  #{searchKeyword} || '%' OR T.EMP_NM LIKE '%' || #{searchKeyword} || '%')
@@ -152,7 +170,48 @@
 			ORDER BY YMD DESC, SABUN
     </select>
     
-        <select id="getEmpWorkCalendarDayInfo" parameterType="map" resultType="wtmGeneral">
+    <select id="getStdMgrInfo" parameterType="map" resultType="wtmGeneral">
+        <![CDATA[
+		      SELECT F_WTM_NVL(B.UNPLANNED_YN, 'N') AS UNPLANNED_YN
+			  FROM WTM_FLEXIBLE_EMP A
+			 INNER JOIN WTM_FLEXIBLE_STD_MGR B
+			    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+			 WHERE A.TENANT_ID = #{tenantId}
+			   AND A.ENTER_CD = #{enterCd}
+			   AND A.SABUN = #{sabun}
+			   AND #{ymd} BETWEEN A.SYMD AND A.EYMD
+        ]]>
+    </select>
+    
+    <select id="getEmpWorkCalendarDayInfo" parameterType="map" resultType="wtmGeneral">
+        <![CDATA[
+		      SELECT A.YMD as YMD, 
+		        TO_CHAR(TO_DATE(A.YMD, 'YYYYMMDDHH24MISS'), 'YYYY.MM.DD') as YMDS,
+		      	F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'YMDHI') as ENTRY_SDATE, 
+      			NVL(F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'Y.M.D H:I'), '') || ' ~ ' || NVL(F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'Y.M.D H:I'), '') as ENTRY_DATE, 
+		      	A.ENTRY_STYPE_CD as ENTRY_STYPE_CD, 
+		      	F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'YMDHI') as ENTRY_EDATE, 
+		      	A.ENTRY_ETYPE_CD as ENTRY_ETYPE_CD, 
+		      	F_WTM_DATE_FORMAT(MIN(B.PLAN_SDATE), 'YMDHI') as PLAN_SDATE, 
+      	NVL(F_WTM_DATE_FORMAT(MIN(B.PLAN_SDATE), 'Y.M.D H:I'), '') || ' ~ ' || NVL(F_WTM_DATE_FORMAT(MAX(B.PLAN_EDATE), 'Y.M.D H:I'), '')  as PLAN_DATE, 
+		      	F_WTM_DATE_FORMAT(MAX(B.PLAN_EDATE), 'YMDHI') as PLAN_EDATE,
+		      	F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) as FLEXIBLE_NM,
+		      	F_WTM_GET_TIME_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) as TIME_NM
+			FROM WTM_WORK_CALENDAR A 
+			LEFT OUTER JOIN WTM_WORK_DAY_RESULT B
+				ON A.YMD = B.YMD 
+					AND A.TENANT_ID = B.TENANT_ID 
+					AND A.ENTER_CD = B.ENTER_CD 
+					AND A.SABUN = B.SABUN
+			WHERE A.YMD = #{ymd} 
+				AND A.SABUN = #{sabun} 
+				AND A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+			GROUP BY A.YMD, A.ENTRY_SDATE, A.ENTRY_EDATE, ENTRY_STYPE_CD, ENTRY_ETYPE_CD, A.TENANT_ID, A.ENTER_CD, A.SABUN, B.PLAN_SDATE, B.PLAN_EDATE
+        ]]>
+    </select>
+    
+    <select id="getEmpWorkCalendarDayInfoSele" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
 		      SELECT A.YMD, 
 		      	F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'YMDHI') as ENTRY_SDATE, 
@@ -164,7 +223,7 @@
 		      	F_WTM_GET_FLEXIBLE_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) as FLEXIBLE_NM,
 		      	F_WTM_GET_TIME_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD) as TIME_NM
 			FROM WTM_WORK_CALENDAR A 
-			INNER JOIN WTM_WORK_DAY_RESULT B
+			LEFT OUTER JOIN WTM_WORK_DAY_RESULT B
 				ON A.YMD = B.YMD 
 					AND A.TENANT_ID = B.TENANT_ID 
 					AND A.ENTER_CD = B.ENTER_CD 
@@ -173,7 +232,7 @@
 				AND A.SABUN = #{sabun} 
 				AND A.TENANT_ID = #{tenantId}
 				AND A.ENTER_CD = #{enterCd}
-			GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, A.ENTRY_SDATE, A.ENTRY_STYPE_CD, A.ENTRY_EDATE, A.ENTRY_ETYPE_CD
+			GROUP BY A.YMD
         ]]>
     </select>
     
@@ -213,4 +272,74 @@
 		</if>
    	 </update>
    	 
+   	 <update id="updateEntryDateByAdmRow" parameterType="map">
+			UPDATE WTM_WORK_CALENDAR
+			SET 
+				<if test="chgSdate!=null and !chgSdate.equals('')">
+				ENTRY_SDATE=F_WTM_TO_DATE(#{chgSdate}, 'YMDHIS'), 
+				ENTRY_STYPE_CD = #{typeCd},
+				</if>
+				<if test="chgEdate!=null and !chgEdate.equals('')">
+				ENTRY_EDATE=F_WTM_TO_DATE(#{chgEdate}, 'YMDHIS'), 
+				ENTRY_ETYPE_CD = #{typeCd},
+				</if>
+				UPDATE_DATE = SYSDATE,
+				UPDATE_ID = #{userId}  
+			WHERE TENANT_ID = #{tenantId} 
+				AND ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun}
+				AND YMD = #{ymd}
+   	 </update>
+   	 
+   	 <update id="updateEntryDateCalendar" parameterType="map">
+		UPDATE WTM_WORK_CALENDAR SET
+		<if test="inoutType.equals('IN')">
+			<![CDATA[
+			ENTRY_SDATE = TO_DATE(#{inoutDateTime}, 'YYYYMMDDHH24MISS'),
+			ENTRY_STYPE_CD =#{entryType}
+			]]>
+		</if>
+		<if test="inoutType.equals('OUT')">
+			<![CDATA[
+			ENTRY_EDATE = TO_DATE(#{inoutDateTime}, 'YYYYMMDDHH24MISS'),
+			ENTRY_ETYPE_CD = #{entryType}
+			]]>
+		</if>
+		<![CDATA[
+		WHERE TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun} AND YMD = #{stdYmd}
+		]]>
+   	 </update>
+   	 
+   	 <update id="cancelEntryDateCalendar" parameterType="map">
+		UPDATE WTM_WORK_CALENDAR SET
+			ENTRY_EDATE = NULL,
+			ENTRY_ETYPE_CD = NULL
+		WHERE TENANT_ID = #{tenantId} 
+			AND ENTER_CD = #{enterCd} 
+			AND SABUN = #{sabun} 
+			AND F_WTM_DATE_FORMAT(ENTRY_EDATE,'YMDHIS') = F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHI') || '00'
+   	 </update>
+   	 
+   	 <select id="getEmpWorkDayResult" parameterType="map" resultType="hashmap">
+        <![CDATA[
+		     SELECT A.TENANT_ID as tenantId, 
+				A.ENTER_CD as enterCd, 
+				A.YMD as ymd, 
+				A.SABUN as sabun, 
+				A.TIME_TYPE_CD as timeTypeCd, 
+				A.TAA_CD as taaCd, 
+				A.PLAN_SDATE as planSdate, 
+				A.PLAN_EDATE as planEdate
+			FROM WTM_WORK_DAY_RESULT  A 
+			INNER JOIN WTM_WORK_CALENDAR B
+				ON A.YMD = B.YMD 
+					AND A.TENANT_ID = B.TENANT_ID 
+					AND A.ENTER_CD = B.ENTER_CD 
+					AND A.SABUN = B.SABUN
+			WHERE A.YMD = #{stdYmd} 
+				AND A.SABUN = #{sabun} 
+				AND A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+        ]]>
+    </select>
 </mapper>
