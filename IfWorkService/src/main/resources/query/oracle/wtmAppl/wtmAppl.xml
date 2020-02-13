@@ -229,7 +229,7 @@
 			   AND APPR_SABUN = #{empNo}
 			   AND L.APPR_TYPE_CD <> 1
 			   AND L.APPR_DATE IS NOT NULL
-			   AND L.APPR_STATUS_CD IS NOT NULL
+			   AND L.APPR_STATUS_CD IS NOT NULL AND L.APPR_STATUS_CD IN ('20', '30')
 			ORDER BY A.APPL_YMD DESC
 			]]>
 			<if test="startPage!=null and startPage!=''">

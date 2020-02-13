@@ -355,7 +355,7 @@
 			   AND A.ENTER_CD = #{enterCd} 
 			   AND APPR_SABUN = #{empNo}
 			   AND L.APPR_DATE IS NOT NULL
-			   AND L.APPR_STATUS_CD IS NOT NULL
+			   AND L.APPR_STATUS_CD IS NOT NULL AND L.APPR_STATUS_CD IN ('20', '30')
 			ORDER BY A.APPL_YMD DESC
 		]]>
 		    <if test="startPage!=null and !startPage.equals('')">
