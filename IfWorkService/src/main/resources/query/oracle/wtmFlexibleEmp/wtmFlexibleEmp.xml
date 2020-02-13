@@ -10,8 +10,8 @@
 			     , E.ENTER_CD 
 			     , E.SABUN 
 			     , E.FLEXIBLE_EMP_ID 
-			     , E.SYMD
-			     , E.EYMD 
+			     , E.SYMD AS S_YMD
+			     , E.EYMD AS E_YMD
 			     , E.WORK_TYPE_CD
 			     , M.FLEXIBLE_NM
 			     , F.APPL_ID 
@@ -51,8 +51,8 @@
 			     , A.ENTER_CD 
 			     , A.APPL_SABUN AS SABUN
 			     , E.FLEXIBLE_EMP_ID 
-			     , FA.SYMD 
-			     , FA.EYMD 
+			     , FA.SYMD AS S_YMD
+			     , FA.EYMD AS E_YMD
 			     , E.WORK_TYPE_CD 
 			     , M.FLEXIBLE_NM AS FLEXIBLE_NM
 			     , A.APPL_ID 
@@ -77,7 +77,7 @@
 			  AND A.APPL_SABUN = #{sabun}
 			  AND A.APPL_STATUS_CD NOT IN ('22','32','99')
 			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
-			ORDER BY SYMD
+			ORDER BY S_YMD
         ]]>
     </select>
 
