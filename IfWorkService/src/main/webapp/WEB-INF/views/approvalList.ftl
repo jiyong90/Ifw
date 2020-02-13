@@ -552,7 +552,7 @@
 	    		if(appr.applCd=='OT' || appr.applCd=='OT_CAN') {
 	    			//연장근무신청서
 	    			$("#otAppl").modal("show"); 
-	    		} else if(appr.applCd=='SELE_F' || appr.applCd=='SELE_C' || appr.applCd=='ELAS') {
+	    		} else if(appr.applCd=='SELE_F' || appr.applCd=='SELE_C' || appr.applCd=='ELAS' || appr.applCd=='DIFF') {
 	    			//선근제 신청서
 	    			$("#flexibleAppl").modal("show");
 	    		} else if(appr.applCd=='ENTRY_CHG') {

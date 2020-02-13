@@ -264,7 +264,8 @@ public class WtmMobileEdocController {
 					}
 				}
 				if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {
-					wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", emp.getEmpHisId().toString());
+					//wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", emp.getEmpHisId().toString());
+					wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", emp.getEmpHisId().toString(), false);
 				}
 			} catch (Exception e) {
 				logger.debug(e.getMessage());

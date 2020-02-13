@@ -55,8 +55,8 @@
 			     , FA.FLEXIBLE_STD_MGR_ID 
 			     , FA.APPL_ID 
 			     , FA.YM 
-			     , FA.SYMD 
-			     , FA.EYMD 
+			     , FA.SYMD AS S_YMD
+			     , FA.EYMD AS E_YMD
 			     , FA.WORK_DAY
 			     , FA.REASON 
 			     , A.APPL_CD

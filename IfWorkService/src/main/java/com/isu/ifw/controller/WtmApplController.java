@@ -169,6 +169,8 @@ public class WtmApplController {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			if(applCd!=null && !"".equals(applCd)) {
+				boolean initResult = false;
+				
 				if("OT".equals(applCd)) {
 					rp = wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
@@ -215,13 +217,17 @@ public class WtmApplController {
 						Calendar eYmd = Calendar.getInstance();
 						eYmd.setTime(eDate);
 						eYmd.add(Calendar.DATE, 1);*/
-						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId);
+						//wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId);
+						
+						initResult = true;
 					}
 				}
+				
+				if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {
+					wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId, initResult);
+				}
 			}
-			if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {
-				wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId);
-			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -298,8 +304,9 @@ public class WtmApplController {
 						applStatusCd = paramMap.get("applStatusCd").toString();
 						
 					if((applStatusCd==null || !WtmApplService.APPL_STATUS_IMSI.equals(applStatusCd)) && paramMap.containsKey("sabun") && paramMap.containsKey("sYmd") && paramMap.containsKey("eYmd")) {
-						wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
-						wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
+						//wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
+						//wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
+						wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("symd")+"", paramMap.get("eymd")+"", userId, true);
 					}
 					
 				}
