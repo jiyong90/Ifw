@@ -304,7 +304,7 @@
   	<select id="getTermList" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CONCAT(DATE_FORMAT(STR_TO_DATE(SDATE, '%Y%m%d'),'%Y.%m.%d'),' ~ ', DATE_FORMAT(STR_TO_DATE(EDATE, '%Y%m%d'),'%Y.%m.%d')) AS title, 
-				WORK_TYPE_NM AS caption_rb, CONCAT(SDATE, '@', group_concat(org_cd), '@', WORK_TYPE_CD) AS key2
+				WORK_TYPE_NM AS caption_rb, CONCAT(SDATE, '@', #{month}, '@', WORK_TYPE_CD) AS key2
 			FROM(
 				SELECT DISTINCT T.WORK_TYPE_CD, T.SDATE, T.EDATE, WORK_TYPE_NM, H.ORG_CD
 					FROM (SELECT CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_SDATE ELSE WEEK_SDATE END AS SDATE

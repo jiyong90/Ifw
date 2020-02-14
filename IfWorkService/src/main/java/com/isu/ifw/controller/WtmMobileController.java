@@ -454,14 +454,14 @@ public class WtmMobileController {
 			logger.debug("/mobile/"+ tenantId+"/team/teamlist s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 	
 			String sdate = id.split("@")[0];
-			String orgCd = id.split("@")[1];
+			String month = id.split("@")[1];
 			String workTypeCd = id.split("@")[2];
 			
-			String[] orgList = orgCd.split(",");
+	//		String[] orgList = orgCd.split(",");
 			
 			Map<String, Object> paramMap = new HashMap();
 			paramMap.put("sdate", sdate);
-			paramMap.put("orgList", orgList);
+			paramMap.put("month", month);
 			paramMap.put("workTypeCd", workTypeCd);
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
