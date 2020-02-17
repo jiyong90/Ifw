@@ -29,14 +29,15 @@
 	<select id="getOtList" parameterType="map" resultType="hashmap">
 		<![CDATA[
 	    	SELECT CONCAT(X.ENTER_CD, '@', X.SABUN) AS EMP,
-	    		CASE WHEN F_WTM_GET_LEADER_SABUN(X.TENANT_ID, X.ENTER_CD,  X.SABUN) != '' THEN  
-    	 			CONCAT(X.ENTER_CD, '@', F_WTM_GET_LEADER_SABUN(X.TENANT_ID, X.ENTER_CD, X.SABUN)) ELSE '' END AS LEADER,
+				CASE WHEN F_WTM_GET_LEADER_SABUN(X.TENANT_ID, X.ENTER_CD,  X.SABUN) != '' THEN  
+    	 			 CONCAT(X.ENTER_CD, '@', F_WTM_GET_LEADER_SABUN(X.TENANT_ID, X.ENTER_CD, X.SABUN)) 
+    	 			 ELSE CONCAT(X.ENTER_CD, '@', O.SABUN) END AS LEADER,    	 		
     	 		X.REST_WORK_MINUTE, 
     	 		X.REST_OT_MINUTE, 
     	 		X.SABUN, 
     	 		X.EMP_NM
 	    	FROM (
-					SELECT H.TENANT_ID, H.ENTER_CD, H.SABUN, H.EMP_NM 
+					SELECT H.TENANT_ID, H.ENTER_CD, H.SABUN, H.EMP_NM, H.ORG_CD
 					  ,	F_WTM_GET_WORK_MINUTE(H.TENANT_ID, H.ENTER_CD, H.SABUN, #{ymd}, 'T', 'WORK') AS TOTAL_WORK_MINUTE
 					  , F_WTM_GET_WORK_MINUTE(H.TENANT_ID, H.ENTER_CD, H.SABUN, #{ymd}, 'T', 'OT') AS TOTAL_OT_MINUTE
 					  , F_WTM_GET_WORK_MINUTE(H.TENANT_ID, H.ENTER_CD, H.SABUN, #{ymd}, 'R', 'WORK') AS REST_WORK_MINUTE
@@ -51,7 +52,11 @@
 				AND H.BUSINESS_PLACE_CD = #{businessPlaceCd}
 				AND H.SYMD < #{ymd} 
 				AND H.EYMD >= #{ymd}
-			) X 
+			) X LEFT JOIN WTM_ORG_CONC O ON 
+				O.TENANT_ID = X.TENANT_ID 
+				AND O.ENTER_CD = X.ENTER_CD 
+				AND O.ORG_CD = X.ORG_CD 
+				AND O.SYMD < #{ymd}  AND O.EYMD >= #{ymd} 
 			]]>
 			<if test="stdType.equals('R_OT')">
 				<![CDATA[
