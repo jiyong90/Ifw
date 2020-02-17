@@ -139,15 +139,31 @@
     
     <select id="getMyInoutList" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT A.YMD as key2, RIGHT(A.YMD, 2) as title, F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'H:I') as caption_lb, F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'H:I') as caption_rb, T.TIME_NM as status 
+			SELECT A.YMD as key2, 
+				RIGHT(A.YMD, 2) as title, 
+				F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'H:I') as caption_lb, 
+				F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'H:I') as caption_rb, 
+				T.TIME_NM as status2,
+				CASE WHEN GROUP_CONCAT(TAA_NM) IS NULL AND A.HOLIDAY_YN ='Y' THEN '휴일' 
+					WHEN GROUP_CONCAT(TAA_NM) IS NULL AND A.HOLIDAY_YN ='N' THEN '정상근무' ELSE GROUP_CONCAT(TAA_NM) END AS status
 			FROM WTM_WORK_CALENDAR A 
 				JOIN WTM_TIME_CD_MGR T
 			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID	
+			 LEFT JOIN WTM_WORK_DAY_RESULT R
+	            ON R.ENTER_CD = A.ENTER_CD
+	           	AND R.TENANT_ID = A.TENANT_ID
+	            AND R.SABUN = A.SABUN
+	            AND R.YMD = A.YMD 
+	         LEFT JOIN WTM_TAA_CODE D 
+	            ON R.TAA_CD = D.TAA_CD
+	            AND D.TENANT_ID = R.TENANT_ID
+	            AND D.ENTER_CD = R.ENTER_CD
 			WHERE A.TENANT_ID = #{tenantId}
 				AND A.ENTER_CD = #{enterCd}
 				AND A.SABUN = #{sabun}
 				AND F_WTM_DATE_FORMAT(A.YMD,'YM') = #{month}
-				ORDER BY A.YMD
+			GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
+			ORDER BY A.YMD
 	        ]]>
     </select>
     
