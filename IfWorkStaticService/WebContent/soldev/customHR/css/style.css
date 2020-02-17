@@ -28,6 +28,7 @@ textarea.required { border:1px solid #008fd5 !important; }
     margin: 0 1px;
     border: 1px solid #e0e2e5;
     color: #606b7b;
+    background-color:#ffffff;
     font-size: 12px;
     line-height: 12px;
     font-weight: 600;
