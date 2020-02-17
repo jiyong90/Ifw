@@ -6,7 +6,7 @@ select.required { border:1px solid #008fd5 !important; }
 textarea.required { border:1px solid #008fd5 !important; }
 
 /* mgr */
-.mgr-wrap{padding-top: 16px; padding-bottom:16px;}
+.mgr-wrap{min-height: calc(100vh - 70px); padding-top: 16px; padding-bottom:16px; }
 
 /* search */
 .sheet_search {

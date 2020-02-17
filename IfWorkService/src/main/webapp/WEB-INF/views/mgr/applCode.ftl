@@ -1,4 +1,4 @@
-<div id="applCode" style="height: calc(100vh - 70px);">
+<div id="applCode">
  	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 			<form id="sheetForm" name="sheetForm">
