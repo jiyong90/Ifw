@@ -5,6 +5,9 @@
   transition: all 0.3s;
   background: #ffffff;
 }
+#content>div.bg-light-blue{
+  min-height: 100vh;
+}
 #sub-nav #summary-wrap{
   padding-bottom:10px;
   margin:-9px 0px;
@@ -47,6 +50,5 @@
 }
 
 /* mgr */
-.mgr-wrap{padding-top: 0px; padding-bottom:0px;}
-
+.mgr-wrap{min-height:100vh; padding-top: 0px; padding-bottom:0px;}
 .sheet_title_wrap {padding: 10px 0;}

@@ -1,5 +1,5 @@
-<div>
- 	<div class="container-fluid mgr-wrap bg-white" style="height: calc(100vh - 70px);">
+<div id="authMgr">
+ 	<div class="container-fluid mgr-wrap bg-white">
  		<p class="page-title">권한관리</p>
         <div class="row no-gutters">
         	<div class="col-3 pr-3">

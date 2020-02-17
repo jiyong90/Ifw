@@ -416,7 +416,7 @@
         </div>
     </div>
     <!-- 결재의견 modal end -->
-	<div class="container-fluid except70">
+	<div class="container-fluid mgr-wrap">
 		<p class="page-title">결재 알림</p>
 		<ul class="nav approval-wrap nav-pills" role="tablist">
             <li class="nav-item">
