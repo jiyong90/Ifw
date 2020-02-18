@@ -451,7 +451,7 @@
 					WHEN X.HOLIDAY_YN = 'Y' AND  #{calcMinute} <= HOL_MAX_MINUTE THEN 'Y'
 					ELSE 'N' END AS valHunit,
 				X.HOL_MAX_MINUTE AS pHunit,
-				CASE WHEN #{subsYn} = 'Y' AND REPLACE(#{subsSymd},'.','') < F_WTM_DATE_FORMAT(X.SSDAY, 'YMD') OR REPLACE(#{subsSymd},'.','') > F_WTM_DATE_FORMAT(X.SEDAY, 'YMD') THEN 'N' ELSE 'Y' END AS valSdate,
+				CASE WHEN #{subYn} = 'Y' AND REPLACE(#{subsSymd},'.','') < F_WTM_DATE_FORMAT(X.SSDAY, 'YMD') OR REPLACE(#{subsSymd},'.','') > F_WTM_DATE_FORMAT(X.SEDAY, 'YMD') THEN 'N' ELSE 'Y' END AS valSdate,
 				CONCAT(STR_TO_DATE(X.SSDAY, '%Y-%m-%d'), ' ~ ', STR_TO_DATE(X.SEDAY, '%Y-%m-%d')) AS pSdate
 			FROM (SELECT C.HOLIDAY_YN, 
 				C.YMD, 
