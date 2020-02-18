@@ -318,6 +318,62 @@ public class WtmInoutController {
 	}
 	
 	/**
+	 * 출퇴근 데이터 현황
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/inout/teamList", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getTeamInoutList(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey,
+			@RequestParam(value="id", required = true) String ymd,
+			HttpServletRequest request) throws Exception {		
+
+		ReturnParam rp = new ReturnParam();
+		rp.setFail("출퇴근 이력 조회 중 오류가 발생했습니다.");
+
+		String userToken = request.getParameter("userToken");
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+		if(emp == null) {
+			rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+			return rp;
+		}
+
+		logger.debug("/mobile/"+ tenantId+"/inout/list s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+		try {
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
+			
+			List<Map <String,Object>> l = inoutService.getTeamInoutList(paramMap);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회결과가 없습니다.");
+				return rp;
+			}
+			l = MobileUtil.parseMobileList(l);
+			
+			rp.setSuccess("");
+			rp.put("result", l);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/inout/list e " + rp.toString());
+		return rp;
+	}
+	
+	/**
 	 * 일별 타각 현황
 	 * @param tenantKey
 	 * @param locale
