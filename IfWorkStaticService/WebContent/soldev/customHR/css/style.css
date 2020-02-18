@@ -157,6 +157,17 @@ a.button7 img {
     vertical-align:middle;
 }
 
+@media all and (max-width:1220px) {
+	/*---- input ----*/
+	.sheet_title input[type="text"],
+	.sheet_title input[type="number"],
+	.sheet_search input[type="text"],
+	.sheet_search input[type="number"] {
+		width: 40%;
+	}
+
+}
+
 
 /* search */
 .sheet_search span.label {
@@ -1453,7 +1464,7 @@ table.default td input.w50 { width:50%; }
 table.default td input.w90 { width:90px !important; }
 table.default td input.w100 { width:100%; } */
 table.default td select{ padding:3px 0 3px 5px; border:1px solid #e0e2e5; }
-table.default td textarea{width:100%; resize:none; padding:3px 0 3px 5px; border:1px solid #e0e2e5; }
+table.default td textarea{width:100%; resize:vertical; padding:3px 0 3px 5px; border:1px solid #e0e2e5; }
 table.default td img.ui-datepicker-trigger{ margin:0 0 0 -4px; }
 
 
