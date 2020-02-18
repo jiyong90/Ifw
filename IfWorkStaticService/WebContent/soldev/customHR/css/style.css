@@ -157,6 +157,17 @@ a.button7 img {
     vertical-align:middle;
 }
 
+@media all and (max-width:920px) {
+	/*---- input ----*/
+	.sheet_title input[type="text"],
+	.sheet_title input[type="number"],
+	.sheet_search input[type="text"],
+	.sheet_search input[type="number"] {
+		width: 40%;
+	}
+
+}
+
 
 /* search */
 .sheet_search span.label {
