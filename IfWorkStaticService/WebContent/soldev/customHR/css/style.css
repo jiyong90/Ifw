@@ -21,6 +21,7 @@ textarea.required { border:1px solid #008fd5 !important; }
     vertical-align: middle;
 }
 
+
 .sheet_search a.basic {
     display: inline-block;
     vertical-align: middle;
@@ -155,17 +156,6 @@ a.button7 img {
     position: relative;
     z-index: 20;
     vertical-align:middle;
-}
-
-@media all and (max-width:1220px) {
-	/*---- input ----*/
-	.sheet_title input[type="text"],
-	.sheet_title input[type="number"],
-	.sheet_search input[type="text"],
-	.sheet_search input[type="number"] {
-		width: 40%;
-	}
-
 }
 
 

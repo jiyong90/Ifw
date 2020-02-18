@@ -52,3 +52,19 @@
 /* mgr */
 .mgr-wrap{min-height:100vh; padding-top: 0px; padding-bottom:0px;}
 .sheet_title_wrap {padding: 10px 0;}
+
+@media all and (max-width:1220px) {
+	.sheet_search{
+		padding-left:10px;
+	}
+}
+
+@media all and (max-width:1220px) {
+	/*---- input ----*/
+	.sheet_title input[type="text"],
+	.sheet_title input[type="number"],
+	.sheet_search input[type="text"],
+	.sheet_search input[type="number"] {
+		width: 40%;
+	}
+}
