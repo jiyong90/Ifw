@@ -193,6 +193,7 @@ a.button7 img {
 }
 
 .sheet_search table {
+	width: 100%;
     min-height: 80px;
 }
 
