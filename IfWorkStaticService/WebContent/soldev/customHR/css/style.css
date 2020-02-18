@@ -157,7 +157,7 @@ a.button7 img {
     vertical-align:middle;
 }
 
-@media all and (max-width:920px) {
+@media all and (max-width:1220px) {
 	/*---- input ----*/
 	.sheet_title input[type="text"],
 	.sheet_title input[type="number"],
