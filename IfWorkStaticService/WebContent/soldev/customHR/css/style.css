@@ -6,7 +6,7 @@ select.required { border:1px solid #008fd5 !important; }
 textarea.required { border:1px solid #008fd5 !important; }
 
 /* mgr */
-.mgr-wrap{padding-top: 16px; padding-bottom:16px;}
+.mgr-wrap{min-height: calc(100vh - 70px); padding-top: 16px; padding-bottom:16px; }
 
 /* search */
 .sheet_search {
@@ -21,6 +21,7 @@ textarea.required { border:1px solid #008fd5 !important; }
     vertical-align: middle;
 }
 
+
 .sheet_search a.basic {
     display: inline-block;
     vertical-align: middle;
@@ -28,6 +29,7 @@ textarea.required { border:1px solid #008fd5 !important; }
     margin: 0 1px;
     border: 1px solid #e0e2e5;
     color: #606b7b;
+    background-color:#ffffff;
     font-size: 12px;
     line-height: 12px;
     font-weight: 600;
@@ -174,12 +176,14 @@ a.button7 img {
     content: "\f111";
     font-size: 10px;
     -webkit-transform: scale(0.4);
+    -ms-transform: scale(0.4);
     position: absolute;
     left: -2px;
     top: 0;
 }
 
 .sheet_search table {
+	width: 100%;
     min-height: 80px;
 }
 
@@ -286,7 +290,7 @@ a.button7 img {
 }
 .sheet_title_wrap .legend-wrap{
 	position: absolute;
-	top:12px;
+	top:14px;
 	left: 190px;
 }
 .sheet_title_wrap .legend-list li{
@@ -313,7 +317,7 @@ a.button7 img {
 .sheet_title_wrap .btn-wrap::after{content:''; display:table; width:100%; clear:both;}
 .sheet_title_wrap .btn-wrap li{float:left; margin-left:5px;}
 .sheet_title_wrap .btn-wrap li:first-child{margin-left:0px;}
-.basic { border:1px solid #e0e2e5; font-size:11px; line-height:25px; font-weight:600; font-weight:bold; color:#3f4145; padding:3px 12px; cursor:pointer; vertical-align:middle; }
+.basic { border:1px solid #e0e2e5; font-size:11px; line-height:25px; font-weight:600; font-weight:bold; color:#3f4145; background-color:#ffffff; padding:3px 12px; cursor:pointer; vertical-align:middle; }
 a.button {border: none;display: inline-block;line-height: normal;margin-right: .1em;cursor: pointer; vertical-align: middle; text-align: center;overflow: visible;/* removes extra width in IE */font-weight: 600;color: #fff !important;font-size: 11px;word-break: keep-all;padding: 4px 12px;}
 a:hover {color: #ef519c}
 a:hover.button {color: #fff !important}
@@ -1256,8 +1260,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5fafd', end
 #autoCompleteDiv {border:none}
 
 /* table */
-table.default{ border-top:1px solid #e0e2e5; width:100%; }
-table.default th{position:relative;  font-weight:500; font-weight:bold; padding:5px 10px; line-height:12px; font-size:12px; text-align:left; vertical-align: middle;
+table.default{ border-top:1px solid #e0e2e5; width:100%; min-width:400px; }
+table.default th{position:relative;  font-weight:500; font-weight:bold; padding:5px 10px; line-height:1.6; font-size:12px; text-align:left; vertical-align: middle;
 border-left:1px solid #e0e2e5; 
 border-right:1px solid #e0e2e5; 
 border-bottom:1px solid #e0e2e5; 
@@ -1451,7 +1455,7 @@ table.default td input.w50 { width:50%; }
 table.default td input.w90 { width:90px !important; }
 table.default td input.w100 { width:100%; } */
 table.default td select{ padding:3px 0 3px 5px; border:1px solid #e0e2e5; }
-table.default td textarea{ padding:3px 0 3px 5px; border:1px solid #e0e2e5; }
+table.default td textarea{width:100%; resize:vertical; padding:3px 0 3px 5px; border:1px solid #e0e2e5; }
 table.default td img.ui-datepicker-trigger{ margin:0 0 0 -4px; }
 
 

@@ -1,4 +1,4 @@
-<div id="applCode" style="height: calc(100vh - 70px);">
+<div id="applCode">
  	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 			<form id="sheetForm" name="sheetForm">
@@ -52,10 +52,10 @@
 						<div id="view_appl">
 							<table class="default">
 								<colgroup>
-									<col width="20%">
 									<col width="30%">
 									<col width="20%">
 									<col width="30%">
+									<col width="20%">
 								</colgroup>
 								<tbody>
 									<tr id="trApplMinute" style="display:none;">
