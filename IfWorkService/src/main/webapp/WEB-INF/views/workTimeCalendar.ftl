@@ -1326,7 +1326,7 @@
 		         				var dayResults = JSON.parse($this.result.dayResults);
 		         				if(dayResults.length>0) {
 		         					dayResults.map(function(dayResult){
-			  	  	         			//if(dayResult.timeTypeCd == 'BASE'){
+			  	  	         			if(dayResult.timeTypeCd != 'GOBACK'){
 				  	  	         			var workSdate = moment(dayResult.sDate).format('YYYY-MM-DD HH:mm');
 					  	         			var workEdate = moment(dayResult.eDate).format('YYYY-MM-DD HH:mm');
 					  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
@@ -1337,7 +1337,7 @@
 					  	  	         			$("#eTime").val('');
 					  	         			}
 					  	         				
-			  	  	         			//}
+			  	  	         			}
 			  	  	         		});
 		         				}
 	     						
