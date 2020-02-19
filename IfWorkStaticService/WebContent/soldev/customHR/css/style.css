@@ -21,6 +21,7 @@ textarea.required { border:1px solid #008fd5 !important; }
     vertical-align: middle;
 }
 
+
 .sheet_search a.basic {
     display: inline-block;
     vertical-align: middle;
@@ -157,17 +158,6 @@ a.button7 img {
     vertical-align:middle;
 }
 
-@media all and (max-width:1220px) {
-	/*---- input ----*/
-	.sheet_title input[type="text"],
-	.sheet_title input[type="number"],
-	.sheet_search input[type="text"],
-	.sheet_search input[type="number"] {
-		width: 40%;
-	}
-
-}
-
 
 /* search */
 .sheet_search span.label {
@@ -193,6 +183,7 @@ a.button7 img {
 }
 
 .sheet_search table {
+	width: 100%;
     min-height: 80px;
 }
 
@@ -299,7 +290,7 @@ a.button7 img {
 }
 .sheet_title_wrap .legend-wrap{
 	position: absolute;
-	top:12px;
+	top:14px;
 	left: 190px;
 }
 .sheet_title_wrap .legend-list li{
@@ -1269,8 +1260,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5fafd', end
 #autoCompleteDiv {border:none}
 
 /* table */
-table.default{ border-top:1px solid #e0e2e5; width:100%; }
-table.default th{position:relative;  font-weight:500; font-weight:bold; padding:5px 10px; line-height:12px; font-size:12px; text-align:left; vertical-align: middle;
+table.default{ border-top:1px solid #e0e2e5; width:100%; min-width:400px; }
+table.default th{position:relative;  font-weight:500; font-weight:bold; padding:5px 10px; line-height:1.6; font-size:12px; text-align:left; vertical-align: middle;
 border-left:1px solid #e0e2e5; 
 border-right:1px solid #e0e2e5; 
 border-bottom:1px solid #e0e2e5; 

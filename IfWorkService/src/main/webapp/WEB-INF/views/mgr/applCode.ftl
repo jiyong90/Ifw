@@ -52,10 +52,10 @@
 						<div id="view_appl">
 							<table class="default">
 								<colgroup>
-									<col width="20%">
 									<col width="30%">
 									<col width="20%">
 									<col width="30%">
+									<col width="20%">
 								</colgroup>
 								<tbody>
 									<tr id="trApplMinute" style="display:none;">

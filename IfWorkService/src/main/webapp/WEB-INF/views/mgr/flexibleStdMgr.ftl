@@ -52,6 +52,12 @@
 								</div>
 								<div id="view_sele">
 									<table class="default">
+										<colgroup>
+											<col width="20%">
+											<col width="30%">
+											<col width="20%">
+											<col width="30%">
+										</colgroup>
 										<tbody>
 											<tr id="trHoliday">
 												<th>공휴일제외여부</th>
