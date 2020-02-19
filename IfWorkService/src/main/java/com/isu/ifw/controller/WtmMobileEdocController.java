@@ -32,6 +32,7 @@ import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
+import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.service.WtmMobileService;
 import com.isu.ifw.util.MobileUtil;
 import com.isu.ifw.util.WtmUtil;
@@ -87,6 +88,10 @@ public class WtmMobileEdocController {
 	@Autowired
 	@Qualifier("wtmApplService")
 	WtmApplService applService;
+	
+	@Autowired
+	WtmInoutService inoutService;
+
 	
 	/**
 	 * 신청서 목록 
@@ -257,6 +262,16 @@ public class WtmMobileEdocController {
 							//wtmEntryApplService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
 						} else if(body.get("apprStatCd").toString().equals("01")) {
 							rp = wtmEntryApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
+						
+							if(rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
+								Map<String, Object> pMap = new HashMap<String, Object>();
+								pMap.put("tenantId", tenantId);
+								pMap.put("enterCd", enterCd);
+								pMap.put("stdYmd", rp.get("stdYmd")+"");
+								pMap.put("sabun", rp.get("sabun")+"");
+								inoutService.inoutPostProcess(pMap, rp.get("unplannedYn").toString());
+							}
+
 						} else {
 							rp.setFail("신청서 상태에 오류가 발생했습니다.");
 							return rp;
