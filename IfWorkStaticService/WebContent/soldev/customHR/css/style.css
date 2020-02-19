@@ -7,6 +7,7 @@ textarea.required { border:1px solid #008fd5 !important; }
 
 /* mgr */
 .mgr-wrap{min-height: calc(100vh - 70px); padding-top: 16px; padding-bottom:16px; }
+.mgr-wrap-height{max-height: calc(100vh - 70px); overflow-y:auto; -ms-overflow-y: auto;}
 
 /* search */
 .sheet_search {
@@ -50,7 +51,7 @@ textarea.required { border:1px solid #008fd5 !important; }
     font-weight: 600;
     font-weight: bold;
     border-radius: 4px;
-    padding: 9px 20px 10px;
+    padding: 9px 20px 8px;
     letter-spacing: 0;
     cursor: pointer;
 }
@@ -69,6 +70,7 @@ textarea.required { border:1px solid #008fd5 !important; }
 	font-size: 16px;
 }
 .sheet_search .search-title{
+	display: block;
 	color: #4b4d51;
     font-size: 15px;
     font-weight: bold;
@@ -183,7 +185,7 @@ a.button7 img {
 }
 
 .sheet_search table {
-	width: 100%;
+	width: auto;
     min-height: 80px;
 }
 
