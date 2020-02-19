@@ -950,6 +950,9 @@ box-sizing: border-box;
   /* ...and now for the proper property */
   transition:.5s;
 }
+.notice-card:last-child{
+	margin-bottom: 14px;
+}
 .notice-card:hover{
 	box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.18);
 }
