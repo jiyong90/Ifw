@@ -1655,6 +1655,10 @@ No media query for `xs` since this is the default in Bootstrap */
 @media (min-width: 768px) and (max-width: 1023px) {
 }
 
+/* Extra large devices (desktops, 1024px and up) */
+@media (min-width: 1024px) and (max-width: 1300px) {
+	
+}
 /* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
 }

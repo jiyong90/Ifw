@@ -56,25 +56,21 @@
 .sheet_title_wrap {padding: 10px 0;}
 
 
-@media all and (max-width:1220px) {
-	
-	.sheet_search .magnifier{
-		margin-right: 0px;
+@media all and (min-width:1240px) and (max-width:1300px) {
+	/* calendar */
+	.work-info-wrap .main-title,
+	.work-info-wrap .main-desc,
+	.work-info-wrap .legend-wrap li,
+	.white-box-wrap .main-desc,
+	.work-plan-wrap .sub-list .sub-title{
+		font-size: 12px;
 	}
-	
-	.sheet_search .search-title{
-		display:none;
+	.work-info-wrap .sub-title,
+	.white-box-wrap .main-title,
+	.work-plan-wrap .sub-big-title{
+		font-size:10px;
 	}
-
-	/*---- input ----*/
-	.sheet_title input[type="text"],
-	.sheet_title input[type="number"],
-	.sheet_search input[type="text"],
-	.sheet_search input[type="number"] {
-		width: 100px;
-	}
-	
-	.ui-tabs:not(.sub_top) .ui-tabs-nav li a{
-		padding: 0 14px;
+	.work-plan-wrap .sub-list>li>span.sub-title{
+		width: calc(40% + 28px);
 	}
 }

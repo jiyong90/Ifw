@@ -70,7 +70,7 @@ textarea.required { border:1px solid #008fd5 !important; }
 	font-size: 16px;
 }
 .sheet_search .search-title{
-	display: block;
+	display: inline-block;
 	color: #4b4d51;
     font-size: 15px;
     font-weight: bold;
@@ -1494,3 +1494,23 @@ table.default td img.ui-datepicker-trigger{ margin:0 0 0 -4px; }
 
 /* cell selector */
 .GMFocusRowBackground, .GMCursorBackground 	{opacity:0.15;filter:alpha(opacity=15);background:#008fd5 !important;}
+
+@media all and (max-width:1330px){
+	/* mgr */
+	.sheet_search .magnifier{
+		margin-right: 0px;
+	}
+	.sheet_search .search-title{
+		display:none;
+	}
+	/*---- input ----*/
+	.sheet_title input[type="text"],
+	.sheet_title input[type="number"],
+	.sheet_search input[type="text"],
+	.sheet_search input[type="number"] {
+		width: 100px;
+	}
+	.ui-tabs:not(.sub_top) .ui-tabs-nav li a{
+		padding: 0 14px;
+	}
+}
