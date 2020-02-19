@@ -356,7 +356,8 @@ public class WtmApiController {
 			paramMap.put("entryType", "API");
 			
 			logger.debug(tsId + "/api/except s2 " + paramMap.toString());
-			inoutService.updateTimecardExcept(paramMap);
+			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(paramMap);
+			inoutService.updateTimecardExcept(paramMap, yn.get("unplannedYn").toString());
 			logger.debug("EXCEPT : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 
 		}catch(Exception e) {
