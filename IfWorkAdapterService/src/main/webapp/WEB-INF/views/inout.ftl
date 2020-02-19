@@ -99,7 +99,7 @@
 		  			formattedYmd : function(){
 		  				var $ymd = this.ymd;
 		  				if($ymd.length == 8){
-		  					return $ymd.substring(0,4) + '.' + $ymd.substring(5,6) + '.' + $ymd.substring(7,8); 
+		  					return $ymd.substring(0,4) + '.' + $ymd.substring(4,6) + '.' + $ymd.substring(6,8); 
 		  				}else{
 		  					return '';
 		  				}

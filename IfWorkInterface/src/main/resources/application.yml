@@ -5,11 +5,11 @@ spring:
     #password: dnjzmxkdla!2
     #driver-class-name: com.mysql.cj.jdbc.Driver 
     hikari:
-      jdbc-url: jdbc:sqlserver://10.10.239.155:1433;databaseName=NEOE
+      jdbc-url: jdbc:sqlserver://10.249.92.148:11443;databaseName=NEOE
       username: NEOE
       password: NEOE
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://10.10.239.155:1433;databaseName=NEOE
+    url: jdbc:sqlserver://10.249.92.148:11443;databaseName=NEOE
     username: NEOE
     password: NEOE
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -33,15 +33,21 @@ mybatis:
     map-underscore-to-camel-case: true
 
 ifw:
-  client-id: hdngv
-  secret: chWQsUbouLFXYYmy5F7k9UFYGprNH1F6uzqsOvt0K9s=
+  client-id: honda
+  secret: 2TMn5k+9iDk7L+KlAux8HF5odHzrQV76AZkA9kwjMhM=
   token-url: https://cloudhr.pearbranch.com/ifa/oauth/token
-  code-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/code
-  emp-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/emp
-  empaddr-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/empaddr
-  gnt-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/gnt
-  holiday-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/holiday
-  org-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/org
-  orgconc-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/orgconc
-  taaappl-post: https://cloudhr.pearbranch.com/ifw/api/hdngv/d/taaappl
+  #code-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/code
+  code-post: http://10.30.30.215/ifw/api/honda/d/code
+  #emp-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/emp 
+  emp-post: http://10.30.30.215/ifw/api/honda/d/emp
+  #empaddr-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/empaddr
+  empaddr-post: http://10.30.30.215/ifw/api/honda/d/empaddr
+  #gnt-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/gnt
+  gnt-post: http://10.30.30.215/ifw/api/honda/d/gnt
+  holiday-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/holiday
+  #org-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/org
+  org-post: http://10.30.30.215/ifw/api/honda/d/org
+  orgconc-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/orgconc
+  #taaappl-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/taaappl
+  taaappl-post: http://10.30.30.215/ifw/api/honda/d/taaappl
   

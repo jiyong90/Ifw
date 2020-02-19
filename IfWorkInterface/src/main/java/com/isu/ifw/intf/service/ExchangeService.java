@@ -72,7 +72,7 @@ public class ExchangeService {
 					System.out.println("getStatusCode" +res.getStatusCode().value());
 					if(res.getStatusCode().value() == HttpServletResponse.SC_OK) {
 						result = res.getBody();
-		 				System.out.println("result " +result.toString());
+		 				//System.out.println("result " +result.toString());
 					}
 					break;
 	

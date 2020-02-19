@@ -52,7 +52,7 @@
 						 , CASE B.NM_VALUE WHEN '2' THEN 'Y'
 								ELSE 'N' END AS HOL_INCL_YN
 						 , CASE A.CD_WTYPE WHEN '001' THEN 'D'
-										   ELSE 'H' END AS REQ_TYPE_CD
+										   ELSE 'H' END AS REQ_USE_TYPE
 						 , 'N' AS WORK_YN
 						 , 'N' AS PAY_YN
 						 , '' AS NOTE
@@ -63,7 +63,7 @@
 					   AND B.CD_SYS='CON043'
 					 WHERE A.CD_COMPANY = ${cdCompany}
 			       ) A
-			 WHERE ENTER_CD = #{enterCd}
+			 WHERE ENTER_CD = #{convEnterCd}
 			 ORDER BY ENTER_CD
         ]]>
     </select>
@@ -84,15 +84,15 @@
 					FROM MA_DEPT
 					WHERE CD_COMPANY = ${cdCompany}
 			       ) A
-			 WHERE ENTER_CD = #{enterCd}
+			 WHERE ENTER_CD = #{convEnterCd}
         ]]>
     </select>
     
     
     <select id="getWtmEmp" parameterType="map" resultType="hashmap">
-        <![CDATA[
+        <![CDATA[ 
 			SELECT ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, SYMD, EYMD, STATUS_CD, ORG_CD, LOCATION_CD
-			     , DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, LEADER_YN
+			     , DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, LEADER_YN, CHKDATE
 			  FROM (SELECT #{convEnterCd} AS ENTER_CD
 							, NO_EMP AS SABUN
 							, NM_KOR AS EMP_NM
@@ -108,7 +108,7 @@
 							, CD_BIZAREA AS LOCATION_CD
 							, CD_DUTY_RESP AS DUTY_CD
 							, CD_DUTY_RANK AS POS_CD
-							, CD_DUTY_STEP AS JOB_GROUP_CD
+							, CD_DUTY_STEP AS CLASS_CD
 							, CD_DUTY_TYPE AS JOB_GROUP_CD
 							, CD_DUTY_WORK AS JOB_CD
 							, TP_EMP AS PAY_TYPE_CD
@@ -118,12 +118,12 @@
 								  AND A.NO_EMP = B.NO_EMPMNG 
 								  AND convert(varchar, getdate(), 112) BETWEEN ISNULL(B.DT_START, '20190101') AND ISNULL(B.DT_END, '29991231')), 'N') AS LEADER_YN
 							, DC_RMK AS NOTE
-							, ISNULL(DTS_UPDATE, '20190101000000') AS CHKDATE
-					FROM MA_EMP
+							, DTS_UPDATE AS CHKDATE
+					FROM MA_EMP A
 					WHERE CD_COMPANY = #{cdCompany}
 			       ) A
-			 WHERE ENTER_CD = #{enterCd}
-			 ORDER BY `SABUN, SYMD
+			 WHERE ENTER_CD = #{convEnterCd}
+			 ORDER BY SABUN, SYMD
         ]]>
     </select>
     
@@ -139,7 +139,7 @@
 					FROM HR_EMP_DDEPT
 					WHERE CD_COMPANY = #{cdCompany}
 			       ) A
-			 WHERE ENTER_CD = #{enterCd}
+			 WHERE ENTER_CD = #{convEnterCd}
         ]]>
     </select>
     
@@ -156,28 +156,29 @@
 					WHERE CD_COMPANY = #{cdCompany}
 					  AND (NO_EMAIL != '' OR NO_TEL != '')
 			       ) A
-			 WHERE ENTER_CD = #{enterCd}
+			 WHERE ENTER_CD = #{convEnterCd}
         ]]>
     </select>
     
     <select id="getWtmTaaAppl" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT #{convEnterCd} AS ENTER_CD
-			     , B.SABUN
-			     , B.GNT_CD
-			     , B.S_YMD AS SYMD
-			     , B.E_YMD AS EYMD
-			     , B.REQ_S_HM AS SHM
-			     , B.REQ_E_HM AS EHM
-			     , A.APPL_SEQ
-			     , A.APPL_STATUS_CD
-			  FROM THRI103 A
-			 INNER JOIN TTIM301 B
-			     ON A.ENTER_CD = B.ENTER_CD 
-			   AND A.APPL_SEQ = B.APPL_SEQ
-			 WHERE A.ENTER_CD = #{enterCd}
-			   AND A.APPL_CD = '22'
-			   AND A.APPL_STATUS_CD <> '11'
+        	SELECT #{convEnterCd} AS ENTER_CD		--회사코드
+			     , CD_BIZAREA		--사업장코드
+			     , NO_EMP	AS SABUN			--사번
+			     , NO_PROPOSAL	AS APPL_SEQ --신청번호
+			     , CD_WCODE	AS GNT_CD	--근태코드
+			     , DT_PROPOSAL	--신청일자
+			     , DT_START	AS SYMD	--시작일자
+			     , DT_CLOSE	AS EYMD	--종료일자
+			     , TM_START	AS SHM	--시작시분
+			     , TM_CLOSE	AS EHM	--종료시분
+			     , DY_PROPOSAL 	--신청일자
+			     , DC_RMK			--비고
+			     , NO_CEMP			--승인자사번
+			     , CD_CONSENT AS APPL_STATUS_CD --상태코드
+			  FROM HR_WAPPLY
+			 WHERE DT_PROPOSAL >= CONVERT(CHAR(8), dateadd(month,-2,getdate()), 112)
+			   AND CD_COMPANY = #{cdCompany} 
         ]]>
     </select>
 </mapper>
