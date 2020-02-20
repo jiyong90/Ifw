@@ -1,5 +1,6 @@
 package com.isu.ifw.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
+import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.service.WtmInterfaceService;
+import com.isu.ifw.util.WtmUtil;
 
 @RestController
 @RequestMapping(value="/interface")
@@ -26,6 +30,11 @@ public class WtmInterfaceController {
 	
 	@Autowired
 	private WtmInterfaceService wtmInterfaceService;
+	
+	@Autowired
+	WtmInoutService inoutService;
+	
+	private RestTemplate restTemplate;
 	
 	@Autowired
 	@Qualifier("WtmTenantModuleRepository")
@@ -162,6 +171,52 @@ public class WtmInterfaceController {
 		
 		wtmInterfaceService.setTaaApplIf(reqMap); //근태정보 인터페이스
 		return ;
+	}
+	
+	@RequestMapping(value = "/workTimeArrIf",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String,Object> setTaaApplArrIf(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		Map<String,Object> retMap = new HashMap();
+		Map<String, Object> ifHisMap = new HashMap<>();
+		System.out.println("workTimeArrIf : start");
+		
+		// 테넌트정보 조회
+		String apiKey = null;
+		apiKey = paramMap.get("apiKey").toString();
+		CommTenantModule tm = null;
+	    tm = tenantModuleRepo.findByApiKey(apiKey);
+	    Long tenantId = tm.getTenantId();
+	    
+		try {
+	        // 근태저장
+	        retMap = wtmInterfaceService.setTaaApplArrIf(paramMap); //근태정보(출장등 배열용) 인터페이스	        
+	        // 결과값 저장 tenantId 있을때만
+	        // WTM_IF_HIS 테이블에 결과저장
+ 	    	ifHisMap.put("tenantId", tenantId);
+ 	    	ifHisMap.put("ifItem", "WORK_TIME");
+ 			ifHisMap.put("ifStatus", retMap.get("status").toString());
+ 			ifHisMap.put("updateDate", WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss"));
+    		ifHisMap.put("ifEndDate", WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss"));
+ 			ifHisMap.put("ifMsg", retMap.get("retMsg").toString());
+ 			wtmInterfaceService.setIfHis(ifHisMap);
+	        
+		} catch(Exception e) {
+			
+			e.printStackTrace();
+			String errMsg = e.getMessage();
+			ifHisMap.put("tenantId", tenantId);
+ 	    	ifHisMap.put("ifItem", "WORK_TIME");
+ 			ifHisMap.put("ifStatus", "ERR");
+ 			ifHisMap.put("updateDate", WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss"));
+    		ifHisMap.put("ifEndDate", WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss"));
+ 			ifHisMap.put("ifMsg", errMsg);
+ 			wtmInterfaceService.setIfHis(ifHisMap);
+ 			
+ 			retMap.put("status", "ERR");
+ 	    	retMap.put("retMsg", errMsg);
+		}
+		System.out.println("workTimeArrIf : end");
+		return retMap;
 	}
 	
 	// 5분간격 배치용

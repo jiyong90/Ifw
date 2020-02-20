@@ -70,4 +70,35 @@
 			</foreach>
 			</if>
     </update>
+    
+    <update id="setInOutChange" parameterType="map">
+       INSERT INTO WTM_INOUT_CHG_HIS 
+		(TENANT_ID,
+		ENTER_CD, 
+		SABUN, 
+		YMD, 
+		ENTRY_SDATE, 
+		ENTRY_STYPE_CD, 
+		ENTRY_EDATE, 
+		ENTRY_ETYPE_CD, 
+		CHG_SDATE, 
+		CHG_EDATE, 
+		REASON, 
+		UPDATE_DATE, 
+		UPDATE_ID)
+	VALUES 
+		(#{tenantId}, 
+		#{enterCd}, 
+		#{sabun}, 
+		#{ymd}, 
+		IF(#{entrySdate}= '', NULL, F_WTM_TO_DATE(#{entrySdate}, 'YMDHIS')),
+		#{entryStypeCd}, 
+		IF(#{entryEdate}= '', NULL, F_WTM_TO_DATE(#{entryEdate}, 'YMDHIS')),
+		#{entryEtypeCd}, 
+		IF(#{chgSdate}= '', NULL, F_WTM_TO_DATE(#{chgSdate}, 'YMDHIS')), 
+		IF(#{chgEdate}='', NULL, F_WTM_TO_DATE(#{chgEdate}, 'YMDHIS')),
+		#{reason}, 
+		now(), 
+		#{userId})	
+    </update>
 </mapper>
