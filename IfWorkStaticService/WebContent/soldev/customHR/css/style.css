@@ -149,6 +149,7 @@ a.button7 img {
 .sheet_title input[type="number"],
 .sheet_search input[type="text"],
 .sheet_search input[type="number"] {
+	width: 140px;
     border: 1px solid #e0e2e5;
     padding: 0 5px;
     height: 28px;
@@ -1267,7 +1268,8 @@ table.default th{position:relative;  font-weight:500; font-weight:bold; padding:
 border-left:1px solid #e0e2e5; 
 border-right:1px solid #e0e2e5; 
 border-bottom:1px solid #e0e2e5; 
-background-color:#F4F4F4; 
+background-color:#F4F4F4;
+background-clip:padding-box; /* for IE */
 color:#333;
 }
 table.default th:first-child{ border-left:none; }
@@ -1497,6 +1499,7 @@ table.default td img.ui-datepicker-trigger{ margin:0 0 0 -4px; }
 
 @media all and (max-width:1330px){
 	/* mgr */
+	.sheet_search{padding-left: 20px;}
 	.sheet_search .magnifier{
 		margin-right: 0px;
 	}
