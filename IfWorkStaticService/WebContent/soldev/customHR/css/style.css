@@ -1282,7 +1282,7 @@ table.default th span.required{
     border-radius: 50%;
     }
 table.default td{padding:4px 10px; border-bottom:1px solid #e0e2e5; font-size:12px;}
-table.default td input{position:relative; padding:3px 0 3px 5px; border:1px solid #e0e2e5; text-align:left; height:21px; vertical-align:middle;}
+table.default td input{width:40%; position:relative; padding:3px 0 3px 5px; border:1px solid #e0e2e5; text-align:left; height:21px; vertical-align:middle;}
 /* date timepicker custom */
 table.default td input div.bootstrap-datetimepicker-widget.dropdown-menu{width:auto;}
 table.default td .bootstrap-datetimepicker-widget table td{border-bottom:0px;}
