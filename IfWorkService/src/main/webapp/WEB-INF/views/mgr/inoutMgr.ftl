@@ -1,5 +1,5 @@
 <div id="inoutMgr">
- 	<div class="container-fluid mgr-wrap bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 	 		<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -71,7 +71,7 @@
 
 		initdata1.Cols = [
 			{Header:"No|No",		Type:"Seq",			Hidden:Number("0"),	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
-			{Header:"삭제|삭제",		Type:"DelCheck",	Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+			{Header:"삭제|삭제",		Type:"DelCheck",	Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sDelete" },
 			{Header:"상태|상태",		Type:"Status",		Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"id|id",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workCalendarId",	KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"소속|소속",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"orgNm"		,	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
@@ -125,7 +125,7 @@
 		if(sabun != '' && ymd != ''){
 			var param = "sabun=" + sabun
 						+ "&ymd=" + ymd;
-			var rtn = ajaxCall("${rc.getContextPath()}/calendar/dayInfo", param ,false).DATA;
+			var rtn = ajaxCall("${rc.getContextPath()}/calendar/dayInfoEntry", param ,false).DATA;
 			if(rtn != null && rtn != "") {
 				sheet1.SetCellValue(row, "entrySdate", rtn.entrySdate);
 				sheet1.SetCellValue(row, "entryStypeCd", rtn.entryStypeCd);
@@ -211,6 +211,13 @@
 			if (StCode == 401) {
 				window.parent.location.href = loginUrl;
 			}
+			
+			var row = sheet1.LastRow();
+			
+				for(var i=2; i<=row; i++){
+					sheet1.SetRowEditable(i, 0);
+				}
+			
 		} catch (ex) {
 			alert("OnSearchEnd Event Error " + ex);
 		}
