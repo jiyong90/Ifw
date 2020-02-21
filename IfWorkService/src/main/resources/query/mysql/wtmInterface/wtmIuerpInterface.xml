@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmIuerpInterfaceMapper">
+
+	<select id="getExpireWtmCode" parameterType="hashmap" resultType="map">
+		<![CDATA[
+		SELECT C.*, I.INTF_ID, F_WTM_DATE_FORMAT(NOW(),'YMD') AS YMD 
+		  FROM WTM_CODE_TEST C
+		  LEFT OUTER JOIN WTM_INTF_CODE I
+		    ON C.TENANT_ID = I.TENANT_ID
+		   	 AND C.ENTER_CD = I.ENTER_CD
+		   	 AND C.GRP_CODE_CD = I.GRP_CODE_CD
+		   	 AND C.CODE_CD = I.CODE_CD
+		 WHERE C.TENANT_ID = ${tenantId} 
+		   AND I.INTF_ID IS NULL
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.GRP_CODE_CD IN ( SELECT GRP_CODE_CD FROM WTM_INTF_CODE WHERE TENANT_ID=${tenantId}  AND YYYYMMDDHHMISS > #{ymdhis})
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD 
+		                     FROM (SELECT A.*
+									  FROM WTM_CODE_TEST A 
+									  JOIN WTM_INTF_CODE B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.GRP_CODE_CD = A.GRP_CODE_CD
+									   AND B.CODE_CD = A.CODE_CD
+									   AND B.CODE_NM = A.CODE_NM
+									   AND B.SYMD = A.SYMD
+									   AND B.EYMD = A.EYMD
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId}) T )
+		]]>
+	</select>
+
+	<update id="expireWtmCode" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_CODE_TEST C
+		  LEFT OUTER JOIN WTM_INTF_CODE I
+		    ON C.TENANT_ID = I.TENANT_ID
+		   	 AND C.ENTER_CD = I.ENTER_CD
+		   	 AND C.GRP_CODE_CD = I.GRP_CODE_CD
+		   	 AND C.CODE_CD = I.CODE_CD
+		   SET C.EYMD = F_WTM_DATE_FORMAT(NOW(),'YMD')
+		     , C.UPDATE_DATE = NOW()
+		     , C.UPDATE_ID = #{updateId} 
+		 WHERE C.TENANT_ID = ${tenantId} 
+		   AND I.INTF_ID IS NULL
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.GRP_CODE_CD IN ( SELECT GRP_CODE_CD FROM WTM_INTF_CODE WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD 
+		                     FROM (SELECT A.*
+									  FROM WTM_CODE_TEST A 
+									  JOIN WTM_INTF_CODE B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.GRP_CODE_CD = A.GRP_CODE_CD
+									   AND B.CODE_CD = A.CODE_CD
+									   AND B.CODE_NM = A.CODE_NM
+									   AND B.SYMD = A.SYMD
+									   AND B.EYMD = A.EYMD
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId}) T )
+		]]>
+	</update>
+	
+	<select id="getDeleteWtmCode" parameterType="hashmap" resultType="map">
+		<![CDATA[
+		SELECT * FROM WTM_CODE_TEST C 
+		  JOIN WTM_INTF_CODE I
+		    ON I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND I.GRP_CODE_CD = C.GRP_CODE_CD
+		   AND I.CODE_CD = C.CODE_CD
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.SYMD <= C.SYMD AND I.EYMD >= C.EYMD
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD 
+		                     FROM (SELECT A.*
+									  FROM WTM_CODE_TEST A 
+									  JOIN WTM_INTF_CODE B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.GRP_CODE_CD = A.GRP_CODE_CD
+									   AND B.CODE_CD = A.CODE_CD
+									   AND B.CODE_NM = A.CODE_NM
+									   AND B.SYMD = A.SYMD
+									   AND B.EYMD = A.EYMD
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId}) T )
+		]]>
+	</select>
+	
+	<update id="deleteWtmCode" parameterType="hashmap">
+		<![CDATA[
+		DELETE C FROM WTM_CODE_TEST C 
+		  JOIN WTM_INTF_CODE I
+		    ON I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND I.GRP_CODE_CD = C.GRP_CODE_CD
+		   AND I.CODE_CD = C.CODE_CD
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.SYMD <= C.SYMD AND I.EYMD >= C.EYMD
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD 
+		                     FROM (SELECT A.*
+									  FROM WTM_CODE_TEST A 
+									  JOIN WTM_INTF_CODE B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.GRP_CODE_CD = A.GRP_CODE_CD
+									   AND B.CODE_CD = A.CODE_CD
+									   AND B.CODE_NM = A.CODE_NM
+									   AND B.SYMD = A.SYMD
+									   AND B.EYMD = A.EYMD
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId}) T )
+		]]>
+	</update>
+	
+	<update id="insertWtmCodeForBetween" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO WTM_CODE_TEST(TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD, CODE_NM, SYMD, EYMD, SEQ, NOTE, UPDATE_DATE, UPDATE_ID)
+		SELECT C.TENANT_ID
+		     , C.ENTER_CD
+		     , C.GRP_CODE_CD
+		     , C.CODE_CD
+		     , C.CODE_NM
+		     , F_WTM_DATE_FORMAT(DATE_ADD(I.EYMD, INTERVAL 1 DAY),'YMD') AS SYMD
+		     , C.EYMD
+		     , C.SEQ
+		     , C.NOTE
+		     , NOW() AS UPDATE_DATE
+		     , #{updateId} AS UPDATE_ID
+		  FROM WTM_INTF_CODE I
+		  JOIN WTM_CODE_TEST C
+		    ON I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND I.GRP_CODE_CD = C.GRP_CODE_CD
+		   AND I.CODE_CD = C.CODE_CD
+		   AND I.SYMD BETWEEN C.SYMD AND C.EYMD 
+		   AND I.EYMD BETWEEN C.SYMD AND C.EYMD 
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD 
+		                     FROM (SELECT A.*
+									  FROM WTM_CODE_TEST A 
+									  JOIN WTM_INTF_CODE B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.GRP_CODE_CD = A.GRP_CODE_CD
+									   AND B.CODE_CD = A.CODE_CD
+									   AND B.CODE_NM = A.CODE_NM
+									   AND B.SYMD = A.SYMD
+									   AND B.EYMD = A.EYMD
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId} ) T )
+		 ORDER BY I.ENTER_CD, I.GRP_CODE_CD, I.CODE_CD, I.SYMD
+		]]>
+	</update>
+	
+	<update id="insertWtmCode" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO WTM_CODE_TEST(TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD, CODE_NM, SYMD, EYMD, SEQ, NOTE, UPDATE_DATE, UPDATE_ID)
+		SELECT I.TENANT_ID
+		     , I.ENTER_CD
+		     , I.GRP_CODE_CD
+			  , I.CODE_CD
+			  , I.CODE_NM
+			  , I.SYMD
+			  , I.EYMD
+			  , I.SEQ
+			  , I.NOTE
+			  , NOW() AS UPDATE_DATE
+			  , #{updateId} AS UPDATE_ID
+		  FROM WTM_INTF_CODE I
+		  LEFT OUTER JOIN WTM_CODE_TEST C
+		    ON I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND I.GRP_CODE_CD = C.GRP_CODE_CD
+		   AND I.CODE_CD = C.CODE_CD
+		   AND I.CODE_NM = C.CODE_NM
+		   AND I.SYMD = C.SYMD
+		   AND I.EYMD = C.EYMD
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD 
+		                     FROM (SELECT A.*
+									  FROM WTM_CODE_TEST A 
+									  JOIN WTM_INTF_CODE B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.GRP_CODE_CD = A.GRP_CODE_CD
+									   AND B.CODE_CD = A.CODE_CD
+									   AND B.CODE_NM = A.CODE_NM
+									   AND B.SYMD = A.SYMD
+									   AND B.EYMD = A.EYMD
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId} ) T )
+		 ORDER BY I.ENTER_CD, I.GRP_CODE_CD, I.CODE_CD, I.SYMD
+		]]>
+	</update>
+	
+	<update id="updateWtmCode" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_CODE_TEST C
+		  JOIN WTM_INTF_CODE I
+		    ON C.TENANT_ID = I.TENANT_ID
+			   AND C.ENTER_CD = I.ENTER_CD
+			   AND C.GRP_CODE_CD = I.GRP_CODE_CD
+			   AND C.CODE_CD = I.CODE_CD
+			   AND I.SYMD<>C.SYMD AND I.EYMD<>C.EYMD
+			   AND (I.SYMD BETWEEN C.SYMD AND C.EYMD OR I.EYMD BETWEEN C.SYMD AND C.EYMD)
+		   SET C.SYMD = (CASE WHEN I.SYMD NOT BETWEEN C.SYMD AND C.EYMD AND I.EYMD BETWEEN C.SYMD AND C.EYMD 
+										  THEN F_WTM_DATE_FORMAT(DATE_ADD(I.EYMD, INTERVAL 1 DAY),'YMD') ELSE C.SYMD END)
+			  , C.EYMD = (CASE WHEN I.SYMD BETWEEN C.SYMD AND C.EYMD THEN F_WTM_DATE_FORMAT(DATE_SUB(I.SYMD, INTERVAL 1 DAY),'YMD') ELSE C.EYMD END)
+		     , C.UPDATE_DATE = NOW()
+		     , C.UPDATE_ID = #{updateId}
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		 ]]>
+	</update>
+	
+	<update id="expireWtmHolidayMgr" parameterType="hashmap">
+		<![CDATA[
+		DELETE FROM WTM_HOLIDAY_MGR
+		 WHERE (TENANT_ID, ENTER_CD, BISINESS_PLACE_CD, HOLIDAY_YMD) NOT IN ( SELECT TENANT_ID, ENTER_CD, LOCATION_CD, YMD 
+															                     FROM WTM_INTF_HOLIDAY
+															                    WHERE TENANT_ID = ${tenantId} 
+															                      AND YYYYMMDDHHMISS > #{ymdhis})
+		]]>
+	</update>
+	
+	<update id="updateWtmHolidayMgr" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_HOLIDAY_MGR H
+		  JOIN WTM_INTF_HOLIDAY I
+		    ON H.TENANT_ID = I.TENANT_ID
+		   	 AND H.ENTER_CD = I.ENTER_CD
+		   	 AND H.BISINESS_PLACE_CD = I.LOCATION_CD
+		   	 AND H.HOLIDAY_YMD = I.YMD
+		   SET H.HOLIDAY_NM = I.HOLIDAY_NM
+			  , H.SUN_YN = 'Y'
+		     , H.FESTIVE_YN = I.FESTIVE_YN
+		     , H.PAY_YN = I.PAY_YN
+		     , H.UPDATE_DATE = NOW()
+		     , H.UPDATE_ID = #{updateId}
+		 WHERE H.TENANT_ID = ${tenantId} 
+		   AND H.ENTER_CD = #{enterCd}
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND (H.HOLIDAY_NM<>I.HOLIDAY_NM OR H.FESTIVE_YN<>I.FESTIVE_YN OR H.PAY_YN<>I.PAY_YN) 
+		 ]]>
+	</update>
+	
+	<update id="insertWtmHolidayMgr" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO WTM_HOLIDAY_MGR(TENANT_ID, ENTER_CD, BISINESS_PLACE_CD, HOLIDAY_YMD, HOLIDAY_NM, SUN_YN, FESTIVE_YN, PAY_YN, NOTE, UPDATE_DATE, UPDATE_ID)
+		SELECT I.TENANT_ID
+		     , I.ENTER_CD
+		     , I.LOCATION_CD
+			  , I.YMD
+			  , I.HOLIDAY_NM
+			  , 'Y' AS SUN_YN
+			  , I.FESTIVE_YN
+			  , I.PAY_YN
+			  , NULL AS NOTE
+			  , NOW() AS UPDATE_DATE
+			  , #{updateId} AS UPDATE_ID
+		  FROM WTM_INTF_HOLIDAY I
+		  LEFT OUTER JOIN WTM_HOLIDAY_MGR M
+		    ON I.TENANT_ID = M.TENANT_ID
+		   AND I.ENTER_CD = M.ENTER_CD
+		   AND I.LOCATION_CD = M.BISINESS_PLACE_CD
+		   AND I.YMD = M.HOLIDAY_YMD
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.ENTER_CD = #{enterCd}
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND M.HOLIDAY_YMD IS NULL
+		 ORDER BY I.ENTER_CD, I.LOCATION_CD, I.YMD
+		]]>
+	</update>
+    
+    <update id="expireWtmTaaCode" parameterType="hashmap">
+		<![CDATA[
+		DELETE C FROM WTM_TAA_CODE_TEST C
+		  JOIN WTM_INTF_GNT I
+		    ON C.TENANT_ID = I.TENANT_ID
+		   	 AND C.ENTER_CD = I.ENTER_CD
+		   	 AND C.TAA_CD = I.GNT_CD
+		 WHERE C.TENANT_ID = ${tenantId} 
+		   AND I.INTF_ID IS NULL
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.TAA_CD IN ( SELECT TAA_CD FROM WTM_INTF_GNT WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis}) 
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, TAA_CD
+				                     FROM (SELECT A.*
+											  FROM WTM_TAA_CODE_TEST A 
+											  JOIN WTM_INTF_GNT B
+											    ON B.TENANT_ID = A.TENANT_ID
+											   AND B.ENTER_CD = A.ENTER_CD
+											   AND B.GNT_CD = A.TAA_CD
+											   AND B.GNT_NM = A.TAA_NM
+											   AND B.YYYYMMDDHHMISS > #{ymdhis}
+											 WHERE B.TENANT_ID = ${tenantId} ) T )		                     
+		]]>
+	</update>
+	
+	<update id="updateWtmTaaCode" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_TAA_CODE_TEST C
+		  JOIN WTM_INTF_GNT I
+		    ON C.TENANT_ID = I.TENANT_ID
+		   	 AND C.ENTER_CD = I.ENTER_CD
+		   	 AND C.TAA_CD = I.GNT_CD
+		   SET C.TAA_NM = I.GNT_NM
+			  , C.TAA_TYPE_CD = I.GNT_GUBUN_CD
+		     , C.HOL_INCL_YN = I.HOL_INCL_YN
+		     , C.REQUEST_TYPE_CD = I.REQ_USE_TYPE
+		     , C.WORK_YN = I.WORK_YN
+		     , C.PAY_YN = I.PAY_YN
+		     , C.UPDATE_DATE = NOW()
+		     , C.UPDATE_ID = #{updateId}
+		 WHERE C.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND (C.TAA_NM<>I.GNT_NM OR C.TAA_TYPE_CD<>I.GNT_GUBUN_CD OR C.HOL_INCL_YN<>I.HOL_INCL_YN OR C.REQUEST_TYPE_CD<>I.REQ_USE_TYPE
+					OR C.WORK_YN<>I.WORK_YN OR C.PAY_YN<>I.PAY_YN) 
+		 ]]>
+	</update>
+	
+	<update id="insertWtmTaaCode" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO WTM_TAA_CODE_TEST(TENANT_ID, ENTER_CD, TAA_CD, TAA_NM, TAA_TYPE_CD, HOL_INCL_YN, REQUEST_TYPE_CD, WORK_YN, PAY_YN, NOTE, UPDATE_DATE, UPDATE_ID)
+		SELECT I.TENANT_ID
+		     , I.ENTER_CD
+		     , I.GNT_CD
+			  , I.GNT_NM
+			  , I.GNT_GUBUN_CD
+			  , I.HOL_INCL_YN
+			  , I.REQ_USE_TYPE
+			  , I.WORK_YN
+			  , I.PAY_YN
+			  , I.NOTE
+			  , NOW() AS UPDATE_DATE
+			  , #{updateId} AS UPDATE_ID
+		  FROM WTM_INTF_GNT I
+		  LEFT OUTER JOIN WTM_TAA_CODE_TEST C
+		    ON I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND I.GNT_CD = C.TAA_CD
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.TAA_CODE_ID IS NULL
+		 ORDER BY I.ENTER_CD, I.GNT_CD
+		]]>
+	</update>
+	
+	<select id="getExpireWtmEmpHis" parameterType="hashmap" resultType="map">
+		<![CDATA[
+		SELECT F_WTM_DATE_FORMAT(NOW(),'YMD') AS YMD , E.* 
+		  FROM WTM_EMP_HIS_TEST E
+		  LEFT OUTER JOIN WTM_INTF_EMP_TEST I
+		    ON E.TENANT_ID = I.TENANT_ID
+			AND E.ENTER_CD = I.ENTER_CD
+			AND E.SABUN = I.SABUN 
+		 WHERE E.TENANT_ID = ${tenantId} 
+		   AND I.INTF_ID IS NULL
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND E.SYMD <= F_WTM_DATE_FORMAT(NOW(),'YMD') AND F_WTM_DATE_FORMAT(NOW(),'YMD') < E.EYMD
+		]]>
+	</select>
+	
+	<update id="expireWtmEmpHis" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_EMP_HIS_TEST E
+		  LEFT OUTER JOIN WTM_INTF_EMP_TEST I
+		    ON E.TENANT_ID = I.TENANT_ID
+					AND E.ENTER_CD = I.ENTER_CD
+					AND E.SABUN = I.SABUN 
+		   SET E.EYMD = F_WTM_DATE_FORMAT(NOW(),'YMD')
+		      ,  E.UPDATE_DATE = NOW()
+		     , E.UPDATE_ID = #{updateId}
+		 WHERE E.TENANT_ID = ${tenantId} 
+		   AND I.INTF_ID IS NULL
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+			AND F_WTM_DATE_FORMAT(NOW(),'YMD') BETWEEN E.SYMD AND E.EYMD
+		]]>
+	</update>
+	
+	<select id="getUpdateWtmEmpHis" parameterType="hashmap" resultType="map">
+		<![CDATA[
+			SELECT *
+			  FROM WTM_EMP_HIS_TEST E
+			  JOIN WTM_INTF_EMP_TEST I
+			    ON E.TENANT_ID = I.TENANT_ID
+			   	 AND E.ENTER_CD = I.ENTER_CD
+			   	 AND E.SABUN = I.SABUN
+			   	 AND E.SYMD = I.SYMD
+			   	 AND E.EYMD = I.EYMD
+			  WHERE E.TENANT_ID = ${tenantId} 
+			   AND I.YYYYMMDDHHMISS > #{ymdhis}
+			   AND (E.EMP_NM<>I.EMP_NM OR E.EMP_ENG_NM<>I.EMP_ENG_NM
+			         OR E.STATUS_CD<>I.STATUS_CD OR E.ORG_CD<>I.ORG_CD
+						OR E.DUTY_CD<>I.DUTY_CD OR E.POS_CD<>I.POS_CD OR E.CLASS_CD<>I.CLASS_CD
+						OR E.JOB_GROUP_CD<>I.JOB_GROUP_CD OR E.JOB_CD<>I.JOB_CD 
+						OR E.PAY_TYPE_CD<>I.PAY_TYPE_CD OR E.LEADER_YN<>I.LEADER_YN)
+		]]>
+	</select>
+	
+	<update id="updateWtmEmpHis" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_EMP_HIS_TEST E
+		  JOIN WTM_INTF_EMP_TEST I
+		    ON E.TENANT_ID = I.TENANT_ID
+		   	 AND E.ENTER_CD = I.ENTER_CD
+		   	 AND E.SABUN = I.SABUN
+		   	 AND E.SYMD = I.SYMD
+		   	 AND E.EYMD = I.EYMD
+		   SET E.EMP_NM = I.EMP_NM
+		      , E.EMP_ENG_NM   = I.EMP_ENG_NM 
+			  , E.STATUS_CD    = I.STATUS_CD
+			  , E.ORG_CD       = I.ORG_CD
+			  , E.DUTY_CD      = I.DUTY_CD
+			  , E.POS_CD       = I.POS_CD
+			  , E.CLASS_CD     = I.CLASS_CD
+			  , E.JOB_GROUP_CD = I.JOB_GROUP_CD
+			  , E.JOB_CD       = I.JOB_CD
+			  , E.PAY_TYPE_CD  = I.PAY_TYPE_CD
+			  , E.LEADER_YN    = I.LEADER_YN
+		     ,  E.UPDATE_DATE = NOW()
+		     , E.UPDATE_ID = #{updateId}
+		 WHERE E.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND (E.EMP_NM<>I.EMP_NM OR E.EMP_ENG_NM<>I.EMP_ENG_NM
+		         OR E.STATUS_CD<>I.STATUS_CD OR E.ORG_CD<>I.ORG_CD
+					OR E.DUTY_CD<>I.DUTY_CD OR E.POS_CD<>I.POS_CD OR E.CLASS_CD<>I.CLASS_CD
+					OR E.JOB_GROUP_CD<>I.JOB_GROUP_CD OR E.JOB_CD<>I.JOB_CD 
+					OR E.PAY_TYPE_CD<>I.PAY_TYPE_CD OR E.LEADER_YN<>I.LEADER_YN)
+		 ]]>
+	</update>
+	
+	<select id="getInsertWtmEmpHis" parameterType="hashmap" resultType="map">
+		<![CDATA[
+		SELECT *
+		  FROM WTM_INTF_EMP_TEST I
+		  LEFT OUTER JOIN WTM_EMP_HIS_TEST E
+		    ON E.TENANT_ID = I.TENANT_ID
+			AND E.ENTER_CD = I.ENTER_CD
+			AND E.SABUN = I.SABUN 
+			AND E.SYMD = I.SYMD
+			AND E.EYMD = I.EYMD
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND I.SABUN IN ( SELECT SABUN FROM WTM_INTF_EMP_TEST WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
+		   AND E.EMP_HIS_ID IS NULL
+		   ORDER BY I.ENTER_CD, I.SABUN, I.SYMD
+		]]>
+	</select>
+	
+	<update id="insertWtmEmpHis" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO WTM_EMP_HIS_TEST(TENANT_ID, ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, ORG_CD, STATUS_CD, BUSINESS_PLACE_CD, DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, LEADER_YN, SYMD, EYMD, EMP_YMD, EMP_ID, UPDATE_DATE, UPDATE_ID)
+			SELECT I.TENANT_ID
+		     , I.ENTER_CD
+		     , I.SABUN
+		     , I.EMP_NM 
+		     , I.EMP_ENG_NM 
+		     , I.ORG_CD
+		     , I.STATUS_CD
+		     , I.LOCATION_CD
+		     , I.DUTY_CD
+			 , I.POS_CD
+			 , I.CLASS_CD
+			 , I.JOB_GROUP_CD
+			 , I.JOB_CD
+		     , I.PAY_TYPE_CD
+		     , I.LEADER_YN
+		     , I.SYMD 
+			 , CASE WHEN I.EYMD IS NULL THEN '29991231' ELSE I.EYMD END 
+			 , I.SYMD AS EMP_YMD
+			 , F_WTM_AES_ENCRYPT(CONCAT(I.TENANT_ID, I.ENTER_CD, I.SABUN), #{encKey}) AS EMP_ID
+			 , NOW() AS UPDATE_DATE
+			 , #{updateId} AS UPDATE_ID
+		FROM WTM_INTF_EMP_TEST I
+		  LEFT OUTER JOIN WTM_EMP_HIS_TEST E
+		    ON E.TENANT_ID = I.TENANT_ID
+			AND E.ENTER_CD = I.ENTER_CD
+			AND E.SABUN = I.SABUN 
+			AND E.SYMD = I.SYMD
+			AND E.EYMD = I.EYMD
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND I.SABUN IN ( SELECT SABUN FROM WTM_INTF_EMP_TEST WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
+		   AND E.EMP_HIS_ID IS NULL
+		   ORDER BY I.ENTER_CD, I.SABUN, I.SYMD
+		]]>
+	</update>
+	
+	<update id="expireWtmEmpAddr" parameterType="hashmap">
+		<![CDATA[
+		DELETE E FROM WTM_EMP_ADDR_TEST E
+		  LEFT OUTER JOIN WTM_INTF_EMP_ADDR I
+		    ON E.TENANT_ID = I.TENANT_ID
+				AND E.ENTER_CD = I.ENTER_CD
+				AND E.SABUN = I.SABUN 
+		 WHERE E.TENANT_ID = ${tenantId}
+		   AND I.INTF_ID IS NULL	   
+		   AND I.YYYYMMDDHHMISS > #{ymdhis} 
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN 
+		                     FROM (SELECT A.*
+									  FROM WTM_EMP_ADDR_TEST A 
+									  JOIN WTM_INTF_EMP_ADDR B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.SABUN = A.SABUN
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId}) T )                 
+		]]>
+	</update>
+	
+	<update id="updateWtmEmpAddr" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_EMP_ADDR_TEST C
+		  JOIN WTM_INTF_EMP_ADDR I
+		    ON C.TENANT_ID = I.TENANT_ID
+		   	 AND C.ENTER_CD = I.ENTER_CD
+		   	 AND C.SABUN = I.SABUN
+		   SET C.EMAIL = I.EMAIL
+			 , C.HAND_PHONE = I.PHONE
+		     , C.UPDATE_DATE = NOW()
+		     , C.UPDATE_ID = #{updateId}
+		 WHERE C.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND (C.EMAIL<>I.EMAIL OR C.HAND_PHONE<>I.PHONE) 
+		 ]]>
+	</update>
+	
+	<update id="insertWtmEmpAddr" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO WTM_EMP_ADDR_TEST(TENANT_ID, ENTER_CD, SABUN, EMAIL, HAND_PHONE, NOTE, UPDATE_DATE, UPDATE_ID)
+		SELECT I.TENANT_ID
+		     , I.ENTER_CD
+		     , I.SABUN
+			  , I.EMAIL
+			  , I.PHONE
+			  , I.NOTE
+			  , NOW() AS UPDATE_DATE
+			  , #{updateId} AS UPDATE_ID
+		  FROM WTM_INTF_EMP_ADDR I
+		  LEFT OUTER JOIN WTM_EMP_ADDR_TEST C
+		    ON I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND I.SABUN = C.SABUN
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.EMP_ADDR_ID IS NULL
+		 ORDER BY I.ENTER_CD, I.SABUN
+		]]>
+	</update>
+	
+</mapper>
