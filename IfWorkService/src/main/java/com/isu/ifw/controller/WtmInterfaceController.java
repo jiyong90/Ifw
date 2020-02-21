@@ -24,7 +24,10 @@ import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.service.WtmInterfaceService;
+<<<<<<< HEAD
 import com.isu.ifw.service.WtmIuerpInterfaceService;
+=======
+>>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 import com.isu.ifw.util.WtmUtil;
 
 @RestController
@@ -44,6 +47,11 @@ public class WtmInterfaceController {
 	@Autowired
 	@Qualifier("wtmIuerpInterfaceService")
 	private WtmIuerpInterfaceService wtmIuerpInterfaceService;
+	
+	@Autowired
+	WtmInoutService inoutService;
+	
+	private RestTemplate restTemplate;
 	
 	@Autowired
 	@Qualifier("WtmTenantModuleRepository")

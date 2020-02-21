@@ -4,7 +4,7 @@
 	<#include "/metadata.ftl">
 	<#include "/metaScript.ftl">
 	<!-- 근태 for HR custom  -->
-	<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/layout4HR.css">
+	<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/layout4HR.css?ver=${.now?long / 1000}">
 </head>
 <body>
 <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" style="z-index:9999;">

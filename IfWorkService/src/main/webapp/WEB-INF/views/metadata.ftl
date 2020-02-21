@@ -17,8 +17,8 @@
     <link rel="stylesheet" href="${rc.getContextPath()}/jBox-1.0.5/dist/jBox.all.min.css">
     
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/NotosansKR.css">
-    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/layout.css">
-    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/common.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/layout.css?ver=${.now?long / 1000}">
+    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/common.css?ver=${.now?long / 1000}">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/calendar.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/all.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/fontawesome-free-5.8.2-web/css/fontawesome.min.css">
@@ -27,12 +27,12 @@
     <link rel="stylesheet" href="${rc.getContextPath()}/tempusdominus-bootstrap4-5.0.0-alpha14/tempusdominus-bootstrap-4.min.css">
     <link rel="stylesheet" href="${rc.getContextPath()}/bxslider-4-master/src/css/jquery.bxslider.css">
     
-    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/customHR/css/style.css">
+    <link rel="stylesheet" href="${rc.getContextPath()}/soldev/customHR/css/style.css?ver=${.now?long / 1000}">
     <link rel="stylesheet" href="${rc.getContextPath()}/soldev/customHR/css/date.css">
   	<#if tsId?exists && tsId?has_content>
-    	<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/${tsId}/theme.css">
+    	<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/${tsId}/theme.css?ver=${.now?long / 1000}">
    	<#else>
-    	<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/isu/theme.css">
+    	<link rel="stylesheet" href="${rc.getContextPath()}/soldev/css/isu/theme.css?ver=${.now?long / 1000}">
 	</#if>
     <!-- <link rel="stylesheet" href="${rc.getContextPath()}/IBLeaders/layout.css"> -->
     <!-- <link rel="stylesheet" href="${rc.getContextPath()}/jQuery-3.4.1/jquery-ui.css"> -->
@@ -54,6 +54,4 @@
 	<title>${mainTitle}</title>
 <#else>
 	<title>근태관리 시스템</title>
-</#if>
-  
-   
+</#if> 
