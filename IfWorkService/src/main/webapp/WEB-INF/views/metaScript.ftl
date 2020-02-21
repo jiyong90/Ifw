@@ -69,6 +69,7 @@
     var sheetH40 = "calc(50vh - 180px)";
     var halfsheetH = "calc(50vh - 140px)";
     var fullsheetH = "calc(100vh - 232px)";
+    var sheetH100 = "calc(100vh - 191px)";
     var sheetH90 = "calc(100vh - 270px)";
     var sheetH80 = "calc(100vh - 308px)";
 
@@ -76,6 +77,7 @@
     	sheetH40 = "calc(50vh - 134px)";
     	halfsheetH = "calc(50vh - 94px)";
 		fullsheetH = "calc(100vh - 140px)";
+		sheetH100 = "calc(100vh - 99px)";
 		sheetH90 = "calc(100vh - 178px)";
 		sheetH80 = "calc(100vh - 216px)";
     </#if>

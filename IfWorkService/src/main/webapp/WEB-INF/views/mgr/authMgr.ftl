@@ -30,7 +30,7 @@
 							</ul>
 						</div>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet1", "100%", fullsheetH,"kr"); </script>
+					<script type="text/javascript">createIBSheet("sheet1", "100%", sheetH100,"kr"); </script>
 				</div>
 			</div>
 			<div class="col-4 pr-3 setting">
@@ -63,7 +63,7 @@
 							</ul>
 						</div>
 					</div>
-					<script type="text/javascript">createIBSheet("sheet2", "100%", fullsheetH,"kr"); </script>
+					<script type="text/javascript">createIBSheet("sheet2", "100%", sheetH100,"kr"); </script>
 				</div>
 			</div>
 		</div>
