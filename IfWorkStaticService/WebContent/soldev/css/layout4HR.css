@@ -28,7 +28,7 @@
   height: calc(100vh - 332px);
 }
 #calendar_left .white-box-wrap.full-height{
-	height: calc(100vh - 156px);
+	height: calc(100vh - 106px);
 }
 #calendar_left .white-box-wrap.full-height.collapse-height{
 	height: calc(100vh - 82px);
