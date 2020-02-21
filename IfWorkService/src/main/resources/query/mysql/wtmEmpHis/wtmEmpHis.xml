@@ -38,6 +38,7 @@
 						   AND ENTER_CD = #{enterCd} 
 							AND CASE WHEN #{sYmd} = '' THEN F_WTM_DATE_FORMAT(now(),'YMD')
 							         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
+							AND STATUS_CD <> 'RA'
 			        ]]>
 			        		<if test="orgList!=null">
 						   AND ORG_CD IN (NULL, 
@@ -85,6 +86,7 @@
 				 , EMP_ID AS empId
 			  FROM WTM_EMP_HIS
 			 WHERE EMP_HIS_ID = #{empHisId}
+			   AND STATUS_CD <> 'RA'
         ]]>
         <if test="orgList!=null">
 			   AND ORG_CD IN (NULL, 
