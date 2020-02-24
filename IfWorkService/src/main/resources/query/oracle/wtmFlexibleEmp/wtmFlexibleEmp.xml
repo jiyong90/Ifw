@@ -1524,7 +1524,7 @@
 		   AND A.ENTER_CD = #{enterCd}
 		   AND A.SYMD <= REPLACE(#{eYmd}, '-', '') 
 		   AND A.EYMD >= REPLACE(#{sYmd}, '-', '')
-		   AND (#{searchKeyword, jdbcType=VARCHAR} IS NULL OR #{searchKeyword, jdbcType=VARCHAR} = '' OR (C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE #{searchKeyword} || '%'))
+		   AND (#{searchKeyword, jdbcType=VARCHAR} IS NULL OR #{searchKeyword, jdbcType=VARCHAR} = '' OR (C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE '%' || #{searchKeyword} || '%'))
 		   AND (#{searchWorkTypeCd, jdbcType=VARCHAR} IS NULL OR #{searchWorkTypeCd, jdbcType=VARCHAR} = '' OR B.WORK_TYPE_CD = #{searchWorkTypeCd})
   		]]>  		
   		<if test="orgList!=null">
@@ -1605,10 +1605,10 @@
 			     , E.TENANT_ID
 			     , E.ENTER_CD
 			     , E.SABUN 
-			     , E.SYMD 
-			     , E.EYMD 
-			     , E.WORK_TYPE_CD 
-			     , C.APPL_NM 
+			     , E.SYMD AS S_YMD
+			     , E.EYMD AS E_YMD
+			     , E.WORK_TYPE_CD
+			     , CASE WHEN C.APPL_CODE_ID IS NULL THEN M.FLEXIBLE_NM ELSE C.APPL_NM END AS WORK_TYPE_NM
 			     , M.WORK_SHM 
 			     , M.WORK_EHM 
 			     , M.CORE_CHK_YN
@@ -1624,7 +1624,7 @@
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
     		    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
-    		  JOIN WTM_APPL_CODE C
+    		  LEFT OUTER JOIN WTM_APPL_CODE C
 			    ON C.ENTER_CD = M.ENTER_CD
 			   AND C.TENANT_ID = M.TENANT_ID
 			   AND M.WORK_TYPE_CD = C.APPL_CD

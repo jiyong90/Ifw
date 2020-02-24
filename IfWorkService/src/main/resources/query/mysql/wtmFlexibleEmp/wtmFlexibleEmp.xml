@@ -1504,7 +1504,7 @@
 		   AND A.ENTER_CD = #{enterCd}
 		   AND A.SYMD <= REPLACE(#{eYmd}, '-', '') 
 		   AND A.EYMD >= REPLACE(#{sYmd}, '-', '') 
-		   AND IF(#{searchKeyword}='',1=1,(C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')))
+		   AND IF(#{searchKeyword}='',1=1,(C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')))
 		   AND IF(#{searchWorkTypeCd}='',1=1,(B.WORK_TYPE_CD = #{searchWorkTypeCd}))
   		]]>
   		  <if test="orgList!=null">
@@ -1588,7 +1588,7 @@
 			     , E.SYMD AS sYmd
 			     , E.EYMD AS eYmd
 			     , E.WORK_TYPE_CD AS workTypeCd
-			     , C.APPL_NM AS workTypeNm
+			     , CASE WHEN C.APPL_CODE_ID IS NULL THEN M.FLEXIBLE_NM ELSE C.APPL_NM END AS workTypeNm
 			     , M.WORK_SHM AS workShm
 			     , M.WORK_EHM AS workEhm
 			     , M.CORE_CHK_YN AS coreChkYn
@@ -1604,7 +1604,7 @@
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
     		    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
-    		  JOIN WTM_APPL_CODE C
+    		  LEFT OUTER JOIN WTM_APPL_CODE C
 			    ON C.ENTER_CD = M.ENTER_CD
 			   AND C.TENANT_ID = M.TENANT_ID
 			   AND M.WORK_TYPE_CD = C.APPL_CD
