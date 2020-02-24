@@ -66,8 +66,8 @@
     
     <select id="getApplyConfirmList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT DISTINCT F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(A.USE_SYMD, 'YMD'), -1, 'D'), 'YMD') as useSymd
-        		 , F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(A.USE_EYMD, 'YMD'), 1, 'D'), 'YMD') as useEymd 
+			SELECT DISTINCT A.USE_SYMD as useSymd
+        		 , A.USE_EYMD as useEymd 
         		 , B.SABUN AS sabun, C.WORK_TYPE_CD AS workTypeCd
         		 , A.FLEXIBLE_APPLY_ID AS flexibleApplyId
         		 , A.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
@@ -75,13 +75,14 @@
         		 , A.TENANT_ID AS tenantId
         		 , A.ENTER_CD AS enterCd
         		 , A.NOTE AS note
+        		 , B.FLEXIBLE_APPLY_TEMP_ID AS flexibleApplyTempId
 			  FROM WTM_FLEXIBLE_APPLY A
 			 INNER JOIN WTM_FLEXIBLE_APPLY_EMP_TEMP B
 			    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+			    AND B.APPLY_YN != 'Y'
 			 INNER JOIN WTM_FLEXIBLE_STD_MGR C
 			    ON A.FLEXIBLE_STD_MGR_ID = C.FLEXIBLE_STD_MGR_ID
-			 WHERE A.FLEXIBLE_APPLY_ID = #{flexibleApplyId}
-        ]]>
+			 WHERE A.FLEXIBLE_APPLY_ID = #{flexibleApplyId}        ]]>
     </select>
     
     <insert id="insertApplyEmp" parameterType="map" >
@@ -290,4 +291,25 @@
 			 WHERE A.FLEXIBLE_APPLY_ID =  #{flexibleApplyId}
         ]]>
     </select>
+    
+  	<update id="updateFlexibleEmpTemp" parameterType="Long">
+		UPDATE WTM_FLEXIBLE_APPLY_EMP_TEMP SET
+			APPLY_YN = 'Y'
+ 		WHERE FLEXIBLE_APPLY_TEMP_ID = #{flexibleApplyTempId}
+	</update>
+  	
+  	
+ 	<update id="updateFlexibleApplyAll" parameterType="Long">
+	  	UPDATE WTM_FLEXIBLE_APPLY X
+			JOIN (
+			SELECT A.FLEXIBLE_APPLY_ID, CASE WHEN B.ALL_CNT = B.APPLY_CNT THEN 'Y' ELSE 'N' END AS APPLY_YN
+			  FROM WTM_FLEXIBLE_APPLY A
+			 INNER JOIN (SELECT MAX(FLEXIBLE_APPLY_ID) AS FLEXIBLE_APPLY_ID, SUM(1) AS ALL_CNT, SUM(CASE WHEN IFNULL(APPLY_YN, 'N') = 'Y' THEN 1 ELSE 0 END) AS APPLY_CNT
+			              FROM WTM_FLEXIBLE_APPLY_EMP_TEMP
+			             WHERE FLEXIBLE_APPLY_ID = #{flexibleApplyId}) B
+			    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+			)XX
+			ON X.FLEXIBLE_APPLY_ID = XX.FLEXIBLE_APPLY_ID
+			SET X.APPLY_YN = XX.APPLY_YN
+	</update>    
 </mapper>
