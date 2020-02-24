@@ -1,5 +1,5 @@
 <div id="taaCodeMgr">
- 	<div class="container-fluid mgr-wrap bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 			<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -29,8 +29,7 @@
 							<div class="sheet_title_wrap clearfix">
 								<div class="float-left title">근태코드관리</div>
 								<ul class="float-right btn-wrap">
-									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
-									<li><a href="javascript:doAction1('Copy');" class="basic">복사</a></li>
+									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>									
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
 									<li><a href="javascript:doAction1('Down2Excel');" class="basic">다운로드</a></li>
 								</ul>
