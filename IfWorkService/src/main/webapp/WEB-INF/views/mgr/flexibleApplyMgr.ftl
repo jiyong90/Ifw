@@ -548,8 +548,10 @@
 			if(rtn.status == "FAIL"){
 				alert(rtn.message);
 			} else {
-				
-				alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
+				if(rtn.message != '')
+					alert(rtn.message);
+				else 
+					alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
 				doAction1("Search");
 			}			
 		} else {
