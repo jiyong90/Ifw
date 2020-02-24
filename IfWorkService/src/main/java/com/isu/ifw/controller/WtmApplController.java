@@ -27,6 +27,7 @@ import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
+import com.isu.ifw.service.WtmApplLineService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
@@ -77,6 +78,10 @@ public class WtmApplController {
 	@Qualifier(value="flexibleEmpService")
 	WtmFlexibleEmpService wtmflexibleEmpService;
 	
+	@Autowired
+	@Qualifier(value="applLineService")
+	WtmApplLineService wtmApplLineService;
+	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(@RequestParam String applType, HttpServletRequest request) throws Exception {
 		
@@ -123,7 +128,7 @@ public class WtmApplController {
 		
 		List<WtmApplLineVO> applLine = null;
 		try {		
-			applLine = applService.getApplLine(tenantId, enterCd, empNo, applCd, userId);
+			applLine = wtmApplLineService.getApplLine(tenantId, enterCd, empNo, applCd, userId);
 			
 			rp.put("applLine", applLine);
 		} catch(Exception e) {

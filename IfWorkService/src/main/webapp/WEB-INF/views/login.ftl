@@ -28,7 +28,7 @@
         <input type="hidden" id="password" name="password" class="form-control" >
         <input type="text" id="grant_type" name="grant_type" class="form-control" value="password" hidden>
         <input type="text" id="redirect_uri" name="redirect_uri" class="form-control" value="${redirect_uri}" hidden>
-        <div class="checkbox mb-3">
+        <div class="checkbox mb-3 form-element">
             <input type="checkbox" value="remember-me" id="keepLogin">
             <label for="keepLogin">아이디 저장</label>
         	<#if interfaceYn?? && interfaceYn?exists && interfaceYn=='Y' >

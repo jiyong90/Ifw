@@ -331,7 +331,7 @@ public class WtmMobileController {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
 				return rp;
 			}
-			logger.debug("/mobile/{tenantId}/dashboard " + empKey);
+			logger.debug("/mobile/"+tenantId+"/my/status " + empKey);
 			
 			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMdd");
 			Date now = new Date();

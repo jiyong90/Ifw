@@ -28,7 +28,7 @@
   height: calc(100vh - 332px);
 }
 #calendar_left .white-box-wrap.full-height{
-	height: calc(100vh - 156px);
+	height: calc(100vh - 106px);
 }
 #calendar_left .white-box-wrap.full-height.collapse-height{
 	height: calc(100vh - 82px);
@@ -54,27 +54,3 @@
 .mgr-wrap-height{max-height: 100vh; overflow-y:auto; -ms-overflow-y: auto;}
 
 .sheet_title_wrap {padding: 10px 0;}
-
-
-@media all and (max-width:1220px) {
-	
-	.sheet_search .magnifier{
-		margin-right: 0px;
-	}
-	
-	.sheet_search .search-title{
-		display:none;
-	}
-
-	/*---- input ----*/
-	.sheet_title input[type="text"],
-	.sheet_title input[type="number"],
-	.sheet_search input[type="text"],
-	.sheet_search input[type="number"] {
-		width: 100px;
-	}
-	
-	.ui-tabs:not(.sub_top) .ui-tabs-nav li a{
-		padding: 0 14px;
-	}
-}

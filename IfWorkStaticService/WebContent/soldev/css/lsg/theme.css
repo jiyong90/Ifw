@@ -146,14 +146,6 @@ table.default th{
 	color: #003876;
 }
 .ui-tabs:not(.sub_top) .ui-tabs-nav li a {
-    display: inline-block;
-    margin-left: -1px;
-    font-size: 12px;
-    padding: 0 20px;
-    height: 28px;
-    line-height: 28px;
-    font-weight: 500;
-    font-weight: bold;
     border-bottom: 1px solid #003876;
     border-left: 1px solid #e0e2e5;
     border-right: 1px solid #e0e2e5;

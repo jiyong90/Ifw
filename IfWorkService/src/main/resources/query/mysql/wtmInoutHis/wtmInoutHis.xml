@@ -40,13 +40,13 @@
 			                           AND A.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT') 
 			                           GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
 			                           ORDER BY A.YMD) X
-			    ON X.YMD = C.YMD
-			   AND F_WTM_DATE_FORMAT(X.pSdate, 'YMD') = F_WTM_DATE_FORMAT(now(),'YMD')
+						    ON X.YMD = C.YMD
 			 WHERE C.TENANT_ID = #{tenantId}
 			      AND C.ENTER_CD = #{enterCd}
 			      AND C.SABUN = #{sabun}
-      			  AND C.YMD BETWEEN F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(now(), -1, 'D'),'YMD') AND F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(now(), 1, 'D'),'YMD')
-		     ORDER BY C.YMD
+			      AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(now(), '%Y%m%d') = C.YMD )
+				  OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(now(), '%Y%m%d') OR DATE_FORMAT(now(), '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
+			 ORDER BY C.YMD
         ]]>
     </select>
     

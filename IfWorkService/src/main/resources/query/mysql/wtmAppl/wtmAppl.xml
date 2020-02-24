@@ -436,7 +436,9 @@
 				CASE WHEN X.YMD < F_WTM_DATE_FORMAT(X.SDAY, 'YMD') OR X.YMD > F_WTM_DATE_FORMAT(X.EDAY, 'YMD') THEN 'N' 
 					ELSE 'Y' END AS valDate,
 				CONCAT(STR_TO_DATE(X.SDAY, '%Y-%m-%d'), ' ~ ', STR_TO_DATE(X.EDAY, '%Y-%m-%d')) AS pDate,
-				CASE WHEN X.HOLIDAY_YN = 'Y' AND REPLACE(#{shm},':','') != '' AND REPLACE(#{ehm},':','') != '' AND (REPLACE(#{shm},':','') < X.HOL_IN_SHM OR REPLACE(#{ehm},':','') > X.HOL_IN_EHM) THEN 'N' 
+				CASE WHEN X.HOLIDAY_YN = 'Y' AND X.HOL_IN_SHM = '' AND X.HOL_IN_EHM = '' THEN 'Y'
+					WHEN X.HOLIDAY_YN = 'Y' AND REPLACE(#{shm},':','') != '' AND REPLACE(#{ehm},':','') != '' AND (REPLACE(#{shm},':','') < X.HOL_IN_SHM OR REPLACE(#{ehm},':','') > X.HOL_IN_EHM) THEN 'N' 
+					WHEN X.HOLIDAY_YN = 'N' AND  X.IN_SHM = '' AND X.IN_EHM = '' THEN 'Y' 
 					WHEN X.HOLIDAY_YN = 'N' AND REPLACE(#{shm},':','') != '' AND REPLACE(#{ehm},':','') != '' AND (REPLACE(#{shm},':','') < X.IN_SHM OR REPLACE(#{ehm},':','') > X.IN_EHM) THEN 'N'
 					ELSE 'Y' END AS valTime,
 				CASE WHEN X.HOLIDAY_YN = 'Y' THEN CONCAT(LEFT(X.HOL_IN_SHM, 2), ':', RIGHT(X.HOL_IN_SHM, 2), ' ~ ', LEFT(X.HOL_IN_EHM, 2), ':', RIGHT(X.HOL_IN_EHM, 2)) 

@@ -1,5 +1,6 @@
 package com.isu.ifw.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -15,21 +18,106 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
+import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.service.WtmInterfaceService;
+import com.isu.ifw.service.WtmIuerpInterfaceService;
+import com.isu.ifw.util.WtmUtil;
 
 @RestController
 @RequestMapping(value="/interface")
 public class WtmInterfaceController {
 	
+	private static final Logger logger = LoggerFactory.getLogger("ifwDbLog");
+	
 	@Autowired
+	@Qualifier("wtmInterfaceService")
 	private WtmInterfaceService wtmInterfaceService;
+	
+	@Autowired
+	@Qualifier("wtmIuerpInterfaceService")
+	private WtmIuerpInterfaceService wtmIuerpInterfaceService;
+	
+	@Autowired
+	WtmInoutService inoutService;
+	
+	private RestTemplate restTemplate;
 	
 	@Autowired
 	@Qualifier("WtmTenantModuleRepository")
 	CommTenantModuleRepository tenantModuleRepo;
+	
+	@RequestMapping(value = "/iuerp/{tsId}",method = RequestMethod.POST)
+	public void applyIntf(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		CommTenantModule tm = null;
+	    tm = tenantModuleRepo.findByTenantKey(tsId);
+        Long tenantId = tm.getTenantId();
+        
+        logger.debug("["+tsId+"] iuERP INTERFACE START >>>>>");
+        
+        try {
+			
+			// 공통코드
+	        logger.debug("==WTM_CODE START==");
+	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_CODE);
+	        logger.debug("==WTM_CODE END==");
+	       
+	        // 공휴일
+	        //logger.debug("==WTM_HOLIDAY_MGR START==");
+	        //wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_HOLIDAY_MGR);
+	        //logger.debug("==WTM_HOLIDAY_MGR END==");
+	        
+	        // 근태코드
+	        logger.debug("==WTM_TAA_CODE START==");
+	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_TAA_CODE);
+	        logger.debug("==WTM_TAA_CODE END==");
+	        
+	        /*
+	        // 조직코드
+	        logger.debug("==WTM_ORG_CODE START==");
+	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_ORG_CODE);
+	        logger.debug("==WTM_ORG_CODE END==");
+	        
+	        // 조직도
+	        logger.debug("==WTM_ORG_CHART, WTM_ORG_CHART_DET START==");
+	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_CODE);
+	        logger.debug("==WTM_ORG_CHART, WTM_ORG_CHART_DET END==");
+	        */
+        	
+	        // 직원정보
+	        logger.debug("==WTM_EMP_HIS START==");
+	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_EMP_HIS);
+	        logger.debug("==WTM_EMP_HIS END==");
+	        
+	        // 겸직정보
+	        //logger.debug("==WTM_ORG_CONC START==");
+	        //wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_ORG_CONC);
+	        //logger.debug("==WTM_ORG_CONC END==");
+	        
+	        // 직원 연락처
+	        logger.debug("==WTM_EMP_ADDR START==");
+	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_EMP_ADDR);
+	        logger.debug("==WTM_EMP_ADDR END==");
+	        
+	        /*
+	        // 근태 신청
+	        logger.debug("==WTM_TAA_APPL START==");
+	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_TAA_APPL);
+	        logger.debug("==WTM_TAA_APPL END==");
+	        */
+	        
+        } catch(Exception e) {
+        	logger.debug("iuERP INTERFACE ERROR");
+        	e.printStackTrace();
+        }
+        
+        logger.debug("iuERP INTERFACE END >>>>>");
+		
+	}
 	
 	@RequestMapping(value = "/ifAll", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -162,6 +250,52 @@ public class WtmInterfaceController {
 		
 		wtmInterfaceService.setTaaApplIf(reqMap); //근태정보 인터페이스
 		return ;
+	}
+	
+	@RequestMapping(value = "/workTimeArrIf",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String,Object> setTaaApplArrIf(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		Map<String,Object> retMap = new HashMap();
+		Map<String, Object> ifHisMap = new HashMap<>();
+		System.out.println("workTimeArrIf : start");
+		
+		// 테넌트정보 조회
+		String apiKey = null;
+		apiKey = paramMap.get("apiKey").toString();
+		CommTenantModule tm = null;
+	    tm = tenantModuleRepo.findByApiKey(apiKey);
+	    Long tenantId = tm.getTenantId();
+	    
+		try {
+	        // 근태저장
+	        retMap = wtmInterfaceService.setTaaApplArrIf(paramMap); //근태정보(출장등 배열용) 인터페이스	        
+	        // 결과값 저장 tenantId 있을때만
+	        // WTM_IF_HIS 테이블에 결과저장
+ 	    	ifHisMap.put("tenantId", tenantId);
+ 	    	ifHisMap.put("ifItem", "WORK_TIME");
+ 			ifHisMap.put("ifStatus", retMap.get("status").toString());
+ 			ifHisMap.put("updateDate", WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss"));
+    		ifHisMap.put("ifEndDate", WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss"));
+ 			ifHisMap.put("ifMsg", retMap.get("retMsg").toString());
+ 			wtmInterfaceService.setIfHis(ifHisMap);
+	        
+		} catch(Exception e) {
+			
+			e.printStackTrace();
+			String errMsg = e.getMessage();
+			ifHisMap.put("tenantId", tenantId);
+ 	    	ifHisMap.put("ifItem", "WORK_TIME");
+ 			ifHisMap.put("ifStatus", "ERR");
+ 			ifHisMap.put("updateDate", WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss"));
+    		ifHisMap.put("ifEndDate", WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss"));
+ 			ifHisMap.put("ifMsg", errMsg);
+ 			wtmInterfaceService.setIfHis(ifHisMap);
+ 			
+ 			retMap.put("status", "ERR");
+ 	    	retMap.put("retMsg", errMsg);
+		}
+		System.out.println("workTimeArrIf : end");
+		return retMap;
 	}
 	
 	// 5분간격 배치용

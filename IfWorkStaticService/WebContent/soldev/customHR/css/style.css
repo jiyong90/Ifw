@@ -70,7 +70,7 @@ textarea.required { border:1px solid #008fd5 !important; }
 	font-size: 16px;
 }
 .sheet_search .search-title{
-	display: block;
+	display: inline-block;
 	color: #4b4d51;
     font-size: 15px;
     font-weight: bold;
@@ -149,6 +149,7 @@ a.button7 img {
 .sheet_title input[type="number"],
 .sheet_search input[type="text"],
 .sheet_search input[type="number"] {
+	width: 140px;
     border: 1px solid #e0e2e5;
     padding: 0 5px;
     height: 28px;
@@ -1267,7 +1268,8 @@ table.default th{position:relative;  font-weight:500; font-weight:bold; padding:
 border-left:1px solid #e0e2e5; 
 border-right:1px solid #e0e2e5; 
 border-bottom:1px solid #e0e2e5; 
-background-color:#F4F4F4; 
+background-color:#F4F4F4;
+background-clip:padding-box; /* for IE */
 color:#333;
 }
 table.default th:first-child{ border-left:none; }
@@ -1282,7 +1284,7 @@ table.default th span.required{
     border-radius: 50%;
     }
 table.default td{padding:4px 10px; border-bottom:1px solid #e0e2e5; font-size:12px;}
-table.default td input{position:relative; padding:3px 0 3px 5px; border:1px solid #e0e2e5; text-align:left; height:21px; vertical-align:middle;}
+table.default td input{width:40%; position:relative; padding:3px 0 3px 5px; border:1px solid #e0e2e5; text-align:left; height:21px; vertical-align:middle;}
 /* date timepicker custom */
 table.default td input div.bootstrap-datetimepicker-widget.dropdown-menu{width:auto;}
 table.default td .bootstrap-datetimepicker-widget table td{border-bottom:0px;}
@@ -1494,3 +1496,24 @@ table.default td img.ui-datepicker-trigger{ margin:0 0 0 -4px; }
 
 /* cell selector */
 .GMFocusRowBackground, .GMCursorBackground 	{opacity:0.15;filter:alpha(opacity=15);background:#008fd5 !important;}
+
+@media all and (max-width:1330px){
+	/* mgr */
+	.sheet_search{padding-left: 20px;}
+	.sheet_search .magnifier{
+		margin-right: 0px;
+	}
+	.sheet_search .search-title{
+		display:none;
+	}
+	/*---- input ----*/
+	.sheet_title input[type="text"],
+	.sheet_title input[type="number"],
+	.sheet_search input[type="text"],
+	.sheet_search input[type="number"] {
+		width: 100px;
+	}
+	.ui-tabs:not(.sub_top) .ui-tabs-nav li a{
+		padding: 0 14px;
+	}
+}

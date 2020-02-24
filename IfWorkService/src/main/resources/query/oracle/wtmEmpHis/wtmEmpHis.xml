@@ -38,6 +38,7 @@
 						   AND ENTER_CD = #{enterCd} 
 							AND CASE WHEN length(#{sYmd, jdbcType=VARCHAR}) > 0 THEN REPLACE(#{sYmd, jdbcType=VARCHAR}, '-', '')
 							         ELSE F_WTM_DATE_FORMAT(SYSDATE,'YMD') END BETWEEN SYMD AND EYMD
+							AND STATUS_CD <> 'RA'
 		]]>
 			        	   <if test="orgList!=null">
 						   AND ORG_CD IN (NULL, 
@@ -86,6 +87,7 @@
 				 , EMP_ID
 			  FROM WTM_EMP_HIS
 			 WHERE EMP_HIS_ID = #{empHisId}
+			   AND STATUS_CD <> 'RA'
         ]]>
         <if test="orgList!=null">
 			   AND ORG_CD IN (NULL, 

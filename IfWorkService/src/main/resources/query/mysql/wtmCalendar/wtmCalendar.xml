@@ -80,7 +80,7 @@
 			LEFT JOIN ( SELECT R.*
 	                 , T.TAA_NM
 	              FROM WTM_WORK_DAY_RESULT R
-	              JOIN WTM_TAA_CODE T
+	              LEFT OUTER JOIN WTM_TAA_CODE T
 	                ON R.TENANT_ID = T.TENANT_ID
 	               AND R.ENTER_CD = T.ENTER_CD
 	               AND R.TAA_CD = T.TAA_CD
