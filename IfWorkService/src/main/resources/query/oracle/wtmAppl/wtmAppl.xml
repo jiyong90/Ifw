@@ -40,13 +40,13 @@
 			        AND X.ORG_CD = H.ORG_CD
 			        AND H.LEADER_YN = 'Y'
 			        AND #{d} BETWEEN H.SYMD AND H.EYMD
-			        AND H.SABUN <> #{sabun}
 			       LEFT OUTER JOIN WTM_ORG_CONC O
 			         ON X.TENANT_ID = O.TENANT_ID
 			        AND X.ENTER_CD = O.ENTER_CD
 			        AND X.ORG_CD = O.ORG_CD
 			        AND #{d} BETWEEN O.SYMD AND O.EYMD
 				 WHERE (EMP_HIS_ID IS NOT NULL OR ORG_CONC_ID IS NOT NULL)
+				 AND (CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END) <> #{sabun}
 		UNION ALL
 		SELECT 3 AS APPR_TYPE_CD
 		     , SEQ

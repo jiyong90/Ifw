@@ -67,6 +67,7 @@
 			 WHERE _PARENT_ID IS NOT NULL
        		   AND (EMP_HIS_ID IS NOT NULL OR ORG_CONC_ID IS NOT NULL)
        		   AND (X.LEADER_YN = 'N' OR (X.LEADER_YN = 'Y' AND EMP_ORG <> X.ORG_CD))
+       		   AND (CASE WHEN EMP_HIS_ID IS NOT NULL THEN H.SABUN ELSE O.SABUN END) <> #{sabun}
        	UNION ALL
 		SELECT 3 AS APPR_TYPE_CD
 		     , SEQ
@@ -77,7 +78,7 @@
 		    ON RL.APPL_CODE_ID = AC.APPL_CODE_ID
 		 WHERE (AC.TENANT_ID, AC.ENTER_CD, AC.APPL_CD) IN (SELECT #{tenantId}, #{enterCd}, #{applCd} FROM dual)
 		ORDER BY APPR_TYPE_CD, SEQ                                                          
-		) S, (SELECT @rownum:=0) TMP                                             
+		) S, (SELECT @rownum:=0) TMP                                           
         ]]>
     </select>
 
