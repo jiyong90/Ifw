@@ -37,4 +37,28 @@
 			 WHERE S.ORG_CD IS NOT NULL
         ]]>
     </select>
+    
+    <update id="updateOrgChartEymd" parameterType="map">
+        <![CDATA[
+          UPDATE WTM_ORG_CHART_TEST
+             SET EYMD = #{ymd}
+          WHERE TENANT_ID = ${tenantId}
+  		    AND ENTER_CD = #{enterCd}
+  		    AND #{ymd} BETWEEN SYMD AND EYMD
+        ]]>
+    </update>
+    
+    <update id="insertOrgChart" parameterType="map">
+        <![CDATA[
+          INSERT INTO WTM_ORG_CHART_TEST(TENANT_ID, ENTER_CD, ORG_CHART_NM, SYMD, EYMD, UPDATE_DATE, UPDATE_ID)
+		  SELECT ${tenantId} AS TENANT_ID 
+		       , #{enterCd} AS ENTER_CD 
+		       , #{orgChartNm} AS ORG_CHART_NM
+		       , #{symd} AS SYMD
+		       , #{eymd} AS EYMD 
+		       , NOW() AS UPDATE_DATE
+		       , #{updateId} AS UPDATE_ID
+  			FROM DUAL
+        ]]>
+    </update>
 </mapper>

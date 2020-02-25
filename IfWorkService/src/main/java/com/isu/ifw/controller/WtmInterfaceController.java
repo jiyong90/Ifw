@@ -63,52 +63,38 @@ public class WtmInterfaceController {
 			
 			// 공통코드
 	        logger.debug("==WTM_CODE START==");
-	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_CODE);
+	        wtmIuerpInterfaceService.applyIntf(tenantId, "WTM_INTF_CODE");
 	        logger.debug("==WTM_CODE END==");
 	       
 	        // 공휴일
 	        //logger.debug("==WTM_HOLIDAY_MGR START==");
-	        //wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_HOLIDAY_MGR);
+	        //wtmIuerpInterfaceService.applyIntf(tenantId, "WTM_INTF_HOLIDAY");
 	        //logger.debug("==WTM_HOLIDAY_MGR END==");
 	        
 	        // 근태코드
 	        logger.debug("==WTM_TAA_CODE START==");
-	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_TAA_CODE);
+	        wtmIuerpInterfaceService.applyIntf(tenantId, "WTM_INTF_GNT");
 	        logger.debug("==WTM_TAA_CODE END==");
 	        
-	        /*
 	        // 조직코드
 	        logger.debug("==WTM_ORG_CODE START==");
-	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_ORG_CODE);
+	        wtmIuerpInterfaceService.applyIntf(tenantId, "WTM_INTF_ORG");
 	        logger.debug("==WTM_ORG_CODE END==");
-	        
-	        // 조직도
-	        logger.debug("==WTM_ORG_CHART, WTM_ORG_CHART_DET START==");
-	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_CODE);
-	        logger.debug("==WTM_ORG_CHART, WTM_ORG_CHART_DET END==");
-	        */
         	
 	        // 직원정보
 	        logger.debug("==WTM_EMP_HIS START==");
-	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_EMP_HIS);
+	        wtmIuerpInterfaceService.applyIntf(tenantId, "WTM_INTF_EMP");
 	        logger.debug("==WTM_EMP_HIS END==");
 	        
 	        // 겸직정보
 	        //logger.debug("==WTM_ORG_CONC START==");
-	        //wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_ORG_CONC);
+	        //wtmIuerpInterfaceService.applyIntf(tenantId, "WTM_INTF_ORG_CONC");
 	        //logger.debug("==WTM_ORG_CONC END==");
 	        
 	        // 직원 연락처
 	        logger.debug("==WTM_EMP_ADDR START==");
-	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_EMP_ADDR);
+	        wtmIuerpInterfaceService.applyIntf(tenantId, "WTM_INTF_EMP_ADDR");
 	        logger.debug("==WTM_EMP_ADDR END==");
-	        
-	        /*
-	        // 근태 신청
-	        logger.debug("==WTM_TAA_APPL START==");
-	        wtmIuerpInterfaceService.applyIntf(tenantId, wtmIuerpInterfaceService.IF_IUERP_WTM_TAA_APPL);
-	        logger.debug("==WTM_TAA_APPL END==");
-	        */
 	        
         } catch(Exception e) {
         	logger.debug("iuERP INTERFACE ERROR");
@@ -116,6 +102,31 @@ public class WtmInterfaceController {
         }
         
         logger.debug("iuERP INTERFACE END >>>>>");
+		
+	}
+	
+	@RequestMapping(value = "/iuerp/{tsId}/{type}",method = RequestMethod.POST)
+	public void applyIntfByType(@PathVariable String tsId, @PathVariable String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		CommTenantModule tm = null;
+	    tm = tenantModuleRepo.findByTenantKey(tsId);
+        Long tenantId = tm.getTenantId();
+        
+        logger.debug("["+tsId+"] iuERP INTERFACE "+type+" START >>>>>");
+        
+        try {
+			
+	        // 근태 신청
+	        logger.debug("==WTM_TAA_APPL START==");
+	        wtmIuerpInterfaceService.applyIntf(tenantId, "WTM_INTF_TAA_APPL");
+	        logger.debug("==WTM_TAA_APPL END==");
+	        
+        } catch(Exception e) {
+        	logger.debug("iuERP INTERFACE ERROR");
+        	e.printStackTrace();
+        }
+        
+        logger.debug("iuERP INTERFACE "+type+" END >>>>>");
 		
 	}
 	

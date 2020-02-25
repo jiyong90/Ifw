@@ -17,4 +17,28 @@
 			CONNECT BY PRIOR ORG_CD = PRIOR_ORG_CD
         ]]>
     </select>
+    
+    <update id="updateOrgChartEymd" parameterType="map">
+        <![CDATA[
+          UPDATE WTM_ORG_CHART
+             SET EYMD = #{ymd}
+          WHERE TENANT_ID = ${tenantId}
+  		    AND ENTER_CD = #{enterCd}
+  		    AND #{ymd} BETWEEN SYMD AND EYMD
+        ]]>
+    </update>
+    
+    <update id="insertOrgChart" parameterType="map" >
+        <![CDATA[
+          INSERT INTO WTM_ORG_CHART(TENANT_ID, ENTER_CD, ORG_CHART_NM, SYMD, EYMD, NOTE, UPDATE_DATE, UPDATE_ID)
+		  SELECT ${tenantId} AS TENANT_ID 
+		       , #{enterCd} AS ENTER_CD 
+		       , #{orgChartNm} AS ORG_CHART_NM
+		       , #{symd} AS SYMD
+		       , #{eymd} AS EYMD 
+		       , SYSDATE AS UPDATE_DATE
+		       , #{updateId} AS UPDATE_ID 
+  			FROM DUAL
+        ]]>
+    </update>
 </mapper>
