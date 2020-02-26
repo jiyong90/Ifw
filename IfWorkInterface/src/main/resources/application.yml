@@ -26,7 +26,17 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
-    
+      
+  mvc: 
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .ftl
+         
+  freemarker:
+    template-loader-path: /WEB-INF/views/
+    suffix: .ftl
+    request-context-attribute: rc 
+        
 mybatis:
   config-location: classpath:query/iuerp/**/*.xml
   configuration:
