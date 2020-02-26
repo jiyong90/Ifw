@@ -228,9 +228,9 @@
 							 , C.ENTER_CD as enterCd
 							 , C.SABUN as sabun 
 							 , F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS orgNm
-							 , F_WTM_GET_EMP_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS empNm
+							 , H.EMP_NM AS empNm
 							 , C.YMD as ymd
-							 , F_WTM_GET_FLEXIBLE_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS flexibleNm
+							 , E.FLEXIBLE_NM AS flexibleNm
 							 , C.TIME_CD_MGR_ID as timeCdMgrId
 							 , MIN(R.PLAN_SDATE) as planSdate
 							 , C.ENTRY_SDATE as entrySdate
@@ -252,6 +252,11 @@
 						 AND C.ENTER_CD = R.ENTER_CD 
 						 AND C.SABUN = R.SABUN 
 						 AND C.YMD = R.YMD
+						LEFT OUTER JOIN WTM_FLEXIBLE_EMP E
+						  ON C.TENANT_ID = E.TENANT_ID
+						 AND C.ENTER_CD = E.ENTER_CD
+						 AND C.SABUN = E.SABUN
+						 AND C.YMD BETWEEN E.SYMD AND E.EYMD
 						WHERE C.YMD BETWEEN #{sYmd} AND #{eYmd}
 						  AND C.TENANT_ID = #{tenantId}
 						  AND C.ENTER_CD = #{enterCd}
@@ -304,7 +309,7 @@
   	<select id="getTermList" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CONCAT(DATE_FORMAT(STR_TO_DATE(SDATE, '%Y%m%d'),'%Y.%m.%d'),' ~ ', DATE_FORMAT(STR_TO_DATE(EDATE, '%Y%m%d'),'%Y.%m.%d')) AS title, 
-				WORK_TYPE_NM AS caption_rb, CONCAT(SDATE, '@', #{month}, '@', WORK_TYPE_CD) AS key2
+				WORK_TYPE_NM AS caption_rb, CONCAT(SDATE, '@',  #{month}, '@', WORK_TYPE_CD) AS key2
 			FROM(
 				SELECT DISTINCT T.WORK_TYPE_CD, T.SDATE, T.EDATE, WORK_TYPE_NM, H.ORG_CD
 					FROM (SELECT CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_SDATE ELSE WEEK_SDATE END AS SDATE
@@ -349,7 +354,8 @@
 				F_WTM_SUM_FLEXIBLE_EMP_TIME(T.TENANT_ID, T.ENTER_CD, T.SABUN, T.SDATE, T.EDATE) as caption_rb,
 				TIME_FORMAT(SEC_TO_TIME((SUM(T.APPR_WORK_MINUTE)+SUM(T.APPR_OT_MINUTE))*60), '%H:%i') as status, 
 				TIME_FORMAT(SEC_TO_TIME(SUM(T.APPR_OT_MINUTE)*60), '%H:%i') as test,
-				H.ORG_CD, F_WTM_GET_ORG_NM(T.TENANT_ID, T.ENTER_CD, H.ORG_CD, F_WTM_DATE_FORMAT(now(), 'YMD')) as caption_lb				FROM (SELECT CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_SDATE ELSE WEEK_SDATE END AS SDATE
+				H.ORG_CD, F_WTM_GET_ORG_NM(T.TENANT_ID, T.ENTER_CD, H.ORG_CD, F_WTM_DATE_FORMAT(now(), 'YMD')) as caption_lb				
+				FROM (SELECT CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_SDATE ELSE WEEK_SDATE END AS SDATE
 				           , CASE WHEN WORK_TYPE_CD LIKE 'SELE%' THEN FLEXIBLE_EDATE ELSE WEEK_EDATE END AS EDATE
 				           , SABUN
 				           , WORK_TYPE_CD

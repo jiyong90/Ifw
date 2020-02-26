@@ -149,35 +149,34 @@
 	                 , T.EYMD
 	                 , CASE WHEN S.INTF_ID IS NOT NULL THEN S.NOTE ELSE T.NOTE END AS NOTE
 				     FROM ( SELECT C.CODE_ID
-					               , C.TENANT_ID
-				                  , C.ENTER_CD
-				                  , C.GRP_CODE_CD
-				                  , C.CODE_CD
-					               , C.CODE_NM
-								      , CASE WHEN C.SYMD > I.SYMD THEN F_WTM_DATE_FORMAT(DATE_ADD(I.EYMD, INTERVAL 1 DAY),'YMD') 
-												ELSE C.SYMD END AS SYMD
-									   , CASE WHEN C.SYMD < I.SYMD THEN F_WTM_DATE_FORMAT(DATE_SUB(I.SYMD, INTERVAL 1 DAY),'YMD') 
-									  			WHEN C.SYMD = I.SYMD THEN I.EYMD
-												ELSE C.EYMD END AS EYMD						  
-								      , C.NOTE
-								  FROM WTM_CODE_TEST C
-								  JOIN (SELECT D.*
-											     , CASE WHEN @grpCodeCd=GRP_CODE_CD THEN CASE WHEN @codeCd=CODE_CD THEN @rownum := @rownum+1 ELSE @rownum:=1 END ELSE @rownum:=1 END AS ROWNUM
-											     , @grpCodeCd := GRP_CODE_CD
-											     , @codeCd := CODE_CD
-											  FROM WTM_INTF_CODE D
-											  JOIN ( SELECT @rownum:=0, @grpCodeCd:= '', @codeCd:= '' ) U
-											 WHERE TENANT_ID = ${tenantId}
-											   AND YYYYMMDDHHMISS > #{ymdhis}
-											ORDER BY YYYYMMDDHHMISS, TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD, SYMD) I
-								    ON C.TENANT_ID = I.TENANT_ID
-									   AND C.ENTER_CD = I.ENTER_CD
-									   AND C.GRP_CODE_CD = I.GRP_CODE_CD
-									   AND C.CODE_CD = I.CODE_CD
-									   AND C.SYMD < I.EYMD AND I.EYMD <= C.EYMD
-								 WHERE I.TENANT_ID = ${tenantId} 
-								   AND ROWNUM = 1
-								   AND (C.SYMD<>I.SYMD OR C.EYMD<>I.EYMD ) ) T
+							      , C.TENANT_ID
+							      , C.ENTER_CD
+							      , C.GRP_CODE_CD
+							      , C.CODE_CD
+							      , C.CODE_NM
+							      , CASE WHEN C.SYMD > I.SYMD THEN I.SYMD ELSE C.SYMD END AS SYMD 
+								   , CASE WHEN C.SYMD < I.SYMD THEN F_WTM_DATE_FORMAT(DATE_SUB(I.SYMD, INTERVAL 1 DAY),'YMD') 
+								  			WHEN C.SYMD >= I.SYMD THEN I.EYMD
+											ELSE C.EYMD END AS EYMD						  
+							      , C.NOTE
+							  FROM WTM_CODE_TEST C
+							  JOIN (SELECT D.*
+										     , CASE WHEN @grpCodeCd=GRP_CODE_CD THEN CASE WHEN @codeCd=CODE_CD THEN @rownum := @rownum+1 ELSE @rownum:=1 END ELSE @rownum:=1 END AS ROWNUM
+										     , @grpCodeCd := GRP_CODE_CD
+										     , @codeCd := CODE_CD
+										  FROM WTM_INTF_CODE D
+										  JOIN ( SELECT @rownum:=0, @grpCodeCd:= '', @codeCd:= '' ) U
+										 WHERE TENANT_ID = ${tenantId}
+										   AND YYYYMMDDHHMISS > #{ymdhis}
+										ORDER BY YYYYMMDDHHMISS, TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD, SYMD) I
+							    ON C.TENANT_ID = I.TENANT_ID
+								   AND C.ENTER_CD = I.ENTER_CD
+								   AND C.GRP_CODE_CD = I.GRP_CODE_CD
+								   AND C.CODE_CD = I.CODE_CD
+								   AND C.SYMD < I.EYMD AND I.EYMD <= C.EYMD
+							 WHERE I.TENANT_ID = ${tenantId}
+							   AND ROWNUM = 1
+							   AND (C.SYMD<>I.SYMD OR C.EYMD<>I.EYMD ) ) T
 							  LEFT OUTER JOIN WTM_INTF_CODE S
 							    ON T.TENANT_ID=S.TENANT_ID 
 								AND T.ENTER_CD=S.ENTER_CD 
@@ -220,7 +219,7 @@
 								  AND SYMD=I.SYMD
 								  AND EYMD=I.EYMD ) AS CNT
 					  FROM WTM_INTF_CODE I
-					  JOIN WTM_CODE_TEST C
+					  LEFT OUTER JOIN WTM_CODE_TEST C
 					    ON I.TENANT_ID = C.TENANT_ID
 					   AND I.ENTER_CD = C.ENTER_CD
 					   AND I.GRP_CODE_CD = C.GRP_CODE_CD
@@ -371,7 +370,7 @@
 		<![CDATA[
 		SELECT F_WTM_DATE_FORMAT(NOW(),'YMD') AS YMD , E.* 
 		  FROM WTM_EMP_HIS_TEST E
-		  LEFT OUTER JOIN WTM_INTF_EMP_TEST I
+		  LEFT OUTER JOIN WTM_INTF_EMP I
 		    ON E.TENANT_ID = I.TENANT_ID
 			AND E.ENTER_CD = I.ENTER_CD
 			AND E.SABUN = I.SABUN 
@@ -385,7 +384,7 @@
 	<update id="expireWtmEmpHis" parameterType="hashmap">
 		<![CDATA[
 		UPDATE WTM_EMP_HIS_TEST E
-		  LEFT OUTER JOIN WTM_INTF_EMP_TEST I
+		  LEFT OUTER JOIN WTM_INTF_EMP I
 		    ON E.TENANT_ID = I.TENANT_ID
 					AND E.ENTER_CD = I.ENTER_CD
 					AND E.SABUN = I.SABUN 
@@ -403,7 +402,7 @@
 		<![CDATA[
 			SELECT *
 			  FROM WTM_EMP_HIS_TEST E
-			  JOIN WTM_INTF_EMP_TEST I
+			  JOIN WTM_INTF_EMP I
 			    ON E.TENANT_ID = I.TENANT_ID
 			   	 AND E.ENTER_CD = I.ENTER_CD
 			   	 AND E.SABUN = I.SABUN
@@ -422,7 +421,7 @@
 	<update id="updateWtmEmpHis" parameterType="hashmap">
 		<![CDATA[
 		UPDATE WTM_EMP_HIS_TEST E
-		  JOIN WTM_INTF_EMP_TEST I
+		  JOIN WTM_INTF_EMP I
 		    ON E.TENANT_ID = I.TENANT_ID
 		   	 AND E.ENTER_CD = I.ENTER_CD
 		   	 AND E.SABUN = I.SABUN
@@ -473,7 +472,7 @@
 		     , I.NOTE AS note
 		     , #{updateId} AS userId
 		     , #{updateId} AS pId
-		  FROM WTM_INTF_EMP_TEST I
+		  FROM WTM_INTF_EMP I
 		  LEFT OUTER JOIN WTM_EMP_HIS_TEST E
 		    ON E.TENANT_ID = I.TENANT_ID
 			AND E.ENTER_CD = I.ENTER_CD
@@ -482,7 +481,7 @@
 			AND E.EYMD = I.EYMD
 		 WHERE I.TENANT_ID = ${tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
-		   AND I.SABUN IN ( SELECT SABUN FROM WTM_INTF_EMP_TEST WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
+		   AND I.SABUN IN ( SELECT SABUN FROM WTM_INTF_EMP WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
 		   AND E.EMP_HIS_ID IS NULL
 		   ORDER BY I.ENTER_CD, I.SABUN, I.SYMD
 		]]>
@@ -512,7 +511,7 @@
 			 , F_WTM_AES_ENCRYPT(CONCAT(I.TENANT_ID, I.ENTER_CD, I.SABUN), #{encKey}) AS EMP_ID
 			 , NOW() AS UPDATE_DATE
 			 , #{updateId} AS UPDATE_ID
-		FROM WTM_INTF_EMP_TEST I
+		FROM WTM_INTF_EMP I
 		  LEFT OUTER JOIN WTM_EMP_HIS_TEST E
 		    ON E.TENANT_ID = I.TENANT_ID
 			AND E.ENTER_CD = I.ENTER_CD
@@ -521,7 +520,7 @@
 			AND E.EYMD = I.EYMD
 		 WHERE I.TENANT_ID = ${tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
-		   AND I.SABUN IN ( SELECT SABUN FROM WTM_INTF_EMP_TEST WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
+		   AND I.SABUN IN ( SELECT SABUN FROM WTM_INTF_EMP WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
 		   AND E.EMP_HIS_ID IS NULL
 		   ORDER BY I.ENTER_CD, I.SABUN, I.SYMD
 		]]>
@@ -704,11 +703,10 @@
 					               , C.ENTER_CD
 					               , C.ORG_CD
 					               , C.ORG_NM
-								      , CASE WHEN C.SYMD > I.SYMD THEN F_WTM_DATE_FORMAT(DATE_ADD(I.EYMD, INTERVAL 1 DAY),'YMD') 
-												ELSE C.SYMD END AS SYMD
-									   , CASE WHEN C.SYMD < I.SYMD THEN F_WTM_DATE_FORMAT(DATE_SUB(I.SYMD, INTERVAL 1 DAY),'YMD') 
-									  			WHEN C.SYMD = I.SYMD THEN I.EYMD
-												ELSE C.EYMD END AS EYMD	
+								   , CASE WHEN C.SYMD > I.SYMD THEN I.SYMD ELSE C.SYMD END AS SYMD 
+								   , CASE WHEN C.SYMD < I.SYMD THEN F_WTM_DATE_FORMAT(DATE_SUB(I.SYMD, INTERVAL 1 DAY),'YMD') 
+								  			WHEN C.SYMD >= I.SYMD THEN I.EYMD
+											ELSE C.EYMD END AS EYMD		
 										, C.ORG_TYPE					  
 								      , C.NOTE
 								  FROM WTM_ORG_CODE_TEST C
@@ -773,13 +771,13 @@
 								  AND SYMD=I.SYMD
 								  AND EYMD=I.EYMD ) AS CNT
 					  FROM WTM_INTF_ORG I
-					  JOIN WTM_ORG_CODE_TEST C
+					  LEFT OUTER JOIN WTM_ORG_CODE_TEST C
 					    ON I.TENANT_ID = C.TENANT_ID
 					   AND I.ENTER_CD = C.ENTER_CD
 					   AND I.ORG_CD = C.ORG_CD
 					   AND (C.SYMD <> I.SYMD AND C.EYMD <> I.EYMD)
-					 WHERE I.TENANT_ID = 12 
-					   AND I.YYYYMMDDHHMISS > '20200215000000'
+					 WHERE I.TENANT_ID = ${tenantId}
+					   AND I.YYYYMMDDHHMISS > #{ymdhis}
 					 ORDER BY I.ENTER_CD, I.ORG_CD, I.SYMD ) T 
 		 WHERE CNT=0
 		]]>
