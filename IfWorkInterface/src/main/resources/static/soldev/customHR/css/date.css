@@ -1,0 +1,339 @@
+@charset "utf-8";
+
+/* datepicker2 css */
+.bbit-dp {
+    position: absolute;
+    width: 191px;
+    height: 216px;
+    border: #b8c6cc 1px solid;
+    overflow: hidden;
+    zoom:1;
+    padding: 0;
+    visibility: hidden;
+    background: #fff;
+    left: 0px;
+    top: 0px;
+}
+
+.bbit-dp em {
+    font-style: normal;
+}
+
+.bbit-dp table {
+    table-layout: fixed;
+    border-collapse: separate;
+}
+
+.bbit-dp td th {
+    margin: 0px;
+}
+
+.bbit-dp-top-center {
+    cursor: pointer;
+    white-space: nowrap;
+    color: #fff;
+    text-align: center;
+    padding-bottom: 6px;
+    vertical-align: top;
+}
+
+.bbit-dp-top-center button {
+    font-size: 11px;
+    border: 0 none;
+    cursor: pointer;
+    margin: 0;
+    overflow: visible;
+    width: auto;
+    -moz-outline: 0 none;
+    outline: 0 none;
+    background: #fff url(../img/btn_calendar_month.gif) no-repeat 95% 8px;
+    padding: 0 20px 0 0;
+}
+
+.bbit-dp-top-center button span {
+    font-size: 13px;
+    font-family: Verdana;
+    font-weight: bold;
+    padding-right: 4px;
+}
+
+.bbit-dp-top-center button b {
+    font-size: 17px;
+    font-family: Verdana;
+    font-weight: bold;
+    padding-right: 4px;
+}
+
+.bbit-dp .bbit-dp-top {
+    width: 173px;
+    margin: 6px 0 0 8px;
+    border-bottom: 1px dotted #b8c6cc;
+}
+
+.bbit-dp-top-right,.bbit-dp-top-left {
+    width: 11px;
+    padding-bottom: 6px;
+}
+
+.bbit-dp-top-right {
+    padding-right: 2px;
+}
+
+.bbit-dp-top-right a,.bbit-dp-top-left a {
+    display: block;
+    width: 11px;
+    height: 17px;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.bbit-dp-top-left {
+    padding-left: 6px;
+}
+
+.bbit-dp-top-left a {
+    background: url(../img/btn_calendar_prev2.gif) no-repeat 0 50%;
+}
+
+.bbit-dp-top-right a {
+    background: url(../img/btn_calendar_next2.gif) no-repeat 0 50%;
+}
+
+.bbit-dp-top-left a:hover {
+    background-image: url(../img/btn_calendar_prev2_over.gif);
+}
+
+.bbit-dp-top-right a:hover {
+    background-image: url(../img/btn_calendar_next2_over.gif);
+}
+
+.bbit-dp-inner {
+    width: 175px;
+    margin: 7px 0 0 9px;
+}
+
+.bbit-dp-inner th,.bbit-dp-inner td {
+    border-collapse: separate;
+}
+
+.bbit-dp-inner th {
+    display: none;
+}
+
+.bbit-dp-inner td {
+    width: 25px;
+    text-align: left;
+    padding: 0;
+    border-collapse: separate;
+    font-family: Verdana
+}
+
+.bbit-dp a {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-decoration: none;
+    color: #8d9ba6;
+    font-weight: bold;
+    zoom:1;margin-bottom: 1px
+}
+
+.bbit-dp-inner td a {
+    display: block;
+    font-family: verdana;
+    font-size: 11px;
+    text-align: center;
+}
+
+.bbit-dp-inner .bbit-dp-active {
+    cursor: pointer;
+    color: black;
+}
+
+.bbit-dp-inner .bbit-dp-selected a {
+}
+
+.bbit-dp-inner .bbit-dp-today a {
+    background: #b8c6cc !important;
+    color: #fff !important;
+}
+
+.bbit-dp-inner .bbit-dp-selected a {
+    background: #fad5e6;
+}
+
+.bbit-dp-inner .bbit-dp-sunday a {
+    color: #ef519c;
+}
+
+.bbit-dp-inner .bbit-dp-satday a {
+    color: #45a3e6;
+}
+
+.bbit-dp-inner .bbit-dp-prevday a,.bbit-dp-inner .bbit-dp-nextday a {
+    color: #c6c6c6;
+    text-decoration: none!important;
+}
+
+.bbit-dp-inner a:hover,.bbit-dp-inner bbit-dp-disabled a:hover {
+    text-decoration: none!important;
+    background: #fad5e6;
+    color: #fff;
+}
+
+.bbit-dp-inner .bbit-dp-disabled a {
+    cursor: default;
+    color: #eee;
+    background: none
+}
+
+.bbit-dp-bottom {
+    padding: 5px 0 0 0
+}
+
+.bbit-dp-bottom button {
+    font-size: 11px;
+    text-decoration: none;
+    text-align: center;
+    text-decoration: none!important;
+    background: #b8c6cc;
+    color: white;
+    border: none;
+    padding: 6px 4px 3px 5px;
+    cursor: pointer;
+}
+
+.bbit-dp-mp {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 193px;
+    background: white;
+    display: none;
+}
+
+.bbit-dp-mp table {
+    width: 191px;
+    margin-top: 9px;
+}
+
+.bbit-dp-mp td {
+}
+
+td.bbit-dp-mp-month,td.bbit-dp-mp-year {
+    text-align: center;
+    vertical-align: middle;
+    width: 25%;
+}
+
+.bbit-dp-mp-ok {
+    margin-right: 3px;
+}
+
+.bbit-dp-mp-cancel {
+    background: #b8c6cc !important
+}
+
+.bbit-dp-mp-btns button {
+    font-size: 11px;
+    text-decoration: none;
+    text-align: center;
+    text-decoration: none!important;
+    background: #f379b2;
+    color: white;
+    border: none;
+    width: 40px;
+    padding: 5px 0 4px 0;
+    cursor: pointer;
+}
+
+.bbit-dp-mp-btns {
+}
+
+.bbit-dp-mp-btns td {
+    text-align: center;
+    padding: 10px 0 13px
+}
+
+td.bbit-dp-mp-month a,td.bbit-dp-mp-year a {
+    font-family: Verdana;
+    font-size: 11px;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    text-decoration: none;
+    text-align: center;
+    color: #8d9ba6;
+}
+
+td.bbit-dp-mp-month a:hover,td.bbit-dp-mp-year a:hover {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    background: #fad5e6;
+}
+
+td.bbit-dp-mp-month a:hover span {
+    color: #fff;
+}
+
+td.bbit-dp-mp-month span {
+    font-size: 11px;
+    color: #ccc;
+    font-family: dotum;
+    font-weight: normal
+}
+
+td.bbit-dp-mp-sel a {
+    width: 40px;
+    height: 20px;
+    background: #b8c6cc;
+    color: #fff;
+}
+
+td.bbit-dp-mp-sel a span {
+    color: #fff
+}
+
+td.bbit-dp-mp-ybtn {
+    vertical-align: top;
+}
+
+.bbit-dp-mp-ybtn a {
+    font-famliy: Verdana;
+    overflow: hidden;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+}
+
+.bbit-dp-mp-ybtn a.bbit-dp-mp-next {
+    width: 11px;
+    height: 17px;
+    background: url(../img/btn_calendar_next2.gif) no-repeat;
+}
+
+.bbit-dp-mp-ybtn a.bbit-dp-mp-next:hover {
+    background-image: url(../img/btn_calendar_next2_over.gif)
+}
+
+.bbit-dp-mp-ybtn a.bbit-dp-mp-prev {
+    width: 11px;
+    height: 17px;
+    background: url(../img/btn_calendar_prev2.gif) no-repeat
+}
+
+.bbit-dp-mp-ybtn a.bbit-dp-mp-prev:hover {
+    background-image: url(../img/btn_calendar_prev2_over.gif)
+}
+
+.bbit-dp-mp-ybtn {
+    text-align: center;
+}
+
+td.bbit-dp-mp-sep {
+    border-right: 1px dashed #b8c6cc;
+}
+
+.date-custom .dropdown-menu{font-size:0.7rem;}

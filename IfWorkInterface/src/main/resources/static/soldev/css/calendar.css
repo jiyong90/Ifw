@@ -1,0 +1,457 @@
+@charset "utf-8";
+  /* calendar */
+.calendar-wrap {
+    position: relative;
+    height: calc(100vh - 176px);
+    background-color:#ffffff;
+    border-top: 3px solid #4d84fe;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+.calendar-wrap.collapse-height {
+  height: calc(100vh - 139px);
+}
+.calendar-wrap .fc-view-container{
+  padding:0px 10px;
+  box-sizing: border-box;
+}
+
+#calendar-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+}
+
+#calendar-container .fc-header-toolbar {
+  /*
+    the calendar will be butting up against the edges,
+    but let's scoot in the header's buttons
+    */
+  padding-top: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin-bottom:18px;
+}
+
+/* 근무제 표시 범례 */
+#calendar-container .fc-header-toolbar .fc-legend-button{
+	padding: 0px;
+	color:#292944;
+	background-color:transparent;
+	border-color:transparent;
+	cursor: auto;
+}
+#calendar-container .fc-header-toolbar .fc-legend-button.focus,
+#calendar-container .fc-header-toolbar .fc-legend-button:focus{
+	box-shadow: none;
+}
+
+.fc-legend-button .sub-info-wrap .title {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b6b80;
+  vertical-align: middle;
+}
+.fc-legend-button .sub-info-wrap .title::after {
+  content:'';
+  display:inline-block;
+  height: 16px;
+  padding-left:12px;
+  border-right: 1px solid #6B6B80;
+  margin-bottom: -4px;
+}
+
+.fc-legend-button .legend-list-wrap{
+  display:inline-block;
+  vertical-align: middle;
+}
+.fc-legend-button .legend-list-wrap::after {
+  content: '';
+  display: table;
+  width: 100%;
+  clear: both;
+}
+.fc-legend-button .legend-list-wrap li {
+  float: left;
+  display: inline-block;
+  margin-left: 22px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #292944;
+}
+
+.fc-legend-button .legend-list-wrap li:first-child {
+  margin-left: 10px;
+}
+
+.fc-legend-button .legend-list-wrap li::before {
+  content: '';
+  display: inline-block;
+  /*
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  */
+  width: 10px;
+  height: 3px;
+  margin-top: -2px;
+  margin-right: 4px;
+  margin-bottom:0px;
+  margin-left: 0px;
+  opacity: 0.5;
+  vertical-align: middle;
+}
+
+
+/* 탄력근무 */
+.fc-legend-button .legend-list-wrap li.ELAS::before {
+  background-color: #ff6f00;
+  /* background-color: rgba(255, 111, 0,0.5); */
+}
+/* 완전선택근무 */
+.fc-legend-button .legend-list-wrap li.SELE_F::before {
+  background-color: #0321b8;
+  /* background-color: rgba(3, 33, 184,0.5); */
+}
+/* 부분선택근무 */
+.fc-legend-button .legend-list-wrap li.SELE_C::before {
+  background-color: #0862bb;
+  /* background-color: rgba(8, 98, 187,0.5); */
+}
+/* 시차출퇴근 */
+.fc-legend-button .legend-list-wrap li.DIFF::before {
+  background-color: #035d18;
+  /* background-color: rgba(3, 93, 24,0.5); */
+}
+/* 자율출퇴근 */
+.fc-legend-button .legend-list-wrap li.AUTO::before {
+  background-color: #080809;
+  /* background-color: rgba(8, 8, 9,0.5); */
+}
+
+
+
+
+#calendar-container .fc-toolbar h2 {
+  font-size: 18px;
+}
+
+/* 버튼 커스텀 : 근태달력보기 */
+#calendar-container .fc-toolbar .fc-month_calendar-button {
+	border-color:#333333;
+	background-color:#3E3E4C;
+}
+
+
+/* 이전,이후,오늘 */
+.fc-prev-button,
+.fc-next-button,
+.fc-today-button{
+  font-size: 12px;
+  color:#292944;
+  border-color:#cccccc;
+  background-color:#ffffff;
+}
+
+/* 이전,이후,오늘 */
+.fc-prev-button:hover,
+.fc-next-button:hover,
+.fc-today-button:hover {
+  color: #292944;
+  border-color: #cccccc;
+  background-color: #E5E5E5;
+}
+
+.fc-prev-button:not(:disabled):not(.disabled):active,
+.fc-next-button:not(:disabled):not(.disabled):active,
+.fc-today-button:not(:disabled):not(.disabled):active{
+  color:#ffffff !important;
+  border-color:#6b6b80 !important;
+  background-color:#6b6b80 !important;
+}
+
+.fc-today-button.btn-primary.disabled,
+.fc-today-button.btn-primary:disabled{
+  color: #ffffff;
+  border-color: #6b6b80;
+  background-color: #6b6b80;
+}
+
+/* 월,주,일 */
+.fc-bgeventGridMonth-button,
+.fc-timeGridWeek-button,
+.fc-timeGridDay-button,
+.fc-dayGridMonth-button {
+  color:#a2a3a5;
+  border-color:#3e3e4c;
+  background-color:#3e3e4c;
+  font-size: 14px;
+}
+/* 월,주,일 active */
+.fc-bgeventGridMonth-button:not(:disabled):not(.disabled).active,
+.fc-bgeventGridMonth-button:not(:disabled):not(.disabled):active,
+.fc-timeGridWeek-button:not(:disabled):not(.disabled).active,
+.fc-timeGridWeek-button:not(:disabled):not(.disabled):active,
+.fc-timeGridDay-button:not(:disabled):not(.disabled).active,
+.fc-timeGridDay-button:not(:disabled):not(.disabled):active,
+.fc-dayGridMonth-button:not(:disabled):not(.disabled).active,
+.fc-dayGridMonth-button:not(:disabled):not(.disabled):active {
+  color:#ffffff !important;
+  border-color:#6b6b80 !important;
+  background-color:#6b6b80 !important;
+}
+
+/* 월,주,일 hover  */
+.fc-bgeventGridMonth-button:hover,
+.fc-timeGridWeek-button:hover,
+.fc-timeGridDay-button:hover,
+.fc-dayGridMonth-button:hover {
+  color: #ffffff;
+  border-color: #6b6b80;
+  background-color: #6b6b80;
+}
+
+.fc-day-header{
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b6b80;
+  font-weight: 500;
+}
+
+
+.fc-bgevent-header{
+  font-size: 12px;
+  color: #7b7c8d;
+}
+
+.fc-ltr .fc-bgeventGrid-view .fc-bgevent-top .fc-bgevent-number{
+  font-size: 12px;
+  color: #333333;
+  text-decoration: none;
+}
+
+/* today mark */
+/* .fc-ltr .fc-bgeventGrid-view .fc-bgevent-top.fc-today .fc-bgevent-number{
+  border-radius : 50%;
+  background-color : #3e3e4c;
+  color: #ffffff;
+} */
+
+/* 날짜 크기 */
+.fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number{
+  width:20px;
+  height:20px;
+  margin-top:3px;
+  text-align: center;
+  padding: 0px;
+  font-size: 13px; 
+  color:#6b6b80;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+/* today mark */
+.fc-ltr .fc-dayGrid-view .fc-day-top.fc-today .fc-day-number {
+  border-radius: 50%;
+  background-color:#3e3e4c;
+  color:#ffffff;
+}
+/* 달력 및 타임 그리드 오늘 표시 */
+.fc-today.alert-info {
+  color: inherit;
+  background-color: inherit;
+}
+.fc-ltr .fc-dayGrid-view .fc-day-top .fc-holiday{padding-left: 2px; font-size: 13px;}
+.fc-day-grid-event .fc-content .fc-title span{font-size: 10px; letter-spacing: -0.5px;}
+
+
+/* .fc-row .fc-content-skeleton{z-index : 2;} */
+/* 클릭 이벤트 해제 */
+.fc-day-grid-event{pointer-events: none;}
+
+/* 근무제 시작일, 종료일 표시 보더 */
+.fc-bgevent{
+  position: relative;
+  opacity: 0.5 !important;
+}
+.fc-bgevent>.fc-border {
+  position: absolute;
+  top: 0;
+  width:100%;
+  height:3px;
+}
+.fc-bgevent>.fc-border.start {
+  left: 10px;
+  width: calc(100% - 10px);
+
+}
+.fc-bgevent>.fc-border.end {
+  left: 0px;
+  width: calc(100% - 10px);
+}
+
+
+/* 탄력근무 */
+.fc-bgevent.ELAS {
+  background-color: #ffc421;
+}
+/* .fc-event-line.ELAS {
+  border-right: 1px solid #ffa200;
+} */
+.fc-bgevent>.fc-border.ELAS {
+  background-color: #ff8800;
+}
+
+
+/* 완전선택근무 */
+.fc-bgevent.SELE_F {
+  background-color: #4d84fe;
+}
+/* .fc-event-line.SELE_F {
+  border-right: 1px solid #044ef1;
+} */
+.fc-bgevent>.fc-border.SELE_F {
+  background-color: #0321b8;
+}
+
+
+/* 부분선택근무 */
+.fc-bgevent.SELE_C {
+  background-color: #85d1f2;
+}
+/* .fc-event-line.SELE_C {
+  border-right: 1px solid #2ab1ec;
+} */
+.fc-bgevent>.fc-border.SELE_C {
+  background-color: #087ebb;
+}
+
+
+/* 시차출퇴근 */
+.fc-bgevent.DIFF {
+  background-color: #1fc486;
+}
+/* .fc-event-line.DIFF {
+  border-right: 1px solid #039f65;
+} */
+.fc-bgevent>.fc-border.DIFF {
+  background-color:#096744;
+}
+
+
+/* 자율출퇴근 */
+.fc-bgevent.AUTO {
+  background-color: #6b6b80;
+}
+/* .fc-event-line.AUTO {
+  border-right: 1px solid #47435e;
+} */
+.fc-bgevent>.fc-border.AUTO {
+  background-color: #080809;
+}
+
+/* 타임 그리드  */
+/* 일정 상세 페이지 : 날짜 눌렀을 때, 오전, 오후 글씨 크기 및 색상 */
+.fc-time-grid .fc-slats td{cursor: pointer;}
+.fc-time-grid .fc-slats td:hover{border-top:1px solid #47435e;}
+.fc-time-grid .fc-slats td.fc-axis{font-size:13px; color:#6b6b80; cursor: default;}
+.fc-time-grid .fc-slats td.fc-axis.fc-time:hover{border-top:1px solid #dee2e6;}
+
+.fc-time-grid-event.fc-event{
+  cursor: pointer;
+}
+/* 1) ENTRY  */
+.fc-time-grid-event.fc-event.entry,
+.fc-time-grid-event.fc-event.ENTRY {
+  background-color: #0b1baa;
+}
+
+/* 2) BREAK */
+.fc-time-grid-event.fc-event.break,
+.fc-time-grid-event.fc-event.BREAK {
+  background-color: #ff448a;
+}
+
+/* 3) TAA */
+.fc-time-grid-event.fc-event.taa,
+.fc-time-grid-event.fc-event.TAA {
+  background-color: rgba(255, 136, 0, 0.3);
+  cursor: default;
+}
+
+/* 4) BASE */
+.fc-time-grid-event.fc-event.base,
+.fc-time-grid-event.fc-event.BASE {
+  background-color: rgba(144, 233, 27, 0.3);
+  cursor: default;
+}
+
+/* 5) OT */
+.fc-time-grid-event.fc-event.ot,
+.fc-time-grid-event.fc-event.OT,
+.fc-time-grid-event.fc-event.fixot,
+.fc-time-grid-event.fc-event.FIXOT,
+.fc-time-grid-event.fc-event.OT_CAN{
+  background-color: rgba(255, 0, 0, 0.3);
+}
+
+/* 6) NIGHT */
+.fc-time-grid-event.fc-event.night,
+.fc-time-grid-event.fc-event.NIGHT {
+  background-color: rgba(87, 46, 255, 0.3);
+}
+
+/* 일정 */
+/* .fc-content {background-color:#ffffff} */
+.fc-content .dot:before{
+  content:'';
+  display:inline-block;
+  width:6px;
+  height:6px;
+  border-radius: 50%;
+  margin-top: -2px;
+  margin-bottom: 1px;
+  margin-right: 3px;
+  margin-left: 3px;
+}
+
+.fc-content .dot span{
+  color:#6b6b80;
+}
+
+.fc-content .dot.time:before{
+  background-color:#00c4b6;
+}
+.fc-content .dot.time.early:before,
+.fc-content .dot.time.later:before{
+  background-color:#fc8262;
+}
+.fc-content .dot.work-type:before {
+  background-color: #7601dc;
+}
+
+
+
+/* button */
+#calendar-container .btn-default{
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* popover */
+#calendar-container .popover-inner-wrap{
+  padding:5px;
+  text-align: center;
+}
+#calendar-container .popover-inner-wrap .msg {
+  margin-bottom:10px;
+  font-size: 14px;
+  line-height: 1.07;
+  letter-spacing: -0.7px;
+  color: #292944;
+}
+#calendar-container .popover-inner-wrap .btn-default {
+  font-size: 14px;
+  line-height: 1;
+}
