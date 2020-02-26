@@ -97,7 +97,8 @@ public class LoginControllerHdngv {
 					}
 						 
 				}
-   			 
+				//현대 NGV는 회사코드정보가 없어서 1000으로 박는다.
+				strCompanyCode = "1000";
 				Cookie c = new Cookie("sessiondata_____"+strCompanyCode,decrptStr);
 				c.setPath("/");
 				c.setMaxAge(60*60*24); //하루
@@ -208,7 +209,7 @@ public class LoginControllerHdngv {
 		String strCompanyCode = paramMap.get("CompanyCode") == null ? "" : paramMap.get("CompanyCode") ;
 		String strEncText = paramMap.get("Encode") == null ? "" : paramMap.get("Encode") ;
 		*/
-		
+		strCompanyCode = "1000";
 		String resultMsg = "";
 		System.out.println("HKMCENC_ID = " + strEncID);
 		System.out.println("CompanyCode = " + strCompanyCode);
@@ -247,7 +248,7 @@ public class LoginControllerHdngv {
 				//paramMap.put("empKey", strCompanyCode + "@" + empId);
 				
 				//empId = "2008856";
-				
+				strCompanyCode = "1000";
 				paramMap.put("enterCd", strCompanyCode);
 				paramMap.put("sabun", empId);
 				
