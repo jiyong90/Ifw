@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.intf.mapper.DzMobileApiMapper">
+
+	<select id="getEmpInfo" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT NO_EMP
+			, CD_COMPANY
+			, NM_USER
+			FROM MA_USER
+			WHERE ID_USER = #{userId}
+			AND CD_COMPANY = #{enterCd}
+		]]>
+	</select>
+ 
+	<insert id="saveMobileSession" parameterType="hashmap">
+		<![CDATA[ 
+			INSERT INTO NEOE.NEOE.MB_ISU_MOBILE_SESSION
+				(	
+					SESSIONKEY
+				  ,	TIME_CREATED
+				  , TIME_EXPIRED
+				  , TOKEN_JSON
+				  ,	INVALIDATE
+				  , USER_TOKEN
+				  , OS_TYPE
+				  , OS_VERSION
+				  , DEVICE_ID
+				  , DEVICE_MODEL
+				)
+				VALUES
+				(	
+					#{sessionKey}
+				  ,	#{timeCreated}
+				  , #{timeExpired}
+				  , #{tokenJson}
+				  ,	'N'
+				  , #{userToken}
+				  , #{osType}
+				  , #{osVersion}
+				  , #{deviceId}
+				  , #{deviceModel}
+				)
+		]]>
+	</insert>
+
+</mapper>
