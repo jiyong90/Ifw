@@ -12,6 +12,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.stereotype.Component;
+
 import com.isu.ifw.intf.wrapper.ResponseWrapper;
 import com.isu.ifw.intf.wrapper.RequestWrapper;
 
@@ -21,6 +23,7 @@ import com.isu.ifw.intf.wrapper.RequestWrapper;
  * @author Hongs
  *
  */
+@Component("encryptFilter") 
 public class EncryptFilter implements Filter {
 
 	@Override
