@@ -37,6 +37,7 @@ public class EncryptFilter implements Filter {
 			throws IOException, ServletException {
 
 		request.setCharacterEncoding(this.encoding);
+		response.setCharacterEncoding(this.encoding);
 		String path = ((HttpServletRequest) request).getRequestURI();
 		System.out.println("path : " + path.indexOf("fileuploadJFileUpload.do"));
 		if(path.indexOf("fileuploadJFileUpload.do") == -1
