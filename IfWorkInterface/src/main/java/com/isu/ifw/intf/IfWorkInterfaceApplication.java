@@ -28,6 +28,7 @@ public class IfWorkInterfaceApplication {
 	@Bean 
 	public FilterRegistrationBean getEncryptFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(encryptFilter);
+		registrationBean.addInitParameter("encoding", "utf-8");
 		registrationBean.addInitParameter("freePassPath", "/login,/certificate");
 		return registrationBean;
 	    

@@ -26,15 +26,17 @@ import com.isu.ifw.intf.wrapper.RequestWrapper;
 @Component("encryptFilter") 
 public class EncryptFilter implements Filter {
 
+	private String encoding;
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-
+		this.encoding = filterConfig.getInitParameter("encoding");
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
+		request.setCharacterEncoding(this.encoding);
 		String path = ((HttpServletRequest) request).getRequestURI();
 		System.out.println("path : " + path.indexOf("fileuploadJFileUpload.do"));
 		if(path.indexOf("fileuploadJFileUpload.do") == -1
