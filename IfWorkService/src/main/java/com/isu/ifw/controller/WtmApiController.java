@@ -1,13 +1,14 @@
 package com.isu.ifw.controller;
 
+import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.TenantSecuredControl;
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.entity.WtmEmpHis;
@@ -31,13 +34,13 @@ import com.isu.ifw.mapper.WtmInoutHisMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.service.WtmInterfaceService;
-import com.isu.ifw.util.MobileUtil;
+import com.isu.ifw.service.WtmValidatorService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
 
 @RestController
 @RequestMapping(value="/api")
-public class WtmApiController {
+public class WtmApiController extends TenantSecuredControl {
 
 	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
 	
@@ -54,10 +57,12 @@ public class WtmApiController {
 	@Autowired
 	WtmInoutHisMapper inoutHisMapper;
 
-
 	@Autowired
 	private WtmInterfaceService wtmInterfaceService;
-
+	
+	@Autowired
+	WtmValidatorService validatorService;
+	
 	@RequestMapping(value = "/{tsId}/d/{gubun}",method = RequestMethod.POST)
 	public void postCode(@PathVariable String tsId,@PathVariable String gubun, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
@@ -371,5 +376,49 @@ public class WtmApiController {
 		logger.debug(tsId + "/api/cancel e " + rp.toString());
 
 		return rp;
-	}	
+	}
+	
+	@RequestMapping(value="/worktime/appl/valid", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam worktimeApplValid(@RequestBody Map<String, Object> paramMap, HttpServletRequest request ){
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			if(!paramMap.containsKey("apiKey") || paramMap.get("apiKey")==null || "".equals(paramMap.get("apiKey")) ) {
+				rp.setFail("apiKey가 없습니다.");
+				return rp;
+			}
+			if(!paramMap.containsKey("secret") || paramMap.get("secret")==null || "".equals(paramMap.get("secret")) ) {
+				rp.setFail("secret가 없습니다.");
+				return rp;
+			}
+			
+			this.certificate(paramMap.get("apiKey").toString(), paramMap.get("secret").toString(), request.getRemoteHost());
+		} catch (CertificateException e1) {
+			rp.setFail(e1.getMessage());
+			return rp;
+		}
+		
+		Long tenantId = this.getTenantId(paramMap.get("apiKey").toString());
+		if(!paramMap.containsKey("enterCd") || paramMap.get("enterCd")==null || "".equals(paramMap.get("enterCd")) ) {
+			rp.setFail("회사 코드가 없습니다.");
+			return rp;
+		}
+		
+		Long applId = null;
+		if(paramMap.containsKey("applId") && paramMap.get("applId")!=null && !"".equals(paramMap.get("applId")) ) {
+			applId = Long.parseLong(paramMap.get("applId").toString());
+		}
+		
+		if(!paramMap.containsKey("appl") || paramMap.get("appl")==null || "".equals(paramMap.get("appl")) ) {
+			rp.setFail("근태 정보가 없습니다.");
+			return rp;
+		}
+			
+		ObjectMapper mapper = new ObjectMapper();
+		List<Map<String, Object>> workList = (List<Map<String, Object>>)paramMap.get("appl");
+		
+		rp = validatorService.worktimeValid(tenantId, paramMap.get("enterCd").toString(), workList, applId);
+		
+		return rp;
+	}
 }
