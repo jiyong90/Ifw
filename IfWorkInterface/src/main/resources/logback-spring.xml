@@ -32,40 +32,18 @@
             <maxHistory>365</maxHistory>
         </rollingPolicy>
 	    <encoder>
-	        <pattern>${FILE_LOG_PATTERN}</pattern>
+	        <pattern>${CONSOLE_LOG_PATTERN}</pattern>
 	    </encoder> 
-    </appender>
-
-	<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
-		<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
-			<driverClass>${spring.datasource.driverClassName}</driverClass>
-			<url>${spring.datasource.jdbcUrl}</url>
-			<user>${spring.datasource.username}</user>
-			<password>${spring.datasource.password}</password>
-		</connectionSource>
-	</appender>
-	
-	<appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold> <!-- default 20, means drop lower event when has 20% capacity remaining -->
-        <appender-ref ref="DB" />
-        <queueSize>512</queueSize> <!-- default 256 -->
-        <includeCallerData>false</includeCallerData><!-- default false -->
-        <maxFlushTime>60000</maxFlushTime>
-        <neverBlock>false</neverBlock><!-- default false, set to true to cause the 
-            Appender not block the application and just drop the messages -->
-    </appender>
-
+    </appender> 
+ 
 	<logger name="ifwDBLog" level="DEBUG">
-		<appender-ref ref="ASYNC" />
+		<appender-ref ref="CONSOLE" />
 	</logger>
 
 	<logger name="ifwFileLog" level="DEBUG">
 		<appender-ref ref="FILE" />
 	</logger>
-	
-	<logger name="ifwDbLog" level="DEBUG">
-		<appender-ref ref="DB" />
-	</logger>
+	 
 <!-- 
   	<logger name="jdbc" level="WARN"/>
 
