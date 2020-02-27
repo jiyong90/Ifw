@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.isu.ifw.intf.crypt.Crypt;
 
@@ -41,7 +42,8 @@ import com.isu.ifw.intf.crypt.Crypt;
  */
 public class RequestWrapper extends HttpServletRequestWrapper {
 
-	private static final Logger Log = Logger.getLogger(RequestWrapper.class);
+	//private static final Logger Log = Logger.getLogger(RequestWrapper.class);
+	private static final Logger Log = LoggerFactory.getLogger("ifwDbLog");
 
 	private Map<String, String[]> params;
 	private JSONObject bodyJSON;

@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
+import com.isu.ifw.intf.util.AdapterProp;
 import com.isu.ifw.intf.util.Aes256;
 
 

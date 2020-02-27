@@ -22,7 +22,7 @@ public class Aes256 {
 		public static void main (String[] args){
 			Aes256 a256;
 			try {
-				a256 = new Aes256("thisisaencryptionkey");
+				a256 = new Aes256("isustasdadsadsadsadsa");
 				String str = a256.encrypt("특정문자열");
 				System.out.println(str);
 				String dstr = a256.decrypt(str);
@@ -48,6 +48,7 @@ public class Aes256 {
 	     * @throws UnsupportedEncodingException 키값의 길이가 16이하일 경우 발생
 	     */
 	    public Aes256(String key) throws UnsupportedEncodingException {
+	    	
 	        this.iv = key.substring(0, 16);
 	        byte[] keyBytes = new byte[16];
 	        byte[] b = key.getBytes("UTF-8");
@@ -55,7 +56,11 @@ public class Aes256 {
 	        if(len > keyBytes.length){
 	            len = keyBytes.length;
 	        }
-	        System.arraycopy(b, 0, keyBytes, 0, len);
+	        
+	        System.out.println(len);
+	        System.out.println(b);
+	        //System.arraycopy(b, 0, keyBytes, 0, len);
+	        System.out.println(b);
 	        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
 
 	        this.keySpec = keySpec;
@@ -72,6 +77,8 @@ public class Aes256 {
 	    public String encrypt(String str) throws NoSuchAlgorithmException, GeneralSecurityException, UnsupportedEncodingException{
 	        Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
 	        c.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(iv.getBytes()));
+	        
+	        
 	        byte[] encrypted = c.doFinal(str.getBytes("UTF-8"));
 	        String enStr = new String(Base64.getEncoder().encode(encrypted));
 	        return enStr;

@@ -43,9 +43,23 @@ mybatis:
     map-underscore-to-camel-case: true
 
 ifw:
-  client-id: honda
-  secret: 2TMn5k+9iDk7L+KlAux8HF5odHzrQV76AZkA9kwjMhM=
+  client-id: hdngv
+  secret: chWQsUbouLFXYYmy5F7k9UFYGprNH1F6uzqsOvt0K9s=
   token-url: https://cloudhr.pearbranch.com/ifa/oauth/token
+  login-post: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/certificate 
+  valid-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/validate     
+  status-get: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/status
+  in-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/in
+  out-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/out
+  cancel-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/cancel
+  except-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/except
+  m-status-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/worktime/status
+  dashboard-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/dashboard
+  edoc-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/edocument/{{function}}
+  team-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/team/{{function}}   
+  apply-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/apply/{{function}} 
+  inout-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/inout/{{function}}
+  my-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/my/{{function}}
   #code-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/code
   code-post: http://10.30.30.215/ifw/api/honda/d/code
   #emp-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/emp 
@@ -60,4 +74,16 @@ ifw:
   orgconc-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/orgconc
   #taaappl-post: https://cloudhr.pearbranch.com/ifw/api/honda/d/taaappl
   taaappl-post: http://10.30.30.215/ifw/api/honda/d/taaappl
+ 
+dzGateway:
+  gateway-url: http://10.249.92.147:85/ErpuMobileGate/_gateway/
+  gateway-customkey: HONDAHRM
+  gateway-product: ISU
+  gateway-product-version: 1.0.0
+  gateway-language: KR
+  gateway-dev-url: http://10.249.92.147:85/ErpuMobileGate/_gateway/
+  gateway-dev-customkey: HONDAHRM
+
+adapter:
+  encrypt-columnKey: empKey,notiKey,payKey,apprEmpKey,applKey,targetEmpKey,changeEmp,dayoffEmp,replaceEmp,lineItemKey
   
