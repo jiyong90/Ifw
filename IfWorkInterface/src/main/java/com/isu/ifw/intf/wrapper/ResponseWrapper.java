@@ -1,4 +1,4 @@
-package com.isu.ifm.wrapper;
+package com.isu.ifw.intf.wrapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,11 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.isu.ifm.crypt.Crypt;
+import com.isu.ifw.intf.crypt.Crypt;
+
 
 /**
  * 반환 데이터중 암호화 컬럼의 데이터를 암호화 하기 위한 wrapper class
@@ -29,7 +31,7 @@ import com.isu.ifm.crypt.Crypt;
  */
 public class ResponseWrapper extends HttpServletResponseWrapper {
 
-	private static final Logger Log = Logger.getLogger(ResponseWrapper.class);
+	private static final Logger Log = LoggerFactory.getLogger("ifwDbLog");
 
 	protected ByteArrayServletOutputStream captureServletOutputStream;
 	protected ServletOutputStream servletOutputStream;
