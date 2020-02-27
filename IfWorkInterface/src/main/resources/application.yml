@@ -36,6 +36,11 @@ spring:
     template-loader-path: /WEB-INF/views/
     suffix: .ftl
     request-context-attribute: rc 
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
         
 mybatis:
   config-location: classpath:query/iuerp/**/*.xml
@@ -84,8 +89,7 @@ dzGateway:
   gateway-dev-url: http://10.249.92.147:85/ErpuMobileGate/_gateway/
   gateway-dev-customkey: HONDAHRM
 
-adapter:
-  encrypt-columnKey: empKey,notiKey,payKey,apprEmpKey,applKey,targetEmpKey,changeEmp,dayoffEmp,replaceEmp,lineItemKey
+adapterEncryptColumnKey: empKey,notiKey,payKey,apprEmpKey,applKey,targetEmpKey,changeEmp,dayoffEmp,replaceEmp,lineItemKey
   
 logging:
   config: classpath:logback-spring.xml
