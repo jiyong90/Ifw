@@ -119,8 +119,8 @@
 							C.TENANT_ID as tenantId, 
 							C.ENTER_CD as enterCd, 
 							C.SABUN as sabun, 
-							F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS orgNm,
-							F_WTM_GET_EMP_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD) AS empNm,
+							O.ORG_NM AS orgNm,
+							H.EMP_NM AS empNm,
 							C.YMD as ymd, 
 							C.TIME_CD_MGR_ID as timeCdMgrId,
 							F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'HI') as entrySdate,
@@ -151,15 +151,22 @@
 						AND C.ENTER_CD = H.ENTER_CD 
 						AND C.SABUN = H.SABUN
 					   AND C.YMD BETWEEN H.SYMD AND H.EYMD
+					    LEFT OUTER JOIN WTM_ORG_CODE O
+					    ON H.TENANT_ID = O.TENANT_ID
+					   AND H.ENTER_CD = O.ENTER_CD
+					   AND H.ORG_CD = O.ORG_CD
+					   AND C.YMD BETWEEN O.SYMD AND O.EYMD
 					 WHERE C.TENANT_ID = #{tenantId}
 					   AND C.ENTER_CD = #{enterCd}
 					   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+			]]>
+					  <if test="orgList!=null"> 
 					   AND H.ORG_CD IN (NULL, 
-		]]>
 					   <foreach collection="orgList" item="org" separator=", ">
 					   #{org}
 					   </foreach>
 					   )
+					   </if>
 					GROUP BY C.TENANT_ID, C.ENTER_CD, C.SABUN, C.YMD
 			) T
 			<if test="searchKeyword!=null and !searchKeyword.equals('')">
