@@ -57,10 +57,7 @@ public class Aes256 {
 	            len = keyBytes.length;
 	        }
 	        
-	        System.out.println(len);
-	        System.out.println(b);
-	        //System.arraycopy(b, 0, keyBytes, 0, len);
-	        System.out.println(b);
+	        System.arraycopy(b, 0, keyBytes, 0, len);
 	        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
 
 	        this.keySpec = keySpec;

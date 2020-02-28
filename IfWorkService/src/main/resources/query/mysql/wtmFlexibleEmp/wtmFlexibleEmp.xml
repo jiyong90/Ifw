@@ -478,6 +478,7 @@
     </update>
     
     <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
+     <![CDATA[
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
 			SELECT Z.WORK_DAY_RESULT_ID, F_WTM_CALC_MINUTE( Z.APPR_SHI  ,  Z.APPR_EHI , '','', '') -
@@ -512,6 +513,7 @@
 			) XX
 			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
 		   SET X.APPR_MINUTE = XX.CM
+		]]>
     </update>
     
     <!-- 

@@ -180,12 +180,12 @@ public class Crypt {
 		if (encCols != null) {
 			for (String encKey : encCols) {
 				if (encKey.equals(colNm)) {
-					//System.out.println(colNm+"은 암호화 컬럼입니다.");
+					System.out.println(colNm+"은 암호화 컬럼입니다.");
 					return true;
 				}
 			}
 		}
-		//System.out.println(colNm+"은 암호화 컬럼이 아닙니다.");
+		System.out.println(colNm+"은 암호화 컬럼이 아닙니다.");
 		return false;
 	}
 }

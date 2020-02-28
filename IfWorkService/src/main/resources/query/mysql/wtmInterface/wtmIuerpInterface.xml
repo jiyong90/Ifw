@@ -481,7 +481,6 @@
 			AND E.EYMD = I.EYMD
 		 WHERE I.TENANT_ID = ${tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
-		   AND I.SABUN IN ( SELECT SABUN FROM WTM_INTF_EMP WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
 		   AND E.EMP_HIS_ID IS NULL
 		   ORDER BY I.ENTER_CD, I.SABUN, I.SYMD
 		]]>
@@ -520,9 +519,35 @@
 			AND E.EYMD = I.EYMD
 		 WHERE I.TENANT_ID = ${tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
-		   AND I.SABUN IN ( SELECT SABUN FROM WTM_INTF_EMP WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis})
 		   AND E.EMP_HIS_ID IS NULL
 		   ORDER BY I.ENTER_CD, I.SABUN, I.SYMD
+		]]>
+	</update>
+	
+	<update id="insertCommUser" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO comm_user(tenant_id, login_id, password, name, phone_no, update_date, login_failure_count, last_login, account_lockout_yn, emp_id, enter_cd)
+		SELECT *
+		  FROM (
+					SELECT H.TENANT_ID AS tenant_id
+					     , F_WTM_AES_ENCRYPT(H.SABUN, #{encKey}) as login_id
+						  , '3KXBgLRev5AMV7MGN267dTNr6f+QjWf0IjLZvWTfpoc=' as password
+						  , H.EMP_NM AS name
+						  , '010' AS phone_no
+						  , NOW() AS update_date
+						  , 0 AS login_failure_count
+						  , now() AS last_login
+						  , 'N' as account_lockout_yn
+						  , F_WTM_AES_ENCRYPT(CONCAT(H.TENANT_ID, H.ENTER_CD, H.SABUN), #{encKey}) as emp_id
+						  , F_WTM_AES_ENCRYPT(H.ENTER_CD, #{encKey}) as enter_cd
+					  FROM WTM_EMP_HIS_TEST H
+					 WHERE H.TENANT_ID = ${tenantId} 
+					   AND NOW() BETWEEN H.SYMD AND H.EYMD ) E
+		  LEFT OUTER JOIN comm_user C
+		    ON E.tenant_id = C.tenant_id
+		   AND E.enter_cd = C.enter_cd
+		   AND E.login_id = C.login_id
+		  WHERE C.user_id IS NULL
 		]]>
 	</update>
 	
