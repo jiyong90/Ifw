@@ -25,7 +25,7 @@
 			       C.ENTRY_SDATE AS entrySdate, 
 			       C.ENTRY_EDATE AS entryEdate,
 			       C.HOLIDAY_YN AS holydayYn,
-			       F_WTM_GET_EMP_DAY_OPTION(C.TENANT_ID, C.ENTER_CD, C.SABUN, F_WTM_DATE_FORMAT(now(),'YMD'), 'UNPLANNED_YN') as unplanedYn,
+			       F_WTM_GET_EMP_DAY_OPTION(C.TENANT_ID, C.ENTER_CD, C.SABUN, LEFT(#{inoutDate},8), 'UNPLANNED_YN') as unplanedYn,
 			       X.pSdate, 
 			       X.pEdate,
 			       F_WTM_DATE_FORMAT(X.pSdate,'YMD') AS pSymd, 
@@ -44,8 +44,8 @@
 			 WHERE C.TENANT_ID = #{tenantId}
 			      AND C.ENTER_CD = #{enterCd}
 			      AND C.SABUN = #{sabun}
-			      AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(now(), '%Y%m%d') = C.YMD )
-				  OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(now(), '%Y%m%d') OR DATE_FORMAT(now(), '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
+			      AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
+				  OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
 			 ORDER BY C.YMD
         ]]>
     </select>
