@@ -49,7 +49,9 @@ public class DzMobileApiService {
 	private String productVersion;
 	@Value("${dzGateway.gateway-language}")
 	private String language;
-
+	@Value("${ifw.username}")
+	private String username;
+	
 	@Autowired
 	private DzMobileApiMapper dzMobileApiMapper;
 
@@ -190,7 +192,16 @@ public class DzMobileApiService {
 			resultMap.put("empKey", empKey);
 			resultMap.put("sessionData", sessionData); 
 
-
+			/**
+			 * 더존은 로그인을 사번으로 안할 수 있다. 우리는 사번으로 데이터를 조회하도록 되어있어서 username에 대해서 사번정보로 바꿔서 보내주자
+			 */
+			if(username != null && !username.equals("") && username.indexOf("##1##") != -1 && username.indexOf("##2##") != -1) {
+				String replace_username = username;
+				replace_username = replace_username.replace("##1##", enterCd);
+				replace_username = replace_username.replace("##2##", sabun);
+				rp.put("username", replace_username);
+			}
+			
 			rp.setSuccess("");
 			rp.put("result", resultMap);
 

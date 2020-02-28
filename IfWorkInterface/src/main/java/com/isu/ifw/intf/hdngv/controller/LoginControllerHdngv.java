@@ -209,7 +209,7 @@ public class LoginControllerHdngv {
 		String strCompanyCode = paramMap.get("CompanyCode") == null ? "" : paramMap.get("CompanyCode") ;
 		String strEncText = paramMap.get("Encode") == null ? "" : paramMap.get("Encode") ;
 		*/
-		strCompanyCode = "1000";
+		strCompanyCode = "1000"; 
 		String resultMsg = "";
 		System.out.println("HKMCENC_ID = " + strEncID);
 		System.out.println("CompanyCode = " + strCompanyCode);
