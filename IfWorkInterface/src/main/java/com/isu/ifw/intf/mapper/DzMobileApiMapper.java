@@ -22,10 +22,19 @@ public interface DzMobileApiMapper {
 	 */
 	public Map<String, Object> getMobileSession(Map<String, Object> paramMap);
 	
-
+	/**
+	 * 세션 정보 저장
+	 * @param paramMap
+	 * @return
+	 */
 	public int saveMobileSession(Map<String, Object> paramMap);
 	
-	public Map<String, Object> invalidateMobileSession(Map<String, Object> paramMap);
+	/**
+	 * 세션 무효화
+	 * @param paramMap
+	 * @return
+	 */
+	public int invalidateMobileSession(Map<String, Object> paramMap);
 	
 
 }

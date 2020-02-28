@@ -129,7 +129,7 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
 				try {
 					if (value != null && value != JSONObject.NULL) {
 						value = Crypt.encrypt(cryptKey, key, String.valueOf(value));
-						System.out.println("암호화 값:"+value);
+						//System.out.println("암호화 값:"+value);
 					}
 				} catch (Exception ee) {
 					ee.printStackTrace();

@@ -32,12 +32,13 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.intf.mapper.DzMobileApiMapper;
 import com.isu.ifw.intf.vo.ReturnParam;
+import com.fasterxml.jackson.core.JsonParser;
 
 @Service
 public class DzMobileApiService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(DzMobileApiService.class);
-	
+
 	@Value("${dzGateway.gateway-url}")
 	private String url;
 	@Value("${dzGateway.gateway-customkey}")
@@ -48,19 +49,19 @@ public class DzMobileApiService {
 	private String productVersion;
 	@Value("${dzGateway.gateway-language}")
 	private String language;
-	
+
 	@Autowired
 	private DzMobileApiMapper dzMobileApiMapper;
-	
+
 	@Autowired
 	private RestTemplate restTemplate;
-	
-	
+
+
 	/**
-	 * 사용자가 명시적으로 로그인할 때, Oauth 인증을 통해 사용자의 유효성을 검증한다. 
+	 * 사용자가 명시적으로 로그인할 때, 더존 모바일 게이트웨이 인증을 통해 사용자의 유효성을 검증한다. 
 	 * 
-	 * 1. access token 인증
-	 * 2. session key 인증
+	 * 1. session key 인증
+	 * 2. erp 인증
 	 * 
 	 * @param request
 	 * @param body
@@ -164,6 +165,12 @@ public class DzMobileApiService {
 			//DB에 저장
 			try {
 				int cnt = dzMobileApiMapper.saveMobileSession(paramMap);
+				if(cnt < 1) {
+					rp.setFail("세션 저장에 실패했습니다.");
+					System.out.println("세션 인증 실패 : " + rp);
+					return rp;
+				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw e;
@@ -178,12 +185,12 @@ public class DzMobileApiService {
 			List<String> authCode = new ArrayList<String>();
 
 			sessionData.put("authCode", authCode);
-			sessionData.put("empNm", (String)empMap.get("NM_USER")); //사원이름
+			sessionData.put("empNm", (String)empMap.get("NM_KOR")); //사원이름
 
 			resultMap.put("empKey", empKey);
 			resultMap.put("sessionData", sessionData); 
 
-			
+
 			rp.setSuccess("");
 			rp.put("result", resultMap);
 
@@ -191,7 +198,7 @@ public class DzMobileApiService {
 			e.printStackTrace();
 			rp.setFail("로그인에 실패했습니다.");
 		}
-		
+
 		System.out.println("#########################");
 		System.out.println(rp);
 
@@ -237,48 +244,55 @@ public class DzMobileApiService {
 				System.out.println("USER TOKEN IS INVALIDATED!!!!!!!!!");
 				System.out.println("==================================");
 				System.out.println("user token 인증 실패 : " + rp);
-				
+
 				return rp;
 			}
 
 			//2. session key의 만료 여부를 검증한다.
-			
+
 			//임의로 게이트웨이를 호출하여 정상적으로 결과가 오는지 확인한다.
 			//정상적으로 오지 않는다면 키 만료로 판단.
-			/*
-			Map<String, Object> header = sessionService.getHeader(userToken);
+
+			Map<String, Object> header = new HashMap<String,Object>();
+			header.put("os_type", sessionMap.get("OS_TYPE"));
+			header.put("os_ver", sessionMap.get("OS_VERSION"));
+			header.put("device", sessionMap.get("DEVICE_ID"));
+			header.put("device_model", sessionMap.get("DEVICE_MODEL"));
+			header.put("session", sessionMap.get("SESSIONKEY"));
+
 			Map<String, Object> body = new HashMap<String,Object>();
 			body.put("FunctionID", "UP_MI_WHR_MG_EMP_USER_BASE_S");
 			body.put("BusinessID", "UP_MI_WHR_MG_EMP_USER_BASE_S");
 			body.put("P_CD_COMPANY", enterCd);
 			body.put("P_NO_EMP", sabun);
-			
+
+			List<Map<String, Object>> empInfo = null; //사원 기본정보
 			try {
-				service.requestSingleService(header, body);				
+				empInfo = requestSingleService(header, body);				
 			}catch(CertificateException e){
-				System.out.println("==================================");
-				System.out.println("SESSION KEY IS INVALIDATED!!!!!!!!");
-				System.out.println("==================================");
-				
 				Calendar cal = Calendar.getInstance();
 				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssss");
 				String timeInvalidated = df.format(cal.getTime());
-				
+
 				paramMap.put("note", "sessionKey expired");
 				paramMap.put("timeInvalidated", timeInvalidated);
-				
+
 				dzMobileApiMapper.invalidateMobileSession(paramMap); //세션 무효화 처리
 
 				rp.setFail("세션이 만료되었습니다. 다시 로그인 하세요.");
+				System.out.println("==================================");
+				System.out.println("SESSION KEY IS INVALIDATED!!!!!!!!");
+				System.out.println("==================================");
+				System.out.println("session key 무효화 : " + rp);
 
 				return rp;
 			}
-			
+
 			System.out.println("==================================");
 			System.out.println("SESSION KEY IS AVAILABLE!!!!!!!!!!");
 			System.out.println("==================================");
-			*/
-			
+
+
 			/*
 			Calendar cal = Calendar.getInstance();
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssss");
@@ -308,18 +322,18 @@ public class DzMobileApiService {
 				System.out.println(rp);
 				return rp;
 			}
-			
-			*/
+
+			 */
+
 
 			//앱에서 가지고 있을 세션 정보
 			Map<String, Object> sessionData = new HashMap<String, Object>();
-			//Map<String, Object> session = sessionService.getSessionData(enterCd, sabun); //사원 기본정보
 
 			//권한코드
 			List<String> authCode = new ArrayList<String>();
 
 			sessionData.put("authCode", authCode);
-			//sessionData.put("empNm", (String)session.get("nmKor")); //사원이름
+			sessionData.put("empNm", empInfo.get(0).get("NM_KOR")); //사원이름
 
 			resultMap.put("empKey", empKey);
 			resultMap.put("sessionData", sessionData);
@@ -332,9 +346,11 @@ public class DzMobileApiService {
 			rp.setFail("로그인에 실패했습니다.");
 		}
 
+		System.out.println("#########################");
+		System.out.println(rp);
+
 		return rp;
 	}
-	
 
 
 	/**
@@ -391,7 +407,7 @@ public class DzMobileApiService {
 
 		return gatewayResult;
 	}
-	
+
 	/**
 	 * 더존 모바일 게이트웨이를 통해 웹 서비스를 호출한다. 
 	 * 
@@ -404,7 +420,7 @@ public class DzMobileApiService {
 	 */
 	public Map<String, Object> callRestService(String urlCd, Map<String,Object> header, Object body, HttpMethod httpMethod) throws Exception {
 
-		
+
 		//연결할 url이 없으면 예외처리
 		if(urlCd == null) 
 			throw new Exception("urlCd is null");
@@ -413,7 +429,7 @@ public class DzMobileApiService {
 		if(!"certificate".equals(urlCd) && !"requestNtx".equals(urlCd) && !"RequestOut".equals(urlCd) 
 				&&!"RequestScalar".equals(urlCd)&& !"requestTx".equals(urlCd) && !"requestTx2".equals(urlCd)) 
 			throw new Exception("urlCd is wrong");
-		
+
 
 		//공통 파라미터값 셋팅
 		//구조는 다음과 같다.
@@ -446,9 +462,9 @@ public class DzMobileApiService {
 
 		ResponseEntity<HashMap> response = null;
 		ObjectMapper objectMapper = new ObjectMapper();
-		
+
 		//특수문자를 허용시켜준다.
-		//objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+		objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 
 		//전송되는 MediaType(text/html)을 허용시켜준다.
 		MappingJackson2HttpMessageConverter converter=new MappingJackson2HttpMessageConverter();
@@ -483,13 +499,13 @@ public class DzMobileApiService {
 				response = restTemplate.getForEntity(url + urlCd + ".aspx", HashMap.class);
 
 			else if(HttpMethod.POST.equals(httpMethod))
-				response = restTemplate.postForEntity("http://10.249.92.147:85/ErpuMobileGate/_gateway/" + urlCd + ".aspx", param, HashMap.class);
-				//response = restTemplate.postForEntity(url + urlCd + ".aspx", param, HashMap.class);
+				//response = restTemplate.postForEntity("http://10.249.92.147:85/ErpuMobileGate/_gateway/" + urlCd + ".aspx", param, HashMap.class);
+				response = restTemplate.postForEntity(url + urlCd + ".aspx", param, HashMap.class);
 
 
 		} catch (HttpClientErrorException e) {
 			e.printStackTrace();
-			
+
 			//client오류 예외처리
 			/*
 			HttpStatus httpStatus=e.getStatusCode();
@@ -499,7 +515,7 @@ public class DzMobileApiService {
 				throw new InternalServerErrorException();
 			if(HttpStatus.SERVICE_UNAVAILABLE.equals(httpStatus))
 				throw new ServiceUnavailableException();
-			*/
+			 */
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -510,4 +526,42 @@ public class DzMobileApiService {
 
 		return response.getBody();
 	}
+
+	/**
+	 * 1개의 조회용 웹 서비스를 호출하여 받은 결과값을 List로 반환한다.
+	 * 
+	 * <pre>
+	 * [
+	 * 	{},
+	 * 	{},...
+	 * ]
+	 * </pre>
+	 * 
+	 * @param header
+	 * @param body
+	 * @return List
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> requestSingleService(Map<String,Object> header, Map<String,Object> body) throws Exception{
+
+		String key = (String)body.get("BusinessID");
+
+		Map<String,Object> map = callRestService("requestNtx", header, body, HttpMethod.POST);
+
+		System.out.println("┌────────────────── Result Start────────────────────────");
+		System.out.println("│  " + map.toString());
+		System.out.println("└────────────────── Result End──────────────────────────");
+
+		//세션 만료
+		if("2000".equals((String)map.get("resultCode")))
+			throw new CertificateException((String)map.get("resultCode") + " : " + (String)map.get("resultMessage"));
+
+		//그 외 에러
+		if(!"1000".equals((String)map.get("resultCode")) && !"2000".equals((String)map.get("resultCode")))
+			throw new Exception((String)map.get("resultCode") + " : " + (String)map.get("resultMessage"));
+
+		return (List<Map<String, Object>>) ((HashMap)((HashMap)map.get("result")).get("List")).get(key);
+	}
+
+
 }

@@ -46,5 +46,32 @@
 				)
 		]]>
 	</insert>
+	
+	<select id="getMobileSession" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT USER_TOKEN
+				, SESSIONKEY
+				, TIME_CREATED
+				, TIME_EXPIRED
+				, TOKEN_JSON
+				, INVALIDATE
+				, OS_TYPE
+				, OS_VERSION
+				, DEVICE_ID
+				, DEVICE_MODEL
+				FROM NEOE.NEOE.MB_ISU_MOBILE_SESSION
+				WHERE USER_TOKEN = #{userToken}
+		]]>
+	</select>
+	
+	<update id="invalidateMobileSession" parameterType="hashmap">
+		<![CDATA[ 
+			UPDATE NEOE.NEOE.MB_ISU_MOBILE_SESSION
+					SET INVALIDATE = 'Y'
+					,NOTE = #{note}
+					,INVALIDATE_TIME = GETDATE()
+				WHERE USER_TOKEN = #{userToken}
+		]]>
+	</update>
 
 </mapper>
