@@ -1264,7 +1264,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5fafd', end
 
 /* table */
 table.default{ border-top:1px solid #e0e2e5; width:100%; min-width:400px; }
-table.default th{position:relative;  font-weight:500; font-weight:bold; padding:5px 10px; line-height:1.6; font-size:12px; text-align:left; vertical-align: middle;
+table.default th{position:relative;  font-weight:500; font-weight:bold; padding:5px 15px; line-height:1.6; font-size:12px; text-align:left; vertical-align: middle;
 border-left:1px solid #e0e2e5; 
 border-right:1px solid #e0e2e5; 
 border-bottom:1px solid #e0e2e5; 
@@ -1275,7 +1275,7 @@ color:#333;
 table.default th:first-child{ border-left:none; }
 table.default th span.required{
 	position:absolute;
-	top: 10px;
+	top: 12px;
 	left: 8px;
 	display: inline-block;
     width: 5px;
