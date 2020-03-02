@@ -369,7 +369,7 @@
 	<select id="getExpireWtmEmpHis" parameterType="hashmap" resultType="map">
 		<![CDATA[
 		SELECT F_WTM_DATE_FORMAT(NOW(),'YMD') AS YMD , E.* 
-		  FROM WTM_EMP_HIS_TEST E
+		  FROM WTM_EMP_HIS E
 		  LEFT OUTER JOIN WTM_INTF_EMP I
 		    ON E.TENANT_ID = I.TENANT_ID
 			AND E.ENTER_CD = I.ENTER_CD
@@ -383,7 +383,7 @@
 	
 	<update id="expireWtmEmpHis" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_EMP_HIS_TEST E
+		UPDATE WTM_EMP_HIS E
 		  LEFT OUTER JOIN WTM_INTF_EMP I
 		    ON E.TENANT_ID = I.TENANT_ID
 					AND E.ENTER_CD = I.ENTER_CD
@@ -401,16 +401,16 @@
 	<select id="getUpdateWtmEmpHis" parameterType="hashmap" resultType="map">
 		<![CDATA[
 			SELECT *
-			  FROM WTM_EMP_HIS_TEST E
+			  FROM WTM_EMP_HIS E
 			  JOIN WTM_INTF_EMP I
 			    ON E.TENANT_ID = I.TENANT_ID
 			   	 AND E.ENTER_CD = I.ENTER_CD
 			   	 AND E.SABUN = I.SABUN
 			   	 AND E.SYMD = I.SYMD
-			   	 AND E.EYMD = I.EYMD
+			   	 AND #{ymd} BETWEEN E.SYMD AND E.EYMD
 			  WHERE E.TENANT_ID = ${tenantId} 
 			   AND I.YYYYMMDDHHMISS > #{ymdhis}
-			   AND (E.EMP_NM<>I.EMP_NM OR E.EMP_ENG_NM<>I.EMP_ENG_NM
+			   AND (E.EMP_NM<>I.EMP_NM OR E.EMP_ENG_NM<>I.EMP_ENG_NM OR E.EYMD<>(CASE WHEN I.EYMD IS NULL OR I.EYMD='' THEN '29991231' ELSE I.EYMD END)
 			         OR E.STATUS_CD<>I.STATUS_CD OR E.ORG_CD<>I.ORG_CD
 						OR E.DUTY_CD<>I.DUTY_CD OR E.POS_CD<>I.POS_CD OR E.CLASS_CD<>I.CLASS_CD
 						OR E.JOB_GROUP_CD<>I.JOB_GROUP_CD OR E.JOB_CD<>I.JOB_CD 
@@ -420,15 +420,16 @@
 	
 	<update id="updateWtmEmpHis" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_EMP_HIS_TEST E
+		UPDATE WTM_EMP_HIS E
 		  JOIN WTM_INTF_EMP I
 		    ON E.TENANT_ID = I.TENANT_ID
 		   	 AND E.ENTER_CD = I.ENTER_CD
 		   	 AND E.SABUN = I.SABUN
 		   	 AND E.SYMD = I.SYMD
-		   	 AND E.EYMD = I.EYMD
+		   	 AND #{ymd} BETWEEN E.SYMD AND E.EYMD
 		   SET E.EMP_NM = I.EMP_NM
 		      , E.EMP_ENG_NM   = I.EMP_ENG_NM 
+		      , E.EYMD   	   = (CASE WHEN I.EYMD IS NULL OR I.EYMD='' THEN '29991231' ELSE I.EYMD END)
 			  , E.STATUS_CD    = I.STATUS_CD
 			  , E.ORG_CD       = I.ORG_CD
 			  , E.DUTY_CD      = I.DUTY_CD
@@ -442,7 +443,7 @@
 		     , E.UPDATE_ID = #{updateId}
 		 WHERE E.TENANT_ID = ${tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
-		   AND (E.EMP_NM<>I.EMP_NM OR E.EMP_ENG_NM<>I.EMP_ENG_NM
+		   AND (E.EMP_NM<>I.EMP_NM OR E.EMP_ENG_NM<>I.EMP_ENG_NM OR E.EYMD<>(CASE WHEN I.EYMD IS NULL OR I.EYMD='' THEN '29991231' ELSE I.EYMD END)
 		         OR E.STATUS_CD<>I.STATUS_CD OR E.ORG_CD<>I.ORG_CD
 					OR E.DUTY_CD<>I.DUTY_CD OR E.POS_CD<>I.POS_CD OR E.CLASS_CD<>I.CLASS_CD
 					OR E.JOB_GROUP_CD<>I.JOB_GROUP_CD OR E.JOB_CD<>I.JOB_CD 
@@ -468,17 +469,17 @@
 		     , I.PAY_TYPE_CD AS payTypeCd
 		     , I.LEADER_YN AS leaderYn
 		     , I.SYMD AS symd
-		     , I.EYMD AS eymd
+		     , CASE WHEN I.EYMD IS NULL OR I.EYMD='' THEN '29991231' ELSE I.EYMD END AS eymd
 		     , I.NOTE AS note
 		     , #{updateId} AS userId
 		     , #{updateId} AS pId
 		  FROM WTM_INTF_EMP I
-		  LEFT OUTER JOIN WTM_EMP_HIS_TEST E
+		  LEFT OUTER JOIN WTM_EMP_HIS E
 		    ON E.TENANT_ID = I.TENANT_ID
 			AND E.ENTER_CD = I.ENTER_CD
 			AND E.SABUN = I.SABUN 
 			AND E.SYMD = I.SYMD
-			AND E.EYMD = I.EYMD
+			AND E.EYMD = (CASE WHEN I.EYMD IS NULL OR I.EYMD='' THEN '29991231' ELSE I.EYMD END)
 		 WHERE I.TENANT_ID = ${tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
 		   AND E.EMP_HIS_ID IS NULL
@@ -488,7 +489,7 @@
 	
 	<update id="insertWtmEmpHis" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO WTM_EMP_HIS_TEST(TENANT_ID, ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, ORG_CD, STATUS_CD, BUSINESS_PLACE_CD, DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, LEADER_YN, SYMD, EYMD, EMP_YMD, EMP_ID, UPDATE_DATE, UPDATE_ID)
+		INSERT INTO WTM_EMP_HIS(TENANT_ID, ENTER_CD, SABUN, EMP_NM, EMP_ENG_NM, ORG_CD, STATUS_CD, BUSINESS_PLACE_CD, DUTY_CD, POS_CD, CLASS_CD, JOB_GROUP_CD, JOB_CD, PAY_TYPE_CD, LEADER_YN, SYMD, EYMD, EMP_YMD, EMP_ID, UPDATE_DATE, UPDATE_ID)
 			SELECT I.TENANT_ID
 		     , I.ENTER_CD
 		     , I.SABUN
@@ -505,18 +506,18 @@
 		     , I.PAY_TYPE_CD
 		     , I.LEADER_YN
 		     , I.SYMD 
-			 , CASE WHEN I.EYMD IS NULL THEN '29991231' ELSE I.EYMD END 
+			 , CASE WHEN I.EYMD IS NULL OR I.EYMD='' THEN '29991231' ELSE I.EYMD END 
 			 , I.SYMD AS EMP_YMD
 			 , F_WTM_AES_ENCRYPT(CONCAT(I.TENANT_ID, I.ENTER_CD, I.SABUN), #{encKey}) AS EMP_ID
 			 , NOW() AS UPDATE_DATE
 			 , #{updateId} AS UPDATE_ID
 		FROM WTM_INTF_EMP I
-		  LEFT OUTER JOIN WTM_EMP_HIS_TEST E
+		  LEFT OUTER JOIN WTM_EMP_HIS E
 		    ON E.TENANT_ID = I.TENANT_ID
 			AND E.ENTER_CD = I.ENTER_CD
 			AND E.SABUN = I.SABUN 
 			AND E.SYMD = I.SYMD
-			AND E.EYMD = I.EYMD
+			AND E.EYMD = (CASE WHEN I.EYMD IS NULL OR I.EYMD='' THEN '29991231' ELSE I.EYMD END)
 		 WHERE I.TENANT_ID = ${tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
 		   AND E.EMP_HIS_ID IS NULL
@@ -526,23 +527,21 @@
 	
 	<update id="insertCommUser" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO comm_user(tenant_id, login_id, password, name, phone_no, update_date, login_failure_count, last_login, account_lockout_yn, emp_id, enter_cd)
-		SELECT *
+		INSERT INTO comm_user(tenant_id, login_id, password, name, phone_no, login_failure_count, account_lockout_yn, emp_id, enter_cd)
+		SELECT E.*
 		  FROM (
 					SELECT H.TENANT_ID AS tenant_id
 					     , F_WTM_AES_ENCRYPT(H.SABUN, #{encKey}) as login_id
 						  , '3KXBgLRev5AMV7MGN267dTNr6f+QjWf0IjLZvWTfpoc=' as password
 						  , H.EMP_NM AS name
 						  , '010' AS phone_no
-						  , NOW() AS update_date
 						  , 0 AS login_failure_count
-						  , now() AS last_login
 						  , 'N' as account_lockout_yn
 						  , F_WTM_AES_ENCRYPT(CONCAT(H.TENANT_ID, H.ENTER_CD, H.SABUN), #{encKey}) as emp_id
 						  , F_WTM_AES_ENCRYPT(H.ENTER_CD, #{encKey}) as enter_cd
-					  FROM WTM_EMP_HIS_TEST H
+					  FROM WTM_EMP_HIS H
 					 WHERE H.TENANT_ID = ${tenantId} 
-					   AND NOW() BETWEEN H.SYMD AND H.EYMD ) E
+					   AND #{ymd} BETWEEN H.SYMD AND H.EYMD ) E
 		  LEFT OUTER JOIN comm_user C
 		    ON E.tenant_id = C.tenant_id
 		   AND E.enter_cd = C.enter_cd

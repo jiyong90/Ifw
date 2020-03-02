@@ -196,4 +196,70 @@
 			) XX
 		]]>	
   	</select>
+  	
+  	<select id="checkApplMinute" parameterType="map" resultType="map">
+  		<![CDATA[ 
+			SELECT SABUN AS sabun
+			    , F_WTM_GET_EMP_NM(TENANT_ID, ENTER_CD, SABUN, YMD) AS empNm
+			    , CASE WHEN SUM((CASE WHEN APPR_MINUTE IS NULL OR APPR_MINUTE=0 THEN CASE WHEN PLAN_MINUTE IS NULL OR PLAN_MINUTE=0 
+				 		  THEN 0 ELSE PLAN_MINUTE END ELSE APPR_MINUTE END )) - CAST(${applMinute} AS unsigned) < 0 THEN 'N' ELSE 'Y' END AS isValid 
+			  FROM WTM_WORK_DAY_RESULT
+			 WHERE TENANT_ID = ${tenantId}
+			   AND ENTER_CD = #{enterCd}
+			   AND SABUN = #{sabun}
+			   AND YMD = #{ymd}
+			   AND 'Y' = CASE WHEN (TIME_TYPE_CD = 'BASE' AND (TAA_CD IS NULL OR TAA_CD = '')) 
+						OR (TIME_TYPE_CD = 'EXCEPT' AND TAA_CD LIKE '%BREAK%') THEN 'Y' ELSE 'N' END
+			GROUP BY TENANT_ID, ENTER_CD, SABUN, YMD
+		]]>	
+  	</select>
+  	
+  	<select id="checkTotalWorkMinuteForSele" parameterType="map" resultType="map">
+  		<![CDATA[ 
+			SELECT F.WORK_MINUTE AS workMinute
+					, CASE WHEN F.WORK_MINUTE - SUM(T.WORK_MINUTE) < 0 THEN 'N' ELSE 'Y' END AS isValid
+			  FROM WTM_FLEXIBLE_EMP F
+			  JOIN ( SELECT CASE WHEN X.YMD IS NOT NULL THEN X.APPL_MINUTE 
+									    ELSE SUM(CASE WHEN X.YMD IS NULL THEN CASE WHEN APPR_MINUTE IS NOT NULL AND APPR_MINUTE<>'' AND APPR_MINUTE<>0 THEN APPR_MINUTE ELSE PLAN_MINUTE END
+									             ELSE 0 END) END AS WORK_MINUTE
+						  FROM WTM_FLEXIBLE_EMP E
+						  JOIN WTM_WORK_DAY_RESULT R
+						    ON E.TENANT_ID = R.TENANT_ID
+						   AND E.ENTER_CD = R.ENTER_CD
+						   AND E.SABUN = R.SABUN
+						   AND R.YMD BETWEEN E.SYMD AND E.EYMD
+		]]>
+						   <if test="orgList!=null">
+						  LEFT OUTER JOIN (
+						  		SELECT S.YMD
+						  		     , SUM(APPL_MINUTE) AS APPL_MINUTE
+						  		  FROM (
+						  		  
+						  		  <foreach collection="applMinutes" item="a" separator="UNION ">
+									SELECT #{a.ymd} AS YMD
+									     , #{a.applMinute} AS APPL_MINUTE
+									  FROM DUAL
+								  </foreach>
+								) S
+								GROUP BY YMD
+						  ) X
+						  ON R.YMD = X.YMD
+						  </if>
+			<![CDATA[ 
+						 WHERE E.TENANT_ID = ${tenantId}
+						   AND E.ENTER_CD = #{enterCd}
+						   AND E.SABUN = #{sabun}
+						   AND #{symd} <= E.EYMD AND  #{eymd} >= E.SYMD
+						   AND 'Y' = CASE WHEN (TIME_TYPE_CD = 'BASE' AND (TAA_CD IS NULL OR TAA_CD = '')) 
+												OR (TIME_TYPE_CD = 'EXCEPT' AND TAA_CD LIKE '%BREAK%') THEN 'Y' ELSE 'N' END
+						GROUP BY E.TENANT_ID, E.ENTER_CD, E.SABUN, R.YMD ) T
+			 WHERE F.TENANT_ID = ${tenantId}
+			   AND F.ENTER_CD = #{enterCd}
+			   AND F.SABUN = #{sabun}
+			   AND #{symd} <= F.EYMD AND #{eymd} >= F.SYMD
+			   AND F.WORK_TYPE_CD LIKE '%SELE%'
+			GROUP BY F.TENANT_ID, F.ENTER_CD, F.SABUN, F.SYMD
+		]]>	
+  	</select>
+  	
 </mapper>
