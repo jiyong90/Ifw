@@ -263,7 +263,7 @@ public class WtmMobileEdocController {
 						} else if(body.get("apprStatCd").toString().equals("01")) {
 							rp = wtmEntryApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
 						
-							if(rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
+							if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("stdYmd")) {
 								Map<String, Object> pMap = new HashMap<String, Object>();
 								pMap.put("tenantId", tenantId);
 								pMap.put("enterCd", enterCd);
