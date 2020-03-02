@@ -12,7 +12,7 @@
 							</td>
 							<td>
 								<span class="label">기준일 </span>
-								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+								<input type="text" id="sYmd" name="sYmd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 							</td>
 							<td>
 								<a href="javascript:doAction1('Search');" class="button">조회</a>
@@ -60,64 +60,61 @@
 										</colgroup>
 										<tbody>
 											<tr id="trHoliday">
-												<th>공휴일제외여부</th>
+												<th>공휴일제외여부 <span id="Tooltip-holExceptYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="checkbox" id="holExceptYn" name="holExceptYn" />
 													<label for="holExceptYn">체크시 공휴일 근무제외</label>
 												</td>
-												<th>인정근무 단위시간(분)</th>
+												<th>인정근무 단위시간(분) <span id="Tooltip-unitMinute" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="text" id="unitMinute" name="unitMinute"/>
 													<input type="hidden" id="taaTimeYn" name="taaTimeYn"/>
 												</td>
 											</tr>
 											<tr id="trDayType">
-												<th>출근자동처리기준</th>
+												<th><span class="required"></span>출근자동처리기준<span id="Tooltip-dayOpenType" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<select id="dayOpenType"></select>
 													
 												</td>
-												<th>퇴근자동처리기준</th>
+												<th><span class="required"></span>퇴근자동처리기준<span id="Tooltip-dayCloseType" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<select id="dayCloseType"></select>
 												</td>
 											</tr>
 											<tr id="trBaseCheck">
-												<th>고정OT소진 사용여부</th>
+												<th>고정OT소진 사용여부 <span id="Tooltip-defaultWorkUseYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td colspan="3">
 													<input type="checkbox" id="defaultWorkUseYn" name="defaultWorkUseYn" />
 													<label for="defaultWorkUseYn">체크시 고정OT 소진기준작성 </label>	
 												</td>
 											</tr>
 											<tr id="trFixOt">
-												<th>고정OT 소진방법</th>
+												<th><span></span>고정OT 소진방법 <span id="Tooltip-fixotUseType" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
-													<select id="fixotUseType">
-														<option value="">사용안함</option>
-					                                    <option value="DAY">일별 소진</option>
-					                                    <option value="ALL">일괄 소진</option>
+													<select id="fixotUseType">														
 					                                </select>
 												</td>
-												<th>고정OT 소진한계시간(분)</th>
+												<th><span></span>고정OT 소진한계시간(분) <span id="Tooltip-fixotUseLimit" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="text" id="fixotUseLimit" name="fixotUseLimit"/>
 												</td>
 											</tr>
 											<tr id="trRega">
-												<th>간주근무시간</th>
+												<th><span class="required"></span>간주근무시간 <span id="Tooltip-regardTimeCdId" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td colspan="3">
 													<select id="regardTimeCdId">
 					                                </select>
 												</td>
 											</tr>
 											<tr id="trWorkTime">
-												<th>근무가능시각</th>
+												<th>근무가능시각 <span id="Tooltip-workTime" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
-													<input type="text" id="workShm" name="workShm" class="date2" data-toggle="datetimepicker" data-target="#workShm" placeholder="시:분" autocomplete="off"/>
+													<input type="text" id="workShm" name="workShm" class="date2 datetimepicker-input" data-toggle="datetimepicker" data-target="#workShm" placeholder="시:분" autocomplete="off"/>
 													~
-													<input type="text" id="workEhm" name="workEhm" class="date2" data-toggle="datetimepicker" data-target="#workEhm" placeholder="시:분" autocomplete="off"/>
+													<input type="text" id="workEhm" name="workEhm" class="date2 datetimepicker-input" data-toggle="datetimepicker" data-target="#workEhm" placeholder="시:분" autocomplete="off"/>
 												</td>
-												<th>근태일 근무가능여부</th>
+												<th>근태일 근무가능여부 <span id="Tooltip-taaWorkYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="checkbox" id="taaWorkYn" name="taaWorkYn" />
 													<label for="taaWorkYn">체크시 근태일 근무가능</label>
@@ -133,13 +130,13 @@
 											<tr id="trCoreTime">
 												<th>코어근무시각</th>
 												<td colspan="3">
-													<input type="text" id="coreShm" name="coreShm" class="date2" data-toggle="datetimepicker" data-target="#coreShm" placeholder="시:분" autocomplete="off"/>
+													<input type="text" id="coreShm" name="coreShm" class="date2 datetimepicker-input" data-toggle="datetimepicker" data-target="#coreShm" placeholder="시:분" autocomplete="off"/>
 													~
-													<input type="text" id="coreEhm" name="coreEhm" class="date2" data-toggle="datetimepicker" data-target="#coreEhm" placeholder="시:분" autocomplete="off"/>
+													<input type="text" id="coreEhm" name="coreEhm" class="date2 datetimepicker-input" data-toggle="datetimepicker" data-target="#coreEhm" placeholder="시:분" autocomplete="off"/>
 												</td>
 											</tr>
 											<tr id="trBaseFirst">
-												<th>기본근무선소진여부</th>
+												<th><span></span>기본근무선소진여부 <span id="Tooltip-exhaustionYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td colspan="3">
 													<select id="exhaustionYn">
 					                                    <option value="Y">사용</option>
@@ -147,15 +144,29 @@
 					                                </select>
 												</td>
 											</tr>
+											<tr id="trTodayPlanEdit">
+												<th>당일근무변경여부 <span id="Tooltip-todayPlanEditYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
+												<td colspan="3">
+													<input type="checkbox" id="todayPlanEditYn" name="todayPlanEditYn" />
+													<label for="todayPlanEditYn">체크시 당일 근무 변경가능</label> 
+												</td>
+											</tr>
 											<tr id="trUnplan">
-												<th>계획없이 타각가능여부</th>
+												<th>근무계획미등록여부 <span id="Tooltip-unplannedYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="checkbox" id="unplannedYn" name="unplannedYn" />
 													<label for="unplannedYn">계획이 없는날 타각수정신청 가능</label> 
 												</td>
 											</tr>
+											<tr id="trApplYn">
+												<th>신청여부 <span id="Tooltip-applYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
+												<td colspan="3">
+													<input type="checkbox" id="applYn" name="applYn" />
+													<label for="applYn">체크시 신청가능</label> 
+												</td>
+											</tr>
 											<tr id="trUsedTerm">
-												<th>사용기간지지정 <span id="Tooltip-7" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
+												<th>사용기간지지정 <span id="Tooltip-usedTermOpt" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td colspan="3">
 													<input type="checkbox" id="usedTermOpt1w" name="usedTermOpt" value="1_week" title="1주" /> 
 													<label for="usedTermOpt1w">1주</label>
@@ -172,33 +183,20 @@
 													<input type="checkbox" id="usedTermOpt3m" name="usedTermOpt" value="3_month" title="3개월"/>
 													<label for="usedTermOpt3m">3개월</label>
 												</td>
-											</tr>
-											<tr id="trApplYn">
-												<th>신청여부</th>
-												<td colspan="3">
-													<input type="checkbox" id="applYn" name="applYn" />
-													<label for="applYn">체크시 신청가능</label> 
-												</td>
-											</tr>
-											<tr id="trTodayPlanEdit">
-												<th>당일근무변경여부</th>
-												<td colspan="3">
-													<input type="checkbox" id="todayPlanEditYn" name="todayPlanEditYn" />
-													<label for="todayPlanEditYn">체크시 당일 근무 변경가능</label> 
-												</td>
-											</tr>
+											</tr>																						
 											<tr id="trApplyEntry">
-												<th>출근타각인정여부</th>
+												<th>출근타각인정여부 <span id="Tooltip-applyEntrySdateYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="checkbox" id="applyEntrySdateYn" name="applyEntrySdateYn" />
 													<label for="applyEntrySdateYn">체크시 출근 타각시간으로 인정</label> 
 												</td>
-												<th>퇴근타각인정여부</th>
+												<th>퇴근타각인정여부 <span id="Tooltip-applyEntryEdateYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="checkbox" id="applyEntryEdateYn" name="applyEntryEdateYn" />
 													<label for="applyEntryEdateYn">체크시 퇴근 타각시간으로 인정</label> 
 												</td>
 											</tr>
+											<!-- 20200220 주석처리
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
 												<td colspan="3">
@@ -214,6 +212,7 @@
 													<label for="applTermOpt4w">4주일 이내</label> 
 												</td>
 											</tr>
+											-->
 											<tr>
 												<th>비고</th>
 												<td colspan="3">
@@ -256,6 +255,7 @@
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
+   		$('#sYmd').val(moment().format('YYYY-MM-DD'));
         
         $('#workShm').datetimepicker({
             //format: 'LT',
@@ -267,7 +267,7 @@
                 vertical: 'bottom'
             }
         });
-        
+                       
         $('#workEhm').datetimepicker({
             //format: 'LT',
             format: 'HH:mm',
@@ -300,8 +300,8 @@
             }
         }); 
         new jBox('Tooltip', {
-       	    attach: '#Tooltip-7',
-       	    target: '#Tooltip-7',
+       	    attach: '#Tooltip-usedTermOpt',
+       	    target: '#Tooltip-usedTermOpt',
        	    theme: 'TooltipBorder',
        	    trigger: 'click',
        	    adjustTracker: true,
@@ -324,8 +324,423 @@
        	    onClose: function () {
        	      this.source.removeClass('active');
        	    }
+       	  });        
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-holExceptYn',
+       	    target: '#Tooltip-holExceptYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '토/일요일, 공휴일 휴일처리 여부',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });        
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-unitMinute',
+       	    target: '#Tooltip-unitMinute',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '타각시 근무시간 절사 기준 <br> ex) 10분 등록시, 출근계획시간 09:00 일때 09:03분 타각시 인정근무 단위 10분단위인 09:10분으로 절사하여 근무인정',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
        	  });
-        
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-dayOpenType',
+       	    target: '#Tooltip-dayOpenType',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '사용안함 : 임직원 타각기록 적용 <br> 기본근무시간자동 : 일마감시 기본근무 계획시간 출근 인정 <br> 연장근무시간자동 : 일마감시 연장근무 계획시간 출근 인정 <br> 일마감 시점에 기본근무/연장근무 항목이 기록완료된 것을 인정함 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-dayCloseType',
+       	    target: '#Tooltip-dayCloseType',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '사용안함 : 임직원 타각기록 적용 <br> 기본근무시간자동 : 일마감시 기본근무 계획시간 퇴근 인정 <br> 연장근무시간자동 : 일마감시 연장근무 계획시간 퇴근 인정 <br> 일마감 시점에 기본근무/연장근무 항목이 기록완료된 것을 인정함 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-defaultWorkUseYn',
+       	    target: '#Tooltip-defaultWorkUseYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '고정연장근무 자동등록시 체크항목 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-fixotUseType',
+       	    target: '#Tooltip-fixotUseType',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '일별소진 : 선택근무 제외 근무제도만 사용가능 <br> 매일 기본근무 종료 후 고정연장근무시간이 근무계획에 추가됨 <br> 일괄소진 : 선택근무 근무제도만 사용가능 <br> 선택근무 기본근무 소진 후 고정연장근무시간까지 근무기록됨 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-fixotUseLimit',
+       	    target: '#Tooltip-fixotUseLimit',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '고정OT 소진 체크시 한계시간 <br> 고정OT 소진방법이 일별소진인 경우 매일 추가되는 연장근무시간 <br> 고정OT 소진방법이 일괄소진인 경우 선택근무제 기간동안 사용할 연장근무시간 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-regardTimeCdId',
+       	    target: '#Tooltip-regardTimeCdId',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무일 간주근무(출장, 교육 등) 근무시간 기록 기준 시간표 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-workTime',
+       	    target: '#Tooltip-workTime',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '선근제 근무계획 등록시 등록가능한 근무가능시간 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-taaWorkYn',
+       	    target: '#Tooltip-taaWorkYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '출장, 교육등 종일근태일 근무가능여부 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-exhaustionYn',
+       	    target: '#Tooltip-exhaustionYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '사용 : 선택근무기간 약정근무시간 소진(계획등록사항 인정) 후 연장근무 신청가능 <br> 미사용 : 선택근무기간 약정근무시간 소진 이전 연장근무 신청가능 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-todayPlanEditYn',
+       	    target: '#Tooltip-todayPlanEditYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '선근제 근무계획 등록시 당일 근무 변경가능 여부 <br> 체크시 당일을 포함한 미래 근무계획 변경가능 <br> 미체크시 당일을 제외한 미래 근무계획 변경가능 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-unplannedYn',
+       	    target: '#Tooltip-unplannedYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무계획 미등록 체크시 <br> 근무계획 없이 출퇴근 타각으로 근무 가능함 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-applYn',
+       	    target: '#Tooltip-applYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무제도 개인 신청 가능 여부 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-applyEntrySdateYn',
+       	    target: '#Tooltip-applyEntrySdateYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '체크시 계획시간 이전 출근시 출근 타각시간으로 근무인정 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-applyEntryEdateYn',
+       	    target: '#Tooltip-applyEntryEdateYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '체크시 계획시간 이후 퇴근시 퇴근 타각시간으로 근무인정 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
         
 		var initdata1 = {};
 		
@@ -349,11 +764,11 @@
 			{Header:"고정OT 소진방법",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"고정OT 한계시간",	Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"fixotUseLimit",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },			
 			{Header:"간주근무시간",		Type:"Int",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"regardTimeCdId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:20 },
-			{Header:"근무가능시작",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
-			{Header:"근무가능종료",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
+			{Header:"근무가능시작",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workShm",			KeyField:0,	Format:"Hm",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
+			{Header:"근무가능종료",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"workEhm",			KeyField:0,	Format:"Hm",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
 			{Header:"코어시간체크여부",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreChkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
-			{Header:"코어근무시작",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
-			{Header:"코어근무종료",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
+			{Header:"코어근무시작",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreShm",			KeyField:0,	Format:"Hm",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
+			{Header:"코어근무종료",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"coreEhm",			KeyField:0,	Format:"Hm",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:4 },
 			{Header:"선소진여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"exhaustionYn",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"사용기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"usedTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
 			{Header:"신청기간지정",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applTermOpt",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
@@ -532,6 +947,8 @@
 	        	var chkYn = getCheckYn("todayPlanEditYn");
 	        	sheet1.SetCellValue(row, "todayPlanEditYn", chkYn);
 	        }
+	        /* 20200220 주석처리
+	        //신청기간지정
 	        if($('#trApplTerm').is(':visible')){
 	        	var applTermOptArr = new Array();
 				$('input[name="applTermOpt"]').each(function() {
@@ -545,6 +962,7 @@
 				var applTermOpt = JSON.stringify(applTermOptArr);
 				sheet1.SetCellValue(row, "applTermOpt", applTermOpt);
 	        }
+	        */
 	        if($("#dayOpenType").val() == "" || $("#dayOpenType").val() == "null" || $("#dayOpenType").val() === null){
 				alert("출근자동처리기준을 선택하세요");
 				return;
@@ -640,6 +1058,7 @@
 		}
 	}
 	
+	// Cell select
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
 		if(sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus") != "I"){
 			$("#pattBtn").show();	// 패턴저장 버튼 숨김
@@ -688,7 +1107,20 @@
 		 			
 				} else {
 					$("#trBaseCheck").show();
-					// 고정ot소진 사용여부
+					
+					// 고정ot소진 사용여부		
+					//20200220 start
+					if(workTypeCd == "SELE_F" || workTypeCd == "SELE_C"){	
+						$("#fixotUseType").empty();
+					    $("#fixotUseType").append("<option value='ALL'>일괄 소진</option>");					    					   
+					    
+					} else {
+						$("#fixotUseType").empty();						
+						$("#fixotUseType").append("<option value='DAY'>일별 소진</option>");
+						
+					}
+					//20200220 end
+					
 					if(sheet1.GetCellValue( NewRow, "defaultWorkUseYn") == "Y"){
 						$("input:checkbox[name='defaultWorkUseYn']").prop("checked", true);
 						setDefaultWorkUseYn(true);
@@ -711,19 +1143,39 @@
 
 				}
 				
-				// 근무가능시각
+				//선택근무
 				if(workTypeCd == "SELE_F" || workTypeCd == "SELE_C"){
 					$("#taaTimeYn").val("Y");
-					$("#trWorkTime").show();
-					$("#workShm").val(sheet1.GetCellValue( NewRow, "workShm"));
-					$("#workEhm").val(sheet1.GetCellValue( NewRow, "workEhm"));
+					
+					//근무가능시각
+					$("#trWorkTime").show();									
+					
+					//20200225 시간 format 수정
+					//$("#workShm").val(sheet1.GetCellValue( NewRow, "workShm"));
+					//$("#workEhm").val(sheet1.GetCellValue( NewRow, "workEhm"));
+										
+					// 시간 format
+					var workShm = sheet1.GetCellValue( NewRow, "workShm");
+					var workEhm = sheet1.GetCellValue( NewRow, "workEhm");
+					if( workShm != "" && workEhm != "" ) {						
+						workShm = workShm.substring(0,2)+":"+workShm.substring(2,4);						
+						workEhm = workEhm.substring(0,2)+":"+workEhm.substring(2,4);
+											
+						$("#workShm").val(workShm);
+						$("#workEhm").val(workEhm);	
+					} else {
+						$("#workShm").val("");
+						$("#workEhm").val("");	
+					}
+										
 					if(sheet1.GetCellValue( NewRow, "taaWorkYn") == "Y"){
 						$("input:checkbox[name='taaWorkYn']").prop("checked", true);
 					} else {
 						$("input:checkbox[name='taaWorkYn']").prop("checked", false);
 					}
 					$("#trBaseFirst").show();
-					$("#exhaustionYn").addClass("required");
+					//$("#exhaustionYn").addClass("required");
+					$("#trBaseFirst").find("th span").eq(0).addClass("required");
 					$("#exhaustionYn").val(sheet1.GetCellValue( NewRow, "exhaustionYn")).prop("selected", true);
 					$("#trUnplan").show();
 					if(sheet1.GetCellValue( NewRow, "unplannedYn") == "Y"){
@@ -731,6 +1183,7 @@
 					} else {
 						$("input:checkbox[name='unplannedYn']").prop("checked", false);
 					}
+					
 					if(workTypeCd == "SELE_C"){
 						$("#trCoreChk").show();
 						if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
@@ -739,12 +1192,29 @@
 						} else {
 							setCoreChkYn(false);
 						}
+						
+						//코어근무시각
 						$("#trCoreTime").show();
-						$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
-						$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
+						//20200225 시간 format 수정
+						//$("#coreShm").val(sheet1.GetCellValue( NewRow, "coreShm"));
+						//$("#coreEhm").val(sheet1.GetCellValue( NewRow, "coreEhm"));
+						
+						var coreShm = sheet1.GetCellValue( NewRow, "coreShm");
+						var coreEhm = sheet1.GetCellValue( NewRow, "coreEhm");
+						if( coreShm != "" && coreEhm != "" ) {													
+							coreShm = coreShm.substring(0,2)+":"+coreShm.substring(2,4);							
+							coreEhm = coreEhm.substring(0,2)+":"+coreEhm.substring(2,4);
+												
+							$("#coreShm").val(coreShm);
+							$("#coreEhm").val(coreEhm);
+						} else {
+							$("#coreShm").val("");
+							$("#coreEhm").val("");
+						}						
+						
 					} else {
 						$("#trCoreChk").hide();
-						$("#trCoreTime").hide();
+						$("#trCoreTime").hide();												
 						
 						$("#trApplyEntry").show();
 					}
@@ -760,7 +1230,8 @@
 					$("#trBaseFirst").hide();
 					$("#trUnplan").hide();
 					$("#trCoreChk").hide();
-					$("#exhaustionYn").removeClass("required");
+					//$("#exhaustionYn").removeClass("required");
+					$("#trBaseFirst").find("th span").eq(0).removeClass("required");
 					$("#workShm").val("");
 					$("#workEhm").val("");
 					$("#coreShm").val("");
@@ -788,9 +1259,17 @@
 						}
 					}
 					$("#trApplYn").show();
-					if(sheet1.GetCellValue( NewRow, "applYn") == "Y"){
+					if(sheet1.GetCellValue( NewRow, "applYn") == "Y"){						
 						$("input:checkbox[name='applYn']").prop("checked", true);
+						
+						setApplYn(true);
+												
+					//20200220 else 추가	
+					} else {						
+						setApplYn(false);											
 					}
+					
+					/* 20200220 주석처리
 					$("#trApplTerm").show();
 					var applTermOpt = sheet1.GetCellValue( NewRow, "applTermOpt");
 					if(applTermOpt != ""){
@@ -800,6 +1279,7 @@
 							$("input:checkbox[name=applTermOpt][value=" + value + "]").prop("checked", true);
 						}
 					}
+					*/
 				}
 				// 간주근무
 				$("#regardTimeCdId").val(sheet1.GetCellValue( NewRow, "regardTimeCdId")).prop("selected", true);
@@ -885,9 +1365,10 @@
 	function checkList(){
 		var ch = true;
         // 화면의 개별 입력 부분 필수값 체크
-        $(".required").each(function(index){
-            if($(this).val() == null || $(this).val() == ""){
-                alert($(this).parent().prev().text()+"은 필수값입니다.");
+        $("#tabs-1 .required").each(function(index){
+            //if($(this).val() == null || $(this).val() == ""){
+            if($(this).parent().next().children().val() == null || $(this).parent().next().children().val() == ""){
+                alert($(this).parent().text()+"은 필수값입니다.");
                 $(this).focus();
                 ch =  false;
                 return false;
@@ -903,23 +1384,34 @@
 		return chkYn;
 	}
 	
+	//고정OT소진 사용여부에 따른 SET
 	function setDefaultWorkUseYn(chk){
 		if(chk){
         	$("#trFixOt").show();
-        	$("#fixotUseType").addClass("required");
-        	$("#fixotUseLimit").addClass("required");
+        	//$("#fixotUseType").addClass("required");
+        	//$("#fixotUseLimit").addClass("required");
+        	
+        	$("#trFixOt").find("th").each(function(t){
+        		$(this).find("span").eq(0).addClass("required");
+        	}); 
+        	
 		} else {
             $("#trFixOt").hide();
            	$("#fixotUseType").val("");
 			$("#fixotUseLimit").val("");
-        	$("#fixotUseType").removeClass("required");
-        	$("#fixotUseLimit").removeClass("required");
+        	//$("#fixotUseType").removeClass("required");
+        	//$("#fixotUseLimit").removeClass("required");
+        	
+			$("#trFixOt").find("th").each(function(t){
+        		$(this).find("span").eq(0).removeClass("required");
+        	}); 
 		}
 	}
 	 $("#defaultWorkUseYn").change(function(){
 	 	setDefaultWorkUseYn($("#defaultWorkUseYn").is(":checked"));
     });
     
+	//코어시간체크여부에 따른 SET
     function setCoreChkYn(chk){
 		if(chk){
 			$("#trCoreTime").show();
@@ -948,7 +1440,29 @@
 		$("#note").val("");
 	}
 	
-	 $("#coreChkYn").change(function(){
+	$("#coreChkYn").change(function(){
 	 	setCoreChkYn($("#coreChkYn").is(":checked"));
     });
+	 
+	//20200220 추가 
+	//신청여부에 따른 SET
+	function setApplYn(chk){		
+		if(chk){
+			$("#trUsedTerm").show();
+			//$("#trApplTerm").show();
+			
+		} else {
+			$("#trUsedTerm").hide();
+			$("#trApplTerm").hide();
+			
+			// input checkbox 클리어
+			$("input:checkbox[name='usedTermOpt']").prop("checked", false);			
+			$("input:radio[name='applTermOpt']").prop("checked", false);
+											
+		}
+	}
+	$("#applYn").change(function(){
+		setApplYn($("#applYn").is(":checked"));
+    });    
+	
 </script>
