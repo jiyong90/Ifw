@@ -236,11 +236,27 @@
 	
 	<update id="expireWtmHolidayMgr" parameterType="hashmap">
 		<![CDATA[
-		DELETE FROM WTM_HOLIDAY_MGR
-		 WHERE (TENANT_ID, ENTER_CD, BISINESS_PLACE_CD, HOLIDAY_YMD) NOT IN ( SELECT TENANT_ID, ENTER_CD, LOCATION_CD, YMD 
-															                     FROM WTM_INTF_HOLIDAY
-															                    WHERE TENANT_ID = ${tenantId} 
-															                      AND YYYYMMDDHHMISS > #{ymdhis})
+	    DELETE C FROM WTM_HOLIDAY_MGR C
+		  JOIN WTM_INTF_HOLIDAY I
+		    ON C.TENANT_ID = I.TENANT_ID
+		   	 AND C.ENTER_CD = I.ENTER_CD
+		   	 AND C.BISINESS_PLACE_CD = I.LOCATION_CD
+		   	 AND C.HOLIDAY_YMD = I.YMD
+		 WHERE C.TENANT_ID = ${tenantId} 
+		   AND I.INTF_ID IS NULL
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.HOLIDAY_YMD IN ( SELECT YMD FROM WTM_INTF_HOLIDAY WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis}) 
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, BISINESS_PLACE_CD, HOLIDAY_YMD
+				                     FROM (SELECT A.*
+											  FROM WTM_HOLIDAY_MGR A 
+											  JOIN WTM_INTF_HOLIDAY B
+											    ON B.TENANT_ID = A.TENANT_ID
+											   AND B.ENTER_CD = A.ENTER_CD
+											   AND C.BISINESS_PLACE_CD = I.LOCATION_CD
+		   									   AND C.HOLIDAY_YMD = I.YMD
+		   									   AND C.HOLIDAY_NM = I.HOLIDAY_NM
+											   AND B.YYYYMMDDHHMISS > #{ymdhis}
+											 WHERE B.TENANT_ID = ${tenantId} ) T )	
 		]]>
 	</update>
 	
