@@ -252,9 +252,9 @@
 											  JOIN WTM_INTF_HOLIDAY B
 											    ON B.TENANT_ID = A.TENANT_ID
 											   AND B.ENTER_CD = A.ENTER_CD
-											   AND C.BISINESS_PLACE_CD = I.LOCATION_CD
-		   									   AND C.HOLIDAY_YMD = I.YMD
-		   									   AND C.HOLIDAY_NM = I.HOLIDAY_NM
+											   AND B.LOCATION_CD = A.BISINESS_PLACE_CD
+		   									   AND B.YMD = A.HOLIDAY_YMD
+		   									   AND B.HOLIDAY_NM = A.HOLIDAY_NM
 											   AND B.YYYYMMDDHHMISS > #{ymdhis}
 											 WHERE B.TENANT_ID = ${tenantId} ) T )	
 		]]>
