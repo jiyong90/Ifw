@@ -371,7 +371,7 @@
 		switch (sAction) {
 		case "Search":
 			var param = "applCodeId="+sheet1.GetCellValue( sheet1.GetSelectRow(), "applCodeId");
-			sheet2.DoSearch( "${rc.getContextPath()}/applCode/line/rec" , param);
+			sheet2.DoSearch( "${rc.getContextPath()}/applCode/recLine" , param);
 			break;
 			
 		case "Insert":
@@ -382,7 +382,7 @@
 		
 		case "Save":
 			IBS_SaveName(document.sheetForm,sheet2);
-			sheet2.DoSave("${rc.getContextPath()}/applCode/line/rec/save", $("#sheetForm").serialize()); break;
+			sheet2.DoSave("${rc.getContextPath()}/applCode/recLine/save", $("#sheetForm").serialize()); break;
 			break;
 		}
 	}

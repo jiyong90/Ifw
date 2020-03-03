@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -94,7 +95,7 @@ public class WtmApplCodeController {
 		return rp;
 	}
 	
-	@RequestMapping(value="/line/rec", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/recLine", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getRecLine(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
@@ -117,7 +118,7 @@ public class WtmApplCodeController {
 		return rp;
 	}
 	
-	@RequestMapping(value="/line/rec/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/recLine/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam saveRecLine(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
