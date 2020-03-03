@@ -8,9 +8,9 @@
 	<select id="getExpireWtmCode" parameterType="hashmap" resultType="map">
 		<![CDATA[
 	     SELECT *
-		  FROM WTM_CODE_TEST C
+		  FROM WTM_CODE C
 		  JOIN (SELECT DISTINCT C.*
-					  FROM WTM_CODE_TEST C
+					  FROM WTM_CODE C
 					  LEFT OUTER JOIN WTM_INTF_CODE F 
 					    ON C.TENANT_ID = F.TENANT_ID
 					   	 AND C.ENTER_CD = F.ENTER_CD
@@ -36,9 +36,9 @@
 
 	<update id="expireWtmCode" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_CODE_TEST C
+		UPDATE WTM_CODE C
 		  JOIN (SELECT DISTINCT C.*
-					  FROM WTM_CODE_TEST C
+					  FROM WTM_CODE C
 					  LEFT OUTER JOIN WTM_INTF_CODE F 
 					    ON C.TENANT_ID = F.TENANT_ID
 					   	 AND C.ENTER_CD = F.ENTER_CD
@@ -68,7 +68,7 @@
 	<select id="getDeleteWtmCode" parameterType="hashmap" resultType="map">
 		<![CDATA[
 		SELECT * 
-		  FROM WTM_CODE_TEST C 
+		  FROM WTM_CODE C 
 		  JOIN WTM_INTF_CODE I
 		    ON I.TENANT_ID = C.TENANT_ID
 		   AND I.ENTER_CD = C.ENTER_CD
@@ -83,7 +83,7 @@
 	
 	<update id="deleteWtmCode" parameterType="hashmap">
 		<![CDATA[
-		DELETE C FROM WTM_CODE_TEST C 
+		DELETE C FROM WTM_CODE C 
 		  JOIN WTM_INTF_CODE I
 		    ON I.TENANT_ID = C.TENANT_ID
 		   AND I.ENTER_CD = C.ENTER_CD
@@ -98,7 +98,7 @@
 	
 	<update id="insertWtmCodeForBetween" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO WTM_CODE_TEST(TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD, CODE_NM, SYMD, EYMD, SEQ, NOTE, UPDATE_DATE, UPDATE_ID)
+		INSERT INTO WTM_CODE(TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD, CODE_NM, SYMD, EYMD, SEQ, NOTE, UPDATE_DATE, UPDATE_ID)
 		SELECT T.TENANT_ID
 		     , T.ENTER_CD
 		     , T.GRP_CODE_CD
@@ -120,7 +120,7 @@
 					     , C.SEQ
 					     , C.NOTE
 					  FROM WTM_INTF_CODE I
-					  JOIN WTM_CODE_TEST C
+					  JOIN WTM_CODE C
 					    ON I.TENANT_ID = C.TENANT_ID
 					   AND I.ENTER_CD = C.ENTER_CD
 					   AND I.GRP_CODE_CD = C.GRP_CODE_CD
@@ -142,7 +142,7 @@
 	
 	<update id="updateWtmCode" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_CODE_TEST A  
+		UPDATE WTM_CODE A  
 	    JOIN (  SELECT T.CODE_ID
 	                 , CASE WHEN S.INTF_ID IS NOT NULL THEN S.CODE_NM ELSE T.CODE_NM END AS CODE_NM
 	                 , T.SYMD
@@ -159,7 +159,7 @@
 								  			WHEN C.SYMD >= I.SYMD THEN I.EYMD
 											ELSE C.EYMD END AS EYMD						  
 							      , C.NOTE
-							  FROM WTM_CODE_TEST C
+							  FROM WTM_CODE C
 							  JOIN (SELECT D.*
 										     , CASE WHEN @grpCodeCd=GRP_CODE_CD THEN CASE WHEN @codeCd=CODE_CD THEN @rownum := @rownum+1 ELSE @rownum:=1 END ELSE @rownum:=1 END AS ROWNUM
 										     , @grpCodeCd := GRP_CODE_CD
@@ -197,7 +197,7 @@
 	
 	<update id="insertWtmCode" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO WTM_CODE_TEST(TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD, CODE_NM, SYMD, EYMD, SEQ, NOTE, UPDATE_DATE, UPDATE_ID)
+		INSERT INTO WTM_CODE(TENANT_ID, ENTER_CD, GRP_CODE_CD, CODE_CD, CODE_NM, SYMD, EYMD, SEQ, NOTE, UPDATE_DATE, UPDATE_ID)
 		SELECT DISTINCT T.TENANT_ID
 			     , T.ENTER_CD
 			     , T.GRP_CODE_CD
@@ -211,7 +211,7 @@
 				  , #{updateId} AS UPDATE_ID
 		  FROM (	SELECT I.*
 						  , (SELECT COUNT(*) 
-						       FROM WTM_CODE_TEST 
+						       FROM WTM_CODE 
 								WHERE TENANT_ID=I.TENANT_ID 
 								  AND ENTER_CD=I.ENTER_CD 
 								  AND GRP_CODE_CD=I.GRP_CODE_CD
@@ -219,7 +219,7 @@
 								  AND SYMD=I.SYMD
 								  AND EYMD=I.EYMD ) AS CNT
 					  FROM WTM_INTF_CODE I
-					  LEFT OUTER JOIN WTM_CODE_TEST C
+					  LEFT OUTER JOIN WTM_CODE C
 					    ON I.TENANT_ID = C.TENANT_ID
 					   AND I.ENTER_CD = C.ENTER_CD
 					   AND I.GRP_CODE_CD = C.GRP_CODE_CD
@@ -295,7 +295,7 @@
     
     <update id="expireWtmTaaCode" parameterType="hashmap">
 		<![CDATA[
-		DELETE C FROM WTM_TAA_CODE_TEST C
+		DELETE C FROM WTM_TAA_CODE C
 		  JOIN WTM_INTF_GNT I
 		    ON C.TENANT_ID = I.TENANT_ID
 		   	 AND C.ENTER_CD = I.ENTER_CD
@@ -306,7 +306,7 @@
 		   AND C.TAA_CD IN ( SELECT TAA_CD FROM WTM_INTF_GNT WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis}) 
 		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, TAA_CD
 				                     FROM (SELECT A.*
-											  FROM WTM_TAA_CODE_TEST A 
+											  FROM WTM_TAA_CODE A 
 											  JOIN WTM_INTF_GNT B
 											    ON B.TENANT_ID = A.TENANT_ID
 											   AND B.ENTER_CD = A.ENTER_CD
@@ -319,7 +319,7 @@
 	
 	<update id="updateWtmTaaCode" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_TAA_CODE_TEST C
+		UPDATE WTM_TAA_CODE C
 		  JOIN WTM_INTF_GNT I
 		    ON C.TENANT_ID = I.TENANT_ID
 		   	 AND C.ENTER_CD = I.ENTER_CD
@@ -341,7 +341,7 @@
 	
 	<update id="insertWtmTaaCode" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO WTM_TAA_CODE_TEST(TENANT_ID, ENTER_CD, TAA_CD, TAA_NM, TAA_TYPE_CD, HOL_INCL_YN, REQUEST_TYPE_CD, WORK_YN, PAY_YN, NOTE, UPDATE_DATE, UPDATE_ID)
+		INSERT INTO WTM_TAA_CODE(TENANT_ID, ENTER_CD, TAA_CD, TAA_NM, TAA_TYPE_CD, HOL_INCL_YN, REQUEST_TYPE_CD, WORK_YN, PAY_YN, NOTE, UPDATE_DATE, UPDATE_ID)
 		SELECT I.TENANT_ID
 		     , I.ENTER_CD
 		     , I.GNT_CD
@@ -355,7 +355,7 @@
 			  , NOW() AS UPDATE_DATE
 			  , #{updateId} AS UPDATE_ID
 		  FROM WTM_INTF_GNT I
-		  LEFT OUTER JOIN WTM_TAA_CODE_TEST C
+		  LEFT OUTER JOIN WTM_TAA_CODE C
 		    ON I.TENANT_ID = C.TENANT_ID
 		   AND I.ENTER_CD = C.ENTER_CD
 		   AND I.GNT_CD = C.TAA_CD
@@ -552,7 +552,7 @@
 	
 	<update id="expireWtmEmpAddr" parameterType="hashmap">
 		<![CDATA[
-		DELETE E FROM WTM_EMP_ADDR_TEST E
+		DELETE E FROM WTM_EMP_ADDR E
 		  LEFT OUTER JOIN WTM_INTF_EMP_ADDR I
 		    ON E.TENANT_ID = I.TENANT_ID
 				AND E.ENTER_CD = I.ENTER_CD
@@ -562,7 +562,7 @@
 		   AND I.YYYYMMDDHHMISS > #{ymdhis} 
 		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN 
 		                     FROM (SELECT A.*
-									  FROM WTM_EMP_ADDR_TEST A 
+									  FROM WTM_EMP_ADDR A 
 									  JOIN WTM_INTF_EMP_ADDR B
 									    ON B.TENANT_ID = A.TENANT_ID
 									   AND B.ENTER_CD = A.ENTER_CD
@@ -574,7 +574,7 @@
 	
 	<update id="updateWtmEmpAddr" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_EMP_ADDR_TEST C
+		UPDATE WTM_EMP_ADDR C
 		  JOIN WTM_INTF_EMP_ADDR I
 		    ON C.TENANT_ID = I.TENANT_ID
 		   	 AND C.ENTER_CD = I.ENTER_CD
@@ -591,7 +591,7 @@
 	
 	<update id="insertWtmEmpAddr" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO WTM_EMP_ADDR_TEST(TENANT_ID, ENTER_CD, SABUN, EMAIL, HAND_PHONE, NOTE, UPDATE_DATE, UPDATE_ID)
+		INSERT INTO WTM_EMP_ADDR(TENANT_ID, ENTER_CD, SABUN, EMAIL, HAND_PHONE, NOTE, UPDATE_DATE, UPDATE_ID)
 		SELECT I.TENANT_ID
 		     , I.ENTER_CD
 		     , I.SABUN
@@ -601,7 +601,7 @@
 			  , NOW() AS UPDATE_DATE
 			  , #{updateId} AS UPDATE_ID
 		  FROM WTM_INTF_EMP_ADDR I
-		  LEFT OUTER JOIN WTM_EMP_ADDR_TEST C
+		  LEFT OUTER JOIN WTM_EMP_ADDR C
 		    ON I.TENANT_ID = C.TENANT_ID
 		   AND I.ENTER_CD = C.ENTER_CD
 		   AND I.SABUN = C.SABUN
@@ -615,8 +615,8 @@
 	<select id="getExpireWtmOrgCode" parameterType="hashmap" resultType="map">
 		<![CDATA[
 		SELECT *
-		  FROM WTM_ORG_CODE_TEST T
-		  LEFT OUTER JOIN WTM_INTF_ORG_TEST A
+		  FROM WTM_ORG_CODE T
+		  LEFT OUTER JOIN WTM_INTF_ORG A
 		    ON T.TENANT_ID = A.TENANT_ID
 		   AND T.ENTER_CD = A.ENTER_CD
 		   AND T.ORG_CD = A.ORG_CD
@@ -629,8 +629,8 @@
 
 	<update id="expireWtmOrgCode" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_ORG_CODE_TEST C
-		 LEFT OUTER JOIN WTM_INTF_ORG_TEST A
+		UPDATE WTM_ORG_CODE C
+		 LEFT OUTER JOIN WTM_INTF_ORG A
 		    ON C.TENANT_ID = A.TENANT_ID
 			   AND C.ENTER_CD = A.ENTER_CD
 			   AND C.ORG_CD = A.ORG_CD
@@ -647,7 +647,7 @@
 	<select id="getDeleteWtmOrgCode" parameterType="hashmap" resultType="map">
 		<![CDATA[
 		SELECT * 
-		  FROM WTM_ORG_CODE_TEST C 
+		  FROM WTM_ORG_CODE C 
 		  JOIN WTM_INTF_ORG I
 		    ON I.TENANT_ID = C.TENANT_ID
 		   AND I.ENTER_CD = C.ENTER_CD
@@ -661,7 +661,7 @@
 	
 	<update id="deleteWtmOrgCode" parameterType="hashmap">
 		<![CDATA[
-		DELETE C FROM WTM_ORG_CODE_TEST C 
+		DELETE C FROM WTM_ORG_CODE C 
 		  JOIN WTM_INTF_ORG I
 		    ON I.TENANT_ID = C.TENANT_ID
 		   AND I.ENTER_CD = C.ENTER_CD
@@ -675,7 +675,7 @@
 	
 	<update id="insertWtmOrgCodeForBetween" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO WTM_ORG_CODE_TEST(TENANT_ID, ENTER_CD, ORG_CD, ORG_NM, SYMD, EYMD, ORG_TYPE, NOTE, UPDATE_DATE, UPDATE_ID)
+		INSERT INTO WTM_ORG_CODE(TENANT_ID, ENTER_CD, ORG_CD, ORG_NM, SYMD, EYMD, ORG_TYPE, NOTE, UPDATE_DATE, UPDATE_ID)
 		SELECT T.TENANT_ID
 		     , T.ENTER_CD
 		     , T.ORG_CD
@@ -695,7 +695,7 @@
 					     , C.ORG_TYPE
 					     , C.NOTE
 					  FROM WTM_INTF_ORG I
-					  JOIN WTM_ORG_CODE_TEST C
+					  JOIN WTM_ORG_CODE C
 					    ON I.TENANT_ID = C.TENANT_ID
 					   AND I.ENTER_CD = C.ENTER_CD
 					   AND I.ORG_CD = C.ORG_CD
@@ -715,7 +715,7 @@
 	
 	<update id="updateWtmOrgCode" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_ORG_CODE_TEST A  
+		UPDATE WTM_ORG_CODE A  
 	    JOIN ( SELECT T.ORG_CODE_ID
 					     , CASE WHEN S.INTF_ID IS NOT NULL THEN S.ORG_NM ELSE T.ORG_NM END AS ORG_NM
 					     , T.SYMD
@@ -733,7 +733,7 @@
 											ELSE C.EYMD END AS EYMD		
 										, C.ORG_TYPE					  
 								      , C.NOTE
-								  FROM WTM_ORG_CODE_TEST C
+								  FROM WTM_ORG_CODE C
 								  JOIN (SELECT D.*
 											     , CASE WHEN @orgCd=ORG_CD THEN @rownum := @rownum+1 ELSE @rownum:=1 END AS ROWNUM
 											     , @orgCd := ORG_CD
@@ -768,7 +768,7 @@
 	
 	<update id="insertWtmOrgCode" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO WTM_ORG_CODE_TEST(TENANT_ID, ENTER_CD, ORG_CD, ORG_NM, SYMD, EYMD, ORG_TYPE, NOTE, UPDATE_DATE, UPDATE_ID)
+		INSERT INTO WTM_ORG_CODE(TENANT_ID, ENTER_CD, ORG_CD, ORG_NM, SYMD, EYMD, ORG_TYPE, NOTE, UPDATE_DATE, UPDATE_ID)
 		 SELECT DISTINCT T.TENANT_ID
 		     , T.ENTER_CD
 		     , T.ORG_CD
@@ -788,14 +788,14 @@
 						  , I.ORG_TYPE
 						  , I.NOTE
 						  , (SELECT COUNT(*) 
-						       FROM WTM_ORG_CODE_TEST 
+						       FROM WTM_ORG_CODE 
 								WHERE TENANT_ID=I.TENANT_ID 
 								  AND ENTER_CD=I.ENTER_CD 
 								  AND ORG_CD=I.ORG_CD
 								  AND SYMD=I.SYMD
 								  AND EYMD=I.EYMD ) AS CNT
 					  FROM WTM_INTF_ORG I
-					  LEFT OUTER JOIN WTM_ORG_CODE_TEST C
+					  LEFT OUTER JOIN WTM_ORG_CODE C
 					    ON I.TENANT_ID = C.TENANT_ID
 					   AND I.ENTER_CD = C.ENTER_CD
 					   AND I.ORG_CD = C.ORG_CD
@@ -809,10 +809,10 @@
 	
 	<update id="updateWtmOrgChartDet" parameterType="hashmap">
 		<![CDATA[
-		UPDATE WTM_ORG_CHART_DET_TEST D
-		  JOIN WTM_ORG_CHART_TEST C
+		UPDATE WTM_ORG_CHART_DET D
+		  JOIN WTM_ORG_CHART C
 		    ON C.ORG_CHART_ID = D.ORG_CHART_ID
-		  JOIN WTM_INTF_ORG_TEST I
+		  JOIN WTM_INTF_ORG I
 		    ON C.TENANT_ID = I.TENANT_ID
 			   AND C.ENTER_CD = I.ENTER_CD
 			   AND D.ORG_CD = I.ORG_CD
@@ -829,7 +829,7 @@
 	
 	<update id="insertWtmOrgChartDet" parameterType="hashmap">
 		<![CDATA[
-		INSERT INTO WTM_ORG_CHART_DET_TEST(ORG_CHART_ID, ORG_CD, PRIOR_ORG_CD, SEQ, ORG_LEVEL, NOTE, UPDATE_DATE, UPDATE_ID)
+		INSERT INTO WTM_ORG_CHART_DET(ORG_CHART_ID, ORG_CD, PRIOR_ORG_CD, SEQ, ORG_LEVEL, NOTE, UPDATE_DATE, UPDATE_ID)
 		SELECT #{orgChartId} AS ORG_CHART_ID
 		     , I.ORG_CD
 		     , I.PRIOR_ORG_CD
@@ -838,8 +838,8 @@
 		     , I.NOTE
 		     , NOW() AS UPDATE_DATE
 		     , #{updateId} AS UPDATE_ID
-		  FROM WTM_INTF_ORG_TEST I
-		  JOIN WTM_ORG_CHART_TEST C
+		  FROM WTM_INTF_ORG I
+		  JOIN WTM_ORG_CHART C
 		    ON C.TENANT_ID = I.TENANT_ID
 		   AND C.ENTER_CD = I.ENTER_CD
 		  LEFT OUTER JOIN WTM_ORG_CHART_DET D

@@ -217,6 +217,7 @@
   	<select id="checkTotalWorkMinuteForSele" parameterType="map" resultType="map">
   		<![CDATA[ 
 			SELECT F.WORK_MINUTE AS workMinute
+			     , SUM(T.WORK_MINUTE) AS totalWorkMinute
 					, CASE WHEN F.WORK_MINUTE - SUM(T.WORK_MINUTE) < 0 THEN 'N' ELSE 'Y' END AS isValid
 			  FROM WTM_FLEXIBLE_EMP F
 			  JOIN ( SELECT CASE WHEN X.YMD IS NOT NULL THEN X.APPL_MINUTE 
@@ -229,22 +230,26 @@
 						   AND E.SABUN = R.SABUN
 						   AND R.YMD BETWEEN E.SYMD AND E.EYMD
 		]]>
-						   <if test="orgList!=null">
 						  LEFT OUTER JOIN (
 						  		SELECT S.YMD
 						  		     , SUM(APPL_MINUTE) AS APPL_MINUTE
 						  		  FROM (
-						  		  
+						  		  SELECT NULL AS YMD
+						  		       , 0 AS APPL_MINUTE
+						  		    FROM DUAL
+						  		    UNION
+						  		  <if test="applMinutes!=null">
 						  		  <foreach collection="applMinutes" item="a" separator="UNION ">
 									SELECT #{a.ymd} AS YMD
 									     , #{a.applMinute} AS APPL_MINUTE
 									  FROM DUAL
 								  </foreach>
+								  </if>
 								) S
 								GROUP BY YMD
 						  ) X
 						  ON R.YMD = X.YMD
-						  </if>
+						  
 			<![CDATA[ 
 						 WHERE E.TENANT_ID = ${tenantId}
 						   AND E.ENTER_CD = #{enterCd}
