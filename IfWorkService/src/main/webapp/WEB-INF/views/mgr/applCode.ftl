@@ -24,7 +24,7 @@
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">신청서코드관리</div>
 							<ul class="float-right btn-wrap">
-								<!-- <li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li> -->
+								<!-- <li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>  -->
 								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
 							</ul>
 						</div>
@@ -96,17 +96,17 @@
 									<tr id="trApplTime" style="display:none;">
 										<th>연장근무 신청 가능 시각</th>
 										<td colspan="3">
-											<input type="text" id="inShm" name="inShm" class="date2 required" data-toggle="datetimepicker" data-target="#inShm" placeholder="시:분" autocomplete="off"/>
+											<input type="text" id="inShm" name="inShm" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#inShm" placeholder="시:분" autocomplete="off"/>
 											~
-											<input type="text" id="inEhm" name="inEhm" class="date2 required" data-toggle="datetimepicker" data-target="#inEhm" placeholder="시:분" autocomplete="off"/>
+											<input type="text" id="inEhm" name="inEhm" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#inEhm" placeholder="시:분" autocomplete="off"/>
 										</td>
 									</tr>
 									<tr id="trHolTime" style="display:none;">
 										<th>휴일근무 신청 가능 시각</th>
 										<td colspan="3">
-											<input type="text" id="holInShm" name="holInShm" class="date2 required" data-toggle="datetimepicker" data-target="#holInShm" placeholder="시:분" autocomplete="off"/>
+											<input type="text" id="holInShm" name="holInShm" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#holInShm" placeholder="시:분" autocomplete="off"/>
 											~
-											<input type="text" id="holInEhm" name="holInEhm" class="date2 required" data-toggle="datetimepicker" data-target="#holInEhm" placeholder="시:분" autocomplete="off"/>
+											<input type="text" id="holInEhm" name="holInEhm" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#holInEhm" placeholder="시:분" autocomplete="off"/>
 										</td>
 									</tr>
 									<tr id="trHolBreak" style="display:none;">
@@ -136,7 +136,7 @@
 			                                    <option value="N">사용안함</option>
 			                                </select>
 										</td>
-										<th>휴일대체 선택대상</th>
+										<th>수당지급 선택대상</th>
 										<td>
 											<select id="subsRuleId">
 			                                    <option value="">사용안함</option>
@@ -241,17 +241,17 @@
 			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"신청서코드",		Type:"Text",		Hidden:0,	Width:60,	Align:"Center",	ColMerge:0,	SaveName:"applCd",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:50 },
-   			{Header:"신청서명",		Type:"Text",		Hidden:0,	Width:80,	Align:"Left",	ColMerge:0,	SaveName:"applNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+   			{Header:"신청서명",		Type:"Text",		Hidden:0,	Width:80,	Align:"Left",	ColMerge:0,	SaveName:"applNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
    			{Header:"결재단계",  		Type:"Combo",     	Hidden:0,   Width:60,  Align:"Center",  ColMerge:0, SaveName:"applLevelCd",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
    			//{Header:"수신단계",  		Type:"Combo",     	Hidden:0,   Width:60,  Align:"Center",  ColMerge:0, SaveName:"recLevelCd",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
    			{Header:"신청시간단위",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"timeUnit",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:50  },
    			{Header:"신청사용분",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"useMinutes",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:2000  },
    			{Header:"연장신청시작",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"otApplSday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
    			{Header:"연장신청종료",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"otApplEday",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
-   			{Header:"입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inShm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
-   			{Header:"입력종료시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inEhm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
-   			{Header:"휴일입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holInShm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
-   			{Header:"휴일입력종료시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holInEhm",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
+   			{Header:"입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inShm",  	KeyField:0, Format:"Hm",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
+   			{Header:"입력종료시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"inEhm",  	KeyField:0, Format:"Hm",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
+   			{Header:"휴일입력시작시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holInShm",  	KeyField:0, Format:"Hm",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
+   			{Header:"휴일입력종료시각",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holInEhm",  	KeyField:0, Format:"Hm",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:4  },
    			{Header:"휴일신청시간기준",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holApplTypeCd",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:50  },
    			{Header:"휴일신청최대시간",  	Type:"Int",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"holMaxMinute",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:5  },
    			{Header:"대휴사용여부",  	Type:"Text",     	Hidden:1,   Width:10,  Align:"Center",  ColMerge:0, SaveName:"subsYn",  	KeyField:0, Format:"",    	PointCount:0,  UpdateEdit:0,  InsertEdit:0,  EditLen:1  },
@@ -464,6 +464,20 @@
 			if($('#trApplTime').is(':visible')){
 				$("#inShm").val(sheet1.GetCellValue( NewRow, "inShm"));
 				$("#inEhm").val(sheet1.GetCellValue( NewRow, "inEhm"));
+				
+				var inShm = $("#inShm").val();
+				var inEhm = $("#inEhm").val();
+				
+				if( inShm != "" && inEhm != "" ) {													
+					inShm = inShm.substring(0,2)+":"+inShm.substring(2,4);							
+					inEhm = inEhm.substring(0,2)+":"+inEhm.substring(2,4);
+										
+					$("#inShm").val(inShm);
+					$("#inEhm").val(inEhm);
+				} else {
+					$("#inShm").val("");
+					$("#inEhm").val("");
+				}	
 			}
 			if($('#trHol').is(':visible')){
 				$("#subsYn").val(sheet1.GetCellValue( NewRow, "subsYn")).prop("selected", true);
@@ -476,6 +490,20 @@
 			if($('#trHolTime').is(':visible')){
 				$("#holInShm").val(sheet1.GetCellValue( NewRow, "holInShm"));
 				$("#holInEhm").val(sheet1.GetCellValue( NewRow, "holInEhm"));
+				
+				var holInShm = $("#holInShm").val();
+				var holInEhm = $("#holInEhm").val();
+				
+				if( holInShm != "" && inEhm != "" ) {													
+					holInShm = holInShm.substring(0,2)+":"+holInShm.substring(2,4);							
+					holInEhm = holInEhm.substring(0,2)+":"+holInEhm.substring(2,4);
+										
+					$("#holInShm").val(holInShm);
+					$("#holInEhm").val(inEhm);
+				} else {
+					$("#holInShm").val("");
+					$("#holInEhm").val("");
+				}	
 			}
 			if($('#trHolBreak').is(':visible')){
 				$("#holApplTypeCd").val(sheet1.GetCellValue( NewRow, "holApplTypeCd")).prop("selected", true);

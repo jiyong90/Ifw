@@ -714,13 +714,15 @@
 		  	  								}
 		  								} */
 		  								
+		  								/*
+		  								//시간 달력 선택 시 단위 세팅하면 1분 단위 신청 못해서 주석처리
 		  								if($this.result.holidayYn!='Y') {
 		  									if(d.timeUnit!=null && d.timeUnit!=undefined && d.timeUnit!=''){
 		  	  									var timeUnit = Number(d.timeUnit);
 		  										$('#sTime').datetimepicker('stepping', timeUnit);
 		  										$('#eTime').datetimepicker('stepping', timeUnit);
 		  	  								}
-		  								}
+		  								} */
   									} else if(d.applCd=='ENTRY_CHG') {
   										//근태사유서 신청 기간에 따라 버튼 보여줌
   		  		  		  		    	if(d.entryLimit!=null && d.entryLimit!=undefined && d.entryLimit!=''){
@@ -1326,7 +1328,8 @@
 		         				var dayResults = JSON.parse($this.result.dayResults);
 		         				if(dayResults.length>0) {
 		         					dayResults.map(function(dayResult){
-			  	  	         			if(dayResult.timeTypeCd != 'GOBACK'){
+			  	  	         			if((!dayResult.hasOwnProperty("applStatusCd") || (dayResult.hasOwnProperty("applStatusCd") && dayResult.applStatusCd!='22' && dayResult.applStatusCd!='32') ) 
+			  	  	         					&& dayResult.timeTypeCd != 'GOBACK'){
 				  	  	         			var workSdate = moment(dayResult.sDate).format('YYYY-MM-DD HH:mm');
 					  	         			var workEdate = moment(dayResult.eDate).format('YYYY-MM-DD HH:mm');
 					  	         			if(moment(workSdate).diff(otSdate)<=0 && moment(otSdate).diff(workEdate)<0 
@@ -1887,11 +1890,12 @@
             useCurrent: false
 		});
 		
-		if(calendarLeftVue.rangeInfo!=null && Object.keys(calendarLeftVue.rangeInfo).length>0) {
+		//시간 달력 선택 시 단위 세팅하면 1분 단위 신청 못해서 주석처리
+		/* if(calendarLeftVue.rangeInfo!=null && Object.keys(calendarLeftVue.rangeInfo).length>0) {
 			var unitMinute = calendarLeftVue.rangeInfo.unitMinute;
 			if(unitMinute!=null && unitMinute!=undefined && unitMinute!='')
 				$(this).datetimepicker('stepping',Number(unitMinute));
-		}
+		} */
 		
 		$(this).off("change.datetimepicker").on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
@@ -1915,11 +1919,12 @@
             useCurrent: false
 		});
 		
-		if(calendarLeftVue.rangeInfo!=null && Object.keys(calendarLeftVue.rangeInfo).length>0) {
+		//시간 달력 선택 시 단위 세팅하면 1분 단위 신청 못해서 주석처리
+		/* if(calendarLeftVue.rangeInfo!=null && Object.keys(calendarLeftVue.rangeInfo).length>0) {
 			var unitMinute = calendarLeftVue.rangeInfo.unitMinute;
 			if(unitMinute!=null && unitMinute!=undefined && unitMinute!='')
 				$(this).datetimepicker('stepping',Number(unitMinute));
-		}
+		} */
 		
 		$(this).off("change.datetimepicker").on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
