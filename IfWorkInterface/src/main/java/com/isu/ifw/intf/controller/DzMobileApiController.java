@@ -56,10 +56,12 @@ public class DzMobileApiController {
 	public @ResponseBody ReturnParam loginForWeb_sso(HttpServletRequest request,
 			@RequestBody(required = true) Map<String, Object> body) throws Exception {
 		
-		System.out.println("#########################/certificate/request/sso");
-		System.out.println(body);
+		ReturnParam rp = new ReturnParam();
 		
-		return null;
+		System.out.println("#########################/certificate/request/sso");
+		//System.out.println(body);
+		rp.putAll(body);
+		return rp;
 	}
 	
 	/**

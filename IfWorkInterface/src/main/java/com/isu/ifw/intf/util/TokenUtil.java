@@ -19,9 +19,6 @@ public class TokenUtil {
 	@Value("${jwt.sign-key}")
 	private static String signKey;
 	
-	@Value("${jwt.alg:HS256}")
-	private static String alg;
-	
 	@Value("${jwt.expired-time:60000l}")
 	private static Long expiredTime;
 	*/
@@ -73,144 +70,14 @@ public class TokenUtil {
 	
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		Map<String, Object> payloads = new HashMap<String, Object>();
-		payloads.put("a", "b");
-		System.out.println(createJWT("a","ss","ddd", payloads,60000l));
-		//System.out.println(UUID.randomUUID().toString());
-		System.out.println(decodeJWT("eyJhbGciOiJIUzI1NiJ9.eyJhIjoiYiIsImV4cCI6MTU4Mjc3MjIyM30.IUP4HhySuDBKer8ZHY3-Kp8krbDHuFrc-KZ1aEWfmL0").toString());
-		//vefify("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhIiwiaWF0IjoxNTgyNzcxODgzLCJzdWIiOiJkZGQiLCJpc3MiOiJzcyIsImV4cCI6MTU4Mjc3MTk0M30.kALhIMgbixW_hM--HrY2KHKJvm4sab0YuDbXcQWomN4");
-	}
-	
-	
-	/*
-	public static String createToken() throws NoSuchAlgorithmException {
-		Map<String, Object> headers = new HashMap<>();
-		headers.put("typ", "JWT");
-		headers.put("alg", SIGNATURE_ALGORITHM);
-		
-		Map<String, Object> payloads = new HashMap<>();
-		//Long expiredTime = 1000 * 60l; //만요기간 1분
-		Date now = new Date();
-		System.out.println(now.getTime());
-		now.setTime(now.getTime() + expiredTime);
 		payloads.put("CD_COMPANY", "1000");
-		payloads.put("NO_EMP", "2008856");
-
-		System.out.println(signKey);
-		
-		String jwt = null;
-		jwt = Jwts.builder()
-						.setHeader(headers)
-						.setClaims(payloads)
-						.setExpiration(now)
-						.signWith(SignatureAlgorithm.HS256, signKey.getBytes())
-						.compact();
-		 
-		return jwt;
+		payloads.put("NO_EMP", "20081111");
+		String jwt = createJWT("id","issuer","subject", payloads,60000l);
+		System.out.println(jwt);
+		System.out.println(decodeJWT(jwt).toString());
 	}
 	
-	public static void vefify(String jwt) throws ExpiredJwtException, PrematureJwtException {
-		try {
-		Jws<Claims> claims = Jwts.parser()
-							.setSigningKey(signKey.getBytes())
-							.parseClaimsJws(jwt);
-		System.out.println(claims.getBody().toString());
-		}catch(ClaimJwtException a) {
-			System.out.println("a");
-		}catch(MalformedJwtException c) {
-			System.out.println("c");
-		}catch(SignatureException e) {
-			System.out.println("e");
-		}catch(UnsupportedJwtException f) {
-			System.out.println("f");
-		}
-	}
-	
-	public static String sha256(String msg)  throws NoSuchAlgorithmException {
-
-	    MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-	    md.update(msg.getBytes());
-	    return Crypt.crypt(md.digest());
-	    //return CryptoUtil.byteToHexString(md.digest());
-
-	}
-	
-	public boolean verifySignature(String signature, String requestBody) {
-		
-        if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(requestBody)) {
-            return false;
-        }
-        
-
-        String madeSignature = getHmacSignature(requestBody.getBytes());
-        //log.info("Sender-sent signature: {}, made signature :{}", signature, madeSignature);
-
-        return signature.trim().equals(madeSignature);
-    }
-
-    public static String getHmacSignature(byte[] requestBody) {
-        byte[] key = signKey.getBytes();
-        final SecretKeySpec secretKey = new SecretKeySpec(key, SIGNATURE_ALGORITHM);
-
-        try {
-            Mac mac = Mac.getInstance(SIGNATURE_ALGORITHM);
-            mac.init(secretKey);
-            return Base64.encodeBase64String(mac.doFinal(requestBody));
-        } catch (Exception ignored) {
-            //log.warn("Error occured processing Mac init - Exception : {}, secretKey: {}", ignored, secretKey);
-            return "";
-        }
-
-    }
-    */
- 
-	
+	 
 	
 }
-/*
-class Hmac {
-    // hash 알고리즘 선택
-    private static final String ALGOLISM = "HmacSHA256";
-    // hash 암호화 key
-    private static final String key = "nsHc6458";
  
- 
-    public static String hget(String message) {
-        try {
-            // hash 알고리즘과 암호화 key 적용
-            Mac hasher = Mac.getInstance(ALGOLISM);
-            hasher.init(new SecretKeySpec(key.getBytes(), ALGOLISM));
- 
-            // messages를 암호화 적용 후 byte 배열 형태의 결과 리턴
-            byte[] hash = hasher.doFinal(message.getBytes());
-            return byteToString(hash);
-        }
-        catch (NoSuchAlgorithmException e){
-            e.printStackTrace();
-        }
-        catch (InvalidKeyException e){
-            e.printStackTrace();
-        }
-        return "";
-    }
- 
-    // byte[]의 값을 16진수 형태의 문자로 변환하는 함수
-    private static String byteToString(byte[] hash) {
-        StringBuffer buffer = new StringBuffer();
- 
-        for (int i = 0; i < hash.length; i++) {
-            int d = hash[i];
-            d += (d < 0)? 256 : 0;
-            if (d < 16) {
-                buffer.append("0");
-            }
-            buffer.append(Integer.toString(d, 16));
-        }
-        return buffer.toString();
-    }
-    
-    
-}
-
-*/
-

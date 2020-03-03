@@ -21,7 +21,7 @@
             <div class="contents-wrap">
                 <p class="date">{{formattedYmd}}</p>
                 <p class="desc">오늘은 <strong>{{desc}}</strong> 입니다.</p>
-            	<a href="/ife/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
+            	<a href="/ifwi/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
             </div>
             <div class="btn-wrap">
                 <button :class="{ 'btn':true, 'btn-on': !isHol }" @click="clickIn">출근하기</button>
@@ -66,7 +66,7 @@
                 </template>
             </div>
             <div class="btn-wrap">
-            <a href="/ife/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
+            <a href="/ifwi/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
                 <button class="btn btn-off" v-if="inoutType=='OUT'" @click="clickOut">퇴근하기</button>
                 <button class="btn btn-go" v-if="inoutType=='OUT' && exceptType=='GO'" @click="clickExcept">휴식</button>
                 <button class="btn btn-back" v-if="inoutType=='OUT' && exceptType=='BACK'" @click="clickExcept">휴식취소</button>
