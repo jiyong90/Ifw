@@ -9,7 +9,7 @@
 <body>
 
 
-	<iframe id="aList" name="aList" width="390" height="350" src="/ife/certificate/hdngv?HKMCENC_ID=22&CompanyCode=H133&Encode=asdwasdsad">
+	<iframe id="aList" name="aList" width="390" height="350" src="/ifwi/certificate/hdngv?HKMCENC_ID=22&CompanyCode=H133&Encode=asdwasdsad">
 	</iframe> 
  
 </body>
