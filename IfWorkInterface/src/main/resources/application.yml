@@ -90,6 +90,8 @@ dzGateway:
   gateway-language: KR
   gateway-dev-url: http://10.249.92.147:85/ErpuMobileGate/_gateway/
   gateway-dev-customkey: HONDAHRM
+  sign-key: h0nda20200401k0readziSuinTerFace
+  expired-time: 600000
 
 adapterEncryptColumnKey: empKey,notiKey,payKey,apprEmpKey,applKey,targetEmpKey,changeEmp,dayoffEmp,replaceEmp,lineItemKey
   

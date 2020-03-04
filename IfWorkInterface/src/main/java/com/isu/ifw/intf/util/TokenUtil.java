@@ -15,19 +15,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 public class TokenUtil {
-	/*
-	@Value("${jwt.sign-key}")
-	private static String signKey;
-	
-	@Value("${jwt.expired-time:60000l}")
-	private static Long expiredTime;
-	*/
-							//"h0nda20200401k0reaDzIsuInterface"
-	static String signKey = "h0nda20200401k0readziSuinTerFace";
+
+	//static String signKey = "h0nda20200401k0readziSuinTerFace";
 	static String SIGNATURE_ALGORITHM = "HmacSHA256";
-	static Long expiredTime = 60000l;
+	//static Long expiredTime = 60000l;
 	
-	public static String createJWT(String id, String issuer, String subject, Map<String, Object> payloads, long ttlMillis) {
+	public static String createJWT(String signKey, String id, String issuer, String subject, Map<String, Object> payloads, long ttlMillis) {
   	  
         //The JWT signature algorithm we will be using to sign the token
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -60,7 +53,7 @@ public class TokenUtil {
         
     }
 	
-	public static Claims decodeJWT(String jwt) {
+	public static Claims decodeJWT(String signKey, String jwt) {
 	    //This line will throw an exception if it is not a signed JWS (as expected)
 	    Claims claims = Jwts.parser()
 	            .setSigningKey(DatatypeConverter.parseBase64Binary(signKey))
@@ -72,9 +65,9 @@ public class TokenUtil {
 		Map<String, Object> payloads = new HashMap<String, Object>();
 		payloads.put("CD_COMPANY", "1000");
 		payloads.put("NO_EMP", "20081111");
-		String jwt = createJWT("id","issuer","subject", payloads,60000l);
-		System.out.println(jwt);
-		System.out.println(decodeJWT(jwt).toString());
+		//String jwt = createJWT("id","issuer","subject", payloads,60000l);
+		//System.out.println(jwt);
+		//System.out.println(decodeJWT(jwt).toString());
 	}
 	
 	 

@@ -385,11 +385,4 @@ public class LoginControllerHdngv {
 		
 
     }
-	
-	@RequestMapping(value = "/err")//, method = RequestMethod.POST)
-	public ModelAndView errorPage(@RequestParam String msg, HttpServletRequest req, HttpServletResponse res) throws Exception {
-		ModelAndView mv = new ModelAndView("error");
-		mv.addObject("message", msg);
-		return mv;
-    }
 }
