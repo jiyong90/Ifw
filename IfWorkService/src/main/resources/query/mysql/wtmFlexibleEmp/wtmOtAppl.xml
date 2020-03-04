@@ -141,7 +141,7 @@
     
     <select id="getTotOtMinuteBySymdAndEymd" parameterType="map" resultType="map">
     <![CDATA[
-    	SELECT SUM(CASE WHEN X.OT_MINUTE IS NULL OR X.OT_MINUTE='' THEN 0 ELSE X.OT_MINUTE END) AS totOtMinute
+    	SELECT CAST(SUM(CASE WHEN X.OT_MINUTE IS NULL OR X.OT_MINUTE='' THEN 0 ELSE X.OT_MINUTE END) AS SIGNED INTEGER) AS totOtMinute
 		  FROM (
 			SELECT SUM(F_WTM_NVL(O.OT_MINUTE,0)) - SUM(F_WTM_NVL(S.SUBS_MINUTE,0)) AS OT_MINUTE
 			  FROM WTM_APPL A
@@ -174,7 +174,7 @@
 			     , O.REASON AS reason
 			     , CASE WHEN O.SUB_YN = 'Y' THEN '휴일대체' 
 			     		WHEN O.SUB_YN ='N' THEN '위로금/시급지급' 
-			     		ELSE '-' END AS subYn			     
+			     		ELSE '-' END AS subYn
 			     , CASE WHEN O.SUB_YN = 'Y' THEN 
 			     	(select group_concat(CONCAT(DATE_FORMAT(SUBS_SDATE, '%Y.%m.%d %H:%i'), ' ~ ', DATE_FORMAT(SUBS_EDATE, '%H:%i'))) from WTM_OT_SUBS_APPL where APPL_ID =  #{applId}  ) 
 			      ELSE '-' END AS subsYmd
