@@ -4,28 +4,52 @@
 	<#include "/metadata.ftl">
 </head>
 <body class="login text-center"  style="background-image:URL('${loginBackgroundImg}');">
-    <form id="lForm" class="form-login" method="post" action="${userAuthorizationUri}">
+    <form id="lForm" class="form-login" method="post" action="${userAuthorizationUri}" onsubmit="return updateValue()">
         <!-- <img class="mb-4 logo" src="soldev/img/bootstrap-solid.svg" alt=""> -->
         <img class="mb-0 logo" src="${loginLogoImg}" alt="기업로고">
         <!-- <h1 class="h3 mb-3 font-weight-normal">이수시스템</h1> -->
-        <#if companyList?exists && companyList?has_content>
-        <div class="select-wrap mb-3">
-        	<label for="loginEnterCd" class="sr-only">회사명을 선택해주세요.</label>
-        	<select id="loginEnterCd" name="loginEnterCd" class="form-control">
-        		<#list companyList as company>
-        			<#list company?keys as key>
-        			<option value="${key}">${company[key]}</option>
-        			</#list>
-        		</#list>
-        	</select>
-        </div>
-       	</#if>
-        <label for="inputEmail" class="sr-only">아이디를 입력해주세요.</label>
-        <input type="text" id="username" name="username" class="form-control" value="" hidden>
-        <input type="text" id="loginUserId" name="loginUserId" class="form-control" placeholder="아이디를 입력해주세요." required="" autofocus="">
-        <label for="loginPassword" class="sr-only">비밀번호를 입력해주세요.</label>
-        <input type="password" id="loginPassword" name="loginPassword" class="form-control" placeholder="비밀번호를 입력해주세요." required="">
+        
+        <template v-if="loginForm!=null && loginForm.length>0">
+        	<template v-for="f in loginForm">
+        		<template v-if="f.type=='select'">
+        			<div class="select-wrap mb-3">
+			        	<label :for="f.key" class="sr-only">{{f.text}}</label>
+			        	<select :id="f.key" :name="f.key" class="form-control" v-model="form[f.key]">
+			        		<template v-if="f.hasOwnProperty('items')">
+			        			<template v-for="i in f.items">
+			        			<option v-for="(v,k) in i" :value="k">{{v}}</option>
+			        			</template>
+			        		</template>
+			        	</select>
+			        </div>
+        		</template>
+        		<template v-else>
+	        		<label :for="f.key" class="sr-only">{{f.text}}</label>
+	        		<input :type="f.type" :id="f.key" :name="f.key" class="form-control" v-model="form[f.key]" :placeholder="f.text" required="">
+        		</template>
+        	</template>
+        </template>
+        <template v-else>
+        	<#if companyList?exists && companyList?has_content>
+	        <div class="select-wrap mb-3">
+	        	<label for="loginEnterCd" class="sr-only">회사명을 선택해주세요.</label>
+	        	<select id="loginEnterCd" name="loginEnterCd" class="form-control" v-model="form['loginEnterCd']">
+	        		<#list companyList as company>
+	        			<#list company?keys as key>
+	        			<option value="${key}">${company[key]}</option>
+	        			</#list>
+	        		</#list>
+	        	</select>
+	        </div>
+	       	</#if>
+	        <label for="inputEmail" class="sr-only">아이디를 입력해주세요.</label>
+	        <input type="text" id="loginUserId" name="loginUserId" class="form-control" v-model="form['loginUserId']" placeholder="아이디를 입력해주세요." required="" autofocus="">
+	        <label for="loginPassword" class="sr-only">비밀번호를 입력해주세요.</label>
+	        <input type="password" id="loginPassword" name="loginPassword" class="form-control" v-model="form['loginPassword']" placeholder="비밀번호를 입력해주세요." required="">
+        </template>
+        
         <input type="hidden" id="password" name="password" class="form-control" >
+        <input type="text" id="username" name="username" class="form-control" value="" hidden>
         <input type="text" id="grant_type" name="grant_type" class="form-control" value="password" hidden>
         <input type="text" id="redirect_uri" name="redirect_uri" class="form-control" value="${redirect_uri}" hidden>
         <div class="checkbox mb-3 form-element">
@@ -108,16 +132,21 @@
     	    return unescape(cookieValue);
     	}
     	
+    	function updateValue() {
+   			var loginUserId = loginVue.form.loginUserId;
+   			var loginEnterCd = loginVue.form.loginEnterCd;
+   			var password = loginVue.form.loginPassword;
+   		 	
+		  	var username = "${tsId}@"+loginEnterCd+"@"+loginUserId;
+   			
+   			$("#password").val(password);
+  		  	$("#username").val(username);
+  		  	
+    		return true;
+    	}
+    	
 //    	function login() {
     	$("form").on("submit", function() {
-    		  var loginUserId = $("#loginUserId").val();
-    		  var loginEnterCd = $("#loginEnterCd").val();
-    		  var password = $("#loginPassword").val();
-    		  var username = "${tsId}@"+loginEnterCd+"@"+loginUserId;
-    		 
-    		  $("#password").val($("#loginPassword").val());
-    		  $("#username").val(username);
-
     		  var action = "${userAuthorizationUri}?client_id=${tsId}&redirect_uri=${redirect_uri}&response_type=code&scope=read";
     		  
     		  $("#lForm").attr("action", action);
@@ -140,6 +169,23 @@
 //			 	});
    	    	});
     	//}
+    	
+    	var loginVue = new Vue({
+    		el: "#lForm",
+    	    data : {
+    	    	loginForm : [],
+    	    	form : {
+    	    		loginUserId: '',
+        	    	loginEnterCd: '',
+        	    	loginPassword: ''
+    	    	}
+    	    },
+    	    mounted: function(){
+    	    	<#if loginForm?? && loginForm!='' && loginForm?exists >
+					this.loginForm = JSON.parse("${loginForm?js_string}");
+				</#if>
+    	    }
+    	});
     </script>
 </body>
 </html>

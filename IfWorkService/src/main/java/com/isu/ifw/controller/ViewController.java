@@ -113,6 +113,7 @@ public class ViewController {
 	    
 		ModelAndView mv = new ModelAndView("login");
 		
+		String loginForm = tcms.getConfigValue(tenantId, "WTMS.LOGIN.FORM", true, "");
 		String company = tcms.getConfigValue(tenantId, "WTMS.LOGIN.COMPANY_LIST", true, "");
         List<Map<String, Object>> companyList = new ArrayList<Map<String, Object>>();
         
@@ -120,6 +121,9 @@ public class ViewController {
         if(company != null && !"".equals(company)) 
         	companyList = mapper.readValue(company, new ArrayList<Map<String, Object>>().getClass());
         mv.addObject("companyList", companyList);
+        
+        mv.addObject("loginForm", loginForm);
+        
         mv.addObject("tsId", tsId);
         mv.addObject("loginBackgroundImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.BACKGROUND_IMG", true, ""));
         mv.addObject("loginLogoImg", tcms.getConfigValue(tenantId, "WTMS.LOGIN.LOGO_IMG", true, ""));
