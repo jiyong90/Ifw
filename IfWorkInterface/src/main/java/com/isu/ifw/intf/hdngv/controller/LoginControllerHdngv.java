@@ -378,7 +378,7 @@ public class LoginControllerHdngv {
 			//https://cloudhr.pearbranch.com/ifw/login/hdngv/sso?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJyZWFkIiwid3JpdGUiXSwiZXhwIjoxNTgwOTAwOTM2LCJhdXRob3JpdGllcyI6WyJBRE1JTiJdLCJqdGkiOiJlZjI5MTFlNS03OGI2LTRjNjUtOGQzOS03N2JmMzAxMmQyMzciLCJjbGllbnRfaWQiOiJoZG5ndiJ9.9PN95JEorGaxrOE0ZFGJdVBVqrLexjjB-2mJx26Dr_I&p=3w65MARMUvbQDhiX7fBCtyhGz1x0Jr9CuCDVAJJYFhIygdvHvXwNmTqj1yE4+7JODK4JBBhAoJ0SeJWEc5R7bmCRyYhrcwv1wDAkMZ4m0SaCZCHKk32QQE3i3TARHTBfG05qzsuBalwGtEi+JinXxA==
 			System.out.println(jwtId+ " :: encParam : " + encParam);
 			//http://cloudhr.pearbranch.com/ifa/oauth/authorize?client_id=hdngv&redirect_uri=http://cloudhr.pearbranch.com/ifw/login/hdngv/authorize&response_type=code&scope=read%20write
-			res.sendRedirect("https://cloudhr.pearbranch.com/ifa/oauth/authorize?client_id=hdngvsso&redirect_uri=http://cloudhr.pearbranch.com/ifw/login/hdngv/authorize&response_type=code&scope=read%20write&accessToken="+t+"&p="+encParam);
+			res.sendRedirect("https://cloudhr.pearbranch.com/ifa/oauth/authorize?client_id=hdngvsso&redirect_uri=https://cloudhr.pearbranch.com/ifw/login/hdngv/authorize&response_type=code&scope=read%20write&accessToken="+t+"&p="+encParam);
 		}catch(Exception e) {
 			res.sendRedirect("/err?mgs="+ e.getMessage());
 		}
