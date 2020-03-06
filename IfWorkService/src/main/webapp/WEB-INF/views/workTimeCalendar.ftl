@@ -463,6 +463,203 @@
         </div>
     </div>
     <!-- 연장근무신청 상세보기 modal end -->
+    <!-- 대체휴일 정정요청 modal start -->
+    <div class="modal fade show" id="chgSubsModal" tabindex="-1" role="dialog"  data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">대체휴일 정정요청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap" v-if="overtimeAppl">
+	                        <div class="inner-wrap">
+                                <div class="title">휴일근로시간</div>
+                                <div class="desc">
+                                    <span class="time-wrap">
+                                        <i class="fas fa-clock"></i>
+                                        <span class="time">
+                                        	<template v-if="overtimeAppl.otMinute">
+                                        		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="overtimeAppl.otSdate">
+                                        	{{moment(overtimeAppl.otSdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="start-time">
+                                        	<template v-if="overtimeAppl.otSdate">
+                                        	{{moment(overtimeAppl.otSdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="overtimeAppl.otEdate">
+                                        	{{moment(overtimeAppl.otEdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="end-time">
+                                        	<template v-if="overtimeAppl.otEdate">
+                                        	{{moment(overtimeAppl.otEdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+	                        <div class="inner-wrap">
+                                <div class="title">대체휴일</div>
+                                <template v-if="overtimeAppl.subs" v-for="s in overtimeAppl.subs">
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">{{moment(s.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="day-end-time">{{moment(s.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="sub-time">{{minuteToHHMM(s.subsMinute,'detail')}}</span>
+                                    </span>
+                                </div>
+                                <div class="sub-desc" v-if="s.workSDate&&s.workEDate">*해당일 근무시간은 {{moment(s.workSDate).format('HH:mm')}}~{{moment(s.workEDate).format('HH:mm')}} 입니다.</div>
+                                </template>
+                            </div>
+                            <hr class="separate-bar">
+                           	<div class="inner-wrap">
+                            	<div class="big-title">{{moment(chgSubsAppl.sDate).format('YYYY-MM-DD HH:mm')}} ~ {{moment(chgSubsAppl.eDate).format('YYYY-MM-DD HH:mm')}} 의 변경 대체휴일</div>
+                                <div class="desc row" v-for="(s, idx) in subYmds">
+                                   	<div class="col-12 col-lg-12 mb-sm-2">
+                                   		<div class="form-row">
+		                                    <div class="col-md-12 col-lg-2 pr-lg-0">
+	                                            <span class="time-wrap">
+	                                                <i class="fas fa-clock"></i>
+	                                                <span class="time" v-if="s.subsMinute">{{minuteToHHMM(s.subsMinute, 'detail')}}</span>
+		                                            <span class="time" v-else>0시간</span>
+	                                            </span>
+	                                        </div>
+		                                    <div class="form-row col-md-12 col-lg-10 mb-sm-2">
+	                                            <div class="col-4 col-sm-4 col-md-4 col-lg-4" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'chgSubsYmd_'+idx" v-model="s.chgSubsYmd" data-toggle="datetimepicker" :data-target="'#chgSubsYmd_'+idx" placeholder="연도-월-일" autocomplete="off" required>
+                                                </div>
+                                                <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'chgSubsShm_'+idx" v-model="s.chgSubsShm" data-toggle="datetimepicker" :data-target="'#chgSubsShm_'+idx" autocomplete="off" required>
+                                                </div>
+                                                <span class="col-1 col-sm-1 col-md-1 col-lg-1 text-center pl-2 pr-2 mt-1">~</span>
+                                                <div class="col-3 col-sm-3 col-md-3 col-lg-3" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" :id="'chgSubsEhm_'+idx" v-model="s.chgSubsEhm" data-toggle="datetimepicker" :data-target="'#chgSubsEhm_'+idx" autocomplete="off" required>
+                                                </div>
+	                                            <div class="guide pl-1">
+	                                            	<span v-if="s.workShm && s.workEhm">*해당일 근무시간은 {{s.workShm}}~{{s.workEhm}} 입니다.</span>
+	                                            	<span v-if="s.subsBreakMinute"> 총 휴게시간은 {{minuteToHHMM(s.subsBreakMinute, 'detail')}} 입니다.</span>
+	                                            </div>
+	                                        </div>
+                                        </div>
+                                	</div>
+                               	</div>
+                            </div>
+                            <appl-line :bind-data="applLine"></appl-line>
+                        </div>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-secondary rounded-0"
+                                data-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-default rounded-0" @click="validateChgSubsAppl">정정요청</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 대체휴일 정정요청 modal end -->
+    <!-- 대체휴일 정정신청 상세보기 modal start -->
+    <div class="modal fade show" id="chgSubsDetail" tabindex="-1" role="dialog"  data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">대체휴일 정정요청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap">
+	                        <div class="inner-wrap">
+                                <div class="title">휴일근로시간</div>
+                                <div class="desc">
+                                    <span class="time-wrap">
+                                        <i class="fas fa-clock"></i>
+                                        <span class="time">
+                                        	<template v-if="overtimeAppl.otMinute">
+                                        		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="overtimeAppl.otSdate">
+                                        	{{moment(overtimeAppl.otSdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="start-time">
+                                        	<template v-if="overtimeAppl.otSdate">
+                                        	{{moment(overtimeAppl.otSdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="overtimeAppl.otEdate">
+                                        	{{moment(overtimeAppl.otEdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="end-time">
+                                        	<template v-if="overtimeAppl.otEdate">
+                                        	{{moment(overtimeAppl.otEdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+	                        <div class="inner-wrap">
+                                <div class="title">대체휴일</div>
+                                <template v-if="overtimeAppl.oldSubs" v-for="s in overtimeAppl.oldSubs">
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">{{moment(s.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="day-end-time">{{moment(s.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="sub-time">{{minuteToHHMM(s.subsMinute,'detail')}}</span>
+                                    </span>
+                                </div>
+                                <div class="sub-desc" v-if="s.workSDate&&s.workEDate">*해당일 근무시간은 {{moment(s.workSDate).format('HH:mm')}}~{{moment(s.workEDate).format('HH:mm')}} 입니다.</div>
+                                </template>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">변경 대체휴일</div>
+                                <template v-if="overtimeAppl.subs" v-for="sub in overtimeAppl.subs">
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">{{moment(sub.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="day-end-time">{{moment(sub.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
+                                    </span>
+                                </div>
+                                <div class="sub-desc" v-if="sub.workSDate&&sub.workEDate">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
+                                </template>
+                            </div>
+                            <appl-line :bind-data="applLine"></appl-line>
+                        </div>
+                        <div class="btn-wrap text-center">
+                            <button type="button" class="btn btn-default rounded-0" v-if="overtimeAppl.recoveryYn" data-toggle="modal" data-target="#confirmModal">회수하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 대체휴일 정정신청 상세보기 modal end -->
     <div id='calendar-container'>
 		<full-calendar ref="fullCalendar" :unselectauto="t" :custombuttons="customButtons" :header="header" :defaultview="view" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
@@ -539,8 +736,9 @@
   		    	payTargetYn: false, //수당 지급 대상자
   		    	inOutChangeAppl: {},
   		    	applLine: [],
-  		    	targets: {} //대상자 잔여 연장근로시간
+  		    	targets: {}, //대상자 잔여 연장근로시간
   		    	//prevOtSubs: [] //이전에 신청한 휴일
+  		    	chgSubsAppl: {} //대체휴일 정정 데이터
   		    },
   		    computed: {
   		    	subsRequired: function(val, oldVal) {
@@ -614,7 +812,11 @@
   		    	eventClickCallback : function(info){
   		    		//상세보기
   		    		if(info.event.extendedProps.timeTypeCd=='OT' || info.event.extendedProps.timeTypeCd=='OT_CAN' || info.event.extendedProps.timeTypeCd=='NIGHT' ) {
-  		    			this.viewOvertimeApplDetail(info.event.extendedProps.timeTypeCd, info.event.extendedProps.applId);
+  		    			this.viewOvertimeApplDetail(info.event.extendedProps.timeTypeCd, info.event.extendedProps.applId, true);
+  		    		//} else if(info.event.extendedProps.timeTypeCd=='SUBS') {
+  		    		//	this.viewChgSubsAppl(info);
+  		    		//} else if(info.event.extendedProps.timeTypeCd=='SUBS_CHG') {
+  		    		//	this.viewChgSubsApplDetail(info.event.extendedProps.applId);
   		    		}
   		    	},
   		    	dateClickCallback : function(info){
@@ -878,7 +1080,7 @@
   	         		var param = {
 	   		    		ymd : ymd
 	   		    	};
-   		    		
+  	         		
    		    		Util.ajax({
 						url: "${rc.getContextPath()}/flexibleEmp/worktime",
 						type: "GET",
@@ -914,7 +1116,7 @@
 									if(data.planEdate!=null && data.planEdate!=undefined && data.planEdate!='')
 										workEhm = moment(data.planEdate).format('HH:mm');
 									
-									if(id.indexOf('subsSymd')!=-1) {
+									if(id.indexOf('subsSymd')!=-1 || id.indexOf('chgSubsYmd')!=-1) {
 										//$("#"+id).closest(".form-row").children("div.guide.pl-1").children(":eq(0)").text("*해당일 근무시간은 " + workShm+ "~" + workEhm + " 입니다.");
 										
 										var key = id.split('_');
@@ -997,7 +1199,7 @@
 					$("#overtimeAppl").modal("show"); 
 					
   	         	},
-  	         	viewOvertimeApplDetail: function(timeTypeCd, applId){
+  	         	viewOvertimeApplDetail: function(timeTypeCd, applId, popYn){
   	         		var $this = this;
   	         		
   	         		var url = "/otAppl";
@@ -1015,6 +1217,7 @@
 						contentType: 'application/json',
 						data: param,
 						dataType: "json",
+						async: false,
 						success: function(data) {
 							if(data!=null) {
 								$this.overtimeAppl = data;
@@ -1030,8 +1233,82 @@
 									$("#recoveryBtn").hide();
 								}
 								
+								if(popYn)
+									$("#overtimeApplDetail").modal("show"); 
+							}
+						},
+						error: function(e) {
+							console.log(e);
+							$this.overtimeAppl = {};
+						}
+					});
+					
+  	         	},
+  	         	viewChgSubsAppl : function(info){
+  	         		var $this = this;
+  	         		
+  	         		var applId = info.event.extendedProps.applId;
+  	         		
+  	         		$this.viewOvertimeApplDetail('OT', applId, false);
+	  	         		
+	  	         	var otAppl = $this.overtimeAppl;
+	         		
+  	         		$this.chgSubsAppl = {
+  	         			applId : applId,
+  	         			sDate : info.event.start,
+  	         			eDate : info.event.end
+  	         		};
+  	         		
+  	         		if(otAppl!=null && otAppl.hasOwnProperty("subs")) {
+  	         			otAppl.subs.map(function(s){
+  	         				if(moment(info.event.start).diff(s.subsSdate,'minutes')==0 && moment(info.event.end).diff(s.subsEdate,'minutes')==0) {
+  	         					$this.chgSubsAppl['calcMinute'] = s.subsMinute;
+  	         				}
+  	         			});
+  	         		}
+  	         		
+  	         		//변경 대체휴일
+  	         		if($this.subYmds.length==0) {
+  	         			var newSubYmd = {
+    	         			chgSubsYmd: '',
+    	         			chgSubsShm: '',
+    	         			chgSubsEhm: '',
+    	         		};
+    	         		
+    	         		$this.subYmds.push(newSubYmd);
+  	         		}
+  	         		
+  	         		$this.applLine = calendarLeftVue.getApplLine('SUBS_CHG');
+  	         		
+  	         		$("#chgSubsModal").modal("show"); 
+  	         	},
+  	         	viewChgSubsApplDetail: function(applId){
+  	         		var $this = this;
+  	         		
+  	         		var param = {
+  	         			applId: applId	
+  	         		};
+  	         		
+  	         		Util.ajax({
+						url: "${rc.getContextPath()}/otSubsChgAppl",
+						type: "GET",
+						contentType: 'application/json',
+						data: param,
+						dataType: "json",
+						async: false,
+						success: function(data) {
+							if(data!=null) {
+								$this.overtimeAppl = data;
 								
-								$("#overtimeApplDetail").modal("show"); 
+								if(data.recoveryYn) {
+									$("#recoveryBtn").show();
+								} else {
+									$("#recoveryBtn").hide();
+								}
+								
+								$this.applLine = calendarLeftVue.getApplLine('SUBS_CHG');
+								
+								$("#chgSubsDetail").modal("show"); 
 							}
 						},
 						error: function(e) {
@@ -1099,7 +1376,7 @@
 	  	         					classNames = [];
 									classNames.push('TAA');
 	  	         					
-									if(vMap.taaCd!='BREAK') {
+									if(vMap.taaCd.indexOf('BREAK')==-1) {
 										var result;
 										if((vMap.sDate==''||vMap.sDate==undefined) && (vMap.eDate==''||vMap.eDate==undefined)) {
 											result = {
@@ -1127,7 +1404,7 @@
 	  	         					//근무
 	  	         					classNames = [];
 	  	         					
-	  	         					if(vMap.timeTypeCd == 'SUBS')
+	  	         					if(vMap.timeTypeCd == 'SUBS' || vMap.timeTypeCd == 'SUBS_CHG')
 	  	         						classNames.push('TAA');
 	  	         					else
 										classNames.push(vMap.timeTypeCd);
@@ -1136,10 +1413,12 @@
 									
 									if(vMap.timeTypeCd!=null && vMap.timeTypeCd!=undefined && vMap.timeTypeCd=='OT_CAN')
 										title += ' 취소';
+									else if(vMap.timeTypeCd!=null && vMap.timeTypeCd!=undefined && vMap.timeTypeCd=='SUBS_CHG')
+										title += ' 정정';
 									
 									if(vMap.applStatusCd!=null && vMap.applStatusCd!=undefined && vMap.applStatusCd!='' && vMap.applStatusCd!='99')
 										title += ' (' + vMap.applStatusNm + ')';
-										
+									
   	  	         					var result = {
   	  	   	         					id: 'TIME.'+vMap.timeTypeCd+'.'+moment(vMap.sDate).format('HH:mm:ss'),
   	  	   	         					title: title,
@@ -1416,6 +1695,86 @@
   	         		}
   	         		
   	         	},
+  	         	validateChgSubsAppl : function(){
+  	         		var $this = this;
+  	         		var isValid = true;
+  	         		var forms = document.getElementById('chgSubsModal').getElementsByClassName('needs-validation');
+  	         		var validation = Array.prototype.filter.call(forms, function(form) {
+  	         			if (form.checkValidity() === false) {
+  	         				isValid = false;
+  	         				event.preventDefault();
+  	         		        event.stopPropagation();
+  	         			}
+  	         			form.classList.add('was-validated');
+  	         		});
+  	         		
+  	         		if(isValid) {
+  	         			var msg = '';
+  	         			
+  	         			$("#loading").show();
+  	         			
+  	  	         		//신청하려는 휴일근로시간 = 대체일시 합산 시간
+ 	  	         		if($this.subYmds!=null && $this.subYmds.length>0) {
+ 	  	         			var subsMin = 0;
+ 	  	         			
+  	  	         			$this.subYmds.map(function(sub){
+  	  	         				//대체일시 근무시간 합산
+  	  	         				if(sub.hasOwnProperty("subsMinute")) {
+  	  	         					var min = sub.subsMinute;
+  	  	         					subsMin += min;
+  	  	         				}
+  	  	         				
+  	  	         				//대체 시간이 근무시간에 포함되는지 확인
+  	  	         				if(sub.unplannedYn!='Y' && sub.hasOwnProperty("workShm") && sub.hasOwnProperty("workEhm")) {
+  	  	         				
+  	  	         					if(sub.workShm==undefined || sub.workEhm==undefined) {
+	  	  	         					isValid = false;
+  	  	         						msg = sub.chgSubsYmd+' 의 대체 근무 가능 시간이 없습니다.';
+  	  	         						
+  	  	         					} else {
+	  	  	         					var workSdate = moment(sub.chgSubsYmd+" "+sub.workShm).format('YYYY-MM-DD HH:mm');
+	  	  	         					var workEdate = moment(sub.chgSubsYmd+" "+sub.workEhm).format('YYYY-MM-DD HH:mm');
+		  	  	         				var subSdate = moment(sub.chgSubsYmd+" "+sub.chgSubsShm).format('YYYY-MM-DD HH:mm');
+	  	  	         					var subEdate = moment(sub.chgSubsYmd+" "+sub.chgSubsEhm).format('YYYY-MM-DD HH:mm');
+	  	  	         					
+		  	  	         				//시작 시간이 크면
+		  	  			       			if(moment(workSdate).diff(workEdate)>0) {
+		  	  			       				workEdate = moment(workEdate).add(1, 'days');
+		  	  			       			}
+	  	  	         					
+	  	  	         					if(!(moment(workSdate).diff(subSdate)<=0 && moment(subSdate).diff(workEdate)<=0 
+	  	  	         							&& moment(workSdate).diff(subEdate)<=0 && moment(subEdate).diff(workEdate)<=0)) {
+	  	  	         						isValid = false;
+	  	  	         						msg = sub.chgSubsYmd+' 의 대체 근무 가능 시간은 '+sub.workShm+'~'+sub.workEhm+' 입니다.';
+	  	  	         					}
+  	  	         					}
+  	  	         					
+  	  	         				}
+  	  	         			});
+  	  	         			
+  	  	         			if(isValid && $this.chgSubsAppl.calcMinute!=null && $this.chgSubsAppl.calcMinute!='' && $this.chgSubsAppl.calcMinute!=subsMin) {
+  	  	         				isValid = false;
+  	  	         				msg = minuteToHHMM($this.chgSubsAppl.calcMinute, 'detail')+'의 대체 휴일을 지정하세요.';
+  	  	         			}
+  	  	         			
+ 	  	         		} else {
+  	  	         			isValid = false;
+  	         				msg = '변경할 대체휴일을 입력하세요.';
+ 	  	         		}
+  	  	         		
+  	  	         		if(isValid) {
+  	         				$this.subsChgAppl();
+  	  	         		} else {
+  	  	         			$("#loading").hide();
+  	  	         			$("#alertText").html(msg);
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+	  	  	         			$("#alertModal").off('hidden.bs.modal');
+	  	  	         		});
+	  	  	         		$("#alertModal").modal("show"); 
+  	  	         		}
+  	         		}
+  	         		
+  	         	},
   	         	otAppl : function(otSdate, otEdate){ //연장근무신청
   	         		var $this = this;
   	         	
@@ -1550,7 +1909,6 @@
   	         			applId : $this.overtimeAppl.applId
   	         		};
 					
-				
   	         		Util.ajax({
 						url: "${rc.getContextPath()}/appl/delete",
 						type: "POST",
@@ -1564,7 +1922,12 @@
 								$("#alertModal").on('hidden.bs.modal',function(){
 									$("#alertModal").off('hidden.bs.modal');
 									$("#confirmModal").modal("hide");
-									$("#overtimeApplDetail").modal("hide");
+									
+									if($this.overtimeAppl.applCd == 'SUBS_CHG')
+										$("#chgSubsDetail").modal("hide");
+									else
+										$("#overtimeApplDetail").modal("hide");
+									
 									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
 								});
 							} else {
@@ -1587,6 +1950,74 @@
 						}
 					});
 						
+  	         	},
+  	         	subsChgAppl: function(){
+  	         		var $this = this;
+  	         		
+  	         		var param = JSON.parse(JSON.stringify($this.overtimeAppl));
+  	         		param['workTypeCd'] = 'SUBS_CHG';
+  	         		
+  	         		var subs = [];
+  	         		
+  	         		//대체휴일 정정
+  	         		if(param!=null && param.hasOwnProperty("subs")) {
+  	         			param.subs.map(function(o){
+  	         				if(moment($this.chgSubsAppl.sDate).diff(o.subsSdate,'minutes')==0 && moment($this.chgSubsAppl.eDate).diff(o.subsEdate,'minutes')==0) {
+  	         					if($this.subYmds!=null && $this.subYmds.length>0) {
+  	    							$this.subYmds.map(function(s){
+  	    								var subsSdate = moment(s.chgSubsYmd+' '+s.chgSubsShm).format('YYYY-MM-DD HH:mm');
+  	    								var subsEdate = moment(s.chgSubsYmd+' '+s.chgSubsEhm).format('YYYY-MM-DD HH:mm');
+  	    								
+  	    								var sub = {
+    										subYmd: moment(s.chgSubsYmd).format('YYYYMMDD'),
+    										subsSdate: moment(subsSdate).format('YYYYMMDDHHmm'),
+    										subsEdate: moment(subsEdate).format('YYYYMMDDHHmm'),
+    										oldSubsApplId : o.otSubsApplId
+    									};
+    									subs.push(sub);
+  	    							});
+  	    						} else {
+  	    							subs.push(sub);
+  	    						}
+  	         				}
+  	         			});
+  	         			
+  	         		}
+  	         		
+  	         		param['subs'] = subs; 
+  	         		
+  	         		Util.ajax({
+						url: "${rc.getContextPath()}/otSubsChgAppl/request",
+						type: "POST",
+						contentType: 'application/json',
+						data: JSON.stringify(param),
+						dataType: "json",
+						success: function(data) {
+							$("#loading").hide();
+							if(data!=null && data.status=='OK') {
+								$("#alertText").html("확인요청 되었습니다.");
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+									//location.reload();
+									location.href='${rc.getContextPath()}/${type}/${tsId}/views/workCalendar?calendarType=Time&date='+moment($this.workday).format('YYYYMMDD');
+								});
+							} else {
+								$("#alertText").html(data.message);
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+								});
+							}
+							
+	  	  	         		$("#alertModal").modal("show"); 
+						},
+						error: function(e) {
+							$("#loading").hide();
+							console.log(e);
+							$("#alertText").html("대체휴일 정정요청 시 오류가 발생했습니다.");
+	  	  	         		$("#alertModal").on('hidden.bs.modal',function(){});
+	  	  	         		$("#alertModal").modal("show"); 
+						}
+					});
   	         	},
   	         	changeSubYn: function(val){
   	         		var $this = this;
@@ -1655,6 +2086,63 @@
 	  	  	           			var shm = subsInfo.subsShm.replace(/:/gi,"");
 	  	  	           			var ehm = subsInfo.subsEhm.replace(/:/gi,"");
 	  	  	           			var result = $this.calcMinute(moment(subsInfo.subsSymd).format('YYYYMMDD'), shm, ehm);
+	  	 						subsInfo['subsMinute'] = result.calcMinute;
+	  	 						subsInfo['subsBreakMinute'] = result.breakMinute;
+  	  	           			}
+  	  	           			
+  	 					}
+  	 					
+  	 				}
+  	         	},
+  	         	calcChgSubsTime: function(id) { //휴일 대체 근로 시간 계산
+  	         		var $this = this;
+  	         		var key = id.split('_');
+  	 				var idx;
+  	 				if(key!=null && key!='undefined' && key.length>0) 
+  	 					idx = key[1];
+  	 				
+  	 				if(idx!=null && idx!='' && idx!=undefined) {
+  	 					var subsInfo = $this.subYmds[idx];
+  	 					//console.log(subsInfo);
+  	 					
+  	 					if(subsInfo.chgSubsYmd!=null && subsInfo.chgSubsYmd!=undefined && subsInfo.chgSubsYmd!=''
+  	 							&& subsInfo.chgSubsShm!=null && subsInfo.chgSubsShm!=undefined && subsInfo.chgSubsShm!=''
+  	 							&& subsInfo.chgSubsEhm!=null && subsInfo.chgSubsEhm!=undefined && subsInfo.chgSubsEhm!='') {
+  	 						
+  	 						var sDate = moment(subsInfo.chgSubsYmd+" "+subsInfo.chgSubsShm).format('YYYYMMDD HHmm');
+  	 						var eDate = moment(subsInfo.chgSubsYmd+" "+subsInfo.chgSubsEhm).format('YYYYMMDD HHmm');
+  	 						
+  	 						var isValid = true;
+  	 						$this.subYmds.map(function(s, i){
+  	 							var sd = moment(s.chgSubsYmd+" "+s.chgSubsShm).format('YYYYMMDD HHmm');
+  	 							var ed = moment(s.chgSubsYmd+" "+s.chgSubsEhm).format('YYYYMMDD HHmm');
+  	 							if(idx!=i && (moment(sd).diff(sDate)<=0 && moment(sDate).diff(ed)<=0 || moment(sd).diff(eDate)<=0 && moment(eDate).diff(ed)<=0)) {
+  	 								isValid = false;
+  	 							}
+  	 								
+  	 						})
+  	 						
+  	 						if(!isValid) {
+  	 							$("#alertText").html("이미 근무정보(신청중인 근무 포함)가 존재합니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+		  	  	         			$("#alertModal").off('hidden.bs.modal');
+		  	  	         			subsInfo.chgSubsShm = '';
+		  	  	         			subsInfo.chgSubsEhm = '';
+		  	  	         		});
+		  	  	         		$("#alertModal").modal("show"); 
+  	 						} else if(sDate > eDate) {
+	  	  	           			$("#alertText").html("종료시간이 시작시간보다 작습니다.");
+		  	  	         		$("#alertModal").on('hidden.bs.modal',function(){
+		  	  	         			$("#alertModal").off('hidden.bs.modal');
+		  	  	         			subsInfo.chgSubsShm = '';
+		  	  	         			subsInfo.chgSubsEhm = '';
+		  	  	         		});
+		  	  	         		$("#alertModal").modal("show"); 
+  	  	           			} else {
+	  	  	           			var shm = subsInfo.chgSubsShm.replace(/:/gi,"");
+	  	  	           			var ehm = subsInfo.chgSubsEhm.replace(/:/gi,"");
+	  	  	           			
+	  	  	           			var result = $this.calcMinute(moment(subsInfo.chgSubsYmd).format('YYYYMMDD'), shm, ehm);
 	  	 						subsInfo['subsMinute'] = result.calcMinute;
 	  	 						subsInfo['subsBreakMinute'] = result.breakMinute;
   	  	           			}
@@ -1812,8 +2300,9 @@
  			}
  		});
    	}); */
-  	
-  	$('body').on('focus',"input[id^='subsSymd'], input[id^='subsEymd']", function(){
+   	
+   	//대체휴가 정정
+   	$('body').on('focus',"input[id^='chgSubsYmd']", function(){
    		var $this = this;
  		$(this).datetimepicker({
  			format: 'YYYY-MM-DD',
@@ -1822,6 +2311,117 @@
  		});
  		
  		$(this).off("change.datetimepicker").on("change.datetimepicker", function(e){
+ 			if(e.date!=null && e.date!='undefined' && e.date!='') {
+ 				var subDate = moment(e.date).format('YYYYMMDD');
+ 				var id = $($this).attr('id');
+ 				var msg ='';
+ 				if(timeCalendarVue.chgSubsAppl.hasOwnProperty('sDate') && timeCalendarVue.chgSubsAppl.sDate!='' && timeCalendarVue.chgSubsAppl.hasOwnProperty('eDate') && timeCalendarVue.chgSubsAppl.eDate!='') {
+	 				//대체휴가 사용 가능일인지 판단
+	         		if(timeCalendarVue.applCode!=null && timeCalendarVue.hasOwnProperty('OT')) {
+	         			var sDate = moment(timeCalendarVue.chgSubsAppl.sDate).format('YYYYMMDD');
+	           			var eDate = moment(timeCalendarVue.chgSubsAppl.eDate).format('YYYYMMDD');
+	         			var otSdate = moment(sDate).format('YYYYMMDD');
+	                 	var otEdate = moment(eDate).format('YYYYMMDD');
+	                 	
+	         			var applCode = timeCalendarVue.applCode['SUBS_CHG'];
+	         			var dayDiff = Number(moment(subDate).diff(sDate,'days'));
+	         			if(dayDiff<0) {
+         					var subsSday = Number(applCode.subsSday);
+	         				if(Math.abs(dayDiff)>subsSday) {
+	         					msg = '대체휴가는 근무일 '+subsSday+'일 전까지 사용 가능합니다.';
+	         				} else if(subsSday == 0) {
+	         					msg = '대체휴가는 근무일 이후에만 사용 가능합니다.';
+	         				}
+	         			} else {
+         					var subsEday = Number(applCode.subsEday);
+         					if(dayDiff>subsEday) {
+	         					msg = '대체휴가는 근무일 '+subsEday+'일 후까지 사용 가능합니다.';
+	         				} else if(subsEday == 0) {
+	         					msg = '대체휴가는 근무일 이전에만 사용 가능합니다.';
+	         				}
+	         			}
+	         			
+	         		} 
+	 				
+ 				} else {
+ 					msg = '근로시간을 입력하세요.';
+ 				}
+ 				
+				if(msg!='') {
+	         		$("#alertText").html(msg);
+	         		$("#alertModal").on('hidden.bs.modal',function(){
+	         			$("#alertModal").off('hidden.bs.modal');
+	         			$("#"+id).val('');
+	         		});
+	         		$("#alertModal").modal("show"); 
+	         	} else {
+	         		//해당일 근무시간 세팅
+	 				timeCalendarVue.getWorkHour(id, subDate);
+	 				//대체시간 계산
+	 				timeCalendarVue.calcSubsTime(id);
+	         	}
+ 				
+ 			}
+ 		});
+   	});
+   	
+   	$('body').on('focus',"input[id^='chgSubsShm']", function(){
+   		var $this = this;
+   		
+		$(this).datetimepicker({
+			format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'top'
+            },
+            useCurrent: false
+		});
+		
+		$(this).off("change.datetimepicker").on("change.datetimepicker", function(e){
+ 			if(e.date!=null && e.date!='undefined' && e.date!='') {
+ 				var id = $($this).attr('id');
+ 				timeCalendarVue.updateValue(id, moment(e.date).format('HH:mm'));
+ 				timeCalendarVue.calcChgSubsTime(id);
+ 			}
+ 		});
+   	});
+   	
+   	$('body').on('focus',"input[id^='chgSubsEhm']", function(){
+   		var $this = this;
+		$(this).datetimepicker({
+			format: 'HH:mm',
+            use24hours: true,
+            language: 'ko',
+            widgetPositioning: {
+                horizontal: 'right',
+                vertical: 'top'
+            },
+            useCurrent: false
+		});
+		
+		$(this).off("change.datetimepicker").on("change.datetimepicker", function(e){
+ 			if(e.date!=null && e.date!='undefined' && e.date!='') {
+ 				var id = $($this).attr('id');
+ 				timeCalendarVue.updateValue(id, moment(e.date).format('HH:mm'));
+ 				timeCalendarVue.calcChgSubsTime(id);
+ 			}
+ 		});
+   	})
+
+   	//연장근로 신청
+  	$('body').on('focus',"input[id^='subsSymd'], input[id^='subsEymd']", function(){
+   		var $this = this;
+   		
+   		$(this).datetimepicker("destroy");
+ 		$(this).datetimepicker({
+ 			format: 'YYYY-MM-DD',
+ 		    language: 'ko',
+ 		    useCurrent: false
+ 		});
+ 		
+ 		$(this).on("change.datetimepicker", function(e){
  			if(e.date!=null && e.date!='undefined' && e.date!='') {
  				var subDate = moment(e.date).format('YYYYMMDD');
  				var id = $($this).attr('id');

@@ -86,6 +86,7 @@
 			  FROM WTM_OT_APPL O
 			  JOIN WTM_OT_SUBS_APPL S
 			    ON O.OT_APPL_ID = S.OT_APPL_ID
+			   AND O.APPL_ID = S.APPL_ID
 			  JOIN WTM_APPL A
 			    ON S.APPL_ID = A.APPL_ID
 			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT  R
@@ -253,4 +254,87 @@
 			AND (#{otApplId} IS NULL OR O.OT_APPL_ID = #{otApplId})
 		]]>
   	</select>
+  	
+  	<select id="otApplfindBySubsChgApplId" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT O.OT_APPL_ID AS otApplId
+			     , A.APPL_ID AS applId
+			     , O.YMD AS ymd
+			     , O.HOLIDAY_YN AS holidayYn
+			     , O.OT_SDATE AS otSdate
+			     , O.OT_EDATE AS otEdate
+			     , O.OT_MINUTE AS otMinute
+			     , O.RET_OT_MINUTE AS retOtMinute
+			     , O.REASON_CD AS reasonCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS reasonNm
+			     , O.REASON AS reason
+			     , O.SUB_YN AS subYn
+			     , O.OLD_OT_APPL_ID AS oldOtApplId
+			     , O.CANCEL_YN AS cancelYn
+			     , A.APPL_SABUN AS applSabun
+			     , A.TENANT_ID AS tenantId
+			     , A.ENTER_CD AS enterCd
+			     , O.SABUN AS sabun
+			     , A.APPL_SABUN AS applSabun
+			     , A.APPL_CD AS applCd
+			     , A.APPL_STATUS_CD AS applStatusCd
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+			     , R.WORK_DAY_RESULT_ID AS workDayResultId
+			  FROM WTM_APPL A
+			  JOIN WTM_OT_SUBS_APPL S
+			    ON A.APPL_ID = S.APPL_ID
+			  JOIN WTM_OT_APPL O
+			    ON S.OT_APPL_ID = O.OT_APPL_ID
+			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+			    ON A.TENANT_ID = R.TENANT_ID
+			   AND A.ENTER_CD = R.ENTER_CD
+			   AND A.APPL_SABUN = R.SABUN
+				AND A.APPL_ID = R.APPL_ID
+				AND O.YMD = R.YMD
+			 WHERE S.APPL_ID = #{applId}   
+			   AND A.APPL_SABUN = #{sabun}
+			   AND (R.TIME_TYPE_CD IS NULL OR R.TIME_TYPE_CD = 'OT')
+			 ORDER BY O.OT_SDATE
+	        ]]>
+    </select>
+    
+    <select id="otSubsChgApplfindByApplId" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+			SELECT S.OT_SUBS_APPL_ID AS otSubsApplId
+			     , S.OT_APPL_ID AS otApplId
+			     , S.APPL_ID AS applId
+			     , S.HOLIDAY_TYPE AS holidayType
+			     , S.SUB_YMD AS subYmd
+			     , S.SUBS_SDATE AS subsSdate
+			     , S.SUBS_EDATE AS subsEdate
+			     , S.SUBS_MINUTE AS subsMinute
+			     , S.OLD_SUBS_APPL_ID AS oldSubsApplId
+			     , MIN(CASE WHEN S.SUBS_SDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE 
+	  						OR S.SUBS_EDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE THEN R.PLAN_SDATE ELSE NULL END) AS workSDate
+			     , MAX(CASE WHEN S.SUBS_SDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE 
+				  			OR S.SUBS_EDATE BETWEEN R.PLAN_SDATE AND R.PLAN_EDATE THEN R.PLAN_EDATE ELSE NULL END) AS workEDate
+			  FROM WTM_OT_SUBS_APPL S
+			  JOIN WTM_OT_APPL O
+			    ON O.OT_APPL_ID = S.OT_APPL_ID
+			  JOIN WTM_APPL A
+			    ON S.APPL_ID = A.APPL_ID
+			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT  R
+			    ON A.TENANT_ID = R.TENANT_ID
+			   AND A.ENTER_CD = R.ENTER_CD
+			   AND A.APPL_SABUN = R.SABUN
+			   AND S.SUB_YMD = R.YMD
+			 WHERE S.APPL_ID = #{applId}
+			 GROUP BY S.SUB_YMD, S.OT_SUBS_APPL_ID 
+				     , S.OT_APPL_ID 
+				     , S.APPL_ID
+				     , S.HOLIDAY_TYPE 
+				     , S.SUB_YMD
+				     , S.SUBS_SDATE 
+				     , S.SUBS_EDATE 
+				     , S.SUBS_MINUTE 
+				     , S.OLD_SUBS_APPL_ID 
+			 ORDER BY S.SUB_YMD, S.SUBS_SDATE
+	        ]]>
+    </select>
+    
 </mapper>

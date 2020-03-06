@@ -66,6 +66,10 @@ public class WtmApplController {
 	WtmApplService wtmEntryApplService;
 	
 	@Autowired
+	@Qualifier("wtmOtSubsChgApplService")
+	WtmApplService wtmOtSubsChgApplService;
+	
+	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
 	@Autowired
@@ -83,7 +87,7 @@ public class WtmApplController {
 	WtmApplLineService wtmApplLineService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam getApprList(@RequestParam String applType, HttpServletRequest request) throws Exception {
+	public @ResponseBody ReturnParam getApprList(@RequestParam Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
@@ -94,13 +98,11 @@ public class WtmApplController {
 		
 		rp.setSuccess("");
 		
-		System.out.println(">>>>>>>>>>>>>>>>["+empNo+"] approvalList applType: "+ applType);
-		logger.debug(">>>>>>>>>>>>>>>>["+empNo+"] approvalList applType: "+ applType);
-		
 		List<Map<String, Object>> apprList = null;
 		try {		
-			Map<String, Object> paramMap = new HashMap<String, Object>();
-			paramMap.put("applType", applType);
+			ObjectMapper mapper = new ObjectMapper();
+			System.out.println(">>>>>>>>>>>>>>>>["+empNo+"] approvalList applType: "+ paramMap.get("applType"));
+			logger.debug(">>>>>>>>>>>>>>>>["+empNo+"] approvalList applType: "+ paramMap.get("applType"));
 			
 			apprList = applService.getApprList(tenantId, enterCd, empNo, paramMap, userId);
 			
@@ -204,7 +206,12 @@ public class WtmApplController {
 						pMap.put("enterCd", enterCd);
 						pMap.put("stdYmd", rp.get("stdYmd")+"");
 						pMap.put("sabun", rp.get("sabun")+"");
-						inoutService.inoutPostProcess(pMap, rp.get("unplannedYn").toString());
+						
+						String unplannedYn = "";
+						if(rp.get("unplannedYn")!=null && !"".equals(rp.get("unplannedYn").toString()))
+							unplannedYn = rp.get("unplannedYn").toString();
+						
+						inoutService.inoutPostProcess(pMap, unplannedYn);
 					}
 					
 				} else {
@@ -301,6 +308,8 @@ public class WtmApplController {
 					wtmOtApplService.delete(applId);
 				} else if("OT_CAN".equals(applCd)) {
 					wtmOtCanApplService.delete(applId);
+				} else if("SUBS_CHG".equals(applCd)) {
+					wtmOtSubsChgApplService.delete(applId);
 				} else {
 					flexibleApplService.delete(applId);
 					

@@ -207,7 +207,7 @@ public class WtmFlexibleEmpController {
 		String sabun = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		return flexibleEmpService.calcMinuteExceptBreaktime(tenantId, enterCd, sabun, paramMap, userId);
+		return flexibleEmpService.getDayWorkHm(tenantId, enterCd, sabun, paramMap, userId);
 	}
 	
 	@RequestMapping(value="/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
