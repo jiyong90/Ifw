@@ -108,35 +108,48 @@
 						SELECT COUNT(*) AS CNT
 						  FROM WTM_APPL A
 						  JOIN ( 
-						  		SELECT APPL_ID, TENANT_ID, ENTER_CD, SABUN, TAA_CD, SYMD, EYMD, SHM, EHM
+						  		SELECT A.APPL_ID, A.TENANT_ID, A.ENTER_CD, A.SABUN, A.TAA_CD, A.SYMD, A.EYMD, A.SHM, A.EHM
 								     , CASE WHEN SHM IS NOT NULL AND SHM<>'' THEN F_WTM_TO_DATE(CONCAT(SYMD, SHM), 'YMDHIS') ELSE NULL END AS SDATE
 								     , CASE WHEN EHM IS NOT NULL AND EHM<>'' THEN F_WTM_TO_DATE(CONCAT(EYMD, EHM), 'YMDHIS') ELSE NULL END AS EDATE
-						        FROM WTM_TAA_APPL
-								 WHERE TENANT_ID = ${tenantId} 
-								   AND ENTER_CD = #{enterCd}
-									AND SABUN = #{sabun}
+								     , C.REQUEST_TYPE_CD
+						        FROM WTM_TAA_APPL A
+						        JOIN WTM_TAA_CODE C
+						          ON A.TAA_CD = C.TAA_CD
+						         AND A.TENANT_ID = C.TENANT_ID
+						         AND A.ENTER_CD = C.ENTER_CD
+								 WHERE A.TENANT_ID = ${tenantId} 
+								   AND A.ENTER_CD = #{enterCd}
+									AND A.SABUN = #{sabun}
 							 ) T
 						    ON A.APPL_ID = T.APPL_ID
-						  LEFT OUTER JOIN ( SELECT NULL AS APPL_ID
-						                         , ${tenantId} AS TENANT_ID
-											     , #{enterCd} AS ENTER_CD
-											     , #{sabun} AS SABUN
-											     , #{symd} AS SYMD
-											     , #{eymd} AS EYMD
-											     , #{shm} AS SHM
-											     , #{ehm} AS EHM
-											     , CASE WHEN #{shm} IS NOT NULL AND #{shm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{symd},#{shm}), 'YMDHIS') ELSE NULL END AS SDATE
-								     			  , CASE WHEN #{ehm} IS NOT NULL AND #{ehm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{eymd},#{ehm}), 'YMDHIS') ELSE NULL END AS EDATE
-											  FROM DUAL
-											 WHERE NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN, TAA_CD, SYMD, EYMD, SHM, EHM
-																		 FROM WTM_TAA_APPL
-																		WHERE APPL_ID = #{applId} )
-											UNION ALL
-											SELECT APPL_ID, TENANT_ID, ENTER_CD, SABUN, SYMD, EYMD, SHM, EHM
-											     , CASE WHEN SHM IS NOT NULL AND SHM<>'' THEN F_WTM_TO_DATE(CONCAT(SYMD, SHM), 'YMDHIS') ELSE NULL END AS SDATE
-								     			  , CASE WHEN EHM IS NOT NULL AND EHM<>'' THEN F_WTM_TO_DATE(CONCAT(EYMD, EHM), 'YMDHIS') ELSE NULL END AS EDATE
-											  FROM WTM_TAA_APPL
-											 WHERE APPL_ID = #{applId}
+						  LEFT OUTER JOIN (  SELECT A.*
+										  	      , C.REQUEST_TYPE_CD
+										  	   FROM ( 
+									  					SELECT NULL AS APPL_ID
+									                         , ${tenantId} AS TENANT_ID
+														     , #{enterCd} AS ENTER_CD
+														     , #{taaCd} AS TAA_CD
+														     , #{sabun} AS SABUN
+														     , #{symd} AS SYMD
+														     , #{eymd} AS EYMD
+														     , #{shm} AS SHM
+														     , #{ehm} AS EHM
+														     , CASE WHEN #{shm} IS NOT NULL AND #{shm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{symd},#{shm}), 'YMDHIS') ELSE NULL END AS SDATE
+											     			  , CASE WHEN #{ehm} IS NOT NULL AND #{ehm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{eymd},#{ehm}), 'YMDHIS') ELSE NULL END AS EDATE
+														  FROM DUAL
+														 WHERE NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN, TAA_CD, SYMD, EYMD, SHM, EHM
+																					 FROM WTM_TAA_APPL
+																					WHERE APPL_ID = #{applId} )
+														UNION ALL
+														SELECT APPL_ID, TENANT_ID, ENTER_CD, TAA_CD, SABUN, SYMD, EYMD, SHM, EHM
+														     , CASE WHEN SHM IS NOT NULL AND SHM<>'' THEN F_WTM_TO_DATE(CONCAT(SYMD, SHM), 'YMDHIS') ELSE NULL END AS SDATE
+											     			  , CASE WHEN EHM IS NOT NULL AND EHM<>'' THEN F_WTM_TO_DATE(CONCAT(EYMD, EHM), 'YMDHIS') ELSE NULL END AS EDATE
+														  FROM WTM_TAA_APPL
+														 WHERE APPL_ID = #{applId} ) A
+											  JOIN WTM_TAA_CODE C
+										        ON A.TAA_CD = C.TAA_CD
+										       AND A.TENANT_ID = C.TENANT_ID
+										       AND A.ENTER_CD = C.ENTER_CD
 										  ) X
 							 ON A.TENANT_ID = X.TENANT_ID
 							AND A.ENTER_CD = X.ENTER_CD
@@ -146,53 +159,87 @@
 							AND T.SABUN = #{sabun}
 							AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')  
 							AND (X.APPL_ID IS NULL OR A.APPL_ID <> X.APPL_ID)
-							AND (X.SYMD BETWEEN T.SYMD AND T.EYMD OR X.EYMD BETWEEN T.SYMD AND T.EYMD)
-							AND (T.SDATE IS NULL AND T.EDATE IS NULL
-							       OR (T.SDATE IS NOT NULL AND T.EDATE IS NOT NULL
-											AND ((X.SDATE IS NULL AND X.EDATE IS NULL) 
-											OR (T.SDATE<=X.SDATE AND X.SDATE<T.EDATE OR T.SDATE<X.EDATE AND X.EDATE<=T.EDATE OR X.SDATE<=T.SDATE AND T.EDATE<=X.EDATE))))
+							AND ((X.SDATE IS NOT NULL AND X.EDATE IS NOT NULL 
+							     AND ((T.SDATE IS NULL AND T.EDATE IS NULL)
+								        OR (T.SDATE<=X.SDATE AND X.SDATE<T.EDATE OR T.SDATE<X.EDATE AND X.EDATE<=T.EDATE OR X.SDATE<=T.SDATE AND T.EDATE<=X.EDATE))
+								  ) 
+								  OR
+							    ( X.SDATE IS NULL AND X.EDATE IS NULL 
+							     AND (T.REQUEST_TYPE_CD='D' 
+								          OR (T.SDATE IS NULL AND T.EDATE IS NULL AND T.REQUEST_TYPE_CD='A' AND X.REQUEST_TYPE_CD<>'P')
+									       OR (T.SDATE IS NULL AND T.EDATE IS NULL AND T.REQUEST_TYPE_CD='P' AND X.REQUEST_TYPE_CD<>'A') 
+											 OR (T.SDATE IS NOT NULL AND T.EDATE IS NOT NULL))	 
+								 )) 
 						UNION
 						SELECT COUNT(*) AS CNT
 						  FROM ( 
-						  		SELECT TENANT_ID, ENTER_CD, SABUN, YMD, APPL_ID, TAA_CD
+						  		SELECT D.TENANT_ID, D.ENTER_CD, D.SABUN, D.YMD, D.APPL_ID, D.TAA_CD
 								     , CASE WHEN APPR_SDATE IS NOT NULL THEN APPR_SDATE ELSE PLAN_SDATE END AS SDATE
 								     , CASE WHEN APPR_EDATE IS NOT NULL THEN APPR_EDATE ELSE PLAN_EDATE END AS EDATE
 								     , CASE WHEN APPR_MINUTE IS NOT NULL OR APPR_MINUTE<>'' OR APPR_MINUTE<>0 THEN APPR_MINUTE ELSE PLAN_MINUTE END AS WORK_MINUTE
-						        FROM WTM_WORK_DAY_RESULT
-								 WHERE TENANT_ID = ${tenantId} 
-								   AND ENTER_CD = #{enterCd}
-									AND SABUN = #{sabun}
+								     , C.REQUEST_TYPE_CD
+						        FROM WTM_WORK_DAY_RESULT D
+						        JOIN WTM_TAA_CODE C
+						          ON D.TAA_CD = C.TAA_CD
+						         AND D.TENANT_ID = C.TENANT_ID
+						         AND D.ENTER_CD = C.ENTER_CD
+								 WHERE D.TENANT_ID = ${tenantId} 
+								   AND D.ENTER_CD = #{enterCd}
+									AND D.SABUN = #{sabun}
 							) R
+						  JOIN WTM_FLEXIBLE_EMP E
+						    ON R.TENANT_ID = E.TENANT_ID
+						   AND R.ENTER_CD = E.ENTER_CD
+						   AND R.SABUN = E.SABUN
+						   AND R.YMD BETWEEN E.SYMD AND E.EYMD
+						  JOIN WTM_FLEXIBLE_STD_MGR M
+						    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
 						  LEFT OUTER JOIN (
-						      SELECT ${tenantId} AS TENANT_ID
-								     , #{enterCd} AS ENTER_CD
-								     , #{sabun} AS SABUN
-								     , #{symd} AS SYMD
-								     , #{eymd} AS EYMD
-								     , #{shm} AS SHM
-								     , #{ehm} AS EHM
-								     , CASE WHEN #{shm} IS NOT NULL AND #{shm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{symd},#{shm}), 'YMDHIS') ELSE NULL END AS SDATE
-								     , CASE WHEN #{ehm} IS NOT NULL AND #{ehm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{eymd},#{ehm}), 'YMDHIS') ELSE NULL END AS EDATE
-								  FROM DUAL
-								 WHERE NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN, TAA_CD, SYMD, EYMD, SHM, EHM
-															 FROM WTM_TAA_APPL
-															WHERE APPL_ID = #{applId} )
-								UNION ALL
-								SELECT TENANT_ID, ENTER_CD, SABUN, SYMD, EYMD, SHM, EHM
-								     , CASE WHEN SHM IS NOT NULL AND SHM<>'' THEN F_WTM_TO_DATE(CONCAT(SYMD, SHM), 'YMDHIS') ELSE NULL END AS SDATE
-								     , CASE WHEN EHM IS NOT NULL AND EHM<>'' THEN F_WTM_TO_DATE(CONCAT(EYMD, EHM), 'YMDHIS') ELSE NULL END AS EDATE
-								  FROM WTM_TAA_APPL
-								 WHERE APPL_ID = #{applId}
+						  	  SELECT A.*
+						  	       , C.REQUEST_TYPE_CD
+						  	    FROM ( 
+									      SELECT ${tenantId} AS TENANT_ID
+											     , #{enterCd} AS ENTER_CD
+											     , #{taaCd} AS TAA_CD
+											     , #{sabun} AS SABUN
+											     , #{symd} AS SYMD
+											     , #{eymd} AS EYMD
+											     , #{shm} AS SHM
+											     , #{ehm} AS EHM
+											     , CASE WHEN #{shm} IS NOT NULL AND #{shm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{symd},#{shm}), 'YMDHIS') ELSE NULL END AS SDATE
+											     , CASE WHEN #{ehm} IS NOT NULL AND #{ehm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{eymd},#{ehm}), 'YMDHIS') ELSE NULL END AS EDATE
+											  FROM DUAL
+											 WHERE NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN, TAA_CD, SYMD, EYMD, SHM, EHM
+																		 FROM WTM_TAA_APPL
+																		WHERE APPL_ID = #{applId} )
+											UNION ALL
+											SELECT TENANT_ID, ENTER_CD, TAA_CD, SABUN, SYMD, EYMD, SHM, EHM
+											     , CASE WHEN SHM IS NOT NULL AND SHM<>'' THEN F_WTM_TO_DATE(CONCAT(SYMD, SHM), 'YMDHIS') ELSE NULL END AS SDATE
+											     , CASE WHEN EHM IS NOT NULL AND EHM<>'' THEN F_WTM_TO_DATE(CONCAT(EYMD, EHM), 'YMDHIS') ELSE NULL END AS EDATE
+											  FROM WTM_TAA_APPL
+											 WHERE APPL_ID = #{applId}) A
+								JOIN WTM_TAA_CODE C
+					              ON A.TAA_CD = C.TAA_CD
+					             AND A.TENANT_ID = C.TENANT_ID
+					             AND A.ENTER_CD = C.ENTER_CD
 						  ) X 
 						   ON R.TENANT_ID = X.TENANT_ID
 						  AND R.ENTER_CD = X.ENTER_CD
 						  AND R.SABUN = X.SABUN
 						 WHERE R.YMD BETWEEN X.SYMD AND X.EYMD
 						   AND R.TAA_CD IS NOT NULL AND R.TAA_CD NOT LIKE '%BREAK%' AND R.TAA_CD <> 'GOOUT'
-							AND (R.SDATE IS NULL AND R.EDATE IS NULL
-							       OR (R.SDATE IS NOT NULL AND R.EDATE IS NOT NULL
-											AND ((X.SDATE IS NULL AND X.EDATE IS NULL) 
-											OR (R.SDATE<=X.SDATE AND X.SDATE<R.EDATE OR R.SDATE<X.EDATE AND X.EDATE<=R.EDATE OR X.SDATE<=R.SDATE AND R.EDATE<=X.EDATE))))
+						   AND (M.UNPLANNED_YN IS NULL OR M.UNPLANNED_YN <> 'Y')
+							AND ((X.SDATE IS NOT NULL AND X.EDATE IS NOT NULL 
+							     AND ((R.SDATE IS NULL AND R.EDATE IS NULL AND (R.WORK_MINUTE IS NULL OR R.WORK_MINUTE=0))
+								        OR (R.SDATE<=X.SDATE AND X.SDATE<R.EDATE OR R.SDATE<X.EDATE AND X.EDATE<=R.EDATE OR X.SDATE<=R.SDATE AND R.EDATE<=X.EDATE))
+								  ) 
+								  OR
+							    ( X.SDATE IS NULL AND X.EDATE IS NULL 
+							     AND (R.REQUEST_TYPE_CD='D' 
+								          OR (R.SDATE IS NULL AND R.EDATE IS NULL AND R.REQUEST_TYPE_CD='A' AND X.REQUEST_TYPE_CD<>'P')
+									       OR (R.SDATE IS NULL AND R.EDATE IS NULL AND R.REQUEST_TYPE_CD='P' AND X.REQUEST_TYPE_CD<>'A') 
+											 OR (R.SDATE IS NOT NULL AND R.EDATE IS NOT NULL))	 
+								 )) 
 			) XX
 		]]>	
   	</select>
