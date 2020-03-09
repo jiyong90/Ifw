@@ -893,7 +893,7 @@
   										} 
 										if(d.otApplEday!=null && d.otApplEday!=undefined && (d.otApplEday!=''||d.otApplEday==0)){
 											var otApplEday = moment(moment().add(d.otApplEday, 'd')).format('YYYYMMDD');
-											if(moment(otApplEday).diff($this.workday)<=0) {
+											if(moment(otApplEday).diff($this.workday)<0) {
 												isOtAppl = false;
 											}
   										} 
