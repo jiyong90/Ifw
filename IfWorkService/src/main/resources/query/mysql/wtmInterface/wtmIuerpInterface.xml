@@ -849,7 +849,7 @@
 		SELECT #{orgChartId} AS ORG_CHART_ID
 		     , I.ORG_CD
 		     , I.PRIOR_ORG_CD
-		     , I.SEQ
+		     , CASE WHEN I.SEQ IS NOT NULL AND I.SEQ <> 'null' AND I.SEQ <> '' THEN I.SEQ ELSE NULL END
 		     , I.ORG_LEVEL
 		     , I.NOTE
 		     , NOW() AS UPDATE_DATE
