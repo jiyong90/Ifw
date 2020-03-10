@@ -391,6 +391,96 @@
         </div>
     </div>
     <!-- 근태사유서신청 상세보기 modal end -->
+    <!-- 대체휴일 정정신청 상세보기 modal start -->
+    <div class="modal fade show" id="chgSubsModal" tabindex="-1" role="dialog"  data-backdrop="static" data-keyboard="false" v-if="appl">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">대체휴일 정정요청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="modal-app-wrap">
+	                        <div class="inner-wrap">
+                                <div class="title">휴일근로시간</div>
+                                <div class="desc">
+                                    <span class="time-wrap">
+                                        <i class="fas fa-clock"></i>
+                                        <span class="time">
+                                        	<template v-if="appl.otMinute">
+                                        		{{minuteToHHMM(appl.otMinute, 'detail')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="appl.otSdate">
+                                        	{{moment(appl.otSdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="start-time">
+                                        	<template v-if="appl.otSdate">
+                                        	{{moment(appl.otSdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="appl.otEdate">
+                                        	{{moment(appl.otEdate).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="end-time">
+                                        	<template v-if="appl.otEdate">
+                                        	{{moment(appl.otEdate).format('HH:mm')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">대체휴일</div>
+                                <template v-if="appl.oldSubs" v-for="sub in appl.oldSubs">
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">{{moment(sub.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="day-end-time">{{moment(sub.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
+                                    </span>
+                                </div>
+                                <div class="sub-desc" v-if="sub.workSDate&&sub.workEDate">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
+                                </template>
+                            </div>
+                            <hr class="separate-bar">
+                            <div class="inner-wrap">
+                                <div class="title">변경 대체휴일</div>
+                                <template v-if="appl.subs" v-for="sub in appl.subs">
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">{{moment(sub.subsSdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="day-end-time">{{moment(sub.subsEdate).format('YYYY-MM-DD HH:mm')}}</span>
+                                        <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
+                                    </span>
+                                </div>
+                                <div class="sub-desc" v-if="sub.workSDate&&sub.workEDate">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
+                                </template>
+                            </div>
+                            
+                            <appl-line :bind-data="appl.applLine"></appl-line>
+                        </div>
+                        <div class="btn-wrap text-center" v-if="applType=='01' && appl.applSabun == appl.sabun">
+                            <button type="button" class="btn btn-default rounded-0" v-if="appl.recoveryYn" data-toggle="modal" data-target="#confirmModal">회수하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 대체휴일 정정신청 상세보기 modal end -->
 	<!-- 결재의견 modal start -->
 	<div class="modal fade" id="apprOpinionModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
@@ -558,6 +648,9 @@
 	    		} else if(appr.applCd=='ENTRY_CHG') {
 	    			//근태 사유서
 	    			$("#inOutChangeAppl").modal("show");
+	    		} else if(appr.applCd=='SUBS_CHG') {
+	    			//대체휴가 정정
+	    			$("#chgSubsModal").modal("show");
 	    		}
 	    		
 	    	},
@@ -795,7 +888,11 @@
 							$("#alertModal").on('hidden.bs.modal',function(){
 								$("#alertModal").off('hidden.bs.modal');
 								$("#confirmModal").modal("hide");
-								$("#otAppl").modal("hide");
+								
+								if(appl.applCd == 'SUBS_CHG')
+									$("#chgSubsModal").modal("hide");
+								else
+									$("#otAppl").modal("hide");
 								$this.getApprovalList($this.applType);
 							});
 						} else {
@@ -817,7 +914,7 @@
   	  	         		$("#alertModal").modal("show"); 
 					}
 				});
-					
+				
          	},
          	accordionDropdown: function(target) {
          		var $el = $('#accordion');

@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.message.config.AuthConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +50,8 @@ import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.mapper.CommUserMapper;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
+import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmEmpMgrService;
 import com.isu.ifw.service.WtmMsgService;
@@ -94,6 +97,9 @@ public class IfwLoginController {
 	
 	@Autowired
 	WtmMsgService msgService;
+	
+	@Autowired
+	WtmEmpHisRepository wtmEmpHisRepo;
    
     @RequestMapping(value = "/login/{tsId}/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView ssoLogin(@PathVariable String tsId,
@@ -429,7 +435,18 @@ public class IfwLoginController {
 			String encKey = tcms.getConfigValue(tenantId, "SECURITY.SHA.KEY", true, "");
 				
 			
-			userData = loginService.findUserData(tenantId, loginEnterCd, loginUserId, encKey);
+			//userData = loginService.findUserData(tenantId, loginEnterCd, loginUserId, encKey);
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			WtmEmpHis empHis = wtmEmpHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, loginEnterCd, loginUserId, sdf.format(new Date()));
+			if(empHis != null) {
+				userData = new HashMap<>();
+				userData.put("loginId", empHis.getSabun());
+				userData.put("userId", empHis.getEmpHisId());
+				userData.put("empNo", empHis.getSabun());
+				userData.put("enterCd", empHis.getEnterCd());
+				userData.put("name", empHis.getEmpNm());
+			}
 		
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
@@ -483,8 +500,8 @@ public class IfwLoginController {
 			System.out.println("======================= loginEnterCd : " + loginEnterCd);
 			System.out.println("======================= loginUserId : " + loginUserId);
 			System.out.println("======================= loginPassword : " + loginPassword);
-			userData = loginService.getUserData(tenantId, loginEnterCd, loginUserId, loginPassword);
-			
+			//userData = loginService.getUserData(tenantId, loginEnterCd, loginUserId, loginPassword);
+		
 			ObjectMapper mapper = new ObjectMapper();
 			System.out.println("======================= userData : " + mapper.writeValueAsString(userData));
 			

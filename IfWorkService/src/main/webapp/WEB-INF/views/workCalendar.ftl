@@ -431,10 +431,10 @@
 				                            	</template>
                                             </span>
                                         </li>
-                                        <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.paidhour">
+                                        <li v-if="Object.keys(workDayInfo).length>0 && workDayInfo.paidHour">
                                             <span class="sub-title">유급</span>
                                             <span class="sub-desc">
-				                            	{{workDayInfo.paidhour}}
+				                            	{{workDayInfo.paidHour}}
                                             </span>
                                         </li>
                                     </ul>
