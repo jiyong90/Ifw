@@ -220,7 +220,16 @@
                                         <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
                                     </span>
                                 </div>
-                                <div class="sub-desc" v-if="sub.workSDate&&sub.workEDate">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
+                                <div class="sub-desc" v-if="(sub.workSDate && sub.workEDate) || appl.oldSubs">
+                                <template v-if="sub.workSDate && sub.workEDate">
+                                *해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.
+                                </template>
+                                <template v-if="appl.oldSubs">
+	                                <template v-for="oldSub in appl.oldSubs" v-if="oldSub.otSubsApplId == sub.oldSubsApplId">
+	                                <br>*이전 대체휴일은  {{moment(oldSub.subsSdate).format('YYYY-MM-DD HH:mm')}}~{{moment(oldSub.subsEdate).format('YYYY-MM-DD HH:mm')}} 입니다.
+	                                </template>
+                                </template>
+                                </div>
                                 </template>
                             </div>
                             <div class="inner-wrap" v-if="appl.applCd=='OT_CAN' && appl.cancelReason">
@@ -456,7 +465,7 @@
                             </div>
                             <hr class="separate-bar">
                             <div class="inner-wrap">
-                                <div class="title">변경 대체휴일</div>
+                                <div class="big-title">{{moment(chgSubsTarget.sDate).format('YYYY-MM-DD HH:mm')}} ~ {{moment(chgSubsTarget.eDate).format('YYYY-MM-DD HH:mm')}} 의 변경 대체휴일</div>
                                 <template v-if="appl.subs" v-for="sub in appl.subs">
                                 <div class="desc">
                                     <span class="date-wrap">
@@ -591,7 +600,8 @@
    			applType: '${applType}', // 신청 내역 조회('01') or 미결('02') or 기결('03')
    			apprOpinion: '',
    			appl: {}, //신청서view 
-   			appr: {} //승인할 신청서
+   			appr: {}, //승인할 신청서
+   			chgSubsTarget: {} //대체휴일 정정 데이터
    		},
 	    mounted: function(){
 	    	this.getApprovalList(this.applType); //신청내역 조회
@@ -629,6 +639,7 @@
 				});
 	    	},
 	    	viewAppl: function(appr){
+	    		var $this = this;
 	    		/* if(appr.applCd=='OT') {
 	    			//연장근무신청서
 	    			this.getOTAppl(appr.applId);
@@ -636,8 +647,8 @@
 	    			//선근제 신청서
 	    			this.getFlexibleSeleAppl(appr.applId);
 	    		} */
-	    		this.appl = appr.appl;
-	    		this.appl['applCd'] = appr.applCd;
+	    		$this.appl = appr.appl;
+	    		$this.appl['applCd'] = appr.applCd;
 	    		
 	    		if(appr.applCd=='OT' || appr.applCd=='OT_CAN') {
 	    			//연장근무신청서
@@ -649,6 +660,25 @@
 	    			//근태 사유서
 	    			$("#inOutChangeAppl").modal("show");
 	    		} else if(appr.applCd=='SUBS_CHG') {
+	    			
+	    			if($this.appl.hasOwnProperty("subs") && $this.appl.hasOwnProperty("oldSubs")
+	    					&& $this.appl.subs!=null && $this.appl.oldSubs!=null
+	    					&& $this.appl.subs!=undefined && $this.appl.oldSubs!=undefined
+	    					&& $this.appl.subs!="" && $this.appl.oldSubs!='' ) {
+	    				
+	    				$this.appl.oldSubs.map(function(o){
+	    					$this.appl.subs.map(function(s){
+	    						if(s.hasOwnProperty('oldSubsApplId') && s.oldSubsApplId!=null && s.oldSubsApplId==o.otSubsApplId) {
+    								$this.chgSubsTarget = {
+    									sDate : o.subsSdate,
+    									eDate : o.subsEdate
+    								};
+	    						} 
+	    					});
+	    				});
+	    			}
+	    			
+	    			
 	    			//대체휴가 정정
 	    			$("#chgSubsModal").modal("show");
 	    		}

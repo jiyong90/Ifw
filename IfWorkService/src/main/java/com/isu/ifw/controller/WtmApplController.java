@@ -214,6 +214,22 @@ public class WtmApplController {
 						inoutService.inoutPostProcess(pMap, unplannedYn);
 					}
 					
+				} else if("SUBS_CHG".equals(applCd)){
+					rp = wtmOtSubsChgApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					
+					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("otApplList")) { 
+						
+						if(rp.get("otApplList")!=null && !"".equals(rp.get("otApplList"))) {
+							List<WtmOtAppl> otApplList = (List<WtmOtAppl>)rp.get("otApplList");
+							
+							if(otApplList!=null && otApplList.size()>0) {
+								//소급의 경우 인정시간과 연장근로시간을 비교하여 다른 경우 대체휴일 정보를 생성하지 않는다.
+								//미래의 연장근로시간의 경우 인정시간계산 서비스에서 대체휴일 정보를 생성한다.
+								wtmflexibleEmpService.applyOtSubs(tenantId, enterCd, otApplList, false, userId);
+							}
+							
+						}
+					}
 				} else {
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
