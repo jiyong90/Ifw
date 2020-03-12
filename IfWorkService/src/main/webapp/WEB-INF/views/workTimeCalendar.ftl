@@ -823,10 +823,10 @@
   		    		//상세보기
   		    		if(info.event.extendedProps.timeTypeCd=='OT' || info.event.extendedProps.timeTypeCd=='OT_CAN' || info.event.extendedProps.timeTypeCd=='NIGHT' ) {
   		    			this.viewOvertimeApplDetail(info.event.extendedProps.timeTypeCd, info.event.extendedProps.applId, true);
-  		    		//} else if(info.event.extendedProps.timeTypeCd=='SUBS') {
-  		    		//	this.viewChgSubsAppl(info);
-  		    		//} else if(info.event.extendedProps.timeTypeCd=='SUBS_CHG') {
-  		    		//	this.viewChgSubsApplDetail(info.event.extendedProps.applId, info);
+  		    		} else if(info.event.extendedProps.timeTypeCd=='SUBS') {
+  		    			this.viewChgSubsAppl(info);
+  		    		} else if(info.event.extendedProps.timeTypeCd=='SUBS_CHG') {
+  		    			this.viewChgSubsApplDetail(info.event.extendedProps.applId, info);
   		    		}
   		    	},
   		    	dateClickCallback : function(info){
@@ -1418,8 +1418,8 @@
 	  	         					//근무
 	  	         					classNames = [];
 	  	         					
-	  	         					if(vMap.timeTypeCd == 'SUBS' || vMap.timeTypeCd == 'SUBS_CHG')
-	  	         						classNames.push('TAA');
+	  	         					if(vMap.timeTypeCd == 'SUBS_CHG')
+	  	         						classNames.push('SUBS');
 	  	         					else
 										classNames.push(vMap.timeTypeCd);
 									
