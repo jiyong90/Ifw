@@ -312,6 +312,7 @@
    	 <select id="getEmpWorkDayResult" parameterType="map" resultType="hashmap">
         <![CDATA[
 		    SELECT CONCAT(E.EMP_NM, '(', E.SABUN, ')') as emp,
+		    	E.SABUN as sabun,
   		    	CONCAT(F_WTM_DATE_FORMAT(MIN(A.PLAN_SDATE), 'Y.M.D H:I'), ' ~ ', F_WTM_DATE_FORMAT(MIN(A.PLAN_EDATE), 'Y.M.D H:I')) as plan
 			FROM WTM_WORK_DAY_RESULT  A 
 			INNER JOIN WTM_EMP_HIS E
