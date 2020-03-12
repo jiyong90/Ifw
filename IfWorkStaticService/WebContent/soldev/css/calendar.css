@@ -402,6 +402,14 @@
   background-color: rgba(87, 46, 255, 0.3);
 }
 
+/* 7) SUBS */
+.fc-time-grid-event.fc-event.subs,
+.fc-time-grid-event.fc-event.SUBS{
+  background-color: rgba(255, 136, 0, 0.3);
+  cursor: pointer;
+}
+
+
 /* 일정 */
 /* .fc-content {background-color:#ffffff} */
 .fc-content .dot:before{
