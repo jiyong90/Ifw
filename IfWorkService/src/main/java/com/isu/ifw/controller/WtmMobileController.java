@@ -671,7 +671,9 @@ public class WtmMobileController {
 					if(l == null || l.size() <= 0) {
 						data.put("plan", "");
 						data.put("emp", "");
-						itemPropertiesMap.put("emp", null);
+						
+						Map<String,Object> temp = new HashMap<String,Object>();
+						itemPropertiesMap.put("emp", temp);
 						
 						result.put("data", data);
 						result.put("itemAttributesMap", itemPropertiesMap);
@@ -728,7 +730,6 @@ public class WtmMobileController {
 			logger.debug(e.getMessage());
 			rp.setFail("조회 중 오류가 발생하였습니다.");
 		}
-		
 		logger.debug("/mobile/"+ tenantId+"/team/plan e " + rp.toString());
 		return rp;
 	}
