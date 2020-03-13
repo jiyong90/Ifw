@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.mapper.WtmFlexibleApplMapper;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmMsgService;
 import com.isu.ifw.vo.ReturnParam;
 
 
@@ -43,6 +45,9 @@ public class WtmFlexibleApplController {
 	
 	@Autowired
 	WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
+	
+	@Autowired
+	WtmMsgService msgService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> flexibleAppl(@RequestParam Long applId
@@ -109,7 +114,22 @@ public class WtmFlexibleApplController {
 			workTypeCd = paramMap.get("workTypeCd").toString();
 				
 		try {
-			flexibleApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
+			rp = flexibleApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, empNo, userId);
+			
+			ObjectMapper mapper = new ObjectMapper();
+			
+			System.out.println("rp : " + mapper.writeValueAsString(rp));
+			
+			//메일 전송
+			if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) 
+					&& rp.containsKey("from") && rp.get("from")!=null && !"".equals(rp.get("from")) 
+					&& rp.containsKey("to") && rp.get("to")!=null && !"".equals(rp.get("to"))) { 
+				List<String> toSabuns = (List<String>)rp.get("to");
+				
+				System.out.println("toSabuns : " + mapper.writeValueAsString(toSabuns));
+				
+				msgService.sendMailForAppl(tenantId, enterCd, rp.get("from").toString(), toSabuns, "FLEX", "APPR");
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
