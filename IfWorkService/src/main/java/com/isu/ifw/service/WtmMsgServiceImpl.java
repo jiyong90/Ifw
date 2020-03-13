@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpAddr;
+import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmOtp;
 import com.isu.ifw.entity.WtmPushMgr;
 import com.isu.ifw.entity.WtmPushSendHis;
 import com.isu.ifw.mapper.WtmEmpAddrMapper;
 import com.isu.ifw.repository.WtmEmpAddrRepository;
+import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmOtpRepository;
 import com.isu.ifw.repository.WtmPushMgrRepository;
 import com.isu.ifw.repository.WtmPushSendHisRepository;
@@ -31,6 +35,8 @@ import com.isu.ifw.vo.WtmMessageVO;
 @Service
 public class WtmMsgServiceImpl implements WtmMsgService {
 
+	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
+	
 	@Autowired
 	@Qualifier("WtmTenantConfigManagerService")
 	TenantConfigManagerService tcms;
@@ -53,12 +59,21 @@ public class WtmMsgServiceImpl implements WtmMsgService {
 	@Autowired
 	WtmPushMgrRepository pushMgrRepo;
 	
+	@Autowired
+	WtmEmpHisRepository empHisRepo;
+	
+	//@Autowired
+	//WtmHansungMailService hansungMailService;
+	
+	@Autowired
+	WtmEmpAddrRepository empAddrRepository;
+	
 	@Override
 	public ReturnParam sendMsg(Long tenantId, String enterCd, WtmMessageVO msgVO) {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		
-		String from = "";
+		String from = msgVO.getFrom();
 		String title = msgVO.getTitle();
 		String contents = msgVO.getContent();
 		List<Map<String, Object>> targets = msgVO.getTargets();
@@ -76,7 +91,8 @@ public class WtmMsgServiceImpl implements WtmMsgService {
 				}
 				
 				if(msgVO.isMailYn()) {
-					from = tcms.getConfigValue(tenantId, "WTMS.API.MAIL_MANAGER", true, "");
+					if(from==null || "".equals(from))
+						from = tcms.getConfigValue(tenantId, "WTMS.API.MAIL_MANAGER", true, "");
 					
 					for(Map<String, Object> target : targets) {
 						WtmPushSendHis pushSendHis = new WtmPushSendHis();
@@ -93,7 +109,8 @@ public class WtmMsgServiceImpl implements WtmMsgService {
 				}
 				
 				if(msgVO.isSmsYn()) {
-					from = tcms.getConfigValue(tenantId, "WTMS.API.SMS_MANAGER", true, "");
+					if(from==null || "".equals(from))
+						from = tcms.getConfigValue(tenantId, "WTMS.API.SMS_MANAGER", true, "");
 					
 					List<String> smsTarget = new ArrayList<String>();
 					for(Map<String, Object> target : targets) {
@@ -146,6 +163,7 @@ public class WtmMsgServiceImpl implements WtmMsgService {
 		date.add(Calendar.MINUTE, 3);
 
 		try {
+			String sabun = null;
 			Long empAddrId = null;
 			
 			List<Map<String, Object>> targets = new ArrayList<Map<String, Object>>();
@@ -163,6 +181,8 @@ public class WtmMsgServiceImpl implements WtmMsgService {
 				empMap.put("sabun", empAddr.get("sabun").toString());
 				empMap.put("phone", empAddr.get("handPhone").toString());
 				
+				sabun = empAddr.get("sabun").toString();
+				
 				targets.add(empMap);
 			} else {
 				WtmEmpAddr empAddr = empAddrRepo.findByTenantIdAndEnterCdAndEmail(tenantId, enterCd, userInfo);
@@ -173,10 +193,18 @@ public class WtmMsgServiceImpl implements WtmMsgService {
 				empMap.put("sabun", empAddr.getSabun());
 				empMap.put("email", empAddr.getEmail());
 				
+				sabun = empAddr.getSabun();
+				
 				targets.add(empMap);
 			}
 			
-			WtmPushMgr pushMgr = pushMgrRepo.findByTenantIdAndEnterCdAndYmdBetweenAndPushObjAndStdType(tenantId, enterCd, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "COMM", "PW");
+			WtmEmpHis emp = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp==null) {
+				rp.setFail("사업장 정보가 없습니다.");
+				return rp;
+			}
+			
+			WtmPushMgr pushMgr = pushMgrRepo.findByTenantIdAndEnterCdAndBusinessPlaceCdAndYmdBetweenAndPushObjAndStdType(tenantId, enterCd, emp.getBusinessPlaceCd(), WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "COMM", "PW");
 			//String otpCode = UUID.randomUUID().toString();
 			
 			StringBuffer otpCode = new StringBuffer();
@@ -231,4 +259,45 @@ public class WtmMsgServiceImpl implements WtmMsgService {
 		return rp;
 		
 	}
+	
+	@Transactional
+	@Override
+	public ReturnParam sendMailForAppl(Long tenantId, String enterCd, String fromSabun, List<String> toSabuns, String applCode, String type) {
+		
+		System.out.println(">>>>>>>>>>>>>>>>>>>> sendMailForAppl start");
+		logger.debug(">>>>>>>>>>>>>>>>>>>> sendMailForAppl start");
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("메일을 전송하였습니다.");
+		
+		WtmEmpHis emp = empHisRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, fromSabun, WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+		if(emp==null) {
+			rp.setMessage("사업장 정보가 없습니다.");
+			return rp;
+		}
+		
+		System.out.println("businessPlaceCd : " + emp.getBusinessPlaceCd());
+		logger.debug("businessPlaceCd : " + emp.getBusinessPlaceCd());
+	
+		WtmPushMgr pushMgr = pushMgrRepo.findByTenantIdAndEnterCdAndBusinessPlaceCdAndYmdBetweenAndPushObjAndStdType(tenantId, enterCd, emp.getBusinessPlaceCd(), WtmUtil.parseDateStr(new Date(), "yyyyMMdd"), "COMM", applCode+"_"+type);
+		if(pushMgr==null) {
+			rp.setMessage("메일 전송 기준이 없습니다.");
+			return rp;
+		}
+		
+		System.out.println("emailYn : " + pushMgr.getEmailYn());
+		logger.debug("emailYn : " + pushMgr.getEmailYn());
+		
+		if(pushMgr.getEmailYn()!=null && "Y".equals(pushMgr.getEmailYn())) {
+			//회사마다 메일 전송 방식 다름
+			//hansungMailService.sendMail(tenantId, enterCd, fromSabun, toSabuns, pushMgr.getTitle(), pushMgr.getPushMsg(), applCode, "APP");
+		}
+		
+		System.out.println(">>>>>>>>>>>>>>>>>>>> sendMailForAppl end");
+		logger.debug(">>>>>>>>>>>>>>>>>>>> sendMailForAppl end");
+			
+		return rp;
+	}
+	
+	
 }

@@ -32,6 +32,7 @@ import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmInoutService;
+import com.isu.ifw.service.WtmMsgService;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
 
@@ -85,6 +86,9 @@ public class WtmApplController {
 	@Autowired
 	@Qualifier(value="applLineService")
 	WtmApplLineService wtmApplLineService;
+	
+	@Autowired
+	WtmMsgService msgService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(@RequestParam Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
@@ -177,6 +181,7 @@ public class WtmApplController {
 		try {
 			if(applCd!=null && !"".equals(applCd)) {
 				boolean initResult = false;
+				boolean isFlexAppl = false;
 				
 				if("OT".equals(applCd)) {
 					rp = wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
@@ -231,6 +236,7 @@ public class WtmApplController {
 						}
 					}
 				} else {
+					isFlexAppl = true;
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
 					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) { 
@@ -254,6 +260,19 @@ public class WtmApplController {
 				if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {
 					wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId, initResult);
 				}
+				
+				//메일 전송
+				if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) 
+						&& rp.containsKey("from") && rp.get("from")!=null && !"".equals(rp.get("from")) 
+						&& rp.containsKey("to") && rp.get("to")!=null && !"".equals(rp.get("to"))
+						&& rp.containsKey("msgType") && rp.get("msgType")!=null && !"".equals(rp.get("msgType"))) { 
+					List<String> toSabuns = (List<String>)rp.get("to");
+
+					String applCode = isFlexAppl?"FLEX":applCd;
+					
+					msgService.sendMailForAppl(tenantId, enterCd, rp.get("from").toString(), toSabuns, applCode, rp.get("msgType").toString());
+				}
+				
 			}
 			
 		} catch (Exception e) {
@@ -290,6 +309,23 @@ public class WtmApplController {
 				} else {
 					applService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				}
+				
+				//메일 전송
+				if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) 
+						&& rp.containsKey("from") && rp.get("from")!=null && !"".equals(rp.get("from")) 
+						&& rp.containsKey("to") && rp.get("to")!=null && !"".equals(rp.get("to"))) { 
+					List<String> toSabuns = (List<String>)rp.get("to");
+					
+					String applCode = null;
+					
+					if("DIFF".equals(applCd) || "ELAS".equals(applCd) || "SELE_C".equals(applCd) || "SELE_F".equals(applCd))
+						applCode = "FLEX";
+					else
+						applCode = applCd;
+					
+					msgService.sendMailForAppl(tenantId, enterCd, rp.get("from").toString(), toSabuns, applCode, "REJECT");
+				}
+				
 			}
 			
 		} catch (Exception e) {

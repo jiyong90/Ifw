@@ -95,7 +95,7 @@
 			{Header:"알림메시지",	Type:"Text",		Hidden:1,	Width:50,	Align:"Left",	ColMerge:0,	SaveName:"pushMsg",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:2000 },
 			{Header:"푸시여부",	Type:"CheckBox",	Hidden:0,	Width:70,	Align:"Left",	ColMerge:0,	SaveName:"mobileYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"문자여부",	Type:"CheckBox",	Hidden:1,	Width:70,	Align:"Left",	ColMerge:0,	SaveName:"smsYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"이메일여부",	Type:"CheckBox",	Hidden:0,	Width:80,	Align:"Left",	ColMerge:0,	SaveName:"emailYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"이메일여부",	Type:"CheckBox",	Hidden:1,	Width:80,	Align:"Left",	ColMerge:0,	SaveName:"emailYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"시작일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"symd",			KeyField:1,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"종료일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"eymd",			KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
@@ -112,10 +112,47 @@
 		sheet1.SetColProperty("businessPlaceCd", {ComboText:businessPlaceCdList[0], ComboCode:businessPlaceCdList[1]} );
 		
 		var pushObj = stfConvCode(codeList("${rc.getContextPath()}/code/list", "MSG_TARGET_CD"), "선택");
-		sheet1.SetColProperty("pushObj", {ComboText:"|"+pushObj[0], ComboCode:"|"+pushObj[1]} );
-		
 		var stdType = stfConvCode(codeList("${rc.getContextPath()}/code/list", "MSG_STD_TYPE_CD"), "선택");
-		sheet1.SetColProperty("stdType", {ComboText:"|"+stdType[0], ComboCode:"|"+stdType[1]} );
+		
+		//알림대상이 공통인 경우 우선 설정 못하도록 함(패스워드 변경, 신청서 메일 전송)
+		var commIdxs=[];
+		var pushObjNameArr = pushObj[0].split('|');
+		var pushObjCodeArr = pushObj[1].split('|');
+		
+		var newPushObjNameArr=[];
+		var newPushObjCodeArr=[];
+		pushObjCodeArr.map(function(code, idx){
+			if(code != 'COMM') {
+				newPushObjCodeArr.push(code);
+				newPushObjNameArr.push(pushObjNameArr[idx]);
+			}
+		});
+		var newPushObjName = newPushObjNameArr.join("|");
+		var newPushObjCode = newPushObjCodeArr.join("|");
+		
+		sheet1.SetColProperty("pushObj", {ComboText:"|"+newPushObjName, ComboCode:"|"+newPushObjCode} );
+		
+		//알림대상이 신청서 메일 전송인 경우 설정 못하도록 함
+		var applIdxs=[];
+		var stdTypeNameArr = stdType[0].split('|');
+		var stdTypeCodeArr = stdType[1].split('|');
+		
+		var newStdTypeNameArr=[];
+		var newStdTypeCodeArr=[];
+		stdTypeCodeArr.map(function(code, idx){
+			if(code.indexOf("_APPR")==-1 && code.indexOf("_APPLY")==-1 && code.indexOf("_REJECT")==-1) {
+				newStdTypeCodeArr.push(code);
+				newStdTypeNameArr.push(stdTypeNameArr[idx]);
+			}
+		});
+		
+		var newStdTypeName = newStdTypeNameArr.join("|");
+		var newStdTypeCode = newStdTypeCodeArr.join("|");
+		
+		sheet1.SetColProperty("stdType", {ComboText:"|"+newStdTypeName, ComboCode:"|"+newStdTypeCode} );
+		
+		//sheet1.SetColProperty("pushObj", {ComboText:"|"+pushObj[0], ComboCode:"|"+pushObj[1]} );
+		//sheet1.SetColProperty("stdType", {ComboText:"|"+stdType[0], ComboCode:"|"+stdType[1]} );
 
 		sheetInit();
 		doAction1("Search");
@@ -239,21 +276,27 @@
 		var pushObj = sheet1.GetCellValue(row, "pushObj");
 		var stdType = sheet1.GetCellValue(row, "stdType");
 		
-		if(pushObj=='COMM' && stdType=='PW') {
-			var passwordCertificate = 'EMAIL';
-			<#if passwordCertificate?? && passwordCertificate?exists >
-				passwordCertificate = "${passwordCertificate}";
-			</#if>
+		if(pushObj=='COMM') {
+			if(stdType=='PW') {
+				var passwordCertificate = 'EMAIL';
+				<#if passwordCertificate?? && passwordCertificate?exists >
+					passwordCertificate = "${passwordCertificate}";
+				</#if>
+				
+				if(passwordCertificate=='PHONE') {
+	    			sheet1.SetCellValue(row, "smsYn", "Y");
+	    		} else if(passwordCertificate=='EMAIL') {
+	    			sheet1.SetCellValue(row, "emailYn", "Y");
+	    		}
+			} else if(stdType.indexOf('APPR')!=-1 || stdType.indexOf('APPLY')!=-1 || stdType.indexOf('REJECT')!=-1) {
+				sheet1.SetCellValue(row, "emailYn", "Y");
+			}
 			
-			if(passwordCertificate=='PHONE') {
-    			sheet1.SetCellValue(row, "smsYn", "Y");
-    		} else if(passwordCertificate=='EMAIL') {
-    			sheet1.SetCellValue(row, "emailYn", "Y");
-    		}
-			
-			sheet1.SetCellEditable(row, "smsYn", 0);
 			sheet1.SetCellEditable(row, "mobileYn", 0);
 			sheet1.SetCellEditable(row, "emailYn", 0);
+			sheet1.SetCellEditable(row, "smsYn", 0);
+			
+			sheet1.SetCellEditable(row, "sDelete", 0);
 		} else {
 			sheet1.SetCellEditable(row, "smsYn", 1);
 			sheet1.SetCellEditable(row, "mobileYn", 1);
