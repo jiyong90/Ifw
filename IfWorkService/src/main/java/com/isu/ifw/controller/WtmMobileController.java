@@ -658,7 +658,11 @@ public class WtmMobileController {
 			if(paramMap.get("eventSource").equals("ymd") || paramMap.get("eventSource").equals("sabun")) {
 				if(data.containsKey("ymd") && !data.get("ymd").toString().equals("")
 						&& data.containsKey("sabun") && !data.get("sabun").toString().equals("")) {
+					data.put("plan", "");
+					data.put("emp", "");
 					if(data.get("sabun").toString().length() < 2 ) {
+						result.put("data", data);
+						rp.put("result", result);
 						rp.setFail("두글자 이상 입력해주세요.");
 						return rp;
 					}
@@ -667,31 +671,41 @@ public class WtmMobileController {
 					if(l == null || l.size() <= 0) {
 						data.put("plan", "");
 						data.put("emp", "");
-						itemPropertiesMap.put("emp", null);
+						
+						Map<String,Object> temp = new HashMap<String,Object>();
+						itemPropertiesMap.put("emp", temp);
 						
 						result.put("data", data);
 						result.put("itemAttributesMap", itemPropertiesMap);
+						rp.put("result", result);
 						rp.setFail("조회 결과가 없습니다.");
 						return rp;
 					}
 					
-					int cnt = 0;
+//					int cnt = 0;
 					
 					List<Map<String,Object>> itemCollection = new ArrayList<Map<String,Object>>();
+					data.put("plan", "");
+					data.put("emp", "");
+					
+					Map<String,Object> blank = new HashMap<String,Object>();
+					blank.put("text", "선택");
+					blank.put("value", "");
+					itemCollection.add(blank);
+					
 					for(Map<String, Object> row : l) {
-						if(cnt == 0) {
-							data.put("emp", row.get("emp") +"@"+ row.get("plan").toString());
-							data.put("plan", row.get("plan").toString());
-						}
-						String value = row.get("emp") +"@"+ row.get("plan").toString();
+//						if(cnt == 0) {
+//							data.put("emp", data.get("emp") +"@"+ row.get("plan").toString());
+//							data.put("plan", row.get("plan").toString());
+//						}
+						String value = row.get("sabun").toString();
 						String text = row.get("emp").toString();
 						Map<String,Object> item = new HashMap<String,Object>();
 						item.put("text", text);
 						item.put("value", value);
 						itemCollection.add(item);
-						cnt++;
+//						cnt++;
 					}
-					
 					
 					Map<String,Object> item = new HashMap<String,Object>();
 					item.put("collection", itemCollection);
@@ -699,10 +713,16 @@ public class WtmMobileController {
 					itemPropertiesMap.put("emp", item);
 					result.put("itemAttributesMap", itemPropertiesMap);
 				}
-			} else {
-				String temp = data.get("emp").toString().split("@")[1];
-				data.put("plan", temp);
-			}
+			} else if(paramMap.get("eventSource").equals("emp")){
+					Map<String, Object> param = new HashMap();
+					param.putAll(data);
+					param.put("emp", data.get("emp").toString());
+					List<Map<String, Object>> l = mobileService.getPlan(data);
+					if(l!= null && l.size()>0) {
+						Map<String, Object> p = l.get(0);
+						data.put("plan", p.get("plan"));
+					}
+				}
 
 			result.put("data", data);
 			rp.put("result", result);
@@ -710,7 +730,6 @@ public class WtmMobileController {
 			logger.debug(e.getMessage());
 			rp.setFail("조회 중 오류가 발생하였습니다.");
 		}
-		
 		logger.debug("/mobile/"+ tenantId+"/team/plan e " + rp.toString());
 		return rp;
 	}

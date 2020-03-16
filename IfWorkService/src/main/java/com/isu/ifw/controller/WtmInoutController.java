@@ -249,8 +249,10 @@ public class WtmInoutController {
 				logger.debug("휴일근무 신청서가 없음. PostProcess 안탐. ");
 				return rp;
 			}
-			//퇴근일때만 인정시간 계산
-			inoutService.inoutPostProcess(paramMap, yn.get("unplannedYn").toString());
+			logger.debug("/inot/out postProcess skip");
+
+			//퇴근일때만 인정시간 계산(일마감으로 변경)
+			//inoutService.inoutPostProcess(paramMap, yn.get("unplannedYn").toString());
 
 		} catch(Exception e) {
 			logger.debug("outexception : " + e.getMessage() + paramMap.toString());
