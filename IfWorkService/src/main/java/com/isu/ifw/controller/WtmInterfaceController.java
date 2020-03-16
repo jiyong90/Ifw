@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.message.config.AuthConfigProvider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,8 +31,8 @@ public class WtmInterfaceController {
 	@Qualifier("wtmInterfaceService")
 	private WtmInterfaceService WtmInterfaceService;
 	
-	@Autowired
-	AuthConfigProvider authConfigProvider;
+//	@Autowired
+//	AuthConfigProvider authConfigProvider;
 		
 	@Autowired
 	WtmInoutService inoutService;
