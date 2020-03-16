@@ -54,7 +54,7 @@ public class WtmInoutController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/mobile/{tenantId}/inout/status", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/inout/status2", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyWorkStatus(@PathVariable Long tenantId, 
 			@RequestParam(value = "tenantKey", required = true) String tenantKey,
 			@RequestParam(value="locale", required = true) String locale, 
@@ -63,14 +63,14 @@ public class WtmInoutController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
-		String userToken = request.getParameter("userToken");
-		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
+//		String userToken = request.getParameter("userToken");
+		String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(empKey, "sabun");
 
 //		String enterCd =  empKey.split("@")[0];
 //		String sabun =  empKey.split("@")[1];
 		
-		logger.debug("/mobile/"+ tenantId+"/inout/status s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+		logger.debug("/mobile/"+ tenantId+"/inout/status2 s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 
 		
 		Map <String,Object> resultMap = new HashMap<String,Object>();
@@ -81,7 +81,7 @@ public class WtmInoutController {
 		resultMap.put("menus", menus);
 		rp.put("result", resultMap);
 		
-		logger.debug("/mobile/"+ tenantId+"/inout/status e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/inout/status2 e " + rp.toString());
 		return rp;
 	}	
 	
@@ -132,7 +132,7 @@ public class WtmInoutController {
 		resultMap.put("menus", menus);
 		rp.put("result", resultMap);
 		
-		logger.debug("/mobile/"+ tenantId+"/inout/checkstatus e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/worktime/status e " + rp.toString());
 		return rp;
 	}
 	
