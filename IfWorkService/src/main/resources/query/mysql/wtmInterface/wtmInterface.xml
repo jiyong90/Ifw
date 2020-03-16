@@ -210,8 +210,8 @@
 			, #{item.holInclYn}
 			, #{item.requestTypeCd}
 			, #{item.workYn}
-        	, #{item.payYn}
-        	, #{item.note}
+			, #{item.payYn}
+			, #{item.note}
 			, NOW()
 			, '0'
 			)
@@ -458,7 +458,7 @@
 			AND A.ENTER_CD = B.ENTER_CD
 			AND A.SABUN = B.SABUN
 			AND A.EYMD = '29991231'
-			AND A.STATUS_CD = 'AA'
+			AND A.STATUS_CD LIKE 'A%'
 		 WHERE B.TENANT_ID = #{tenantId}
 		   AND F_WTM_DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') > #{ifEndDate}
 		   AND B.CHG_TYPE_CD = 'BUSINESS_PLACE_CD'
@@ -476,15 +476,28 @@
 			AND A.ENTER_CD = B.ENTER_CD
 			AND A.SABUN = B.SABUN
 			AND A.EYMD = '29991231'
-			AND A.STATUS_CD = 'AA'
+			AND A.STATUS_CD LIKE 'A%'
 		 WHERE B.TENANT_ID = #{tenantId}
 		   AND F_WTM_DATE_FORMAT(B.UPDATE_DATE, 'YMDHIS') > #{ifEndDate}
 		   AND B.CHG_TYPE_CD = 'STATUS_CD'
-		   AND B.OLD_VALUE != 'AA'
+		   AND B.OLD_VALUE NOT LIKE 'A%'
 		 ORDER BY enterCd, sabun
     ]]>
     </select>
     
+    <select id="getEmpBaseEtcList" parameterType="map" resultType="hashmap">
+  	<![CDATA[
+SELECT 21 AS tenantId
+		  , 'SAMHWACROWN' AS enterCd
+		  , SABUN AS sabun
+		  , SYMD AS symd
+		  , EYMD AS eymd
+		  , 'HJ' as userId
+  FROM WTM_WORKTEAM_EMP
+ WHERE WORKTEAM_MGR_ID IN (8,9)
+    ]]>
+    </select>
+        
     <select id="getOrgConcChk" parameterType="map" resultType="hashmap">
   	<![CDATA[
 		SELECT A.LEADER_CNT as leaderCnt, B.CONC_CNT as concCnt, C.CONC_CNT as concEndCnt
@@ -515,6 +528,36 @@
 		    ON 1=1
     ]]>
     </select>
+    
+    <insert id="insertWtmEmpAddr" parameterType="java.util.HashMap" >
+        INSERT INTO WTM_EMP_ADDR (
+        	  TENANT_ID
+        	, ENTER_CD
+        	, SABUN
+        	, EMAIL
+        	, HAND_PHONE
+        	, NOTE
+        	, UPDATE_DATE
+        	, UPDATE_ID
+        ) VALUES 
+       <foreach collection="list" item="item" separator=", ">
+		(     #{item.tenantId}
+        	, #{item.enterCd}
+        	, #{item.sabun}
+        	, #{item.email}
+        	, #{item.handPhone}
+        	, #{item.note}
+        	, NOW()
+        	, '0'
+        )
+		</foreach>
+        ON DUPLICATE KEY UPDATE
+              EMAIL = VALUES(EMAIL)
+            , HAND_PHONE = VALUES(HAND_PHONE)
+            , NOTE = VALUES(NOTE)
+            , UPDATE_DATE = NOW()
+            , UPDATE_ID = '0'
+    </insert>
     
     <insert id="insertOrgConc" parameterType="java.util.HashMap" >
         INSERT INTO WTM_ORG_CONC (
@@ -550,36 +593,6 @@
            AND SYMD = #{symd}
     </update>
     
-    <insert id="insertWtmEmpAddr" parameterType="java.util.HashMap" >
-        INSERT INTO WTM_EMP_ADDR (
-        	  TENANT_ID
-        	, ENTER_CD
-        	, SABUN
-        	, EMAIL
-        	, HAND_PHONE
-        	, NOTE
-        	, UPDATE_DATE
-        	, UPDATE_ID
-        ) VALUES 
-       <foreach collection="list" item="item" separator=", ">
-		(     #{item.tenantId}
-        	, #{item.enterCd}
-        	, #{item.sabun}
-        	, #{item.email}
-        	, #{item.handPhone}
-        	, #{item.note}
-        	, NOW()
-        	, '0'
-        )
-		</foreach>
-        ON DUPLICATE KEY UPDATE
-              EMAIL = VALUES(EMAIL)
-            , HAND_PHONE = VALUES(HAND_PHONE)
-            , NOTE = VALUES(NOTE)
-            , UPDATE_DATE = NOW()
-            , UPDATE_ID = '0'
-    </insert>
-    
     <select id="setTaaApplIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
   		{ call P_WTM_IF_TAA_APPL( 
   				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
@@ -600,7 +613,7 @@
   			  ) }
   	</select>
   	<select id="setTaaApplDayIf" statementType="CALLABLE" parameterType="java.util.HashMap" >
-  		{ call P_WTM_IF_TAA_APPL_DAY( 
+  		{ call P_WTM_IF_TAA_APPL_DAY2( 
   				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
   			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
@@ -620,6 +633,31 @@
   			  , #{taaEdate,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
   			  ) }
   	</select>
+  	
+  	
+  	<select id="getTaaApplList"  parameterType="map" resultType="hashmap">
+        <![CDATA[
+SELECT A.TENANT_ID AS tenantId
+     , A.ENTER_CD AS enterCd
+	  , A.SABUN AS sabun
+	  , A.TAA_CD AS taaCd
+	  , A.SYMD AS sYmd
+	  , A.EYMD AS eYmd
+	  , A.SHM AS sHm
+	  , A.EHM AS eHm
+	  , A.TAA_APPL_ID AS taaApplId
+	  , A.APPL_ID AS applId
+	  , B.APPL_STATUS_CD AS status 
+	  , '' AS oldStatus
+  FROM WTM_TAA_APPL A
+ INNER JOIN WTM_APPL B
+    ON A.APPL_ID = B.APPL_ID
+ WHERE A.TENANT_ID =  #{tenantId}
+ AND A.ENTER_CD = #{enterCd}
+ AND A.APPL_ID = 33772
+ AND APPL_STATUS_CD = '99'
+        ]]>
+    </select>
   	
   	<select id="getWtmTaaApplId" parameterType="map" resultType="hashmap">
 		SELECT TAA_APPL_ID as taaApplId
@@ -642,6 +680,48 @@
   			  ) }
   	</select>
   	
+  	<select id="getCloseEmp" parameterType="map" resultType="hashmap">
+       	SELECT DISTINCT A.SABUN AS sabun
+		  FROM WTM_WORK_CALENDAR A
+		 INNER JOIN WTM_FLEXIBLE_EMP B
+		    ON A.TENANT_ID = B.TENANT_ID
+		   AND A.ENTER_CD = B.ENTER_CD
+		   AND A.SABUN = B.SABUN
+		   AND A.YMD BETWEEN B.SYMD AND B.EYMD
+		 WHERE A.TENANT_ID = #{tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.YMD BETWEEN #{sYmd} AND #{eYmd}
+	<if test="sabun!=null and !sabun.equals('')">
+		   AND A.SABUN = #{sabun}
+	</if>
+		 ORDER BY A.SABUN
+  	</select>
+  	
+  	<select id="setCloseDay" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_CLOSE_DAY( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{worktimeCloseId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
+  	
+  	<select id="setCloseMonth" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_CLOSE_MONTH( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{worktimeCloseId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
+  	
   	<select id="getExceptRuleId" parameterType="map" resultType="hashmap">
         <![CDATA[
         	SELECT info_data
@@ -653,37 +733,123 @@
     
     <select id="setCalcDay" parameterType="Long" resultType="hashmap">
         <![CDATA[
-        	SELECT DISTINCT ENTER_CD AS enterCd
-				  , SABUN AS sabun
-				  , YMD AS ymd
-			  FROM WTM_WORK_DAY_RESULT 
-			WHERE TENANT_ID = #{tenantId}
-			  AND YMD BETWEEN '20191104' AND '20191201'
-			  AND PLAN_MINUTE IS NOT NULL
-			  AND APPR_MINUTE IS NULL
+SELECT DISTINCT A.TENANT_ID AS tenantId
+	, A.ENTER_CD AS enterCd
+	, A.SABUN AS sabun
+	  , A.YMD AS ymd
+	  , 0 AS gooutCnt		
+  FROM WTM_WORK_CALENDAR A
+ WHERE A.TENANT_ID = 10
+   AND A.ENTER_CD = 'LSG'
+   AND A.YMD IN ('20200106', '20200203', '20200302')
+  ORDER BY A.YMD, A.SABUN
         ]]>
     </select>
     
-    <select id="setCalcDayResult" parameterType="Long" resultType="hashmap">
+    <select id="setCalcDayParam"  parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT ENTER_CD AS enterCd
-				  , SABUN AS sabun
-				  , YMD AS ymd
-				  , TIME_TYPE_CD AS time_type_cd
-				  , F_WTM_DATE_FORMAT(PLAN_SDATE, 'YMDHI') AS planSdate
-				  , F_WTM_DATE_FORMAT(PLAN_EDATE, 'YMDHI') AS planEdate
-				  , (SELECT TIME_CD_MGR_ID FROM WTM_WORK_CALENDAR B 
-				      WHERE A.TENANT_ID = B.TENANT_ID
-						  AND A.ENTER_CD = B.ENTER_CD
-						  AND A.SABUN = B.SABUN
-						  AND A.YMD = B.YMD) AS timeCdMgrId
-				  , WORK_DAY_RESULT_ID AS workDayResultId
-			  FROM WTM_WORK_DAY_RESULT A
-			 WHERE TENANT_ID = #{tenantId}
-			   AND PLAN_SDATE IS NOT NULL
-				AND PLAN_EDATE IS NOT NULL
-				AND YMD BETWEEN '20191201' AND '20191231'
-			 ORDER BY ENTER_CD, SABUN
+SELECT A.ENTER_CD AS enterCd
+	  , A.SABUN AS sabun
+	  , A.YMD AS ymd
+	  , COUNT(B.SABUN) AS gooutCnt				  
+	  , C.FLEXIBLE_EMP_ID AS flexibleEmpId
+			  FROM WTM_WORK_CALENDAR A
+			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT B
+			    ON A.TENANT_ID = B.TENANT_ID
+			   AND A.ENTER_CD = B.ENTER_CD
+			   AND A.SABUN = B.SABUN
+			   AND A.YMD = B.YMD
+			   AND B.TIME_TYPE_CD = 'GOBACK'
+			 INNER JOIN WTM_FLEXIBLE_EMP C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.SABUN = C.SABUN
+			   AND A.YMD BETWEEN C.SYMD AND C.EYMD
+WHERE A.TENANT_ID = #{tenantId}
+  AND A.ENTER_CD = #{enterCd}
+  AND A.SABUN = #{sabun}
+  AND A.YMD  BETWEEN #{sYmd} AND #{eYmd}
+ GROUP BY A.ENTER_CD, A.SABUN, A.YMD
+ ORDER BY A.SABUN, A.YMD
+        ]]>
+    </select>
+    
+    <select id="getCalcDayLoopEmp" parameterType="Long" resultType="hashmap">
+        <![CDATA[
+ SELECT A.ENTER_CD AS enterCd
+	  , A.SABUN AS sabun
+	  , A.SYMD AS sYmd
+	  , A.EYMD AS eYmd
+			  FROM WTM_FLEXIBLE_EMP A
+WHERE A.TENANT_ID = #{tenantId}
+  AND A.SYMD = '20191230'
+--  AND A.SABUN = '329409'
+  AND A.SABUN = '20050818001'
+ ORDER BY A.SABUN
+        ]]>
+    </select>
+    
+    <update id="deleteCalcDayLoop" parameterType="hashmap">
+    	<![CDATA[
+    		DELETE
+  FROM WTM_WORK_DAY_RESULT
+ WHERE TENANT_ID = #{tenantId}
+   AND ENTER_CD = #{enterCd}
+   AND YMD BETWEEN #{sYmd} AND #{eYmd}
+   AND SABUN = #{sabun}
+   AND TIME_TYPE_CD NOT IN ('REGA', 'TAA', 'GOBACK', 'OT', 'NIGHT', 'SUBS')
+    	]]>
+    </update>
+    
+    <select id="setCalcDayLoop"  parameterType="map" resultType="hashmap">
+        <![CDATA[
+SELECT A.ENTER_CD AS enterCd
+	  , A.SABUN AS sabun
+	  , A.YMD AS ymd
+	  , COUNT(B.SABUN) AS gooutCnt				  
+	  , C.FLEXIBLE_EMP_ID AS flexibleEmpId
+			  FROM WTM_WORK_CALENDAR A
+			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT B
+			    ON A.TENANT_ID = B.TENANT_ID
+			   AND A.ENTER_CD = B.ENTER_CD
+			   AND A.SABUN = B.SABUN
+			   AND A.YMD = B.YMD
+			   AND B.TIME_TYPE_CD = 'GOBACK'
+			 INNER JOIN WTM_FLEXIBLE_EMP C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND A.SABUN = C.SABUN
+			   AND A.YMD BETWEEN C.SYMD AND C.EYMD
+WHERE A.TENANT_ID = #{tenantId}
+  AND A.ENTER_CD = 'BRS'
+  AND A.SABUN NOT IN ('20050818001', '329409')
+  AND A.YMD  BETWEEN '20191230' AND '20200126'
+ GROUP BY A.ENTER_CD, A.SABUN, A.YMD
+ ORDER BY A.YMD, A.SABUN
+        ]]>
+    </select>
+    
+    <select id="setCalcDayResult"  parameterType="map" resultType="hashmap">
+        <![CDATA[
+SELECT ENTER_CD AS enterCd
+	  , SABUN AS sabun
+	  , YMD AS ymd
+	  , TIME_TYPE_CD AS timeTypeCd
+	  , F_WTM_DATE_FORMAT(PLAN_SDATE, 'YMDHIS') AS planSdate
+	  , F_WTM_DATE_FORMAT(PLAN_EDATE, 'YMDHIS') AS planEdate
+	  , (SELECT TIME_CD_MGR_ID FROM WTM_WORK_CALENDAR B 
+	      WHERE A.TENANT_ID = B.TENANT_ID
+			  AND A.ENTER_CD = B.ENTER_CD
+			  AND A.SABUN = B.SABUN
+			  AND A.YMD = B.YMD) AS timeCdMgrId
+	  , WORK_DAY_RESULT_ID AS workDayResultId
+  FROM WTM_WORK_DAY_RESULT A
+ WHERE TENANT_ID = #{tenantId}
+   AND ENTER_CD = #{enterCd}
+   AND SABUN = #{sabun}
+	AND YMD = #{ymd} 
+	AND TIME_TYPE_CD = 'GOBACK'
+ ORDER BY PLAN_SDATE
         ]]>
     </select>
     
@@ -716,5 +882,152 @@
 		    WHERE WORK_DAY_RESULT_ID = ${workDayResultId}
     	]]>
     </insert>
+    
+        <select id="getWtmCloseDay" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT AA.ENTER_CD AS enterCd, AA.SABUN AS sabun, AA.YMD AS ymd
+              FROM (SELECT A.ENTER_CD, A.SABUN, A.YMD, MIN(F_WTM_DATE_FORMAT(B.PLAN_SDATE, 'YMD')) AS SDATE, MAX(F_WTM_DATE_FORMAT(B.PLAN_EDATE, 'YMD')) AS EDATE
+                    FROM WTM_WORK_CALENDAR A
+                   INNER JOIN WTM_WORK_DAY_RESULT B
+                       ON A.TENANT_ID = B.TENANT_ID
+                      AND A.ENTER_CD = B.ENTER_CD
+                      AND A.SABUN = B.SABUN
+                      AND A.YMD = B.YMD
+                   WHERE B.TIME_TYPE_CD IN ('BASE', 'REGA', 'OT', 'FIXOT', 'NIGTH')	-- 간주근무나 기본근무일때)
+                      AND A.TENANT_ID = #{tenantId}
+                      AND A.YMD = #{ymd}
+--                      AND A.SABUN = '327979'
+                   GROUP BY A.ENTER_CD, A.SABUN, A.YMD
+                   ) AA
+             WHERE ((#{closeType} = 'A' AND AA.SDATE = AA.EDATE)
+                 OR (#{closeType} = 'B' AND AA.SDATE != AA.EDATE))
+ORDER BY YMD, SABUN
+        ]]>
+    </select>
+    
+    <select id="getApplId" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT APPL_ID as applId, APPL_STATUS_CD as oldApplStatusCd
+		  FROM WTM_APPL
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+			AND IF_APPL_NO =#{applNo}
+        ]]>
+    </select>
+    
+    <select id="getCloseYnChk" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT F_WTM_DATE_DIFF(F_WTM_TO_DATE(#{eymd}, 'YMD'), F_WTM_TO_DATE(#{symd}, 'YMD')) + 1 AS dayCnt
+			  , SUM(CLOSE_CNT) AS closeCnt
+		  FROM (SELECT CASE F_WTM_NVL(WORK_CLOSE_YN, 'N') WHEN 'Y' THEN 1 ELSE 0 END AS CLOSE_CNT
+				  FROM WTM_WORK_CALENDAR
+				 WHERE TENANT_ID = #{tenantId}
+				   AND ENTER_CD = #{enterCd}
+				   AND SABUN = #{sabun}
+				   AND YMD BETWEEN #{symd} AND #{eymd}
+		) A
+        ]]>
+    </select>
+    
+    
+    <select id="getTaaList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT A.TENANT_ID AS tenantId
+        	 , A.ENTER_CD AS enterCd
+        	 , A.SABUN AS sabun
+             , B.TAA_CD AS taaCd
+             , C.YMD AS ymd
+             , B.SHM AS shm
+             , B.EHM AS ehm
+             , DATE_FORMAT(F_WTM_TO_DATE(CONCAT(C.YMD, B.SHM), 'YMDHIS'), '%Y%m%d%H%i%s') AS taaSdate
+			 , CASE WHEN B.SHM > B.EHM THEN DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(C.YMD, B.EHM), 'YMDHIS'), 1, 'D'), '%Y%m%d%H%i%s')
+	         ELSE DATE_FORMAT(F_WTM_TO_DATE(CONCAT(C.YMD, B.EHM), 'YMDHIS'), '%Y%m%d%H%i%s') END AS taaEdate
+             , CASE WHEN B.SHM IS NOT NULL AND B.EHM IS NOT NULL 
+		 		  THEN timestampdiff(MINUTE, F_WTM_TO_DATE(CONCAT(C.YMD, B.SHM), 'YMDHI'), F_WTM_TO_DATE(CONCAT(C.YMD, B.EHM), 'YMDHI'))
+		 		  ELSE 0 END AS workMinute
+             , C.TIME_CD_MGR_ID AS timeCdMgrId
+             , C.HOLIDAY_YN AS holidayYn
+             , F_WTM_NVL(C.WORK_CLOSE_YN, 'N') AS closeYn
+		  FROM WTM_TAA_APPL A
+		 INNER JOIN WTM_TAA_APPL_DET B
+		    ON A.TAA_APPL_ID = B.TAA_APPL_ID
+		 INNER JOIN WTM_WORK_CALENDAR C
+		    ON A.TENANT_ID = C.TENANT_ID
+		   AND A.ENTER_CD = C.ENTER_CD
+		   AND A.SABUN = C.SABUN
+			AND C.YMD BETWEEN B.SYMD AND B.EYMD
+		 WHERE A.TENANT_ID = #{tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.APPL_ID = #{applId}
+		  ORDER BY A.SABUN, C.YMD
+        ]]>
+    </select>
+    
+    <select id="getStdMgrList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT F_WTM_NVL(B.UNPLANNED_YN, 'N') AS unplannedYn
+	  		 , DATE_FORMAT(F_WTM_TO_DATE(CONCAT(#{ymd}, D.WORK_SHM), 'YMDHIS'), '%Y%m%d%H%i%s') AS taaSdate
+			 , CASE WHEN D.WORK_SHM > D.WORK_EHM THEN DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(#{ymd}, D.WORK_EHM), 'YMDHIS'), 1, 'D'), '%Y%m%d%H%i%s')
+	         ELSE DATE_FORMAT(F_WTM_TO_DATE(CONCAT(#{ymd}, D.WORK_EHM), 'YMDHIS'), '%Y%m%d%H%i%s') END AS taaEdate
+		  FROM WTM_FLEXIBLE_EMP A
+		 INNER JOIN WTM_FLEXIBLE_STD_MGR B
+		    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+		 INNER JOIN WTM_TIME_CD_MGR D
+		    ON B.REGARD_TIME_CD_ID = D.TIME_CD_MGR_ID
+		 WHERE A.TENANT_ID = #{tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.SABUN = #{sabun}
+		   AND #{ymd} BETWEEN A.SYMD AND A.EYMD
+        ]]>
+    </select>
+    
+    <update id="deleteResult" parameterType="hashmap">
+		DELETE FROM WTM_WORK_DAY_RESULT 
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND YMD = #{ymd}
+		   AND APPL_ID = #{applId}
+		   AND TAA_CD = #{taaCd}
+	</update>
+	
+	<select id="getTaaPlanTimeList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CASE REQ_TYPE_CD WHEN 'A' THEN SDATE
+									   WHEN 'P' THEN F_WTM_DATE_ADD(EDATE, -4, 'H')
+									   ELSE SDATE END AS taaSdate
+			  , CASE REQ_TYPE_CD WHEN 'A' THEN F_WTM_DATE_ADD(EDATE, -4, 'H')
+									   WHEN 'P' THEN EDATE
+									   ELSE EDATE END AS taaEdate
+		  FROM (
+				SELECT F_WTM_TO_DATE(#{taaSdate}, 'YMDHIS') AS SDATE
+				     , F_WTM_TO_DATE(#{taaEdate}, 'YMDHIS') AS EDATE
+				     , #{reqTypeCd} AS REQ_TYPE_CD
+				  FROM DUAL) A
+        ]]>
+    </select>
+    
+    <select id="getCompList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT A.TENANT_ID AS tenantId
+				  , A.ENTER_CD AS enterCd
+				  , A.SABUN AS sabun
+				  , A.SYMD AS symd
+				  , A.EYMD AS eymd
+				  , C.INFO_VALUE AS gntCd
+				  , TRUNCATE(A.ALLOW_MINUTE/60/8,2) AS compCnt
+			  FROM WTM_COMP_CREATE A
+			 INNER JOIN WTM_WORKTIME_CLOSE B
+			    ON A.TENANT_ID = B.TENANT_ID
+			   AND A.ENTER_CD = B.ENTER_CD
+			   AND A.YMD BETWEEN B.SYMD AND B.EYMD
+			 INNER JOIN WTM_PROPERTIE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND C.INFO_KEY = 'OPTION_COMP_CODE'
+			 WHERE B.WORKTIME_CLOSE_ID = ${worktimeCloseId}
+			   AND A.ALLOW_MINUTE > 0
+        ]]>
+    </select>
     
 </mapper>

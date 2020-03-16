@@ -332,4 +332,26 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		return ifList;
 	}
 	
+	@Override
+	public int setWorkTimeClose(String tenantId, List<Map<String, Object>> compList) throws Exception {
+		// TODO Auto-generated method stub
+		int cnt = 0;
+		System.out.println("WtmInterfaceServiceImpl setWorkTimeClose");
+        try {
+        	//회사코드 조회
+        	enterCd = getEnterCd(tenantId);
+        	// 루프돌려서 저장하기
+        	for(int i=0; i<compList.size(); i++) {
+	        	Map<String, Object> paramMap = compList.get(i);
+	        	paramMap.put("enterCd", enterCd);
+	        	// paramMap.put("enterCd", "BRS");
+	        	System.out.println("paramMap" + paramMap.toString());
+	        	int rtn = wtmInterfaceMapper.insertCompBrs(paramMap);
+        	}
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+		return cnt;
+	}
+	
 }
