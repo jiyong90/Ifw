@@ -335,4 +335,68 @@ public class WtmMobileEdocController {
 		logger.debug("/mobile/"+ tenantId+"/edocument/requestCount e " + rp.toString());
 		return rp;
 	}
+	
+	
+	/**
+	 * 신청서 갯수(기안 문서 중 완료 되지 않은 건, 결재해야 할 건)
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/edocument/menuBadges/{uId}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam menuBadges(HttpServletRequest request,
+			@PathVariable Long tenantId, @PathVariable String uId, 
+			@RequestParam(value = "locale", required = true) String locale,
+			@RequestParam(value = "empKey", required = true) String empKey) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Map<String, Object> result = new HashMap();
+		Map<String, Object> menuBadges = new HashMap();
+		
+		try {
+			String userToken = request.getParameter("userToken");
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			
+			Map<String, Object> cnt = applMapper.getEdocCountForMobile(paramMap);
+			menuBadges.put("count", cnt.get("totRequestCnt"));
+			menuBadges.put("key", uId);
+			
+			result.put("menuBadges", menuBadges);
+			rp.put("result", result);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/edocument/menuBadges e " + rp.toString());
+		return rp;
+	}
+	
+	@RequestMapping(value = "/mobile/process", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public void menuBadges(HttpServletRequest request,
+			@RequestParam(value = "tenantId", required = true) Long tenantId,
+			@RequestParam(value = "enterCd", required = true) String enterCd,
+			@RequestParam(value = "stdYmd", required = true) String stdYmd,
+			@RequestParam(value = "sabun", required = true) String sabun,
+			@RequestParam(value = "unplannedYn", required = true) String unplannedYn) throws Exception {
+
+		Map<String, Object> map = new HashMap();
+		map.put("tenantId", tenantId);
+		map.put("enterCd", enterCd);
+		map.put("stdYmd", stdYmd);
+		map.put("sabun", sabun);
+		
+		inoutService.inoutPostProcess(map, unplannedYn);
+	}
 }

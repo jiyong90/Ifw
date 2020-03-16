@@ -434,6 +434,9 @@
     <select id="getApplValidation" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT 
+				CASE WHEN #{applCd} = 'ENTRY_CHG' AND (#{ymd} < F_WTM_DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -(X.ENTRY_LIMIT - 1) DAY), 'YMD') OR (#{ymd} > F_WTM_DATE_FORMAT(NOW(), 'YMD'))) THEN 'N'
+					WHEN #{applCd} = 'ENTRY_CHG' AND #{ymd} <= F_WTM_DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -(X.ENTRY_LIMIT - 1) DAY), 'YMD') THEN 'Y' END AS entryYn,
+				CASE WHEN #{applCd} = 'ENTRY_CHG' THEN CONCAT(F_WTM_DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -(X.ENTRY_LIMIT -1) DAY), 'Y-M-D'), '~', F_WTM_DATE_FORMAT(NOW(), 'Y-M-D')) END AS entryDate,
 				CASE WHEN X.YMD <= F_WTM_DATE_FORMAT(NOW(), 'YMD') AND X.SDAY IS NULL THEN 'Y'
 						WHEN X.YMD <= F_WTM_DATE_FORMAT(NOW(), 'YMD') AND X.SDAY = '0' THEN 'N'
 						WHEN X.YMD <= F_WTM_DATE_FORMAT(NOW(), 'YMD') AND X.YMD >= X.SDAY THEN 'Y' 
@@ -477,6 +480,7 @@
 				A.TIME_UNIT,
 				A.HOL_APPL_TYPE_CD,
 				A.HOL_MAX_MINUTE,
+				A.ENTRY_LIMIT,
 				CASE
 					WHEN A.OT_APPL_SDAY = '0' THEN '0'
 					WHEN A.OT_APPL_SDAY = '1' THEN F_WTM_DATE_FORMAT(NOW(), 'YMD')
