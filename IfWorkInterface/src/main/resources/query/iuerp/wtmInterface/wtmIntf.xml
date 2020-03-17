@@ -176,7 +176,8 @@
 			     , DC_RMK			--비고
 			     , NO_CEMP			--승인자사번
 			     , CASE CD_CONSENT 
-			     	WHEN '001' THEN '21'  
+			     	WHEN '001' THEN '21' 
+			     	WHEN '002' THEN '21'   
 			        WHEN '003' THEN '22'
 			        WHEN '004' THEN '99'
 			        ELSE CD_CONSENT END AS APPL_STATUS_CD --상태코드
