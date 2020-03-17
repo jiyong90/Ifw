@@ -719,8 +719,8 @@ public class WtmMobileController {
 			} else if(paramMap.get("eventSource").equals("emp")){
 					Map<String, Object> param = new HashMap();
 					param.putAll(data);
-					param.put("emp", data.get("emp").toString());
-					List<Map<String, Object>> l = mobileService.getPlan(data);
+					param.put("sabun", data.get("emp").toString());
+					List<Map<String, Object>> l = mobileService.getPlan(param);
 					if(l!= null && l.size()>0) {
 						Map<String, Object> p = l.get(0);
 						data.put("plan", p.get("plan"));
