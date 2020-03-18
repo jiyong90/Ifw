@@ -68,7 +68,12 @@ public class TokenUtil {
 	    return claims;
 	}
 	
-	
+	/**
+	 * REPLACE_IDX 배열에 등록된 자릿수 및 숫자와 특수문자를 제외 한
+	 * 문자의 대소문자를 바꾼다 
+	 * @param token
+	 * @return
+	 */
 	public static String replaceJWT(String token) {
 
 		String replaceToken = "";
