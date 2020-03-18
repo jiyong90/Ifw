@@ -247,16 +247,31 @@ public class WtmMobileEdocController {
 						paramMap.put("otEdate", paramMap.get("otEdate").toString().replace(".","").replace(":", "").replace(" ", ""));
 						paramMap.put("ymd", paramMap.get("otEdate").toString().substring(0,8));
 						
+						logger.debug(":::::::: enterCd " + enterCd);
+						logger.debug(":::::::: applId " + applId);
+						logger.debug(":::::::: apprSeq " + apprSeq);
+						logger.debug(":::::::: applSabun " + applSabun);
+						logger.debug(":::::::: sabun " + sabun);
+						logger.debug(":::::::: paramMap " + paramMap.toString());
+
 						if(body.get("apprStatCd").toString().equals("02")) {
 							wtmOtApplService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
 							
 						} else if(body.get("apprStatCd").toString().equals("01")) {
-							rp = wtmOtApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
+							rp = wtmOtApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, applSabun, emp.getEmpHisId().toString());
 						} else {
 							rp.setFail("신청서 상태에 오류가 발생했습니다.");
 							return rp;
 						}
 					} else {
+						logger.debug(":::::::: enterCd " + enterCd);
+						logger.debug(":::::::: applId " + applId);
+						logger.debug(":::::::: apprSeq " + apprSeq);
+						logger.debug(":::::::: applSabun " + applSabun);
+						logger.debug(":::::::: sabun " + sabun);
+						logger.debug(":::::::: paramMap " + paramMap.toString());
+
+						
 						if(body.get("apprStatCd").toString().equals("02")) {
 							applService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, sabun);
 							//wtmEntryApplService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
