@@ -61,7 +61,7 @@
 					 INNER JOIN HR_CONFIG B
 					    ON A.CD_COMPANY = B.CD_COMPANY
 					   AND B.CD_SYS='CON043'
-					 WHERE A.CD_COMPANY = ${cdCompany}
+					 WHERE A.CD_COMPANY = #{cdCompany}
 			       ) A
 			 WHERE ENTER_CD = #{convEnterCd}
 			 ORDER BY ENTER_CD
@@ -82,7 +82,7 @@
 							, '' AS ORG_TYPE
 							, DC_RMK1 AS NOTE 
 					FROM MA_DEPT
-					WHERE CD_COMPANY = ${cdCompany}
+					WHERE CD_COMPANY = #{cdCompany}
 			       ) A
 			 WHERE ENTER_CD = #{convEnterCd}
         ]]>
@@ -175,7 +175,12 @@
 			     , DY_PROPOSAL 	--신청일자
 			     , DC_RMK			--비고
 			     , NO_CEMP			--승인자사번
-			     , CD_CONSENT AS APPL_STATUS_CD --상태코드
+			     , CASE CD_CONSENT 
+			     	WHEN '001' THEN '21' 
+			     	WHEN '002' THEN '21'   
+			        WHEN '003' THEN '22'
+			        WHEN '004' THEN '99'
+			        ELSE CD_CONSENT END AS APPL_STATUS_CD --상태코드
 			  FROM HR_WAPPLY
 			 WHERE DT_PROPOSAL >= CONVERT(CHAR(8), dateadd(month,-2,getdate()), 112)
 			   AND CD_COMPANY = #{cdCompany} 

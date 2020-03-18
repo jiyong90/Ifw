@@ -1,5 +1,5 @@
 <div id="dayClose">
- 	<div class="container-fluid mgr-wrap bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 	 		<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -11,10 +11,14 @@
 								    <span class="search-title">Search</span>
 								</td>
 								<td>
+									<span class="label">마감기준</span>
+									<select id="worktimeCloseId" name="worktimeCloseId" class="box"></select>
+								</td>
+								<td>
 									<span class="label">근무기간 </span>
-									<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+									<input type="text" id="sYmd" name="sYmd" class="date2 required" value="" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 									~
-									<input type="text" id="eYmd" name="eYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
+									<input type="text" id="eYmd" name="eYmd" class="date2 required" value="" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
 								</td>
 								<td>
 									<span class="label">사번/성명</span>
@@ -95,8 +99,12 @@
 		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=",false).DATA, "");
 		sheet1.SetColProperty("timeCdMgrId", {ComboText:timeCdMgrIdList[0], ComboCode:timeCdMgrIdList[1]} );
 		
+		//마감기준
+		var flexibleList = stfConvCode(ajaxCall("${rc.getContextPath()}/worktimeClose/WorktimeCloseCode", "", false).DATA, "선택");
+		$("#worktimeCloseId").html(flexibleList[2]);
+		
 		sheetInit();
-		doAction1("Search");
+		// doAction1("Search");
 	});
 
    	function doAction1(sAction) {

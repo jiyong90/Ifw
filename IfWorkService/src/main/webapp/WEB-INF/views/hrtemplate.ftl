@@ -31,6 +31,11 @@
 	</script>
     <div class="wrapper">
         <div id="content">
+		    	<div id="loading" class="dim" style="display:none;" >
+        	<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+        	<span class="sr-only">Loading...</span>
+        </div>
+
         	<!-- 알림에서 근무 계획 작성 시 어느 화면에서나 호출하기 위함  -->
 		    <!-- 근무 계획 작성 리스트 start -->
 		    <div class="modal fade" id="planWorkDayModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">

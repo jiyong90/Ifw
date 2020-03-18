@@ -193,6 +193,44 @@ public class WtmCalendarController {
 	}
 	
 	/**
+	 * 관리자_근태 달력 하루 조회(근무타각갱신체크용)
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/dayInfoEntry", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getEmpWorkCalendarDayInfoEntry(@RequestParam Map<String, Object> paramMap
+													   				 , HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String userId = sessionData.get("userId").toString();
+		String enterCd = sessionData.get("enterCd").toString();
+		String ymd = paramMap.get("ymd").toString();
+		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("ymd", ymd);
+		
+		rp.setSuccess("");
+	
+		Map<String, Object> dayInfo = null;
+		try {		
+			dayInfo =  wtmCalendarService.getEmpWorkCalendarDayInfoEntry(paramMap);
+			
+			rp.put("DATA", dayInfo);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+
+		return rp;
+	}
+	
+	/**
 	 * 해당 일의 휴일 여부 조회
 	 * @param paramMap
 	 * @param request

@@ -24,7 +24,9 @@
        	</li>
         <li v-for="(f, fIdx) in inboxList">
         	<span class="status ELAS"></span>
-        	<div class="desc">{{f.title}} [{{f.contents}}]</div>
+        	<div class="desc">
+        		{{f.title}} <template v-if="f.contents">[{{f.contents}}]</template>
+        	</div>
         	<button class="btn-close" @click="notiCheckYn(f.id)">&#215;</button>
         </li>
 	</ul>

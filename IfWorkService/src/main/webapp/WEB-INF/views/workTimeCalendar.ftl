@@ -436,7 +436,16 @@
                                         <span class="sub-time">{{minuteToHHMM(sub.subsMinute,'detail')}}</span>
                                     </span>
                                 </div>
-                                <div class="sub-desc" v-if="sub.workSDate && sub.workEDate">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
+                                <div class="sub-desc" v-if="(sub.workSDate && sub.workEDate) || overtimeAppl.oldSubs">
+                                <template v-if="sub.workSDate && sub.workEDate">
+                                *해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.
+                                </template>
+                                <template v-if="overtimeAppl.oldSubs">
+	                                <template v-for="oldSub in overtimeAppl.oldSubs" v-if="oldSub.otSubsApplId == sub.oldSubsApplId">
+	                                <br>*이전 대체휴일은  {{moment(oldSub.subsSdate).format('YYYY-MM-DD HH:mm')}}~{{moment(oldSub.subsEdate).format('YYYY-MM-DD HH:mm')}} 입니다.
+	                                </template>
+                                </template>
+                                </div>
                                 </template>
                             </div>
                             <div class="inner-wrap" v-if="overtimeAppl.cancelReason">
@@ -635,8 +644,9 @@
                                 <div class="sub-desc" v-if="s.workSDate&&s.workEDate">*해당일 근무시간은 {{moment(s.workSDate).format('HH:mm')}}~{{moment(s.workEDate).format('HH:mm')}} 입니다.</div>
                                 </template>
                             </div>
+                            <hr class="separate-bar">
                             <div class="inner-wrap">
-                                <div class="title">변경 대체휴일</div>
+                                <div class="big-title">{{moment(chgSubsAppl.sDate).format('YYYY-MM-DD HH:mm')}} ~ {{moment(chgSubsAppl.eDate).format('YYYY-MM-DD HH:mm')}} 의 변경 대체휴일</div>
                                 <template v-if="overtimeAppl.subs" v-for="sub in overtimeAppl.subs">
                                 <div class="desc">
                                     <span class="date-wrap">
@@ -649,7 +659,7 @@
                                 <div class="sub-desc" v-if="sub.workSDate&&sub.workEDate">*해당일 근무시간은 {{moment(sub.workSDate).format('HH:mm')}}~{{moment(sub.workEDate).format('HH:mm')}} 입니다.</div>
                                 </template>
                             </div>
-                            <appl-line :bind-data="applLine"></appl-line>
+                            <appl-line :bind-data="overtimeAppl.applLine"></appl-line>
                         </div>
                         <div class="btn-wrap text-center">
                             <button type="button" class="btn btn-default rounded-0" v-if="overtimeAppl.recoveryYn" data-toggle="modal" data-target="#confirmModal">회수하기</button>
@@ -813,10 +823,10 @@
   		    		//상세보기
   		    		if(info.event.extendedProps.timeTypeCd=='OT' || info.event.extendedProps.timeTypeCd=='OT_CAN' || info.event.extendedProps.timeTypeCd=='NIGHT' ) {
   		    			this.viewOvertimeApplDetail(info.event.extendedProps.timeTypeCd, info.event.extendedProps.applId, true);
-  		    		//} else if(info.event.extendedProps.timeTypeCd=='SUBS') {
-  		    		//	this.viewChgSubsAppl(info);
-  		    		//} else if(info.event.extendedProps.timeTypeCd=='SUBS_CHG') {
-  		    		//	this.viewChgSubsApplDetail(info.event.extendedProps.applId);
+  		    		} else if(info.event.extendedProps.timeTypeCd=='SUBS') {
+  		    			this.viewChgSubsAppl(info);
+  		    		} else if(info.event.extendedProps.timeTypeCd=='SUBS_CHG') {
+  		    			this.viewChgSubsApplDetail(info.event.extendedProps.applId, info);
   		    		}
   		    	},
   		    	dateClickCallback : function(info){
@@ -1282,8 +1292,14 @@
   	         		
   	         		$("#chgSubsModal").modal("show"); 
   	         	},
-  	         	viewChgSubsApplDetail: function(applId){
+  	         	viewChgSubsApplDetail: function(applId, info){
   	         		var $this = this;
+  	         		
+  	         		$this.chgSubsAppl = {
+  	         			applId : applId,
+  	         			sDate : info.event.start,
+  	         			eDate : info.event.end
+  	         		};
   	         		
   	         		var param = {
   	         			applId: applId	
@@ -1305,8 +1321,6 @@
 								} else {
 									$("#recoveryBtn").hide();
 								}
-								
-								$this.applLine = calendarLeftVue.getApplLine('SUBS_CHG');
 								
 								$("#chgSubsDetail").modal("show"); 
 							}
@@ -1404,8 +1418,8 @@
 	  	         					//근무
 	  	         					classNames = [];
 	  	         					
-	  	         					if(vMap.timeTypeCd == 'SUBS' || vMap.timeTypeCd == 'SUBS_CHG')
-	  	         						classNames.push('TAA');
+	  	         					if(vMap.timeTypeCd == 'SUBS_CHG')
+	  	         						classNames.push('SUBS');
 	  	         					else
 										classNames.push(vMap.timeTypeCd);
 									

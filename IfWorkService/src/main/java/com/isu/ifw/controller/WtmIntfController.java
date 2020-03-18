@@ -122,8 +122,9 @@ public class WtmIntfController extends TenantSecuredControl {
          
 			logger.debug("/intf/inoutCheck rp : " + rp.toString());
 			if(request.getParameter("type").toString().equals("OUT")) {
-				//퇴근일때만 인정시간 계산
-				inoutService.inoutPostProcess(paramMap, "N");
+				logger.debug("/intf/inoutCheck postProcess skip");
+				//퇴근일때만 인정시간 계산(일마감으로 변경)
+				//inoutService.inoutPostProcess(paramMap, "N");
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -188,8 +189,10 @@ public class WtmIntfController extends TenantSecuredControl {
 			logger.debug("/intf/inoutCheck rp : " + rp.toString());
 			logger.debug("/intf/inoutCheck rp : " + rp.toString());
 			if(request.getParameter("type").toString().equals("OUT")) {
+				logger.debug("/intf/inoutCheck postProcess skip");
+
 				//퇴근일때만 인정시간 계산
-				inoutService.inoutPostProcess(paramMap, "N");
+				//inoutService.inoutPostProcess(paramMap, "N");
 			}
 
 		} catch(Exception e) {

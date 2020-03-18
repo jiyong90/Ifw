@@ -40,7 +40,7 @@
     
     <update id="updateOrgChartEymd" parameterType="map">
         <![CDATA[
-          UPDATE WTM_ORG_CHART_TEST
+          UPDATE WTM_ORG_CHART
              SET EYMD = #{ymd}
           WHERE TENANT_ID = ${tenantId}
   		    AND ENTER_CD = #{enterCd}
@@ -50,7 +50,7 @@
     
     <update id="insertOrgChart" parameterType="map">
         <![CDATA[
-          INSERT INTO WTM_ORG_CHART_TEST(TENANT_ID, ENTER_CD, ORG_CHART_NM, SYMD, EYMD, UPDATE_DATE, UPDATE_ID)
+          INSERT INTO WTM_ORG_CHART(TENANT_ID, ENTER_CD, ORG_CHART_NM, SYMD, EYMD, UPDATE_DATE, UPDATE_ID)
 		  SELECT ${tenantId} AS TENANT_ID 
 		       , #{enterCd} AS ENTER_CD 
 		       , #{orgChartNm} AS ORG_CHART_NM

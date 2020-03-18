@@ -103,5 +103,13 @@ public interface WtmInterfaceService {
 
 	String getEnterCd(String tenantId) throws Exception;
 	
+	/**
+	 * 보상휴가 생성용
+	 * @param tenantId - 최종갱신일
+	 * @return 
+	 * @throws Exception 
+	 */
+	public int setWorkTimeClose(String tenantId, List<Map<String, Object>> compList) throws Exception;
+
 	
 }

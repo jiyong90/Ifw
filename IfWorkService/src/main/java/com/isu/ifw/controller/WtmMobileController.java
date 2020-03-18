@@ -599,7 +599,7 @@ public class WtmMobileController {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
 				return rp;
 			}
-			logger.debug("/mobile/{tenantId}/dashboard " + empKey);
+			logger.debug("/mobile/"+tenantId+"/dashboard s" + empKey);
 			
 			Map<String, Object> resultMap = new HashMap();
 			Map<String, Object> paramMap = new HashMap();
@@ -612,6 +612,7 @@ public class WtmMobileController {
 			Map<String, Object> data = wtmCalendarService.getEmpWorkCalendarDayInfo(paramMap);
 			resultMap.put("data", data);
 			rp.put("result", resultMap);
+			logger.debug("/mobile/"+tenantId+"/dashboard e " + rp.toString());
 		} catch(Exception e) {
 			rp.put("result", null);
 			logger.debug(e.getMessage());
@@ -639,8 +640,128 @@ public class WtmMobileController {
 		try {
 			String userToken = paramMap.get("userToken").toString();
 			String empKey = paramMap.get("empKey").toString();
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+
+			logger.debug("/mobile/"+ tenantId+"/team/plan s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+	
+			Map<String, Object> result = new HashMap();
+			Map<String, Object> data = (Map<String, Object>) paramMap.get("data");
+			data.put("tenantId", tenantId);
+			data.put("enterCd", enterCd);
+			Map<String,Map<String,Object>> itemPropertiesMap = new HashMap<String,Map<String,Object>>();
+			
+			if(paramMap.get("eventSource").equals("ymd") || paramMap.get("eventSource").equals("sabun")) {
+				if(data.containsKey("ymd") && !data.get("ymd").toString().equals("")
+						&& data.containsKey("sabun") && !data.get("sabun").toString().equals("")) {
+					data.put("plan", "");
+					data.put("emp", "");
+					if(data.get("sabun").toString().length() < 2 ) {
+						result.put("data", data);
+						rp.put("result", result);
+						rp.setFail("두글자 이상 입력해주세요.");
+						return rp;
+					}
+					
+					List<Map<String, Object>> l = mobileService.getPlan(data);
+					if(l == null || l.size() <= 0) {
+						data.put("plan", "");
+						data.put("emp", "");
+//						itemPropertiesMap.put("emp", null);
+						
+						Map<String,Object> temp = new HashMap<String,Object>();
+						itemPropertiesMap.put("emp", temp);
+						
+						result.put("data", data);
+						result.put("itemAttributesMap", itemPropertiesMap);
+						rp.put("result", result);
+						rp.setFail("조회 결과가 없습니다.");
+						return rp;
+					}
+					
+//					int cnt = 0;
+					
+					List<Map<String,Object>> itemCollection = new ArrayList<Map<String,Object>>();
+					data.put("plan", "");
+					data.put("emp", "");
+					
+					Map<String,Object> blank = new HashMap<String,Object>();
+					blank.put("text", "선택");
+					blank.put("value", "");
+					itemCollection.add(blank);
+					
+					for(Map<String, Object> row : l) {
+//						if(cnt == 0) {
+//							data.put("emp", data.get("emp") +"@"+ row.get("plan").toString());
+//							data.put("plan", row.get("plan").toString());
+//						}
+						String value = row.get("sabun").toString();
+						String text = row.get("emp").toString();
+						Map<String,Object> item = new HashMap<String,Object>();
+						item.put("text", text);
+						item.put("value", value);
+						itemCollection.add(item);
+//						cnt++;
+					}
+					
+					Map<String,Object> item = new HashMap<String,Object>();
+					item.put("collection", itemCollection);
+					
+					itemPropertiesMap.put("emp", item);
+					result.put("itemAttributesMap", itemPropertiesMap);
+				}
+			} else if(paramMap.get("eventSource").equals("emp")){
+					Map<String, Object> param = new HashMap();
+					param.putAll(data);
+					param.put("sabun", data.get("emp").toString());
+					List<Map<String, Object>> l = mobileService.getPlan(param);
+					if(l!= null && l.size()>0) {
+						Map<String, Object> p = l.get(0);
+						data.put("plan", p.get("plan"));
+					}
+				}
+
+			result.put("data", data);
+			rp.put("result", result);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/team/plan e " + rp.toString());
+		return rp;
+	}
+	
+	
+	/**
+	 * 타각시간 조회
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/team/inout", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public @ResponseBody Map<String, Object> getTeamInoutList(@PathVariable Long tenantId, 
+			@RequestBody Map<String, Object> paramMap
+			,HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		try {
+			String userToken = paramMap.get("userToken").toString();
+			String empKey = paramMap.get("empKey").toString();
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
+			
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
@@ -680,7 +801,7 @@ public class WtmMobileController {
 					List<Map<String,Object>> itemCollection = new ArrayList<Map<String,Object>>();
 					for(Map<String, Object> row : l) {
 						if(cnt == 0) {
-							data.put("emp", row.get("emp") +"@"+ row.get("plan").toString());
+							data.put("emp", data.get("emp") +"@"+ row.get("plan").toString());
 							data.put("plan", row.get("plan").toString());
 						}
 						String value = row.get("emp") +"@"+ row.get("plan").toString();
@@ -691,7 +812,6 @@ public class WtmMobileController {
 						itemCollection.add(item);
 						cnt++;
 					}
-					
 					
 					Map<String,Object> item = new HashMap<String,Object>();
 					item.put("collection", itemCollection);
@@ -714,4 +834,98 @@ public class WtmMobileController {
 		logger.debug("/mobile/"+ tenantId+"/team/plan e " + rp.toString());
 		return rp;
 	}
+	
+	@RequestMapping(value = "/mobile/demo/{uId}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam demo(@PathVariable Long uId,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey, 
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			if(uId == 1) {
+				List<Map<String, Object>> statusList = new ArrayList();
+				
+				statusList.add(MobileUtil.getStatusMap("iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBQjk2OEI5ODYyMzcxMUU4QjZDMEVDNEJDNDdBQzZDRCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBQjk2OEI5OTYyMzcxMUU4QjZDMEVDNEJDNDdBQzZDRCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkFCOTY4Qjk2NjIzNzExRThCNkMwRUM0QkM0N0FDNkNEIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkFCOTY4Qjk3NjIzNzExRThCNkMwRUM0QkM0N0FDNkNEIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Pe0TJgAABa9JREFUeNrsXWtsFFUUnuluWdpSuxqVpgg2QaP4JFg1xGgFNagh4uOH+CA+/vj6Qfxh9IchhBj9owYNNv1RFRITCQF8JKBFDdVoQkCDie8IglBKG419xNKWTnf9TnpHzt7MttuZnenc6fmSj3t7Z2f2zDdnzpx79k6w8/m8JQgfFSKBCC1CC0RoEVqEFkSCNP1j27YxBtdv6KpH0wFeYojJObDFRI++yyCR3ajxtIlCV5sYotOGh77d4EMxta0OPFoQow3GaPe6hr6YPksk65D0ToQWiNAitECEFqFFaIEILUILRGgRWoQWiNAitOAMTKxH8x84l9Rv6NocUztnmS70Faw/H3xEQkc4GJTQEQ3+YP0fwbdjamcV+LLJQnMc7l7XsDGOhuHZkeVCS9YhoaMk1MFzFgfYn7xubpFttMLoCOj4PHZtkoS+GTwoWUc46DPQ5lETPXo7eC94VYBjzNZChuPhgBVs24kgIoObbHpZyKTVpGXKCDrQNKs/25G53K5tX4DmEFiphh7DZwLNQAMLfdOyW+nKrwBXgheD5we48j3gt+COr/Z+/kNIIlNc38uGlkLEfR6fa0XzhJtGgpfic860CA2Rb0HzBnh5CJrsBNdC8M4ovTksr64I4Mlr0XwWksiWisMH8T1NZfbmZja0vthnIeoxNO+woRexv+9nWtqnyPej2ajd9lvBT8GToJ+3RKnadRG4GrxRjZ0L7sb3LSmTZ3Nh271Chgaa2T2uvHoh+DC42XfoaF5+2z3oPwlmStgnBV7PbimKX6sgxE/l8jwIuwZNm3Wm1PgX+HOQY45V1mZP18y7+v8TzzlDdt4ZmWy/XCqDiYedGhfLGZ7df3g//GgqjkTf0eoKTRUxPyvpB8DFEPlIueMGxH4UzbsJSXROuTHa7+sKr4UhssIW8LuECF3tFaMpDk1U893GwsaOsCzDBczDqynzuEYNfU0X1n8iW2EPzF16ZT6VqfJ7iMrBk53Vfb+UOnmpAd+b6GG4CyfZV+R2rmUiu/E5TPDa8yjs+jDY4fZ8EJULQ6tskPQupXndcMj2Dhtel0mG8SK0QIQWoUVoQTlQUq0Dqco5aM6ytNU3EcOGHfNV5tMdQcYTndA4MappbAKbYmDrDeAx1XdgG/3S8gwE/8fo0IETWYTmi5iIrOfw5CBU5WuHnWmjhQZeUNNIF/3gWMT2necxgeHlAXKCVaYLfS3rr8EtSlPK5RHbdyHrD4FZ2DHHKqyxNJkuNK/ouUX3P6cxXIxA5BHNHkKV6UILRGgRWiBCi9AzXuhTrL9AtY0R28fz9gwmJ+6v9BdoaZ/RU/AD4CLV34KTfNPS1vxirNSVnSRQJbuwOTX5mGyJ1SwtjevHdzraROqA6UK/At7HTqrO4zN1AfLjGh/7ZazCtSf7wY+NDh2YHPyKZpmHx0zXW1G8WncafB+8A3Y6pns0iU0iX4fb9WzlvUMY68Hf86zCX8OLYbW6Mwh04Wg1FJVbd7Lvpmn9ZGtDqM7yrzW+ppnuhp5ElUmZ4L1oetnfJa1twAXhYvyG/b5U44Ms7PRi/GiJ9nZahkLSu4QI7eh3D7zZtgqLRWMzQeiwi+a82rcCIh9X/TkszTsuHh0c7exBl1YTDT7Z2Fps+ZkIPQVARErD6N2W3z02fwI+JTG6fGLTAvLLwG/Y8KsYvxMcEKHLKzY9FP9mQyesGYayPQzxoHsQzbMTTGQaWf85taK/2OSE3sb6XoT2xlvW+EvspaBBsRjWg3dL6PBGNqbHSnQe/QDYrY29ZI2vNnK9f7u2nV6sfF5i9NSwT69fICbzh+EhbO/QtjfOhKwjx8ZGfR5LL2PqGCnS9xobSoC2XMecK3SLqku0wdP81ptfV8fYhmN0eWxvUxkFvWD0kcf2PSC9FErl0FbTVVY6tilNWmz5P2cTNGERiNAitAgtEKHjjP8EGAApHZTWqLpuNQAAAABJRU5ErkJggg=="
+						,"잔여연차", "15","개", "", ""));
+				statusList.add(MobileUtil.getStatusMap("iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBQjk2OEI5ODYyMzcxMUU4QjZDMEVDNEJDNDdBQzZDRCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBQjk2OEI5OTYyMzcxMUU4QjZDMEVDNEJDNDdBQzZDRCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkFCOTY4Qjk2NjIzNzExRThCNkMwRUM0QkM0N0FDNkNEIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkFCOTY4Qjk3NjIzNzExRThCNkMwRUM0QkM0N0FDNkNEIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Pe0TJgAABa9JREFUeNrsXWtsFFUUnuluWdpSuxqVpgg2QaP4JFg1xGgFNagh4uOH+CA+/vj6Qfxh9IchhBj9owYNNv1RFRITCQF8JKBFDdVoQkCDie8IglBKG419xNKWTnf9TnpHzt7MttuZnenc6fmSj3t7Z2f2zDdnzpx79k6w8/m8JQgfFSKBCC1CC0RoEVqEFkSCNP1j27YxBtdv6KpH0wFeYojJObDFRI++yyCR3ajxtIlCV5sYotOGh77d4EMxta0OPFoQow3GaPe6hr6YPksk65D0ToQWiNAitECEFqFFaIEILUILRGgRWoQWiNAitOAMTKxH8x84l9Rv6NocUztnmS70Faw/H3xEQkc4GJTQEQ3+YP0fwbdjamcV+LLJQnMc7l7XsDGOhuHZkeVCS9YhoaMk1MFzFgfYn7xubpFttMLoCOj4PHZtkoS+GTwoWUc46DPQ5lETPXo7eC94VYBjzNZChuPhgBVs24kgIoObbHpZyKTVpGXKCDrQNKs/25G53K5tX4DmEFiphh7DZwLNQAMLfdOyW+nKrwBXgheD5we48j3gt+COr/Z+/kNIIlNc38uGlkLEfR6fa0XzhJtGgpfic860CA2Rb0HzBnh5CJrsBNdC8M4ovTksr64I4Mlr0XwWksiWisMH8T1NZfbmZja0vthnIeoxNO+woRexv+9nWtqnyPej2ajd9lvBT8GToJ+3RKnadRG4GrxRjZ0L7sb3LSmTZ3Nh271Chgaa2T2uvHoh+DC42XfoaF5+2z3oPwlmStgnBV7PbimKX6sgxE/l8jwIuwZNm3Wm1PgX+HOQY45V1mZP18y7+v8TzzlDdt4ZmWy/XCqDiYedGhfLGZ7df3g//GgqjkTf0eoKTRUxPyvpB8DFEPlIueMGxH4UzbsJSXROuTHa7+sKr4UhssIW8LuECF3tFaMpDk1U893GwsaOsCzDBczDqynzuEYNfU0X1n8iW2EPzF16ZT6VqfJ7iMrBk53Vfb+UOnmpAd+b6GG4CyfZV+R2rmUiu/E5TPDa8yjs+jDY4fZ8EJULQ6tskPQupXndcMj2Dhtel0mG8SK0QIQWoUVoQTlQUq0Dqco5aM6ytNU3EcOGHfNV5tMdQcYTndA4MappbAKbYmDrDeAx1XdgG/3S8gwE/8fo0IETWYTmi5iIrOfw5CBU5WuHnWmjhQZeUNNIF/3gWMT2necxgeHlAXKCVaYLfS3rr8EtSlPK5RHbdyHrD4FZ2DHHKqyxNJkuNK/ouUX3P6cxXIxA5BHNHkKV6UILRGgRWiBCi9AzXuhTrL9AtY0R28fz9gwmJ+6v9BdoaZ/RU/AD4CLV34KTfNPS1vxirNSVnSRQJbuwOTX5mGyJ1SwtjevHdzraROqA6UK/At7HTqrO4zN1AfLjGh/7ZazCtSf7wY+NDh2YHPyKZpmHx0zXW1G8WncafB+8A3Y6pns0iU0iX4fb9WzlvUMY68Hf86zCX8OLYbW6Mwh04Wg1FJVbd7Lvpmn9ZGtDqM7yrzW+ppnuhp5ElUmZ4L1oetnfJa1twAXhYvyG/b5U44Ms7PRi/GiJ9nZahkLSu4QI7eh3D7zZtgqLRWMzQeiwi+a82rcCIh9X/TkszTsuHh0c7exBl1YTDT7Z2Fps+ZkIPQVARErD6N2W3z02fwI+JTG6fGLTAvLLwG/Y8KsYvxMcEKHLKzY9FP9mQyesGYayPQzxoHsQzbMTTGQaWf85taK/2OSE3sb6XoT2xlvW+EvspaBBsRjWg3dL6PBGNqbHSnQe/QDYrY29ZI2vNnK9f7u2nV6sfF5i9NSwT69fICbzh+EhbO/QtjfOhKwjx8ZGfR5LL2PqGCnS9xobSoC2XMecK3SLqku0wdP81ptfV8fYhmN0eWxvUxkFvWD0kcf2PSC9FErl0FbTVVY6tilNWmz5P2cTNGERiNAitAgtEKHjjP8EGAApHZTWqLpuNQAAAABJRU5ErkJggg=="
+						,"개정연차", "4","개", "", ""));
+				statusList.add(MobileUtil.getStatusMap("iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpDMzIyODFFOTYyMzcxMUU4QjVDNUZBNkU2NjZENkVCNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpDMzIyODFFQTYyMzcxMUU4QjVDNUZBNkU2NjZENkVCNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkMzMjI4MUU3NjIzNzExRThCNUM1RkE2RTY2NkQ2RUI0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkMzMjI4MUU4NjIzNzExRThCNUM1RkE2RTY2NkQ2RUI0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8++6xboAAADFlJREFUeNrsXQuUVlUV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"
+						,"일 근무", "8", "시간", "", ""));
+				statusList.add(MobileUtil.getStatusMap("iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpDMzIyODFFOTYyMzcxMUU4QjVDNUZBNkU2NjZENkVCNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpDMzIyODFFQTYyMzcxMUU4QjVDNUZBNkU2NjZENkVCNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkMzMjI4MUU3NjIzNzExRThCNUM1RkE2RTY2NkQ2RUI0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkMzMjI4MUU4NjIzNzExRThCNUM1RkE2RTY2NkQ2RUI0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8++6xboAAADFlJREFUeNrsXQuUVlUV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"
+						,"주 근무", "40", "시간", "", ""));
+				statusList.add(MobileUtil.getStatusMap("iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpDMzIyODFFOTYyMzcxMUU4QjVDNUZBNkU2NjZENkVCNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpDMzIyODFFQTYyMzcxMUU4QjVDNUZBNkU2NjZENkVCNCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkMzMjI4MUU3NjIzNzExRThCNUM1RkE2RTY2NkQ2RUI0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkMzMjI4MUU4NjIzNzExRThCNUM1RkE2RTY2NkQ2RUI0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8++6xboAAADFlJREFUeNrsXQuUVlUV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"
+						,"월별 근태 현황", "", "", "", "view://inoutList"));
+				rp.put("result", statusList);
+			} else if(uId == 2) {
+				Map<String, Object> data = new HashMap();
+				Map<String, Object> result = new HashMap();
+				
+				data.put("ymd", "20200217");
+				result.put("data", data);
+				
+				List<Map<String,Object>> itemCollection = new ArrayList<Map<String,Object>>();
+				Map<String,Object> propertiesMap1 = new HashMap();
+				Map<String,Object> propertiesMap = new HashMap();
+				Map<String,Object> itemPropertiesMap = new HashMap();
+
+				Map<String,Object> item = new HashMap<String,Object>();
+				item = new HashMap<String,Object>();
+				item.put("text", "재직증명서");
+				item.put("value", "1");
+				itemCollection.add(item);
+
+				item = new HashMap<String,Object>();
+				item.put("text", "원천징수");
+				item.put("value", "2");
+				itemCollection.add(item);
+				propertiesMap.put("collection", itemCollection);
+				itemPropertiesMap.put("appl", propertiesMap);
+				
+				item = new HashMap<String,Object>();
+				itemCollection = new ArrayList();
+				item.put("text", "은행제출");
+				item.put("value", "1");
+				itemCollection.add(item);
+				
+				propertiesMap1.put("collection", itemCollection);
+				itemPropertiesMap.put("reason", propertiesMap1);
+				result.put("itemAttributesMap", itemPropertiesMap);
+				rp.put("result", result);
+			} else if(uId == 3) {
+				List<Map<String, Object>> statusList = new ArrayList();
+
+				Map<String, Object> statusMap = new HashMap();
+				statusMap.put("title", "개인정보수집이용 동의서");
+				statusMap.put("caption_lb", "2020.03.01까지");
+				statusMap.put("status", "작성완료");
+				statusList.add(statusMap);
+				
+				statusMap = new HashMap();
+				statusMap.put("title", "취업조건고지서");
+				statusMap.put("caption_lb", "2020.03.01까지");
+				statusMap.put("status", "미작성");
+				statusList.add(statusMap);
+
+				rp.put("result", statusList);
+			} else if(uId == 4) {
+				Map<String, Object> data = new HashMap();
+				Map<String, Object> result = new HashMap();
+				
+				data.put("test2", "성명, e-메일주소, 연락처, 주민등록번호, 성별, 주소, 학력, 경력, 자기소개서,안면");
+				data.put("test3", "이력서 작성, 근로계약서 체결, 명부/임금대장 작성, 기본업무 연락");
+				data.put("test4", "원칙적으로 개인정보의 수집 또는 이용 목적 달성 시 지체 없이 파기.  다만, 이용자의 권리 남용, 악용 방지,\r\n" + 
+									"권리침해/명예훼손 분쟁 및 수사협조 등의 요청이 있었을 경우에는 이의 재발에 대비하여 회원의\r\n" + 
+									"이용계약 해지시부터 1년 동안 개인정보를  보관할 수 있음");
+	
+				result.put("data", data);
+				rp.put("result", result);
+			}
+		} catch(Exception e) {
+			rp.put("result", null);
+			logger.debug(e.getMessage());
+		}
+		return rp;
+	}	
 }

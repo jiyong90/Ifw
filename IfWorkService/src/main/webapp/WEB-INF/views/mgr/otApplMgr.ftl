@@ -451,7 +451,7 @@
   							if(data!=null) {
   								$this.applCode = data;
   								
-  								if($this.holidayYn=='Y') {
+  								/* if($this.holidayYn=='Y') {
   								//휴일연장 시간단위
   									if(data.holApplTypeCd!=null && data.holApplTypeCd!=undefined && data.holApplTypeCd!=''){
   	  									var holApplTypeCd = Number(data.holApplTypeCd);
@@ -465,7 +465,7 @@
   										$('#sTime').datetimepicker('stepping', timeUnit);
   										$('#eTime').datetimepicker('stepping', timeUnit);
   	  								}
-  								}
+  								} */
   								
   							}
   						},

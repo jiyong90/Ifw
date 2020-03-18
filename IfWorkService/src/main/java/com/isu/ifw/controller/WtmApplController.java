@@ -32,6 +32,7 @@ import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmInoutService;
+import com.isu.ifw.service.WtmMsgService;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
 
@@ -85,6 +86,9 @@ public class WtmApplController {
 	@Autowired
 	@Qualifier(value="applLineService")
 	WtmApplLineService wtmApplLineService;
+	
+	@Autowired
+	WtmMsgService msgService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(@RequestParam Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
@@ -177,6 +181,7 @@ public class WtmApplController {
 		try {
 			if(applCd!=null && !"".equals(applCd)) {
 				boolean initResult = false;
+				boolean isFlexAppl = false;
 				
 				if("OT".equals(applCd)) {
 					rp = wtmOtApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
@@ -214,7 +219,24 @@ public class WtmApplController {
 						inoutService.inoutPostProcess(pMap, unplannedYn);
 					}
 					
+				} else if("SUBS_CHG".equals(applCd)){
+					rp = wtmOtSubsChgApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					
+					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("otApplList")) { 
+						
+						if(rp.get("otApplList")!=null && !"".equals(rp.get("otApplList"))) {
+							List<WtmOtAppl> otApplList = (List<WtmOtAppl>)rp.get("otApplList");
+							
+							if(otApplList!=null && otApplList.size()>0) {
+								//소급의 경우 인정시간과 연장근로시간을 비교하여 다른 경우 대체휴일 정보를 생성하지 않는다.
+								//미래의 연장근로시간의 경우 인정시간계산 서비스에서 대체휴일 정보를 생성한다.
+								wtmflexibleEmpService.applyOtSubs(tenantId, enterCd, otApplList, false, userId);
+							}
+							
+						}
+					}
 				} else {
+					isFlexAppl = true;
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
 					if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) && rp.containsKey("sabun")) { 
@@ -238,6 +260,19 @@ public class WtmApplController {
 				if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd")) {
 					wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd")+"", rp.get("eymd")+"", userId, initResult);
 				}
+				
+				//메일 전송
+				if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) 
+						&& rp.containsKey("from") && rp.get("from")!=null && !"".equals(rp.get("from")) 
+						&& rp.containsKey("to") && rp.get("to")!=null && !"".equals(rp.get("to"))
+						&& rp.containsKey("msgType") && rp.get("msgType")!=null && !"".equals(rp.get("msgType"))) { 
+					List<String> toSabuns = (List<String>)rp.get("to");
+
+					String applCode = isFlexAppl?"FLEX":applCd;
+					
+					msgService.sendMailForAppl(tenantId, enterCd, rp.get("from").toString(), toSabuns, applCode, rp.get("msgType").toString());
+				}
+				
 			}
 			
 		} catch (Exception e) {
@@ -274,6 +309,23 @@ public class WtmApplController {
 				} else {
 					applService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				}
+				
+				//메일 전송
+				if(rp.getStatus()!=null && "OK".equals(rp.getStatus()) 
+						&& rp.containsKey("from") && rp.get("from")!=null && !"".equals(rp.get("from")) 
+						&& rp.containsKey("to") && rp.get("to")!=null && !"".equals(rp.get("to"))) { 
+					List<String> toSabuns = (List<String>)rp.get("to");
+					
+					String applCode = null;
+					
+					if("DIFF".equals(applCd) || "ELAS".equals(applCd) || "SELE_C".equals(applCd) || "SELE_F".equals(applCd))
+						applCode = "FLEX";
+					else
+						applCode = applCd;
+					
+					msgService.sendMailForAppl(tenantId, enterCd, rp.get("from").toString(), toSabuns, applCode, "REJECT");
+				}
+				
 			}
 			
 		} catch (Exception e) {

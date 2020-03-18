@@ -67,4 +67,9 @@ public interface WtmInterfaceMapper {
 	 * 근태정보 조회
 	 **/
 	public List<Map<String, Object>> getTaaAppl(Map<String, Object> paramMap);
+	
+	/**
+	 * 근태정보 조회
+	 **/
+	public int insertCompBrs(Map<String, Object> paramMap);
 }

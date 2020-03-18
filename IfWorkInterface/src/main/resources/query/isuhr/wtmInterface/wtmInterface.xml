@@ -114,7 +114,7 @@
 			     , B.REQ_S_HM
 			     , B.REQ_E_HM
 			     , A.APPL_SEQ
-			     , A.APPL_STATUS_CD
+			     , DECODE(A.APPL_STATUS_CD, 'ZZ', '44', A.APPL_STATUS_CD) AS APPL_STATUS_CD
 			  FROM THRI103 A
 			 INNER JOIN TTIM301 B
 			     ON A.ENTER_CD = B.ENTER_CD 
@@ -125,4 +125,11 @@
 			   AND A.CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
         ]]>
     </select>
+    
+    <insert id="insertCompBrs" parameterType="map">
+    	<![CDATA[
+    		INSERT INTO TTIM511(ENTER_CD, YY, SABUN, GNT_CD, USE_S_YMD, USE_E_YMD, CRE_CNT, USE_CNT, REST_CNT, COM_CNT, CHKDATE, CHKID)
+    		VALUES (#{enterCd}, SUBSTR(#{symd}, 1, 4), #{sabun}, #{gntCd}, #{symd}, #{eymd}, ${compCnt}, ${compCnt}, ${compCnt}, ${compCnt}, SYSDATE, 'MIG')
+    	]]>
+    </insert>
 </mapper>
