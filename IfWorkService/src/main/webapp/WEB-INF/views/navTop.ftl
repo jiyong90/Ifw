@@ -15,9 +15,11 @@
         	<li class="nav-item">
                 <a class="" href="javascript:void(window.open('${rc.getContextPath()}/console/${tsId}/guide', '관리자 도움말','width=680, height=600, toolbar=no, resizable=yes'))"><span class="ico-wrap"><i class="sp_ico help"></i></span></a>
             </li>
+            <!-- 
             <li class="nav-item">
                 <a class="" href="#"><span class="ico-wrap"><i class="sp_ico calendar"></i></span></a>
             </li>
+             -->
             <li class="nav-item">
             	<a href="#" id="alertLink" title="알림보기"><span class="ico-wrap"><i class="sp_ico alarm" :class="{'bell':inboxCount > 0}"></i><span :class="{'new':inboxCount > 0}"></span></span></a>
             </li>

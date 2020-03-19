@@ -247,6 +247,9 @@ public class WtmMsgServiceImpl implements WtmMsgService {
 					otpRepo.save(otp);
 				} 
 				
+			} else {
+				rp.setFail("인증코드 메시지가 등록되지 않았습니다. 관리자에게 문의하시기 바랍니다.");
+				return rp;
 			}
 			
 			

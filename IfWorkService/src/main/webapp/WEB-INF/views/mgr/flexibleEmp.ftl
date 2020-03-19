@@ -67,7 +67,7 @@
             </div>
         </div>
     </div>
- 	<div class="container-fluid mgr-wrap bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 	 		<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -150,6 +150,7 @@
 			{Header:"시작일",		Type:"Date",		Hidden:0,	Width:90,	Align:"Center",	ColMerge:0,	SaveName:"symd",		KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"종료일",		Type:"Date",		Hidden:0,	Width:90,	Align:"Center",	ColMerge:0,	SaveName:"eymd",		KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"근무변경/취소",		Type:"Html",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"modify",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"퇴직처리",		Type:"Html",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"retire",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 }
 		]; 
 		
@@ -317,4 +318,44 @@
 			$("#chgSymd, #chgEymd").removeAttr("disabled");
 		}
     });
+	
+	function setRetire(flexibleEmpId){
+		
+		if(confirm("퇴직처리 시 퇴직일 이후 근무 데이터가 모두 삭제됩니다.\n진행하시겠습니까?")){
+			$("#loading").show();
+			
+			var param = {
+				flexibleEmpId: flexibleEmpId
+	   		};
+	   		
+	   		Util.ajax({
+				url: "${rc.getContextPath()}/flexibleEmp/retire",
+				type: "POST",
+				contentType: 'application/json',
+				data: JSON.stringify(param),
+				dataType: "json",
+				success: function(data) {
+					$("#loading").hide();
+					
+					if(data!=null && data.status=='OK') {
+						$("#alertText").html("퇴직 처리되었습니다.");
+					} else {
+						$("#alertText").html(data.message);
+					}
+					
+					$("#alertModal").on('hidden.bs.modal',function(){
+	         			$("#alertModal").off('hidden.bs.modal');
+	         			doAction1("Search");
+	         		});
+	         		$("#alertModal").modal("show"); 
+				},
+				error: function(e) {
+					$("#loading").hide();
+				}
+			});
+   		
+		}
+		
+	}
+	
 </script>
