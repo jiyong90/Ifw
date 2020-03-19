@@ -500,8 +500,9 @@ public class IfwLoginController {
 			System.out.println("======================= loginEnterCd : " + loginEnterCd);
 			System.out.println("======================= loginUserId : " + loginUserId);
 			System.out.println("======================= loginPassword : " + loginPassword);
-			//userData = loginService.getUserData(tenantId, loginEnterCd, loginUserId, loginPassword);
-		
+			userData = loginService.getUserData(tenantId, loginEnterCd, loginUserId, loginPassword);
+			userData.put("client_id", tsId);
+			rp.put("username", tsId+"@"+loginEnterCd+"@"+loginUserId);
 			ObjectMapper mapper = new ObjectMapper();
 			System.out.println("======================= userData : " + mapper.writeValueAsString(userData));
 			

@@ -62,7 +62,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		.and()
 		.cors().disable()
 		.authorizeRequests()
-		.antMatchers("/intf/**", "/login/**","/login/**/authorize","/we/**","/info/**","/certificate/**","/schedule/**","/interface/**","/api/**").permitAll()
+		.antMatchers("/intf/**", "/login/**","/login/**/authorize","/we/**","/info/**","/certificate/**","/schedule/**","/interface/**","/api/**","/static/**").permitAll()
 		.anyRequest()//.access("hasRole('ROLE_USER')")
 		.authenticated()
 		.and()

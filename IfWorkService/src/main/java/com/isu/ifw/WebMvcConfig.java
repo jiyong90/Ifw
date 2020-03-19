@@ -11,6 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+	private static final String CLASSPATH_RESOURCE_LOCATIONS = "classpath:/static/";
+	
 	@Autowired
 	@Qualifier(value = "httpInterceptor")
 	private HandlerInterceptor interceptor;
@@ -23,7 +25,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resource/**").addResourceLocations("WEB-INF/resources/");
+		registry.addResourceHandler("/static/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
     }
     
 }
