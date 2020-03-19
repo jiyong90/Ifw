@@ -536,29 +536,42 @@
 	function setEndConfirm(flexibleApplyId){
 		var row = sheet1.FindText("flexibleApplyId", flexibleApplyId, 0);
 		var workTypeCd = sheet1.GetCellValue(row, "workTypeCd");
-		var param = "flexibleApplyId=" + flexibleApplyId + "&workTypeCd=" + workTypeCd;
 		
 		if(!confirm("확정하시겠습니까?")) {
 			return;
 		}
+		
 		$("#loading").show();
-		var rtn = ajaxCall("${rc.getContextPath()}/flexibleApply/apply", param ,false);
-		if(rtn != null && rtn != "") {
-			$("#loading").hide();
-			if(rtn.status == "FAIL"){
-				alert(rtn.message);
-			} else {
-				if(rtn.message != '')
-					alert(rtn.message);
-				else 
-					alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
-				doAction1("Search");
-			}			
-		} else {
-			$("#loading").hide();
-			alert("확정할 내용이 없습니다.");
-			
-		}
+		var param = {
+			flexibleApplyId: flexibleApplyId
+			, workTypeCd: workTypeCd
+		};
+		
+		$.ajax({
+			url: "${rc.getContextPath()}/flexibleApply/apply",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				$("#loading").hide();
+				console.log(data);
+				if(data!=null) {
+					if(data.message != '')
+						alert(data.message);
+					else 
+						alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
+					
+					doAction1("Search");
+				}
+			},
+			error: function(e) {
+				$("#loading").hide();
+				alert("확정할 내용이 없습니다.");
+				console.log(e);
+			}
+		});
+		
 	}
 	
 	function getReturnValue(returnValue) {
@@ -850,6 +863,8 @@
 		  			alert("탄력근무제의 시작 요일은 "+arr[weekDay]+"요일 입니다.\n근무제 시작일을 다시 지정해 주세요.");
 					return false;
 		  		}
+			} else if(status=='D') {
+				sheet1.SetCellValue( i, "endImg", "");
 			}
 		}
 		
