@@ -306,7 +306,8 @@ html {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 
-#sidebar ul li a {
+#sidebar ul li a,
+#sidebar ul li button {
   text-align: left;
 }
 
@@ -337,20 +338,23 @@ html {
 }
 
 
-#sidebar.active ul li a {
+#sidebar.active ul li a,
+#sidebar.active ul li button {
   padding: 22px 0px 18px;
   text-align: center;
   text-decoration: none;
 }
 
-#sidebar.active ul li a i {
+#sidebar.active ul li a i,
+#sidebar.active ul li button i {
   display: block;
   font-size: 1.4em;
   margin-right:0px;
   /* font-weight: 500; */
 }
 
-#sidebar.active ul li a span.title {
+#sidebar.active ul li a span.title,
+#sidebar.active ul li button span.title {
   margin-top: 5px;
   font-size: 12px;
   font-weight: bold;
@@ -360,15 +364,21 @@ html {
   letter-spacing: -0.6px;
   color: #ffffff;
 }
-#sidebar.active ul li.active a span.title{
+
+#sidebar.active ul li.active a span.title,
+#sidebar.active ul li.active button span.title {
   color: #4d84fe;
 }
 
-#sidebar.active ul li a:hover span.title {
+
+#sidebar.active ul li a:hover span.title,
+#sidebar.active ul li button:hover span.title {
   color: #4d84fe;
 }
 
-#sidebar.active ul ul a {
+
+#sidebar.active ul ul a,
+#sidebar.active ul ul button {
   padding: 10px;
 }
 
@@ -387,7 +397,8 @@ html {
   padding: 0px;
 }
 
-#sidebar ul li a {
+#sidebar ul li a,
+#sidebar ul li button {
   padding: 10px 10px 10px 20px;
   font-size: 1.1em;
   display: block;
@@ -399,30 +410,45 @@ html {
   /* ...and now for the proper property */
   transition:.5s;
 }
+#sidebar ul li button{
+  width: 100%;
+  background-color:#4d84fe;
+  border:0px;
+}
 
-#sidebar ul li a:hover {
+
+#sidebar ul li a:hover,
+#sidebar ul li button:hover {
   color: #4d84fe;
   background: #fff;
 }
 
-#sidebar ul li a.dropdown-toggle{
+#sidebar ul li a.dropdown-toggle,
+#sidebar ul li button.dropdown-toggle {
   color: #ffffff;
 }
-#sidebar ul li a.dropdown-toggle.collapsed {
+
+#sidebar ul li a.dropdown-toggle.collapsed,
+#sidebar ul li button.dropdown-toggle.collapsed {
   color:#4d84fe;
 }
 
-#sidebar ul li a i {
+
+#sidebar ul li a i ,
+#sidebar ul li button i {
   margin-right: 10px;
 }
 
 #sidebar ul li.active>a,
-a[aria-expanded="true"] {
+a[aria-expanded="true"],
+#sidebar ul li.active>button,
+button[aria-expanded="true"] {
   color: #4d84fe;
   background: #ffffff;
 }
 
-a[data-toggle="collapse"] {
+a[data-toggle="collapse"],
+button[data-toggle="collapse"] {
   position: relative;
 }
 

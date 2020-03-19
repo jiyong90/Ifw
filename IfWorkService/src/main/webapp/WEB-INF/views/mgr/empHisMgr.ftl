@@ -32,7 +32,7 @@
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
 								<div class="float-left title">사원정보</div>
-								<ul id="btnDiv" class="float-right btn-wrap">
+								<ul id="btnDiv" class="float-right btn-wrap" style="display:none;">
 									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
 								</ul>
