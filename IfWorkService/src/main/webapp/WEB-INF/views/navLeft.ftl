@@ -18,22 +18,22 @@
             </ul>
         </li> -->
         <li :class="{active: curMenu!='flexibleMgr'&& (curPageName==''||curPageName=='workCalendar')}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';">
+            <button type="button" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/workCalendar?calendarType=Month';">
                 <i class="fas fa-calendar-alt"></i>
                 <span class="title">근태 캘린더</span>
-            </a>
+            </button>
         </li>
         <li :class="{active: curMenu!='flexibleMgr' && curPageName=='approvalList'}">
-            <a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/approvalList';">
+            <button type="button" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/approvalList';">
                 <i class="fas fa-clipboard-check"></i>
                 <span class="title">결재</span>
-            </a>
+            </button>
         </li>
         <li :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'" v-if="authRule">
-        	<a href="javascript:void(0);" onclick="callLnb(this);return false;">
+        	<button type="button" href="javascript:void(0);" onclick="callLnb(this);return false;">
                 <i class="fas fa-laptop"></i>
                 <span class="title">유연근무관리</span>
-            </a>
+            </button>
             <ul id="lnb-sub">
                 <li :class="{active: curSubMenu=='sub1'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
                 	<a href="#submenu-list1" data-toggle="collapse" :aria-expanded="curSubMenu=='sub1'?true:false" class="dropdown-toggle" @click="curSubMenu='sub1'">근태기본조회</a>
