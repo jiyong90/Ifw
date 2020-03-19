@@ -12,7 +12,7 @@
 								</td>
 								<td>
 									<span class="label">마감기준</span>
-									<select id="worktimeCloseId" name="worktimeCloseId" class="box"></select>
+									<select id="worktimeCloseId" name="worktimeCloseId" class="box" onchange="javascript:selectWorktime();"></select>
 								</td>
 								<td>
 									<span class="label">사번/성명</span>
@@ -33,7 +33,7 @@
 							<div class="sheet_title_wrap clearfix">
 								<div class="float-left title">근무마감 월별조회</div>
 								<ul class="float-right btn-wrap">
-									<li><a href="javascript:doAction1('CloseConfirm');" class="basic authA">마감확정</a></li>
+									<li id="btnCloseConfirm" name="btnCloseConfirm"><a href="javascript:doAction1('CloseConfirm');" class="basic authA">마감확정</a></li>
 									<li><a href="javascript:doAction1('Down2Excel');" class="basic authA">다운로드</a></li>
 								</ul>
 							</div>
@@ -47,9 +47,11 @@
 </div>
 
 <script type="text/javascript">
+var closeList = {};
    	$(function() {
    		//resize
 		$(window).smartresize(sheetResize);
+   		$("#btnCloseConfirm").hide();
    	        
 		var initdata1 = {};
 		
@@ -93,7 +95,8 @@
 		sheet1.SetColProperty("workTypeCd", {ComboText:workTypeList[0], ComboCode:workTypeList[1]} );
 		
 		//마감기준
-		var flexibleList = stfConvCode(ajaxCall("${rc.getContextPath()}/worktimeClose/WorktimeCloseCode", "", false).DATA, "선택");
+		closeList = ajaxCall("${rc.getContextPath()}/worktimeClose/WorktimeCloseCode", "", false).DATA
+		var flexibleList = stfConvCode(closeList, "선택");
 		$("#worktimeCloseId").html(flexibleList[2]);
 		
 		sheetInit();
@@ -150,8 +153,19 @@
 			if (StCode == 401) {
 				window.parent.location.href = loginUrl;
 			}
+			
 		} catch (ex) {
 			alert("OnSearchEnd Event Error " + ex);
+		}
+	}
+	
+	function selectWorktime(){
+		var index = $("#worktimeCloseId option").index( $("#worktimeCloseId option:selected") ) -1;
+		var closeYn = closeList[index]["closeYn"];
+		if(closeYn == "Y"){
+			$("#btnCloseConfirm").hide();
+		} else {
+			$("#btnCloseConfirm").show();
 		}
 	}
 

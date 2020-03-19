@@ -564,7 +564,7 @@
 	function getReturnValue(returnValue) {
 		//var rv = $.parseJSON('{' + returnValue+ '}');
    		sheet3.SetCellValue(gPRow, "sabun",returnValue.sabun);
-		sheet3.SetCellValue(gPRow, "name",returnValue.empNm);
+		sheet3.SetCellValue(gPRow, "empNm",returnValue.empNm);
         sheet3.SetCellValue(gPRow, "orgNm",returnValue.orgNm);
 	}
 	

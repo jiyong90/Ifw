@@ -7,7 +7,7 @@
 	
 	<select id="getDayList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, YMD) AS orgNm
+        	SELECT F_WTM_GET_EMP_ORG_NM(B.TENANT_ID, B.ENTER_CD, A.SABUN, YMD) AS orgNm
         		  , A.YMD AS ymd
 				  , A.SABUN AS sabun
 				  , B.EMP_NM AS empNm
@@ -24,25 +24,31 @@
 				  , HOLIDAY_YN AS holidayYn
 				  , SUB_YN AS subYn
 			  FROM WTM_WORKTIME_DAY_CLOSE A
+			 INNER JOIN WTM_WORKTIME_CLOSE C
+			    ON A.WORKTIME_CLOSE_ID = C.WORKTIME_CLOSE_ID
 			 INNER JOIN WTM_EMP_HIS B
-			    ON A.TENANT_ID = B.TENANT_ID
-			   AND A.ENTER_CD = B.ENTER_CD
+			    ON C.TENANT_ID = B.TENANT_ID
+			   AND C.ENTER_CD = B.ENTER_CD
 			   AND A.SABUN = B.SABUN
 			   AND A.YMD BETWEEN B.SYMD AND B.EYMD
-			 WHERE A.TENANT_ID = #{tenantId}
-			   AND A.ENTER_CD = #{enterCd} 
-				AND A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '')
-				AND IF(#{searchKeyword}='',1=1,(B.SABUN = #{searchKeyword} OR B.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')))
+			 WHERE C.WORKTIME_CLOSE_ID = ${worktimeCloseId}
+		]]>
+			<if test="sYmd!=null and !sYmd.equals('') and eYmd!=null and !eYmd.equals('')">
+			AND A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '')
+			</if>
+			<if test="searchKeyword!=null and !searchKeyword.equals('')">
+			AND B.SABUN = #{searchKeyword} OR B.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')
+			</if>
+		<![CDATA[
 			 ORDER BY A.SABUN, YMD
         ]]>
     </select>
     
     <select id="getMonList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, A.EYMD) AS orgNm
+        	SELECT F_WTM_GET_EMP_ORG_NM(B.TENANT_ID, B.ENTER_CD, A.SABUN, A.EYMD) AS orgNm
 				  , A.SABUN AS sabun
 				  , B.EMP_NM AS empNm
-				  , YM AS ym
 				  , WORK_TYPE_CD AS workTypeCd
 				  , A.SYMD AS symd
 				  , A.EYMD AS eymd
@@ -64,16 +70,140 @@
 				  , TRUNCATE(LEAVE_MINUTE/60,2) AS leaveMinute
 				  , TRUNCATE(ABSENCE_MINUTE/60,2) AS absenceMinute
 			  FROM WTM_WORKTIME_MON_CLOSE A
+			 INNER JOIN WTM_WORKTIME_CLOSE C
+			    ON A.WORKTIME_CLOSE_ID = C.WORKTIME_CLOSE_ID
 			 INNER JOIN WTM_EMP_HIS B
-			    ON A.TENANT_ID = B.TENANT_ID
-			   AND A.ENTER_CD = B.ENTER_CD
+			    ON C.TENANT_ID = B.TENANT_ID
+			   AND C.ENTER_CD = B.ENTER_CD
 			   AND A.SABUN = B.SABUN
 			   AND A.EYMD BETWEEN B.SYMD AND B.EYMD
-			 WHERE A.TENANT_ID = #{tenantId}
-			   AND A.ENTER_CD = #{enterCd} 
-				AND A.YM = REPLACE(#{searchYm}, '-', '')
-				AND IF(#{searchKeyword}='',1=1,(B.SABUN = #{searchKeyword} OR B.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')))
+			 WHERE C.WORKTIME_CLOSE_ID = ${worktimeCloseId}
+			]]>
+			<if test="searchKeyword!=null and !searchKeyword.equals('')">
+			AND B.SABUN = #{searchKeyword} OR B.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')
+			</if>
+		<![CDATA[
 			 ORDER BY A.SABUN, A.SYMD
         ]]>
     </select>
+        
+    <select id="getCloseList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT WORKTIME_CLOSE_ID AS worktimeCloseId
+        	     , CLOSE_NM AS closeNm
+			     , TENANT_ID AS tenantId
+			     , ENTER_CD AS enterCd
+			     , SYMD AS symd
+			     , EYMD AS eymd
+			     , CLOSE_YN AS closeYn
+			     , CASE WHEN F_WTM_NVL(CLOSE_YN, 'N') = 'Y' THEN '완료'
+					    ELSE CONCAT('<a class="basic" onClick="setEndConfirm(', WORKTIME_CLOSE_ID, ",''", ')">마감</a>')  
+				    END AS endImg
+			     , NOTE AS note
+			FROM WTM_WORKTIME_CLOSE
+		   WHERE TENANT_ID = #{tenantId}
+		   	 AND ENTER_CD = #{enterCd}
+		   	 AND (SUBSTR(SYMD,1,4) = #{sYY} OR SUBSTR(EYMD,1,4) = #{sYY})
+		   ORDER BY WORKTIME_CLOSE_ID	
+        ]]>
+    </select>      
+    
+    <select id="getCloseEmpList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.WORKTIME_CLOSE_ID AS worktimeCloseId
+        	     , A.SABUN  AS sabun
+        	     , B.EMP_NM AS empNm
+        	     , B.ORG_CD AS orgCd
+                 , F_WTM_GET_ORG_NM(B.TENANT_ID, B.ENTER_CD, B.ORG_CD, DATE_FORMAT(NOW(), '%Y%m%d')) AS orgNm
+                 , CONCAT('<a class="basic" onClick="setEndConfirm(', WORKTIME_CLOSE_ID, ",'", A.SABUN, "'" ')">재생성</a>') AS endImg
+              FROM WTM_WORKTIME_MON_CLOSE A
+             INNER JOIN WTM_EMP_HIS B
+                ON A.SABUN = B.SABUN 
+             WHERE WORKTIME_CLOSE_ID = #{worktimeCloseId}
+             GROUP BY A.WORKTIME_CLOSE_ID, A.SABUN
+        ]]>
+    </select>     
+        
+    <update id="setWorkTimeCloseConfirm" parameterType="map">	    	    
+   		UPDATE WTM_WORK_CALENDAR 
+ 		   SET WORK_CLOSE_YN = 'Y'
+ 		     , UPDATE_DATE = now()
+ 		     , UPDATE_ID = #{userId}
+		 WHERE TENANT_ID = #{tenantId}
+           AND ENTER_CD = #{enterCd}               
+           AND SUBSTR(YMD, 1, 6) = REPLACE(#{searchYm}, '-', '')
+             AND CASE WHEN #{searchKeyword} IS NULL THEN 1=1
+	                  WHEN #{searchKeyword} = '' THEN 1=1
+	                  ELSE SABUN = #{searchKeyword}
+                 END            	   
+    </update>
+    
+    <update id="insertCloseList" parameterType="hashmap">
+		INSERT INTO WTM_WORKTIME_CLOSE
+               (TENANT_ID, 
+				ENTER_CD, 
+				SYMD,
+				EYMD,
+				CLOSE_NM, 
+				CLOSE_YN, 
+				NOTE, 
+				UPDATE_DATE,
+				UPDATE_ID)
+         VALUES 
+			<if test="insertRows!=null and insertRows.size()>0">
+			<foreach collection="insertRows" item="item" separator=", ">
+				(#{tenantId},
+				 #{enterCd} ,
+				 #{item.symd} ,
+				 #{item.eymd} ,
+				 #{item.closeNm} ,
+				 #{item.colseYn} ,
+				 #{item.note} ,
+				 now(),
+				 #{userId}
+				)
+			</foreach>
+			</if>
+	</update>
+
+	<update id="updateCloseList" parameterType="hashmap">
+		<if test="updateRows!=null and updateRows.size()>0">
+		<foreach collection="updateRows" item="item" separator=";">
+			UPDATE WTM_WORKTIME_CLOSE
+			   SET NOTE = #{item.note}  
+				 , UPDATE_DATE = NOW()
+				 , UPDATE_ID = #{userId}
+			 WHERE WORKTIME_CLOSE_ID = #{item.worktimeCloseId}
+		</foreach>
+		</if>
+	</update>
+	
+	<update id="deleteCloseList" parameterType="hashmap">
+		<if test="deleteRows!=null and deleteRows.size()>0">
+		<foreach collection="deleteRows" item="item" separator=";">
+			DELETE FROM WTM_WORKTIME_CLOSE
+             WHERE WORKTIME_CLOSE_ID = #{item.worktimeCloseId}
+		</foreach>
+		</if>
+	</update>
+	
+	<select id="getWorktimeCloseCode" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT WORKTIME_CLOSE_ID AS code
+        	     , CONCAT(CLOSE_NM, ' [', DATE_FORMAT(SYMD,'%Y.%m.%d'), '~' ,DATE_FORMAT(SYMD,'%Y.%m.%d'), ']') AS codeNm
+        	     , F_WTM_NVL(CLOSE_YN, 'N') AS closeYn
+			FROM WTM_WORKTIME_CLOSE
+		   WHERE TENANT_ID = #{tenantId}
+		   	 AND ENTER_CD = #{enterCd}
+		   ORDER BY SYMD DESC	
+        ]]>
+    </select>
+    
+    <select id="setCompMon" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_CREATE_COMP_MON( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{worktimeCloseId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  ) }
+  	</select>
 </mapper>
