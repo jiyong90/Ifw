@@ -1,6 +1,7 @@
 package com.isu.ifw.controller;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -258,7 +259,12 @@ public class WtmMobileEdocController {
 							wtmOtApplService.reject(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
 							
 						} else if(body.get("apprStatCd").toString().equals("01")) {
-							rp = wtmOtApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, applSabun, emp.getEmpHisId().toString());
+							List<String> sabuns = new ArrayList<String>();
+							sabuns.add(applSabun);
+							paramMap.put("applSabuns", mapper.writeValueAsString(sabuns));
+
+							logger.debug(":::::::: sabuns " + sabuns.toString());
+							rp = wtmOtApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, emp.getEmpHisId().toString());
 						} else {
 							rp.setFail("신청서 상태에 오류가 발생했습니다.");
 							return rp;
