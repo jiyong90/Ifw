@@ -900,7 +900,6 @@
 	    		if(val!=null && val.length>0 && $(".fc-legend-button").length>0) {
 	    			//신청 가능한 유연근무제 리스트
 	    			this.legendList = [];
-	    			
     				this.drawLegend(val, true);
 	    		} 
 	    	}

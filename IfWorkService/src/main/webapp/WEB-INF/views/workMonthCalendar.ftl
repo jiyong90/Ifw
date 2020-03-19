@@ -53,6 +53,7 @@
 	    		//화면에 보이는 달력의 시작일, 종료일을 파라미터로 넘김
 	    		var calendar = this.$refs.fullCalendar.cal;
 	    		calendarLeftVue.calendar = calendar;
+	    		document.querySelector(".fc-legend-button").innerHTML='';
 	    	},
 	    	navLinkDayClickCallback: function(info){
 	    		if(calendarLeftVue.useYn!='Y')
@@ -62,7 +63,7 @@
 	    		var $this = this;
 	    		var calendar = this.$refs.fullCalendar.cal;
 	    		
-	    		document.querySelector(".fc-legend-button").innerHTML='';
+	    		//document.querySelector(".fc-legend-button").innerHTML='';
 	    		if(info.view.type == 'dayGridMonth' && calendar.getOption('selectAllow')!=undefined) { //month change
 	    			var d = moment(calendar.getDate()).format('YYYY-MM-DD');
 	    			calendar.select(d);

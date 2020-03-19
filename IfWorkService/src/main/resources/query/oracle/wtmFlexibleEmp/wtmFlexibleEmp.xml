@@ -1572,6 +1572,9 @@
 			  , A.FLEXIBLE_EMP_ID
 			  , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') AND A.EYMD >= F_WTM_DATE_FORMAT(SYSDATE, 'YMD') THEN '<a class="basic" onClick="setModify(' || FLEXIBLE_EMP_ID || ')">근무변경/취소</a>'
 					    ELSE '' END AS FLEX_MODIFY
+			  , CASE WHEN C.STATUS_CD IN ('CA','RA') AND C.SYMD IS NOT NULL AND C.EYMD IS NOT NULL 
+			  					AND ((A.SYMD <= C.SYMD AND C.SYMD< A.EYMD) OR (A.SYMD <= C.EYMD AND C.EYMD< A.EYMD)) THEN CONCAT('<a class="basic" onClick="setRetire(', FLEXIBLE_EMP_ID, ')">퇴직처리</a>')
+		 			   ELSE '' END AS RETIRE
 		  FROM WTM_FLEXIBLE_EMP A
 		 INNER JOIN WTM_FLEXIBLE_STD_MGR B
 		    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
@@ -2235,5 +2238,15 @@
 		   )
 		   </if>
   	</select>
+  	
+  	<update id="deleteWorkTermByYmdGreaterThan" parameterType="map">
+  		<![CDATA[
+  		 DELETE FROM WTM_WORK_TERM_TIME
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND FLEXIBLE_SDATE > #{ymd}
+		]]>
+  	</update>
 	
 </mapper>
