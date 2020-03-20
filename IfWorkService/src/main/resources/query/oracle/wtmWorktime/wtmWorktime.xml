@@ -220,7 +220,7 @@
 		   </foreach>
 		   )
 		   </if>
-	ORDER BY ENTRY_SDATE desc
+	ORDER BY YMD desc, ENTRY_SDATE desc
   	</select>
   	
   	<select id="getEntryDiffList" parameterType="map" resultType="wtmGeneral">
