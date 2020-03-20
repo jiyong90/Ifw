@@ -2250,6 +2250,37 @@
 		   </if>
   	</select>
   	
+  	<update id="deleteWorkDayResultByYmdGreaterThan" parameterType="map">
+  		<![CDATA[
+  		 DELETE FROM WTM_WORK_DAY_RESULT
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND YMD > #{ymd}
+		]]>
+  	</update>
+  	
+
+  	<update id="deleteWorkCalendarByYmdGreaterThan" parameterType="map">
+  		<![CDATA[
+  		 DELETE FROM WTM_WORK_CALENDAR
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND YMD > #{ymd}
+		]]>
+  	</update>
+  	
+  	<update id="deleteFlexEmpByYmdGreaterThan" parameterType="map">
+  		<![CDATA[
+  		 DELETE FROM WTM_FLEXIBLE_EMP
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND SYMD > #{ymd}
+		]]>
+  	</update>
+  	
   	<update id="deleteWorkTermByYmdGreaterThan" parameterType="map">
   		<![CDATA[
   		 DELETE FROM WTM_WORK_TERM_TIME
