@@ -220,7 +220,7 @@
 		   </foreach>
 		   )
 		   </if>
-	ORDER BY entrySdate desc
+	ORDER BY ymd desc, entrySdate desc
   	</select>
   	
   	<select id="getEntryDiffList" parameterType="map" resultType="map">

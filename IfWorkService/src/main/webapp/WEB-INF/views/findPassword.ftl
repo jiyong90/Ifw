@@ -27,6 +27,7 @@
     <!-- alert modal end -->
     <form class="form-changePW" id="changPw">
     	<h1 class="h3 mb-3 title">비밀번호 변경하기</h1>
+    	<label for="enterCd" class="sr-only">회사명을 선택해주세요.</label>
     	<#if companyList?exists && companyList?has_content>
     	<div class="select-wrap mb-3">
         	<label for="enterCd" class="sr-only">회사명을 선택해주세요.</label>
@@ -43,7 +44,7 @@
             <#if passwordCertificate?? && passwordCertificate?exists && passwordCertificate=='PHONE' >
             	<label for="userid" class="sr-only">핸드폰번호를 입력해주세요.</label>
             	<div class="col-8 pr-1">
-	        		<input type="text" id="userid" class="form-control" v-model="userInfo" placeholder="핸드폰번호 (-포함하여 입력)">
+	        		<input type="text" id="userid" class="form-control" v-model="userInfo" placeholder="핸드폰번호">
 	        	</div>
 	        <#else>
 	        	<label for="userid" class="sr-only">이메일을 입력해주세요.</label>
@@ -266,10 +267,10 @@
     		    return (false);
     		},
     		validatePhone : function(phone){
-    			if (/^\d{3}-\d{3,4}-\d{4}$/.test(phone)){
+    			if (/^\d{3}\d{3,4}\d{4}$/.test(phone) || /^\d{3}-\d{3,4}-\d{4}$/.test(phone)){
 		    		return (true);
 			 	}
-			 	$('#alertText').html("핸드폰번호 형식이 맞지 않습니다.<br>- 를 포함한 숫자만 입력하세요.");
+			 	$('#alertText').html("핸드폰번호 형식이 맞지 않습니다. 숫자만 입력하세요.");
 				$('#alertModal').modal("show");
 			    return (false);
     		}
