@@ -211,7 +211,7 @@
 			{Header:"시작일",			Type:"Date",    Hidden:0, 	Width:90,   Align:"Center", ColMerge:0, SaveName:"useSymd",      	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
 			{Header:"종료일",			Type:"Date",    Hidden:0, 	Width:90,   Align:"Center", ColMerge:0, SaveName:"useEymd",      	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
 			{Header:"반복기준",			Type:"Combo",   Hidden:0, 	Width:70,   Align:"Center", ColMerge:0, SaveName:"repeatTypeCd",   	KeyField:0, Format:"",   	PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:50 },
-			{Header:"반복횟수",			Type:"Int",    	Hidden:0, 	Width:70,   Align:"Center", ColMerge:0, SaveName:"repeatCnt",      	KeyField:0, Format:"",   	PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:2 },
+			{Header:"반복횟수",			Type:"Int",    	Hidden:0, 	Width:70,   Align:"Center", ColMerge:0, SaveName:"repeatCnt",      	KeyField:0, Format:"",   	PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:2 },
 			{Header:"소정근무시간(분)",	Type:"Int",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workMinute",	  	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"연장근무시간(분)",	Type:"Int",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"otMinute",		KeyField:0,	Format:"",		PointCount:2,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"대상자조회",		Type:"Image", 	Hidden:0,  	Width:70,  	Align:"Center", ColMerge:0, SaveName:"selectImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:1    },
@@ -536,29 +536,42 @@
 	function setEndConfirm(flexibleApplyId){
 		var row = sheet1.FindText("flexibleApplyId", flexibleApplyId, 0);
 		var workTypeCd = sheet1.GetCellValue(row, "workTypeCd");
-		var param = "flexibleApplyId=" + flexibleApplyId + "&workTypeCd=" + workTypeCd;
 		
 		if(!confirm("확정하시겠습니까?")) {
 			return;
 		}
+		
 		$("#loading").show();
-		var rtn = ajaxCall("${rc.getContextPath()}/flexibleApply/apply", param ,false);
-		if(rtn != null && rtn != "") {
-			$("#loading").hide();
-			if(rtn.status == "FAIL"){
-				alert(rtn.message);
-			} else {
-				if(rtn.message != '')
-					alert(rtn.message);
-				else 
-					alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
-				doAction1("Search");
-			}			
-		} else {
-			$("#loading").hide();
-			alert("확정할 내용이 없습니다.");
-			
-		}
+		var param = {
+			flexibleApplyId: flexibleApplyId
+			, workTypeCd: workTypeCd
+		};
+		
+		$.ajax({
+			url: "${rc.getContextPath()}/flexibleApply/apply",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				$("#loading").hide();
+				console.log(data);
+				if(data!=null) {
+					if(data.message != '')
+						alert(data.message);
+					else 
+						alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
+					
+					doAction1("Search");
+				}
+			},
+			error: function(e) {
+				$("#loading").hide();
+				alert("확정할 내용이 없습니다.");
+				console.log(e);
+			}
+		});
+		
 	}
 	
 	function getReturnValue(returnValue) {
