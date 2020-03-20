@@ -30,7 +30,7 @@
             </button>
         </li>
         <li :class="{active: curMenu=='flexibleMgr'}" @click="curMenu='flexibleMgr'" v-if="authRule">
-        	<button type="button" href="javascript:void(0);" onclick="callLnb(this);return false;">
+        	<button type="button" onclick="callLnb(this);return false;">
                 <i class="fas fa-laptop"></i>
                 <span class="title">유연근무관리</span>
             </button>

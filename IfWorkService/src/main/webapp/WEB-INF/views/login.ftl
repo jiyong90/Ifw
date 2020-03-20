@@ -55,7 +55,7 @@
         <div class="checkbox mb-3 form-element">
             <input type="checkbox" value="remember-me" id="keepLogin">
             <label for="keepLogin">아이디 저장</label>
-        	<#if interfaceYn?? && interfaceYn?exists && interfaceYn=='Y' >
+        	<#if interfaceYn?? && interfaceYn?exists && interfaceYn=='N' >
             <a href="#" class="find-pw" onclick="location.href='${rc.getContextPath()}/login/${tsId}/findPassword';">비밀번호 재설정</a>
         	</#if>
         </div>

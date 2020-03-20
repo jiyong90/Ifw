@@ -87,7 +87,7 @@
 				 , EMP_ID
 			  FROM WTM_EMP_HIS
 			 WHERE EMP_HIS_ID = #{empHisId}
-			   AND STATUS_CD <> 'RA'
+			 AND STATUS_CD <> 'RA'
         ]]>
         <if test="orgList!=null">
 			   AND ORG_CD IN (NULL, 
@@ -97,5 +97,74 @@
 			   )
 			   </if>
     </select>
+    
+    <update id="insertCommUser" parameterType="Long">
+    	<![CDATA[
+    		INSERT INTO comm_user(tenant_id, login_id, password, name, phone_no, update_date, login_failure_count, last_login, account_lockout_yn, emp_id, enter_cd)
+			SELECT E.TENANT_ID
+			     , F_WTM_AES_ENCRYPT(E.SABUN, #{enterCd})
+			     , F_WTM_SHA_ENCRYPT(E.SABUN)
+			     , E.EMP_NM
+			     , CASE WHEN A.HAND_PHONE IS NOT NULL OR A.HAND_PHONE <> '' THEN A.HAND_PHONE ELSE '010' END 
+			     , NOW()
+			     , 0
+			     , NOW()
+			     , 'N'
+			     , F_WTM_AES_ENCRYPT(CONCAT(E.TENANT_ID, E.ENTER_CD, E.SABUN), #{enterCd})
+			     , F_WTM_AES_ENCRYPT(E.ENTER_CD, #{enterCd})
+			  FROM WTM_EMP_HIS E
+			  LEFT OUTER JOIN WTM_EMP_ADDR A
+			    ON E.TENANT_ID = A.TENANT_ID
+			   AND E.ENTER_CD = A.ENTER_CD
+			   AND E.SABUN = A.SABUN
+			  LEFT OUTER JOIN comm_user U
+			    ON E.TENANT_ID = U.tenant_id
+			   AND F_WTM_AES_ENCRYPT(E.ENTER_CD, #{enterCd}) = U.enter_cd
+			   AND F_WTM_AES_ENCRYPT(E.SABUN, #{enterCd}) = U.login_id
+			 WHERE E.TENANT_ID = ${tenantId}
+			   AND F_WTM_DATE_FORMAT(NOW(),'YMD') BETWEEN E.SYMD AND E.EYMD
+			   AND U.user_id IS NULL
+    	]]>
+    </update>
+    
+    <update id="updateCommUserPw" parameterType="map">
+    	UPDATE comm_user U
+		   SET PASSWORD = ( SELECT PASSWORD
+		                      FROM (  SELECT NULL AS TENANT_ID
+							              , NULL AS ENTER_CD
+							              , NULL AS SABUN
+							              , NULL AS PASSWORD
+							           FROM DUAL
+							          <if test="pwList!=null">
+							          <foreach collection="pwList" item="m" separator="">
+							          UNION 
+							          SELECT ${tenantId} AS TENANT_ID
+							               , F_WTM_AES_ENCRYPT(#{enterCd}, #{enterCd}) AS ENTER_CD 
+							               , F_WTM_AES_ENCRYPT( #{m.sabun}, #{enterCd}) AS SABUN
+										   , #{m.password} AS PASSWORD
+										FROM DUAL
+									  </foreach>
+									  </if> ) T
+		                     WHERE T.TENANT_ID = U.tenant_id
+		                       AND T.ENTER_CD = U.enter_cd
+		                       AND T.SABUN = U.login_id
+		                  )
+    </update>
+    
+    <update id="deleteCommUser" parameterType="map">
+       DELETE FROM comm_user
+	   WHERE (tenant_id, enter_cd, login_id) IN ( SELECT TENANT_ID
+	                                                   , F_WTM_AES_ENCRYPT(ENTER_CD, ENTER_CD)
+	                                                   , F_WTM_AES_ENCRYPT(SABUN, ENTER_CD)
+	                                                FROM WTM_EMP_HIS
+	                                               WHERE EMP_HIS_ID IN (NULL
+		                                               <if test="empHisIds!=null">
+		                                               <foreach collection="empHisIds" item="empHisId" separator=", ">
+		                                               	#{empHisId}
+		                                               </foreach>
+		                                               </if>
+		                                               )
+													)
+    </update>
 	
 </mapper>
