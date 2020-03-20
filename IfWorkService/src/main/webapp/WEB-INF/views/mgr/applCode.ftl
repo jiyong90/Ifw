@@ -494,12 +494,12 @@
 				var holInShm = $("#holInShm").val();
 				var holInEhm = $("#holInEhm").val();
 				
-				if( holInShm != "" && inEhm != "" ) {													
+				if( holInShm != "" && holInEhm != "" ) {													
 					holInShm = holInShm.substring(0,2)+":"+holInShm.substring(2,4);							
 					holInEhm = holInEhm.substring(0,2)+":"+holInEhm.substring(2,4);
 										
 					$("#holInShm").val(holInShm);
-					$("#holInEhm").val(inEhm);
+					$("#holInEhm").val(holInEhm);
 				} else {
 					$("#holInShm").val("");
 					$("#holInEhm").val("");
