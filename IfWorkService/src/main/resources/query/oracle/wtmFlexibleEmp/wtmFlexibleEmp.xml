@@ -544,6 +544,7 @@
     	]]>
     </update>
     <update id="updateApprMinuteByYmdAndSabun" parameterType="map">
+    <![CDATA[
     	MERGE INTO WTM_WORK_DAY_RESULT X
             USING ( 
 			SELECT D.WORK_DAY_RESULT_ID  
@@ -571,11 +572,13 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
 			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
+			   AND D.APPR_SDATE < D.APPR_EDATE
 			 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE, D.APPR_EDATE
 			) XX
 			ON (X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID)
 	     WHEN MATCHED THEN
                 UPDATE SET X.APPR_MINUTE = XX.CM
+    ]]>
     </update>
     <!-- 
 						   CASE WHEN XZ.APPR_MINUTE BETWEEN XZ.PRE_WORK_MINUTE + XZ.PRE_BREAK_MINUTE AND XZ.PRE_WORK_MINUTE + XZ.BREAK_MINUTE  THEN XZ.PRE_WORK_MINUTE
@@ -617,6 +620,7 @@
 			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
 						   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
 						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
+			   			   AND D.APPR_SDATE < D.APPR_EDATE
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 					 ) XZ
 	 			) XX
@@ -653,6 +657,7 @@
 			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
 						   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
 						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
+			   			   AND D.APPR_SDATE < D.APPR_EDATE
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 	 				) XX
 	 			ON (X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID)
@@ -1584,13 +1589,19 @@
 		    ON A.TENANT_ID = C.TENANT_ID
 		   AND A.ENTER_CD = C.ENTER_CD
 		   AND A.SABUN = C.SABUN
-		   AND A.SYMD BETWEEN C.SYMD AND C.EYMD
 		 WHERE A.TENANT_ID = #{tenantId}
 		   AND A.ENTER_CD = #{enterCd}
 		   AND A.SYMD <= REPLACE(#{eYmd}, '-', '') 
 		   AND A.EYMD >= REPLACE(#{sYmd}, '-', '')
 		   AND (#{searchKeyword, jdbcType=VARCHAR} IS NULL OR #{searchKeyword, jdbcType=VARCHAR} = '' OR (C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE #{searchKeyword} || '%'))
 		   AND (#{searchWorkTypeCd, jdbcType=VARCHAR} IS NULL OR #{searchWorkTypeCd, jdbcType=VARCHAR} = '' OR B.WORK_TYPE_CD = #{searchWorkTypeCd})
+		   AND (C.TENANT_ID, C.ENTER_CD, C.SABUN, C.SYMD) IN  ( SELECT TENANT_ID, ENTER_CD, SABUN, MAX(SYMD)
+															                 FROM WTM_EMP_HIS
+															                WHERE TENANT_ID = A.TENANT_ID
+															                  AND ENTER_CD = A.ENTER_CD
+															                  AND SABUN = A.SABUN
+															                  AND (A.SYMD BETWEEN SYMD AND EYMD OR A.EYMD BETWEEN SYMD AND EYMD)
+																				GROUP BY TENANT_ID, ENTER_CD, SABUN )
   		]]>  		
   		<if test="orgList!=null">
 		   AND C.ORG_CD IN (NULL, 
