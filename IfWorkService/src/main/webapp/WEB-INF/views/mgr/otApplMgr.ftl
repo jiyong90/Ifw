@@ -518,7 +518,7 @@
 					  	         		$("#alertModal").on('hidden.bs.modal',function(){
 					  	         			$("#alertModal").off('hidden.bs.modal');
 					  	         		});
-					  	         		$("#alertModal").show();
+					  	         		$("#alertModal").modal("show");
 									}
 								} 
 							},

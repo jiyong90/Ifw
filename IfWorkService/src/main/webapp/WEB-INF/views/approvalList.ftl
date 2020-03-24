@@ -130,7 +130,7 @@
                     <form>
                         <div class="modal-app-wrap">
                             <div class="inner-wrap">
-                            	<template v-if="appl.targetList && appl.targetList!=null && Object.keys(appl.targetList).length>1">
+                            	<template v-if="appl.targetList && appl.targetList!=null && (Object.keys(appl.targetList).length>1 || (Object.keys(appl.targetList).length==1 && !appl.targetList.hasOwnProperty(appl.applSabun)))">
 				                	<p class="page-sub-title mb-1" v-if="appl.holidayYn!='Y'">연장근로 대상자</p>
 				                	<p class="page-sub-title mb-1" v-else>휴일근로 대상자</p>
 						   			<div class="select-list-wrap position-relative">
@@ -142,7 +142,7 @@
 						            </div>
 						            <hr class="separate-bar">
 					            </template>
-					            <template  v-if="appl.targetList && appl.targetList!=null && Object.keys(appl.targetList).length==1">
+					            <template  v-if="appl.targetList && appl.targetList!=null && (Object.keys(appl.targetList).length==1 && appl.targetList.hasOwnProperty(appl.applSabun))">
 				                	<p class="page-sub-title mb-0">잔여 연장근로시간</p>
 				                    <span class="time-wrap"  v-for="(v, k) in appl.targetList">
 				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(v.restOtMinute, 'detail')}}</span>
