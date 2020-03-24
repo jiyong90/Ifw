@@ -34,6 +34,15 @@
 	             </div>
              </template>
              <template v-else>
+             	<form>
+	 				<div class="input-group mb-2">
+	                     <input id="searchKeyword" type="text" class="form-control rounded-0" placeholder="검색어를 입력해주세요" aria-label="검색어를 입력해주세요"
+	                         aria-describedby="search" @keyup.enter="getTargetList">
+	                     <div class="input-group-append">
+	                         <button class="btn btn-primary rounded-0" type="button" @click="getTargetList"><i class="fas fa-search"></i></button>
+	                     </div>
+	                 </div>
+	             </form>
              	<div class="inner-wrap">
              		<div class="function-list-wrap form-element">
              			<ul class="fun-list over-height">
@@ -259,12 +268,11 @@
   		    		$this.targetList = [];
   		    		
   		    		var searchKeyword = '';
-  		    		
   		    		if($("#searchKeyword").val()!=null && $("#searchKeyword").val()!=undefined && $("#searchKeyword").val()!='')
   		    			searchKeyword = $("#searchKeyword").val();
   		    		
   		    		Util.ajax({
-						url: "${rc.getContextPath()}/emp/list?searchKeyword="+searchKeyword,
+						url: "${rc.getContextPath()}/emp/list?searchKeyword="+encodeURIComponent(searchKeyword),
 						type: "POST",
 						contentType: 'application/json',
 						//data: param,
@@ -478,13 +486,19 @@
   	         		var $this = this;
   	         		var result = {};
   	         		
+  	         		var sabuns = [];
+  	         		$.each($this.applSabuns, function(k,v) {
+  	         			sabuns.push(k);
+  	         		})
+  	         		
   	         		if(ymd!=null && ymd!=undefined && ymd!=''
   	         				&& shm!=null && shm!=undefined && shm!='' && ehm!=null && ehm!=undefined && ehm!='') {
 	  	         		
 	  	         		var param = {
 	  	         			ymd: ymd,
 		   		    		shm : shm,
-		   		    		ehm : ehm
+		   		    		ehm : ehm,
+		   		    		sabuns : JSON.stringify(sabuns)
 		   		    	};
 	   		    		
 	   		    		Util.ajax({
@@ -498,6 +512,14 @@
 								if(data!=null) {
 									result = data;
 									//console.log(result);
+									
+									if(data.hasOwnProperty('message') && data.message!=null && data.message!=undefined && data.message!='') {
+										$("#alertText").html(data.message);
+					  	         		$("#alertModal").on('hidden.bs.modal',function(){
+					  	         			$("#alertModal").off('hidden.bs.modal');
+					  	         		});
+					  	         		$("#alertModal").show();
+									}
 								} 
 							},
 							error: function(e) {
