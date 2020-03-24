@@ -239,6 +239,11 @@ public class WtmMobileApplController {
 			if("OT".equals(dataMap.get("applCd").toString())) {
 				rp = mobileApplService.requestOtAppl(tenantId, enterCd, sabun, dataMap);
 			} else if("ENTRY_CHG".equals(dataMap.get("applCd").toString())) {
+				dataMap.put("shm", "");
+				dataMap.put("ehm", "");
+				dataMap.put("calcMinute", "");
+				dataMap.put("subYn", "");
+				dataMap.put("subsSymd", "");
 				rp = mobileApplService.requestEntryChgAppl(tenantId, enterCd, sabun, dataMap);
 			}
 			
