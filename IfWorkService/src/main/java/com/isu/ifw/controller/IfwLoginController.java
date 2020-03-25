@@ -182,6 +182,152 @@ public class IfwLoginController {
          
 		return mv;
     }
+    
+    @RequestMapping(value = "/login/{tsId}/hr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void authorizeHrCallback(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect, Authentication authentication) {
+
+		System.out.println("1111111111111111111111111111111111111 callback");
+		//UserDetails userDetails = (UserDetails) authentication.getPrincipal(); 
+		//System.out.println("userDetails.getUsername() : " + userDetails.getUsername());
+
+			
+		CommTenantModule tm = null;
+	    tm = tenantModuleRepo.findByTenantKey(tsId);
+        Long tenantId = tm.getTenantId();
+		
+	    String tokenUri = tcms.getConfigValue(tenantId, "IFO.TOKEN.URI", true, "");
+	    String redirectUri = tcms.getConfigValue(tenantId, "IFO.REDIRECT.URI", true, "");
+		
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(); 
+		factory.setReadTimeout(3000); 
+		factory.setConnectTimeout(3000); 
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build(); 
+		factory.setHttpClient(httpClient); 
+		RestTemplate restTemplate = new RestTemplate(factory);
+		String url = tokenUri;
+
+        String clientCredentials = tsId+":"+tm.getSecret();
+        String base64ClientCredentials = new String(Base64.encodeBase64(clientCredentials.getBytes()));
+        
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Basic "+base64ClientCredentials);
+		headers.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+		
+		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+		param.add("code", request.getParameter("code"));
+		param.add("grant_type", "authorization_code");
+		param.add("redirect_uri", redirectUri);
+		
+		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(param, headers);
+        ModelAndView mv = new ModelAndView("loading");
+   		mv.addObject("tenantId", tenantId);
+    	mv.addObject("tsId", tsId);
+//   		mv.addObject("pageName", "loading");
+
+		try {
+			ResponseEntity<Map> res = restTemplate.postForEntity(url, entity, Map.class);
+			System.out.println("1111111111111111111111111111111111111 getStatusCode" +res.getStatusCode().value());
+
+			if(res.getStatusCode().value() == HttpServletResponse.SC_OK) {
+				 Map<String, Object> tokenMap = res.getBody();
+ 	             String accessToken = tokenMap.get("access_token").toString();
+ 				System.out.println("1111111111111111111111111111111111111 tokenMap " +tokenMap.toString());
+ 	           
+ 	            Map<String, Object> data = WtmUtil.parseJwtToken(request, accessToken);
+ 	           
+ 	            //mv.addObject("access_token", accessToken);
+ 	            //mv.addObject("Authorization", accessToken);
+ 	            //Cookie c = new Cookie("Authorization",  accessToken);
+   				//c.setPath("/");
+   				//response.addCookie(c);
+ 	       		
+   				redirect.addFlashAttribute("Authorization", accessToken);
+   				redirect.addFlashAttribute("x-auth-token", accessToken);
+   				
+   				
+   				/*
+   				String username = loginRequest.getUsername();
+   			    String password = loginRequest.getPassword();
+   			    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+   			    Authentication authentication = this.authenticationManager.authenticate(token);
+   			    // vvv THIS vvv
+   			    SecurityContextHolder
+   			        .getContext()
+   			        .setAuthentication(authentication);
+   			    return new ResponseEntity<>(authentication.getPrincipal(), HttpStatus.OK);
+   			    */
+   				
+   				Enumeration<String> k = request.getHeaderNames();
+   				System.out.println("header :::::::");
+   				while(k.hasMoreElements()) {
+   					String key = k.nextElement();
+   					System.out.println(key + " : " + request.getHeader(key));
+   				}
+   				System.out.println("header ::::::: END");
+   				if(1==1) {
+   					try {
+   						redisTemplate.opsForValue().set(data.get("userName").toString(), tokenMap.get("refresh_token").toString());
+   						
+   				        //String token = JwtUtil.generateToken(signingKey, username);
+   				        CookieUtil.create(response, jwtTokenCookieName, accessToken, false, -1, null);
+   				        
+   						//response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+   				        response.sendRedirect("http://10.30.30.56:8888");
+   						//return;
+   					} catch (Exception e1) {
+   						// TODO Auto-generated catch block
+   						e1.printStackTrace();
+   					}
+   					//return "redirect:" + request.getContextPath()+"/console/"+tsId;
+   				}
+   				
+
+   				//   				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//   				System.out.println("0000000" + auth.getPrincipal().toString());
+//   				System.out.println("0000000" + auth.getCredentials().toString());
+//   				
+//   				Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), auth.getAuthorities());
+//   				
+//   			
+   				/*
+   	  		  Cookie c2 = new Cookie("JSESSIONID",  "");
+   		 	  c2.setPath("/ifw");
+   			  c2.setMaxAge(0);
+   			  response.addCookie(c2);
+	*/
+ 	       	    //return mv;
+   			  //return ""; 
+ 	       	            
+// 	            Cookie c = new Cookie("Authorization",  accessToken);
+// 				c.setPath("/");
+// 				c.setMaxAge(60*60*24);
+// 				response.addCookie(c);
+// 				response.setHeader("Set-Cookie", "HttpOnly;SameSite=Lax;");
+// 				response.setHeader("Access-Control-Allow-Origin", "*");
+// 				response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+// 				return null;
+ 	            
+// 				request.getRequestDispatcher(request.getContextPath() +"/console/" + tsId).forward(request, response);
+
+// 	            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+// 	            temp.put("Authorization", accessToken);
+// 	       
+ 	            
+ 				//return mv;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			try {
+				response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			//return null;
+		}
+		//return "";
+    }
+    
     @RequestMapping(value = "/login/{tsId}/authorize", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void authorizeCallback(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect, Authentication authentication) {
 
