@@ -170,6 +170,7 @@
 			break;
 		case "Insert":
 			$("input:checkbox[name=authFuntion]").prop("checked",false);
+			sheet2.RemoveAll();
 			sheet1.DataInsert(-1) ;
 			break;
 		case "Save":
