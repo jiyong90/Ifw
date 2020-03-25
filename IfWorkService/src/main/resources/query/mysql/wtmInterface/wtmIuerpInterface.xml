@@ -422,7 +422,6 @@
 			    ON E.TENANT_ID = I.TENANT_ID
 			   	 AND E.ENTER_CD = I.ENTER_CD
 			   	 AND E.SABUN = I.SABUN
-			   	 AND #{ymd} BETWEEN E.SYMD AND E.EYMD
 			  WHERE E.TENANT_ID = ${tenantId} 
 			   AND I.YYYYMMDDHHMISS > #{ymdhis}
 			   AND (E.EMP_NM<>I.EMP_NM OR E.EMP_ENG_NM<>I.EMP_ENG_NM 
@@ -441,7 +440,6 @@
 		    ON E.TENANT_ID = I.TENANT_ID
 		   	 AND E.ENTER_CD = I.ENTER_CD
 		   	 AND E.SABUN = I.SABUN
-		   	 AND #{ymd} BETWEEN E.SYMD AND E.EYMD
 		   SET E.EMP_NM = I.EMP_NM
 		      , E.EMP_ENG_NM   = I.EMP_ENG_NM 
 		      , E.SYMD   	   = I.SYMD
