@@ -136,6 +136,7 @@ public class WtmInOutChangeController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String userId = sessionData.get("userId").toString();
 		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
 		String sYmd = paramMap.get("sYmd").toString();
 		String eYmd = paramMap.get("eYmd").toString();
 		String searchKeyword = paramMap.get("searchKeyword").toString();
@@ -150,7 +151,7 @@ public class WtmInOutChangeController {
 	
 		List<Map<String, Object>> inoutList = null;
 		try {		
-			inoutList =  inOutChangeService.getInpoutChangeHis(paramMap);
+			inoutList =  inOutChangeService.getInpoutChangeHis(tenantId, enterCd, empNo, paramMap);
 			
 			rp.put("DATA", inoutList);
 		} catch(Exception e) {
