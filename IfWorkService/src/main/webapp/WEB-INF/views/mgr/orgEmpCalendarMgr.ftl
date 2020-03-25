@@ -35,7 +35,7 @@
 						<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">근무캘린더</div>
 							<ul class="float-right btn-wrap">
-								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
+								<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
 							</ul>
 						</div>
 					</div>
@@ -158,6 +158,11 @@
 			break;
 		case "Insert":
 			sheet1.DataInsert(0) ;
+			break;
+		case "Down2Excel":
+			var downcol = makeHiddenSkipCol(sheet1);
+			var param = {DownCols:downcol, SheetDesign:1, Merge:1};
+			sheet1.Down2Excel(param); 
 			break;
 		}
 	}
