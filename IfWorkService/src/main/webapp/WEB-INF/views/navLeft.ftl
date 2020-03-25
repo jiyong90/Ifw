@@ -47,7 +47,7 @@
                         <li :class="{active: curPageName=='pushMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/pushMgr';">알림관리</a></li>
                     </ul>
                 </li>
-                <li :class="{active: curSubMenu=='sub2'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1">
+                <li :class="{active: curSubMenu=='sub2'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
                 	<a href="#submenu-list2" data-toggle="collapse" :aria-expanded="curSubMenu=='sub2'?true:false" class="dropdown-toggle" @click="curSubMenu='sub2'">근무제도관리</a>
                 	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub2'}" id="submenu-list2">
                         <li :class="{active: curPageName=='timeCdMgr'}" v-if="authRule.indexOf('FLEX_SETTING')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/timeCdMgr';">근무시간표관리</a></li>
@@ -55,8 +55,8 @@
                         <li :class="{active: curPageName=='workteamEmp'}" v-if="authRule.indexOf('FLEX_SETTING')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workteamEmp';">근무조대상자관리</a></li>
                         <li :class="{active: curPageName=='flexibleStdMgr'}" v-if="authRule.indexOf('FLEX_SETTING')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleStdMgr';">근무제도관리</a></li>
                         <li :class="{active: curPageName=='baseWorkMgr'}" v-if="authRule.indexOf('FLEX_SETTING')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/baseWorkMgr';">기본근무시간관리</a></li>    
-                        <li :class="{active: curPageName=='flexibleApplyMgr'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleApplyMgr';">근무제도적용</a></li>                                
-                        <li :class="{active: curPageName=='flexibleEmp'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">개인별 근무제도 조회</a></li>
+                        <li :class="{active: curPageName=='flexibleApplyMgr'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 "><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleApplyMgr';">근무제도적용</a></li>                                
+                        <li :class="{active: curPageName=='flexibleEmp'}" v-if="authRule.indexOf('FLEX_SETTING')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">개인별 근무제도 조회</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub3'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1">
@@ -77,10 +77,10 @@
                 <li :class="{active: curSubMenu=='sub5'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1">
                 	<a href="#submenu-list5" data-toggle="collapse" :aria-expanded="curSubMenu=='sub5'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub5'">근무시간관리</a>
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub5'}" id="submenu-list5">
-                        <li :class="{active: curPageName=='empCalendarMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">근무시간관리</a></li>
+                        <li :class="{active: curPageName=='empCalendarMgr'}" v-if="authRule.indexOf('FLEX_SETTING')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">근무시간관리</a></li>
+                        <li :class="{active: curPageName=='orgEmpCalendarMgr'}" v-if="authRule.indexOf('FLEX_SUB')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/orgEmpCalendarMgr';">근무시간관리</a></li>
                         <li :class="{active: curPageName=='inoutMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutMgr';">출/퇴근시간 변경</a></li>
                         <li :class="{active: curPageName=='worktimeChangeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeChangeMgr';">근무시간 변경</a></li>
-                        <!-- <li :class="{active: curPageName=='orgEmpCalendarMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/orgEmpCalendarMgr';">팀원근무시간관리</a></li> -->
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub6'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">

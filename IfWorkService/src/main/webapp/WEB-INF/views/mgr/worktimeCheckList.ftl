@@ -16,6 +16,9 @@
 								<div class="inner">
 									<div class="sheet_title_wrap clearfix">
 										<div id="popupTitle" class="float-left title"></div>
+										<ul class="float-right btn-wrap">
+											<li><a href="javascript:doAction2('Down2Excel')" class="basic authR">다운로드</a></li>
+										</ul>
 									</div>
 								</div>
 								<script type="text/javascript"> createIBSheet("sheet2", "100%", sheetH90, "kr"); </script>
@@ -212,6 +215,11 @@
 		case "Search":
 			var param = "sYmd="+sheet1.GetCellValue( sheet1.GetSelectRow(), "weekSdate") + "&eYmd="+sheet1.GetCellValue( sheet1.GetSelectRow(), "weekEdate") + "&sabun="+sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun");
 			sheet2.DoSearch( "${rc.getContextPath()}/worktime/detail" , param);
+			break;
+		case "Down2Excel":
+			var downcol = makeHiddenSkipCol(sheet2);
+			var param = {DownCols:downcol, SheetDesign:1, Merge:1};
+			sheet2.Down2Excel(param); 
 			break;
 		}
    	}

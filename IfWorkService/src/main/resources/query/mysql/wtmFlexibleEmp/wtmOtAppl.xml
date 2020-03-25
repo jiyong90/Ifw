@@ -217,17 +217,27 @@
         <![CDATA[
 			SELECT 	DATE_FORMAT(O.OT_SDATE, '%Y.%m.%d %H:%i') AS otSdate
 			     , DATE_FORMAT(O.OT_EDATE, '%Y.%m.%d %H:%i') AS otEdate
+			     , DATE_FORMAT(O.OT_SDATE, '%m.%d %H:%i') AS otStime
+			     , DATE_FORMAT(O.OT_EDATE, '%m.%d %H:%i') AS otEtime
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'REASON_CD', O.REASON_CD, A.APPL_YMD) AS reasonNm
 			     , O.REASON AS reason
+			     , H.EMP_NM AS empNm
+			     , group_concat(H.EMP_NM) as applNames
+    			 , group_concat(O.SABUN) as applSabuns
 			     , CASE WHEN O.SUB_YN = 'Y' THEN '휴일대체' 
 			     		WHEN O.SUB_YN ='N' THEN '위로금/시급지급' 
 			     		ELSE '-' END AS subYn
 			     , CASE WHEN O.SUB_YN = 'Y' THEN 
 			     	(select group_concat(CONCAT(DATE_FORMAT(SUBS_SDATE, '%Y.%m.%d %H:%i'), ' ~ ', DATE_FORMAT(SUBS_EDATE, '%H:%i'))) from WTM_OT_SUBS_APPL where APPL_ID =  #{applId}  ) 
 			      ELSE '-' END AS subsYmd
-			  FROM WTM_APPL A
-			  JOIN WTM_OT_APPL O
+			  FROM WTM_OT_APPL O
+			  JOIN WTM_APPL A
 			    ON A.APPL_ID = O.APPL_ID
+			  JOIN WTM_EMP_HIS H
+		  		ON A.TENANT_ID = H.TENANT_ID
+			   	AND A.ENTER_CD = H.ENTER_CD
+			   	AND O.SABUN = H.SABUN
+			   	AND EYMD = '29991231'
 			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
 			    ON A.TENANT_ID = R.TENANT_ID
 			   AND A.ENTER_CD = R.ENTER_CD

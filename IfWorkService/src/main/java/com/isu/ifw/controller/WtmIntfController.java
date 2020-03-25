@@ -80,7 +80,8 @@ public class WtmIntfController extends TenantSecuredControl {
 		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
 		Date now = new Date();
 		String today = format1.format(now);
-      
+		Map<String, Object> paramMap = new HashMap();
+		
 		logger.debug("/intf/inoutCheck s " + WtmUtil.paramToString(request));
 		try {
 			String apiKey = request.getParameter("apiKey");
@@ -106,7 +107,7 @@ public class WtmIntfController extends TenantSecuredControl {
 				return rp;
 			}
          
-			Map<String, Object> paramMap = new HashMap();
+			
 			paramMap.put("tenantId", tm.getTenantId());
 			paramMap.put("enterCd", request.getParameter("enterCd"));
 			paramMap.put("sabun", request.getParameter("emp"));
@@ -118,9 +119,8 @@ public class WtmIntfController extends TenantSecuredControl {
          
 			logger.debug("getParameter s2 " + paramMap.toString());
       
-			inoutService.updateTimecard(paramMap);
+			inoutService.updateTimecardIntf(paramMap);
          
-			logger.debug("/intf/inoutCheck rp : " + rp.toString());
 			if(request.getParameter("type").toString().equals("OUT")) {
 				logger.debug("/intf/inoutCheck postProcess skip");
 				//퇴근일때만 인정시간 계산(일마감으로 변경)
@@ -130,7 +130,7 @@ public class WtmIntfController extends TenantSecuredControl {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
 		}
-		logger.debug("/intf/inoutCheck e " + rp.toString());
+		logger.debug("/intf/inoutCheck e " + paramMap.toString() + "," + rp.toString());
 		return rp;
 	}
 	
@@ -174,20 +174,18 @@ public class WtmIntfController extends TenantSecuredControl {
 			
 			Map<String, Object> paramMap = new HashMap();
 			paramMap.put("tenantId", tm.getTenantId());
-			paramMap.put("enterCd", request.getParameter("enterCd"));
-			paramMap.put("sabun", request.getParameter("emp"));
-			paramMap.put("inoutDate", request.getParameter("time"));
+			paramMap.put("enterCd", params.get("enterCd").toString());
+			paramMap.put("sabun", params.get("emp"));
+			paramMap.put("inoutDate", params.get("time"));
 //	         paramMap.put("ymd", request.getParameter("ymd"));
-			paramMap.put("inoutType", request.getParameter("type"));
-			paramMap.put("entryNote", request.getParameter("deviceKey"));
+			paramMap.put("inoutType", params.get("type"));
+			paramMap.put("entryNote", params.get("deviceKey"));
 			paramMap.put("entryType", "INTF");
 			
 			logger.debug("getParameter s2 " + paramMap.toString());
 		
-			inoutService.updateTimecard(paramMap);
+			inoutService.updateTimecardIntf(paramMap);
 			
-			logger.debug("/intf/inoutCheck rp : " + rp.toString());
-			logger.debug("/intf/inoutCheck rp : " + rp.toString());
 			if(request.getParameter("type").toString().equals("OUT")) {
 				logger.debug("/intf/inoutCheck postProcess skip");
 
@@ -197,7 +195,7 @@ public class WtmIntfController extends TenantSecuredControl {
 
 		} catch(Exception e) {
 			e.printStackTrace();
-			rp.setFail("");
+			rp.setFail(e.getMessage());
 		}
 		logger.debug("/intf/inoutCheck e " + rp.toString());
 		return rp;

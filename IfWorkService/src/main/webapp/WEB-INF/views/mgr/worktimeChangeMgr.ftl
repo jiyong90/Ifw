@@ -190,7 +190,7 @@
   		    			searchKeyword = $("#searchKeyword").val();
   		    		
   		    		Util.ajax({
-  		    			url: "${rc.getContextPath()}/worktime/change/target?ymd="+ymd+"&searchKeyword="+searchKeyword,
+  		    			url: "${rc.getContextPath()}/worktime/change/target?ymd="+ymd+"&searchKeyword="+encodeURIComponent(searchKeyword),
 						type: "GET",
 						contentType: 'application/json',
 						dataType: "json",

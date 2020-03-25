@@ -34,6 +34,13 @@
 				<if test="searchKeyword!=null and !searchKeyword.equals('')">
 					AND (A.SABUN LIKE CONCAT(#{searchKeyword}, '%') OR B.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%'))
 				</if>
+				<if test="orgList!=null">
+				   AND ORG_CD IN (NULL, 
+			       <foreach collection="orgList" item="org" separator=", ">
+					   #{org}
+				   </foreach>
+				   )
+			    </if>
 	</select>
     
     <update id="setInOutChangeList" parameterType="map">

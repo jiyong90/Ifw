@@ -11,28 +11,39 @@
   background: #0f5aa4;
 }
 
-#sidebar.active ul li.active a span.title {
+#sidebar.active ul li.active a span.title,
+#sidebar.active ul li.active button span.title {
     color: #0f5aa4;
 }
 
-#sidebar.active ul li a:hover span.title {
+#sidebar.active ul li a:hover span.title,
+#sidebar.active ul li button:hover span.title {
     color: #0f5aa4;
 }
 
-#sidebar ul li a:hover {
+#sidebar ul li button {
+background-color: #0f5aa4;
+}
+
+#sidebar ul li a:hover,
+#sidebar ul li button:hover {
     color: #0f5aa4;
 }
 
-#sidebar ul li a.dropdown-toggle.collapsed {
+#sidebar ul li a.dropdown-toggle.collapsed,
+#sidebar ul li button.dropdown-toggle.collapsed {
     color: #0f5aa4;
 }
 
 #sidebar ul li.active>a,
-a[aria-expanded="true"] {
+a[aria-expanded="true"],
+#sidebar ul li.active>button,
+button[aria-expanded="true"] {
     color: #0f5aa4;
 }
 
-#sidebar #lnb-sub li.active>a {
+#sidebar #lnb-sub li.active>a,
+#sidebar #lnb-sub li.active>button {
     color: #0f5aa4;
 }
 
@@ -99,6 +110,8 @@ a[aria-expanded="true"] {
 .error-page .container a.btn-main {
     background-color: #0f5aa4;
 }
+/* setting */
+.setting .card.choice{border:2px solid #0f5aa4;}
 /* spinner */
 .loading-spinner::before {
     border-bottom-color: #0f5aa4;

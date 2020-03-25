@@ -7,8 +7,8 @@
 	<select id="getOtList" parameterType="map" resultType="map">
 		SELECT B.TENANT_ID AS tenantId 
 			   , B.ENTER_CD AS enterCd
-		       , C.SABUN AS sabun
-		       , F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, C.SABUN, A.YMD) AS orgNm
+		        , A.SABUN AS sabun
+		       , F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, A.SABUN, A.YMD) AS orgNm
 		       , C.EMP_NM AS empNm
 		       , CASE WHEN A.HOLIDAY_YN = 'Y' THEN '휴일근무' ELSE '연장근무' END AS applNm
 		       , A.YMD AS ymd
@@ -25,7 +25,7 @@
 		 INNER JOIN WTM_EMP_HIS C
 		     ON B.TENANT_ID = C.TENANT_ID
 		   AND B.ENTER_CD = C.ENTER_CD
-		   AND B.APPL_SABUN = C.SABUN
+		    AND A.SABUN = C.SABUN
 		   AND B.APPL_YMD BETWEEN C.SYMD AND C.EYMD
 		    LEFT OUTER JOIN WTM_OT_SUBS_APPL D
 		     ON  A.OT_APPL_ID = D.OT_APPL_ID

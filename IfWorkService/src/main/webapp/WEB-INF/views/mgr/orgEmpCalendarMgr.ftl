@@ -35,7 +35,7 @@
 						<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">근무캘린더</div>
 							<ul class="float-right btn-wrap">
-								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
+								<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
 							</ul>
 						</div>
 					</div>
@@ -47,10 +47,6 @@
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">근무상세결과</div>
-							<ul class="float-right btn-wrap">
-								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
-								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
-							</ul>
 						</div>
 					</div>
 					<script type="text/javascript">createIBSheet("sheet2", "100%", halfsheetH,"kr"); </script>
@@ -95,7 +91,7 @@
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
-		sheet1.SetEditable(true);
+		sheet1.SetEditable(false);
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
 		sheet1.SetCountPosition(8);
@@ -133,7 +129,7 @@
 
 
         IBS_InitSheet(sheet2, initdata2);
-		sheet2.SetEditable(true);
+		sheet2.SetEditable(false);
 		sheet2.SetVisible(true);
 		sheet2.SetUnicodeByte(3);
 
@@ -162,6 +158,11 @@
 			break;
 		case "Insert":
 			sheet1.DataInsert(0) ;
+			break;
+		case "Down2Excel":
+			var downcol = makeHiddenSkipCol(sheet1);
+			var param = {DownCols:downcol, SheetDesign:1, Merge:1};
+			sheet1.Down2Excel(param); 
 			break;
 		}
 	}

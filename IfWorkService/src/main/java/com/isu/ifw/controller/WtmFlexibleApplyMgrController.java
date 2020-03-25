@@ -157,7 +157,7 @@ public class WtmFlexibleApplyMgrController {
 	}
 	
 	@RequestMapping(value="/apply", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam setApply(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+	public @ResponseBody ReturnParam setApply(HttpServletRequest request, @RequestBody Map<String, Object> paramMap ) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("확정에 성공하였습니다.");
