@@ -145,7 +145,7 @@ public class TokenUtil {
 		String jwt = createReplaceJWT("asdadsa", "id","issuer","subject", payloads,60000l);
 		System.out.println(jwt);
 		System.out.println("ssss");
-		System.out.println(decodeReplaceJWT("asdadsa", jwt).toString());
+		System.out.println(decodeReplaceJWT("asdddsa", jwt).toString());
 	}
 	
 	 
