@@ -125,7 +125,7 @@
 			 WHERE A.ENTER_CD = #{enterCd}
 			   AND A.APPL_CD = '22'
 			   AND A.APPL_STATUS_CD <> '11'
-			   AND A.CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
+			   AND B.CHKDATE > TO_DATE(#{lastDataTime}, 'YYYYMMDDHH24MISS')
         ]]>
     </select>
     
