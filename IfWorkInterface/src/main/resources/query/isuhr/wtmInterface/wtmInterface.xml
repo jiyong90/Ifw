@@ -114,7 +114,10 @@
 			     , B.REQ_S_HM
 			     , B.REQ_E_HM
 			     , A.APPL_SEQ
-			     , DECODE(A.APPL_STATUS_CD, 'ZZ', '44', A.APPL_STATUS_CD) AS APPL_STATUS_CD
+			     , CASE WHEN NVL(B.UPDATE_YN, 'N') = 'Y' THEN '44'
+                  		WHEN A.APPL_STATUS_CD = 'ZZ' THEN '44'
+				   		ELSE A.APPL_STATUS_CD
+                   END AS APPL_STATUS_CD
 			  FROM THRI103 A
 			 INNER JOIN TTIM301 B
 			     ON A.ENTER_CD = B.ENTER_CD 
