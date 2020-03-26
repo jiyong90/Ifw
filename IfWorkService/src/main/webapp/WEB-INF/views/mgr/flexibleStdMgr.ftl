@@ -905,10 +905,10 @@
 	        	var chkYn = getCheckYn("taaWorkYn");
 	        	sheet1.SetCellValue(row, "taaWorkYn", chkYn);
 	        }
-	        if($('#trCoreChk').is(':visible')){
+	        // if($('#trCoreChk').is(':visible')){
 	        	var chkYn = getCheckYn("coreChkYn");
 				sheet1.SetCellValue(row, "coreChkYn", chkYn);
-	        }
+	        // }
 	        if($('#trCoreTime').is(':visible')){
 	        	sheet1.SetCellValue(row, "coreShm", $("#coreShm").val());
 	        	sheet1.SetCellValue(row, "coreEhm", $("#coreEhm").val());
@@ -1177,15 +1177,9 @@
 					//$("#exhaustionYn").addClass("required");
 					$("#trBaseFirst").find("th span").eq(0).addClass("required");
 					$("#exhaustionYn").val(sheet1.GetCellValue( NewRow, "exhaustionYn")).prop("selected", true);
-					$("#trUnplan").show();
-					if(sheet1.GetCellValue( NewRow, "unplannedYn") == "Y"){
-						$("input:checkbox[name='unplannedYn']").prop("checked", true);
-					} else {
-						$("input:checkbox[name='unplannedYn']").prop("checked", false);
-					}
 					
 					if(workTypeCd == "SELE_C"){
-						$("#trCoreChk").show();
+						$("#trCoreChk").hide();
 						if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
 							$("input:checkbox[name='coreChkYn']").prop("checked", true);
 							setCoreChkYn(true);
@@ -1217,6 +1211,14 @@
 						$("#trCoreTime").hide();												
 						
 						$("#trApplyEntry").show();
+						
+						// 근무계획없음 가능여부
+						$("#trUnplan").show();
+						if(sheet1.GetCellValue( NewRow, "unplannedYn") == "Y"){
+							$("input:checkbox[name='unplannedYn']").prop("checked", true);
+						} else {
+							$("input:checkbox[name='unplannedYn']").prop("checked", false);
+						}
 					}
 					
 					if(sheet1.GetCellValue( NewRow, "todayPlanEditYn") == "Y"){
