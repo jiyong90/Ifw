@@ -2202,6 +2202,21 @@
   	         			form.classList.add('was-validated');
   	         		});
   	         		
+  	         		if( moment('${today}').diff($this.inOutChangeAppl.planEdate)<=0 && $("#chgEdate").val()!='' && $("#chgEdate").val()!='00:00') {
+  	         			applYn = false;
+  	         			msg = '퇴근 시간을 변경할 수 없습니다.';
+  	         		}
+  	         		
+  	         		if( moment('${today}').diff($this.inOutChangeAppl.planEdate)>0) {
+  	         			if( ($this.inOutChangeAppl.inoutSdate=='' || $this.inOutChangeAppl.inoutSdate=='00:00') && ($("#chgSdate").val()=='' || $("#chgSdate").val()=='00:00') ) {
+  	         				applYn = false;
+  	  	         			msg = '변경 할 출근 시간을 입력해 주세요.';
+  	         			} else if( ($this.inOutChangeAppl.inoutEdate=='' || $this.inOutChangeAppl.inoutEdate=='00:00') && ($("#chgEdate").val()=='' || $("#chgEdate").val()=='00:00') ) {
+  	         				applYn = false;
+  	  	         			msg = '변경 할 퇴근 시간을 입력해 주세요.';
+  	         			}
+  	         		}
+  	         		
   	         		if( ($("#chgSdate").val()=='' && $("#chgEdate").val()=='') || ($("#chgSdate").val()=='00:00' && $("#chgEdate").val()=='00:00')) {
   	         			applYn = false;
   	         			msg = '변경 할 출근/퇴근 시간을 입력해 주세요.';

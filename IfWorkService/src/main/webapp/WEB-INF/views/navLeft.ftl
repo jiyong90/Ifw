@@ -78,7 +78,7 @@
                 	<a href="#submenu-list5" data-toggle="collapse" :aria-expanded="curSubMenu=='sub5'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub5'">근무시간관리</a>
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub5'}" id="submenu-list5">
                         <li :class="{active: curPageName=='empCalendarMgr'}" v-if="authRule.indexOf('FLEX_SETTING')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/empCalendarMgr';">근무시간관리</a></li>
-                        <li :class="{active: curPageName=='orgEmpCalendarMgr'}" v-if="authRule.indexOf('FLEX_SUB')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/orgEmpCalendarMgr';">근무시간관리</a></li>
+                        <li :class="{active: curPageName=='orgEmpCalendarMgr'}" v-if="authRule.indexOf('FLEX_SETTING')==-1 && authRule.indexOf('FLEX_SUB')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/orgEmpCalendarMgr';">근무시간관리</a></li>
                         <li :class="{active: curPageName=='inoutMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutMgr';">출/퇴근시간 변경</a></li>
                         <li :class="{active: curPageName=='worktimeChangeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeChangeMgr';">근무시간 변경</a></li>
                     </ul>
