@@ -620,11 +620,7 @@
 			               AND D.APPR_SDATE IS NOT NULL AND D.APPR_EDATE IS NOT NULL
 						   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
 						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
-<<<<<<< HEAD
 						   AND D.APPR_SDATE < D.APPR_EDATE
-=======
-			   			   AND D.APPR_SDATE < D.APPR_EDATE
->>>>>>> branch 'master' of https://github.com/isusys/if-work.git
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 					 ) XZ
 	 			) XX
