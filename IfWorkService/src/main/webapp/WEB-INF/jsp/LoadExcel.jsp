@@ -25,7 +25,7 @@
 	// LoadExcel 용도의 엑셀파일을 업로드하여 임시보관할 임시폴더경로를 지정해 주십시오.
 	// 예 : "C:/tmp/"   "/usr/tmp/"
 	//====================================================================================================
-	ibExcel.setTempFolder("c:/Temp/");
+	ibExcel.setTempFolder("/soldev/download");
 
     //====================================================================================================
     // [ 사용자 환경 설정 #3 ]
@@ -94,7 +94,7 @@
 				// 서버에 저장된 파일명
 				String uploadFileName = ibExcel.getUploadFileName();
 
-				// System.out.println("uploadFileName : " + uploadFileName);
+				//System.out.println("uploadFileName : " + uploadFileName);
 
 				// TODO
 				// 업로드된 엑셀 파일을 가공함 (예, 엑셀문서를 DRM 처리함)
