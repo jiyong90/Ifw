@@ -2443,7 +2443,6 @@
   	$('body').on('focus',"input[id^='subsSymd'], input[id^='subsEymd']", function(){
    		var $this = this;
    		
-   		$(this).datetimepicker("destroy");
  		$(this).datetimepicker({
  			format: 'YYYY-MM-DD',
  		    language: 'ko',
