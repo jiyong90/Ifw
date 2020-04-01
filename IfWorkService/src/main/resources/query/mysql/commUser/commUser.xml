@@ -22,10 +22,9 @@
     
     <select id="getUserAuth" parameterType="map" resultType="hashmap">
         <![CDATA[
-		    SELECT r.rule_text as ruleText
+		    SELECT r.auth_id as ruleText
 				FROM WTM_EMP_HIS A 
-					JOIN WTM_USER_AUTH U ON U.USER_KEY = A.EMP_ID
-					JOIN comm_auth_rule r ON U.AUTH_ID = r.auth_id
+					JOIN WTM_USER_AUTH r ON A.EMP_ID = r.USER_KEY
 				where A.TENANT_ID = #{tenantId}
 					AND A.ENTER_CD = #{enterCd} 
 					AND A.SABUN = #{sabun}
