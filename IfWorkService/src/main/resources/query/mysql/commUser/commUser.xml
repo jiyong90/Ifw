@@ -12,10 +12,23 @@
 				, F_WTM_AES_DECRYPT(a.enter_cd, #{encKey}) as enterCd 
 				, a.name as name 
 				, a.password as password 
+				, a.emp_id
 			from comm_user a 
 			where a.tenant_id = #{tenantId} 
 				and a.enter_cd = F_WTM_AES_ENCRYPT(#{enterCd}, #{encKey}) 
 				and a.login_id = F_WTM_AES_ENCRYPT(#{loginId}, #{encKey})
+        ]]>
+    </select>
+    
+    <select id="getUserAuth" parameterType="map" resultType="hashmap">
+        <![CDATA[
+		    SELECT r.rule_text as ruleText
+				FROM WTM_EMP_HIS A 
+					JOIN WTM_USER_AUTH U ON U.USER_KEY = A.EMP_ID
+					JOIN comm_auth_rule r ON U.AUTH_ID = r.auth_id
+				where A.TENANT_ID = #{tenantId}
+					AND A.ENTER_CD = #{enterCd} 
+					AND A.SABUN = #{sabun}
         ]]>
     </select>
 </mapper>

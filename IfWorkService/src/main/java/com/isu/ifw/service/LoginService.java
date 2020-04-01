@@ -2,6 +2,7 @@ package com.isu.ifw.service;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -268,5 +269,24 @@ public class LoginService{
 			throw new Exception("비밀번호가 일치하지 않습니다.");
 
 		return userData;
+	}
+	
+	public List<String> getUserAuth(Long tenantId, String enterCd, String sabun) throws Exception {
+		Map<String, Object> paramMap = new HashMap();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		List<String> listdata = new ArrayList();
+		List<Map<String, Object>> auths = commUserMapper.getUserAuth(paramMap);
+		if(auths != null && auths.size() > 0) {
+			for(Map<String, Object> auth : auths) {
+				if(auth.containsKey("ruleText")) {
+					listdata.add(auth.get("ruleText").toString());
+				}
+			}
+		}
+
+		return listdata;
 	}
 }

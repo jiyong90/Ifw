@@ -2,6 +2,7 @@ package com.isu.ifw.controller;
 
 
 import java.net.URLDecoder;
+import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,7 +40,6 @@ import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmCalendarService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmMobileService;
-import com.isu.ifw.util.Aes256;
 import com.isu.ifw.util.MobileUtil;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
@@ -187,6 +187,8 @@ public class WtmMobileController {
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 		try {
+			logger.debug("certificate s " + params.toString());
+
 			String userToken = params.get("userToken").toString();
 			System.out.println(params.toString());
 			String enterCd = params.get("loginEnterCd").toString();
@@ -195,14 +197,7 @@ public class WtmMobileController {
 			String tenantKey = params.get("tenantKey").toString();
 			String empKey = enterCd + "@" + sabun;
 
-			logger.debug("1111111111111 0" + empKey);
-
 			empKey = MobileUtil.encEmpKey(userToken, empKey);
-			logger.debug("1111111111111 1" + empKey);
-
-			
-			 //{"deviceType":"android","osVersion":28,"tenantKey":"hdngv","loginPassword":"20000101","loginUserId":"20000101","deviceModel":"SM-G965N","locale":"ko_KR","pushToken":"cZoiIYlt5ew:APA91bHZsjQ42zSKByHVCKELzQkA_nRs1L7k0qqg3lxbTTrhahPTW8Vfj-hlRdWEae4Eaz-3oOeqY7nlg3uslRDWgiGX3oe-1LSNV7CjUoRmVclkvk8box5jxjXN84qJbXMYtQ7IpUKN","deviceId":"051e0704-45e6-42bf-94f6-7760afac1e0a","loginEnterCd":"H133","userToken":"26577433-1626-4d32-87f5-cb26a1891efc"}"
-
 			 
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
@@ -210,13 +205,9 @@ public class WtmMobileController {
 				rp.setFail("사용자 정보가 존재하지 않습니다.");
 				return rp;
 			}
-			logger.debug("1111111111111 3 " + emp.toString());
-			
 			UUID token = UUID.randomUUID();
 				
 			Map<String, Object> userData = loginService.getUserData(tenantId, enterCd, sabun, password);
-
-			logger.debug("1111111111111 4 " + userData.toString());
 
 			WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
 			if(mobileToken == null) {
@@ -226,7 +217,8 @@ public class WtmMobileController {
 			} 
 			mobileToken.setToken(token.toString());
 			mobileToken = tokenRepository.save(mobileToken);
-			logger.debug("1111111111111 5 ");
+			
+			List<String> listdata = loginService.getUserAuth(tenantId, enterCd, sabun);
 			
 			Map<String, Object> sessionData = new HashMap();
 			sessionData.put("orgNm", emp.getOrgCd());
@@ -234,21 +226,19 @@ public class WtmMobileController {
 			sessionData.put("empNm", emp.getEmpNm());
 			sessionData.put("id", enterCd+sabun);
 			sessionData.put("accessToken", token.toString());
-			
-			logger.debug("1111111111111 6 ");
+			if(listdata != null && listdata.size() > 0) {
+				sessionData.put("authCode", listdata);
+			}
+
 			Map<String, Object> result = new HashMap();
 			result.put("sessionData", sessionData);
 			
-			
-			logger.debug("1111111111111 7 ");
-//			empKey = empKey.replace("+", "%2B"); 
-
 			result.put("empKey", empKey);
-			logger.debug("1111111111111 8 ");
 			rp.put("result", result);
 		} catch(Exception e) {
 			rp.setFail(e.getMessage());
 		}
+		logger.debug("certificate e " + rp.toString());
 		return rp;
 	}
 	
@@ -262,49 +252,53 @@ public class WtmMobileController {
 					@RequestParam(value = "accessToken", required = true) String accessToken) throws Exception {
 
 		ReturnParam rp = new ReturnParam();
-		try {
-			String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(empKey, "sabun");
-			
-			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
-			if(emp == null) {
-				logger.debug("사용자 정보가 존재하지 않습니다.");
 
+		String enterCd = MobileUtil.parseEmpKey(empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(empKey, "sabun");
+		
+		logger.debug("validate s " + enterCd + " " + sabun);
+		
+		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+		if(emp == null) {
+			logger.debug("사용자 정보가 존재하지 않습니다.");
+			throw new CertificateException("사용자 정보가 존재하지 않습니다.");
 //				rp.setFail("사용자 정보가 존재하지 않습니다.");
-				return rp;
-			}
-			WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
-			if(mobileToken == null) {
-				logger.debug("로그인 정보가 존재하지 않습니다.");
-//				rp.setFail("로그인 정보가 존재하지 않습니다.");
-				return rp;
-			} 
-			logger.debug("1111111111 " + mobileToken.getToken() + ", " + accessToken);
-			if(!mobileToken.getToken().equals(accessToken)) {
-//				rp.setFail("사용자 인증이 만료되었습니다.");
-				logger.debug("1111111111 validate " + rp.toString());
-				return rp;
-			}
-			
-//			Map<String, Object> userData = loginService.getUserData(tenantId, enterCd, sabun, password);
-			
-			Map<String, Object> sessionData = new HashMap();
-			sessionData.put("orgNm", emp.getOrgCd());
-			sessionData.put("authCode", "");
-			sessionData.put("empNm", emp.getEmpNm());
-			sessionData.put("id", enterCd+sabun);
-			sessionData.put("accessToken", accessToken);
-			
-			Map<String, Object> result = new HashMap();
-			result.put("sessionData", sessionData);
-			result.put("empKey", enterCd+"@"+sabun);
-			
-			rp.put("result", result);
-		} catch(Exception e) {
-			logger.debug("1111111 dddd " + e.getMessage());
-			//			rp.setFail(e.getMessage());
+//				return rp;
 		}
-		logger.debug("1111111111 validate " + rp.toString());
+		WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
+		if(mobileToken == null) {
+			logger.debug("로그인 정보가 존재하지 않습니다.");
+			throw new CertificateException("로그인 정보가 존재하지 않습니다.");
+//				rp.setFail("로그인 정보가 존재하지 않습니다.");
+//				return rp;
+		} 
+//		logger.debug("1111111111 " + mobileToken.getToken() + ", " + accessToken);
+		if(!mobileToken.getToken().equals(accessToken)) {
+			logger.debug("사용자 인증이 만료되었습니다.");
+			throw new CertificateException("사용자 인증이 만료되었습니다.");
+//				rp.setFail("사용자 인증이 만료되었습니다.");
+//				return rp;
+		}
+			
+		List<String> listdata = loginService.getUserAuth(tenantId, enterCd, sabun);
+		
+		Map<String, Object> sessionData = new HashMap();
+		sessionData.put("orgNm", emp.getOrgCd());
+		sessionData.put("authCode", "");
+		sessionData.put("empNm", emp.getEmpNm());
+		sessionData.put("id", enterCd+sabun);
+		sessionData.put("accessToken", accessToken);
+		if(listdata != null && listdata.size() > 0) {
+			sessionData.put("authCode", listdata);
+		}
+
+		Map<String, Object> result = new HashMap();
+		result.put("sessionData", sessionData);
+		result.put("empKey", enterCd+"@"+sabun);
+		
+		rp.put("result", result);
+
+		logger.debug("validate e " + rp.toString());
 		rp.setSuccess("");
 		return rp;
 	}
