@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isu.ifw.mapper.WtmEmpHisMapper;
+import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmEmpMgrService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
@@ -26,6 +28,12 @@ public class WtmEmpMgrController {
 	
 	@Autowired
 	WtmEmpMgrService empMgrService;
+	
+	@Autowired
+	WtmAsyncService wtmAsyncService;
+	
+	@Autowired
+	WtmEmpHisMapper wtmEmpHisMapper;
 
 	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
 	
@@ -129,6 +137,15 @@ public class WtmEmpMgrController {
 			cnt = empMgrService.saveEmpHis(tenantId, enterCd, convertMap, userId);
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
+				
+				//신규입사자 또는 복직자(기본근무제 없는 사람들) 기본근무제 생성
+				List<Map<String, Object>> createBaseTarget = wtmEmpHisMapper.getCreateBaseTarget(convertMap);
+				if(createBaseTarget!=null && createBaseTarget.size()>0) {
+					for(Map<String, Object> t : createBaseTarget) {
+						wtmAsyncService.createWorkTermtimeByEmployee(Long.valueOf(t.get("tenantId")+""), t.get("enterCd")+"", t.get("sabun")+"", t.get("symd")+"", t.get("eymd")+"", userId, true);
+					}
+				}
+				
 				return rp;
 			}
 		} catch(Exception e) {

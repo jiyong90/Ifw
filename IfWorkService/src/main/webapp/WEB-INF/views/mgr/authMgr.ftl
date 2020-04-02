@@ -58,6 +58,7 @@
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">권한 대상자 관리</div>
 							<ul class="float-right btn-wrap" style="display:none;">
+								<li><a href="javascript:doAction2('Upload')" class="basic authA">업로드</a></li>
 								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 							</ul>
@@ -155,7 +156,7 @@
 		sheet2.SetUnicodeByte(3);
 		
 		//이름
-        //setSheetAutocompleteEmp( "sheet2", "empNm", null, getSheetEmpInfo);
+        setSheetAutocompleteEmp( "sheet2", "empNm", null, getSheetEmpInfo);
 		
 		sheetInit();
 		
@@ -195,6 +196,10 @@
 			IBS_SaveName(document.sheetForm,sheet2);
 			sheet2.DoSave( "${rc.getContextPath()}/authMgr/save/user" , $("#sheetForm").serialize());
 			break;
+		case "Upload":   
+			var params = {Mode:"HeaderMatch", WorkSheetNo:1}; 
+			sheet2.LoadExcel(params);
+            break;
 		}
 	}
 	
@@ -235,6 +240,12 @@
 			}
 			
 			doAction2('Search');
+		}
+	}
+	
+	function sheet2_OnLoadExcel() {
+		for(var i=1; i<=sheet2.LastRow(); i++) {
+			sheet2.SetCellValue(i, "authId", sheet1.GetCellValue( sheet1.GetSelectRow(), "authId"));
 		}
 	}
 	
