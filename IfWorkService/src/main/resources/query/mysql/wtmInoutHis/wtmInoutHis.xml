@@ -50,7 +50,7 @@
         ]]>
     </select>
     
-    <select id="getInoutStatus_old" parameterType="map" resultType="hashmap">
+    <select id="getInoutStatusIntf" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT X.YMD AS ymd, 
 				X.P_SDATE AS pSdate, 
@@ -293,5 +293,13 @@
         ]]>
     </select>
  
- 
+      <select id="getInoutMonitorList" parameterType="map" resultType="wtmGeneral">
+        <![CDATA[
+			SELECT * FROM (
+				SELECT ENTER_CD as TITLE, SABUN as CAPTION_LB, INOUT_TYPE_CD as CAPTION_RB, TO_CHAR(YMD, 'MM-DD HH:MI') as STATUS
+					FROM WTM_INOUT_HIS 
+				ORDER BY INOUT_DATE DESC) 
+			WHERE ROWNUM <= 20 
+        ]]>
+    </select>
 </mapper>

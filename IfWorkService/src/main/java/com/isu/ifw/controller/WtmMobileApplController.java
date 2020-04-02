@@ -2,6 +2,7 @@ package com.isu.ifw.controller;
 
 
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -135,7 +136,7 @@ public class WtmMobileApplController {
 				itemPropertiesMap.put("gubun", mobileService.getCodeList(tenantId, enterCd, "REASON_CD"));
 				result.put("itemAttributesMap", itemPropertiesMap);
 			} else if(applCd.equals("ENTRY_CHG")) {
-				if(!ymd.equals("")) {
+				if(!ymd.equals("") && ymd.length() == 8) {
 					dataMap = mobileApplService.init(tenantId, enterCd, sabun, paramMap);
 				}
 			}

@@ -588,7 +588,35 @@ public class WtmInoutController {
 		logger.debug("/mobile/"+ tenantId+"/inout/goback s " + rp.toString());
 		return rp;
 	}
-	
+	/**
+	 * 모니터링용
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/inout/monitor", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getMyInoutList(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey,
+			HttpServletRequest request) throws Exception {		
+
+		ReturnParam rp = new ReturnParam();
+		try {
+			Map<String, Object> paramMap = new HashMap();
+			
+			List<Map <String,Object>> l = inoutService.getInoutMonitorList(paramMap);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회결과가 없습니다.");
+				return rp;
+			}
+			l = MobileUtil.parseMobileList(l);
+			
+			rp.setSuccess("");
+			rp.put("result", l);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		return rp;
+	}
 }
 
 //출근, 퇴근 정보 전부 있으면 > calcApprDayInfo
