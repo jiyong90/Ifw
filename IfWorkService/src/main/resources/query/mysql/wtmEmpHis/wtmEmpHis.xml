@@ -175,5 +175,25 @@
 		                                               )
 													)
     </update>
+    
+    <select id="getCreateBaseTarget" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT H.TENANT_ID AS tenantId
+        	     , H.ENTER_CD AS enterCd
+        	     , H.SABUN AS sabun
+        	     , H.SYMD AS symd
+        	     , H.EYMD AS eymd
+			  FROM WTM_EMP_HIS H
+			  LEFT OUTER JOIN WTM_FLEXIBLE_EMP E
+			    ON H.TENANT_ID = E.TENANT_ID
+			   AND H.ENTER_CD = E.ENTER_CD
+			   AND H.SABUN = E.SABUN
+			 WHERE H.TENANT_ID = #{tenantId}
+			   AND H.ENTER_CD = #{enterCd}
+			   AND F_WTM_DATE_FORMAT(NOW(),'YMD') BETWEEN H.SYMD AND H.EYMD
+			   AND STATUS_CD = 'AA'
+			   AND E.FLEXIBLE_STD_MGR_ID IS NULL
+        ]]>
+    </select>
 	
 </mapper>
