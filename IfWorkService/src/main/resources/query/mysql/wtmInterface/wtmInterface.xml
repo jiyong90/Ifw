@@ -739,9 +739,12 @@ SELECT DISTINCT A.TENANT_ID AS tenantId
 	  , A.YMD AS ymd
 	  , 0 AS gooutCnt		
   FROM WTM_WORK_CALENDAR A
- WHERE A.TENANT_ID = 10
-   AND A.ENTER_CD = 'LSG'
-   AND A.YMD IN ('20200106', '20200203', '20200302')
+ WHERE A.TENANT_ID = 21
+   AND A.ENTER_CD = 'SAMHWACROWN'
+   AND TIME_CD_MGR_ID = 145
+   AND YMD > '20200301'
+   AND DATE_FORMAT(ENTRY_SDATE,'%H') >= '07' 
+   AND DATE_FORMAT(ENTRY_SDATE,'%i') > 50 
   ORDER BY A.YMD, A.SABUN
         ]]>
     </select>
@@ -1029,5 +1032,169 @@ ORDER BY YMD, SABUN
 			   AND A.ALLOW_MINUTE > 0
         ]]>
     </select>
+    
+    <update id="insertErrorLog" parameterType="hashmap">
+		INSERT INTO WTM_ERR_LOG (TENANT_ID, ENTER_CD, OBJECT_NM, ERR_LOCATION, ERR_LOG, ERR_MSG, UPDATE_DATE)
+		SELECT ${tenantId}, #{enterCd}, 'CLOSE_DAY', '10', 'NO DATA', CONCAT(#{enterCd}, '/', #{symd}, '~' , #{eymd}, '/', #{msg}), NOW()
+		FROM DUAL;
+	</update>
+    
+    <select id="isWorkClose" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT COUNT(*) as workCloseCnt
+			  FROM WTM_WORK_CALENDAR
+			 WHERE TENANT_ID = ${tenantId}
+			   AND ENTER_CD = #{enterCd}
+			   AND YMD BETWEEN #{symd} AND #{eymd}
+			   AND IFNULL(WORK_CLOSE_YN, 'N') = 'Y'
+			   AND (#{sabun} IS NULL OR #{sabun} = '' OR SABUN = #{sabun})
+        ]]>
+    </select>
+    
+    <update id="deleteWorktimeDayClose" parameterType="hashmap">
+		DELETE FROM WTM_WORKTIME_DAY_CLOSE
+		 WHERE WORKTIME_CLOSE_ID = #{worktimeCloseId}
+		   AND YMD BETWEEN #{symd} AND #{eymd}
+		   AND (#{sabun} IS NULL OR #{sabun} = '' OR SABUN = #{sabun})
+	</update>
+    
+    <select id="getLateAndLeaveAndAbsenceCode" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT MAX(CASE WHEN P.TAA_INFO_CD='LATE' THEN P.TAA_CD ELSE NULL END) AS lateCd -- 지각
+			     , MAX(CASE WHEN P.TAA_INFO_CD='LEAVE' THEN P.TAA_CD ELSE NULL END) AS leaveCd -- 조퇴
+			     , MAX(CASE WHEN P.TAA_INFO_CD='ABSENCE' THEN P.TAA_CD ELSE NULL END) AS absenceCd -- 결근
+			  FROM WTM_TAA_CODE P
+			 WHERE P.TENANT_ID = ${tenantId}
+			   AND P.ENTER_CD = #{enterCd}
+			   AND P.TAA_INFO_CD IN ('LATE', 'LEAVE', 'ABSENCE')
+        ]]>
+    </select>
+    
+    <select id="isWorkType" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT COUNT(*) AS emptyWorkTypeCnt
+			  FROM WTM_WORK_CALENDAR A
+			  JOIN WTM_FLEXIBLE_EMP B
+			    ON A.TENANT_ID = B.TENANT_ID
+			   AND A.ENTER_CD = B.ENTER_CD
+			   AND A.SABUN = B.SABUN
+			   AND A.YMD BETWEEN B.SYMD AND B.EYMD
+			 WHERE A.TENANT_ID = ${tenantId}
+			   AND A.ENTER_CD = #{enterCd}
+			   AND A.YMD BETWEEN #{symd} AND #{eymd}
+			   AND IFNULL(A.WORK_CLOSE_YN, 'N') = 'N'
+			   AND (B.WORK_TYPE_CD IS NULL OR B.WORK_TYPE_CD='')
+			   AND (#{sabun} IS NULL OR #{sabun} = '' OR SABUN = #{sabun})
+        ]]>
+    </select>
+    
+    <update id="insertWorktimeDayClose" parameterType="hashmap">
+		INSERT INTO WTM_WORKTIME_DAY_CLOSE (WORKTIME_CLOSE_ID, SABUN, YMD, WORK_TYPE_CD, TIME_CD_MGR_ID, HOLIDAY_YN, UPDATE_DATE, UPDATE_ID) 
+		SELECT #{worktimeCloseId} AS worktimeCloseId
+		     , A.SABUN AS sabun
+			  , A.YMD AS ymd
+			  , B.WORK_TYPE_CD AS workTypeCd
+			  , A.TIME_CD_MGR_ID AS timeCdMgrId
+			  , A.HOLIDAY_YN AS holidayYn
+			  , NOW()
+			  , '0'
+		  FROM WTM_WORK_CALENDAR A
+		  JOIN WTM_FLEXIBLE_EMP B
+		    ON A.TENANT_ID = B.TENANT_ID
+		   AND A.ENTER_CD = B.ENTER_CD
+		   AND A.SABUN = B.SABUN
+		   AND A.YMD BETWEEN B.SYMD AND B.EYMD
+		 WHERE A.TENANT_ID = ${tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.YMD BETWEEN #{symd} AND #{eymd}
+		   AND IFNULL(A.WORK_CLOSE_YN, 'N') = 'N'
+		   AND (#{sabun} IS NULL OR #{sabun} = '' OR A.SABUN = #{sabun})
+	</update>
+	
+    <update id="updateWorktimeDayClose" parameterType="hashmap">
+		UPDATE WTM_WORKTIME_DAY_CLOSE AA
+		  JOIN (			 
+		SELECT TENANT_ID
+			  , ENTER_CD
+			  , SABUN
+			  , YMD
+		     , SUM(A.WORK_MINUTE)-SUM(A.BREAK_MINUTE) as WORK_MINUTE
+		     , SUM(A.OT_MINUTE)-SUM(A.BREAK_OT_MINUTE) as OT_MINUTE
+			  , SUM(A.OTN_MINUTE)-SUM(A.BREAK_NIGHT_MINUTE) as OTN_MINUTE
+			  , SUM(A.LATE_MINUTE) as LATE_MINUTE
+			  , SUM(A.LEAVE_MINUTE) as  LEAVE_MINUTE
+			  , SUM(A.ABSENCE_MINUTE) as ABSENCE_MINUTE
+			  , SUM(A.PAY_MINUTE) as PAY_MINUTE
+			  , SUM(A.NONPAY_MINUTE) as NONPAY_MINUTE
+			  , CASE WHEN (SELECT HOLIDAY_YN FROM WTM_WORK_CALENDAR WHERE TENANT_ID = A.TENANT_ID AND ENTER_CD = A.ENTER_CD AND SABUN = A.SABUN AND YMD = A.YMD ) = 'Y'
+			              AND (SUM(A.WORK_MINUTE)-SUM(A.BREAK_MINUTE)>0 OR SUM(A.OT_MINUTE)-SUM(A.BREAK_OT_MINUTE)>0 OR SUM(A.OTN_MINUTE)-SUM(A.BREAK_NIGHT_MINUTE)>0) 
+						THEN (SELECT CASE WHEN COUNT(*) > 0 THEN 'Y' ELSE 'N' END AS SUBS_YN
+							     FROM WTM_WORK_DAY_RESULT X
+							     JOIN WTM_OT_APPL Y
+							       ON X.APPL_ID = Y.APPL_ID
+							      AND F_WTM_NVL(Y.CANCEL_YN, 'N') = 'N'
+						        JOIN WTM_OT_SUBS_APPL Z
+							       ON Y.OT_APPL_ID = Z.OT_APPL_ID
+							      AND F_WTM_NVL(Z.CANCEL_YN, 'N') = 'N'
+							     JOIN WTM_APPL Q
+							       ON Z.APPL_ID = Q.APPL_ID
+							      AND Q.APPL_STATUS_CD = '99'
+							    WHERE X.TENANT_ID = A.TENANT_ID
+							      AND X.ENTER_CD = A.ENTER_CD
+							      AND X.SABUN = A.SABUN
+							      AND X.YMD = A.YMD)
+			         ELSE 'N' END as SUB_YN 
+		  FROM (SELECT R.TENANT_ID
+		              , R.ENTER_CD
+		              , R.SABUN
+		              , R.YMD
+		              , SUM(CASE WHEN (TIME_TYPE_CD IN ('BASE', 'REGA') OR (F_WTM_GET_EMP_DAY_OPTION(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 'TAA_TIME_YN') = 'Y' AND TIME_TYPE_CD = 'TAA')) THEN IFNULL(APPR_MINUTE,0) ELSE 0 END) AS WORK_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD = 'EXCEPT' AND R.TAA_CD = 'BREAK' THEN IFNULL(APPR_MINUTE,0) ELSE 0 END) AS BREAK_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD IN ('OT', 'FIXOT') THEN IFNULL(APPR_MINUTE,0) ELSE 0 END) AS OT_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD = 'EXCEPT' AND R.TAA_CD IN ('BREAK_OT', 'BREAK_FIXOT') THEN IFNULL(APPR_MINUTE,0) ELSE 0 END) AS BREAK_OT_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD = 'NIGHT' THEN F_WTM_NVL(APPR_MINUTE,0) ELSE 0 END) AS OTN_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD = 'EXCEPT' AND R.TAA_CD = 'BREAK_NIGHT' THEN IFNULL(APPR_MINUTE,0) ELSE 0 END) AS BREAK_NIGHT_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD = 'LLA' AND R.TAA_CD = #{lateCd} THEN IFNULL(APPR_MINUTE,0) ELSE 0 END) AS LATE_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD = 'LLA' AND R.TAA_CD = #{leaveCd} THEN IFNULL(APPR_MINUTE,0) ELSE 0 END) AS LEAVE_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD = 'LLA' AND R.TAA_CD = #{absenceCd} THEN IFNULL(APPR_MINUTE,0) ELSE 0 END) AS ABSENCE_MINUTE
+						  , SUM(CASE WHEN TIME_TYPE_CD = 'TAA' AND C.PAY_YN = 'Y' THEN R.APPR_MINUTE ELSE 0 END) AS PAY_MINUTE
+		              , SUM(CASE WHEN TIME_TYPE_CD = 'TAA' AND C.PAY_YN = 'N' THEN R.APPR_MINUTE ELSE 0 END) AS NONPAY_MINUTE
+					  FROM WTM_WORK_DAY_RESULT R
+					  LEFT OUTER JOIN WTM_TAA_CODE C
+					    ON R.TENANT_ID = C.TENANT_ID
+					   AND R.ENTER_CD = C.ENTER_CD
+					   AND R.TAA_CD = C.TAA_CD
+					 WHERE R.TENANT_ID = ${tenantId}
+					   AND R.ENTER_CD = #{enterCd}
+					   AND R.YMD BETWEEN #{symd} AND #{eymd}
+					   AND (#{sabun} IS NULL OR #{sabun} = '' OR R.SABUN = #{sabun})
+					 GROUP BY R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD) A
+		GROUP BY TENANT_ID, ENTER_CD, SABUN, YMD ) BB
+		    ON AA.SABUN = BB.SABUN
+		   AND AA.YMD = BB.YMD
+		   SET AA.WORK_MINUTE = IFNULL(BB.WORK_MINUTE,0)
+			  , AA.OT_MINUTE = IFNULL(BB.OT_MINUTE,0) + IFNULL(BB.OTN_MINUTE,0)
+			  , AA.OTN_MINUTE = IFNULL(BB.OTN_MINUTE,0)
+			  , AA.NONPAY_MINUTE = IFNULL(BB.NONPAY_MINUTE,0)
+			  , AA.PAY_MINUTE = IFNULL(BB.PAY_MINUTE,0)
+			  , AA.LATE_MINUTE = IFNULL(BB.LATE_MINUTE,0)
+			  , AA.LEAVE_MINUTE = IFNULL(BB.LEAVE_MINUTE,0)
+			  , AA.ABSENCE_MINUTE = IFNULL(BB.ABSENCE_MINUTE,0)
+			  , AA.SUB_YN = BB.SUB_YN
+		 WHERE AA.WORKTIME_CLOSE_ID = #{worktimeCloseId}
+	</update>
+    
+    <select id="monthWorkClose" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_CLOSE_MONTH_N( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{worktimeCloseId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{sYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
     
 </mapper>

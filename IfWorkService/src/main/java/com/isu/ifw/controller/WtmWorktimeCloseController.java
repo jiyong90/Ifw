@@ -88,7 +88,8 @@ public class WtmWorktimeCloseController {
 			reqMap.put("eYmd", (String)paramMap.get("eYmd") );			
 			reqMap.put("sabun", (String)paramMap.get("sabun") );
 									
-			wtmInterfaceService.setCloseWorkIf(reqMap); //근무시간 마감생성 자바루프용 호출
+			//wtmInterfaceService.setCloseWorkIf(reqMap); //근무시간 마감생성 자바루프용 호출
+			wtmInterfaceService.setCloseWorkIfN(reqMap); //근무시간 마감생성 자바루프용 호출
 			
 		} catch(Exception e) {
 			e.printStackTrace();
