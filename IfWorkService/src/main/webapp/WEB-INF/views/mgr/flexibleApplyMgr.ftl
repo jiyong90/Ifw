@@ -118,7 +118,7 @@
 							</td>
 							<td>
 								<span class="label">기준일 </span>
-								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+								<input type="text" id="sYmd" name="sYmd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 							</td>
 							<td>
 								<a href="javascript:doAction1('Search');" class="button">조회</a>
@@ -193,6 +193,7 @@
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
+		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
         
 		var initdata1 = {};
 		

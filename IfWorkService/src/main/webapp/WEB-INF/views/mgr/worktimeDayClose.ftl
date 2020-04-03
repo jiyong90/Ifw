@@ -16,9 +16,9 @@
 								</td>
 								<td>
 									<span class="label">근무기간 </span>
-									<input type="text" id="sYmd" name="sYmd" class="date2 required" value="" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+									<input type="text" id="sYmd" name="sYmd" class="date2 required datetimepicker-input" value="" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
 									~
-									<input type="text" id="eYmd" name="eYmd" class="date2 required" value="" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
+									<input type="text" id="eYmd" name="eYmd" class="date2 required datetimepicker-input" value="" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
 								</td>
 								<td>
 									<span class="label">사번/성명</span>

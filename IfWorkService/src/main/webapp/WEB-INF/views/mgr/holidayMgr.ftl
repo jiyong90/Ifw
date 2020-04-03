@@ -12,9 +12,9 @@
 								</td>
 								<td>
 									<span class="label">기간</span>
-									<input type="text" id="symd" name="symd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#symd" placeholder="연도-월-일" autocomplete="off"/>
+									<input type="text" id="symd" name="symd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#symd" placeholder="연도-월-일" autocomplete="off"/>
 									~
-									<input type="text" id="eymd" name="eymd" class="date2 required" value="${today?date("yyyy-MM-dd")?string("yyyyMMdd")}" data-toggle="datetimepicker" data-target="#eymd" placeholder="연도-월-일" autocomplete="off"/>
+									<input type="text" id="eymd" name="eymd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#eymd" placeholder="연도-월-일" autocomplete="off"/>
 								</td>
 								<td>
 									<a href="javascript:doAction1('Search');" class="button">조회</a>
@@ -55,7 +55,6 @@
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
-   		
    		$("#symd").val(moment(moment().format('YYYY')+"0101").format("YYYY-MM-DD"));
    		$("#eymd").val(moment(moment().format('YYYY')+"1231").format("YYYY-MM-DD"));
    		

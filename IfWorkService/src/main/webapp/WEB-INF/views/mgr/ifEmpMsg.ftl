@@ -12,7 +12,7 @@
 							</td>
 							<td>
 								<span class="label">년월 </span>
-								<input type="text" id="sYmd" name="sYmd" class="date2 required" value="${today?date("yyyy-MM")?string("yyyyMM")}" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월" autocomplete="off"/>
+								<input type="text" id="sYmd" name="sYmd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월" autocomplete="off"/>
 							</td>
 							<td>
 								<span class="label">사번</span>
@@ -55,6 +55,7 @@
             format: 'YYYY-MM',
             language: 'ko'
         });
+		$("#sYmd").val("${today?date("yyyy-MM")?string("yyyy-MM")}");
         
 		var initdata1 = {};
 		
