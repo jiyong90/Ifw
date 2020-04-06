@@ -460,7 +460,7 @@
 			sheet1.DoSearch( "${rc.getContextPath()}/flexibleApply/list" , $("#sheetForm").serialize());
 			break;
 		case "Insert":
-			sheet1.DataInsert(0) ;
+			sheet1.DataInsert(100) ;
 			break;
 		case "Save":
 			if(!dupChk(sheet1,"tenantId|enterCd|applyNm|useSymd", false, true)){break;}
