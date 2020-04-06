@@ -65,8 +65,8 @@ public class WtmWorktimeCloseController {
 	}
 		
 	@RequestMapping(value = "/workTimeCloseIf",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void setWorkTimeCloseIf(HttpServletRequest request, @RequestBody Map<String, Object> paramMap) throws Exception {
-				
+	public ReturnParam setWorkTimeCloseIf(HttpServletRequest request, @RequestBody Map<String, Object> paramMap) throws Exception {
+		ReturnParam rp = new ReturnParam();		
 		// 사원정보
 		try {
 			Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
@@ -88,12 +88,13 @@ public class WtmWorktimeCloseController {
 			reqMap.put("eYmd", (String)paramMap.get("eYmd") );			
 			reqMap.put("sabun", (String)paramMap.get("sabun") );
 									
-			wtmInterfaceService.setCloseWorkIf(reqMap); //근무시간 마감생성 자바루프용 호출
+			//wtmInterfaceService.setCloseWorkIf(reqMap); //근무시간 마감생성 자바루프용 호출
+			rp = wtmInterfaceService.setCloseWorkIfN(reqMap); //근무시간 마감생성 자바루프용 호출
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		return ;
+		return rp;
 	}
 		
 	@RequestMapping(value="/dayList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

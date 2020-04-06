@@ -45,6 +45,7 @@
                         <li :class="{active: curPageName=='ifEmpMsg'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ifEmpMsg';">[연계]사원이력</a></li>
                         <li :class="{active: curPageName=='applCode'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/applCode';">신청서관리</a></li>
                         <li :class="{active: curPageName=='pushMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/pushMgr';">알림관리</a></li>
+                    	<li :class="{active: curPageName=='holidayMgr'}" v-if="interfaceYn=='N'"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/holidayMgr';">공휴일관리</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub2'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
@@ -161,12 +162,16 @@ function callLnb (obj) {
 				this.authRule = JSON.parse("${authRule?js_string}");
 			</#if>
 			
+			<#if interfaceYn?? && interfaceYn!='' && interfaceYn?exists >
+				this.interfaceYn = "${interfaceYn}";
+			</#if>
+			
 			var path = $(location).attr('pathname');
 			var pageName = path.substring(path.lastIndexOf('/') + 1);
 			
 			this.curSubMenu = '';
 						
-			if(pageName=='codeMgr'||pageName=='taaCodeMgr'||pageName=='empHisMgr'||pageName=='ifEmpMsg'||pageName=='ruleMgr'||pageName=='applCode'||pageName=='pushMgr')
+			if(pageName=='codeMgr'||pageName=='taaCodeMgr'||pageName=='empHisMgr'||pageName=='ifEmpMsg'||pageName=='ruleMgr'||pageName=='applCode'||pageName=='pushMgr'||pageName=='holidayMgr')
 				this.curSubMenu = 'sub1';
 			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
 				this.curSubMenu = 'sub2';

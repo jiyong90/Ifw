@@ -218,17 +218,15 @@ public class WtmMobileController {
 			mobileToken.setToken(token.toString());
 			mobileToken = tokenRepository.save(mobileToken);
 			
-			List<String> listdata = loginService.getUserAuth(tenantId, enterCd, sabun);
+			List<String> listdata = new ArrayList();
+			listdata = loginService.getUserAuth(tenantId, enterCd, sabun);
 			
 			Map<String, Object> sessionData = new HashMap();
 			sessionData.put("orgNm", emp.getOrgCd());
-			sessionData.put("authCode", "");
 			sessionData.put("empNm", emp.getEmpNm());
 			sessionData.put("id", enterCd+sabun);
 			sessionData.put("accessToken", token.toString());
-			if(listdata != null && listdata.size() > 0) {
-				sessionData.put("authCode", listdata);
-			}
+			sessionData.put("authCode", listdata);
 
 			Map<String, Object> result = new HashMap();
 			result.put("sessionData", sessionData);
@@ -261,36 +259,34 @@ public class WtmMobileController {
 		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 		if(emp == null) {
 			logger.debug("사용자 정보가 존재하지 않습니다.");
-			throw new CertificateException("사용자 정보가 존재하지 않습니다.");
-//				rp.setFail("사용자 정보가 존재하지 않습니다.");
-//				return rp;
+//			throw new CertificateException("사용자 정보가 존재하지 않습니다.");
+				rp.setFail("사용자 정보가 존재하지 않습니다.");
+				return rp;
 		}
 		WtmMobileToken mobileToken = tokenRepository.findByTenantIdAndEmpKey(tenantId, enterCd+"@"+sabun);
 		if(mobileToken == null) {
 			logger.debug("로그인 정보가 존재하지 않습니다.");
-			throw new CertificateException("로그인 정보가 존재하지 않습니다.");
-//				rp.setFail("로그인 정보가 존재하지 않습니다.");
-//				return rp;
+//			throw new CertificateException("로그인 정보가 존재하지 않습니다.");
+				rp.setFail("로그인 정보가 존재하지 않습니다.");
+				return rp;
 		} 
-//		logger.debug("1111111111 " + mobileToken.getToken() + ", " + accessToken);
+		logger.debug("1111111111 " + mobileToken.getToken() + ", " + accessToken);
 		if(!mobileToken.getToken().equals(accessToken)) {
 			logger.debug("사용자 인증이 만료되었습니다.");
-			throw new CertificateException("사용자 인증이 만료되었습니다.");
-//				rp.setFail("사용자 인증이 만료되었습니다.");
-//				return rp;
+//			throw new CertificateException("사용자 인증이 만료되었습니다.");
+				rp.setFail("사용자 인증이 만료되었습니다.");
+				return rp;
 		}
 			
-		List<String> listdata = loginService.getUserAuth(tenantId, enterCd, sabun);
+		List<String> listdata = new ArrayList();
+		listdata = loginService.getUserAuth(tenantId, enterCd, sabun);
 		
 		Map<String, Object> sessionData = new HashMap();
 		sessionData.put("orgNm", emp.getOrgCd());
-		sessionData.put("authCode", "");
 		sessionData.put("empNm", emp.getEmpNm());
 		sessionData.put("id", enterCd+sabun);
 		sessionData.put("accessToken", accessToken);
-		if(listdata != null && listdata.size() > 0) {
-			sessionData.put("authCode", listdata);
-		}
+		sessionData.put("authCode", listdata);
 
 		Map<String, Object> result = new HashMap();
 		result.put("sessionData", sessionData);

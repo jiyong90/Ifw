@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmHolidayMapper">
+	<!--
+   		공휴일 조회
+     -->
+	<select id="getHolidayList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT H.TENANT_ID AS tenantId
+			     , H.ENTER_CD AS enterCd
+			     , H.BISINESS_PLACE_CD AS bisinessPlaceCd
+			     , H.HOLIDAY_YMD AS holidayYmd
+			     , H.HOLIDAY_NM AS holidayNm
+			     , H.SUN_YN AS sunYn
+			     , H.FESTIVE_YN AS festiveYn
+			     , H.PAY_YN AS payYn
+			     , H.NOTE as note
+			  FROM WTM_HOLIDAY_MGR H
+			  WHERE H.TENANT_ID = ${tenantId}
+			    AND H.ENTER_CD = #{enterCd}
+			    AND H.HOLIDAY_YMD BETWEEN #{symd} AND #{eymd}
+			 ORDER BY H.BISINESS_PLACE_CD, H.HOLIDAY_YMD
+        ]]>
+    </select>
+    
+    <update id="deleteHolidays" parameterType="map" >
+       <if test="deleteList!=null">
+          DELETE FROM WTM_HOLIDAY_MGR 
+          WHERE (TENANT_ID, ENTER_CD, BISINESS_PLACE_CD, HOLIDAY_YMD) IN (
+	       <foreach collection="deleteList" item="m" separator=", ">
+			  (${tenantId}, #{enterCd}, #{m.bisinessPlaceCd}, #{m.holidayYmd})
+		   </foreach>
+		   )
+	   </if>
+    </update>
+    
+    <update id="insertHolidays" parameterType="map" >
+       <if test="insertList!=null">
+		    INSERT INTO WTM_HOLIDAY_MGR(TENANT_ID, ENTER_CD, BISINESS_PLACE_CD, HOLIDAY_YMD, HOLIDAY_NM, SUN_YN, FESTIVE_YN, PAY_YN, NOTE) 
+	       <foreach collection="insertList" item="m" separator="UNION">
+		    SELECT ${tenantId}, #{enterCd}, #{m.bisinessPlaceCd}, #{m.holidayYmd}, #{m.holidayNm}, #{m.sunYn}, #{m.festiveYn}, #{m.payYn}, #{m.note}
+		      FROM DUAL
+		   </foreach>
+	   </if>
+    </update>
+    
+    <update id="updateHolidays" parameterType="map" >
+       <if test="updateList!=null">
+		    UPDATE WTM_HOLIDAY_MGR M
+		      JOIN ( 
+		       <foreach collection="updateList" item="m" separator="UNION">
+			    SELECT ${tenantId} AS TENANT_ID
+			         , #{enterCd} AS ENTER_CD
+			         , #{m.bisinessPlaceCd} AS BISINESS_PLACE_CD
+			         , #{m.holidayYmd} AS HOLIDAY_YMD
+			         , #{m.holidayNm} AS HOLIDAY_NM
+			         , #{m.sunYn} AS SUN_YN
+			         , #{m.festiveYn} AS FESTIVE_YN
+			         , #{m.payYn} AS PAY_YN
+			         , #{m.note} AS NOTE
+			      FROM DUAL
+			   </foreach>
+			   ) T
+			   ON M.TENANT_ID = T.TENANT_ID
+			  AND M.ENTER_CD = T.ENTER_CD
+			  AND M.BISINESS_PLACE_CD = T.BISINESS_PLACE_CD
+			  AND M.HOLIDAY_YMD = T.HOLIDAY_YMD
+			  SET M.HOLIDAY_NM = T.HOLIDAY_NM
+			    , M.NOTE = T.NOTE
+	   </if>
+    </update>
+</mapper>
