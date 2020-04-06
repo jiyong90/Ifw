@@ -1211,6 +1211,16 @@
 						$("#trCoreTime").hide();												
 						
 						$("#trApplyEntry").show();
+						if(sheet1.GetCellValue( NewRow, "applyEntrySdateYn") == "Y"){
+							$("input:checkbox[name='applyEntrySdateYn']").prop("checked", true);
+						} else {
+							$("input:checkbox[name='applyEntrySdateYn']").prop("checked", false);
+						}
+						if(sheet1.GetCellValue( NewRow, "applyEntryEdateYn") == "Y"){
+							$("input:checkbox[name='applyEntryEdateYn']").prop("checked", true);
+						} else {
+							$("input:checkbox[name='applyEntryEdateYn']").prop("checked", false);
+						}
 						
 						// 근무계획없음 가능여부
 						$("#trUnplan").show();
