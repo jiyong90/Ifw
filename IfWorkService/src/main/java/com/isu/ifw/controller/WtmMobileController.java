@@ -621,6 +621,52 @@ public class WtmMobileController {
 	}
 	
 	/**
+	 * 근무계획시간 조회 초기괎
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/team/init", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody Map<String, Object> temInitData(@PathVariable Long tenantId,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey,
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		try {
+			String userToken = request.getParameter("userToken");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+			Map<String, Object> data = new HashMap();
+			Map<String, Object> result = new HashMap();
+
+			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy.MM.dd");
+			Date now = new Date();
+			String today = format1.format(now);
+	
+			data.put("ymd", today);
+			result.put("data", data);
+			rp.put("result", result);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		return rp;
+	}
+	
+	/**
 	 * 근무계획시간 조회
 	 * @param tenantKey
 	 * @param locale
