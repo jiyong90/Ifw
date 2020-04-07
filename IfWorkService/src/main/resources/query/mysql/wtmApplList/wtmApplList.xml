@@ -13,13 +13,13 @@
 		       , C.EMP_NM AS empNm
 		       , CASE WHEN A.HOLIDAY_YN = 'Y' THEN '휴일근무' ELSE '연장근무' END AS applNm
 		       , A.YMD AS ymd
-		       , A.OT_SDATE AS otSdate
-		       , A.OT_EDATE AS otEdate
+		       , F_WTM_DATE_FORMAT(A.OT_SDATE, 'YMDHI') AS otSdate
+		       , F_WTM_DATE_FORMAT(A.OT_EDATE, 'YMDHI') AS otEdate
 		       , A.OT_MINUTE AS otMinute
 		       , A.REASON_CD AS reasonCd
 		       , A.REASON AS reason
-		       , D.SUBS_SDATE AS subsSdate
-		       , D.SUBS_EDATE AS subsEdate
+		       , F_WTM_DATE_FORMAT(D.SUBS_SDATE, 'YMDHI') AS subsSdate
+		       , F_WTM_DATE_FORMAT(D.SUBS_EDATE, 'YMDHI') AS subsEdate
 		  FROM WTM_OT_APPL A
 		 INNER JOIN WTM_APPL B
 		     ON A.APPL_ID = B.APPL_ID
@@ -53,12 +53,12 @@
 		       , F_WTM_GET_EMP_ORG_NM(C.TENANT_ID, C.ENTER_CD, B.APPL_SABUN, A.YMD) AS orgNm
 		       , C.EMP_NM AS empNm
 		       , A.YMD AS ymd
-		       , A.PLAN_SDATE AS planSdate
-		       , A.PLAN_EDATE AS planEdate
-		       , A.ENTRY_SDATE AS entrySdate
-		       , A.ENTRY_EDATE AS entryEdate
-		       , A.CHG_SDATE AS chgSdate
-		       , A.CHG_EDATE AS chgEdate
+		       , F_WTM_DATE_FORMAT(A.PLAN_SDATE, 'YMDHI') AS planSdate
+		       , F_WTM_DATE_FORMAT(A.PLAN_EDATE, 'YMDHI') AS planEdate
+		       , F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'YMDHI') AS entrySdate
+		       , F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'YMDHI') AS entryEdate
+		       , F_WTM_DATE_FORMAT(A.CHG_SDATE, 'YMDHI') AS chgSdate
+		       , F_WTM_DATE_FORMAT(A.CHG_EDATE, 'YMDHI') AS chgEdate
 		       , A.REASON AS reason
 		  FROM WTM_ENTRY_APPL A
 		 INNER JOIN WTM_APPL B
@@ -73,7 +73,7 @@
 		    AND A.YMD BETWEEN #{sYmd} AND #{eYmd}
 		  <if test="searchValue!=''">
 		  	AND (C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT(#{searchKeyword}, '%'))
-		  </if>
+		  </if>OT
 		  <if test="orgList!=null">
 		   AND C.ORG_CD IN (NULL, 
 	       <foreach collection="orgList" item="org" separator=", ">
