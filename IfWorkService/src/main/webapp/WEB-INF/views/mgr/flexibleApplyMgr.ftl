@@ -235,7 +235,7 @@
 		sheet1.SetImageList(0,"${rc.getContextPath()}/IBLeaders/Sheet/icon/icon_popup.png");
 		sheet1.SetImageList(1,"${rc.getContextPath()}/IBLeaders/Sheet/icon/icon_popup.png");
 		
-		var repeatTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "REPEAT_TYPE_CD"), "선택");	
+		var repeatTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "REPEAT_TYPE_CD"), "");	
 		sheet1.SetColProperty("repeatTypeCd", {ComboText:repeatTypeCdList[0], ComboCode:repeatTypeCdList[1]} );
 		
 		
