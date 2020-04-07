@@ -558,10 +558,13 @@
 				$("#loading").hide();
 				console.log(data);
 				if(data!=null) {
-					if(data.message != '')
-						alert(data.message);
-					else 
+					if(data.status=='OK'){
 						alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
+					} else { 
+						var msg = data.message;
+						if(msg == '') msg = "근무 확정처리 중 오류가 발생되었습니다.";
+						alert(msg);
+					}
 					
 					doAction1("Search");
 				}

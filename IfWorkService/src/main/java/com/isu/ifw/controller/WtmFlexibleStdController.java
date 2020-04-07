@@ -222,6 +222,32 @@ public class WtmFlexibleStdController {
 		return rp;
 	}
 	
+	@RequestMapping(value="/flextype", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam stdFlexList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap) {
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		ObjectMapper mapper = new ObjectMapper();
+		String userId = sessionData.get("userId").toString();
+		String enterCd = sessionData.get("enterCd").toString();
+		String bisinessPlaceCd = null;
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> wtmFlexibleStd = null;
+		
+		try {
+			wtmFlexibleStd = WtmFlexibleStdService.getFlexibleStdFlex(tenantId, enterCd);
+			rp.put("DATA", wtmFlexibleStd);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
 	
 	@RequestMapping(value="/listWeb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam stdListWeb(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {

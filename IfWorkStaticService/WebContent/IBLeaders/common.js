@@ -166,7 +166,11 @@ function stfConvCode(obj, str) {
 
 
 
-	if(str != "") convArray[2] += "<option value=''>" + str + "</option>";
+	if(str != "") {
+		convArray[0] += str + "|";
+		convArray[1] += "|";
+		convArray[2] += "<option value=''>" + str + "</option>";
+	}
 
 	for (i = 0; i < obj.length; i++) {
 		convArray[0] += obj[i].codeNm + "|";
