@@ -142,7 +142,8 @@ function callLnb (obj) {
 			leaderYn: '',
 			tsId: '',
 			authCd: '',
-			authRule: []
+			authRule: [],
+			interfaceYn: ''
 		},
 		mounted: function(){
 			
