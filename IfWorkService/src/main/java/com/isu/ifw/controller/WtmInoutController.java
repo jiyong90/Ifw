@@ -591,7 +591,7 @@ public class WtmInoutController {
 	/**
 	 * 모니터링용
 	 */
-	@RequestMapping(value = "/mobile/{tenantId}/inout/monitor", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = "/mobile/{tenantId}/team/monitor", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getMyInoutList(@PathVariable Long tenantId, 
 			@RequestParam(value = "tenantKey", required = true) String tenantKey,
 			@RequestParam(value="locale", required = true) String locale, 

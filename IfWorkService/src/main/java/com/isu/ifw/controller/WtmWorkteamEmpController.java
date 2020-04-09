@@ -26,7 +26,7 @@ import com.isu.ifw.vo.ReturnParam;
 @RequestMapping(value="/workteam")
 public class WtmWorkteamEmpController {
 	
-	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
+	private final Logger logger = LoggerFactory.getLogger("ifwFileLog");
 	
 	@Autowired
 	WtmWorkteamEmpService workteamService;
@@ -41,12 +41,8 @@ public class WtmWorkteamEmpController {
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		logger.debug("getWorkteamList Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+		logger.debug("getWorkteamList paramMap" + paramMap.toString());
 	
-		MDC.put("paramMap", paramMap.toString());
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> workteamList = null;
@@ -63,7 +59,7 @@ public class WtmWorkteamEmpController {
 	}
 	
 	@RequestMapping(value="/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ReturnParam setWorkteamList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+	public @ResponseBody ReturnParam setWorkteamList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
 		
@@ -73,26 +69,20 @@ public class WtmWorkteamEmpController {
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		MDC.put("param", paramMap.toString());
-		logger.debug("setTaaCodeList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+		logger.debug("setWorkteamList paramMap : " + paramMap.toString());
 		
 		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
 		convertMap.put("enterCd", enterCd);
 		convertMap.put("tenantId", tenantId);
 		convertMap.put("userId", userId);
 
-		MDC.put("convertMap", convertMap);
+		logger.debug("setWorkteamList convertMap : " + convertMap.toString());
 
 		try {		
 			rp = workteamService.setWorkteamList(tenantId, enterCd, userId, convertMap);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		//근무조 저장 후 프로시저 호출 
-		//P_WTM_FLEXIBLE_EMP_RESET
 		
 		return rp;
 	}
