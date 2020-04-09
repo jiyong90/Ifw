@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.service.WtmInterfaceService;
 import com.isu.ifw.service.WtmWorktimeCloseService;
 import com.isu.ifw.util.WtmUtil;
@@ -31,6 +33,10 @@ public class WtmWorktimeCloseController {
 	
 	@Autowired
 	WtmInterfaceService wtmInterfaceService;
+	
+
+	@Autowired
+	WtmPropertieRepository propertieRepo;
 	
 	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
 		
@@ -54,6 +60,14 @@ public class WtmWorktimeCloseController {
 		try {			
 			cnt = worktimeCloseService.setWorktimeCloseConfirm(tenantId, enterCd, userId, paramMap);
 			if(cnt > 0) {
+				// 마감사용이 HR전송방식이면 인터페이스 해야한다.
+				// 단 오라클 db사용회사는 마감프로시져에서 insert 연동하니깐 제외됨
+				if(!"HSML".equals(enterCd)) {
+					WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_COMP_USED");
+					if(propertie!=null && "HR".equalsIgnoreCase(propertie.getInfoValue())) {
+						wtmInterfaceService.sendCompCnt((HashMap) paramMap);
+					}
+				}
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;
 			}

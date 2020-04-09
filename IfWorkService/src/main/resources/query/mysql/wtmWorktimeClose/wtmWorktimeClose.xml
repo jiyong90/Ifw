@@ -125,17 +125,18 @@
     </select>     
         
     <update id="setWorkTimeCloseConfirm" parameterType="map">	    	    
-   		UPDATE WTM_WORK_CALENDAR 
+   		UPDATE WTM_WORK_CALENDAR C
+   		JOIN (SELECT B.WORK_CALENDAR_ID
+		        FROM WTM_WORKTIME_CLOSE A
+		       INNER JOIN WTM_WORK_CALENDAR B
+		          ON A.TENANT_ID = B.TENANT_ID
+		         AND A.ENTER_CD = B.ENTER_CD
+		         AND B.YMD BETWEEN A.SYMD AND A.EYMD 
+		       WHERE A.WORKTIME_CLOSE_ID = #{worktimeCloseId}) N
+ 		ON ( C.WORK_CALENDAR_ID = N.WORK_CALENDAR_ID)
  		   SET WORK_CLOSE_YN = 'Y'
  		     , UPDATE_DATE = now()
  		     , UPDATE_ID = #{userId}
-		 WHERE TENANT_ID = #{tenantId}
-           AND ENTER_CD = #{enterCd}               
-           AND SUBSTR(YMD, 1, 6) = REPLACE(#{searchYm}, '-', '')
-             AND CASE WHEN #{searchKeyword} IS NULL THEN 1=1
-	                  WHEN #{searchKeyword} = '' THEN 1=1
-	                  ELSE SABUN = #{searchKeyword}
-                 END            	   
     </update>
     
     <update id="insertCloseList" parameterType="hashmap">
