@@ -223,6 +223,9 @@ public class ViewController {
 		mv.addObject("authCd", authCd);
 		mv.addObject("applType", request.getParameter("applType")!=null?request.getParameter("applType"):"01");
 		
+		//hr interface여부
+  		mv.addObject("interfaceYn", tcms.getConfigValue(tenantId, "WTMS.HR.INTERFACE_YN", true, ""));
+		
 		Calendar date = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String today = sdf.format(date.getTime());
