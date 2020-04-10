@@ -188,28 +188,29 @@
     
     <select id="getTotOtMinuteBySymdAndEymd" parameterType="map" resultType="map">
     <![CDATA[
-    	SELECT CAST(SUM(CASE WHEN X.OT_MINUTE IS NULL OR X.OT_MINUTE='' THEN 0 ELSE X.OT_MINUTE END) AS SIGNED INTEGER) AS totOtMinute
-		  FROM (
-			SELECT SUM(F_WTM_NVL(O.OT_MINUTE,0)) - SUM(F_WTM_NVL(S.SUBS_MINUTE,0)) AS OT_MINUTE
-			  FROM WTM_APPL A
-			  JOIN WTM_OT_APPL O
-			    ON A.APPL_ID = O.APPL_ID
-			  LEFT OUTER JOIN WTM_OT_SUBS_APPL S
-			    ON A.APPL_ID = S.APPL_ID
-			   AND S.SUB_YMD BETWEEN #{symd} AND #{eymd}
-			 WHERE A.APPL_STATUS_CD IN ('21','31')
-			   AND O.YMD BETWEEN #{symd} AND #{eymd}
-			   AND A.APPL_IN_SABUN = #{sabun}
-			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '') 
-			 UNION ALL
-			SELECT F_WTM_NVL(CASE WHEN R.APPR_MINUTE IS NULL THEN R.PLAN_MINUTE ELSE R.APPR_MINUTE END,0) AS OT_MINUTE
-			  FROM WTM_WORK_DAY_RESULT R
-			 WHERE R.TENANT_ID = #{tenantId}
-			   AND R.ENTER_CD = #{enterCd}
-			   AND R.YMD BETWEEN #{symd} AND #{eymd}
-			   AND R.TIME_TYPE_CD IN ('OT','FIXOT')
-			   AND R.SABUN = #{sabun}
-		) X
+		SELECT CAST(SUM(CASE WHEN X.OT_MINUTE IS NULL OR X.OT_MINUTE='' THEN 0 ELSE X.OT_MINUTE END) AS SIGNED INTEGER) AS totOtMinute
+	        FROM (
+	         SELECT SUM(F_WTM_NVL(O.OT_MINUTE,0)) - SUM(F_WTM_NVL(S.SUBS_MINUTE,0)) AS OT_MINUTE
+	           FROM WTM_APPL A
+	           JOIN WTM_OT_APPL O
+	             ON A.APPL_ID = O.APPL_ID
+	           LEFT OUTER JOIN WTM_OT_SUBS_APPL S
+	             ON A.APPL_ID = S.APPL_ID
+	            AND S.SUB_YMD BETWEEN #{symd} AND #{eymd}
+	          WHERE A.APPL_STATUS_CD IN ('21','31')
+	            AND O.YMD BETWEEN #{symd} AND #{eymd}
+	            AND A.APPL_IN_SABUN = #{sabun}
+	            AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '') 
+	          UNION ALL
+	         SELECT F_WTM_NVL(CASE WHEN YMD<F_WTM_DATE_FORMAT(NOW(), 'YMD') THEN F_WTM_NVL(R.APPR_MINUTE,0) ELSE CASE WHEN R.APPR_MINUTE IS NULL THEN R.PLAN_MINUTE ELSE R.APPR_MINUTE END END,0) AS OT_MINUTE
+	           FROM WTM_WORK_DAY_RESULT R
+	          WHERE R.TENANT_ID = #{tenantId}
+	            AND R.ENTER_CD = #{enterCd}
+	            AND R.YMD BETWEEN #{symd} AND #{eymd}
+	            AND R.TIME_TYPE_CD IN ('OT','FIXOT')
+	            AND R.SABUN = #{sabun}
+	      ) X
+
 	]]>
     </select>
    
