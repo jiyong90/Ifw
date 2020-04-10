@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,20 @@ public class WtmInterfaceController {
 	
 	@Autowired
 	private WtmInterfaceService WtmInterfaceService;
+	
+	@RequestMapping(value="/data/{type}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	   public void sendMaCodedtl(@PathVariable String type, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+	      try {
+	         //ObjectMapper mapper = new ObjectMapper();
+	         WtmInterfaceService.sendData(type, paramMap);
+	         //return mapper.writeValueAsString(resMap);
+	      } catch (Exception e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	         //return e.getMessage();
+	      }
+	       
+	   }
 	
 	@RequestMapping(value = "/code",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam codeIf(HttpServletRequest request, @RequestParam Map<String, Object> paramMap, HttpServletResponse response) throws Exception {

@@ -1,4 +1,119 @@
+spring: 
+  profiles:
+    active: korgc
+
+#그린케미칼
+---
 spring:
+  profiles: korgc
+  datasource:
+    #url: dbc:log4jdbc:mysql://db-2o9bg.cdb.ntruss.com:3306/worktimemanagement?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    #username: worktime
+    #password: dnjzmxkdla!2
+    #driver-class-name: com.mysql.cj.jdbc.Driver 
+    hikari:
+      jdbc-url: jdbc:sqlserver://211.34.1.12:1433;databaseName=KPXERP
+      username: Sa
+      password: korgc12!@
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://211.34.1.12:1433;databaseName=KPXERP
+    username: Sa
+    password: korgc12!@
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      
+    tomcat:
+      max-active: 50
+      max-wait: 20000
+      max-idle: 20
+      min-idle: 15
+      test-on-borrow: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 3600000 
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+      
+  mvc: 
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .ftl
+         
+  freemarker:
+    template-loader-path: /WEB-INF/views/
+    suffix: .ftl
+    request-context-attribute: rc 
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+        
+mybatis:
+  config-location: classpath:query/ksystem/green/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+ifw:
+  client-id: korgc
+  secret: 5/xpGvxWo3sGstiBrRahvQAVkjOTnt0yM0gXW6g0e7k=
+  token-url: https://cloudhr.pearbranch.com/ifa/oauth/token
+  login-post: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/certificate 
+  valid-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/validate     
+  status-get: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/status
+  in-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/in
+  out-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/out
+  cancel-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/cancel
+  except-post: https://cloudhr.pearbranch.com/ifw/api/{{tsId}}/worktime/except
+  m-status-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/worktime/status
+  dashboard-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/dashboard
+  edoc-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/edocument/{{function}}
+  team-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/team/{{function}}   
+  apply-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/apply/{{function}} 
+  inout-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/inout/{{function}}
+  my-url: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/my/{{function}}
+  code-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/code
+  #code-post: http://10.30.30.215/ifw/api/korgc/d/code
+  emp-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/emp 
+  #emp-post: http://10.30.30.215/ifw/api/korgc/d/emp
+  empaddr-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/empaddr
+  #empaddr-post: http://10.30.30.215/ifw/api/korgc/d/empaddr
+  gnt-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/gnt
+  #gnt-post: http://10.30.30.215/ifw/api/korgc/d/gnt
+  holiday-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/holiday
+  org-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/org
+  #org-post: http://10.30.30.215/ifw/api/korgc/d/org
+  orgconc-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/orgconc
+  taaappl-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/taaappl
+  #taaappl-post: http://10.30.30.215/ifw/api/korgc/d/taaappl
+  #더존은 로그인 정보가 userId로도 사용할 수 있다 우리쪽 데이터는 사번정보로 내무 세션정보를 가지고 오고 있기 때문에 username을 다시 만들어주자
+  username: korgc@##1##@##2##
+ 
+dzGateway:
+  gateway-url: 
+  gateway-customkey: 
+  gateway-product: ISU
+  gateway-product-version: 1.0.0
+  gateway-language: KR
+  gateway-dev-url: 
+  gateway-dev-customkey: 
+  sign-key: k0rgc20200401KsYstEmiSuinTerFace
+  expired-time: 600000
+
+adapterEncryptColumnKey: empKey,notiKey,payKey,apprEmpKey,applKey,targetEmpKey,changeEmp,dayoffEmp,replaceEmp,lineItemKey
+  
+logging:
+  config: classpath:logback-spring.xml
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta(%-4relative) --- [ %thread{10} ] %cyan(%logger{20}) : %msg "%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %-4relative --- [ %thread{10} ] %logger{35} - %msg"%n'
+  path: C:\Log
+  file: ifwi.log
+  
+  
+---
+spring:
+  profiles: honda
   datasource:
     #url: dbc:log4jdbc:mysql://db-2o9bg.cdb.ntruss.com:3306/worktimemanagement?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
     #username: worktime

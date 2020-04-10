@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.intf.mapper.WtmIntfMapper">
+ 
+	<select id="getWtmCode" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT CompanySeq AS ENTER_CD
+			     , GRCODE_CD
+			     , CODE
+			     , CODE_NM
+			     , SYMD , EYMD
+			     , '' AS SEQ
+			     , Remark AS NOTE
+			     , LastDateTme AS CHKDATE
+			  FROM KPXERP_VCOMCommonCode_ISU
+		]]>
+	</select>
+	 
+    <select id="getWtmHoliday" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT #{convEnterCd} AS ENTER_CD, LOCATION_CD, YMD, HOLIDAY_NM, FESTIVE_YN, PAY_YN
+			  FROM (
+			        ) A
+			 WHERE ENTER_CD = #{enterCd}
+			 ORDER BY ENTER_CD
+        ]]>
+    </select>
+    
+    <select id="getWtmGnt" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CompanySeq AS ENTER_CD
+			     , WkItemSeq AS GNT_CD
+			     , WkItemName AS GNT_NM
+			     , '' AS GNT_GUBUN_CD
+			     , '' AS HOL_INCL_YN
+			     , '' AS REQUEST_TYPE_CD
+			     , '' AS WORK_YN
+			     , ISNULL(IsPaid,'') AS PAY_YN
+			     , Remark AS NOTE
+			     , LastDateTime AS CHKDATE
+			 FROM KPXERP_VPRWkItem_ISU
+        ]]>
+    </select>
+    
+    <select id="getWtmOrg" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CompanySeq AS ENTER_CD
+			     , DeptName AS ORG_NM
+			     , BegDate AS SYMD
+			     , EndDate AS EYMD
+			     , DeptSeq AS ORG_CD
+			     , UppDeptSeq AS PRIOR_ORG_CD
+			     , '' AS SEQ
+			     , '' AS ORG_LEVEL
+			     , '' AS ORDER_SEQ
+			     , Remark AS NOTE
+			     , LastDateTime AS CHKDATE
+			  FROM KPXERP_VHROrgDeptInfo_ISU --KPXERP_VDADeptInfo_ISU 
+        ]]>
+    </select>
+    
+    
+    <select id="getWtmEmp" parameterType="map" resultType="hashmap">
+        <![CDATA[ 
+			SELECT CompanySeq AS ENETR_CD
+			     , EmpId AS SABUN
+			     , EmpName AS EMP_NM
+			     , EmpEngName AS EMP_ENG_NM
+			     , EntDate AS SYMD
+			     , RetireDate AS EYMD
+			     , TypeSeq AS STATUS_CD
+			     , DeptSeq AS ORG_CD
+			     , '' AS LOCATION_CD
+			     , UMJdSeq AS DUTY_CD
+			     , UMJPSeq AS POS_CD
+			     , UMPgSeq AS CLASS_CD
+			     , '' AS JOB_GROUP_CD
+			     , JobSeq AS JOB_CD
+			     , '' AS PAY_TYPE_CD
+			     , '' AS LEADER_YN
+			     , Remark AS NOTE
+			     , LastDateTime AS CHKDATE
+			  FROM KPXERP_VDAEmpInfo_ISU
+			 ORDER BY EmpId, EntDate
+        ]]>
+    </select>
+    
+    <select id="getWtmOrgConc" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, ORG_CD, SABUN, SYMD, EYMD
+			  FROM (SELECT #{convEnterCd} AS ENTER_CD
+							, CD_DDEPT AS ORG_CD
+							, NO_EMP AS SABUN
+							, DT_FROM AS SYMD
+							, DT_TO AS EYMD
+							, DTS_UPDATE AS CHKDATE
+					FROM HR_EMP_DDEPT
+					WHERE CD_COMPANY = #{cdCompany}
+			       ) A
+			 WHERE ENTER_CD = #{convEnterCd}
+        ]]>
+    </select>
+    
+    <select id="getWtmEmpAddr" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT ENTER_CD, SABUN, EMAIL, PHONE, NOTE
+			  FROM (SELECT #{convEnterCd} AS ENTER_CD
+							, NO_EMP AS SABUN
+							, NO_EMAIL AS EMAIL
+							, NO_TEL AS PHONE
+							, DC_RMK AS NOTE
+							, DTS_UPDATE AS CHKDATE
+					FROM MA_EMP
+					WHERE CD_COMPANY = #{cdCompany}
+					  AND (NO_EMAIL != '' OR NO_TEL != '')
+			       ) A
+			 WHERE ENTER_CD = #{convEnterCd}
+        ]]>
+    </select>
+    
+    <select id="getWtmTaaAppl" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT #{convEnterCd} AS ENTER_CD		--회사코드
+			     , CD_BIZAREA		--사업장코드
+			     , NO_EMP	AS SABUN			--사번
+			     , NO_PROPOSAL	AS APPL_SEQ --신청번호
+			     , CD_WCODE	AS GNT_CD	--근태코드
+			     , DT_PROPOSAL	--신청일자
+			     , DT_START	AS SYMD	--시작일자
+			     , DT_CLOSE	AS EYMD	--종료일자
+			     , TM_START	AS SHM	--시작시분
+			     , TM_CLOSE	AS EHM	--종료시분
+			     , DY_PROPOSAL 	--신청일자
+			     , DC_RMK			--비고
+			     , NO_CEMP			--승인자사번
+			     , CASE CD_CONSENT 
+			     	WHEN '001' THEN '21' 
+			     	WHEN '002' THEN '21'   
+			        WHEN '003' THEN '22'
+			        WHEN '004' THEN '99'
+			        ELSE CD_CONSENT END AS APPL_STATUS_CD --상태코드
+			  FROM HR_WAPPLY
+			 WHERE DT_PROPOSAL >= CONVERT(CHAR(8), dateadd(month,-2,getdate()), 112)
+			   AND CD_COMPANY = #{cdCompany} 
+        ]]>
+    </select>
+</mapper>
