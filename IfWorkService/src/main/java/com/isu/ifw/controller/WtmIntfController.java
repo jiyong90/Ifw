@@ -117,7 +117,7 @@ public class WtmIntfController extends TenantSecuredControl {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
 		}
-		logger.debug("getParameter e " + request.getParameter("emp") + " " + request.getParameter("type") + rp.toString());
+		logger.debug("getParameter e " + request.getParameter("emp") + "," + request.getParameter("time")+"," +request.getParameter("type")+","+request.getParameter("deviceKey")+","+ rp.toString());
 		return rp;
 	}
 	
@@ -168,7 +168,7 @@ public class WtmIntfController extends TenantSecuredControl {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
 		}
-		logger.debug("getParameter e " + params.get("emp") + " " + params.get("type") + rp.toString());
+		logger.debug("getParameter e " + request.getParameter("emp") + "," + request.getParameter("time")+"," +request.getParameter("type")+","+request.getParameter("deviceKey")+","+ rp.toString());
 		return rp;
 	}
 	
