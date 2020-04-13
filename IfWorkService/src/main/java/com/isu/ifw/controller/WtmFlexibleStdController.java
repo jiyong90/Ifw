@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.entity.WtmRule;
 import com.isu.ifw.entity.WtmTimeCdMgr;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.repository.WtmPropertieRepository;
+import com.isu.ifw.repository.WtmRuleRepository;
 import com.isu.ifw.repository.WtmTimeCdMgrRepository;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmFlexibleStdService;
@@ -40,6 +44,12 @@ public class WtmFlexibleStdController {
 	
 	@Autowired
 	WtmTimeCdMgrRepository timeCdMgrRepo;
+	
+	@Autowired
+	WtmPropertieRepository propertieRepo;
+	
+	@Autowired
+	WtmRuleRepository ruleRepo;
 
 	@RequestMapping(value="/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam flexibleStdList(HttpServletRequest request) {
@@ -53,6 +63,8 @@ public class WtmFlexibleStdController {
 			enterCd = sessionData.get("enterCd").toString();
 		if(sessionData.get("bisinessPlaceCd")!=null)
 			bisinessPlaceCd = sessionData.get("bisinessPlaceCd").toString();
+		
+		String sabun = sessionData.get("empNo").toString();
 		
 		/*List<Map<String, Object>> l = new ArrayList<Map<String, Object>>();
 		Map<String, Object> m = new HashMap<>();
@@ -132,8 +144,26 @@ public class WtmFlexibleStdController {
 		List<WtmFlexibleStdVO> wtmFlexibleStd = null;
 		
 		try {
-			wtmFlexibleStd = WtmFlexibleStdService.getFlexibleStd(tenantId, enterCd, userId);
-			rp.put("wtmFlexibleStd", wtmFlexibleStd);
+			WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_EMP_EXCEPT_TARGET");
+			
+			String ruleValue = null;
+			String ruleType = null;
+			if(propertie!=null && propertie.getInfoValue()!=null && !"".equals(propertie.getInfoValue())) {
+				WtmRule rule = ruleRepo.findByTenantIdAndEnterCdAndRuleNm(tenantId, enterCd, propertie.getInfoValue());
+				if(rule!=null && rule.getRuleValue()!=null && !"".equals(rule.getRuleValue())) {
+					ruleType = rule.getRuleType();
+					ruleValue = rule.getRuleValue();
+				}
+			}
+		
+			boolean isTarget = false;
+			if(ruleValue!=null) 
+				isTarget = flexibleEmpService.isRuleTarget(tenantId, enterCd, sabun, ruleType, ruleValue);
+			
+			if(!isTarget) {
+				wtmFlexibleStd = WtmFlexibleStdService.getFlexibleStd(tenantId, enterCd, userId);
+				rp.put("wtmFlexibleStd", wtmFlexibleStd);
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("조회 시 오류가 발생했습니다.");

@@ -8,7 +8,8 @@
 		INSERT INTO WTM_RULE
 				(TENANT_ID, 
 				ENTER_CD, 
-				RULE_NM, 
+				RULE_NM,
+				RULE_TYPE, 
 				RULE_VALUE, 
 				NOTE, 
 				UPDATE_DATE,
@@ -19,6 +20,7 @@
 				(#{tenantId},
 				 #{enterCd} ,
 				 #{item.ruleNm} ,
+				 #{item.ruleType} ,
 				 #{item.ruleValue} ,
 				 #{item.note} ,
 				 now(),
@@ -33,6 +35,7 @@
 		<foreach collection="updateRows" item="item" separator=";">
 			UPDATE WTM_RULE SET 
 				RULE_VALUE =  #{item.ruleValue}
+				, RULE_TYPE = #{item.ruleType}
 				, NOTE = #{item.note}  
 				, UPDATE_DATE = NOW()
 				, UPDATE_ID = #{userId}

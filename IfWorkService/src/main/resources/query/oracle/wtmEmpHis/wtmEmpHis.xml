@@ -167,7 +167,7 @@
 													)
     </update>
     
-    <select id="getCreateBaseTarget" parameterType="map" resultType="wtmGeneral">
+     <select id="getCreateBaseTarget" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
         	SELECT H.TENANT_ID
         	     , H.ENTER_CD
@@ -186,5 +186,19 @@
 			   AND E.FLEXIBLE_STD_MGR_ID IS NULL
         ]]>
     </select>
+    
+    <select id="getRuleTargetBySql" parameterType="map" resultType="wtmGeneral">
+    	SELECT CASE WHEN COUNT(*) = 0 THEN 'N' ELSE 'Y' END AS IS_TARGET
+    	  FROM (
+		 SELECT SABUN
+		  FROM WTM_EMP_HIS
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND #{d} BETWEEN SYMD AND EYMD
+		   <if test="sql!=null">
+		   AND ( ${sql} )
+		   </if> ) H
+		 WHERE SABUN = #{sabun}
+  	</select>
 	
 </mapper>
