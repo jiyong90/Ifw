@@ -64,6 +64,9 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	}else if(T.equalsIgnoreCase("EMP")) {
         		dataList = intfMapper.getWtmEmp(paramMap);
         		url = empUrl;
+        	}else if(T.equalsIgnoreCase("EMPMULTI")) {
+        		dataList = intfMapper.getWtmEmpMulti(paramMap);
+        		url = empUrl;
         	}else if(T.equalsIgnoreCase("EMPADDR")) {
         		dataList = intfMapper.getWtmEmpAddr(paramMap);
         		url = empaddrUrl;

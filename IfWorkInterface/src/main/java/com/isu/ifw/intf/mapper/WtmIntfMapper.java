@@ -33,6 +33,11 @@ public interface WtmIntfMapper {
 	public List<Map<String, Object>> getWtmEmp(Map<String, Object> paramMap);
 	
 	/**
+	 * 겸직 조회
+	 **/
+	public List<Map<String, Object>> getWtmEmpMulti(Map<String, Object> paramMap);
+
+	/**
 	 * 조직장 조회
 	 **/
 	public List<Map<String, Object>> getWtmOrgConc(Map<String, Object> paramMap);

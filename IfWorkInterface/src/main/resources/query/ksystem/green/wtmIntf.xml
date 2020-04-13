@@ -21,11 +21,14 @@
 	 
     <select id="getWtmHoliday" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT #{convEnterCd} AS ENTER_CD, LOCATION_CD, YMD, HOLIDAY_NM, FESTIVE_YN, PAY_YN
-			  FROM (
-			        ) A
-			 WHERE ENTER_CD = #{enterCd}
-			 ORDER BY ENTER_CD
+			SELECT CompanySeq AS ENTER_CD
+				, Unit as LOCATION_CD
+				, Solar as YMD
+				, HolidayName as HOLIDAY_NM 
+				, IsHoly as FESTIVE_YN 
+				, ISNULL(IsPaid,'') as PAY_YN
+				, LastDateTime as CHKDATE
+			  FROM KPXERP_VPRHoliday_ISU
         ]]>
     </select>
     
@@ -48,7 +51,21 @@
     <select id="getWtmOrg" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
+			     , DeptSeq AS ORG_CD
 			     , DeptName AS ORG_NM
+			     , BegDate AS SYMD
+			     , EndDate AS EYMD
+			     , '' AS ORG_TYPE
+			     , Remark AS NOTE
+			     , LastDateTime AS CHKDATE
+			  FROM KPXERP_VDADeptInfo_ISU 
+        ]]>
+    </select>
+    
+    <select id="getWtmOrgConc" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CompanySeq AS ENTER_CD
+			     , DeptName AS ORG_CHART_NM
 			     , BegDate AS SYMD
 			     , EndDate AS EYMD
 			     , DeptSeq AS ORG_CD
@@ -58,10 +75,9 @@
 			     , '' AS ORDER_SEQ
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
-			  FROM KPXERP_VHROrgDeptInfo_ISU --KPXERP_VDADeptInfo_ISU 
+			  FROM KPXERP_VHROrgDeptInfo_ISU  
         ]]>
     </select>
-    
     
     <select id="getWtmEmp" parameterType="map" resultType="hashmap">
         <![CDATA[ 
@@ -88,63 +104,42 @@
         ]]>
     </select>
     
-    <select id="getWtmOrgConc" parameterType="map" resultType="hashmap">
-        <![CDATA[
-			SELECT ENTER_CD, ORG_CD, SABUN, SYMD, EYMD
-			  FROM (SELECT #{convEnterCd} AS ENTER_CD
-							, CD_DDEPT AS ORG_CD
-							, NO_EMP AS SABUN
-							, DT_FROM AS SYMD
-							, DT_TO AS EYMD
-							, DTS_UPDATE AS CHKDATE
-					FROM HR_EMP_DDEPT
-					WHERE CD_COMPANY = #{cdCompany}
-			       ) A
-			 WHERE ENTER_CD = #{convEnterCd}
+    <select id="getEmpMulti" parameterType="map" resultType="hashmap">
+        <![CDATA[ 
+			SELECT CompanySeq AS ENETR_CD
+			     , DeptSeq AS ORG_CD
+			     , EmpId AS SABUN
+			     , '' AS SYMD
+			     , '' AS EYMD
+			     , LastDateTime AS CHKDATE
+			  FROM KPXERP_VDAEmpInfoMulti_ISU
         ]]>
     </select>
     
-    <select id="getWtmEmpAddr" parameterType="map" resultType="hashmap">
+    <select id="getEmpAddr" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT ENTER_CD, SABUN, EMAIL, PHONE, NOTE
-			  FROM (SELECT #{convEnterCd} AS ENTER_CD
-							, NO_EMP AS SABUN
-							, NO_EMAIL AS EMAIL
-							, NO_TEL AS PHONE
-							, DC_RMK AS NOTE
-							, DTS_UPDATE AS CHKDATE
-					FROM MA_EMP
-					WHERE CD_COMPANY = #{cdCompany}
-					  AND (NO_EMAIL != '' OR NO_TEL != '')
-			       ) A
-			 WHERE ENTER_CD = #{convEnterCd}
+			SELECT CompanySeq AS ENETR_CD
+				 , EmpId AS SABUN
+				 , Cellphone AS EMAIL
+				 , EMail AS EMAIL
+			     , Remark AS NOTE
+			     , LastDateTime AS CHKDATE
+			  FROM KPXERP_VDAEmpAddInfo_ISU
         ]]>
     </select>
     
     <select id="getWtmTaaAppl" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT #{convEnterCd} AS ENTER_CD		--회사코드
-			     , CD_BIZAREA		--사업장코드
-			     , NO_EMP	AS SABUN			--사번
-			     , NO_PROPOSAL	AS APPL_SEQ --신청번호
-			     , CD_WCODE	AS GNT_CD	--근태코드
-			     , DT_PROPOSAL	--신청일자
-			     , DT_START	AS SYMD	--시작일자
-			     , DT_CLOSE	AS EYMD	--종료일자
-			     , TM_START	AS SHM	--시작시분
-			     , TM_CLOSE	AS EHM	--종료시분
-			     , DY_PROPOSAL 	--신청일자
-			     , DC_RMK			--비고
-			     , NO_CEMP			--승인자사번
-			     , CASE CD_CONSENT 
-			     	WHEN '001' THEN '21' 
-			     	WHEN '002' THEN '21'   
-			        WHEN '003' THEN '22'
-			        WHEN '004' THEN '99'
-			        ELSE CD_CONSENT END AS APPL_STATUS_CD --상태코드
-			  FROM HR_WAPPLY
-			 WHERE DT_PROPOSAL >= CONVERT(CHAR(8), dateadd(month,-2,getdate()), 112)
-			   AND CD_COMPANY = #{cdCompany} 
+ 			SELECT CompanySeq AS ENETR_CD
+				 , EmpId AS SABUN
+				 , WkItemSeq AS TAA_CODE
+				 , WkDateFr AS SYMD
+				 , WkDateTo AS EYMD
+				 , '' AS SHM
+				 , '' AS EHM
+				 , '' AS IF_APPL_NO
+				 , '' AS STATUS
+			  FROM KPXERP_VDAEmpAddInfo_ISU
         ]]>
     </select>
 </mapper>
