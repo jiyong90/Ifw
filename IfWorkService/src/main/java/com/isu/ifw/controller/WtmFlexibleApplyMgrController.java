@@ -18,9 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.entity.WtmRule;
 import com.isu.ifw.mapper.WtmFlexibleApplyMgrMapper;
+import com.isu.ifw.repository.WtmPropertieRepository;
+import com.isu.ifw.repository.WtmRuleRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmFlexibleApplyMgrService;
+import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
 
@@ -39,6 +44,16 @@ public class WtmFlexibleApplyMgrController {
 	@Autowired
 	@Qualifier("wtmFlexibleApplService")
 	WtmApplService wtmApplService;
+	
+	@Autowired
+	WtmPropertieRepository propertieRepo;
+	
+	@Autowired
+	WtmRuleRepository ruleRepo;
+	
+	@Autowired
+	@Qualifier("flexibleEmpService")
+	private WtmFlexibleEmpService flexibleEmpService;
 	
 	private final Logger logger = LoggerFactory.getLogger("ifwFileLog");
 	
@@ -189,27 +204,47 @@ public class WtmFlexibleApplyMgrController {
 			List<Map<String, Object>> ymdList = flexibleApplyService.getApplyYmdList(paramMap);
 			
 			//오류체크까지 하고 리턴
+			int empCnt = 0;
 			for(int i=0; i < searchList.size(); i++) {
 				Map<String, Object> validateMap = new HashMap<>();
 				validateMap = searchList.get(i);
 				String sabun = validateMap.get("sabun").toString();
 				
-				for(int j=0; j < ymdList.size(); j++) {
-					// 반복 구간별 밸리데이션 체크 및 유연근무기간 입력
-					paramMap.put("sYmd", ymdList.get(j).get("symd"));
-					paramMap.put("eYmd", ymdList.get(j).get("eymd"));
-					
-					//탄근제 validation 체크를 위한 param
-					paramMap.put("adminYn", "Y");
-					paramMap.put("flexibleApplyId", flexibleApplyId);
-					
-					rp = wtmApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
-					if(rp.getStatus().equals("FAIL")) {
-						return rp;
+				WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_EMP_EXCEPT_TARGET");
+				
+				String ruleValue = null;
+				String ruleType = null;
+				if(propertie!=null && propertie.getInfoValue()!=null && !"".equals(propertie.getInfoValue())) {
+					WtmRule rule = ruleRepo.findByTenantIdAndEnterCdAndRuleNm(tenantId, enterCd, propertie.getInfoValue());
+					if(rule!=null && rule.getRuleValue()!=null && !"".equals(rule.getRuleValue())) {
+						ruleType = rule.getRuleType();
+						ruleValue = rule.getRuleValue();
 					}
-					
-					validateMap.put("flexibleApplyId", flexibleApplyId);
-					validateMap.put("workTypeCd", workTypeCd);
+				}
+				
+				boolean isTarget = false;
+				if(ruleValue!=null) 
+					isTarget = flexibleEmpService.isRuleTarget(tenantId, enterCd, sabun, ruleType, ruleValue);
+				
+				if(!isTarget) {
+					for(int j=0; j < ymdList.size(); j++) {
+						// 반복 구간별 밸리데이션 체크 및 유연근무기간 입력
+						paramMap.put("sYmd", ymdList.get(j).get("symd"));
+						paramMap.put("eYmd", ymdList.get(j).get("eymd"));
+						
+						//탄근제 validation 체크를 위한 param
+						paramMap.put("adminYn", "Y");
+						paramMap.put("flexibleApplyId", flexibleApplyId);
+						
+						rp = wtmApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
+						if(rp.getStatus().equals("FAIL")) {
+							return rp;
+						}
+						
+						validateMap.put("flexibleApplyId", flexibleApplyId);
+						validateMap.put("workTypeCd", workTypeCd);
+					}
+					empCnt++;
 				}
 			}
 			
@@ -217,7 +252,7 @@ public class WtmFlexibleApplyMgrController {
 			//flexibleApplyService.setApplyAsync(searchList, ymdList);
 			//동기로 확정처리
 			int cnt = flexibleApplyService.setApply(searchList, ymdList);
-			rp.setMessage("총 " + searchList.size() + "명의 확정 대상자 중 " + cnt + "명의 확정에 성공하였습니다.");
+			rp.setMessage("총 " + empCnt + "명의 확정 대상자 중 " + cnt + "명의 확정에 성공하였습니다.");
 		} catch(Exception e) {
 			rp.setFail("확정 시 오류가 발생했습니다.");
 		} 
@@ -354,6 +389,8 @@ public class WtmFlexibleApplyMgrController {
 		
 		List<Map<String, Object>> searchList = null;
 		try {
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
 			searchList = flexibleApplyService.getApplyEmpPopList(paramMap);
 			
 			rp.put("DATA", searchList);

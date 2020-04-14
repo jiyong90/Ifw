@@ -1,5 +1,5 @@
-<div id="taaCodeMgr">
- 	<div class="container-fluid mgr-wrap bg-white">
+<div>
+ 	<div class="container-fluid bg-white mgr-wrap">
  	<div class="ibsheet-wrapper">
 		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
@@ -31,7 +31,7 @@
 				</div>
 				<script type="text/javascript">createIBSheet("sheet1", "100%", fullsheetH,"kr"); </script>
 			</div>
-			<div class="col-4 pr-3">
+			<div class="col-4 pr-3 ruleTab">
 				<div class="innertab inner">
 					<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">대상자</div>
@@ -59,7 +59,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-4">
+			<div class="col-4 ruleTab">
 				<div class="innertab inner">
 					<div class="sheet_title_wrap clearfix">
 						<div class="float-left title">대상자 제외</div>
@@ -81,6 +81,18 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="col-8 sqlTab" style="display:none;">
+				<div class="inner">
+					<div class="sheet_title_wrap clearfix">
+						<div class="float-left title">조건 항목 설정<span id="Tooltip-1" class="tooltip-st"><i class="far fa-question-circle"></i></div>
+						<ul class="float-right btn-wrap">
+							<li><a href="javascript:doAction4('Insert')" class="basic authA">입력</a></li>
+							<li><a href="javascript:doAction4('Save')" class="basic authA">저장</a></li>
+						</ul>
+					</div>
+				</div>
+				<script type="text/javascript">createIBSheet("sheet4", "100%", fullsheetH,"kr"); </script>
 			</div>
 		</div>
 		</from>
@@ -126,6 +138,33 @@
 				//showIframe();
 			}
 		});
+		
+	 	new jBox('Tooltip', {
+            attach: '#Tooltip-1',
+            target: '#Tooltip-1',
+            theme: 'TooltipBorder',
+            trigger: 'click',
+            adjustTracker: true,
+            closeOnClick: 'body',
+            closeButton: 'box',
+            animation: 'move',
+            position: {
+                x: 'left',
+                y: 'bottom'
+            },
+            outside: 'y',
+            pointer: 'left:20',
+            offset: {
+                x: 25
+            },
+            content: '그룹의 순차가 같으면 AND 조건, 순차가 다르면 OR 조건',
+            onOpen: function () {
+                this.source.addClass('active');
+            },
+            onClose: function () {
+                this.source.removeClass('active');
+            }
+        });
       
 		var initdata1 = {};
 		
@@ -140,6 +179,7 @@
 			{Header:"tenantId",		Type:"Text",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"enterCd",		Type:"Text",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"규칙명",			Type:"Text",	Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"ruleNm",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"규칙타입",		Type:"Combo",	Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"ruleType",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"규칙값",			Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"ruleValue",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0 },
 			{Header:"비고",			Type:"Text",	Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 		]; 
@@ -149,6 +189,8 @@
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
 		sheet1.SetFocusEditMode(0); //단순 포커스 상태, edit모드일 경우 다른 sheet에서 자동완성 시 edit 값이 파라미터로 넘어감
+		
+		sheet1.SetColProperty("ruleType", {ComboText:"|규칙|조건", ComboCode:"|rule|sql"} );
 		
 		var initdata2 = {};
 		initdata2.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -200,7 +242,35 @@
 		sheet3.SetVisible(true);
 		sheet3.SetUnicodeByte(3);
 		sheet3.SetFocusEditMode(1);
+		
+		
+		var initdata4 = {};
+		initdata4.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata4.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
+		
+        initdata4.Cols = [
+            {Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
+			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+   			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+			{Header:"id",			Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ruleId",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"그룹순차",		Type:"Int",			Hidden:0,	Width:60,	Align:"Center",	ColMerge:0,	SaveName:"groupSeq",	KeyField:1,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:5 },
+            {Header:"항목",  			Type:"Combo",     	Hidden:0,   Width:70,   Align:"Center", ColMerge:0, SaveName:"item",  		KeyField:1, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+            {Header:"항목타입",  		Type:"Text",     	Hidden:1,   Width:70,   Align:"Center", ColMerge:0, SaveName:"itemType",  		KeyField:1, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+            {Header:"코드값",  			Type:"Combo",     	Hidden:0,   Width:100,   Align:"Center", ColMerge:0, SaveName:"codeItemValue",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+            {Header:"값",  			Type:"Text",     	Hidden:0,   Width:100,   Align:"Center", ColMerge:0, SaveName:"textItemValue",  		KeyField:0, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+            {Header:"값",  			Type:"Text",     	Hidden:1,   Width:70,   Align:"Center", ColMerge:0, SaveName:"itemValue",  		KeyField:1, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+            {Header:"연산자",  		Type:"Combo",     	Hidden:0,   Width:50,   Align:"Center", ColMerge:0, SaveName:"operator",  	KeyField:1, Format:"",    PointCount:0,  UpdateEdit:1,  InsertEdit:1,  EditLen:100  },
+			{Header:"비고",			Type:"Text",	 	Hidden:0,	Width:80,	Align:"Left",	ColMerge:0, SaveName:"note",	KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+			
+        ];
+        IBS_InitSheet(sheet4, initdata4);
+		sheet4.SetEditable(true);
+		sheet4.SetVisible(true);
 
+		var sqlItemList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "SQL_ITEM_CD"), "");
+		sheet4.SetColProperty("item", {ComboText:"|"+sqlItemList[0], ComboCode:"|"+sqlItemList[1]} );
+		
+		sheet4.SetColProperty("operator", {ComboText:"|=|<>", ComboCode:"|=|<>"} );
 		
 		//성명
         //setSheetAutocompleteEmp( "sheet3", "empNm", null, getSheet3EmpInfo);
@@ -409,6 +479,32 @@
 		
 		}
 	}
+   	
+   	function doAction4(sAction) {
+		switch (sAction) {
+		case "Insert":
+			var status = sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus");	
+			if(status!=-1 && status=='R')
+				sheet4.DataInsert(-1) ;
+			else 
+				alert("규칙관리를 저장 후 조건 항목을 입력하셔야 합니다.");
+			break;
+			
+			break;
+		case "Save":
+			var saveJson = sheet4.GetSaveJson(1);
+			
+			if(saveJson!=null && saveJson!='' && saveJson!=undefined && saveJson.hasOwnProperty('data')) {
+				var data = saveJson.data;
+				
+				sheet1.SetCellValue( sheet1.GetSelectRow(), "ruleValue", JSON.stringify(data));
+				sheet1.SetCellValue( sheet1.GetSelectRow(), "sStatus", "U");
+				doAction1("Save");
+			}
+			
+			break;
+		}
+   	}
 	
 	// 조회 후 에러 메시지
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
@@ -420,6 +516,8 @@
 			if (Msg != "") {
 				alert(Msg);
 			}
+			
+			getSql(1);
 		} catch (ex) {
 			alert("OnSearchEnd Event Error : " + ex);
 		}
@@ -437,12 +535,11 @@
 		}
 	}
 	
+	
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
-		
-		if(OldRow != NewRow && sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus") != "I"){
-			getIncludeTarget();
-			getExcludeTarget();
-		}
+
+		if(OldRow!=NewRow || OldCol!=NewCol)
+			getSql(NewRow);
 	}
 	
 	function sheet2_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
@@ -460,6 +557,15 @@
 		
 		if ( colName == "empNm" ){
 			setSheetAutocompleteEmp( "sheet3", "empNm" , null , getSheet3EmpInfo );
+		}
+	}
+	
+	function sheet1_OnChange(Row, Col, Value) {
+		var status = sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus");	
+		var colName = sheet1.ColSaveName(Col);
+		
+		if ( (status=='I' || status=='U') && colName == "ruleType" ){
+			getSql(Row);
 		}
 	}
 	
@@ -502,6 +608,49 @@
 			
 			sheet2.SetCellValue(Row, "orgCd", codes[idx]);
 		} */
+	}
+	
+	function sheet4_OnChange(Row, Col, Value) {
+		var colName = sheet4.ColSaveName(Col);
+		
+		if ( colName == "item" ){
+			var item = sheet4.GetCellValue(Row, Col);
+			var classCdList = [];
+			
+			if(item=='SABUN' || item=='EMP_NM') {
+				sheet4.SetCellValue(Row, "itemType", "text");
+				//sheet4.SetColHidden("codeItemValue", 1);
+				//sheet4.SetColHidden("textItemValue", 0);
+				sheet4.SetCellEditable(Row, "codeItemValue", 0);
+				sheet4.SetCellEditable(Row, "textItemValue", 1);
+			} else {
+				sheet4.SetCellValue(Row, "itemType", "code");
+				if(item=='BUSINESS_PLACE_CD') {
+					classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "BUSINESS_PLACE_CD"), "");
+				} else if(item=='ORG_CD') {
+					classCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/orgCode/comboList", "", false).DATA, "");
+				} else if(item=='POS_CD') {
+					classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "POS_CD"), "");
+				} else if(item=='DUTY_CD') {
+					classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "DUTY_CD"), "");
+				} else if(item=='CLASS_CD') {
+					classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "CLASS_CD"), "");
+				} else if(item=='JOB_CD') {
+					classCdList = stfConvCode(codeList("${rc.getContextPath()}/code/list", "JOB_CD"), "");
+				} 
+				
+				//sheet4.SetColHidden("codeItemValue", 0);
+				//sheet4.SetColHidden("textItemValue", 1);
+				sheet4.SetCellEditable(Row, "codeItemValue", 1);
+				sheet4.SetCellEditable(Row, "textItemValue", 0);
+				
+				var info = {ComboText:"|"+classCdList[0], ComboCode:"|"+classCdList[1]};
+				sheet4.CellComboItem(Row, "codeItemValue",info);
+			}
+			
+		} else if(colName == "codeItemValue" || colName == "textItemValue" ){
+			sheet4.SetCellValue(Row, "itemValue", sheet4.GetCellValue(Row, Col));
+		}
 	}
 	
 	function getIncludeTarget(){
@@ -636,6 +785,46 @@
 				}
 				sheet3.SetCellValue(row, "sStatus", "");
 			});
+		}
+	}
+	
+	function getSql(Row){
+		var ruleType = sheet1.GetCellValue(Row, "ruleType");
+		
+		if(ruleType=="sql") {
+			
+			var sqlList;
+			var ruleValue = sheet1.GetCellValue( sheet1.GetSelectRow(), "ruleValue");	
+			if(ruleValue!=null && ruleValue!='' && ruleValue!=undefined) {
+				sheet4.RemoveAll();
+				sqlList = JSON.parse(ruleValue);	
+				
+				sqlList.map(function(s){
+					var row = sheet4.DataInsert(-1) ;
+					sheet4.SetCellValue(row, "groupSeq", s.groupSeq);
+					sheet4.SetCellValue(row, "item", s.item);
+					sheet4.SetCellValue(row, "itemType", s.itemType);
+					
+					if(s.itemType=='code')
+						sheet4.SetCellValue(row, "codeItemValue", s.itemValue);
+					else
+						sheet4.SetCellValue(row, "textItemValue", s.itemValue);
+					
+					sheet4.SetCellValue(row, "itemValue", s.itemValue);
+					sheet4.SetCellValue(row, "operator", s.operator);
+				});
+			}
+			
+			$(".ruleTab").hide();
+			$(".sqlTab").show();
+			sheetResize();
+			
+		} else {
+			
+			$(".sqlTab").hide();
+			getIncludeTarget();
+			getExcludeTarget();
+			$(".ruleTab").show();
 		}
 	}
 	

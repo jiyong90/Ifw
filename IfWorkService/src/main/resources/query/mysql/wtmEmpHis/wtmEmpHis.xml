@@ -195,5 +195,19 @@
 			   AND E.FLEXIBLE_STD_MGR_ID IS NULL
         ]]>
     </select>
+    
+    <select id="getRuleTargetBySql" parameterType="map" resultType="hashmap">
+    	SELECT CASE WHEN COUNT(*) = 0 THEN 'N' ELSE 'Y' END AS isTarget
+    	  FROM (
+		 SELECT SABUN
+		  FROM WTM_EMP_HIS
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND #{d} BETWEEN SYMD AND EYMD
+		   <if test="sql!=null">
+		   AND ( ${sql} )
+		   </if> ) H
+		 WHERE SABUN = #{sabun}
+  	</select>
 	
 </mapper>

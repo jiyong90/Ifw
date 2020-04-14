@@ -45,7 +45,7 @@
                         <li :class="{active: curPageName=='ifEmpMsg'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/ifEmpMsg';">[연계]사원이력</a></li>
                         <li :class="{active: curPageName=='applCode'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/applCode';">신청서관리</a></li>
                         <li :class="{active: curPageName=='pushMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/pushMgr';">알림관리</a></li>
-                    	<li :class="{active: curPageName=='holidayMgr'}" v-if="interfaceYn=='N'"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/holidayMgr';">공휴일관리</a></li>
+                    	<li :class="{active: curPageName=='holidayMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/holidayMgr';">공휴일관리</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub2'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
