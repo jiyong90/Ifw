@@ -202,7 +202,7 @@
 					
 					var row = sheet1.GetSelectRow();
 					
-	        		if(sheet2.GetCellValue(i, "timeTypeCd") == "BASE") {
+	        		if(sheet2.GetCellValue(i, "timeTypeCd") == "SELE_E" || sheet2.GetCellValue(i, "timeTypeCd") == "SELE_F") {
 						
 			        	var cores = sheet1.GetCellValue(row, "coreShm");
 			        	var coree = sheet1.GetCellValue(row, "coreEhm");
