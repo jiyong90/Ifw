@@ -106,7 +106,7 @@
     
     <select id="getEmpMulti" parameterType="map" resultType="hashmap">
         <![CDATA[ 
-			SELECT CompanySeq AS ENETR_CD
+			SELECT CompanySeq AS ENTER_CD
 			     , DeptSeq AS ORG_CD
 			     , EmpId AS SABUN
 			     , '' AS SYMD
@@ -118,7 +118,7 @@
     
     <select id="getEmpAddr" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT CompanySeq AS ENETR_CD
+			SELECT CompanySeq AS ENTER_CD
 				 , EmpId AS SABUN
 				 , Cellphone AS EMAIL
 				 , EMail AS EMAIL
@@ -130,7 +130,7 @@
     
     <select id="getWtmTaaAppl" parameterType="map" resultType="hashmap">
         <![CDATA[
- 			SELECT CompanySeq AS ENETR_CD
+ 			SELECT CompanySeq AS ENTER_CD
 				 , EmpId AS SABUN
 				 , WkItemSeq AS TAA_CODE
 				 , WkDateFr AS SYMD
