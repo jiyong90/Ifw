@@ -81,7 +81,7 @@
     
     <select id="getWtmEmp" parameterType="map" resultType="hashmap">
         <![CDATA[ 
-			SELECT CompanySeq AS ENETR_CD
+			SELECT CompanySeq AS ENTER_CD
 			     , EmpId AS SABUN
 			     , EmpName AS EMP_NM
 			     , EmpEngName AS EMP_ENG_NM
