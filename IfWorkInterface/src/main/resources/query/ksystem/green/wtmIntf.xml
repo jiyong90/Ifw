@@ -104,7 +104,7 @@
         ]]>
     </select>
     
-    <select id="getEmpMulti" parameterType="map" resultType="hashmap">
+    <select id="getWtmEmpMulti" parameterType="map" resultType="hashmap">
         <![CDATA[ 
 			SELECT CompanySeq AS ENTER_CD
 			     , DeptSeq AS ORG_CD
@@ -116,7 +116,7 @@
         ]]>
     </select>
     
-    <select id="getEmpAddr" parameterType="map" resultType="hashmap">
+    <select id="getWtmEmpAddr" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 				 , EmpId AS SABUN
