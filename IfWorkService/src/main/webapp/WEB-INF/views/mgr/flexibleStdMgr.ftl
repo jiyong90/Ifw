@@ -1180,6 +1180,8 @@
 					
 					if(workTypeCd == "SELE_C"){
 						$("#trCoreChk").hide();
+						$("#trUnplan").hide();
+						
 						if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
 							$("input:checkbox[name='coreChkYn']").prop("checked", true);
 							setCoreChkYn(true);

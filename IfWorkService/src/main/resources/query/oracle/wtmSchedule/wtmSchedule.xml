@@ -15,13 +15,48 @@
                       AND A.ENTER_CD = B.ENTER_CD
                       AND A.SABUN = B.SABUN
                       AND A.YMD = B.YMD
-                   WHERE B.TIME_TYPE_CD IN ('BASE', 'REGA', 'OT', 'FIXOT', 'NIGTH', 'TAA')	-- 간주근무나 기본근무일때)
+                   WHERE B.TIME_TYPE_CD IN ('BASE', 'REGA', 'OT', 'FIXOT', 'NIGTH')	-- 간주근무나 기본근무일때)
                       AND A.TENANT_ID = #{tenantId}
                       AND A.YMD = #{ymd}
                    GROUP BY A.ENTER_CD, A.SABUN, A.YMD
                    ) AA
              WHERE ((#{closeType} = 'A' AND AA.SDATE = AA.EDATE)
                  OR (#{closeType} = 'B' AND AA.SDATE != AA.EDATE))
+            UNION
+			SELECT A.ENTER_CD, A.SABUN, A.YMD
+			  FROM WTM_WORK_CALENDAR A
+			  LEFT OUTER JOIN WTM_WORK_DAY_RESULT B
+			     ON A.TENANT_ID = B.TENANT_ID
+			    AND A.ENTER_CD = B.ENTER_CD
+			    AND A.SABUN = B.SABUN
+			    AND A.YMD = B.YMD
+			    AND A.ENTRY_SDATE <= B.PLAN_EDATE
+			    AND A.ENTRY_EDATE >= B.PLAN_SDATE
+			 WHERE A.TENANT_ID = #{tenantId}
+			    AND A.YMD < #{ymd}
+			    AND A.HOLIDAY_YN = 'N'
+			    AND B.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT')
+			    AND A.ENTRY_SDATE IS NOT NULL AND A.ENTRY_EDATE IS NOT NULL
+				 AND B.APPR_SDATE IS NULL AND B.APPR_EDATE IS NULL
+			 GROUP BY A.ENTER_CD, A.SABUN, A.YMD
+			 UNION
+			SELECT A.ENTER_CD, A.SABUN, A.YMD
+			  FROM WTM_WORK_CALENDAR A
+			  JOIN WTM_WORK_DAY_RESULT B
+			     ON A.TENANT_ID = B.TENANT_ID
+			    AND A.ENTER_CD = B.ENTER_CD
+			    AND A.SABUN = B.SABUN
+			    AND A.YMD = B.YMD
+			    AND A.ENTRY_SDATE <= B.PLAN_EDATE
+			    AND A.ENTRY_EDATE >= B.PLAN_SDATE
+			 WHERE A.TENANT_ID = #{tenantId}
+			    AND A.YMD < #{ymd}
+			    AND A.HOLIDAY_YN = 'Y'
+			    AND B.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT')
+			    AND A.ENTRY_SDATE IS NOT NULL AND A.ENTRY_EDATE IS NOT NULL
+				 AND B.PLAN_SDATE IS NOT NULL AND B.PLAN_EDATE IS NOT NULL 
+				 AND B.APPR_SDATE IS NULL AND B.APPR_EDATE IS NULL
+			 GROUP BY A.ENTER_CD, A.SABUN, A.YMD
 			ORDER BY YMD, SABUN
         ]]>
     </select>

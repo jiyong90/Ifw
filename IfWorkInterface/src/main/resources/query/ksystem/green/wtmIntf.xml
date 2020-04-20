@@ -81,7 +81,7 @@
     
     <select id="getWtmEmp" parameterType="map" resultType="hashmap">
         <![CDATA[ 
-			SELECT CompanySeq AS ENETR_CD
+			SELECT CompanySeq AS ENTER_CD
 			     , EmpId AS SABUN
 			     , EmpName AS EMP_NM
 			     , EmpEngName AS EMP_ENG_NM
@@ -104,9 +104,9 @@
         ]]>
     </select>
     
-    <select id="getEmpMulti" parameterType="map" resultType="hashmap">
+    <select id="getWtmEmpMulti" parameterType="map" resultType="hashmap">
         <![CDATA[ 
-			SELECT CompanySeq AS ENETR_CD
+			SELECT CompanySeq AS ENTER_CD
 			     , DeptSeq AS ORG_CD
 			     , EmpId AS SABUN
 			     , '' AS SYMD
@@ -116,12 +116,12 @@
         ]]>
     </select>
     
-    <select id="getEmpAddr" parameterType="map" resultType="hashmap">
+    <select id="getWtmEmpAddr" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT CompanySeq AS ENETR_CD
+			SELECT CompanySeq AS ENTER_CD
 				 , EmpId AS SABUN
-				 , Cellphone AS EMAIL
-				 , EMail AS EMAIL
+				 , ISNULL(Cellphone, '') AS HAND_PHONE
+				 , ISNULL(EMail, '') AS EMAIL
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VDAEmpAddInfo_ISU
@@ -130,7 +130,7 @@
     
     <select id="getWtmTaaAppl" parameterType="map" resultType="hashmap">
         <![CDATA[
- 			SELECT CompanySeq AS ENETR_CD
+ 			SELECT CompanySeq AS ENTER_CD
 				 , EmpId AS SABUN
 				 , WkItemSeq AS TAA_CODE
 				 , WkDateFr AS SYMD
