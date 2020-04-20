@@ -120,7 +120,7 @@
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 				 , EmpId AS SABUN
-				 , Cellphone AS EMAIL
+				 , Cellphone AS HAND_PHONE
 				 , EMail AS EMAIL
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
