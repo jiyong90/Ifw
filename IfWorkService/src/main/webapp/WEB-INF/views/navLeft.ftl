@@ -94,8 +94,9 @@
                 <li :class="{active: curSubMenu=='sub7'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
                 	<a href="#submenu-list7" data-toggle="collapse" :aria-expanded="curSubMenu=='sub7'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub7'">근무마감조회</a>
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub7'}" id="submenu-list7">
-                        <li :class="{active: curPageName=='worktimeDayClose'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeDayClose';">근무마감일별조회</a></li>
+                    	<li :class="{active: curPageName=='worktimeClose'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeClose';">근무마감생성</a></li>
                         <li :class="{active: curPageName=='worktimeMonClose'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeMonClose';">근무마감월별조회</a></li>
+                        <li :class="{active: curPageName=='worktimeDayClose'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeDayClose';">근무마감일별조회</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub8'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
