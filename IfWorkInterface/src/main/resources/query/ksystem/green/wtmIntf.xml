@@ -120,8 +120,8 @@
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 				 , EmpId AS SABUN
-				 , Cellphone AS HAND_PHONE
-				 , EMail AS EMAIL
+				 , ISNULL(Cellphone, '') AS HAND_PHONE
+				 , ISNULL(EMail, '') AS EMAIL
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VDAEmpAddInfo_ISU
