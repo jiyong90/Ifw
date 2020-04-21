@@ -160,13 +160,33 @@ var closeList = {};
 	}
 	
 	function selectWorktime(){
-		var index = $("#worktimeCloseId option").index( $("#worktimeCloseId option:selected") ) -1;
-		var closeYn = closeList[index]["closeYn"];
-		if(closeYn == "Y"){
-			$("#btnCloseConfirm").hide();
-		} else {
-			$("#btnCloseConfirm").show();
-		}
+		// 마감 조회조건이 자동조회하자
+		// 1.마감여부 조회
+		Util.ajax({
+	    	url: "${rc.getContextPath()}/worktimeClose/closeYn?worktimeCloseId="+$("#worktimeCloseId").val(),
+			type: "GET",
+			contentType: 'application/json',
+			dataType: "json",
+			success: function(data) {
+				// console.log(data);
+				var closeYn = "";
+				if(data!=null && data.status=='OK') {
+					closeYn = data.DATA.closeYn;
+				} 
+				if(closeYn == "Y"){
+					$("#btnCloseConfirm").hide();
+				} else {
+					$("#btnCloseConfirm").show();
+				}
+			},
+			error: function(e) {
+				console.log(e);
+				$("#btnCloseConfirm").hide();
+			}
+		});
+		
+		// 1.마감월 조회
+		doAction1('Search');
 	}
 
 </script>

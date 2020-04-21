@@ -207,4 +207,12 @@
   			  , #{worktimeCloseId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
   			  ) }
   	</select>
+  	
+  	<select id="getCloseYn" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT F_WTM_NVL(CLOSE_YN, 'N') AS closeYn
+			FROM WTM_WORKTIME_CLOSE
+		   WHERE WORKTIME_CLOSE_ID = ${worktimeCloseId}
+        ]]>
+    </select>
 </mapper>

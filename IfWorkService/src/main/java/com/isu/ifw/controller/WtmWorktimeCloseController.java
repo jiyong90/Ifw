@@ -268,4 +268,27 @@ public class WtmWorktimeCloseController {
 		return rp;
 	}
 	
+	@RequestMapping(value="/closeYn", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getCloseYn(@RequestParam Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		
+		rp.setSuccess("");
+		
+		Map<String, Object> resultMap = null;
+		try {
+			resultMap = worktimeCloseService.getCloseYn(tenantId, enterCd, paramMap);
+			
+			rp.put("DATA", resultMap);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
 }
