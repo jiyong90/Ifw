@@ -14,7 +14,7 @@
 			     , SYMD , EYMD
 			     , '' AS SEQ
 			     , Remark AS NOTE
-			     , LastDateTme AS CHKDATE
+			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VCOMCommonCode_ISU
 		]]>
 	</select>
@@ -54,7 +54,7 @@
 			     , DeptSeq AS ORG_CD
 			     , DeptName AS ORG_NM
 			     , BegDate AS SYMD
-			     , EndDate AS EYMD
+				 , CASE WHEN EndDate='99991231' THEN '29991231' ELSE EndDate  END AS EYMD
 			     , '' AS ORG_TYPE
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
@@ -67,7 +67,7 @@
 			SELECT CompanySeq AS ENTER_CD
 			     , DeptName AS ORG_CHART_NM
 			     , BegDate AS SYMD
-			     , EndDate AS EYMD
+			     , CASE WHEN EndDate='99991231' THEN '29991231' ELSE EndDate  END AS EYMD
 			     , DeptSeq AS ORG_CD
 			     , UppDeptSeq AS PRIOR_ORG_CD
 			     , '' AS SEQ
@@ -86,7 +86,7 @@
 			     , EmpName AS EMP_NM
 			     , EmpEngName AS EMP_ENG_NM
 			     , EntDate AS SYMD
-			     , RetireDate AS EYMD
+			     , CASE WHEN RetireDate='99991231' THEN '29991231' ELSE RetireDate END AS EYMD
 			     , TypeSeq AS STATUS_CD
 			     , DeptSeq AS ORG_CD
 			     , '' AS LOCATION_CD
