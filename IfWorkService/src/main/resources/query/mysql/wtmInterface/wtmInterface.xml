@@ -951,6 +951,7 @@ ORDER BY YMD, SABUN
              , C.TIME_CD_MGR_ID AS timeCdMgrId
              , C.HOLIDAY_YN AS holidayYn
              , F_WTM_NVL(C.WORK_CLOSE_YN, 'N') AS closeYn
+             , B.NOTE AS note
 		  FROM WTM_TAA_APPL A
 		 INNER JOIN WTM_TAA_APPL_DET B
 		    ON A.TAA_APPL_ID = B.TAA_APPL_ID
@@ -1182,6 +1183,55 @@ ORDER BY YMD, SABUN
 			  , AA.ABSENCE_MINUTE = IFNULL(BB.ABSENCE_MINUTE,0)
 			  , AA.SUB_YN = BB.SUB_YN
 		 WHERE AA.WORKTIME_CLOSE_ID = #{worktimeCloseId}
+	</update>
+	
+	<update id="updateWorktimeNight" parameterType="hashmap">
+		UPDATE WTM_WORKTIME_DAY_CLOSE X 
+    	  USING (
+			SELECT ${worktimeCloseId} AS WORKTIME_CLOSE_ID, D.TENANT_ID, D.ENTER_CD, D.SABUN, D.YMD
+				 , F_WTM_CALC_MINUTE( F_WTM_DATE_FORMAT(D.NIGHT_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.NIGHT_EDATE, 'HI'), '','', '') -
+				     SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(D.NIGHT_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.NIGHT_EDATE, 'HI'), '' )) AS CM
+			  FROM WTM_WORK_CALENDAR C
+			  JOIN (	SELECT TENANT_ID, ENTER_CD, SABUN, YMD, NIGHT_SDATE, NIGHT_EDATE
+			           FROM (SELECT TENANT_ID, ENTER_CD, SABUN, YMD, GREATEST(APPR_SDATE, F_WTM_TO_DATE(YMD || '220000', 'YMDHIS')) AS NIGHT_SDATE, 
+								 LEAST(APPR_EDATE, F_WTM_DATE_ADD(F_WTM_TO_DATE(YMD || '060000', 'YMDHIS'), 1, 'D')) AS NIGHT_EDATE
+								  FROM WTM_WORK_DAY_RESULT
+								 WHERE TENANT_ID = ${tenantId}
+								   AND ENTER_CD = #{enterCd}
+								   AND (#{sabun} IS NULL OR #{sabun} = '' OR SABUN = #{sabun})
+								   AND YMD BETWEEN #{symd} AND #{eymd}
+								   AND TIME_TYPE_CD = 'BASE'
+								   AND APPR_SDATE IS NOT NULL
+								   AND APPR_EDATE IS NOT NULL
+								   AND (APPR_SDATE BETWEEN F_WTM_TO_DATE(YMD ||'220000', 'YMDHIS') AND F_WTM_DATE_ADD(F_WTM_TO_DATE(YMD || '060000', 'YMDHIS'), 1, 'D')
+									     OR
+										  APPR_EDATE BETWEEN F_WTM_TO_DATE(YMD ||'220000', 'YMDHIS') AND F_WTM_DATE_ADD(F_WTM_TO_DATE(YMD || '060000', 'YMDHIS'), 1, 'D')
+										  )
+							)DD 
+						WHERE DD.NIGHT_SDATE != DD.NIGHT_EDATE) D 
+			    ON C.TENANT_ID = D.TENANT_ID
+			   AND C.ENTER_CD = D.ENTER_CD
+			   AND C.YMD = D.YMD
+			   AND C.SABUN = D.SABUN
+			  JOIN WTM_TIME_CD_MGR T
+			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			   AND T.BREAK_TYPE_CD = 'MGR'
+			  LEFT OUTER JOIN WTM_TIME_BREAK_MGR B
+			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			 WHERE C.TENANT_ID = ${tenantId}
+			   AND C.ENTER_CD = #{enterCd}
+			   AND (#{sabun} IS NULL OR #{sabun} = '' OR C.SABUN = #{sabun})
+			   AND C.YMD BETWEEN #{symd} AND #{eymd}
+			GROUP BY D.TENANT_ID, D.ENTER_CD, D.SABUN, D.YMD		
+			) XX
+		    ON (X.WORKTIME_CLOSE_ID = XX.WORKTIME_CLOSE_ID
+				AND X.SABUN = XX.SABUN
+			   AND X.YMD = XX.YMD
+			   AND XX.CM > 0 
+			   AND X.WORKTIME_CLOSE_ID = ${worktimeCloseId})
+		WHEN MATCHED THEN
+		   UPDATE SET X.OTN_MINUTE = NVL(X.OTN_MINUTE,0) + NVL(XX.CM,0)
+		 
 	</update>
     
     <select id="monthWorkClose" statementType="CALLABLE" parameterType="java.util.HashMap" >

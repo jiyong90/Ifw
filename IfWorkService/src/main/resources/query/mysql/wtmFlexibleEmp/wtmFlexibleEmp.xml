@@ -469,6 +469,7 @@
      -->
      
     <update id="updatePlanMinute" parameterType="Long">
+    	<![CDATA[
     	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
 			SELECT D.WORK_DAY_RESULT_ID  
@@ -486,17 +487,20 @@
 			   AND C.SABUN = D.SABUN
 			  JOIN WTM_TIME_CD_MGR T
 			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-			  JOIN WTM_TIME_BREAK_MGR B
-			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			  LEFT OUTER JOIN WTM_TIME_BREAK_MGR B /* 20200414 휴게시간이 없을수도 있음으로 OUTER로 변경 */
+			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+/* 20200414  휴게시간조건 제외 함수에서 시간처리함			    
+        	   AND (B.SHM <= F_WTM_DATE_FORMAT(D.PLAN_EDATE, 'HI') 
+			     OR B.EHM >= F_WTM_DATE_FORMAT(D.PLAN_SDATE, 'HI'))
+*/			     
 			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 			   AND E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
 			   AND D.TIME_TYPE_CD = 'BASE'
-			   AND (B.SHM BETWEEN F_WTM_DATE_FORMAT(D.PLAN_SDATE, 'HI') AND F_WTM_DATE_FORMAT(D.PLAN_EDATE, 'HI') 
-			     OR B.EHM BETWEEN F_WTM_DATE_FORMAT(D.PLAN_SDATE, 'HI') AND F_WTM_DATE_FORMAT(D.PLAN_EDATE, 'HI'))
-			 GROUP BY D.WORK_DAY_RESULT_ID
+			 GROUP BY D.WORK_DAY_RESULT_ID, D.PLAN_SDATE, D.PLAN_EDATE
 			) XX
 			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
 		   SET X.PLAN_MINUTE = XX.CM
+		]]>
     </update>
     <update id="updateApprDatetimeByYmdAndSabun" parameterType="map">
     <![CDATA[
@@ -542,8 +546,8 @@
       	UPDATE WTM_WORK_DAY_RESULT X 
     	  JOIN (
 			SELECT D.WORK_DAY_RESULT_ID  
-				 , F_WTM_CALC_MINUTE( F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '','', '') -
-				   SUM(F_WTM_CALC_MINUTE(IF(B.SHM= '0000', '2400', B.SHM), IF(B.EHM = '0000', '2400', B.EHM), F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '' )) AS CM
+				 , F_WTM_CALC_MINUTE( F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '','', '')
+				   - SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(D.APPR_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.APPR_EDATE, 'HI'), '' )) AS CM
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_WORK_CALENDAR C
 			    ON E.TENANT_ID = C.TENANT_ID AND E.ENTER_CD = C.ENTER_CD
@@ -556,10 +560,11 @@
 			   AND C.SABUN = D.SABUN
 			  JOIN WTM_TIME_CD_MGR T
 			    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
-			  LEFT OUTER JOIN WTM_TIME_BREAK_MGR B
+			  LEFT OUTER JOIN WTM_TIME_BREAK_MGR B	/* 20200414 휴게시간이 없을수도 있음으로 OUTER로 변경 */
 			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
-        	   AND (DATE_FORMAT(D.APPR_SDATE, '%H%i') <=  STR_TO_DATE(B.SHM, '%H%i') 
-			     AND DATE_FORMAT(D.APPR_EDATE, '%H%i') >= STR_TO_DATE(B.EHM, '%H%i'))
+/* 20200414  휴게시간조건 제외 함수에서 시간처리함
+        	   AND (DATE_FORMAT(D.APPR_SDATE, '%H%i') <=  STR_TO_DATE(B.SHM, '%H%i')
+			     AND DATE_FORMAT(D.APPR_EDATE, '%H%i') >= STR_TO_DATE(B.EHM, '%H%i'))  */
 			 WHERE C.YMD BETWEEN E.SYMD AND E.EYMD
 			   AND T.BREAK_TYPE_CD = 'MGR'
 			   AND E.TENANT_ID = #{tenantId}
@@ -567,7 +572,7 @@
 			   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
 			   AND D.APPR_SDATE < D.APPR_EDATE
-			 GROUP BY D.WORK_DAY_RESULT_ID
+			 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE, D.APPR_EDATE
 			) XX
 			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
 		   SET X.APPR_MINUTE = XX.CM
@@ -2267,5 +2272,17 @@
 		   AND FLEXIBLE_SDATE > #{ymd}
 		]]>
   	</update>
+  	
+  	<select id="addMinuteWithBreakMGR" statementType="CALLABLE" parameterType="java.util.HashMap" >
+  		{ call P_WTM_DATE_ADD_FOR_BREAK_MGR( 
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sDate, jdbcType=DATETIME, javaType=java.util.Date, mode=IN}
+  			  , #{addMinute, jdbcType=INT, javaType=java.lang.Interger, mode=IN}
+  			  , #{retDate,jdbcType=DATETIME, javaType=java.util.Date, mode=OUT}
+  			  ) }
+  	</select>
   	
 </mapper>
