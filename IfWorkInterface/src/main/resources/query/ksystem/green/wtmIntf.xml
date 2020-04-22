@@ -89,7 +89,7 @@
 			     , CASE WHEN RetireDate='99991231' THEN '29991231' ELSE RetireDate END AS EYMD
 			     , TypeSeq AS STATUS_CD
 			     , DeptSeq AS ORG_CD
-			     , '' AS LOCATION_CD
+			     , '1' AS LOCATION_CD
 			     , UMJdSeq AS DUTY_CD
 			     , UMJPSeq AS POS_CD
 			     , UMPgSeq AS CLASS_CD
