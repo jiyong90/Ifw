@@ -87,16 +87,16 @@
 			     , EmpEngName AS EMP_ENG_NM
 			     , EntDate AS SYMD
 			     , CASE WHEN RetireDate='99991231' THEN '29991231' ELSE RetireDate END AS EYMD
-			     , TypeSeq AS STATUS_CD
+			     , CASE WHEN TypeSeq='3031001' THEN 'AA' ELSE 'RA' END AS STATUS_CD
 			     , DeptSeq AS ORG_CD
-			     , '' AS LOCATION_CD
+			     , '1' AS LOCATION_CD
 			     , UMJdSeq AS DUTY_CD
 			     , UMJPSeq AS POS_CD
 			     , UMPgSeq AS CLASS_CD
 			     , '' AS JOB_GROUP_CD
 			     , JobSeq AS JOB_CD
 			     , '' AS PAY_TYPE_CD
-			     , '' AS LEADER_YN
+			     , 'N' AS LEADER_YN
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VDAEmpInfo_ISU

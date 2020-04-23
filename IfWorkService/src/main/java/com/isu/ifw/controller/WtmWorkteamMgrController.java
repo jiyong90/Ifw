@@ -52,7 +52,7 @@ public class WtmWorkteamMgrController {
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
 		}
-		
+		logger.debug("getBaseWorkList rp " + rp.toString());
 		return rp;
 	}
 	
@@ -68,28 +68,22 @@ public class WtmWorkteamMgrController {
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		MDC.put("param", paramMap.toString());
-		logger.debug("setBaseWorkList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
+		logger.debug("setBaseWorkList Controller Start " + paramMap.toString());
 		
 		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
 		convertMap.put("enterCd", enterCd);
 		convertMap.put("tenantId", tenantId);
 		convertMap.put("userId", userId);
 
-		MDC.put("convertMap", convertMap);
-
+		logger.debug("setBaseWorkList Controller convertMap " + convertMap.toString());
 		
-		rp.setSuccess("");
-		int cnt = 0;
+//		int cnt = 0;
 		try {		
-			cnt = workteamMgrService.setWorkteamMgrList(tenantId, enterCd, userId, convertMap);
-			if(cnt > 0) {
-				rp.setSuccess("저장이 성공하였습니다.");
-				return rp;
-			}
+			rp = workteamMgrService.setWorkteamMgrList(tenantId, enterCd, userId, convertMap);
+//			if(cnt > 0) {
+//				rp.setSuccess("저장이 성공하였습니다.");
+//				return rp;
+//			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -118,7 +112,8 @@ public class WtmWorkteamMgrController {
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
 		}
-		
+		logger.debug("getWorkteamCdList rp " + rp.toString());
+
 		return rp;
 	}
 }
