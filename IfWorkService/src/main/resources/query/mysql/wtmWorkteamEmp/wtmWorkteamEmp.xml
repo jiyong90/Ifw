@@ -62,4 +62,13 @@
 		      AND #{ymd} BETWEEN E.SYMD AND E.EYMD 
         ]]>
     </select>
+    
+      <select id="getWorkteamMgrIdAndEymd" parameterType="map" resultType="int">
+        <![CDATA[
+			SELECT count(*)
+		    FROM WTM_WORKTEAM_EMP E
+		    WHERE E.WORKTEAM_MGR_ID = #{workteamMgrId} 
+		    	AND E.EYMD > #{eymd} 
+        ]]>
+    </select>
 </mapper>

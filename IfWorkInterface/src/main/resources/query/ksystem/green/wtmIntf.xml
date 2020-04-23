@@ -96,7 +96,7 @@
 			     , '' AS JOB_GROUP_CD
 			     , JobSeq AS JOB_CD
 			     , '' AS PAY_TYPE_CD
-			     , '' AS LEADER_YN
+			     , 'N' AS LEADER_YN
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VDAEmpInfo_ISU
