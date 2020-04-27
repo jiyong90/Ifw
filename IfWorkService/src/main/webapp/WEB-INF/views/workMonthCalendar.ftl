@@ -521,6 +521,7 @@
     			//결재라인
     			calendarLeftVue.applLine = calendarLeftVue.getApplLine(flexStd.workTypeCd);
     			
+    			$("#applyBtn").hide();
     			$("#flexibleAppl").find(".sub-wrap").show();
     			
     			//신청 화면 전환
