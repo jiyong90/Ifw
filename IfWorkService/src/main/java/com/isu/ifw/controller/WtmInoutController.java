@@ -340,8 +340,8 @@ public class WtmInoutController {
 		rp.setFail("출퇴근 이력 조회 중 오류가 발생했습니다.");
 
 		String userToken = request.getParameter("userToken");
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 		if(emp == null) {
