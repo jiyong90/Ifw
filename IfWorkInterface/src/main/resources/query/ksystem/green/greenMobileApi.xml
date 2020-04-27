@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.intf.mapper.GreenMobileApiMapper">
+
+ 
+	<insert id="saveMobileSession" parameterType="hashmap">
+		<![CDATA[ 
+			INSERT INTO KPXERP_VDAMobile_ISU
+				(	
+					ENTER_CD
+				  ,	SABUN
+				  , ACCESS_TOKEN
+				  , UPDATE_DATE
+				  ,	CREATE_DATE
+				  , NOTE
+				)
+				VALUES
+				(	
+					#{enterCd}
+				  ,	#{sabun}
+				  , #{accessToken}
+				  , CURRENT_TIMESTAMP
+				  ,	CURRENT_TIMESTAMP
+				  , #{note}
+				)
+		]]>
+	</insert>
+	
+	<select id="getMobileSession" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT ENTER_CD
+				  ,	SABUN
+				  , ACCESS_TOKEN
+				FROM KPXERP_VDAMobile_ISU
+				WHERE ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun}
+				AND ACCESS_TOKEN = #{accessToken}
+				
+		]]>
+	</select>
+	
+	<update id="updateAccessToken" parameterType="hashmap">
+		<![CDATA[ 
+			UPDATE KPXERP_VDAMobile_ISU
+					SET ACCESS_TOKEN = #{newAccessToken}
+					,UPDATE_DATE = CURRENT_TIMESTAMP 
+				WHERE ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun}
+				AND ACCESS_TOKEN = #{accessToken}
+		]]>
+	</update>
+
+</mapper>
