@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +45,7 @@ import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmEmpMgrService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmRuleService;
+import com.isu.ifw.util.CookieUtil;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.StringUtil;
 
@@ -97,14 +101,34 @@ public class ViewController {
 	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
+	@Autowired private TokenStore tokenStore;
+	
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
 	 * @param tsId
 	 * @return
 	 */
 	@RequestMapping(value="/login/{tsId}", method= {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView viewLogin(@PathVariable String tsId, HttpServletRequest request) throws Exception {
-
+	public ModelAndView viewLogin(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		String token = response.getHeader("Authorization");
+		if(token != null && !token.equals("")) {
+			OAuth2AccessToken accessToken = tokenStore.readAccessToken(token);
+			tokenStore.removeAccessToken(accessToken);
+		}
+		
+		if(request.getCookies() != null && request.getCookies().length > 0) {
+			for(Cookie ck : request.getCookies()) {
+				if(ck.getName().equalsIgnoreCase("Authorization")) {
+					token = ck.getValue();
+					OAuth2AccessToken accessToken = tokenStore.readAccessToken(token);
+					tokenStore.removeAccessToken(accessToken);
+				}
+			}
+		}
+		
+		CookieUtil.clear(response, "Authorization");
+		
 	    CommTenantModule tm = null;
 	    tm = tenantModuleRepo.findByTenantKey(tsId);
         Long tenantId = tm.getTenantId();

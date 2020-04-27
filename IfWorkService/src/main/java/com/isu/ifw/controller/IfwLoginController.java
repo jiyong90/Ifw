@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -47,8 +46,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.common.entity.CommTenantModule;
+import com.isu.ifw.common.entity.OauthClientToken;
 import com.isu.ifw.common.mapper.CommUserMapper;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
+import com.isu.ifw.common.repository.OauthClientTokenRepository;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.repository.WtmEmpHisRepository;
@@ -80,9 +81,11 @@ public class IfwLoginController {
 	@Autowired
 	CommUserMapper commUserMapper;
 	
+	/*
     @Autowired
     StringRedisTemplate redisTemplate;
-    
+    */
+	
     @Autowired
     RestTemplate restTemplate;
 
@@ -100,6 +103,9 @@ public class IfwLoginController {
 	
 	@Autowired
 	WtmEmpHisRepository wtmEmpHisRepo;
+	
+	@Autowired
+	OauthClientTokenRepository oauthClientTokenRepo;
    
     @RequestMapping(value = "/login/{tsId}/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView ssoLogin(@PathVariable String tsId,
@@ -225,6 +231,7 @@ public class IfwLoginController {
 //   		mv.addObject("pageName", "loading");
 
 		try {
+			System.out.println("1111111111111111111111111111111111111 url" +url);
 			ResponseEntity<Map> res = restTemplate.postForEntity(url, entity, Map.class);
 			System.out.println("1111111111111111111111111111111111111 getStatusCode" +res.getStatusCode().value());
 
@@ -266,7 +273,7 @@ public class IfwLoginController {
    				System.out.println("header ::::::: END");
    				if(1==1) {
    					try {
-   						redisTemplate.opsForValue().set(data.get("userName").toString(), tokenMap.get("refresh_token").toString());
+   						//redisTemplate.opsForValue().set(data.get("userName").toString(), tokenMap.get("refresh_token").toString());
    						
    				        //String token = JwtUtil.generateToken(signingKey, username);
    				        CookieUtil.create(response, jwtTokenCookieName, accessToken, false, -1, null);
@@ -331,10 +338,12 @@ public class IfwLoginController {
     @RequestMapping(value = "/login/{tsId}/authorize", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void authorizeCallback(@PathVariable String tsId, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirect, Authentication authentication) {
 
+    	System.out.println("===========================================================================================");
 		System.out.println("1111111111111111111111111111111111111 callback");
 		//UserDetails userDetails = (UserDetails) authentication.getPrincipal(); 
 		//System.out.println("userDetails.getUsername() : " + userDetails.getUsername());
 
+		
 			
 		CommTenantModule tm = null;
 	    tm = tenantModuleRepo.findByTenantKey(tsId);
@@ -370,6 +379,8 @@ public class IfwLoginController {
 //   		mv.addObject("pageName", "loading");
 
 		try {
+			System.out.println("1111111111111111111111111111111111111 url" +url);
+			System.out.println("1111111111111111111111111111111111111 entity" +entity.toString());
 			ResponseEntity<Map> res = restTemplate.postForEntity(url, entity, Map.class);
 			System.out.println("1111111111111111111111111111111111111 getStatusCode" +res.getStatusCode().value());
 
@@ -411,8 +422,18 @@ public class IfwLoginController {
    				System.out.println("header ::::::: END");
    				if(1==1) {
    					try {
-   						redisTemplate.opsForValue().set(data.get("userName").toString(), tokenMap.get("refresh_token").toString());
-   						
+   						OauthClientToken oauthClientToken = new OauthClientToken();
+   						oauthClientToken.setAuthenticationId(tokenMap.get("jti")+"");
+   						oauthClientToken.setToken(tokenMap.get("refresh_token").toString());
+   						oauthClientToken.setClientId(data.get("client_id")+"");
+   						oauthClientToken.setUserName(data.get("userName").toString());
+
+   						oauthClientTokenRepo.save(oauthClientToken);
+   						//redisTemplate.opsForValue().set(data.get("userName").toString(), tokenMap.get("refresh_token").toString());
+   						/*
+   						 *  tokenMap {access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1ODUyOTIyMTgsInVzZXJfbmFtZSI6InNvbGRldkBJU1VAMTEwMTAiLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwianRpIjoiOGMwZTFkNmMtNDhmZi00M2FhLWJjMWYtN2M2NzM5ZGY3YmI3IiwiY2xpZW50X2lkIjoic29sZGV2Iiwic2NvcGUiOlsicmVhZCIsIndyaXRlIl19.xYcJGgewV5VDeao2YrER3XmzLuuE9P8EyQOhj9CqLuQ, token_type=bearer, refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJzb2xkZXZASVNVQDExMDEwIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIl0sImF0aSI6IjhjMGUxZDZjLTQ4ZmYtNDNhYS1iYzFmLTdjNjczOWRmN2JiNyIsImV4cCI6MTU4Nzc5NzgxOCwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImp0aSI6IjlmMTM4ZGE0LWQ1ZjctNDBjZi1iZmMzLWZiYjc1MjdjYTc1NCIsImNsaWVudF9pZCI6InNvbGRldiJ9.kJ4n-5zllWcyiLQOAAjK0PJIOq7_R2DYPcXSifYYSB0, expires_in=80934, scope=read write, jti=8c0e1d6c-48ff-43aa-bc1f-7c6739df7bb7}
+							{exp=1585292218, user_name=soldev@ISU@11010, authorities=[ROLE_USER], jti=8c0e1d6c-48ff-43aa-bc1f-7c6739df7bb7, client_id=soldev, scope=[read, write]}
+   						 */
    				        //String token = JwtUtil.generateToken(signingKey, username);
    				        CookieUtil.create(response, jwtTokenCookieName, accessToken, false, -1, null);
    				        

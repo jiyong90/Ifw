@@ -50,8 +50,8 @@
         
         <input type="hidden" id="password" name="password" class="form-control" >
         <input type="text" id="username" name="username" class="form-control" value="" hidden>
-        <input type="text" id="grant_type" name="grant_type" class="form-control" value="password" hidden>
-        <input type="text" id="redirect_uri" name="redirect_uri" class="form-control" value="${redirect_uri}" hidden>
+        <!-- <input type="text" id="grant_type" name="grant_type" class="form-control" value="password" hidden>
+        <input type="text" id="redirect_uri" name="redirect_uri" class="form-control" value="${redirect_uri}" hidden> -->
         <div class="checkbox mb-3 form-element">
             <input type="checkbox" value="remember-me" id="keepLogin">
             <label for="keepLogin">아이디 저장</label>
@@ -144,7 +144,7 @@
   		  	
     		return true;
     	}
-    	
+    	/*
 //    	function login() {
     	$("form").on("submit", function() {
     		  var action = "${userAuthorizationUri}?client_id=${tsId}&redirect_uri=${redirect_uri}&response_type=code&scope=read";
@@ -169,7 +169,7 @@
 //			 	});
    	    	});
     	//}
-    	
+    	*/
     	var loginVue = new Vue({
     		el: "#lForm",
     	    data : {

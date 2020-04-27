@@ -9,16 +9,23 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.TokenExtractor;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
+import com.isu.ifw.util.CookieUtil;
 import com.isu.ifw.util.WtmUtil;
 
 class CustomExtractor implements TokenExtractor {
     private static final String TOKEN_KEY_JWT = "Authorization";
     private static final String TOKEN_KEY_PARAM = "access_token";
 
+    @Autowired
+    private TokenStore tokenStore;
 //    @Autowired
 //    StringRedisTemplate redisTemplate;
         
@@ -83,7 +90,7 @@ class CustomExtractor implements TokenExtractor {
     	    return null;
     	}
     	
-    	Map<String, Object> t = WtmUtil.parseJwtToken(request, token);
+    	//Map<String, Object> t = WtmUtil.parseJwtToken(request, token);
     	//System.out.println("parseJwtToken " + t.toString());
 //    	if(t.containsKey("user_name")) {
 //    		try {
@@ -95,7 +102,16 @@ class CustomExtractor implements TokenExtractor {
 //    		}
 //    	}
     	
-    	return new PreAuthenticatedAuthenticationToken(token, "");
+    	//OAuth2Authentication auth = tokenStore.readAuthentication(token);
+
+    	OAuth2AccessToken accessToken = tokenStore.readAccessToken(token);
+    
+    	System.out.println("CustomExtractor accessToken.isExpired() : " + accessToken.isExpired());
+    	if(accessToken.isExpired()) {
+    		return null;
+    	}else {
+    		return new PreAuthenticatedAuthenticationToken(token, "");
+    	}
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {

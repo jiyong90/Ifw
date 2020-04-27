@@ -39,12 +39,20 @@
                 <div class="modal-body">
                     <form class="needs-validation" novalidate>
                         <div class="modal-app-wrap">
-                        	<div class="inner-wrap position-relative">
+                        	<div class="inner-wrap position-relative row">
 			                	<div class="loading-spinner" style="display:none;"></div>
-			                	<p class="page-sub-title mb-0">잔여 연장근로시간</p>
-			                    <span class="time-wrap">
-			                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(targets['${empNo}'], 'detail')}}</span>
-			                    </span>
+			                	<div class="col-4 col-sm-3 col-md-3 col-lg-2" v-if="targets != null && targets['${empNo}'] != null && targets['${empNo}'].restWorkMinute != null">
+				                	<p class="page-sub-title mb-0">잔여 소정근로시간</p>
+				                    <span class="time-wrap">
+				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(targets['${empNo}'].restWorkMinute, 'detail')}}</span> -->
+				                    </span>
+			                    </div>
+			                    <div class="col-4 col-sm-3 col-md-3 col-lg-2" v-if="targets != null && targets['${empNo}'] != null && targets['${empNo}'].restOtMinute != null">
+				                	<p class="page-sub-title mb-0">잔여 연장근로시간</p>
+				                    <span class="time-wrap">
+				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(targets['${empNo}'].restOtMinute, 'detail')}}</span>
+				                    </span>
+			                    </div>
 			                    <hr class="separate-bar">
 		                    </div>
                             <div class="inner-wrap">
@@ -75,6 +83,7 @@
                                             </div>
                                         </div>
                                         <div class="guide" v-if="overtime.breakMinute && overtime.breakMinute!=0">*해당일 총 휴게시간은 {{minuteToHHMM(overtime.breakMinute,'detail')}} 입니다.</div>
+                                        <div class="guide" v-if="targets != null && targets['${empNo}'] != null && targets['${empNo}'].guideMessage != null">{{targets['${empNo}'].guideMessage}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -2301,6 +2310,7 @@
 							$(".loading-spinner").hide();
 							
 							if(data!=null) {
+								console.log(data.targetList);
 								//잔여연장근로시간
 								if(data.hasOwnProperty('targetList')) 
 									$this.targets = data.targetList;

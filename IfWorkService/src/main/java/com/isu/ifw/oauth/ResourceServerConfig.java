@@ -1,5 +1,8 @@
 package com.isu.ifw.oauth;
 
+
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -10,12 +13,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.authentication.TokenExtractor;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @Configuration
@@ -26,6 +28,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Autowired 
 	private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 	
+	@Autowired 
+	private CustomTokenAuthenticationEntryPoint customTokenAuthenticationEntryPoint;
+	
+	@Autowired
+	private DataSource dataSource;
 
 	@Autowired
     private javax.servlet.Filter preFilter;
@@ -58,16 +65,15 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		.and()
 		.sessionManagement()
 		.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-		//.headers().frameOptions().disable()
 		.and()
 		.cors().disable()
+		.headers().frameOptions().disable().and()
 		.authorizeRequests()
 		.antMatchers("/intf/**", "/login/**","/login/**/authorize","/we/**","/info/**","/certificate/**","/schedule/**","/interface/**","/api/**","/static/**").permitAll()
-		.anyRequest()//.access("hasRole('ROLE_USER')")
+		.anyRequest()//.access("hasRole('ROLE_USER')") 
 		.authenticated()
-		.and()
-		.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-		.and().addFilterBefore(preFilter, UsernamePasswordAuthenticationFilter.class)
+		.and().exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint)
+		//.and().addFilterBefore(preFilter, UsernamePasswordAuthenticationFilter.class)
 		
 		;
 		
@@ -81,28 +87,44 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		return registrationBean;
 	    
 	}
-	
-    @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        //return new CustomAuthenticationEntryPoint("/loginPage");
-    	return customAuthenticationEntryPoint;
-    }
-    
+//	
+//    @Bean
+//    public AuthenticationEntryPoint authenticationEntryPoint() {
+//        //return new CustomAuthenticationEntryPoint("/loginPage");
+//    	return customAuthenticationEntryPoint;
+//    }
+//    
 	@Override
 	public void configure(ResourceServerSecurityConfigurer config) {
 		
-		config
-//		.tokenServices(tokenServices())
-		.tokenStore(tokenStore())
-		.tokenExtractor(new CustomExtractor());
+		try {
+			config
+			.tokenServices(tokenServices())
+			.tokenStore(tokenStore())
+			.tokenExtractor(extractor())
+			//.and().oauth2Login().loginPage("/")
+			//.authenticationEntryPoint(customTokenAuthenticationEntryPoint)
+			;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	
+	@Bean
+	public TokenExtractor extractor() {
+		return new CustomExtractor();
+	}
 	@Bean
 	public TokenStore tokenStore() {
 		return new JwtTokenStore(jwtAccessTokenConverter());
 	}
-
+	/*
+	@Bean
+	public TokenStore tokenStore() {
+		return new JdbcTokenStore(dataSource);
+	}
+	*/
 //	@Autowired 
 //	RedisConnectionFactory redisConnectionFactory;
 //	
@@ -117,7 +139,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey("123@#$");
+        converter.setSigningKey("iSuSystEmW0rkT1meM@n@gemEnTServ1c2");
         return converter;
     }
 
@@ -136,6 +158,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public DefaultTokenServices tokenServices() {
 		DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
 		defaultTokenServices.setTokenStore(tokenStore());
+		defaultTokenServices.setSupportRefreshToken(true);
 		return defaultTokenServices;
 	}
 }

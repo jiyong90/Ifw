@@ -12,88 +12,104 @@
 </head>
 <body>
 	<div id="topDiv">
-    <div class="wrapper work-off" v-if="inoutType=='HOL' || inoutType=='IN' ">
-        <div class="inner-wrapper">
-            <div class="ico-wrap">
-                <img v-if="inoutType=='IN'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workday.png" alt="">
-                <img v-if="inoutType=='HOL'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_holiday.png" alt="">
-            </div>
-            <div class="contents-wrap">
-                <p class="date">{{formattedYmd}}</p>
-                <p class="desc">오늘은 <strong>{{desc}}</strong> 입니다.</p>
-            	<a href="/ife/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
-            </div>
-            <div class="btn-wrap">
-                <button :class="{ 'btn':true, 'btn-on': !isHol }" @click="clickIn">출근하기</button>
-            </div>
-        </div>
+		<div v-if="inoutType!='NONE'">
+		    <div class="wrapper work-off" v-if="inoutType=='HOL' || inoutType=='IN' ">
+		        <div class="inner-wrapper">
+		            <div class="ico-wrap">
+		                <img v-if="inoutType=='IN'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workday.png" alt="">
+		                <img v-if="inoutType=='HOL'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_holiday.png" alt="">
+		            </div>
+		            <div class="contents-wrap">
+		                <p class="date">{{formattedYmd}}</p>
+		                <p class="desc">오늘은 <strong>{{desc}}</strong> 입니다.</p>
+		            	<a href="/ifwi/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
+		            </div>
+		            <div class="btn-wrap">
+		                <button :class="{ 'btn':true, 'btn-on': !isHol }" @click="clickIn">출근하기</button>
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="wrapper work-day" v-if="inoutType=='END' || inoutType=='OUT' ">
+		        <div class="top-bg">
+		            <div class="inner-wrapper">
+		                <div class="ico-wrap">
+		                    <img v-if="inoutType=='OUT'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workon.png" alt="">
+		                    <img v-if="inoutType=='END'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workoff.png" alt="">
+		                </div>
+		                <div class="info-wrap">
+		                    <p class="date">{{formattedYmd}}</p>
+		                    <p class="desc"><strong>{{desc}}</strong> 입니다.</p>
+		                </div>
+		            </div>
+		        </div>
+		        <div class="contents-outer-wrap">
+		            <div class="contents-wrap">
+		            	<template  v-if="entrySymd">
+			                <span class="title">출근</span>
+			                <span class="date">{{entrySymd}}</span>
+			                <span class="time">{{entryStime}}</span>
+		                </template>
+		            </div>
+		            <div class="contents-wrap" >
+		            	<template  v-if="entryEymd">
+			                <span class="title">퇴근</span>
+			                <span class="date">{{entryEymd}}</span>
+			                <span class="time">{{entryEtime}}</span>
+		                </template>
+		            </div>
+		            <div class="contents-wrap" >
+		            	<template  v-if="exceptYmd">
+			                <span class="title" v-if="exceptType=='BACK'">휴식중</span>
+			                <span class="title" v-if="exceptType=='GO'">휴식종료</span>
+			                <span class="date">{{exceptYmd}}</span>
+			                <span class="time">{{exceptTime}}</span>
+		                </template>
+		            </div>
+		            <div class="btn-wrap">
+		            <a href="/ifwi/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
+		                <button class="btn btn-off" v-if="inoutType=='OUT'" @click="clickOut">퇴근하기</button>
+		                <button class="btn btn-go" v-if="inoutType=='OUT' && exceptType=='GO'" @click="clickExcept">휴식</button>
+		                <button class="btn btn-back" v-if="inoutType=='OUT' && exceptType=='BACK'" @click="clickExcept">휴식취소</button>
+		                <button class="btn btn-cancel" v-if="inoutType=='END'" @click="clickCancel">퇴근취소</button>
+		            </div>
+		        </div>
+		    </div>
+	    </div> <!-- #topDiv end -->
+	    <div v-if="inoutType=='NONE'">
+		    <div class="wrapper work-off" >
+		        <div class="inner-wrapper">
+		            <div class="ico-wrap">
+		                <img src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_holiday.png" alt="">
+		            </div>
+		            <div class="contents-wrap">
+		                <p class="date">{{currYmd}}</p>
+		                <p class="desc"><strong>{{desc}}</strong></p>
+		            	<a href="/ifwi/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
+		            </div>
+		        </div>
+		    </div>
+	    </div>
     </div>
-    
-    <div class="wrapper work-day" v-if="inoutType=='END' || inoutType=='OUT' ">
-        <div class="top-bg">
-            <div class="inner-wrapper">
-                <div class="ico-wrap">
-                    <img v-if="inoutType=='OUT'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workon.png" alt="">
-                    <img v-if="inoutType=='END'" src="${rc.getContextPath()}/company/hyundaiNGV/assets/img/icon_workoff.png" alt="">
-                </div>
-                <div class="info-wrap">
-                    <p class="date">{{formattedYmd}}</p>
-                    <p class="desc"><strong>{{desc}}</strong> 입니다.</p>
-                </div>
-            </div>
-        </div>
-        <div class="contents-outer-wrap">
-            <div class="contents-wrap">
-            	<template  v-if="entrySymd">
-	                <span class="title">출근</span>
-	                <span class="date">{{entrySymd}}</span>
-	                <span class="time">{{entryStime}}</span>
-                </template>
-            </div>
-            <div class="contents-wrap" >
-            	<template  v-if="entryEymd">
-	                <span class="title">퇴근</span>
-	                <span class="date">{{entryEymd}}</span>
-	                <span class="time">{{entryEtime}}</span>
-                </template>
-            </div>
-            <div class="contents-wrap" >
-            	<template  v-if="exceptYmd">
-	                <span class="title" v-if="exceptType=='BACK'">휴식중</span>
-	                <span class="title" v-if="exceptType=='GO'">휴식종료</span>
-	                <span class="date">{{exceptYmd}}</span>
-	                <span class="time">{{exceptTime}}</span>
-                </template>
-            </div>
-            <div class="btn-wrap">
-            <a href="/ife/wtms/hdngvsso" target="blank" class="link">근무시간 관리 시스템 바로가기</a>
-                <button class="btn btn-off" v-if="inoutType=='OUT'" @click="clickOut">퇴근하기</button>
-                <button class="btn btn-go" v-if="inoutType=='OUT' && exceptType=='GO'" @click="clickExcept">휴식</button>
-                <button class="btn btn-back" v-if="inoutType=='OUT' && exceptType=='BACK'" @click="clickExcept">휴식취소</button>
-                <button class="btn btn-cancel" v-if="inoutType=='END'" @click="clickCancel">퇴근취소</button>
-            </div>
-        </div>
-    </div>
-    </div> <!-- #topDiv end -->
     <script type="text/javascript">
 		$(function () {
 			var inoutVue = new Vue({
 		   		el: "#topDiv",
 			    data : {
 			    	isHol: true,
-			    	ymd: '${ymd}',
-			    	entrySymd: '${entrySymd}',
-			    	entryStime: '${entryStime}',
-			    	entryEymd: '${entryEymd}',
-			    	entryEtime: '${entryEtime}',
-			    	label: '${label}',
-			    	desc: '${desc}',
-			    	inoutType: '${inoutType}', 
-			    	exceptType: '${exceptType}',
-			    	exceptYmd: '${exceptYmd}',
-			    	exceptTime: '${exceptTime}',
-			    	empId : '${sabun}',
-		    		enterCd : '${enterCd}'
+			    	ymd: "${ymd?default('')}",
+			    	entrySymd: '${entrySymd?default('')}',
+			    	entryStime: '${entryStime?default('')}',
+			    	entryEymd: '${entryEymd?default('')}',
+			    	entryEtime: '${entryEtime?default('')}',
+			    	label: '${label?default('')}',
+			    	desc: '${desc?default('')}',
+			    	inoutType: '${inoutType?default('')}', 
+			    	exceptType: '${exceptType?default('')}',
+			    	exceptYmd: '${exceptYmd?default('')}',
+			    	exceptTime: '${exceptTime?default('')}',
+			    	empId : '${sabun?default('')}',
+		    		enterCd : '${enterCd?default('')}'
 		  		},
 		  		computed : {
 		  			formattedYmd : function(){
@@ -103,6 +119,16 @@
 		  				}else{
 		  					return '';
 		  				}
+		  			},
+		  			currYmd : function(){
+		  				var today = new Date();   
+
+		  				var year = today.getFullYear(); // 년도
+		  				var month = today.getMonth() + 1;  // 월
+		  				var date = today.getDate();  // 날짜
+		  				var day = today.getDay();  // 요일
+
+		  				return year + '.' + month + '.' + date;
 		  			}
 		  		},
 			    mounted: function(){
@@ -110,6 +136,9 @@
 					if(this.inoutType == "IN"){
 						this.isHol = false;	
 					}
+					/*
+					{"result":{"ymd":null,"entrySymd":"","exceptDesc":"-","exceptType":"GO","exceptTime":"","exceptYmd":"","label":" - ","inoutType":"NONE","entryEymd":"","entryStime":"","entryEtime":"","desc":"출근체크 필요시 인사팀에 문의 바랍니다"},"message":"","status":"OK"}
+					*/
 					 
 			    },
 			    methods: {
