@@ -31,6 +31,7 @@ public interface WtmIntfMapper {
 	 * 발령이력 조회
 	 **/
 	public List<Map<String, Object>> getWtmEmp(Map<String, Object> paramMap);
+	public Map<String, Object> getWtmEmpByEmpID(Map<String, Object> paramMap);
 	
 	/**
 	 * 겸직 조회

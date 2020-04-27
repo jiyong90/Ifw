@@ -96,11 +96,37 @@
 			     , '' AS JOB_GROUP_CD
 			     , JobSeq AS JOB_CD
 			     , '' AS PAY_TYPE_CD
-			     , 'N' AS LEADER_YN
+			     , CASE WHEN IsBoss = 1 THEN 'Y' ELSE 'N' END AS LEADER_YN
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VDAEmpInfo_ISU
 			 ORDER BY EmpId, EntDate
+        ]]>
+    </select>
+    
+    
+    <select id="getWtmEmpByEmpID" parameterType="map" resultType="hashmap">
+        <![CDATA[ 
+			SELECT CompanySeq AS ENTER_CD
+			     , EmpId AS SABUN
+			     , EmpName AS EMP_NM
+			     , EmpEngName AS EMP_ENG_NM
+			     , EntDate AS SYMD
+			     , CASE WHEN RetireDate='99991231' THEN '29991231' ELSE RetireDate END AS EYMD
+			     , CASE WHEN TypeSeq='3031001' THEN 'AA' ELSE 'RA' END AS STATUS_CD
+			     , DeptSeq AS ORG_CD
+			     , '1' AS LOCATION_CD
+			     , UMJdSeq AS DUTY_CD
+			     , UMJPSeq AS POS_CD
+			     , UMPgSeq AS CLASS_CD
+			     , '' AS JOB_GROUP_CD
+			     , JobSeq AS JOB_CD
+			     , '' AS PAY_TYPE_CD
+			     , CASE WHEN IsBoss = 1 THEN 'Y' ELSE 'N' END AS LEADER_YN
+			     , Remark AS NOTE
+			     , LastDateTime AS CHKDATE
+			  FROM KPXERP_VDAEmpInfo_ISU
+			 WHERE EmpID = #{EmpID}
         ]]>
     </select>
     
