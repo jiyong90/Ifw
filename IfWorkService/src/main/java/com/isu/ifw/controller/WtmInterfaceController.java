@@ -25,6 +25,7 @@ import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.service.WtmInterfaceService;
 import com.isu.ifw.service.WtmIuerpInterfaceService;
+import com.isu.ifw.service.WtmRocheService;
 import com.isu.ifw.util.WtmUtil;
 
 @RestController
@@ -40,6 +41,11 @@ public class WtmInterfaceController {
 	@Autowired
 	@Qualifier("wtmIuerpInterfaceService")
 	private WtmIuerpInterfaceService wtmIuerpInterfaceService;
+	
+	@Autowired
+	@Qualifier("wtmRocheService")
+	private WtmRocheService wtmRocheService;
+	
 	
 //	@Autowired
 //	AuthConfigProvider authConfigProvider;
@@ -102,6 +108,9 @@ public class WtmInterfaceController {
 			
 			System.out.println("getEmpHisIfResult call");
 			wtmInterfaceService.getEmpHisIfResult(tenantId); //사원이력
+			
+			System.out.println("getOrgConcIfResult call");
+			wtmInterfaceService.getOrgConcIfResult(tenantId); //조직장 변경정보 저장 Service 호출
 			
 			System.out.println("getEmpAddrIfResult call");
 			wtmInterfaceService.getEmpAddrIfResult(tenantId); //사원 주소
@@ -293,6 +302,8 @@ public class WtmInterfaceController {
 		System.out.println("workTimeArrIf : end");
 		return retMap;
 	}
+	
+	
 	
 	@RequestMapping(value = "/workTimeBatch",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setTaaApplPPIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
