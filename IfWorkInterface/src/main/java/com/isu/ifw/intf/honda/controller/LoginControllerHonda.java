@@ -32,6 +32,18 @@ public class LoginControllerHonda {
 	@Autowired
 	private ExchangeService exchangeService;
 	
+	public static void main(String[] args) {
+		
+		Map<String, Object> payloads = new HashMap<String, Object>();
+		payloads.put("CD_COMPANY", "1000");
+		payloads.put("NO_EMP", "13080103");
+		
+		String jwtString = TokenUtil.createJWT("h0nda20200401k0readziSuinTerFace", "id", "issure", "subject", payloads, 6000000l);
+		//System.out.println(aes256.encrypt(jwtString));
+		System.out.println(jwtString);
+	}
+	
+	
 	@RequestMapping(value = "/wtms/hondasso", method = RequestMethod.GET)
 	public void hondaSsoLogin(@RequestParam(required = true) String p, HttpServletRequest req, HttpServletResponse res) throws Exception {
 		//ModelAndView mv = new ModelAndView("inout");
@@ -50,7 +62,7 @@ public class LoginControllerHonda {
 		//Aes256 aes256 = new Aes256(signKey);
 		Map<String, Object> payloads = new HashMap<String, Object>();
 		payloads.put("CD_COMPANY", "1000");
-		payloads.put("NO_EMP", "인사");
+		payloads.put("NO_EMP", "13080103");
 		
 		String jwtString = TokenUtil.createJWT(signKey, "id", "issure", "subject", payloads, expiredTime);
 		//System.out.println(aes256.encrypt(jwtString));
@@ -80,7 +92,8 @@ public class LoginControllerHonda {
 			//https://cloudhr.pearbranch.com/ifw/login/honda/sso?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJyZWFkIiwid3JpdGUiXSwiZXhwIjoxNTgwOTAwOTM2LCJhdXRob3JpdGllcyI6WyJBRE1JTiJdLCJqdGkiOiJlZjI5MTFlNS03OGI2LTRjNjUtOGQzOS03N2JmMzAxMmQyMzciLCJjbGllbnRfaWQiOiJoZG5ndiJ9.9PN95JEorGaxrOE0ZFGJdVBVqrLexjjB-2mJx26Dr_I&p=3w65MARMUvbQDhiX7fBCtyhGz1x0Jr9CuCDVAJJYFhIygdvHvXwNmTqj1yE4+7JODK4JBBhAoJ0SeJWEc5R7bmCRyYhrcwv1wDAkMZ4m0SaCZCHKk32QQE3i3TARHTBfG05qzsuBalwGtEi+JinXxA==
 			System.out.println(jwtId+ " :: encParam : " + encParam);
 			//http://cloudhr.pearbranch.com/ifa/oauth/authorize?client_id=honda&redirect_uri=http://cloudhr.pearbranch.com/ifw/login/honda/authorize&response_type=code&scope=read%20write
-			res.sendRedirect("https://cloudhr.pearbranch.com/ifa/oauth/authorize?client_id=hondasso&redirect_uri=https://cloudhr.pearbranch.com/ifw/login/honda/authorize&response_type=code&scope=read%20write&accessToken="+t+"&p="+encParam);
+			//res.sendRedirect("https://cloudhr.pearbranch.com/ifa/oauth/authorize?client_id=hondasso&redirect_uri=https://cloudhr.pearbranch.com/ifw/login/honda/authorize&response_type=code&scope=read%20write&accessToken="+t+"&p="+encParam);
+			res.sendRedirect("https://cloudhr.pearbranch.com/ifw/login/hondasso/sso?accessToken="+t+"&p="+encParam);
 		}catch(Exception e) {
 			res.sendRedirect("/err?mgs="+ e.getMessage());
 		}
