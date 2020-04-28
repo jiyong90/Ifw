@@ -1,6 +1,9 @@
 package com.isu.ifw.intf.service;
 
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -21,16 +24,33 @@ public class GreenMobileApiService {
 	private WtmIntfMapper intfMapper;
 	
 	public String createAccessToken(String enterCd, String sabun){
+		System.out.println("######################### 1111 ");
 		String accessToken = UUID.randomUUID().toString();
 		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put("enterCd", sabun);
+		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 		paramMap.put("accessToken", accessToken);
 		paramMap.put("note", "");
-		
-		int res = mobile.saveMobileSession(paramMap);
-		if(res > 0) {
-			return accessToken;
+		try {
+			List<Map<String, Object>> resMap = mobile.getMobileSession(paramMap);
+			if(resMap != null && resMap.size() > 0) {
+				System.out.println("######################### 3333 ");
+				int res = mobile.updateAccessToken(paramMap);
+				System.out.println("#################### res " + res);
+				if(res > 0) {
+					return accessToken;
+				}
+				//this.updateAccessToken(enterCd, sabun);
+			}else {
+				System.out.println("######################### 2222 ");
+				int res = mobile.saveMobileSession(paramMap);
+				System.out.println("#################### res " + res);
+				if(res > 0) {
+					return accessToken;
+				}
+			}
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
 		}
 		return null;
 	}
@@ -49,32 +69,57 @@ public class GreenMobileApiService {
 		return null;
 	}
 	
-	public ReturnParam greenValidEmp(String locale, String empKey,  String accessToken){
+	public String greenEmpPhotoOut(String locale, String empKey) {
+		String enterCd =  empKey.split("@")[0];
+		String sabun =  empKey.split("@")[1];
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		
+		System.out.println("#########################/employee/image " + paramMap.toString());
+		Map<String, Object> emp = mobile.getEmpPhotoOut(paramMap);
+		if(emp != null && emp.containsKey("Photo")) {
+			return emp.get("Photo").toString();
+		}
+		return null;
+	}
+	
+	public ReturnParam greenValidEmp(String locale, String empKey,  String accessToken) throws CertificateException{
 		String enterCd =  empKey.split("@")[0];
 		String sabun =  empKey.split("@")[1];
 		ReturnParam rp = new ReturnParam();
 		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put("enterCd", sabun);
+		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 		paramMap.put("accessToken", accessToken);
-		
-		Map<String, Object> resMap = mobile.getMobileSession(paramMap);
+		System.out.println("##################### 잉?");
+		Map<String, Object> resMap = mobile.getCheckSession(paramMap);
 		if(resMap != null) {
-			//올바른 사용자다 토큰을 갱신하자
-			String newAccessToken = updateAccessToken(enterCd, sabun);
+			//올바른 사용자다 토큰을 갱신하자, 하지마
+			
+//			String newAccessToken = updateAccessToken(enterCd, sabun);
 			
 			Map<String, Object> pMap = new HashMap<String, Object>();
 			pMap.put("EmpID", sabun);		
 			
 			Map<String, Object> sessionData = intfMapper.getWtmEmpByEmpID(pMap);
-			sessionData.put("accessToken", newAccessToken);
+			System.out.println("##################### sessionData " + sessionData.toString());
+			List<String> listdata = new ArrayList();
+			if(sessionData.containsKey("LEADER_YN") && sessionData.get("LEADER_YN").equals("Y")) {
+				listdata.add("leader");
+			}
+			
+			sessionData.put("authCode", listdata);
+			sessionData.put("accessToken", accessToken);
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			
 			resultMap.put("sessionData", sessionData);
 			rp.setSuccess("");
 			rp.put("result", resultMap);
+			System.out.println("##################### rp " + rp.toString());
+
 		}else {
-			rp.setFail("인증 실패");
+			throw new CertificateException("인증 실패");
 		}
 		return rp;
 	}

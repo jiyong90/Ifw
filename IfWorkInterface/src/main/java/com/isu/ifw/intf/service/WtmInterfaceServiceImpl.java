@@ -106,6 +106,49 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	}
 	
 	@Override
+	public void receiveData(String T, Map<String, Object> paramMap) throws Exception{
+		System.out.println("############ receiveData");
+		List<Map<String, Object>> dataList = null;
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println("================================");
+		System.out.println(mapper.writeValueAsString(paramMap));
+		
+		System.out.println("================================");
+		
+		String url = "";
+        try {
+        	int cnt = 0;
+        	if(paramMap.containsKey("data")) {
+        		List<Map<String, Object>> list = (List<Map<String, Object>>) paramMap.get("data");
+            	
+        		if(list != null && list.size() > 0) {
+        			System.out.println("intf total : " + list.size() );
+
+        			for(Map<String, Object> data : list) {
+          				int temp = 0;
+            			if(T.equalsIgnoreCase("OT")) {
+          					temp = intfMapper.saveIntfOtData(data);
+                    	}else if(T.equalsIgnoreCase("COMP")) {
+                    		temp = intfMapper.saveIntfCompData(data);
+                    	}
+          				if(temp == 0) {
+          					System.out.println("intf fail : " + data.toString());
+          				} else {
+          					cnt += temp ;
+          					System.out.println("intf success : " + data.toString());
+          				}
+            		}
+            	}
+        	}
+			System.out.println("intf totalsuccess : " + cnt);
+				 	
+        } catch(Exception e){
+            e.printStackTrace(); 
+        }
+        
+	}
+	
+	@Override
 	public String getEnterCd(String tenantId) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("getEnterCd tenantId : " + tenantId);

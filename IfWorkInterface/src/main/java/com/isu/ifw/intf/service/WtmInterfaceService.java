@@ -12,6 +12,8 @@ public interface WtmInterfaceService {
 
 	public void sendData(String T, Map<String, Object> paramMap) throws Exception;
 	
+	public void receiveData(String T, Map<String, Object> paramMap) throws Exception;
+
 	/**
 	 * 공통코드 이관
 	 * @param lastDataTime - 최종 이관데이터 시간

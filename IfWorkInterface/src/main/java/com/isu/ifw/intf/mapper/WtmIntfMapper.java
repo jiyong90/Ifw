@@ -52,4 +52,14 @@ public interface WtmIntfMapper {
 	 * 근태정보 조회
 	 **/
 	public List<Map<String, Object>> getWtmTaaAppl(Map<String, Object> paramMap);
+
+	/**
+	 * OT내역
+	 **/
+	public int saveIntfOtData(Map<String, Object> paramMap);
+	
+	/**
+	 * 보상휴가내역
+	 **/
+	public int saveIntfCompData(Map<String, Object> paramMap);
 }

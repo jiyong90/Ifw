@@ -135,4 +135,50 @@
 					(#{stdType} = 'A_OUT' AND DATE_FORMAT(now(), '%Y%m%d%H%i') = DATE_FORMAT(DATE_ADD(X.PLAN_EDATE, INTERVAL #{stdMinute} MINUTE), '%Y%m%d%H%i') AND X.ENTRY_EDATE IS NULL)
 		]]>
 	</select>
+	
+	<select id="getIntfOtList" parameterType="map" resultType="hashmap">
+		<![CDATA[
+			SELECT C.WORK_DAY_RESULT_ID AS OT_ID
+			   , C.ENTER_CD AS CompanySeq
+			   , C.YMD AS WkDate
+			   , C.SABUN AS EmpID
+			   , '0' AS OT_CD 
+			   , C.APPR_MINUTE DTCnt
+			   , C.UPDATE_DATE 
+			    FROM WTM_FLEXIBLE_EMP A
+			   INNER JOIN WTM_FLEXIBLE_STD_MGR B
+			      ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+			     AND B.WORK_TYPE_CD NOT IN ('SELE_C', 'SELE_F')
+			   INNER JOIN WTM_WORK_DAY_RESULT C
+			      ON A.TENANT_ID = C.TENANT_ID
+			        AND A.ENTER_CD = C.ENTER_CD
+			        AND A.SABUN = C.SABUN
+			        AND C.YMD BETWEEN A.SYMD AND A.EYMD
+			        AND C.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT')
+			   WHERE C.TENANT_ID = #{tenantId}
+			     AND IFNULL(C.APPR_MINUTE ,0) > 0
+			     AND C.UPDATE_DATE > F_WTM_TO_DATE(#{lastDate}, 'YMDHIS')
+		]]>
+	</select>
+	
+		<select id="getIntfCompList" parameterType="map" resultType="hashmap">
+		<![CDATA[
+			SELECT ENTER_CD AS CompanySeq, 
+			  	YM as WkYM, 
+			  	SABUN as EmpID, 
+			  	SUM(ALLOW_MINUTE) AS DTCnt, 
+			  	MAX(UPDATE_DATE) AS UPDATE_DATE
+			  FROM (SELECT ENTER_CD
+			      , F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(EYMD, 'YMD'), 1, 'D'), 'YM') AS YM
+			      , SABUN
+			      , ALLOW_MINUTE
+			      , UPDATE_DATE
+			     FROM WTM_COMP_CREATE
+			    WHERE TENANT_ID = #{tenantId}
+			      AND ALLOW_MINUTE > 0
+			    AND UPDATE_DATE > F_WTM_TO_DATE(#{lastDate}, 'YMDHIS')
+			   ) A
+			 GROUP BY ENTER_CD, YM, SABUN		
+ 		]]>
+	</select>
 </mapper>

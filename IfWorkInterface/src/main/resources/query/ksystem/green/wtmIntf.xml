@@ -11,7 +11,8 @@
 			     , GRCODE_CD
 			     , CODE
 			     , CODE_NM
-			     , SYMD , EYMD
+			     , ISNULL(SYMD, '19000101')
+			     , ISNULL(EYMD, '29991231')
 			     , '' AS SEQ
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
@@ -122,7 +123,7 @@
 			     , '' AS JOB_GROUP_CD
 			     , JobSeq AS JOB_CD
 			     , '' AS PAY_TYPE_CD
-			     , CASE WHEN IsBoss = 1 THEN 'Y' ELSE 'N' END AS LEADER_YN
+			     , CASE WHEN IsBoss = 1 OR #{EmpID} = '20170054' THEN 'Y' ELSE 'N' END AS LEADER_YN
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VDAEmpInfo_ISU
@@ -165,7 +166,55 @@
 				 , '' AS EHM
 				 , '' AS IF_APPL_NO
 				 , '' AS STATUS
-			  FROM KPXERP_VDAEmpAddInfo_ISU
+			  FROM KPXERP_TPRWkAbsEmp_ISU
         ]]>
     </select>
+    
+  	<insert id="saveIntfOtData" parameterType="hashmap">
+		<![CDATA[ 
+			INSERT INTO KPXERP_TPRWkEmpDd_ISU
+				(	
+					OT_ID
+				  ,	CompanySeq
+				  , WkDate
+				  , EmpID
+				  ,	DTCnt
+				  , WkItemSeq
+				  , UPDATE_DATE
+				)
+				VALUES
+				(	
+					#{OT_ID}
+				  ,	#{CompanySeq}
+				  , #{WkDate}
+				  , #{EmpID}
+				  , #{DTCnt}
+				  , 0
+				  , CURRENT_TIMESTAMP
+				)
+		]]>
+	</insert>
+	
+	<insert id="saveIntfCompData" parameterType="hashmap">
+		<![CDATA[ 
+			INSERT INTO KPXERP_IF_TPRWkReward_ISU
+				(	
+					CompanySeq
+				  ,	WkYM
+				  , EmpID
+				  , DTCnt
+				  , WkItemSeq
+				  ,	UPDATE_DATE
+				)
+				VALUES
+				(	
+					#{CompanySeq}
+				  ,	#{WkYM}
+				  , #{EmpID}
+				  , #{DTCnt}
+				  , 0
+				  , CURRENT_TIMESTAMP
+				)
+		]]>
+	</insert>
 </mapper>

@@ -61,6 +61,24 @@ public class WtmScheduleController {
 		return;
 	}
 	
+	// 인터페이스로 데이터 쏴주기
+	@RequestMapping(value = "/sendIntfData",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void sendInterface(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 공통코드
+		try {
+			System.out.println("sendIntfData start");
+			
+			Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+			String dataType = request.getParameter("ifType").toString();
+			//Long tenantId = (long) 38;
+			wtmScheduleService.sendIntfData(tenantId, dataType);
+			System.out.println("sendIntfData end");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+	
 	//하루에 몇번 보내야 하는지 기준이 없넹...
 	//일단 타각알림의 경우 분단위로 스케줄러가 돌아야 하니까...
 	@RequestMapping(value="/push/min", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

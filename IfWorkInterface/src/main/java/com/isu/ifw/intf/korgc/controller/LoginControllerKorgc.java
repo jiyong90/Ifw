@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -54,7 +55,7 @@ public class LoginControllerKorgc {
 	public ReturnParam korgcLogin(@RequestBody Map<String, Object> paramMap, HttpServletRequest req, HttpServletResponse res) throws Exception {
 
 		ReturnParam rp = new ReturnParam();
-		rp.setMessage("");
+		rp.setSuccess("");
 		
 
 		String userId = paramMap.get("loginUserId")+"";
@@ -110,6 +111,13 @@ public class LoginControllerKorgc {
 		return null;
 
     }
+
+	@RequestMapping(value = "/korgc/employee/image", method = RequestMethod.GET, produces = "text/plain")
+	public @ResponseBody String getImage(HttpServletRequest request,
+			@RequestParam(value = "locale", required = false) String locale,
+			@RequestParam(value = "empKey", required = true) String empKey) throws Exception {
+		return service.greenEmpPhotoOut(locale, empKey);
+	}
 	
 	@RequestMapping(value = "/korgc/certificate/request" , method = RequestMethod.POST)
 	public ReturnParam korgcLoginForMobile(@RequestBody Map<String, Object> paramMap, HttpServletRequest req, HttpServletResponse res) throws Exception {
@@ -125,7 +133,7 @@ public class LoginControllerKorgc {
 		/*
 		 * {"password":"1","grant_type":"password","loginPassword":"1","loginUserId":"master","redirect_uri":"https://cloudhr.pearbranch.com/ifw/login/korgc/authorize","loginEnterCd":"KORGC","username":"korgc@KORGC@master"}
 		 */
-		System.out.println(mapper.writeValueAsString(paramMap));
+		System.out.println("#########################/m/certificate/request s " + mapper.writeValueAsString(paramMap));
 		
 		/*
 		{Tables=[
@@ -157,18 +165,19 @@ public class LoginControllerKorgc {
 								) {
 							//rp.putAll(resMap);
 							//"username":"korgc@KORGC@master"
+							Map<String, Object> pMap = new HashMap<String, Object>();
 							String sabun = row.get("EmpID")+"";
 							String username = "korgc@"+enterCd+"@"+sabun ;
+							pMap.put("empKey", enterCd+"@"+ sabun);
 							
 							String accessToken = service.createAccessToken(enterCd, sabun);
-							Map<String, Object> pMap = new HashMap<String, Object>();
 							pMap.put("EmpID", row.get("EmpID"));		
 							
 							Map<String, Object> sessionData = intfMapper.getWtmEmpByEmpID(pMap);
 							sessionData.put("accessToken", accessToken);
 							pMap.put("sessionData", sessionData);
-							pMap.put("empKey", enterCd+"@"+ sabun);
 							rp.put("result", pMap);
+							System.out.println("#########################/m/certificate/request " + rp.toString());
 							return rp;
 						}
 					}
@@ -197,7 +206,14 @@ public class LoginControllerKorgc {
 			@RequestParam(value = "empKey", required = false) String empKey,
 			@RequestParam(value = "accessToken", required = false) String accessToken) throws Exception {
 		
-		System.out.println("#########################/m/certificate/valid");
+		String data = "";
+		Enumeration params = request.getParameterNames();
+		while (params.hasMoreElements()){
+		    String name = (String)params.nextElement();
+		    data += name+":"+request.getParameter(name)+",";
+		}
+		
+		System.out.println("#########################/m/certificate/valid " + data);
 		System.out.println("empKey : " + empKey);
 		return service.greenValidEmp(locale, empKey, accessToken);
 	}

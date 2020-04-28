@@ -29,7 +29,7 @@
 		]]>
 	</insert>
 	
-	<select id="getMobileSession" parameterType="map" resultType="hashmap">
+	<select id="getCheckSession" parameterType="map" resultType="hashmap">
 		<![CDATA[ 
 			SELECT ENTER_CD
 				  ,	SABUN
@@ -38,19 +38,39 @@
 				WHERE ENTER_CD = #{enterCd}
 				AND SABUN = #{sabun}
 				AND ACCESS_TOKEN = #{accessToken}
-				
+		]]>
+	</select>
+	
+	<select id="getMobileSession" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT ENTER_CD
+				  ,	SABUN
+				  , ACCESS_TOKEN
+				FROM KPXERP_VDAMobile_ISU
+				WHERE ENTER_CD = #{enterCd}
+				AND SABUN = #{sabun} 
 		]]>
 	</select>
 	
 	<update id="updateAccessToken" parameterType="hashmap">
 		<![CDATA[ 
 			UPDATE KPXERP_VDAMobile_ISU
-					SET ACCESS_TOKEN = #{newAccessToken}
+					SET ACCESS_TOKEN = #{accessToken}
 					,UPDATE_DATE = CURRENT_TIMESTAMP 
 				WHERE ENTER_CD = #{enterCd}
 				AND SABUN = #{sabun}
-				AND ACCESS_TOKEN = #{accessToken}
 		]]>
 	</update>
 
+	<select id="getEmpPhotoOut" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT Photo 
+			FROM _THRBasEmpPhoto A
+				JOIN KPXERP_VDAEmpInfo_ISU B
+					ON A.CompanySeq = B.CompanySeq
+					AND A.EmpSeq = B.EmpSeq
+			WHERE B.CompanySeq = #{enterCd}
+				AND B.EmpID = #{sabun}
+		]]>
+	</select>
 </mapper>
