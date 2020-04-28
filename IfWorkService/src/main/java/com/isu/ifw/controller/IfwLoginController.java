@@ -107,6 +107,27 @@ public class IfwLoginController {
 	@Autowired
 	OauthClientTokenRepository oauthClientTokenRepo;
    
+	@RequestMapping(value = "/login/jyp/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ModelAndView jypSsoLogin() {
+		ModelAndView mv = new ModelAndView("ssoLogin");
+		Map<String, Object>	requestMap = new HashMap<>();
+		requestMap.put("clientId", "hondasso");
+		requestMap.put("username", "honda@1000@13080103");
+		requestMap.put("loginUserId", "13080103");
+		requestMap.put("loginEnterCd", "1000");
+		requestMap.put("password", "ssoCertificate");
+		 ObjectMapper mapper = new ObjectMapper();
+	    	try {
+				mv.addObject("loginParam", mapper.writeValueAsString(requestMap));
+			} catch (JsonProcessingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        mv.addObject("userAuthorizationUri", "https://cloudhr.pearbranch.com/ifa/login/hondasso/authorize");
+		return mv;
+	}
+	
+	
     @RequestMapping(value = "/login/{tsId}/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView ssoLogin(@PathVariable String tsId,
 			@RequestParam(required = true) String p,

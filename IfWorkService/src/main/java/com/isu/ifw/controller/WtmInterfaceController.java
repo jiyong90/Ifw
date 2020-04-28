@@ -25,7 +25,6 @@ import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.service.WtmInterfaceService;
 import com.isu.ifw.service.WtmIuerpInterfaceService;
-import com.isu.ifw.service.WtmRocheService;
 import com.isu.ifw.util.WtmUtil;
 
 @RestController
@@ -41,10 +40,6 @@ public class WtmInterfaceController {
 	@Autowired
 	@Qualifier("wtmIuerpInterfaceService")
 	private WtmIuerpInterfaceService wtmIuerpInterfaceService;
-	
-	@Autowired
-	@Qualifier("wtmRocheService")
-	private WtmRocheService wtmRocheService;
 	
 	
 //	@Autowired
