@@ -159,7 +159,6 @@ public class LoginControllerKorgc {
 							//"username":"korgc@KORGC@master"
 							String sabun = row.get("EmpID")+"";
 							String username = "korgc@"+enterCd+"@"+sabun ;
-							rp.put("empKey", enterCd+"@"+ sabun);
 							
 							String accessToken = service.createAccessToken(enterCd, sabun);
 							Map<String, Object> pMap = new HashMap<String, Object>();
@@ -168,6 +167,7 @@ public class LoginControllerKorgc {
 							Map<String, Object> sessionData = intfMapper.getWtmEmpByEmpID(pMap);
 							sessionData.put("accessToken", accessToken);
 							pMap.put("sessionData", sessionData);
+							pMap.put("empKey", enterCd+"@"+ sabun);
 							rp.put("result", pMap);
 							return rp;
 						}

@@ -2275,13 +2275,13 @@
   	
   	<select id="addMinuteWithBreakMGR" statementType="CALLABLE" parameterType="java.util.HashMap" >
   		{ call P_WTM_DATE_ADD_FOR_BREAK_MGR( 
-  				#{tenantId, jdbcType=BIGINT, mode=IN}
-  			  , #{enterCd, jdbcType=VARCHAR, mode=IN}
-  			  , #{sabun, jdbcType=VARCHAR, mode=IN}
-  			  , #{ymd, jdbcType=VARCHAR, mode=IN}
-  			  , #{sDate, jdbcType=DATE, mode=IN}
-  			  , #{addMinute, jdbcType=INTEGER, mode=IN}
-  			  , #{retDate,jdbcType=DATE, mode=OUT}
+  				#{tenantId, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{enterCd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{ymd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sDate, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{addMinute, jdbcType=INTEGER, javaType=java.lang.Integer, mode=IN}
+  			  , #{retDate,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
   			  ) }
   	</select>
   	

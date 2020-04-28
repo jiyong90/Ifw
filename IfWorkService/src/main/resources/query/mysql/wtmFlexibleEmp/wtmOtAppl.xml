@@ -256,13 +256,24 @@
 		     , E.ENTER_CD AS enterCd
 		     , E.SABUN AS sabun
 		     , E.EMP_NM AS empNm
-		     , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS orgNm
-			  , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'DUTY_CD', DUTY_CD, SYMD) AS dutyNm
-			  , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'POS_CD', POS_CD, SYMD) AS posNm
-			  , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'CLASS_CD', CLASS_CD, SYMD) AS classNm
-			  , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'JOB_CD', JOB_CD, SYMD) AS jobNm
+		     , F_WTM_GET_ORG_NM(E.TENANT_ID, E.ENTER_CD, E.ORG_CD, E.SYMD) AS orgNm
+			  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'DUTY_CD', E.DUTY_CD, E.SYMD) AS dutyNm
+			  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'POS_CD', E.POS_CD, E.SYMD) AS posNm
+			  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'CLASS_CD', E.CLASS_CD, E.SYMD) AS classNm
+			  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'JOB_CD', E.JOB_CD, E.SYMD) AS jobNm
 		     , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
+		     , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
+             , C.HOLIDAY_YN as holidayYn, P.WORK_TYPE_CD as workTypeCd
 		  FROM WTM_EMP_HIS E
+          LEFT OUTER JOIN WTM_FLEXIBLE_EMP P 
+          ON E.TENANT_ID = P.TENANT_ID 
+          AND E.ENTER_CD = P.ENTER_CD 
+          AND E.SABUN = P.SABUN 
+          AND #{ymd} BETWEEN P.SYMD AND P.EYMD
+          LEFT OUTER JOIN WTM_WORK_CALENDAR C 
+          ON E.TENANT_ID = C.TENANT_ID 
+          AND E.ENTER_CD = C.ENTER_CD 
+          AND E.SABUN = C.SABUN AND #{ymd} =  C.YMD
 		 WHERE E.TENANT_ID = #{tenantId}
 		   AND E.ENTER_CD = #{enterCd}
 		   <if test="sabuns!=null">

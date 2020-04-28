@@ -82,6 +82,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
   				  System.out.println("filecookie " + cookie.getName());
   				  System.out.println("filecookie " + cookie.getValue());
   				  cookie.setValue("");
+  				  cookie.setMaxAge(0);
 				  response.addCookie(cookie);
   			  }
   		  }

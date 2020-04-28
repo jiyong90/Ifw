@@ -56,10 +56,11 @@
   			<p class="page-sub-title mb-1">연장근로 대상자</p>
    			<div class="select-list-wrap position-relative">
    				<div class="loading-spinner" style="display:none;"></div>
-  				<div class="targetor" v-for="a in applSabuns">
+  				<div class="targetor" style="max-width:95px!important;" v-for="a in applSabuns">
    					<span class="name">{{a.empNm}}</span>
-                    <span class="cancel" @click="uncheckTarget(a.sabun)">×</span>
-                    <span class="time">잔여 {{minuteToHHMM(targets[a.sabun], 'short')}}</span>
+                    <span class="cancel" style="float:right;" @click="uncheckTarget(a.sabun)">×</span>
+                    <span class="time" v-if="targets != null && targets[a.sabun] != null && targets[a.sabun].restWorkMinute != null">잔여(소정) {{minuteToHHMM(targets[a.sabun].restWorkMinute, 'short')}}</span>
+                    <span class="time" v-if="targets != null && targets[a.sabun] != null && targets[a.sabun].restOtMinute != null">잔여(연장) {{minuteToHHMM(targets[a.sabun].restOtMinute, 'short')}}</span>
                 </div>
             </div>
             <hr class="separate-bar">
@@ -92,6 +93,7 @@
                                      </div>
                                  </div>
                                  <div class="guide" v-if="overtime.breakMinute && overtime.breakMinute!=0">*해당일 총 휴게시간은 {{minuteToHHMM(overtime.breakMinute,'detail')}} 입니다.</div>
+                                 <div class="guide" v-if="targets != null && targets['${empNo}'] != null && targets['${empNo}'].guideMessage != null">{{targets['${empNo}'].guideMessage}}</div>
                              </div>
                          </div>
                      </div>
