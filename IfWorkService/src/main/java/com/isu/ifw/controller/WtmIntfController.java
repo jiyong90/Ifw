@@ -112,7 +112,7 @@ public class WtmIntfController extends TenantSecuredControl {
          
 			logger.debug("getParameter s2 " + request.getParameter("deviceKey") + " " + request.getParameter("emp") + " " + request.getParameter("time") + " " + request.getParameter("type"));
       
-			inoutService.updateTimecardIntf(paramMap);
+			inoutService.updateTimecard2(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
@@ -163,7 +163,7 @@ public class WtmIntfController extends TenantSecuredControl {
 			
 			logger.debug("getParameter s2 " + params.get("deviceKey") + " " + params.get("emp") + " " + params.get("time") + " " + params.get("type"));
 		
-			inoutService.updateTimecardIntf(paramMap);
+			inoutService.updateTimecard2(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
