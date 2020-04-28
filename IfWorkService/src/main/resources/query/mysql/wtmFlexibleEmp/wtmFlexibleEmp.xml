@@ -519,6 +519,8 @@
 		   AND C.SABUN = R.SABUN
 		   SET R.APPR_SDATE = F_WTM_CALC_APPR_DATE(C.ENTRY_SDATE, R.PLAN_SDATE, M.UNIT_MINUTE, 'S')
 			 , R.APPR_EDATE = F_WTM_CALC_APPR_DATE(C.ENTRY_EDATE, R.PLAN_EDATE, M.UNIT_MINUTE, 'E')
+			 , R.UPDATE_DATE = now()
+			 , R.UPDATE_ID = 'updateApprDatetimeByYmdAndSabun'
 		 WHERE C.TENANT_ID = #{tenantId}
 		   AND C.ENTER_CD = #{enterCd}
 		   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
@@ -698,6 +700,8 @@
 				ON A.TENANT_ID = B.TENANT_ID AND A.ENTER_CD = B.ENTER_CD AND A.YMD = B.YMD AND A.SABUN = B.SABUN 
 			   SET A.ENTRY_SDATE = B.PLAN_SDATE 
 			     , A.ENTRY_STYPE_CD = 'AUTO'
+			     , A.UPDATE_DATE = now()
+			     , A.UPDATE_ID = #{userId}
     	]]>
     </update>
     
@@ -737,6 +741,8 @@
 				ON A.TENANT_ID = B.TENANT_ID AND A.ENTER_CD = B.ENTER_CD AND A.YMD = B.YMD AND A.SABUN = B.SABUN 
 			   SET A.ENTRY_EDATE = B.PLAN_EDATE 
 			     , A.ENTRY_ETYPE_CD = 'AUTO'
+			     , A.UPDATE_DATE = now()
+			     , A.UPDATE_ID = #{userId}
     	]]>
     </update>
     
