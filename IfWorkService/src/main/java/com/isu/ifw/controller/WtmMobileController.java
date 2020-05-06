@@ -701,6 +701,7 @@ public class WtmMobileController {
 			Map<String, Object> data = (Map<String, Object>) paramMap.get("data");
 			data.put("tenantId", tenantId);
 			data.put("enterCd", enterCd);
+			
 			Map<String,Map<String,Object>> itemPropertiesMap = new HashMap<String,Map<String,Object>>();
 			
 			if(paramMap.get("eventSource").equals("ymd") || paramMap.get("eventSource").equals("sabun")) {
@@ -708,6 +709,7 @@ public class WtmMobileController {
 						&& data.containsKey("sabun") && !data.get("sabun").toString().equals("")) {
 					data.put("plan", "");
 					data.put("emp", "");
+					data.put("status", "");
 					if(data.get("sabun").toString().length() < 2 ) {
 						result.put("data", data);
 						rp.put("result", result);
@@ -719,6 +721,7 @@ public class WtmMobileController {
 					if(l == null || l.size() <= 0) {
 						data.put("plan", "");
 						data.put("emp", "");
+						data.put("status", "");
 //						itemPropertiesMap.put("emp", null);
 						
 						Map<String,Object> temp = new HashMap<String,Object>();
@@ -736,6 +739,7 @@ public class WtmMobileController {
 					List<Map<String,Object>> itemCollection = new ArrayList<Map<String,Object>>();
 					data.put("plan", "");
 					data.put("emp", "");
+					data.put("status", "");
 					
 					Map<String,Object> blank = new HashMap<String,Object>();
 					blank.put("text", "선택");
@@ -763,6 +767,10 @@ public class WtmMobileController {
 					result.put("itemAttributesMap", itemPropertiesMap);
 				}
 			} else if(paramMap.get("eventSource").equals("emp")){
+				if(data.get("emp").toString().contentEquals("")) {
+					data.put("plan", "");
+					data.put("status", "");
+				} else {
 					Map<String, Object> param = new HashMap();
 					param.putAll(data);
 					param.put("sabun", data.get("emp").toString());
@@ -770,9 +778,10 @@ public class WtmMobileController {
 					if(l!= null && l.size()>0) {
 						Map<String, Object> p = l.get(0);
 						data.put("plan", p.get("plan"));
+						data.put("status", p.get("status"));
 					}
 				}
-
+			}
 			result.put("data", data);
 			rp.put("result", result);
 		} catch(Exception e) {

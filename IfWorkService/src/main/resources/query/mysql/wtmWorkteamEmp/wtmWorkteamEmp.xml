@@ -45,6 +45,22 @@
         ]]>
     </select>
     
+    <select id="dupCheckFlexibleByYmd" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT A.SABUN AS sabun
+			     , A.SYMD AS symd
+			     , A.EYMD AS eymd
+			  FROM WTM_FLEXIBLE_EMP A 
+			  JOIN WTM_FLEXIBLE_STD_MGR B 
+			    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID 
+			   AND B.TENANT_ID = #{tenantId} 
+			   AND B.ENTER_CD = #{enterCd}
+			  WHERE A.SABUN=#{sabun}
+			  	AND A.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM')
+			    AND (#{sYmd} BETWEEN A.SYMD AND A.EYMD OR #{eYmd} BETWEEN A.SYMD AND A.EYMD)
+	     ]]>
+    </select>
+    
     <select id="getWorkteamEmp" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT M.WORKTEAM_MGR_ID AS workteamMgrId

@@ -313,8 +313,10 @@
         <![CDATA[
 		    SELECT CONCAT(E.EMP_NM, '(', E.SABUN, ')') as emp,
 		    	E.SABUN as sabun,
-  		    	CONCAT(F_WTM_DATE_FORMAT(MIN(A.PLAN_SDATE), 'Y.M.D H:I'), ' ~ ', F_WTM_DATE_FORMAT(MIN(A.PLAN_EDATE), 'Y.M.D H:I')) as plan
-			FROM WTM_WORK_DAY_RESULT  A 
+  		    	CONCAT(F_WTM_DATE_FORMAT(MIN(A.PLAN_SDATE), 'Y.M.D H:I'), ' ~ ', F_WTM_DATE_FORMAT(MIN(A.PLAN_EDATE), 'Y.M.D H:I')) as plan,
+  		    	CASE WHEN GROUP_CONCAT(D.TAA_NM) IS NULL AND B.HOLIDAY_YN ='Y' THEN '휴일' 
+					WHEN GROUP_CONCAT(D.TAA_NM) IS NULL AND B.HOLIDAY_YN ='N' THEN '정상근무' ELSE GROUP_CONCAT(D.TAA_NM) END AS status
+  			FROM WTM_WORK_DAY_RESULT  A 
 			INNER JOIN WTM_EMP_HIS E
 				ON E.TENANT_ID = A.TENANT_ID
 					AND A.ENTER_CD = E.ENTER_CD 
@@ -325,11 +327,15 @@
 					AND A.TENANT_ID = B.TENANT_ID 
 					AND A.ENTER_CD = B.ENTER_CD 
 					AND A.SABUN = B.SABUN
+			LEFT JOIN WTM_TAA_CODE D 
+	            ON A.TAA_CD = D.TAA_CD
+	            AND D.TENANT_ID = A.TENANT_ID
+	            AND D.ENTER_CD = A.ENTER_CD
 			WHERE A.YMD = REPLACE(#{ymd}, '.', '') 
 				AND (A.SABUN like CONCAT('%', #{sabun}, '%') OR E.EMP_NM like CONCAT('%', #{sabun}, '%'))
 				AND A.TENANT_ID = #{tenantId} 
 				AND A.ENTER_CD = #{enterCd} 
-			GROUP BY A.TENANT_ID, A.ENTER_CD, A.YMD, A.SABUN;
+			GROUP BY A.TENANT_ID, A.ENTER_CD, A.YMD, A.SABUN
         ]]>
     </select>
 </mapper>

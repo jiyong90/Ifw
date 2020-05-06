@@ -29,7 +29,9 @@
 			       X.pSdate, 
 			       X.pEdate,
 			       F_WTM_DATE_FORMAT(X.pSdate,'YMD') AS pSymd, 
-			       F_WTM_DATE_FORMAT(X.pEdate,'YMD') AS pEymd
+			       F_WTM_DATE_FORMAT(X.pEdate,'YMD') AS pEymd,
+  			       (SELECT YMD FROM WTM_WORK_DAY_RESULT WHERE tenant_id=#{tenantId} and enter_cd=#{enterCd} and sabun = #{sabun} and 
+ STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') BETWEEN DATE_FORMAT(PLAN_SDATE, '%Y%m%d%H%i%s') and DATE_FORMAT(PLAN_EDATE, '%Y%m%d%H%i%s')) as cYmd
 			  FROM WTM_WORK_CALENDAR C
 			  LEFT OUTER JOIN (SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS pSdate, 
 			                           MAX(A.PLAN_EDATE) AS pEdate

@@ -108,4 +108,44 @@
 		now(), 
 		#{userId})	
     </update>
+    
+    <select id="getEntryInoutList" parameterType="map" resultType="wtmGeneral">
+        <![CDATA[
+	        SELECT F_WTM_DATE_FORMAT(H.INOUT_DATE, 'YMDHI')  AS inoutDate
+	        	, CASE WHEN H.INOUT_TYPE_CD ='IN' THEN '출근' 
+	        		WHEN H.INOUT_TYPE_CD ='OUT' THEN '퇴근' 
+	        		WHEN H.INOUT_TYPE_CD ='GO' THEN '외출' 
+	        		WHEN H.INOUT_TYPE_CD ='BACK' THEN '복귀' ELSE '' END AS inoutType
+	        	, H.SABUN AS sabun
+	        	, H.YMD AS ymd
+	        	, E.EMP_NM AS empNm
+	        	, O.ORG_NM AS orgNm
+			FROM WTM_INOUT_HIS H
+			JOIN WTM_EMP_HIS E 
+				ON E.TENANT_ID = H.TENANT_ID 
+				AND E.ENTER_CD =  H.ENTER_CD 
+				AND E.SABUN = H.SABUN
+				AND E.EYMD ='29991231'
+			JOIN WTM_ORG_CODE O 
+				ON O.TENANT_ID = E.TENANT_ID 
+				AND O.ENTER_CD = E.ENTER_CD
+				AND O.ORG_CD = E.ORG_CD
+				AND O.EYMD = '29991231'
+			WHERE DATE_FORMAT(H.INOUT_DATE, '%Y%m%d') = #{ymd}
+				AND H.TENANT_ID=#{tenantId}
+				AND H.ENTER_CD=#{enterCd}
+			]]>
+			<if test="searchValue!=null and !searchValue.equals('')">
+				AND (E.SABUN LIKE CONCAT(#{searchValue}, '%') OR E.EMP_NM LIKE CONCAT('%', #{searchValue}, '%'))
+			</if>
+			<if test="orgList!=null">
+			   AND E.ORG_CD IN (NULL, 
+		       <foreach collection="orgList" item="org" separator=", ">
+				   #{org}
+			   </foreach>
+			   )
+		    </if>
+			<![CDATA[
+		    ORDER BY H.INOUT_DATE DESC
+		    ]]>	</select>
 </mapper>

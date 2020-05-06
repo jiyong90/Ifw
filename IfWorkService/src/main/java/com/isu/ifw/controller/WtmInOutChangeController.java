@@ -161,5 +161,31 @@ public class WtmInOutChangeController {
 
 		return rp;
 	}
+	
+	@RequestMapping(value="/raw/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getEntryInoutList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		
+		logger.debug("getEntryInoutList Start " + paramMap.toString());
+	
+		rp.setSuccess("");
+		
+		List<Map<String, Object>> entryInoutList = null;
+		try {		
+			entryInoutList = inOutChangeService.getEntryInoutList(tenantId, enterCd, sabun, paramMap);
+			
+			rp.put("DATA", entryInoutList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
 
 }
