@@ -117,7 +117,7 @@
 	        		WHEN H.INOUT_TYPE_CD ='GO' THEN '외출' 
 	        		WHEN H.INOUT_TYPE_CD ='BACK' THEN '복귀' ELSE '' END AS inoutType
 	        	, H.SABUN AS sabun
-	        	, H.YMD AS ymd
+	        	, F_WTM_DATE_FORMAT(H.YMD, 'YMDHI') AS ymd
 	        	, E.EMP_NM AS empNm
 	        	, O.ORG_NM AS orgNm
 			FROM WTM_INOUT_HIS H
