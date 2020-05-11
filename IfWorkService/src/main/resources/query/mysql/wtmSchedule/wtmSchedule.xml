@@ -128,6 +128,7 @@
 						    AND W.YMD = C.YMD 
 					WHERE W.YMD=DATE_FORMAT(now(), '%Y%m%d')
 						AND W.ENTER_CD=#{enterCd}
+						AND W.TIME_TYPE_CD NOT IN ('TAA','REGA','SUBS')
 				GROUP BY W.TENANT_ID, W.ENTER_CD, W.SABUN, W.YMD) X
 				WHERE 
 					(#{stdType} = 'B_IN' AND DATE_FORMAT(now(), '%Y%m%d%H%i') = DATE_FORMAT(DATE_SUB(X.PLAN_SDATE, INTERVAL #{stdMinute} MINUTE), '%Y%m%d%H%i') AND X.ENTRY_SDATE IS NULL)

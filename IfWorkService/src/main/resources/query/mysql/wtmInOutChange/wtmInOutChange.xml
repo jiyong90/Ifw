@@ -146,6 +146,6 @@
 			   )
 		    </if>
 			<![CDATA[
-		    ORDER BY H.INOUT_DATE DESC
+		    ORDER BY H.SABUN, H.INOUT_DATE DESC
 		    ]]>	</select>
 </mapper>

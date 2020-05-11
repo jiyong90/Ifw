@@ -109,4 +109,9 @@
 			#{userId})	
     </update>
     
+       <select id="getEntryInoutList" parameterType="map" resultType="wtmGeneral">
+        <![CDATA[
+	        SELECT 1 from daul
+	     ]]>    
+	</select>
 </mapper>

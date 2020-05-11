@@ -109,6 +109,13 @@
 			break;
 		case "Save":
 			if(!dupChk(sheet1,"tenantId|enterCd|sabun|workteamMgrId|symd|eymd", false, true)){break;}
+//			for(var i=1;i<sheet1.RowCount(); i++){
+//        		if(sheet1.GetCellValue(i, "symd") > sheet1.GetCellValue(i, "eymd")) {
+//        			alert("종료일은 시작일보다 늦어야 합니다.");
+//        			return;
+//        		}
+//        	}
+			
 			IBS_SaveName(document.sheetForm,sheet1);
 			sheet1.DoSave("${rc.getContextPath()}/workteam/save", $("#sheetForm").serialize()); break;
 			break;
