@@ -377,7 +377,7 @@ public class WtmApiController{
 		return rp;
 	}
 	
-	//퇴근취소
+	//조직장
 	@RequestMapping(value = "/{tsId}/isLeader", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam getLeaderYn(@PathVariable String tsId, HttpServletRequest request) throws Exception {		
 		
@@ -405,7 +405,7 @@ public class WtmApiController{
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("sabun", sabun);
 			Map<String, Object> data = empHisMapper.getLeaderYn(paramMap);
-			rp.putAll(data);
+			rp.put("result", data);
 		}catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
