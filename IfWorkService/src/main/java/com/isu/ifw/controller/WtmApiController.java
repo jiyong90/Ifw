@@ -53,8 +53,6 @@ public class WtmApiController{
 	@Autowired
 	WtmInoutHisMapper inoutHisMapper;
 
-	@Autowired
-	WtmEmpHisMapper empHisMapper;
 
 	@Autowired
 	private WtmInterfaceService wtmInterfaceService;
@@ -376,42 +374,4 @@ public class WtmApiController{
 
 		return rp;
 	}
-	
-	//조직장
-	@RequestMapping(value = "/{tsId}/isLeader", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-	public @ResponseBody ReturnParam getLeaderYn(@PathVariable String tsId, HttpServletRequest request) throws Exception {		
-		
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-		
-		Map<String, Object> paramMap = new HashMap();
-		Long tenantId=null;
-		
-		try {
- 
-			CommTenantModule tm = null;
-			tm = tenantModuleRepo.findByTenantKey(tsId);
-			
-			if(tm == null) {
-				rp.setFail("잘못된 호출 url입니다.");
-				return rp;
-			}
-			tenantId = tm.getTenantId();
-			
-			String enterCd = request.getParameter("enterCd").toString();
-			String sabun = request.getParameter("sabun").toString();
-			
-			paramMap.put("tenantId", tenantId);
-			paramMap.put("enterCd", enterCd);
-			paramMap.put("sabun", sabun);
-			Map<String, Object> data = empHisMapper.getLeaderYn(paramMap);
-			rp.put("result", data);
-		}catch(Exception e) {
-			e.printStackTrace();
-			rp.setFail(e.getMessage());
-		} 
-		return rp;
-	}
-	
-	
 }
