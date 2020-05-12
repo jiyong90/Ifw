@@ -51,12 +51,17 @@ public class DzMobileApiService {
 	private String language;
 	@Value("${ifw.username}")
 	private String username;
+	@Value("${ifw.url}")
+	private String ifwUrl;
 	
 	@Autowired
 	private DzMobileApiMapper dzMobileApiMapper;
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private ExchangeService exchangeService;
 
 
 	/**
@@ -185,6 +190,32 @@ public class DzMobileApiService {
 
 			//권한코드
 			List<String> authCode = new ArrayList<String>();
+			
+			//---------------------------------------------------------------
+			//20200512 추가 : authcode API호출
+			paramMap = new HashMap<String, Object>();
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			String enterName = "";
+			if (username != null && username.indexOf("@") >= 0) {
+				String separator = "@";
+				String[] usernameArr = username.split(separator);
+				if (usernameArr.length > 1) {
+					enterName = usernameArr[0];
+				}
+			}
+			String url = ifwUrl + "/ifw/v1/" + enterName + "/isLeader";
+			Map<String, Object> chkAuthCodeMap = exchangeService.exchange(url, HttpMethod.GET, MediaType.APPLICATION_JSON_VALUE, paramMap);
+			
+			if(chkAuthCodeMap != null) {
+				Map<String, Object> result = (Map) chkAuthCodeMap.get("result");
+				if(result != null) {
+					String isLeader = "" + result.get("isLeader");
+					authCode.add("Y".equals(isLeader) ? "LEADER" : "");
+				}
+			}
+			//---------------------------------------------------------------
 
 			sessionData.put("authCode", authCode);
 			sessionData.put("empNm", (String)empMap.get("NM_KOR")); //사원이름
@@ -342,6 +373,32 @@ public class DzMobileApiService {
 
 			//권한코드
 			List<String> authCode = new ArrayList<String>();
+			
+			//---------------------------------------------------------------
+			//20200512 추가 : authcode API호출
+			paramMap = new HashMap<String, Object>();
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			String enterName = "";
+			if (username != null && username.indexOf("@") >= 0) {
+				String separator = "@";
+				String[] usernameArr = username.split(separator);
+				if (usernameArr.length > 1) {
+					enterName = usernameArr[0];
+				}
+			}
+			String url = ifwUrl + "/ifw/v1/" + enterName + "/isLeader";
+			Map<String, Object> chkAuthCodeMap = exchangeService.exchange(url, HttpMethod.GET, MediaType.APPLICATION_JSON_VALUE, paramMap);
+			
+			if(chkAuthCodeMap != null) {
+				Map<String, Object> result = (Map) chkAuthCodeMap.get("result");
+				if(result != null) {
+					String isLeader = "" + result.get("isLeader");
+					authCode.add("Y".equals(isLeader) ? "LEADER" : "");
+				}
+			}
+			//---------------------------------------------------------------
 
 			sessionData.put("authCode", authCode);
 			sessionData.put("empNm", empInfo.get(0).get("NM_KOR")); //사원이름
