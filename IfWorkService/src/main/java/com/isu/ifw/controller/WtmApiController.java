@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.mapper.WtmEmpHisMapper;
 import com.isu.ifw.mapper.WtmInoutHisMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.service.WtmInoutService;
@@ -51,6 +52,7 @@ public class WtmApiController{
 	
 	@Autowired
 	WtmInoutHisMapper inoutHisMapper;
+
 
 	@Autowired
 	private WtmInterfaceService wtmInterfaceService;
@@ -372,5 +374,4 @@ public class WtmApiController{
 
 		return rp;
 	}
-	
 }

@@ -2017,9 +2017,19 @@
 	    WHERE FLEXIBLE_CHG_HIS_ID = #{hisId}
 	</update>
 	
-		<!--해당 기간의 근무 정보 -->
+	<!--해당 기간의 근무 정보 -->
   	<select id="getFlexibleRangeInfoMobile" parameterType="map" resultType="map">
-		 SELECT CASE WHEN WORK_TYPE_CD IN ('SELE_C', 'SELE_F') THEN '선근제'
+		 SELECT 
+		 	  X.WORK_TYPE_CD AS workTypeCd 
+		 	, X.TODAY_PLAN_EDIT_YN AS todayPlanEditYn
+			, X.WORK_SHM AS workShm
+			, X.WORK_EHM AS workEhm
+			, X.CORE_SHM AS coreShm
+			, X.CORE_EHM AS coreEhm
+			, CASE WHEN #{ymd} > F_WTM_DATE_FORMAT(now(), 'YMD') THEN 'Y'
+				   WHEN #{ymd} = F_WTM_DATE_FORMAT(now(), 'YMD') AND X.TODAY_PLAN_EDIT_YN = 'Y' THEN 'Y'
+			ELSE 'N' END as editYn
+		 	, CASE WHEN WORK_TYPE_CD IN ('SELE_C', 'SELE_F') THEN '선근제'
 			       WHEN WORK_TYPE_CD = 'EALS' THEN '탄근제'
 			       WHEN WORK_TYPE_CD = 'DIFF' THEN '시차근무'
 			       WHEN WORK_TYPE_CD = 'WORKTEAM' THEN '근무조'
@@ -2032,7 +2042,9 @@
 			, TIME_FORMAT(SEC_TO_TIME(restWorkMinute*60), '%H:%i') as param5
 			, TIME_FORMAT(SEC_TO_TIME(restOtMinute*60), '%H:%i') as param6
 			, TIME_FORMAT(SEC_TO_TIME(usedWorkMinute*60), '%H:%i') as param10   
-			FROM (SELECT  M.FLEXIBLE_NM AS flexibleNm
+			FROM (SELECT
+					M.WORK_SHM, M.WORK_EHM, M.CORE_SHM, M.CORE_EHM, M.TODAY_PLAN_EDIT_YN
+			      , M.FLEXIBLE_NM AS flexibleNm
 				  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END AS sYmd
 				  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END AS eYmd
 				  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute

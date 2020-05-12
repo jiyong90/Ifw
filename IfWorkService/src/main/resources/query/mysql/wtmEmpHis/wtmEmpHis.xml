@@ -210,4 +210,20 @@
 		 WHERE SABUN = #{sabun}
   	</select>
 	
+	<select id="getLeaderYn" parameterType="map" resultType="hashmap">
+    	SELECT CASE WHEN H.LEADER_YN = 'Y' THEN 'Y' 
+			WHEN COUNT(C.ORG_CD) > 0 THEN 'Y'
+			ELSE 'N' END AS LEADER_YN
+		FROM WTM_EMP_HIS H
+		LEFT OUTER JOIN WTM_ORG_CONC C
+			ON H.TENANT_ID=C.TENANT_ID 
+			AND H.ENTER_CD=C.ENTER_CD 
+			AND H.SABUN=C.SABUN
+		WHERE H.TENANT_ID=#{tenantId}
+			AND H.ENTER_CD=#{enterCd}
+			AND H.SABUN=#{sabun}
+			AND H.STATUS_CD='AA'
+			AND H.EYMD='29991231'
+  	</select>
+
 </mapper>
