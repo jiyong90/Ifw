@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
 import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.mapper.WtmEmpHisMapper;
 import com.isu.ifw.mapper.WtmInoutHisMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.service.WtmInoutService;
@@ -51,6 +52,9 @@ public class WtmApiController{
 	
 	@Autowired
 	WtmInoutHisMapper inoutHisMapper;
+
+	@Autowired
+	WtmEmpHisMapper empHisMapper;
 
 	@Autowired
 	private WtmInterfaceService wtmInterfaceService;
@@ -372,5 +376,42 @@ public class WtmApiController{
 
 		return rp;
 	}
+	
+	//퇴근취소
+	@RequestMapping(value = "/{tsId}/isLeader", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getLeaderYn(@PathVariable String tsId, HttpServletRequest request) throws Exception {		
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Map<String, Object> paramMap = new HashMap();
+		Long tenantId=null;
+		
+		try {
+ 
+			CommTenantModule tm = null;
+			tm = tenantModuleRepo.findByTenantKey(tsId);
+			
+			if(tm == null) {
+				rp.setFail("잘못된 호출 url입니다.");
+				return rp;
+			}
+			tenantId = tm.getTenantId();
+			
+			String enterCd = request.getParameter("enterCd").toString();
+			String sabun = request.getParameter("sabun").toString();
+			
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			Map<String, Object> data = empHisMapper.getLeaderYn(paramMap);
+			rp.putAll(data);
+		}catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		} 
+		return rp;
+	}
+	
 	
 }

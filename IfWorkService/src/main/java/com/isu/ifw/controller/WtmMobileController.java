@@ -599,7 +599,7 @@ public class WtmMobileController {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
 				return rp;
 			}
-			logger.debug("/mobile/"+tenantId+"/dashboard s" + empKey);
+			logger.debug("/mobile/"+tenantId+"/my/info s" + empKey);
 			
 			Map<String, Object> resultMap = new HashMap();
 			Map<String, Object> paramMap = new HashMap();
@@ -608,17 +608,81 @@ public class WtmMobileController {
 			paramMap.put("sabun", sabun);
 			paramMap.put("ymd", ymd);
 			
-			
+			Map<String, Object> preference = new HashMap<>();
+			preference.put("saveBtnLabel", "정정요청하기");
+			preference.put("useSave", "true");
+
 			Map<String, Object> data = wtmCalendarService.getEmpWorkCalendarDayInfo(paramMap);
+			if(data != null && data.containsKey("workTypeCd")) {
+				//완전 선근제이거나 부분 선근제 
+				if((data.get("workTypeCd").equals("SELE_F") || data.get("workTypeCd").equals("SELE_C"))
+					&& data.get("editYn").equals("Y") && data.get("holidayYn").equals("N")) {
+					preference.put("extBtnLabel", "계획시간변경");
+					preference.put("useExtBtn", "true");
+				}
+			}
+			
+			resultMap.put("preference", preference);
 			resultMap.put("data", data);
 			rp.put("result", resultMap);
-			logger.debug("/mobile/"+tenantId+"/dashboard e " + rp.toString());
+			logger.debug("/mobile/"+tenantId+"/my/info e " + rp.toString());
 		} catch(Exception e) {
 			rp.put("result", null);
 			logger.debug(e.getMessage());
 		}
 		return rp;
 	}
+	
+	/**
+	 * 내 근무계획 정보
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/my/plan", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getMyPlanInfo(@PathVariable Long tenantId,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey, 
+			@RequestParam(value="id", required = true) String ymd, 
+			HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			String userToken = request.getParameter("userToken");
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+			logger.debug("/mobile/"+tenantId+"/my/plan s" + empKey);
+			
+			Map<String, Object> resultMap = new HashMap();
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId" , tenantId);
+			paramMap.put("enterCd" , enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
+			
+			Map<String, Object> data = wtmCalendarService.getEmpWorkCalendarDayInfo(paramMap);
+
+			resultMap.put("data", data);
+			rp.put("result", resultMap);
+			logger.debug("/mobile/"+tenantId+"/my/plan e " + rp.toString());
+		} catch(Exception e) {
+			rp.put("result", null);
+			logger.debug(e.getMessage());
+		}
+		return rp;
+	}	
+	
+	
 	
 	/**
 	 * 근무계획시간 조회 초기괎
@@ -793,6 +857,152 @@ public class WtmMobileController {
 		return rp;
 	}
 	
+	/**
+	 * 부서원 근무계획시간 조회
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/team/planlist", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getTeamPlanList(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey,
+			@RequestParam(value="id", required = true) String ymd,
+			HttpServletRequest request) throws Exception {		
+
+		ReturnParam rp = new ReturnParam();
+		rp.setFail("근무계획 조회 중 오류가 발생했습니다.");
+
+		String userToken = request.getParameter("userToken");
+		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+
+		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+		if(emp == null) {
+			rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+			return rp;
+		}
+
+		logger.debug("/mobile/"+ tenantId+"/team/planlist s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+		try {
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
+			
+			List<Map <String,Object>> l = mobileService.getPlanList(paramMap);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회결과가 없습니다.");
+				return rp;
+			}
+			l = MobileUtil.parseMobileList(l);
+			
+			rp.setSuccess("");
+			rp.put("result", l);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/team/planlist e " + rp.toString());
+		return rp;
+	}
+	
+	/**
+	 * 근무계획시간 변경
+	 * @param tenantKey
+	 * @param locale
+	 * @param empKey
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/mobile/{tenantId}/my/chgplan", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public @ResponseBody Map<String, Object> changePlan(@PathVariable Long tenantId, 
+			@RequestBody Map<String, Object> paramMap
+			,HttpServletRequest request) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		try {
+			String userToken = paramMap.get("userToken").toString();
+			String empKey = paramMap.get("empKey").toString();
+			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			
+			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+			if(emp == null) {
+				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+				return rp;
+			}
+			
+			logger.debug("/mobile/"+ tenantId+"/my/chgplan s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			
+			
+			Map<String, Object> result = new HashMap();
+			Map<String, Object> data = (Map<String, Object>) paramMap.get("data");
+
+			if(data.get("shm") == null || data.get("ehm") == null) {
+				rp.setFail("변경 시작/종료 시간을 입력해 주세요.");
+				return rp;
+			}
+			data.put("shm", data.get("shm").toString().replace(":", ""));
+			data.put("ehm", data.get("ehm").toString().replace(":", ""));
+			Long cSHm = Long.parseLong(data.get("shm").toString());
+			Long cEHm = Long.parseLong(data.get("ehm").toString());
+			
+			if(cSHm >= cEHm) {
+				rp.setFail("근무 시작/종료 시간을 확인해주세요.");
+				return rp;
+			}
+
+			if(data.containsKey("editYn") && data.get("editYn").equals("Y")) {
+				//근무가능시간 체크
+				if(data.containsKey("workShm") && data.get("workShm") != null && data.containsKey("workEhm") && data.get("workEhm") != null) {
+					Long workShm = Long.parseLong(data.get("workShm").toString().replace(":", ""));
+					Long workEhm = Long.parseLong(data.get("workEhm").toString().replace(":", ""));
+					
+					if(cSHm < workShm || cSHm >= workEhm || cEHm <= workShm || cEHm > workEhm ) {
+						rp.setFail("근무 가능시간은 " + data.get("workDate").toString() + " 입니다.");
+						return rp;
+					}
+				} 
+				//코어근무시간 체크
+				if(data.containsKey("coreShm") && data.get("coreShm") != null && data.containsKey("coreEhm") && data.get("coreEhm") != null) {
+					Long coreShm = Long.parseLong(data.get("coreShm").toString().replace(":", ""));
+					Long coreEhm = Long.parseLong(data.get("coreEhm").toString().replace(":", ""));
+					
+					if(cSHm <= coreShm &&  cEHm >= coreEhm) {
+					} else {
+						rp.setFail("코어 근무시간은 " + data.get("coreDate").toString() + " 입니다.");
+						return rp;
+					}
+				} 
+				//{ "20190101" : {"shm" : "0800" , "ehm" : "0200"}
+				Map<String, Object> rs = new HashMap();
+				rs.put(data.get("ymd").toString(), data);
+				rp = flexibleEmpService.save(Long.parseLong(data.get("flexibleEmpId").toString()), rs, sabun);
+			}
+
+			result.put("data", data);
+			rp.put("result", result);
+		} catch(Exception e) {
+			logger.debug(e.getMessage());
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/my/chgplan e " + rp.toString());
+		return rp;
+	}
 	
 	/**
 	 * 타각시간 조회
