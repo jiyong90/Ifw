@@ -44,7 +44,7 @@
 			                	<div class="col-4 col-sm-3 col-md-3 col-lg-2" v-if="targets != null && targets['${empNo}'] != null && targets['${empNo}'].restWorkMinute != null">
 				                	<p class="page-sub-title mb-0">잔여 소정근로시간</p>
 				                    <span class="time-wrap">
-				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(targets['${empNo}'].restWorkMinute, 'detail')}}</span> -->
+				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(targets['${empNo}'].restWorkMinute, 'detail')}}</span> 
 				                    </span>
 			                    </div>
 			                    <div class="col-4 col-sm-3 col-md-3 col-lg-2" v-if="targets != null && targets['${empNo}'] != null && targets['${empNo}'].restOtMinute != null">
@@ -101,7 +101,7 @@
                                         placeholder="팀장 확인 시에 필요합니다." required></textarea>
                                 </div>
                             </div>
-                            <div class="inner-wrap" v-show="result.holidayYn=='Y' && (subsYn=='Y' || payTargetYn)">
+                            <div class="inner-wrap" v-show="isOtUse && result.holidayYn=='Y' && (subsYn=='Y' || payTargetYn)">
                                 <div class="title mb-2">휴일대체방법</div>
                                 <div class="desc">
                                     <div class="custom-control custom-radio custom-control-inline">
@@ -749,6 +749,7 @@
   		    	reasons: [], //연장/휴일 근로 사유
   		    	subYmds: [], //대체휴일
   		    	overtime: {}, //연장/휴일 근로시간, 휴게시간
+  		    	otTime: 0, //잔여소정근로시간 외 연장근로시간
   		    	overtimeAppl: {},
   		    	applCode: {}, //신청서 정보
   		    	subsYn: false, //대체휴가 사용 여부
@@ -757,11 +758,12 @@
   		    	applLine: [],
   		    	targets: {}, //대상자 잔여 연장근로시간
   		    	//prevOtSubs: [] //이전에 신청한 휴일
-  		    	chgSubsAppl: {} //대체휴일 정정 데이터
+  		    	chgSubsAppl: {}, //대체휴일 정정 데이터
+  		    	isOtUse:false //대체휴일 Div section사용 여부 기본근무에서 잔여 소정근로시간이 남았을 경우 잔여소정근로시간 선 소진 후 나머지 시간이 있을 경우 사용할 수 있
   		    },
   		    computed: {
   		    	subsRequired: function(val, oldVal) {
-  		    		return this.result.holidayYn=='Y'&&(this.subsYn=='Y'||this.payTargetYn)?true:false;
+  		    		return this.result.holidayYn=='Y'&&(this.subsYn=='Y'||this.payTargetYn)&&this.isOtUse?true:false;
   		    	}
   		    },
   		    mounted: function(){
@@ -1197,7 +1199,6 @@
   	         			//eYmd.setHours(sYmd.getHours()+1);
   	         			eYmd = moment(eYmd).add(1, 'hours');
   	         		} 
-  	         		
 					$("#sDate").val(moment(sYmd).format('YYYY-MM-DD'));
 					$("#eDate").val(moment(eYmd).format('YYYY-MM-DD'));
 					$("#sTime").val(moment(sYmd).format('HH:mm'));
@@ -1567,7 +1568,8 @@
 		   				}
 		     				
 		     			//var time = Number(moment(otEdate).diff(otSdate,'minutes'));
-		     			var time = $this.overtime.calcMinute;
+		     			//var time = $this.overtime.calcMinute;
+		     			var time = $this.otTime; // 20200429 jyp 수정
 		       			// 신청 시간 단위
 		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='') {
 		       				var timeUnit = Number(applCode.timeUnit);
@@ -1596,7 +1598,8 @@
 			         	
 			         	//휴일근무 신청 시간 단위 체크
 			         	//휴게시간 차감 후 근무시간을 휴일근무 신청시간으로 딱 나눠떨어져야함(분 단위)
-			         	if(holidayYn=='Y') {
+			         	//
+			         	if(holidayYn=='Y' && $this.isOtUse ) {
 			         		if(applCode.holApplTypeCd!=null && applCode.holApplTypeCd!=undefined && applCode.holApplTypeCd!='') {
 			         			var holApplTypeCd = Number(applCode.holApplTypeCd);
 			         			
@@ -1693,9 +1696,10 @@
 		  	  	         				}
 		  	  	         			});
 		  	  	         			
-		  	  	         			if(isValid && $this.overtime.calcMinute!=null && $this.overtime.calcMinute!='' && $this.overtime.calcMinute!=subsMin) {
+		  	  	         			//if(isValid && $this.overtime.calcMinute!=null && $this.overtime.calcMinute!='' && $this.overtime.calcMinute!=subsMin) {
+	  	  	         				if(isValid && time !=null && time!='' && time!=subsMin) {
 		  	  	         				isValid = false;
-		  	  	         				msg = minuteToHHMM($this.overtime.calcMinute, 'detail')+'의 대체 휴일을 지정하세요.';
+		  	  	         				msg = minuteToHHMM(time, 'detail')+'의 대체 휴일을 지정하세요.';
 		  	  	         			}
 		  	  	         			
 	  	  	         			} else {
@@ -2585,8 +2589,24 @@
    		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
    			var sTime = $("#sTime").val().replace(/:/gi,"");
    			var eTime = $("#eTime").val().replace(/:/gi,"");
-       		
+   			//restWorkMinute
        		timeCalendarVue.overtime = timeCalendarVue.calcMinute(moment(timeCalendarVue.workday).format('YYYYMMDD'), sTime, eTime);
+   			if(timeCalendarVue.targets['${empNo}'] != null && timeCalendarVue.targets['${empNo}'].restWorkMinute != null){
+   		
+   				console.log(timeCalendarVue.targets['${empNo}']);
+   				console.log(timeCalendarVue.overtime);
+	       		if( timeCalendarVue.targets['${empNo}'].restWorkMinute >= timeCalendarVue.overtime.calcMinute){
+	       			timeCalendarVue.isOtUse = false;
+	       		}else{
+	       			//잔여소정근로시간보다 근무시간이 더 클 경우 연장근로시간에 대해 대체휴가 탭을 활성화 한다. 
+	       			timeCalendarVue.otTime = timeCalendarVue.overtime.calcMinute - timeCalendarVue.targets['${empNo}'].restWorkMinute;
+	       			timeCalendarVue.isOtUse = true;
+	       		}
+   			}else{
+   				timeCalendarVue.otTime = timeCalendarVue.overtime.calcMinute;
+       			timeCalendarVue.isOtUse = true;
+   			}
+       		
    		}
     });
    	

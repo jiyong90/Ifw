@@ -1,13 +1,8 @@
 package com.isu.ifw.util;
 
-
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
 public enum RedisUtil {
     INSTANCE;
-
+/*
     private final JedisPool pool;
 
     RedisUtil() {
@@ -49,4 +44,5 @@ public enum RedisUtil {
             }
         }
     }
+    */
 }

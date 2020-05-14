@@ -6,6 +6,7 @@
 		<project>isu-commons-auth</project>
 		<project>isu-commons-option</project>
 		<project>IfWork</project>
+		<project>pb-msg-gabia</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
