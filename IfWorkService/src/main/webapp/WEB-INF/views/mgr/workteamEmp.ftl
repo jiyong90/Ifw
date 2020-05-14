@@ -31,7 +31,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">근무조대상자관리</div>
+								<div class="float-left title">근무조대상자관리 &nbsp;<span id="Tooltip-workTeamEmp" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
@@ -56,6 +56,33 @@
             language: 'ko'
         });
    		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
+    
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-workTeamEmp',
+       	    target: '#Tooltip-workTeamEmp',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무조를 변경할 경우 종료일을 조정하여 저장한 후 새로 입력. 종료일을 과거로 저장할 경우 인정시간은 삭제됨 ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
         
 		var initdata1 = {};
 		
