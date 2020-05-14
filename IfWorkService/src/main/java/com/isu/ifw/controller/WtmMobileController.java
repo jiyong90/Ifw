@@ -653,8 +653,8 @@ public class WtmMobileController {
 		rp.setSuccess("");
 		try {
 			String userToken = request.getParameter("userToken");
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
@@ -878,8 +878,8 @@ public class WtmMobileController {
 		rp.setFail("근무계획 조회 중 오류가 발생했습니다.");
 
 		String userToken = request.getParameter("userToken");
-		String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-		String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 
 		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 		if(emp == null) {
@@ -933,8 +933,8 @@ public class WtmMobileController {
 		try {
 			String userToken = paramMap.get("userToken").toString();
 			String empKey = paramMap.get("empKey").toString();
-			String enterCd = MobileUtil.parseEmpKey(userToken, empKey, "enterCd");
-			String sabun = MobileUtil.parseEmpKey(userToken, empKey, "sabun");
+			String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+			String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
 			
 			WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
 			if(emp == null) {
@@ -957,6 +957,7 @@ public class WtmMobileController {
 			}
 			data.put("shm", data.get("shm").toString().replace(":", ""));
 			data.put("ehm", data.get("ehm").toString().replace(":", ""));
+
 			Long cSHm = Long.parseLong(data.get("shm").toString());
 			Long cEHm = Long.parseLong(data.get("ehm").toString());
 			
@@ -970,26 +971,35 @@ public class WtmMobileController {
 				if(data.containsKey("workShm") && data.get("workShm") != null && data.containsKey("workEhm") && data.get("workEhm") != null) {
 					Long workShm = Long.parseLong(data.get("workShm").toString().replace(":", ""));
 					Long workEhm = Long.parseLong(data.get("workEhm").toString().replace(":", ""));
-					
+
 					if(cSHm < workShm || cSHm >= workEhm || cEHm <= workShm || cEHm > workEhm ) {
+
 						rp.setFail("근무 가능시간은 " + data.get("workDate").toString() + " 입니다.");
 						return rp;
 					}
 				} 
 				//코어근무시간 체크
-				if(data.containsKey("coreShm") && data.get("coreShm") != null && data.containsKey("coreEhm") && data.get("coreEhm") != null) {
+				if(data.containsKey("coreShm") && data.get("coreShm") != null && !data.get("coreShm").equals("") 
+						&& data.containsKey("coreEhm") && data.get("coreEhm") != null && !data.get("coreEhm").equals("")) {
 					Long coreShm = Long.parseLong(data.get("coreShm").toString().replace(":", ""));
 					Long coreEhm = Long.parseLong(data.get("coreEhm").toString().replace(":", ""));
-					
+			
 					if(cSHm <= coreShm &&  cEHm >= coreEhm) {
+
 					} else {
+
 						rp.setFail("코어 근무시간은 " + data.get("coreDate").toString() + " 입니다.");
 						return rp;
 					}
 				} 
 				//{ "20190101" : {"shm" : "0800" , "ehm" : "0200"}
 				Map<String, Object> rs = new HashMap();
-				rs.put(data.get("ymd").toString(), data);
+				Map<String, Object> ds = new HashMap();
+				ds.put("shm", data.get("shm").toString());
+				ds.put("ehm", data.get("ehm").toString());
+				
+				rs.put(data.get("ymd").toString(), ds);
+				logger.debug("ds " + ds.toString());
 				rp = flexibleEmpService.save(Long.parseLong(data.get("flexibleEmpId").toString()), rs, sabun);
 			}
 
@@ -1032,7 +1042,6 @@ public class WtmMobileController {
 				rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
 				return rp;
 			}
-
 			logger.debug("/mobile/"+ tenantId+"/team/plan s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
 	
 			Map<String, Object> result = new HashMap();
