@@ -27,7 +27,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">근무조관리</div>
+								<div class="float-left title">근무조관리 &nbsp;<span id="Tooltip-workTeamMgr" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
@@ -53,6 +53,33 @@
         });
    		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
    		
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-workTeamMgr',
+       	    target: '#Tooltip-workTeamMgr',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무조는 할당된 직원이 없는 근무조만 삭제가 가능합니다. 근무조 종료일 변경 시 해당 기간내에 할당된 직원이 있는 경우 근무조 대상자 관리를 통해 먼저 확인 후 근무조 변경을 진행해주세요. ',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
