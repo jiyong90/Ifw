@@ -312,4 +312,34 @@
 			ON X.FLEXIBLE_APPLY_ID = XX.FLEXIBLE_APPLY_ID
 			SET X.APPLY_YN = XX.APPLY_YN
 	</update>    
+	
+	<update id="updateFlexibleTaaReset" parameterType="Long">
+		<![CDATA[
+	  	UPDATE WTM_APPL X
+			JOIN (
+				SELECT M.APPL_ID, T.SABUN, D.TAA_CD, D.SYMD, D.EYMD
+				  FROM WTM_APPL M
+				 INNER JOIN WTM_TAA_APPL T
+				    ON M.APPL_ID = T.APPL_ID
+				 INNER JOIN WTM_TAA_APPL_DET D
+				    ON T.TAA_APPL_ID = D.TAA_APPL_ID
+				 INNER JOIN (SELECT A.USE_SYMD AS SYMD, A.USE_EYMD AS EYMD, B.TENANT_ID , B.ENTER_CD, B.SABUN
+								  FROM WTM_FLEXIBLE_APPLY A
+								 INNER JOIN WTM_FLEXIBLE_APPLY_EMP_TEMP B
+								    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+								 WHERE A.FLEXIBLE_APPLY_ID = #{flexibleApplyId}
+								 ) F
+				    ON M.TENANT_ID = F.TENANT_ID
+				   AND M.ENTER_CD = F.ENTER_CD
+				   AND T.SABUN = F.SABUN
+				   AND F.SYMD <= D.EYMD
+				   AND F.EYMD >= D.SYMD
+				 WHERE M.APPL_CD = 'TAA'
+				   AND M.APPL_STATUS_CD = '99'
+			)XX
+			ON X.APPL_ID = XX.APPL_ID
+			SET X.APPL_STATUS_CD = '00'
+			  , X.UPDATE_ID = 'FLEX_RE'
+		]]>
+	</update>
 </mapper>

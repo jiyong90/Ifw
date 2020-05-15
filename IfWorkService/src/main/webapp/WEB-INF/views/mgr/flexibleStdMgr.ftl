@@ -65,7 +65,7 @@
 													<input type="checkbox" id="holExceptYn" name="holExceptYn" />
 													<label for="holExceptYn">체크시 공휴일 근무제외</label>
 												</td>
-												<th>인정근무 단위시간(분) <span id="Tooltip-unitMinute" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
+												<th><span class="required">인정근무 단위시간(분) <span id="Tooltip-unitMinute" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="text" id="unitMinute" name="unitMinute"/>
 													<input type="hidden" id="taaTimeYn" name="taaTimeYn"/>
