@@ -260,7 +260,12 @@ public class WtmMobileEdocController {
 							
 						} else if(body.get("apprStatCd").toString().equals("01")) {
 							List<String> sabuns = new ArrayList<String>();
-							sabuns.add(applSabun);
+							String[] as = paramMap.get("applSabuns").toString().split(",");
+							for(int i = 0; i < as.length; i++) {
+								sabuns.add(as[i]);
+							}
+							
+//							sabuns.add(paramMap.get("applSabuns").toString());
 							paramMap.put("applSabuns", mapper.writeValueAsString(sabuns));
 
 							logger.debug(":::::::: sabuns " + sabuns.toString());
