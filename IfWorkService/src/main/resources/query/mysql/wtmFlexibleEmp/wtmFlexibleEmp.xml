@@ -1340,7 +1340,7 @@
 			    ON A.APPL_ID = O.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
-			   AND A.APPL_IN_SABUN = #{sabun}
+			   AND O.SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			   AND (#{sdate} < F_WTM_DATE_FORMAT(O.OT_EDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.OT_SDATE,'YMDHI') < #{edate})
@@ -1349,14 +1349,15 @@
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_SUBS_APPL O
 			    ON A.APPL_ID = O.APPL_ID
+ 			  JOIN WTM_OT_APPL B
+			    ON O.OT_APPL_ID = B.OT_APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
-			   AND A.APPL_IN_SABUN = #{sabun}
+			   AND B.SABUN = #{sabun}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '')
 			   AND A.APPL_STATUS_CD IN ('21','31')
 			   AND (#{sdate} < F_WTM_DATE_FORMAT(O.SUBS_SDATE,'YMDHI') AND F_WTM_DATE_FORMAT(O.SUBS_EDATE,'YMDHI') < #{edate})
-			) X
-		]]>	
+			) X		]]>	
   	</select>
   	
   	<select id="checkDuplicateSubsWorktime" parameterType="map" resultType="map">

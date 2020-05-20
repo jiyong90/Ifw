@@ -158,7 +158,7 @@
 			if (StCode == 401) {
 				window.parent.location.href = loginUrl;
 			}
-		    for(i=1;i<=sheet1.RowCount();i++){
+			for(i=1;i<sheet1.RowCount()+2;i++){
 	   	  		sheet1.SetCellEditable(i, 1,0);
 		    }
 			if (Msg != "") {
