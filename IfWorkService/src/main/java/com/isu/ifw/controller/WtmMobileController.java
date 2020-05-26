@@ -968,7 +968,7 @@ public class WtmMobileController {
 
 			if(data.containsKey("editYn") && data.get("editYn").equals("Y")) {
 				//근무가능시간 체크
-				if(data.containsKey("workShm") && data.get("workShm") != null && data.containsKey("workEhm") && data.get("workEhm") != null) {
+				if(data.containsKey("workShm") && data.get("workShm") != null && data.get("workShm") != "" && data.containsKey("workEhm") && data.get("workEhm") != null && data.get("workEhm") != "") {
 					Long workShm = Long.parseLong(data.get("workShm").toString().replace(":", ""));
 					Long workEhm = Long.parseLong(data.get("workEhm").toString().replace(":", ""));
 
@@ -979,8 +979,8 @@ public class WtmMobileController {
 					}
 				} 
 				//코어근무시간 체크
-				if(data.containsKey("coreShm") && data.get("coreShm") != null && !data.get("coreShm").equals("") 
-						&& data.containsKey("coreEhm") && data.get("coreEhm") != null && !data.get("coreEhm").equals("")) {
+				if(data.containsKey("coreShm") && data.get("coreShm") != null && !data.get("coreShm").equals("") && data.get("coreShm") != ""
+						&& data.containsKey("coreEhm") && data.get("coreEhm") != null && !data.get("coreEhm").equals("") && data.get("coreEhm") != null) {
 					Long coreShm = Long.parseLong(data.get("coreShm").toString().replace(":", ""));
 					Long coreEhm = Long.parseLong(data.get("coreEhm").toString().replace(":", ""));
 			
