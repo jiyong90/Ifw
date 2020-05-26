@@ -61,7 +61,7 @@ public class WtmScheduleController {
 		return;
 	}
 	
-	// 인터페이스로 데이터 쏴주기
+	// korgc 인터페이스로 데이터 쏴주기
 	@RequestMapping(value = "/sendIntfData",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void sendInterface(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 공통코드

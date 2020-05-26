@@ -179,7 +179,8 @@
 				  , WkDate
 				  , EmpID
 				  ,	DTCnt
-				  , WkItemSeq
+				  , NTCnt
+				  , IsHoliApp
 				  , UPDATE_DATE
 				)
 				VALUES
@@ -189,8 +190,9 @@
 				  , #{WkDate}
 				  , #{EmpID}
 				  , #{DTCnt}
-				  , 0
-				  , CURRENT_TIMESTAMP
+				  , #{NTCnt}
+				  , #{IsHoliApp}
+				  , #{UPDATE_DATE}
 				)
 		]]>
 	</insert>

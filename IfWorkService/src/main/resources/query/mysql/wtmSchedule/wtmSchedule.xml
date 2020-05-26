@@ -139,26 +139,126 @@
 	
 	<select id="getIntfOtList" parameterType="map" resultType="hashmap">
 		<![CDATA[
+			SELECT MAX(OT_ID) AS OT_ID, CompanySeq, WkDate, EmpID, SUM(DTCnt) AS DTCnt, SUM(NTCnt) AS NTCnt, MAX(IsHoliApp) AS IsHoliApp, MIN(UPDATE_DATE) AS UPDATE_DATE 
+			  FROM (
 			SELECT C.WORK_DAY_RESULT_ID AS OT_ID
-			   , C.ENTER_CD AS CompanySeq
-			   , C.YMD AS WkDate
-			   , C.SABUN AS EmpID
-			   , '0' AS OT_CD 
-			   , C.APPR_MINUTE DTCnt
-			   , C.UPDATE_DATE 
-			    FROM WTM_FLEXIBLE_EMP A
-			   INNER JOIN WTM_FLEXIBLE_STD_MGR B
-			      ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
-			     AND B.WORK_TYPE_CD NOT IN ('SELE_C', 'SELE_F')
-			   INNER JOIN WTM_WORK_DAY_RESULT C
-			      ON A.TENANT_ID = C.TENANT_ID
-			        AND A.ENTER_CD = C.ENTER_CD
-			        AND A.SABUN = C.SABUN
-			        AND C.YMD BETWEEN A.SYMD AND A.EYMD
-			        AND C.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT')
-			   WHERE C.TENANT_ID = #{tenantId}
-			     AND IFNULL(C.APPR_MINUTE ,0) > 0
-			     AND C.UPDATE_DATE > F_WTM_TO_DATE(#{lastDate}, 'YMDHIS')
+			      , C.ENTER_CD AS CompanySeq
+			      , C.YMD AS WkDate
+			      , C.SABUN AS EmpID
+			      , C.APPR_MINUTE AS DTCnt
+			      , CASE WHEN C.TIME_TYPE_CD = 'NIGHT' THEN C.APPR_MINUTE ELSE 0 END AS NTCnt
+			      , D.HOLIDAY_YN AS IsHoliApp
+			      , C.UPDATE_DATE 
+			       FROM WTM_FLEXIBLE_EMP A
+			      INNER JOIN WTM_FLEXIBLE_STD_MGR B
+			         ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+			        AND B.WORK_TYPE_CD NOT IN ('SELE_C', 'SELE_F')
+			      INNER JOIN WTM_WORK_CALENDAR D
+			         ON A.TENANT_ID = D.TENANT_ID
+			           AND A.ENTER_CD = D.ENTER_CD
+			           AND A.SABUN = D.SABUN
+			           AND D.YMD BETWEEN A.SYMD AND A.EYMD
+			    INNER JOIN WTM_WORK_DAY_RESULT C
+			         ON A.TENANT_ID = C.TENANT_ID
+			           AND A.ENTER_CD = C.ENTER_CD
+			           AND A.SABUN = C.SABUN
+			           AND C.YMD BETWEEN A.SYMD AND A.EYMD
+			           AND C.YMD = D.YMD
+			         AND C.APPR_SDATE IS NOT NULL
+			         AND C.APPR_EDATE IS NOT NULL
+			           AND C.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT')
+			      WHERE C.TENANT_ID = #{tenantId}
+			        AND IFNULL(C.APPR_MINUTE ,0) > 0
+			        AND C.UPDATE_DATE > F_WTM_TO_DATE(#{lastDate}, 'YMDHIS')
+			UNION ALL
+			SELECT D.WORK_DAY_RESULT_ID AS OT_ID
+			    , D.ENTER_CD AS CompanySeq
+			  , D.YMD AS WkDate
+			  , D.SABUN AS EmpID
+			  , 0  AS DTCnt
+			  , F_WTM_CALC_MINUTE( F_WTM_DATE_FORMAT(D.NIGHT_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.NIGHT_EDATE, 'HI'), '','', '') -
+			         SUM(F_WTM_CALC_MINUTE(B.SHM, B.EHM, F_WTM_DATE_FORMAT(D.NIGHT_SDATE, 'HI') ,  F_WTM_DATE_FORMAT(D.NIGHT_EDATE, 'HI'), '' ))  AS NTCnt
+			  , D.HOLIDAY_YN AS IsHoliApp
+			  , D.UPDATE_DATE
+			  FROM (
+			SELECT C.WORK_DAY_RESULT_ID
+			      , C.ENTER_CD
+			      , C.YMD
+			      , C.SABUN
+			      , D.HOLIDAY_YN
+			      , D.TIME_CD_MGR_ID
+			      , GREATEST(C.APPR_SDATE, F_WTM_TO_DATE(CONCAT(C.YMD, '220000'), 'YMDHIS')) AS NIGHT_SDATE
+			    , LEAST(C.APPR_EDATE, F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(C.YMD, '060000'), 'YMDHIS'), 1, 'D')) AS NIGHT_EDATE
+			      , C.UPDATE_DATE 
+			       FROM WTM_FLEXIBLE_EMP A
+			      INNER JOIN WTM_FLEXIBLE_STD_MGR B
+			         ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+			        AND B.WORK_TYPE_CD NOT IN ('SELE_C', 'SELE_F')
+			      INNER JOIN WTM_WORK_CALENDAR D
+			         ON A.TENANT_ID = D.TENANT_ID
+			           AND A.ENTER_CD = D.ENTER_CD
+			           AND A.SABUN = D.SABUN
+			           AND D.YMD BETWEEN A.SYMD AND A.EYMD
+			    INNER JOIN WTM_WORK_DAY_RESULT C
+			         ON A.TENANT_ID = C.TENANT_ID
+			           AND A.ENTER_CD = C.ENTER_CD
+			           AND A.SABUN = C.SABUN
+			           AND C.YMD BETWEEN A.SYMD AND A.EYMD
+			           AND C.YMD = D.YMD
+			         AND C.APPR_SDATE IS NOT NULL
+			         AND C.APPR_EDATE IS NOT NULL
+			           AND C.TIME_TYPE_CD = 'BASE'
+			           AND (C.APPR_SDATE BETWEEN F_WTM_TO_DATE(CONCAT(C.YMD, '220000'), 'YMDHIS') AND F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(C.YMD, '060000'), 'YMDHIS'), 1, 'D')
+			           OR
+			         C.APPR_EDATE BETWEEN F_WTM_TO_DATE(CONCAT(C.YMD, '220000'), 'YMDHIS') AND F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(C.YMD, '060000'), 'YMDHIS'), 1, 'D')
+			         )
+			      WHERE C.TENANT_ID = #{tenantId}
+			        AND IFNULL(C.APPR_MINUTE ,0) > 0
+			        AND C.UPDATE_DATE > F_WTM_TO_DATE(#{lastDate}, 'YMDHIS')
+			 ) D
+			 JOIN WTM_TIME_CD_MGR T
+			    ON D.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+			   AND T.BREAK_TYPE_CD = 'MGR'
+			  LEFT OUTER JOIN WTM_TIME_BREAK_MGR B
+			    ON T.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID 
+			GROUP BY D.WORK_DAY_RESULT_ID, D.ENTER_CD, D.SABUN, D.YMD, D.HOLIDAY_YN
+			UNION ALL
+			SELECT DISTINCT C.WORK_DAY_RESULT_ID AS OT_ID
+			      , C.ENTER_CD AS CompanySeq
+			      , C.YMD AS WkDate
+			      , C.SABUN AS EmpID
+			      , C.APPR_MINUTE AS DTCnt
+			      , 0 AS NTCnt
+			      , D.HOLIDAY_YN AS IsHoliApp
+			      , C.UPDATE_DATE 
+			       FROM WTM_FLEXIBLE_EMP A
+			      INNER JOIN WTM_FLEXIBLE_STD_MGR B
+			         ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+			        AND B.WORK_TYPE_CD NOT IN ('SELE_C', 'SELE_F')
+			      INNER JOIN WTM_WORK_CALENDAR D
+			         ON A.TENANT_ID = D.TENANT_ID
+			           AND A.ENTER_CD = D.ENTER_CD
+			           AND A.SABUN = D.SABUN
+			           AND D.YMD BETWEEN A.SYMD AND A.EYMD
+			    INNER JOIN WTM_WORK_DAY_RESULT C
+			         ON A.TENANT_ID = C.TENANT_ID
+			           AND A.ENTER_CD = C.ENTER_CD
+			           AND A.SABUN = C.SABUN
+			           AND C.YMD BETWEEN A.SYMD AND A.EYMD
+			           AND C.YMD = D.YMD
+			         AND C.APPR_SDATE IS NOT NULL
+			         AND C.APPR_EDATE IS NOT NULL
+			           AND C.TIME_TYPE_CD IN ('BASE')
+			      INNER JOIN WTM_HOLIDAY_MGR F
+			         ON F.TENANT_ID = A.TENANT_ID
+			        AND F.ENTER_CD = A.ENTER_CD
+			        AND F.HOLIDAY_YMD = D.YMD
+			    WHERE C.TENANT_ID = #{tenantId}
+			        AND IFNULL(C.APPR_MINUTE ,0) > 0
+			        AND D.HOLIDAY_YN = 'N'
+			        AND C.UPDATE_DATE > F_WTM_TO_DATE(#{lastDate}, 'YMDHIS')
+			) AA
+			GROUP BY AA.CompanySeq, AA.WkDate, AA.EmpID
 		]]>
 	</select>
 	
