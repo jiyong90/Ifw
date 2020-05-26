@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,8 +94,8 @@ public class ViewController {
 	@Qualifier("WtmTenantModuleRepository")
 	CommTenantModuleRepository tenantModuleRepo;
 	
-	@Autowired
-    StringRedisTemplate redisTemplate;
+	//@Autowired
+    //StringRedisTemplate redisTemplate;
 	
 	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
@@ -222,7 +221,7 @@ public class ViewController {
 	
 	@RequestMapping(value = "/console/{tsId}/views/{viewPage}", method = RequestMethod.GET)
 	public ModelAndView views(@PathVariable String tsId, @PathVariable String viewPage, HttpServletRequest request) throws Exception {
-		redisTemplate.opsForValue().set("33", "44");
+		//redisTemplate.opsForValue().set("33", "44");
 		
 		ModelAndView mv = new ModelAndView("template");
 		

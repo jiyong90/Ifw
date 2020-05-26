@@ -59,9 +59,9 @@ public class WtmOtCanApplController {
 		String sabun = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		Long applId = null;
-		if(paramMap.get("applId")!=null && !"".equals(paramMap.get("applId")))
-			applId = Long.valueOf(paramMap.get("applId").toString());
+		Long otApplId = null;
+		if(paramMap.get("otApplId")!=null && !"".equals(paramMap.get("otApplId")))
+			otApplId = Long.valueOf(paramMap.get("otApplId").toString());
 		
 		String status = null;
 		if(paramMap.get("status")!=null && !"".equals(paramMap.get("status")))
@@ -74,7 +74,7 @@ public class WtmOtCanApplController {
 		try {
 			//rp = otCanApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
 			//if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-				otCanApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+				otCanApplService.request(tenantId, enterCd, otApplId, workTypeCd, paramMap, sabun, userId);
 			//}
 			
 		} catch (Exception e) {

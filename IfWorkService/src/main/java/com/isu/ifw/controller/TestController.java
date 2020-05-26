@@ -51,6 +51,14 @@ public class TestController {
 		
 		Map<String, Object> m = new HashMap<String, Object>();
 		empService.calcApprDayInfo(tenantId, enterCd, sYmd, eYmd, sabun);
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("pId", "JYP");
+		paramMap.put("symd", sYmd);
+		paramMap.put("eymd", eYmd);
+		empService.createWorkTermtimeByEmployee(tenantId, enterCd, sabun, paramMap, "JSP");
 		return m;
 	}
 	

@@ -647,6 +647,7 @@
 	    			//선근제 신청서
 	    			this.getFlexibleSeleAppl(appr.applId);
 	    		} */
+	    		console.log(appr);
 	    		$this.appl = appr.appl;
 	    		$this.appl['applCd'] = appr.applCd;
 	    		

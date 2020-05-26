@@ -35,10 +35,11 @@ public class JwtUtil {
         }
 
         String subject = Jwts.parser().setSigningKey(signingKey).parseClaimsJws(token).getBody().getSubject();
+        /*
         if (!RedisUtil.INSTANCE.sismember(REDIS_SET_ACTIVE_SUBJECTS, subject)) {
             return null;
         }
-
+         */
         return subject;
     }
 /*

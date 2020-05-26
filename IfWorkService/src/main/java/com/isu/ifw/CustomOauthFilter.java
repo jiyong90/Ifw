@@ -15,12 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
-import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.util.WtmUtil;
 
@@ -36,8 +34,8 @@ public class CustomOauthFilter implements Filter {
 	@Qualifier("WtmTenantModuleRepository")
 	CommTenantModuleRepository tenantModuleRepo;
 	
-	@Autowired
-	StringRedisTemplate redisTemplate;
+	//@Autowired
+	//StringRedisTemplate redisTemplate;
 	 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -91,10 +89,10 @@ public class CustomOauthFilter implements Filter {
         Map<String, Object> sessionData = WtmUtil.parseJwtToken((HttpServletRequest)request, jwtToken);
         try {
 	        if(sessionData.containsKey("user_name")) {
-	        	if(redisTemplate.hasKey(sessionData.get("user_name").toString()) ) {
-	    			String refreshToken = redisTemplate.opsForValue().get(sessionData.get("user_name").toString()).toString();
-	    			System.out.println("getRefreshToken " + refreshToken);
-	        	} 
+//	        	if(redisTemplate.hasKey(sessionData.get("user_name").toString()) ) {
+//	    			String refreshToken = redisTemplate.opsForValue().get(sessionData.get("user_name").toString()).toString();
+//	    			System.out.println("getRefreshToken " + refreshToken);
+//	        	} 
 	        } else {
 	        	throw new Exception();
 	        }

@@ -1017,7 +1017,8 @@
          			
     				var o = {
     					workTypeCd : workTypeCd,
-    					flexibleNm : v.flexibleNm
+    					//flexibleNm : v.flexibleNm
+    					workTypeNm : v.workTypeNm
     				};
     				
     				if(keys.indexOf(o.workTypeCd)==-1 && (!v.hasOwnProperty('baseWorkYn') || (v.hasOwnProperty('baseWorkYn')&&v.baseWorkYn!='Y'))) {
@@ -1034,7 +1035,7 @@
 		    			;
 		    		
 		    		$this.legendList.map(function(v){
-	    				legend += '			<li class="'+v.workTypeCd+'">'+v.flexibleNm+'</li>        ';
+	    				legend += '			<li class="'+v.workTypeCd+'">'+v.workTypeNm+'</li>        ';
 	    			});
 		    			
 		    		legend += '		</ul>                                 '

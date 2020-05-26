@@ -110,6 +110,7 @@ public class WtmApplController {
 			
 			apprList = applService.getApprList(tenantId, enterCd, empNo, paramMap, userId);
 			
+			System.out.println(" 22. apprList : " + mapper.writeValueAsString(apprList));
 			rp.put("apprList", apprList);
 		} catch(Exception e) {
 			e.printStackTrace();
