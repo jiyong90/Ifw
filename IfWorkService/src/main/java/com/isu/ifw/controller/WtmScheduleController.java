@@ -101,4 +101,15 @@ public class WtmScheduleController {
 		wtmScheduleService.sendPushMessageDay(tenantId, enterCd);
 		logger.debug("================push/day e");
 	}
+	
+	@RequestMapping(value="/push/day2", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void sendPushDay2(HttpServletRequest request, 
+			@RequestParam(value = "tenantId", required = false) Long tenantId,
+			@RequestParam(value="enterCd", required = false) String enterCd) {
+		
+		logger.debug("================push/send s " + tenantId + ", " + enterCd);
+		wtmScheduleService.sendPushMessageDay2(tenantId, enterCd);
+		logger.debug("================push/send e");
+	}
+	
 }
