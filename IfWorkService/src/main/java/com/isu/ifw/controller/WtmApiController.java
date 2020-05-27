@@ -84,6 +84,8 @@ public class WtmApiController{
 			wtmInterfaceService.saveOrgConcIntf(tenantId, dataList);
 		}else if (gubun.equalsIgnoreCase("TAAAPPL")) {
 			wtmInterfaceService.saveTaaApplIntf(tenantId, dataList);
+		}else if (gubun.equalsIgnoreCase("ORGCHART")) {
+			wtmInterfaceService.saveOrgChartIntf(tenantId, dataList);
 		}
 		System.out.println("postCode end");
 		

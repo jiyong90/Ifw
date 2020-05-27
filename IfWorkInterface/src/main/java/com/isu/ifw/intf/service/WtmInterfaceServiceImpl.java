@@ -32,6 +32,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	private String orgUrl;
 	@Value("${ifw.orgconc-post}")
 	private String orgConcUrl;
+	@Value("${ifw.orgchart-post}")
+	private String orgChartUrl;
 	@Value("${ifw.taaappl-post}")
 	private String taaApplUrl;
 	
@@ -87,7 +89,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         		url = taaApplUrl;
         	}else if(T.equalsIgnoreCase("ORGCHART")) {
         		dataList = intfMapper.getWtmTaaAppl(paramMap);
-        		url = taaApplUrl;
+        		url = orgChartUrl;
         	}else {
         		dataList = null;
         	}
