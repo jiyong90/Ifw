@@ -80,6 +80,24 @@
         ]]>
     </select>
     
+    <select id="getWtmOrgChart" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CompanySeq AS ENTER_CD
+				 -- , OrgType
+			     , DeptSeq AS ORDER_SEQ
+			     , DeptName AS ORG_CHART_NM
+			     , UppDeptSeq AS PRIOR_ORG_CD
+			     -- , UppDeptName 
+			     , BegDate AS SYMD
+			     , CASE WHEN EndDate='99991231' THEN '29991231' ELSE EndDate  END AS EYMD
+			     , '' AS SEQ
+			     , '' AS ORG_LEVEL
+			     , Remark AS NOTE
+			     , LastDateTime AS CHKDATE
+			  FROM KPXERP_VHROrgDeptInfo_ISU  
+        ]]>
+    </select>
+    
     <select id="getWtmEmp" parameterType="map" resultType="hashmap">
         <![CDATA[ 
 			SELECT CompanySeq AS ENTER_CD

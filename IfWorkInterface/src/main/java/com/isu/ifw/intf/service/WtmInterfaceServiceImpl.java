@@ -85,6 +85,9 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	}else if(T.equalsIgnoreCase("TAAAPPL")) {
         		dataList = intfMapper.getWtmTaaAppl(paramMap);
         		url = taaApplUrl;
+        	}else if(T.equalsIgnoreCase("ORGCHART")) {
+        		dataList = intfMapper.getWtmTaaAppl(paramMap);
+        		url = taaApplUrl;
         	}else {
         		dataList = null;
         	}

@@ -62,4 +62,10 @@ public interface WtmIntfMapper {
 	 * 보상휴가내역
 	 **/
 	public int saveIntfCompData(Map<String, Object> paramMap);
+	
+	/**
+	 * 조직도
+	 **/
+	public List<Map<String, Object>> getWtmOrgChart(Map<String, Object> paramMap);
+
 }
