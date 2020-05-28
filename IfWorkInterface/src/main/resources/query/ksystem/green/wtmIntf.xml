@@ -66,17 +66,13 @@
     <select id="getWtmOrgConc" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
-			     , DeptName AS ORG_CHART_NM
-			     , BegDate AS SYMD
-			     , CASE WHEN EndDate='99991231' THEN '29991231' ELSE EndDate  END AS EYMD
+			     , EmpID AS SABUN
 			     , DeptSeq AS ORG_CD
-			     , UppDeptSeq AS PRIOR_ORG_CD
-			     , '' AS SEQ
-			     , '' AS ORG_LEVEL
-			     , '' AS ORDER_SEQ
-			     , Remark AS NOTE
+			     , DeptName AS ORG_CD
+			     , '19990101' AS SYMD
+			     , '29991231' AS EYMD
 			     , LastDateTime AS CHKDATE
-			  FROM KPXERP_VHROrgDeptInfo_ISU  
+			FROM KPXERP_VDAEmpMultiInfo_ISU 
         ]]>
     </select>
     
