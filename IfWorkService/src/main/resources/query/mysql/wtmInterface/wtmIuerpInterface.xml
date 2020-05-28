@@ -822,6 +822,28 @@
 		]]>
 	</update>
 	
+	<update id="expireWtmOrgChart" parameterType="hashmap">
+		<![CDATA[
+		DELETE E FROM WTM_ORG_CHART E
+		  LEFT OUTER JOIN WTM_INTF_ORG_CHART I
+		    ON E.TENANT_ID = I.TENANT_ID
+				AND E.ENTER_CD = I.ENTER_CD
+				AND E.SABUN = I.SABUN 
+		 WHERE E.TENANT_ID = ${tenantId}
+		   AND I.INTF_ID IS NULL	   
+		   AND I.YYYYMMDDHHMISS > #{ymdhis} 
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN 
+		                     FROM (SELECT A.*
+									  FROM WTM_ORG_CHART A 
+									  JOIN WTM_INTF_ORG_CHART B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.SABUN = A.SABUN
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId}) T )                 
+		]]>
+	</update>
+	
 	<update id="updateWtmOrgChartDet" parameterType="hashmap">
 		<![CDATA[
 		UPDATE WTM_ORG_CHART_DET D
@@ -864,6 +886,116 @@
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
 		   AND #{ymd} BETWEEN I.SYMD AND I.EYMD
 		   AND D.ORG_CD IS NULL
+		]]>
+	</update>
+	
+	<update id="expireWtmOrgConc" parameterType="hashmap">
+		<![CDATA[
+		DELETE E FROM WTM_ORG_CONC E
+		  LEFT OUTER JOIN WTM_INTF_ORG_CONC I
+		    ON E.TENANT_ID = I.TENANT_ID
+				AND E.ENTER_CD = I.ENTER_CD
+				AND E.SABUN = I.SABUN 
+		 WHERE E.TENANT_ID = ${tenantId}
+		   AND I.INTF_ID IS NULL	   
+		   AND I.YYYYMMDDHHMISS > #{ymdhis} 
+		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN 
+		                     FROM (SELECT A.*
+									  FROM WTM_ORG_CONC A 
+									  JOIN WTM_INTF_ORG_CONC B
+									    ON B.TENANT_ID = A.TENANT_ID
+									   AND B.ENTER_CD = A.ENTER_CD
+									   AND B.SABUN = A.SABUN
+									   AND B.YYYYMMDDHHMISS > #{ymdhis}
+									 WHERE B.TENANT_ID = ${tenantId}) T )                 
+		]]>
+	</update>
+	
+	<update id="updateWtmOrgConc" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_ORG_CONC C
+		  JOIN WTM_INTF_ORG_CONC I
+		    ON C.TENANT_ID = I.TENANT_ID
+		   	 AND C.ENTER_CD = I.ENTER_CD
+		   	 AND C.SABUN = I.SABUN
+		   	 AND C.SYMD = I.SYMD
+		   	 AND C.EYMD = I.EYMD
+		   SET C.ORG_CD = I.ORG_CD
+		     , C.UPDATE_DATE = NOW()
+		     , C.UPDATE_ID = #{updateId}
+		 WHERE C.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.ORG_CD<>I.ORG_CD 
+		 ]]>
+	</update>
+	
+	<update id="insertWtmOrgConc" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO WTM_ORG_CONC(TENANT_ID, ENTER_CD, ORG_CD, SABUN, SYMD, EYMD, UPDATE_DATE, UPDATE_ID)
+		SELECT DISTINCT I.TENANT_ID
+		     , I.ENTER_CD
+		     , I.SABUN
+			  , I.ORG_CD
+			  , I.SYMD
+			  , I.EYMD
+			  , NOW() AS UPDATE_DATE
+			  , #{updateId} AS UPDATE_ID
+		  FROM WTM_INTF_ORG_CONC I
+		  LEFT OUTER JOIN WTM_ORG_CONC C
+		    ON I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND I.SABUN = C.SABUN
+		 WHERE I.TENANT_ID = ${tenantId} 
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.ORG_CONC_ID IS NULL
+		 ORDER BY I.ENTER_CD, I.SABUN
+		]]>
+	</update>
+	
+	<update id="updateWtmOrgChart" parameterType="hashmap">
+		<![CDATA[
+		UPDATE WTM_ORG_CHART_DET C
+		  JOIN WTM_ORG_CHART A
+		     ON A.ORG_CHART_ID = #{orgChartId}
+		  JOIN WTM_INTF_ORG_CHART I
+		    ON A.TENANT_ID = I.TENANT_ID
+		   	 AND A.ENTER_CD = I.ENTER_CD
+		   SET C.ORG_CD = I.ORG_CD
+		     , C.PRIOR_ORG_CD = I.PRIOR_ORG_CD
+		     , C.SEQ = I.SEQ
+		     , C.ORG_LEVEL = I.ORG_LEVEL
+			 , C.ORDER_SEQ = ''
+		     , C.NOTE = I.NOTE
+		 WHERE 
+		      I.YYYYMMDDHHMISS > #{ymdhis}
+		   AND C.ORG_CHART_ID = A.ORG_CHART_ID
+		   AND (C.ORG_CD<>I.ORG_CD OR C.PRIOR_ORG_CD<>I.PRIOR_ORG_CD OR C.SEQ<>I.SEQ 
+		   OR C.ORG_LEVEL<>I.ORG_LEVEL
+		   OR C.NOTE<>I.NOTE) 
+		 ]]>
+	</update>
+	
+	<update id="insertWtmOrgChart" parameterType="hashmap">
+		<![CDATA[
+		INSERT INTO WTM_ORG_CHART_DET(ORG_CHART_ID, ORG_CD, PRIOR_ORG_CD, SEQ, ORG_LEVEL,ORDER_SEQ, NOTE, UPDATE_DATE, UPDATE_ID)
+		SELECT DISTINCT C.ORG_CHART_ID
+		     , I.ORG_CD
+		     , I.PRIOR_ORG_CD
+			  , CASE WHEN I.SEQ = '' THEN 0 ELSE I.SEQ END AS SEQ
+			  , I.ORG_LEVEL
+			  , 0
+			  , I.NOTE
+			  , NOW() AS UPDATE_DATE
+			  , #{updateId} AS UPDATE_ID
+		  FROM WTM_INTF_ORG_CHART I
+		  LEFT OUTER JOIN WTM_ORG_CHART C
+		    ON I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND F_WTM_DATE_FORMAT(NOW(), 'YMD') BETWEEN C.SYMD AND C.EYMD
+		 WHERE I.TENANT_ID = C.TENANT_ID
+		   AND I.ENTER_CD = C.ENTER_CD
+		   AND I.YYYYMMDDHHMISS > #{ymdhis}
+		 ORDER BY I.ORG_CD
 		]]>
 	</update>
 	
