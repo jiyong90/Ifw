@@ -84,8 +84,8 @@
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 				 -- , OrgType
-			     , DeptSeq AS ORDER_SEQ
-			     , DeptName AS ORG_CHART_NM
+			     , DeptSeq AS ORG_CD
+			     , DeptName AS ORG_NM
 			     , UppDeptSeq AS PRIOR_ORG_CD
 			     -- , UppDeptName 
 			     , BegDate AS SYMD
