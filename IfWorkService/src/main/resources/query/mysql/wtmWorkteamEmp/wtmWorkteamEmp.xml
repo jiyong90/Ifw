@@ -19,6 +19,7 @@
 			 WHERE C.TENANT_ID= #{tenantId} 
 			   AND E.SABUN = C.SABUN 
 			   AND #{ymd} BETWEEN C.SYMD AND C.EYMD 
+			   AND C.STATUS_CD ='AA'
 			   AND C.ENTER_CD= #{enterCd}
 			   AND #{ymd} BETWEEN E.SYMD AND E.EYMD 
 			   AND (E.SABUN like CONCAT('%', #{searchKeyword, jdbcType=VARCHAR}, '%')  OR C.EMP_NM like CONCAT('%', #{searchKeyword, jdbcType=VARCHAR}, '%'))
