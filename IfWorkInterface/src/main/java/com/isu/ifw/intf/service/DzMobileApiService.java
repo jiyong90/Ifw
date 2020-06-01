@@ -193,6 +193,7 @@ public class DzMobileApiService {
 			
 			//---------------------------------------------------------------
 			//20200512 추가 : authcode API호출
+			/*
 			paramMap = new HashMap<String, Object>();
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("sabun", sabun);
@@ -215,9 +216,10 @@ public class DzMobileApiService {
 					authCode.add("Y".equals(isLeader) ? "LEADER" : "");
 				}
 			}
+			*/
 			
 			//20200601 추가 : 그룹코드
-			authCode.add("" + empMap.get("CD_GROUP"));
+			authCode.add(loginGroupCd);
 			//---------------------------------------------------------------
 
 			sessionData.put("authCode", authCode);
@@ -379,6 +381,7 @@ public class DzMobileApiService {
 			
 			//---------------------------------------------------------------
 			//20200512 추가 : authcode API호출
+			/*
 			paramMap = new HashMap<String, Object>();
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("sabun", sabun);
@@ -400,12 +403,17 @@ public class DzMobileApiService {
 					String isLeader = "" + result.get("isLeader");
 					authCode.add("Y".equals(isLeader) ? "LEADER" : "");
 				}
-			}
+			}*/
 			
 			//20200601 추가 : 그룹코드
-			Map<String, Object> empMap = dzMobileApiMapper.getEmpInfo(paramMap);
-			if(empMap != null && empMap.containsKey("CD_GROUP")) {
-				authCode.add("" + empMap.get("CD_GROUP"));
+			paramMap = new HashMap<String, Object>();
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			List<Map<String, Object>> userInfoList = dzMobileApiMapper.getEmpUserInfo(paramMap);
+			if(userInfoList != null && userInfoList.size() > 0) {
+				for(Map<String, Object> row : userInfoList) {
+					authCode.add("" + row.get("CD_GROUP"));
+				}
 			}
 			//---------------------------------------------------------------
 

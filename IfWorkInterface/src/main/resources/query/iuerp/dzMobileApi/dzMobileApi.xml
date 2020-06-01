@@ -11,13 +11,26 @@
 				A.NO_EMP
 				, A.CD_COMPANY
 				, A.NM_USER
+			FROM MA_USER A
+			WHERE 1=1
+				AND A.ID_USER = #{userId}
+				AND A.CD_COMPANY = #{enterCd}
+		]]>
+	</select>
+	
+	<select id="getEmpUserInfo" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT
+				A.NO_EMP
+				, A.CD_COMPANY
+				, A.NM_USER
 				, B.CD_GROUP
 			FROM MA_USER A, MA_GRANT B
 			WHERE 1=1
 				AND A.CD_COMPANY = B.CD_COMPANY
-				AND A.ID_USER = B.ID_USER
-				AND A.ID_USER = #{userId}
-				AND CD_COMPANY = #{enterCd}
+				AND A.NO_EMP = B.NO_EMP
+				AND A.NO_EMP = #{sabun}
+				AND A.CD_COMPANY = #{enterCd}
 		]]>
 	</select>
  
