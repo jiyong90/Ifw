@@ -215,6 +215,9 @@ public class DzMobileApiService {
 					authCode.add("Y".equals(isLeader) ? "LEADER" : "");
 				}
 			}
+			
+			//20200601 추가 : 그룹코드
+			authCode.add("" + empMap.get("CD_GROUP"));
 			//---------------------------------------------------------------
 
 			sessionData.put("authCode", authCode);
@@ -397,6 +400,12 @@ public class DzMobileApiService {
 					String isLeader = "" + result.get("isLeader");
 					authCode.add("Y".equals(isLeader) ? "LEADER" : "");
 				}
+			}
+			
+			//20200601 추가 : 그룹코드
+			Map<String, Object> empMap = dzMobileApiMapper.getEmpInfo(paramMap);
+			if(empMap != null && empMap.containsKey("CD_GROUP")) {
+				authCode.add("" + empMap.get("CD_GROUP"));
 			}
 			//---------------------------------------------------------------
 

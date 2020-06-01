@@ -7,12 +7,17 @@
 
 	<select id="getEmpInfo" parameterType="map" resultType="hashmap">
 		<![CDATA[ 
-			SELECT NO_EMP
-			, CD_COMPANY
-			, NM_USER
-			FROM MA_USER
-			WHERE ID_USER = #{userId}
-			AND CD_COMPANY = #{enterCd}
+			SELECT
+				A.NO_EMP
+				, A.CD_COMPANY
+				, A.NM_USER
+				, B.CD_GROUP
+			FROM MA_USER A, MA_GRANT B
+			WHERE 1=1
+				AND A.CD_COMPANY = B.CD_COMPANY
+				AND A.ID_USER = B.ID_USER
+				AND A.ID_USER = #{userId}
+				AND CD_COMPANY = #{enterCd}
 		]]>
 	</select>
  
