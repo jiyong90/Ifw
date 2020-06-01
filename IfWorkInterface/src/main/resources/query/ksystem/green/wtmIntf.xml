@@ -69,8 +69,8 @@
 			     , EmpID AS SABUN
 			     , DeptSeq AS ORG_CD
 			     , DeptName AS ORG_CD
-			     , '19990101' AS SYMD
-			     , '29991231' AS EYMD
+			     , OrdDate AS SYMD
+			     , OrdEndDate AS EYMD
 			     , LastDateTime AS CHKDATE
 			FROM KPXERP_VDAEmpMultiInfo_ISU 
         ]]>
