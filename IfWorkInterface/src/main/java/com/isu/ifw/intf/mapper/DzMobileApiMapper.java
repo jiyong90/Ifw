@@ -16,6 +16,13 @@ public interface DzMobileApiMapper {
 	public Map<String, Object> getEmpInfo(Map<String, Object> paramMap);
 	
 	/**
+	 * 유저 정보 조회
+	 * @param paramMap
+	 * @return
+	 */
+	public List<Map<String, Object>> getEmpUserInfo(Map<String, Object> paramMap);
+	
+	/**
 	 * 세션 정보 조회
 	 * @param paramMap
 	 * @return

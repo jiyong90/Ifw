@@ -193,6 +193,7 @@ public class DzMobileApiService {
 			
 			//---------------------------------------------------------------
 			//20200512 추가 : authcode API호출
+			/*
 			paramMap = new HashMap<String, Object>();
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("sabun", sabun);
@@ -215,6 +216,10 @@ public class DzMobileApiService {
 					authCode.add("Y".equals(isLeader) ? "LEADER" : "");
 				}
 			}
+			*/
+			
+			//20200601 추가 : 그룹코드
+			authCode.add(loginGroupCd);
 			//---------------------------------------------------------------
 
 			sessionData.put("authCode", authCode);
@@ -376,6 +381,7 @@ public class DzMobileApiService {
 			
 			//---------------------------------------------------------------
 			//20200512 추가 : authcode API호출
+			/*
 			paramMap = new HashMap<String, Object>();
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("sabun", sabun);
@@ -396,6 +402,17 @@ public class DzMobileApiService {
 				if(result != null) {
 					String isLeader = "" + result.get("isLeader");
 					authCode.add("Y".equals(isLeader) ? "LEADER" : "");
+				}
+			}*/
+			
+			//20200601 추가 : 그룹코드
+			paramMap = new HashMap<String, Object>();
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			List<Map<String, Object>> userInfoList = dzMobileApiMapper.getEmpUserInfo(paramMap);
+			if(userInfoList != null && userInfoList.size() > 0) {
+				for(Map<String, Object> row : userInfoList) {
+					authCode.add("" + row.get("CD_GROUP"));
 				}
 			}
 			//---------------------------------------------------------------
