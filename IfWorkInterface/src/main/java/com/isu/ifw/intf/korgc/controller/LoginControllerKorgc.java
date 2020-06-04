@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -81,7 +82,8 @@ public class LoginControllerKorgc {
 		, Columns=[{ColumnName=IsApproval, ColumnType=string}, {ColumnName=UserID, ColumnType=string}]
 		, Rows=[{IsApproval=1, UserID=master}]}]}
 		*/
-		Map<String, Object> resMap = ksystemLogin(userId, enterCd, userPw);
+		String encodePw = URLEncoder.encode(userPw,"UTF-8");
+		Map<String, Object> resMap = ksystemLogin(userId, enterCd, encodePw);
 		
 		if(resMap.containsKey("Tables") && resMap.get("Tables") != null) {
 			List<Map<String, Object>> tables = (List<Map<String, Object>>) resMap.get("Tables");
@@ -149,7 +151,9 @@ public class LoginControllerKorgc {
 		, Columns=[{ColumnName=IsApproval, ColumnType=string}, {ColumnName=UserID, ColumnType=string}]
 		, Rows=[{IsApproval=1, UserID=master}]}]}
 		*/
-		Map<String, Object> resMap = ksystemLogin(userId, enterCd, userPw);
+		String encodePw = URLEncoder.encode(userPw,"UTF-8");
+		System.out.println("encodePw : " + encodePw);
+		Map<String, Object> resMap = ksystemLogin(userId, enterCd, encodePw);
 		
 		if(resMap.containsKey("Tables") && resMap.get("Tables") != null) {
 			List<Map<String, Object>> tables = (List<Map<String, Object>>) resMap.get("Tables");
