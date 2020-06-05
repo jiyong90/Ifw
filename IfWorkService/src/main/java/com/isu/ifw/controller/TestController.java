@@ -44,20 +44,19 @@ public class TestController {
 	public Map<String, Object> testCalcAppr(@RequestParam String enterCd,
 										@RequestParam Long tenantId,
 										@RequestParam String sabun,
-										@RequestParam String sYmd,
-										@RequestParam String eYmd,
+										@RequestParam String ymd,
 										HttpServletRequest request, 
 										HttpServletResponse response){
 		
 		Map<String, Object> m = new HashMap<String, Object>();
-		empService.calcApprDayInfo(tenantId, enterCd, sYmd, eYmd, sabun);
+		empService.calcApprDayInfo(tenantId, enterCd, ymd, ymd, sabun);
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", sabun);
 		paramMap.put("pId", "JYP");
-		paramMap.put("symd", sYmd);
-		paramMap.put("eymd", eYmd);
+		paramMap.put("symd", ymd);
+		paramMap.put("eymd", ymd);
 		empService.createWorkTermtimeByEmployee(tenantId, enterCd, sabun, paramMap, "JSP");
 		return m;
 	}
