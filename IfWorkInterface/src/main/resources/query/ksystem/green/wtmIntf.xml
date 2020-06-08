@@ -70,7 +70,7 @@
 			     , DeptSeq AS ORG_CD
 			     , DeptName AS ORG_CD
 			     , OrdDate AS SYMD
-			     , OrdEndDate AS EYMD
+			     , CASE WHEN OrdEndDate = '99991231' then '29991231' ELSE OrdEndDate END AS EYMD
 			     , LastDateTime AS CHKDATE
 			FROM KPXERP_VDAEmpMultiInfo_ISU 
         ]]>
@@ -173,13 +173,13 @@
         <![CDATA[
  			SELECT CompanySeq AS ENTER_CD
 				 , EmpId AS SABUN
-				 , WkItemSeq AS TAA_CODE
+				 , WkItemSeq AS GNT_CD
 				 , WkDateFr AS SYMD
 				 , WkDateTo AS EYMD
 				 , '' AS SHM
 				 , '' AS EHM
-				 , '' AS IF_APPL_NO
-				 , '' AS STATUS
+				 , Seq AS IF_APPL_NO
+				 , STATUS AS STATUS
 			  FROM KPXERP_TPRWkAbsEmp_ISU
         ]]>
     </select>
