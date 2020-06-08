@@ -1883,7 +1883,8 @@
   	         		
   	         		var param = {
   	         			workDayResultId: $this.overtimeAppl.workDayResultId,
-  	         			applId: $this.overtimeAppl.otApplId,
+  	         			//applId: $this.overtimeAppl.otApplId,
+  	         			otApplId: $this.overtimeAppl.otApplId,
   	         			status: $this.overtimeAppl.applStatusCd,
         				workTypeCd : 'OT_CAN',
 	   		    		reason: $("#cancelOpinion").val()
