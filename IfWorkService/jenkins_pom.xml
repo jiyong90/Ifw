@@ -344,7 +344,7 @@
 			<artifactId>IfWork</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>system</scope>
-			<systemPath>/var/lib/jenkins/workspace/ifw/IfWork/target/IfWork.jar</systemPath>
+			<systemPath>file:///var/lib/jenkins/workspace/ifw/IfWork/target/IfWork.jar</systemPath>
 		</dependency>	
 			
 	</dependencies>
