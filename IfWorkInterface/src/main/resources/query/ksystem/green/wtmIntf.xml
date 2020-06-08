@@ -49,7 +49,7 @@
         ]]>
     </select>
     
-    <select id="getWtmOrgTemp" parameterType="map" resultType="hashmap">
+    <select id="getWtmOrg" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 			     , DeptSeq AS ORG_CD
@@ -76,7 +76,7 @@
         ]]>
     </select>
     
-    <select id="getWtmOrg" parameterType="map" resultType="hashmap">
+    <select id="getWtmOrgChart" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 				 , ''  AS ORG_TYPE
@@ -86,8 +86,8 @@
 			     -- , UppDeptName 
 			     , BegDate AS SYMD
 			     , CASE WHEN EndDate='99991231' THEN '29991231' ELSE EndDate  END AS EYMD
-			     , NULL AS SEQ
-			     , NULL AS ORG_LEVEL
+			     , '1' AS SEQ
+			     , '1' AS ORG_LEVEL
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VHROrgDeptInfo_ISU  
@@ -178,8 +178,8 @@
 				 , WkDateTo AS EYMD
 				 , '' AS SHM
 				 , '' AS EHM
-				 , Seq AS IF_APPL_NO
-				 , STATUS AS STATUS
+				 , Seq AS APPL_SEQ
+				 , STATUS AS APPL_STATUS_CD
 			  FROM KPXERP_TPRWkAbsEmp_ISU
         ]]>
     </select>

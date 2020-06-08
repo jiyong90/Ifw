@@ -87,9 +87,8 @@ public class WtmInOutChangeController {
 						if(Integer.parseInt(ymd) > Integer.parseInt(l.get("ymd").toString()) 	// 소급이거나
 						   || (ymd.equals(l.get("ymd").toString()) && (!"".equals(l.get("chgSdate").toString()) || !"".equals(l.get("entrySdate").toString())) && (!"".equals(l.get("chgEdate").toString()) || !"".equals(l.get("entryEdate").toString())))	// 오늘인데 타각이 모두 있을경우 
 						) {
-							logger.debug("/mobile/"+ tenantId+"/inout/out s2 " + paramMap.toString());
-							System.out.println("unplannedyn : " + retMap.get("unplannedYn").toString());
-							inoutService.inoutPostProcess(saveMap, retMap.get("unplannedYn").toString());
+							logger.debug("inoutChange s" + paramMap.toString());
+							inoutService.inoutPostProcess(saveMap);
 						}
 
 					} catch(Exception e) {

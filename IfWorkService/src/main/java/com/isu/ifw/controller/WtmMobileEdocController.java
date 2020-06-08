@@ -295,7 +295,7 @@ public class WtmMobileEdocController {
 								pMap.put("enterCd", enterCd);
 								pMap.put("stdYmd", rp.get("stdYmd")+"");
 								pMap.put("sabun", rp.get("sabun")+"");
-								inoutService.inoutPostProcess(pMap, rp.get("unplannedYn").toString());
+								inoutService.inoutPostProcess(pMap);
 							}
 
 						} else {
@@ -423,6 +423,6 @@ public class WtmMobileEdocController {
 		map.put("stdYmd", stdYmd);
 		map.put("sabun", sabun);
 		
-		inoutService.inoutPostProcess(map, unplannedYn);
+		inoutService.inoutPostProcess(map);
 	}
 }

@@ -213,11 +213,7 @@ public class WtmApplController {
 						pMap.put("stdYmd", rp.get("stdYmd")+"");
 						pMap.put("sabun", rp.get("sabun")+"");
 						
-						String unplannedYn = "";
-						if(rp.get("unplannedYn")!=null && !"".equals(rp.get("unplannedYn").toString()))
-							unplannedYn = rp.get("unplannedYn").toString();
-						
-						inoutService.inoutPostProcess(pMap, unplannedYn);
+						inoutService.inoutPostProcess(pMap);
 					}
 					
 				} else if("SUBS_CHG".equals(applCd)){

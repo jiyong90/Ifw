@@ -67,7 +67,7 @@ public class WtmIntfController extends TenantSecuredControl {
 		paramMap.put("sabun", request.getParameter("sabun"));
 		paramMap.put("stdYmd", request.getParameter("stdYmd"));
 		
-		inoutService.inoutPostProcess(paramMap, "N");
+		inoutService.inoutPostProcess(paramMap);
 	}
 
 	@RequestMapping (value="/intf/inoutCheck", method=RequestMethod.POST)

@@ -175,16 +175,9 @@ public class WtmInoutController {
 			paramMap.put("inoutDate", today);
 			paramMap.put("entryType", "MO");
 			
-			logger.debug("/mobile/"+ tenantId+"/inout/in s2 " + paramMap.toString());
-		
-			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(paramMap);
-			if(yn != null && yn.get("unplannedYn") != null && "Y".equals(yn.get("unplannedYn").toString())) {
-				inoutService.updateTimecardUnplanned(paramMap);
-			} else {
-				inoutService.updateTimecard(paramMap);
-			}
-			
-			logger.debug("in : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
+			logger.debug("getParameter s " + paramMap.toString());
+			inoutService.updateTimecard2(paramMap);
+			logger.debug("getParameter s2 " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 
 		} catch(Exception e) {
 			logger.debug("inexception : " + e.getMessage() + paramMap.toString());
@@ -232,28 +225,9 @@ public class WtmInoutController {
 			paramMap.put("inoutDate", today);
 			paramMap.put("entryType", "MO");
 			
-			logger.debug("/mobile/"+ tenantId+"/inout/out s2 " + paramMap.toString());
-			
-			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(paramMap);
-			if("Y".equals(yn.get("unplannedYn").toString())) {
-				inoutService.updateTimecardUnplanned(paramMap);
-			} else {
-				inoutService.updateTimecard(paramMap);
-			}
-			
-			logger.debug("out : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
-			
-			//퇴근일때만 인정시간 계산
-			//unplanned이고 holyday인데 OT, NIGHT가 없으면 return;
-			if("Y".equals(yn.get("unplannedYn").toString()) && "Y".equals(yn.get("holidayYn").toString()) && yn.get("cnt").equals("0")) {
-				logger.debug("휴일근무 신청서가 없음. PostProcess 안탐. ");
-				return rp;
-			}
-			logger.debug("/inot/out postProcess skip");
-
-			//퇴근일때만 인정시간 계산(일마감으로 변경)
-			//inoutService.inoutPostProcess(paramMap, yn.get("unplannedYn").toString());
-
+			logger.debug("getParameter s " + paramMap.toString());
+			inoutService.updateTimecard2(paramMap);
+			logger.debug("getParameter s2 " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 		} catch(Exception e) {
 			logger.debug("outexception : " + e.getMessage() + paramMap.toString());
 			rp.setFail(e.getMessage());
@@ -517,21 +491,16 @@ public class WtmInoutController {
 			data.put("sabun", sabun);
 			data.put("tenantId", tenantId);
 			data.put("stdYmd", data.get("ymd").toString().replace(".", ""));
+			data.put("ymd", data.get("ymd").toString().replace(".", ""));
 			
-			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(data);
-			inoutService.updateTimecardCancel(data, yn.get("unplannedYn").toString());
-//			rp = inoutService.cancel(data);
-//			rp = inoutService.updateTimecard(tenantId, enterCd, sabun, ymd, "OUTC", "MO");
-
-//			if(cnt <= 0) {
-//				rp.setFail("퇴근 취소가 실패하였습니다.");
-//			}
+			logger.debug("getParameter cancel " + data.toString());
+			inoutService.updateTimecardCancel(data);
+			logger.debug("getParameter cancel2" + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 			
 		}catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
 		}
-		
 		logger.debug("/mobile/"+ tenantId+"/inout/cancel e " + rp.toString());
 
 		return rp;
@@ -575,11 +544,9 @@ public class WtmInoutController {
 			paramMap.put("inoutDate", today);
 			paramMap.put("entryType", "MO");
 			
-			logger.debug("/mobile/"+ tenantId+"/inout/goback s2 " + paramMap.toString());
-			Map<String, Object> yn = inoutHisMapper.getMyUnplannedYn(paramMap);
-			inoutService.updateTimecardExcept(paramMap, yn.get("unplannedYn").toString());
-			logger.debug("EXCEPT : " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
-
+			logger.debug("getParameter except " + paramMap.toString());
+			inoutService.updateTimecardExcept(paramMap);
+			logger.debug("getParameter except2" + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 		} catch(Exception e) {
 			logger.debug("outexception : " + e.getMessage() + paramMap.toString());
 			rp.setFail(e.getMessage());
@@ -618,6 +585,3 @@ public class WtmInoutController {
 		return rp;
 	}
 }
-
-//출근, 퇴근 정보 전부 있으면 > calcApprDayInfo
-//퇴근 취소 시 타각 데이터 지우고 인정시간도 지워주기
