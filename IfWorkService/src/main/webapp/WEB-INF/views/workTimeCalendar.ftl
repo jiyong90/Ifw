@@ -1400,7 +1400,7 @@
   	         				//console.log(dayResults);
          					dayResults.map(function(vMap){
          						
-         						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='') {
+         						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='' && vMap.taaCd != 'SUBS') {
 	  	         					//근태
 	  	         					classNames = [];
 									classNames.push('TAA');
