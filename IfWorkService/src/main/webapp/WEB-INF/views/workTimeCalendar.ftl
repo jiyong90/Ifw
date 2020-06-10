@@ -63,6 +63,7 @@
                                         <span class="time-wrap">
                                             <i class="fas fa-clock"></i>
                                             <span class="time" v-if="overtime.calcMinute">{{minuteToHHMM(overtime.calcMinute,'detail')}}</span>
+                                            <span class="time" v-else>{{minuteToHHMM(0,'detail')}}</span>
                                         </span>
                                     </div>
                                     <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
@@ -383,6 +384,9 @@
                                         	<template v-if="overtimeAppl.otMinute">
                                         		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
                                         	</template>
+                                        	<template v-else>
+                                        		{{minuteToHHMM(0, 'detail')}}
+                                        	</template>
                                         </span>
                                     </span>
                                     <span class="date-wrap">
@@ -503,6 +507,9 @@
                                         	<template v-if="overtimeAppl.otMinute">
                                         		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
                                         	</template>
+                                        	<template v-else>
+                                        		{{minuteToHHMM(0, 'detail')}}
+                                        	</template>
                                         </span>
                                     </span>
                                     <span class="date-wrap">
@@ -611,6 +618,9 @@
                                         <span class="time">
                                         	<template v-if="overtimeAppl.otMinute">
                                         		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
+                                        	</template>
+                                        	<template v-else>
+                                        		{{minuteToHHMM(0, 'detail')}}
                                         	</template>
                                         </span>
                                     </span>
@@ -1573,8 +1583,13 @@
 		   				}
 		     				
 		     			//var time = Number(moment(otEdate).diff(otSdate,'minutes'));
-		     			//var time = $this.overtime.calcMinute;
-		     			var time = $this.otTime; // 20200429 jyp 수정
+
+		     			var time = $this.overtime.calcMinute;
+		     			if(time == null || time == undefined || time <= 0){
+		     				msg="신청가능한 연장근무 시간이 없습니다.";
+		     				isValid = false;
+		     			} 
+		     			//var time = $this.otTime; // 20200429 jyp 수정
 		       			// 신청 시간 단위
 		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='') {
 		       				var timeUnit = Number(applCode.timeUnit);

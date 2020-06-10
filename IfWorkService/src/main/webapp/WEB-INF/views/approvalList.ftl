@@ -242,13 +242,13 @@
                             <hr class="bar">
                         </div>
                         <div class="btn-wrap text-center" v-if="applType=='01' && appl.applSabun == appl.sabun">
-                        	<template v-if="(appl.cancelYn==null||appl.cancelYn==undefined||appl.cancelYn!='Y') && appl.applStatusCd=='99'">
+                        	<!-- <template v-if="(appl.cancelYn==null||appl.cancelYn==undefined||appl.cancelYn!='Y') && appl.applStatusCd=='99'">
                             	<button type="button" class="btn btn-default rounded-0" v-if="appl.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
                             	<button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
                         	</template>
-                        	<template v-else>
+                        	<template v-else> -->
                             	<button type="button" class="btn btn-default rounded-0" v-if="appl.recoveryYn" data-toggle="modal" data-target="#confirmModal">회수하기</button>
-                        	</template>
+                        	<!-- </template> -->
                         </div>
                     </form>
                 </div>
