@@ -33,12 +33,14 @@ import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmCode;
 import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.entity.WtmPropertie;
+import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
+import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.service.LoginService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmEmpMgrService;
@@ -102,6 +104,7 @@ public class ViewController {
 	
 	@Autowired private TokenStore tokenStore;
 	
+	@Autowired private WtmWorkCalendarRepository workCalendarRepo;
 	/**
 	 * POST 방식은 로그인 실패시 포워드를 위한 엔드포인트 
 	 * @param tsId
@@ -271,6 +274,12 @@ public class ViewController {
 				workday = request.getParameter("date");
 				mv.addObject("workday", workday); 
 			}
+			if(workday != null) {
+				WtmWorkCalendar cal = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, empNo, workday);
+				//보상 마감 여부 
+				mv.addObject("workCloseYn", cal.getWorkCloseYn()==null?"N":cal.getWorkCloseYn());
+			}
+			
 			
 			String calendarType = "Month"; //기본은 월달력
 			

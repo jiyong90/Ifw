@@ -468,8 +468,8 @@
                         </div>
                         <div class="btn-wrap text-center" v-if="overtimeAppl.applSabun==overtimeAppl.sabun">
                         	<template v-if="(overtimeAppl.cancelYn==null||overtimeAppl.cancelYn==undefined||overtimeAppl.cancelYn!='Y') && overtimeAppl.applStatusCd=='99'">
-                            	<button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
-                            	<button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
+                            	<button type="button" class="btn btn-default rounded-0" v-if="workCloseYn == 'N' && result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
+                            	<button type="button" class="btn btn-default rounded-0" v-if="workCloseYn == 'N' && result.holidayYn =='Y'" data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
                         	</template>
                         	<template v-else>
                             	<button type="button" id="recoveryBtn" class="btn btn-default rounded-0" style="display:none;" data-toggle="modal" data-target="#confirmModal">회수하기</button>
@@ -759,7 +759,8 @@
   		    	targets: {}, //대상자 잔여 연장근로시간
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    	chgSubsAppl: {}, //대체휴일 정정 데이터
-  		    	isOtUse:false //대체휴일 Div section사용 여부 기본근무에서 잔여 소정근로시간이 남았을 경우 잔여소정근로시간 선 소진 후 나머지 시간이 있을 경우 사용할 수 있
+  		    	isOtUse:false, //대체휴일 Div section사용 여부 기본근무에서 잔여 소정근로시간이 남았을 경우 잔여소정근로시간 선 소진 후 나머지 시간이 있을 경우 사용할 수 있
+  		    	workCloseYn: 'N'
   		    },
   		    computed: {
   		    	subsRequired: function(val, oldVal) {
@@ -771,6 +772,10 @@
   		    		this.workday = moment('${workday}').format('YYYY-MM-DD');
   		    	<#else>
   		    		this.workday = '${today}';
+  		    	</#if>
+
+  		    	<#if workCloseYn?? && workCloseYn!='' && workCloseYn?exists >
+  		    		this.workCloseYn = '${workCloseYn}';
   		    	</#if>
   		    	
   		    	<#if reasons?? && reasons!='' && reasons?exists >
@@ -1883,7 +1888,8 @@
   	         		
   	         		var param = {
   	         			workDayResultId: $this.overtimeAppl.workDayResultId,
-  	         			applId: $this.overtimeAppl.otApplId,
+  	         			//applId: $this.overtimeAppl.otApplId,
+  	         			otApplId: $this.overtimeAppl.otApplId,
   	         			status: $this.overtimeAppl.applStatusCd,
         				workTypeCd : 'OT_CAN',
 	   		    		reason: $("#cancelOpinion").val()

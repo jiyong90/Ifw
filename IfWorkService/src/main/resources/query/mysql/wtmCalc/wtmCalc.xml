@@ -65,12 +65,12 @@
 			   AND R.ENTER_CD = E.ENTER_CD
 			   AND R.SABUN = E.SABUN
 			   AND R.YMD BETWEEN E.SYMD AND E.EYMD
+	 		   AND R.YMD BETWEEN E.SYMD AND #{ymd}
 		      LEFT OUTER JOIN WTM_TAA_CODE T ON T.TENANT_ID = R.TENANT_ID AND T.ENTER_CD = R.ENTER_CD AND T.TAA_CD = R.TAA_CD  
              WHERE E.TENANT_ID = #{tenantId}
                AND E.ENTER_CD = #{enterCd}
                AND E.SABUN = #{sabun}
 	 		   AND #{ymd} BETWEEN E.SYMD AND E.EYMD
-	 		   AND R.YMD BETWEEN E.SYMD AND #{ymd}
 		     GROUP BY E.WORK_MINUTE
 			) XX
         ]]>
