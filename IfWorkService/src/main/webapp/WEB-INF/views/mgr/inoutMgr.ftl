@@ -33,7 +33,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">근무시간수정</div>
+								<div class="float-left title">근무시간수정 &nbsp;<span id="Tooltip-inoutMgr" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
 									<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
@@ -64,6 +64,40 @@
         });
    		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
 	    $("#eYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-inoutMgr',
+       	    target: '#Tooltip-inoutMgr',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '관리자가 출퇴근 시각을 입력합니다.'
+	    		   + '<br>● 관리자가 출퇴근 시각을 입력한 이력만 조회됩니다.'
+	    		   + '<br>● 출퇴근 시각변경시 [입력]버튼을 클릭하고 성명항목에서 대상자를 검색합니다.'
+	    		   + '<br>● 검색된 대상자를 선택 한 후 근무일을 선택합니다. 대상자 및 근무일 선택시 메시지항목에 OK 표시된 대상자의 출퇴근시간을 변경할 수 있습니다.'
+	    		   + '<br>● 출/퇴근 시각 입력 형식1은 년(4자리)월(2자리)일(2자리)시(24시기준2자리)분(2자리) 띄워쓰기 특수문자없이 입력합니다.(예제 202001180900)'
+	    		   + '<br>● 출/퇴근 시각 입력 형식2는 년(4자리)-월(2자리)-일(2자리) 시(24시기준2자리):분(2자리) 띄워쓰기 특수문자 포함하여 입력합니다.(예제 2020-01-18 09:00)'
+	    		   + '<br>● 관리자 출퇴근 시각 변경 이후 다시 변경을 해야한다면, [입력]버튼을 누르고 재입력합니다. 최종등록된 자료가 갱신됩니다.'
+	    		   + '<br>● 관리자 출퇴근 시각 변경시 출근 또는 퇴근 값이 없다면 해당 항목은 갱신하지 않습니다.'
+       	    ,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	}); 
    		
 		var initdata1 = {};
 		
@@ -80,14 +114,14 @@
 			{Header:"성명|성명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"empNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"근무일|근무일",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ymd",				KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"메시지|메시지",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"msg",				KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"근무제도|근무제도",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleNm",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"근무상태|근무상태",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"근무제도|근무제도",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleNm",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"근무상태|근무상태",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"관리자|출근",		Type:"Text",	 Hidden:0,	Width:120,	Align:"Center",	 ColMerge:0, SaveName:"chgSdate", 		KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:16 },
 			{Header:"관리자|퇴근",		Type:"Text",	 Hidden:0,	Width:120,	Align:"Center",	 ColMerge:0, SaveName:"chgEdate",		KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:16 },
 			{Header:"변경사유|변경사유",	Type:"Text",	 Hidden:0,  Width:200,  Align:"Left",    ColMerge:0, SaveName:"reason", 		KeyField:1, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:1000 ,	MultiLineText:1 },
-			{Header:"원본|출근시간",	Type:"Text",	 Hidden:0,	Width:120,	Align:"Center",	 ColMerge:0, SaveName:"entrySdate", 	KeyField:0,	Format:"YmdHms",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:16 },
+			{Header:"원본|출근시간",	Type:"Text",	 Hidden:0,	Width:120,	Align:"Center",	 ColMerge:0, SaveName:"entrySdate", 	KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:16 },
 			{Header:"원본|출근구분",	Type:"Combo",	 Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"entryStypeCd", 	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:16 },
-			{Header:"원본|퇴근시간",	Type:"Text",	 Hidden:0,	Width:120,	Align:"Center",	 ColMerge:0, SaveName:"entryEdate",		KeyField:0,	Format:"YmdHms",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:16 },
+			{Header:"원본|퇴근시간",	Type:"Text",	 Hidden:0,	Width:120,	Align:"Center",	 ColMerge:0, SaveName:"entryEdate",		KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:16 },
 			{Header:"원본|퇴근구분",	Type:"Combo",	 Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"entryEtypeCd",	KeyField:0,	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:16 },
 			{Header:"수정자|수정자",	Type:"Text",	 Hidden:0,	Width:100,	Align:"Left",	 ColMerge:0, SaveName:"updateId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"수정일|수정일",	Type:"Text",	 Hidden:0,	Width:120,	Align:"Center",	 ColMerge:0, SaveName:"updateDate", 	KeyField:0,	Format:"YmdHms",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:16 }

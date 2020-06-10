@@ -37,7 +37,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">근무마감 일별조회</div>
+								<div class="float-left title">근무마감 일별조회 &nbsp;<span id="Tooltip-worktimeDayClose" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Down2Excel');" class="basic authA">다운로드</a></li>
 								</ul>
@@ -60,6 +60,34 @@
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-worktimeDayClose',
+       	    target: '#Tooltip-worktimeDayClose',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '마감생성된 일별 근무시간이 조회됩니다.'
+	    	   	   + '<br>● 일별 인정근무시간으로 월근무 합산됩니다.'
+       	    ,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});  
         
 		var initdata1 = {};
 		

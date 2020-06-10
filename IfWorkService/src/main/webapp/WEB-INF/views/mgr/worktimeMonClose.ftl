@@ -31,7 +31,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">근무마감 월별조회</div>
+								<div class="float-left title">근무마감 월별조회 &nbsp;<span id="Tooltip-worktimeMonClose" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li id="btnCloseConfirm" name="btnCloseConfirm"><a href="javascript:doAction1('CloseConfirm');" class="basic authA">마감확정</a></li>
 									<li><a href="javascript:doAction1('Down2Excel');" class="basic authA">다운로드</a></li>
@@ -53,6 +53,38 @@ var closeList = {};
 		$(window).smartresize(sheetResize);
    		$("#btnCloseConfirm").hide();
    	        
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-worktimeMonClose',
+       	    target: '#Tooltip-worktimeMonClose',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '마감기준을 선택하고 조회하면 생성된 합산근무시간이 조회됩니다.'
+ 	    	   	   + '<br>● 마감기간 내 근무제도가 여러건인 경우 근무제도 구간별로 합산됩니다.'
+ 	    	   	   + '<br>● 기준시간은 근무제도,근무기간동안 근무가능한 기준시간입니다.'
+ 	    	   	   + '<br>● 근무시간은 근무제도,근무기간동안 인정된 근무시간입니다.'
+ 	    	   	   + '<br>● 정산시간은 인정된 근무시간을 기준으로 기준시간에 맞게 재정산 된 시간입니다.(정산시간은 선택근무제도 및 보상휴가를 위한 고정연장근무에따라 근무시간과 차이가 발생될 수 있습니다.)'
+       	           ,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
+   		
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,MergeSheet:msHeaderOnly,Page:22};

@@ -133,7 +133,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-							<div class="float-left title">근무제 적용</div>
+							<div class="float-left title">근무제 적용 &nbsp;<span id="Tooltip-flexibleApplyMgr" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 							<ul class="float-right btn-wrap">
 								<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
@@ -155,7 +155,7 @@
 								<div id="tabs-1">
 									<div  class="layout_tabs">
 										<div class="inner sheet_title_wrap clearfix">
-											<div class="float-left title" id="searchAppText">그룹별 대상자 관리</div>
+											<div class="float-left title" id="searchAppText">그룹별 대상자 관리 &nbsp;<span id="Tooltip-flexibleApplyMgr2" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 											<ul class="float-right btn-wrap" id="sheet2Btn">
 												<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 												<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
@@ -195,6 +195,95 @@
         });
 		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
         
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-flexibleApplyMgr',
+       	    target: '#Tooltip-flexibleApplyMgr',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '유연근무제도를 관리자가 등록합니다.'
+	    		   + '<br>● 근무제도기준은 근무제도관리 메뉴의 근무제도유형이 기본근무,근무조가 아닌 항목만 표시됩니다.'
+	    		   + '<br>● 저장 후 근무명칭, 근무제도기준, 시작일은 변경이 불가능합니다.'
+	    		   + '<br>● 근무제 저장 후 하단 탭에서 [그룹별,개인별] 적용 대상을 입력 저장하면 대상자 조회 팝업에 대상자리스트가 조회됩니다.'
+	    		   + '<br>● 근무제도기준이 탄력근무 인경우 근무계획조회 버튼이 활성화됩니다. 근무제 기준 변경시 근무계획조회 팝업의 [근무 계획 재생성] 버튼을 클릭합니다.'
+	    		   + '<br>● 확정 대상자 인원이 많은 경우 확정 실패 메시지가 발생할 수있습니다. [확정] 버튼을 클릭하여 다시 확정할 수 있습니다.'
+	    		   + '<br>● 확정후 취소 불가합니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-flexibleApplyMgr2',
+       	    target: '#Tooltip-flexibleApplyMgr2',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '그룹별 유연근무제 대상을 관리합니다.'
+       	    		+ '<br>● 상단 탭에서 근무제를 선택한 후 그룹별적용 기준을 입력합니다.'
+       	    		+ '<br>● 그룹별 입력시 한 행의 조건값이 추가되면 AND조건으로 대상자가 선정됩니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-flexibleApplyMgr3',
+       	    target: '#Tooltip-flexibleApplyMgr3',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '그룹별 유연근무제 대상을 관리합니다.'
+       	    		+ '<br>● 상단 탭에서 근무제를 선택한 후 개인별 적용 기준을 입력합니다.'
+       	    		+ '<br>● 개인별 입력시 사번항목에서 검색합니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });	 
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -240,7 +329,7 @@
 		
 		
 		//근무제도
-		var flexibleList = stfConvCode(ajaxCall("${rc.getContextPath()}/flexibleStd/all", "",false).DATA, "선택");
+		var flexibleList = stfConvCode(ajaxCall("${rc.getContextPath()}/flexibleStd/flextype", "",false).DATA, "선택");
 		sheet1.SetColProperty("flexibleStdMgrId", {ComboText:flexibleList[0], ComboCode:flexibleList[1], comboEtc:flexibleList[2]} );
 		
 		var initdata2 = {};
@@ -535,7 +624,8 @@
 	}
 	
 	function setEndConfirm(flexibleApplyId){
-		var row = sheet1.FindText("flexibleApplyId", flexibleApplyId, 0);
+		var flexibleApplyId2 = flexibleApplyId + "";
+		var row = sheet1.FindText(3, flexibleApplyId2, 0);
 		var workTypeCd = sheet1.GetCellValue(row, "workTypeCd");
 		
 		if(!confirm("확정하시겠습니까?")) {

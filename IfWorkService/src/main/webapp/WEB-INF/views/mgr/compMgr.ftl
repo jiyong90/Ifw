@@ -23,7 +23,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">보상휴가 기준관리</div>
+								<div class="float-left title">보상휴가 기준관리 &nbsp;<span id="Tooltip-compMgr" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
@@ -43,6 +43,35 @@
    		//resize
    		$(window).smartresize(sheetResize);
    		
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-compMgr',
+       	    target: '#Tooltip-compMgr',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '보상휴가가 발생하는 기준을 관리합니다.'
+    	    	   + '<br>● 사용기한 사용기한단위 기준을 환산하여 보상휴가 발생시 사용종료일을 정의합니다.(예시 사용기한 1, 사용기한단위 년 : 사용시작일이 2020-01-01인 경우 사용종료일은 2020-12-31)'
+    	    	   + '<br>● 보상휴가 사용기능이 연동화면에서 적용될 경우 신청기준 항목은 미적용됩니다.'
+    	    	   ,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});				  
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};

@@ -27,7 +27,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">기본근무시간관리</div>
+								<div class="float-left title">기본근무시간관리 &nbsp;<span id="Tooltip-workTeamEmp" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
@@ -53,6 +53,34 @@
         });
    		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
         
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-workTeamEmp',
+       	    target: '#Tooltip-workTeamEmp',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '사업장 별 기본근무로 설정할 근무제도를 설정할 수 있습니다.'
+   	    		   + '<br>● 근무제는 근무제도관리 메뉴의 근무제도유형이 기본근무인 항목만 표시됩니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+        					 
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
