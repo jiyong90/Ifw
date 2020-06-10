@@ -852,6 +852,7 @@
          		var param = {
          			workDayResultId: appl.workDayResultId,
          			otApplId: appl.otApplId,
+         			applId: appl.applId,
          			status: appl.applStatusCd,
    					workTypeCd : 'OT_CAN',
   		    		reason: $("#cancelOpinion").val()

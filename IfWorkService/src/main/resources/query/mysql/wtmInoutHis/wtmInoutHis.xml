@@ -148,6 +148,7 @@
 	           	AND R.TENANT_ID = A.TENANT_ID
 	            AND R.SABUN = A.SABUN
 	            AND R.YMD = A.YMD 
+	            AND R.TIME_TYPE_CD NOT IN ('EXCEPT', 'GOBACK')
 	         LEFT JOIN WTM_TAA_CODE D 
 	            ON R.TAA_CD = D.TAA_CD
 	            AND D.TENANT_ID = R.TENANT_ID

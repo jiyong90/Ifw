@@ -105,7 +105,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">개인별 근무제도 조회</div>
+								<div class="float-left title">개인별 근무제도 조회 &nbsp;<span id="Tooltip-flexibleEmp" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<!--  li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li -->
 									<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
@@ -136,6 +136,34 @@
 		
 		var initdata1 = {};
 		
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-flexibleEmp',
+       	    target: '#Tooltip-flexibleEmp',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '개인별 근무제도를 조회합니다.'
+   	    		  + '<br>● 퇴직발령 등록된 대상자는 퇴직처리 항목에 버튼이 활성화됩니다.'
+   	    		  + '<br>● [퇴직처리] 버튼 클릭시 퇴직일 이후 근무기록이 삭제됩니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
 		initdata1.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
 

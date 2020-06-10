@@ -85,7 +85,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">근무시간 초과자 조회</div>
+								<div class="float-left title">근무시간 초과자 조회 &nbsp;<span id="Tooltip-worktimeCheckList" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<div class="legend-wrap">
 									<ul class="legend-list">
 										<li><span class="flag excess"></span><span>초과</span></li>
@@ -120,6 +120,39 @@
 		var workSearchTypeCd = convCode(codeList("${rc.getContextPath()}/code/list", "WORK_SEARCH_TYPE_CD"), ""); 
         $("#searchType").append(workSearchTypeCd[2]);
 		
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-worktimeCheckList',
+       	    target: '#Tooltip-worktimeCheckList',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무시간을 조회합니다.'
+       	    		+ '<br>● 근무기준 주별인 경우 주간근무기준(기본근무,근무조,시차근무,탄력근무) 대상자가 조회됩니다.'
+       	    		+ '<br>● 근무기준 기간별인 경우 기간근무기준(선택근무) 대상자가 조회됩니다.'
+       	    		+ '<br>● 기준시간은 제도별 기간의 근무 가능 기준시간입니다.'
+       	    		+ '<br>● 인정시간은 제도별 기간의 인정근무시간입니다.'
+       	    		+ '<br>● 근무기준 기간의 근무상세내역은 근무상세 팝업을 클릭하여 조회합니다.'
+       	    		+ '<br>● 근무시간 조건은 기준선택시 해당기준 대상자만 조회됩니다.'
+       	    		,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,MergeSheet:msHeaderOnly,Page:22,FrozenCol:0,DataRowMerge:0};

@@ -33,7 +33,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-						<div class="float-left title">근무캘린더</div>
+						<div class="float-left title">근무캘린더 &nbsp;<span id="Tooltip-calendarAll" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 							<ul class="float-right btn-wrap">
 								<!-- li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li -->
 								<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
@@ -47,7 +47,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-						<div class="float-left title">근무상세결과</div>
+						<div class="float-left title">근무상세결과 &nbsp;<span id="Tooltip-flexibleEmpCaldays" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 							<ul class="float-right btn-wrap">
 								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
@@ -71,6 +71,64 @@
    		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
 	    $("#eYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
         
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-calendarAll',
+       	    target: '#Tooltip-calendarAll',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '개인별 근무시간을 관리합니다.'
+	    		   + '<br>● 근무마감여부가 비어있거나 N인 경우 근무상세결과를 수정할수 있습니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
+	    
+	    new jBox('Tooltip', {
+       	    attach: '#Tooltip-flexibleEmpCaldays',
+       	    target: '#Tooltip-flexibleEmpCaldays',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '개인별 근무 상세시간을 관리합니다.'
+   	    		   + '<br>● 시간구분이 기본근무, 연장근무, 야간근무인 경우만 입력/수정가능합니다.'
+   	    		   + '<br>● 근무정보는 계획시간만 입력/수정가능합니다.'
+   	    		   + '<br>● 근무정보의 인정시간은 계획시간 및 타각시간을 기준으로 자동 갱신됩니다.'
+   	    		   ,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -95,7 +153,8 @@
 			{Header:"퇴근구분",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"entryEtypeCd",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
 			{Header:"코어시작시간",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"coreShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"코어종료시간",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"coreEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
+			{Header:"코어종료시간",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"coreEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"근무마감여부",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workCloseYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }			
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -138,8 +197,8 @@
 			{Header:"계획근무시간",		Type:"Int",	      	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"planMinute",	 KeyField:0,	Format:"", 		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"인정시작시각",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprSdate", 	 KeyField:0,	Format:"YmdHm",	 	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"인정종료시각",		Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprEdate", 	 KeyField:0,	Format:"YmdHm",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"인정근무시간",		Type:"Int",	      	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprMinute",	 KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"비고",			Type:"Text",	  	Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
+			{Header:"인정근무시간",		Type:"Int",	      	Hidden:0,	Width:80,	Align:"Center",	 ColMerge:0, SaveName:"apprMinute",	 KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
+			//{Header:"비고",			Type:"Text",	  	Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
         ];
 
 
@@ -149,7 +208,7 @@
 		sheet2.SetUnicodeByte(3);
 
 		//시간구분
-		var timeTypeCdList = convCode(codeList("${rc.getContextPath()}/code/list", "TIME_TYPE_CD"), ""); 
+		var timeTypeCdList = convCode(codeList("${rc.getContextPath()}/code/list", "TIME_TYPE_CD"), "선택"); 
         sheet2.SetColProperty("timeTypeCd", {ComboText:"|"+timeTypeCdList[0], ComboCode:"|"+timeTypeCdList[1]} );
         
 		//근태코드
@@ -207,10 +266,13 @@
 			        	var cores = sheet1.GetCellValue(row, "coreShm");
 			        	var coree = sheet1.GetCellValue(row, "coreEhm");
 	
-			        	if(s <= cores && e >= coree) {
-			        	} else {
-			        		alert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
-			        		return;
+			        	if(cores != "" && coree != ""){
+	
+				        	if(s <= cores && e >= coree) {
+				        	} else {
+				        		alert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
+				        		return;
+				        	}
 			        	}
 	        		}
 	        		if(sheet2.GetCellValue(i, "timeTypeCd") == "OT") {
@@ -315,7 +377,14 @@
 		if(OldRow != NewRow){
 			sheet2.RemoveAll();
 			doAction2('Search');
-		}
+//20200228 추가
+			var workCloseYn = sheet1.GetCellValue( NewRow, "workCloseYn");
+			if( workCloseYn == "Y" ){
+				$("#optionBtn").hide();
+			} else {
+				$("#optionBtn").show();
+			}
+		}		
 	}
 	
 	//셀 값변경 이벤트
