@@ -26,7 +26,7 @@
 			<div class="col-5 pr-3">
 				<div class="inner">
 					<div class="sheet_title_wrap clearfix">
-						<div class="float-left title">근무제도관리</div>
+						<div class="float-left title">근무제도관리&nbsp;<span id="Tooltip-flexibleStd" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 						<ul class="float-right btn-wrap">
 							<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
 							<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
@@ -65,7 +65,7 @@
 													<input type="checkbox" id="holExceptYn" name="holExceptYn" />
 													<label for="holExceptYn">체크시 공휴일 근무제외</label>
 												</td>
-												<th><span class="required">인정근무 단위시간(분) <span id="Tooltip-unitMinute" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
+												<th><span class="required"></span>인정근무 단위시간(분) <span id="Tooltip-unitMinute" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="text" id="unitMinute" name="unitMinute"/>
 													<input type="hidden" id="taaTimeYn" name="taaTimeYn"/>
@@ -155,7 +155,7 @@
 												<th>근무계획미등록여부 <span id="Tooltip-unplannedYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
 												<td>
 													<input type="checkbox" id="unplannedYn" name="unplannedYn" />
-													<label for="unplannedYn">계획이 없는날 타각수정신청 가능</label> 
+													<label for="unplannedYn">계획없이 타각시간 근무가능</label> 
 												</td>
 											</tr>
 											<tr id="trApplYn">
@@ -228,7 +228,7 @@
 						<div id="tabs-2">
 							<div  class="layout_tabs">
 								<div class="inner sheet_title_wrap clearfix">
-									<div class="float-left title" id="pattText">반복패턴</div>
+									<div class="float-left title" id="pattText">반복패턴</div>&nbsp;<span id="Tooltip-flexiblePatt" class="tooltip-st"><i class="far fa-question-circle"></i></span>
 									<ul class="float-right btn-wrap" id="pattBtn">
 										<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 										<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
@@ -299,6 +299,65 @@
                 vertical: 'bottom'
             }
         }); 
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-flexibleStd',
+       	    target: '#Tooltip-flexibleStd',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무제도 기준을 관리합니다.'
+       	    		+ '<br>● 근무제도유형, 근무명칭, 시작일은 저장 후 변경이 불가능합니다.'
+       	    		+ '<br>● 입력시 삭제가 불가능합니다.'
+       	    		,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
+        new jBox('Tooltip', {
+       	    attach: '#Tooltip-flexiblePatt',
+       	    target: '#Tooltip-flexiblePatt',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무제도별 근무패턴을 관리합니다.'
+       	    		+ '<br>● 순서는 1부터 순서대로 입력합니다. 순서대로 근무스케줄이 생성됩니다.'
+       	    		+ '<br>● 근무시간은 근무시간표 관리에 등록된 항목이 표시됩니다.'
+       	    		+ '<br>● 반복패턴 순서1에 해당하는 기준은 근무제도관리의 시작일 요일입니다.'
+       	    		,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
         new jBox('Tooltip', {
        	    attach: '#Tooltip-usedTermOpt',
        	    target: '#Tooltip-usedTermOpt',
@@ -1004,6 +1063,7 @@
 			break;
 		
 		case "Save":
+			if(!dupChk(sheet1,"flexibleStdMgrId|seq", false, true)){break;}													  
 			IBS_SaveName(document.sheetForm,sheet2);
 			sheet2.DoSave("${rc.getContextPath()}/flexibleStd/savePatt", $("#sheetForm").serialize());
 			break;
@@ -1181,13 +1241,13 @@
 					if(workTypeCd == "SELE_C"){
 						$("#trCoreChk").hide();
 						$("#trUnplan").hide();
-						
-						if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
+						// 20200521 부분선근제는 무조건 코어시간 체크해야함
+						// if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
 							$("input:checkbox[name='coreChkYn']").prop("checked", true);
 							setCoreChkYn(true);
-						} else {
-							setCoreChkYn(false);
-						}
+						// } else {
+						// 	setCoreChkYn(false);
+						//}
 						
 						//코어근무시각
 						$("#trCoreTime").show();

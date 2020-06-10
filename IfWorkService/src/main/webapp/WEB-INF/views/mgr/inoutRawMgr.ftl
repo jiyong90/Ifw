@@ -31,7 +31,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">타각 데이터 조회</div>
+								<div class="float-left title">타각 데이터 조회 &nbsp;<span id="Tooltip-inoutRawMgr" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
 								</ul>
@@ -56,6 +56,34 @@
         });
 	    $("#ymd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
 		
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-inoutRawMgr',
+       	    target: '#Tooltip-inoutRawMgr',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '임직원이 출퇴근시 타각한 실제 기록이 조회됩니다.'
+       	    	   + '<br>● 갱신시각은 타각정보 연동시 기록된 시각입니다.'
+       	           ,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,MergeSheet:msHeaderOnly,Page:22,FrozenCol:0,DataRowMerge:0};
