@@ -1584,17 +1584,17 @@
 		     				
 		     			//var time = Number(moment(otEdate).diff(otSdate,'minutes'));
 
-		     			var time = $this.overtime.calcMinute;
+		     			//var time = $this.overtime.calcMinute;
+		     			var time = $this.otTime; // 20200429 jyp 수정
 		     			if(time == null || time == undefined || time <= 0){
 		     				msg="신청가능한 연장근무 시간이 없습니다.";
 		     				isValid = false;
-		     			} 
-		     			//var time = $this.otTime; // 20200429 jyp 수정
+		     			}  
 		       			// 신청 시간 단위
 		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='') {
 		       				var timeUnit = Number(applCode.timeUnit);
 		       			
-			       			if(time % timeUnit != 0) {
+			       			if($this.overtime.calcMinute % timeUnit != 0) {
 			       				isValid = false;
 			       				msg = '근무시간은 '+timeUnit+'분 단위로 신청 가능합니다.';
 			       				$("#sTime").val('');
@@ -1627,7 +1627,7 @@
 			         			/* if($this.overtime.breakMinute!=null && $this.overtime.breakMinute!=undefined && $this.overtime.breakMinute!='')
 			         				time = time - Number($this.overtime.breakMinute); */
 			         			
-			         			if(time % holApplTypeCd != 0) {
+			         			if($this.overtime.calcMinute % holApplTypeCd != 0) {
 			         				isValid = false;
 				       				msg = '휴일 근무시간은 '+minuteToHHMM(holApplTypeCd,'detail')+' 단위로 신청 가능합니다.';
 				       				$("#sTime").val('');
@@ -1638,7 +1638,7 @@
 			         			if(applCode.holMaxMinute!=null && applCode.holMaxMinute!=undefined && applCode.holMaxMinute!='') {
 				         			var holMaxMinute = Number(applCode.holMaxMinute);
 				         			
-				         			if(time > holMaxMinute) {
+				         			if($this.overtime.calcMinute > holMaxMinute) {
 				         				isValid = false;
 					       				msg = '근무시간은 최대 '+minuteToHHMM(holMaxMinute,'detail')+' 까지 신청 가능합니다.';
 					       				$("#sTime").val('');
@@ -2616,6 +2616,7 @@
    		
    				console.log(timeCalendarVue.targets['${empNo}']);
    				console.log(timeCalendarVue.overtime);
+   				timeCalendarVue.otTime = timeCalendarVue.overtime.calcMinute;
 	       		if( timeCalendarVue.targets['${empNo}'].restWorkMinute >= timeCalendarVue.overtime.calcMinute){
 	       			timeCalendarVue.isOtUse = false;
 	       		}else{
