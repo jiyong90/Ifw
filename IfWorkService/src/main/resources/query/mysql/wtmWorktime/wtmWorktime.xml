@@ -39,7 +39,7 @@
   		  FROM (
 	  		SELECT E.TENANT_ID
 			     , E.ENTER_CD
-			     , F_WTM_GET_ORG_NM(E.TENANT_ID, E.ENTER_CD, H.ORG_CD, E.SYMD) AS ORG_NM
+			     , F_WTM_GET_ORG_NM(E.TENANT_ID, E.ENTER_CD, H.ORG_CD, H.SYMD) AS ORG_NM
 			     , E.SABUN
 			     , H.EMP_NM
 			     , E.WORK_TYPE_CD
