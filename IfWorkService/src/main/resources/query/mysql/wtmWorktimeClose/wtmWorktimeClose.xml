@@ -191,7 +191,7 @@
 	<select id="getWorktimeCloseCode" parameterType="map" resultType="hashmap">
         <![CDATA[
         	SELECT WORKTIME_CLOSE_ID AS code
-        	     , CONCAT(CLOSE_NM, ' [', DATE_FORMAT(SYMD,'%Y.%m.%d'), '~' ,DATE_FORMAT(SYMD,'%Y.%m.%d'), ']') AS codeNm
+        	     , CONCAT(CLOSE_NM, ' [', DATE_FORMAT(SYMD,'%Y.%m.%d'), '~' ,DATE_FORMAT(EYMD,'%Y.%m.%d'), ']') AS codeNm
         	     , F_WTM_NVL(CLOSE_YN, 'N') AS closeYn
 			FROM WTM_WORKTIME_CLOSE
 		   WHERE TENANT_ID = #{tenantId}
