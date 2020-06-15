@@ -180,6 +180,7 @@
 				 , '' AS EHM
 				 , Seq AS APPL_SEQ
 				 , STATUS AS APPL_STATUS_CD
+				 , ERP_IF_DATE AS CHKDATE
 			  FROM KPXERP_TPRWkAbsEmp_ISU
         ]]>
     </select>

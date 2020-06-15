@@ -359,139 +359,7 @@ public class WtmApiController{
 
 		return rp;
 	}
-	
-	@RequestMapping (value="/intf/test/status", method=RequestMethod.GET)
-	public @ResponseBody Map<String,Object> test0(HttpServletRequest request, @RequestParam Map<String,Object> params)throws Exception{
-   
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-      
-		try {
-         	Map<String,Object> menus = inoutService.getMenuContext3(1L, "ISU", params.get("emp").toString(), params.get("ymd").toString()); 
-         	Map<String, Object> resultMap = new HashMap();
-    		resultMap.put("menus", menus);
-    		rp.put("result", resultMap);
-		} catch(Exception e) {
-			e.printStackTrace();
-			rp.setFail(e.getMessage());
-		}
-		
-		return rp;
-	}
-	
-	@RequestMapping (value="/intf/test/in", method=RequestMethod.GET)
-	public @ResponseBody Map<String,Object> test1(HttpServletRequest request, @RequestParam Map<String,Object> params)throws Exception{
-   
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-      
-		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
-		Date now = new Date();
-		String today = format1.format(now);
-      
-		try {
-			Map<String, Object> paramMap = new HashMap();
-			paramMap.put("tenantId", "1");
-			paramMap.put("enterCd", "ISU");
-			paramMap.put("sabun", request.getParameter("emp"));
-			paramMap.put("inoutDate", request.getParameter("time"));
-			paramMap.put("inoutType", "IN");
-			paramMap.put("entryNote", "TEST");
-			paramMap.put("entryType", "INTF");
-         	inoutService.updateTimecard2(paramMap);
-		} catch(Exception e) {
-			e.printStackTrace();
-			rp.setFail(e.getMessage());
-		}
-		return rp;
-	}
-	
-	@RequestMapping (value="/intf/test/out", method=RequestMethod.GET)
-	public @ResponseBody Map<String,Object> test2(HttpServletRequest request, @RequestParam Map<String,Object> params)throws Exception{
-   
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-      
-		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
-		Date now = new Date();
-		String today = format1.format(now);
-      
-		try {
-			Map<String, Object> paramMap = new HashMap();
-			paramMap.put("tenantId", "1");
-			paramMap.put("enterCd", "ISU");
-			paramMap.put("sabun", request.getParameter("emp"));
-			paramMap.put("inoutDate", request.getParameter("time"));
-			paramMap.put("inoutType", "OUT");
-			paramMap.put("entryNote", "TEST");
-			paramMap.put("entryType", "INTF");
-         	inoutService.updateTimecard2(paramMap);
-         	inoutService.inoutPostProcess(paramMap);
-		} catch(Exception e) {
-			e.printStackTrace();
-			rp.setFail(e.getMessage());
-		}
-		return rp;
-	}
-	
-	@RequestMapping (value="/intf/test/except", method=RequestMethod.GET)
-	public @ResponseBody Map<String,Object> test3(HttpServletRequest request, @RequestParam Map<String,Object> params)throws Exception{
-   
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-      
-		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
-		Date now = new Date();
-		String today = format1.format(now);
-      
-		try {
-			Map<String, Object> paramMap = new HashMap();
-			paramMap.put("tenantId", "1");
-			paramMap.put("enterCd", "ISU");
-			paramMap.put("sabun", request.getParameter("emp"));
-			paramMap.put("inoutDate", request.getParameter("time"));
-			paramMap.put("inoutType", "EXCEPT");
-			paramMap.put("entryNote", "TEST");
-			paramMap.put("entryType", "INTF");
-			inoutService.updateTimecardExcept(paramMap);
-		} catch(Exception e) {
-			e.printStackTrace();
-			rp.setFail(e.getMessage());
-		}
-		return rp;
-	}
-	
-	@RequestMapping (value="/intf/test/calcel", method=RequestMethod.GET)
-	public @ResponseBody Map<String,Object> test4(HttpServletRequest request, @RequestParam Map<String,Object> params)throws Exception{
-   
-		ReturnParam rp = new ReturnParam();
-		rp.setSuccess("");
-      
-		SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
-		Date now = new Date();
-		String today = format1.format(now);
-      
-		try {
-			Map<String, Object> paramMap = new HashMap();
-			paramMap.put("tenantId", "1");
-			paramMap.put("enterCd", "ISU");
-			paramMap.put("sabun", request.getParameter("emp"));
-			paramMap.put("inoutDate", request.getParameter("time"));
-			paramMap.put("inoutType", "OUTC");
-			paramMap.put("entryNote", "TEST");
-			paramMap.put("entryType", "INTF");
-			paramMap.put("stdYmd", request.getParameter("ymd"));
-			paramMap.put("ymd", request.getParameter("ymd"));
-			paramMap.put("stdYmd", request.getParameter("ymd"));
-			inoutService.updateTimecardCancel(paramMap);
-		} catch(Exception e) {
-			e.printStackTrace();
-			rp.setFail(e.getMessage());
-		}
-		return rp;
-	}
 
-	//외출복귀
 	@RequestMapping(value = "/{tsId}/emergency", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	public @ResponseBody ReturnParam emergencyInout(@PathVariable String tsId,
 			@RequestBody Map<String,Object> params, HttpServletRequest request) throws Exception {		
@@ -530,4 +398,7 @@ public class WtmApiController{
 
 		return rp;
 	}
+	
+
+
 }

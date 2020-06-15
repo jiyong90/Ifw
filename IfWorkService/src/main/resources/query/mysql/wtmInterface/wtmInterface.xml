@@ -1040,6 +1040,12 @@ ORDER BY YMD, SABUN
 		FROM DUAL;
 	</update>
     
+    <update id="insertErrorLogBatch" parameterType="hashmap">
+		INSERT INTO WTM_ERR_LOG (TENANT_ID, ENTER_CD, OBJECT_NM, ERR_LOCATION, ERR_LOG, ERR_MSG, UPDATE_DATE)
+		SELECT ${tenantId}, #{enterCd}, #{type}, '10', 'NO DATA', CONCAT(#{enterCd}, '/', #{symd}, '~' , #{eymd}, '/', #{msg}), NOW()
+		FROM DUAL;
+	</update>
+	
     <select id="isWorkClose" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT COUNT(*) as workCloseCnt
