@@ -324,10 +324,10 @@ public class LoginControllerKorgc {
 //		secMap.put("serviceId", "IsStoredProcedure");
 //		secMap.put("hostComputername", "");
 //		secMap.put("dsn", "kpxerp_oper");
-		String securityStr = "certKey:DA949252-7918-46C1-9C9F-D2B60E524A19,"
+		String securityStr = "certKey:0F8555BE-34EC-4B6D-82E6-DAE94AE012DF,"
 				+ "userPwd:,"
-				+ "methodId:LoginPwdCheck_kpxerp,"
-				+ "certId:PWD_CHECK,"
+				+ "methodId:YYQuery,"
+				+ "certId:YYQuery,"
 				+ "dsnOper:kpxerp_oper,"
 				+ "userId:"+userId+","
 				+ "languageSeq:1,"
@@ -336,7 +336,7 @@ public class LoginControllerKorgc {
 				+ "hostIPAddress:,"
 				+ "securityType:0,"
 				+ "companySeq:1,"
-				+ "serviceId:IsStoredProcedure,"
+				+ "serviceId:AngKor.KPXERP.PR.DatWkYyMmListAPI_kpxerp,"
 				+ "hostComputername:,"
 				+ "dsn:kpxerp_oper" 
 				;
