@@ -123,6 +123,7 @@
     <select id="getWtmEmpByEmpID" parameterType="map" resultType="hashmap">
         <![CDATA[ 
 			SELECT CompanySeq AS ENTER_CD
+				 , UserId AS USER_ID
 			     , EmpId AS SABUN
 			     , EmpName AS EMP_NM
 			     , EmpEngName AS EMP_ENG_NM
