@@ -350,7 +350,8 @@ public class WtmApplController {
 		
 		Long applId = Long.valueOf(paramMap.get("applId").toString());
 		String applCd = paramMap.get("applCd").toString();
-				
+		logger.debug("appl/delete " + tenantId + ", "+ enterCd +", "+ userId +", "+ applCd +", "+applId);
+	
 		try {
 			if(applCd!=null && !"".equals(applCd)) {
 				if("OT".equals(applCd)) {
