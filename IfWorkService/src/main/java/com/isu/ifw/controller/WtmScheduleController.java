@@ -61,6 +61,22 @@ public class WtmScheduleController {
 		return;
 	}
 	
+	// 일마감 배치(캘린더기준 data 기준 대상자 일마감) 근무계획없음은 result가 없음
+	@RequestMapping(value = "/colseDayUnplaned",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void setCloseDayUnplaned(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 공통코드
+		try {
+			System.out.println("colseDay start");
+			Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+			//Long tenantId = (long) 38;
+			wtmScheduleService.setCloseDayUnplaned(tenantId);
+			System.out.println("colseDay end");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+	
 	// korgc 인터페이스로 데이터 쏴주기
 	@RequestMapping(value = "/sendIntfData",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void sendInterface(HttpServletRequest request, HttpServletResponse response) throws Exception {

@@ -60,6 +60,49 @@
 			ORDER BY YMD, SABUN
         ]]>
     </select>
+    
+    <select id="getWtmCloseDayUnplaned" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	 SELECT A.ENTER_CD AS enterCd, A.SABUN AS sabun, A.YMD AS ymd
+						  FROM WTM_WORK_CALENDAR A
+						  LEFT OUTER JOIN WTM_WORK_DAY_RESULT B
+						     ON A.TENANT_ID = B.TENANT_ID
+						    AND A.ENTER_CD = B.ENTER_CD
+						    AND A.SABUN = B.SABUN
+						    AND A.YMD = B.YMD
+						    AND A.ENTRY_SDATE <= B.PLAN_EDATE
+						    AND A.ENTRY_EDATE >= B.PLAN_SDATE
+						    AND B.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT')
+						 WHERE A.TENANT_ID = #{tenantId}
+						    AND A.YMD BETWEEN (DATE_FORMAT(DATE_ADD(CONCAT(#{ymd}, '000000'), INTERVAL -10 DAY), '%Y%m%d')) AND #{ymd}
+						    AND A.HOLIDAY_YN = 'N'
+						    AND A.ENTRY_SDATE IS NOT NULL AND A.ENTRY_EDATE IS NOT NULL
+						    AND ((B.APPR_SDATE IS NULL AND B.APPR_EDATE IS NULL)
+						          OR
+						          B.SABUN IS NULL
+						         )
+						 GROUP BY A.ENTER_CD, A.SABUN, A.YMD
+						 UNION
+						SELECT A.ENTER_CD, A.SABUN, A.YMD
+						  FROM WTM_WORK_CALENDAR A
+						  JOIN WTM_WORK_DAY_RESULT B
+						     ON A.TENANT_ID = B.TENANT_ID
+						    AND A.ENTER_CD = B.ENTER_CD
+						    AND A.SABUN = B.SABUN
+						    AND A.YMD = B.YMD
+						    AND A.ENTRY_SDATE <= B.PLAN_EDATE
+						    AND A.ENTRY_EDATE >= B.PLAN_SDATE
+						 WHERE A.TENANT_ID = #{tenantId}
+						    AND A.YMD BETWEEN (DATE_FORMAT(DATE_ADD(CONCAT(#{ymd}, '000000'), INTERVAL -10 DAY), '%Y%m%d')) AND #{ymd}
+						    AND A.HOLIDAY_YN = 'Y'
+						    AND B.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT')
+						    AND A.ENTRY_SDATE IS NOT NULL AND A.ENTRY_EDATE IS NOT NULL
+							 AND B.PLAN_SDATE IS NOT NULL AND B.PLAN_EDATE IS NOT NULL 
+							 AND B.APPR_SDATE IS NULL AND B.APPR_EDATE IS NULL
+						 GROUP BY A.ENTER_CD, A.SABUN, A.YMD
+		   ORDER BY YMD, SABUN
+        ]]>
+    </select>
 
 	<select id="getOtList" parameterType="map" resultType="hashmap">
 		<![CDATA[
