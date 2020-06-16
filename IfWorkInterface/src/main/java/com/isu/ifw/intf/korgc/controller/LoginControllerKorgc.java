@@ -247,7 +247,7 @@ public class LoginControllerKorgc {
 		 
 		
 		Map<String, Object> resMap = this.ksystemRest(userId, sabun);;
-		
+
 		if(resMap.containsKey("Tables") && resMap.get("Tables") != null) {
 			List<Map<String, Object>> tables = (List<Map<String, Object>>) resMap.get("Tables");
 			if(tables.size() > 0) {
@@ -256,20 +256,19 @@ public class LoginControllerKorgc {
 					List<Map<String, Object>> rows = (List<Map<String, Object>>) table.get("Rows");
 					if(rows.size() > 0) {
 						Map<String, Object> row = rows.get(0);
-						if(row.containsKey("UserID") && row.get("UserID") != null && (row.get("UserID")+"").equalsIgnoreCase(userId)
-								&& row.containsKey("IsApproval") && row.get("IsApproval") != null && (row.get("IsApproval")+"").equalsIgnoreCase("1")
-										&& row.containsKey("EmpID") && row.get("EmpID") != null
-								) {
+						if(row.containsKey("EmpID") && row.get("EmpID") != null) {
 							//rp.putAll(resMap);
 							//"username":"korgc@KORGC@master"
 							Double useCnt = Double.parseDouble(row.get("UseCnt")+"");
 							Double usedCnt = Double.parseDouble(row.get("UsedCnt")+"");
 							Double restCnt = Double.parseDouble(row.get("RestCnt")+"");
 							 
-							pMap.put("useCnt", useCnt);
-							pMap.put("UsedCnt", usedCnt);
-							pMap.put("RestCnt", restCnt);
+							pMap.put("creCnt", useCnt);
+							pMap.put("usedCnt", usedCnt);
+							pMap.put("restCnt", restCnt);
 							rp.put("DATA", pMap);
+							rp.put("Message", "");
+							
 							System.out.println("#########################/rest " + rp.toString());
 							return rp;
 						}
@@ -369,7 +368,7 @@ public class LoginControllerKorgc {
 //		System.out.println(rStr);
 		
 		// 공백 있으면 안된다.. url encode 도 쓰면 안된다..
-		String dStr = "{\"ROOT\":{\"DataBlock1\":[{\"EmpId\":\""+empId+"\"}]}}";
+		String dStr = "{\"ROOT\":{\"DataBlock1\":[{\"EmpID\":\""+empId+"\"}]}}";
 		url += "&dataJson=" + dStr; //URLEncoder.encode(rStr); 
 		
 		url += "&encryptionType=0";
