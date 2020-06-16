@@ -1,14 +1,22 @@
 package com.isu.ifw.intf.service;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.intf.mapper.WtmInterfaceMapper;
@@ -85,8 +93,31 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         		dataList = intfMapper.getWtmOrgConc(paramMap);
         		url = orgConcUrl;
         	}else if(T.equalsIgnoreCase("TAAAPPL")) {
+        		paramMap.put("ifDate", "2020-01-01 00:00");
+        		//디비 읽기전에 파일
+        		try {
+       	        	FileReader rw = new FileReader("./intfTime.txt");
+                    BufferedReader br = new BufferedReader(rw);
+                 	String readLine = null ;
+    	            while( ( readLine =  br.readLine()) != null ){
+    	            	System.out.println("========= a " + readLine);
+    	            	paramMap.put("ifDate", readLine);
+    	            }
+        		} catch(Exception e) {System.out.println(e.getMessage());}    
+        		
+        		SimpleDateFormat format = new SimpleDateFormat ( "yyyy-MM-dd HH:mm", Locale.KOREA );
+         		String ifDate = format.format(new Date());
+         		
+         		//시간 미리 조회해놓고 db쿼리
         		dataList = intfMapper.getWtmTaaAppl(paramMap);
-        		url = taaApplUrl;
+        		
+        		FileWriter fw = new FileWriter("./intfTime.txt");
+                BufferedWriter bw = new BufferedWriter( fw );
+                bw.write(ifDate); 
+                bw.flush();
+	            System.out.println("========= b " + ifDate);
+ 
+                url = taaApplUrl;
         	}else if(T.equalsIgnoreCase("ORGCHART")) {
         		dataList = intfMapper.getWtmOrgChart(paramMap);
         		url = orgChartUrl;
