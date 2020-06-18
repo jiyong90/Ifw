@@ -270,7 +270,7 @@
 				         		$.each($this.dayWorks, function(k, v){
 						         	v.map(function(dayWork){
 						         		//근무일
-						         		if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
+						         		//if(dayWork.hasOwnProperty("holidayYn") && dayWork.holidayYn!='Y') {
 											dayWork.plans.map(function(plan){
 												var day = moment(plan.key).format('YYYY-MM-DD');
 												
@@ -294,7 +294,7 @@
 					  		    				
 					 		    				} 
 											});
-						         		} 
+						         		//} 
 									});
 				         		});
 			        		}

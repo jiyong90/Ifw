@@ -49,7 +49,7 @@
         ]]>
     </select>
     
-    <select id="getWtmOrg" parameterType="map" resultType="hashmap">
+    <select id="getWtmOrgbk" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 			     , DeptSeq AS ORG_CD
@@ -76,7 +76,7 @@
         ]]>
     </select>
     
-    <select id="getWtmOrgChart" parameterType="map" resultType="hashmap">
+    <select id="getWtmOrg" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 				 , ''  AS ORG_TYPE
