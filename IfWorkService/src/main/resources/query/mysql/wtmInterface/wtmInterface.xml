@@ -1192,6 +1192,7 @@ ORDER BY YMD, SABUN
 	</update>
 	
 	<update id="updateWorktimeNight" parameterType="hashmap">
+	<![CDATA[
 		UPDATE WTM_WORKTIME_DAY_CLOSE X 
     	  JOIN (
 			SELECT ${worktimeCloseId} AS WORKTIME_CLOSE_ID, D.TENANT_ID, D.ENTER_CD, D.SABUN, D.YMD
@@ -1209,10 +1210,10 @@ ORDER BY YMD, SABUN
 								   AND TIME_TYPE_CD = 'BASE'
 								   AND APPR_SDATE IS NOT NULL
 								   AND APPR_EDATE IS NOT NULL
-								   AND (APPR_SDATE BETWEEN F_WTM_TO_DATE(CONCAT(YMD, '220000'), 'YMDHIS') AND F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(YMD, '060000'), 'YMDHIS'), 1, 'D')
-									     OR
-										  APPR_EDATE BETWEEN F_WTM_TO_DATE(CONCAT(YMD, '220000'), 'YMDHIS') AND F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(YMD, '060000'), 'YMDHIS'), 1, 'D')
-										  )
+								   AND (APPR_SDATE <= F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(YMD, '060000'), 'YMDHIS'), 1, 'D')
+									     AND
+										APPR_EDATE >= F_WTM_TO_DATE(CONCAT(YMD, '220000'), 'YMDHIS')
+										)
 							)DD 
 						WHERE DD.NIGHT_SDATE != DD.NIGHT_EDATE) D 
 			    ON C.TENANT_ID = D.TENANT_ID
@@ -1236,6 +1237,7 @@ ORDER BY YMD, SABUN
 		   AND XX.CM > 0
 		   SET X.OTN_MINUTE = IFNULL(X.OTN_MINUTE,0) + IFNULL(XX.CM,0)
 		 WHERE X.WORKTIME_CLOSE_ID = ${worktimeCloseId}
+		]]>
 	</update>
     
     <select id="monthWorkClose" statementType="CALLABLE" parameterType="java.util.HashMap" >
