@@ -232,13 +232,17 @@ public class LoginControllerKorgc {
 			@RequestParam(value = "enterCd", required = false) String enterCd) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
-		
+		rp.setSuccess("");
+		rp.put("Message", "");
 		//ObjectMapper mapper = new ObjectMapper();
-		
 		
 		
 		Map<String, Object> pMap = new HashMap<String, Object>();
 		pMap.put("EmpID", sabun);		
+		pMap.put("creCnt", "-");
+		pMap.put("usedCnt", "-");
+		pMap.put("restCnt", "-");
+		
 		
 		Map<String, Object> sessionDataMap = intfMapper.getWtmEmpByEmpID(pMap);
 		 
@@ -266,17 +270,16 @@ public class LoginControllerKorgc {
 							pMap.put("creCnt", useCnt);
 							pMap.put("usedCnt", usedCnt);
 							pMap.put("restCnt", restCnt);
-							rp.put("DATA", pMap);
-							rp.put("Message", "");
 							
 							System.out.println("#########################/rest " + rp.toString());
-							return rp;
+//							return rp;
 						}
 					}
 				}
 			}
 		}
-		rp.setFail("");
+		rp.put("DATA", pMap);
+//		rp.setFail("");
 		return rp;
 	}
 	
