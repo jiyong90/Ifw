@@ -304,8 +304,38 @@
 			GROUP BY AA.CompanySeq, AA.WkDate, AA.EmpID
 		]]>
 	</select>
-	
-		<select id="getIntfCompList" parameterType="map" resultType="hashmap">
+
+	<select id="getTotList" parameterType="map" resultType="hashmap">
+		<![CDATA[
+			SELECT CONCAT(X.ENTER_CD, '@', X.SABUN) AS EMP,
+				CASE WHEN F_WTM_GET_LEADER_SABUN(X.TENANT_ID, X.ENTER_CD,  X.SABUN) != '' THEN  
+		 			CONCAT(X.ENTER_CD, '@', F_WTM_GET_LEADER_SABUN(X.TENANT_ID, X.ENTER_CD, X.SABUN)) ELSE '' END AS LEADER,
+		 		X.WORK_MINUTE, 
+		 		X.EMP_NM 
+ 			FROM (
+			SELECT R.TENANT_ID, R.ENTER_CD, R.SABUN, H.EMP_NM, SUM(CASE WHEN R.APPR_MINUTE IS NULL THEN R.PLAN_MINUTE ELSE APPR_MINUTE END) AS WORK_MINUTE
+			FROM WTM_WORK_DAY_RESULT R
+			JOIN WTM_EMP_HIS H
+				ON H.TENANT_ID = R.TENANT_ID
+				AND H.ENTER_CD = R.ENTER_CD
+				AND H.SABUN = R.SABUN
+				AND H.STATUS_CD = 'AA'
+				AND H.EYMD = '29991231'
+				AND H.BUSINESS_PLACE_CD = #{businessPlaceCd}
+			JOIN WTM_WORK_TERM_TIME T
+				ON T.TENANT_ID = R.TENANT_ID 
+				AND T.ENTER_CD = R.ENTER_CD
+				AND T.SABUN = R.SABUN
+				AND #{ymd} BETWEEN T.WEEK_SDATE AND T.WEEK_EDATE
+			WHERE R.TENANT_ID = #{tenantId} 
+				AND R.ENTER_CD = #{enterCd}
+				AND R.YMD BETWEEN T.WEEK_SDATE AND T.WEEK_EDATE
+				GROUP BY R.TENANT_ID, R.ENTER_CD, R.SABUN) X
+			WHERE X.WORK_MINUTE < #{stdOtTime} AND WORK_MINUTE >= #{stdOtTime2}
+		]]>
+	</select>
+		
+	<select id="getIntfCompList" parameterType="map" resultType="hashmap">
 		<![CDATA[
 			SELECT ENTER_CD AS CompanySeq, 
 			  	YM as WkYM, 
