@@ -1900,6 +1900,9 @@
 					 WHERE ${key} = ${value}
 					   AND HOLIDAY_YN = 'N'
 					   AND (D.OTB_MINUTE IS NOT NULL AND D.OTB_MINUTE<>0)
+					   /* 20200619 이효정 근무계획 생성시 연장근무 시각이 기록되었어야함.*/
+					   AND OTB_SDATE IS NOT NULL	
+					   AND OTB_EDATE IS NOT NULL
 					UNION
 					SELECT YMD
 					     , 'BASE' AS TIME_TYPE_CD
@@ -1909,6 +1912,9 @@
 					  FROM ${tableName} D
 					 WHERE ${key} = ${value}
 					   AND HOLIDAY_YN = 'N'
+					   /* 20200619 이효정 탄력근무는 근무시간이 필수로 있어야 기록할수 있음.*/
+					   AND PLAN_SDATE IS NOT NULL	
+					   AND PLAN_EDATE IS NOT NULL
 					UNION
 					SELECT YMD
 					     , 'OT' AS TIME_TYPE_CD
@@ -1919,6 +1925,9 @@
 					 WHERE ${key} = ${value}
 					   AND (D.OTA_MINUTE IS NOT NULL AND D.OTA_MINUTE<>0)
 					   AND HOLIDAY_YN = 'N'
+					   /* 20200619 이효정 근무계획 생성시 연장근무 시각이 기록되었어야함.*/
+					   AND OTA_SDATE IS NOT NULL	
+					   AND OTA_EDATE IS NOT NULL
 				   UNION
 					SELECT YMD
 					     , 'OT' AS TIME_TYPE_CD
@@ -1930,6 +1939,9 @@
 					  FROM ${tableName} D
 					 WHERE ${key} = ${value}
 					   AND HOLIDAY_YN = 'Y'
+					   /* 20200619 이효정 휴일근무일때 근무시간이 필수로 있어야 기록할수 있음.*/
+					   AND PLAN_SDATE IS NOT NULL	
+					   AND PLAN_EDATE IS NOT NULL
 				 ) S
 		ORDER BY YMD, PLAN_SDATE
 		 ]]>
