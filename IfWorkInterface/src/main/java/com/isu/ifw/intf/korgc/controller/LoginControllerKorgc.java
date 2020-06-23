@@ -157,6 +157,9 @@ public class LoginControllerKorgc {
 		System.out.println("encodePw : " + encodePw);
 		Map<String, Object> resMap = ksystemLogin(userId, enterCd, encodePw);
 		
+		if(resMap != null) {
+			System.out.println("resMap : " + resMap.toString());
+		}
 		if(resMap.containsKey("Tables") && resMap.get("Tables") != null) {
 			List<Map<String, Object>> tables = (List<Map<String, Object>>) resMap.get("Tables");
 			if(tables.size() > 0) {
