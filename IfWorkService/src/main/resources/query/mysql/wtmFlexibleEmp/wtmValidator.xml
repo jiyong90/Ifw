@@ -208,7 +208,7 @@
 											     , #{ehm} AS EHM
 											     , CASE WHEN #{shm} IS NOT NULL AND #{shm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{symd},#{shm}), 'YMDHIS') ELSE NULL END AS SDATE
 											     , CASE WHEN #{ehm} IS NOT NULL AND #{ehm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{eymd},#{ehm}), 'YMDHIS') ELSE NULL END AS EDATE
-											  FROM DUAL
+											   FROM DUAL
 											 WHERE NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN, TAA_CD, SYMD, EYMD, SHM, EHM
 																		 FROM WTM_TAA_APPL
 																		WHERE APPL_ID = #{applId} )
@@ -283,13 +283,13 @@
 						  		  FROM (
 						  		  SELECT NULL AS YMD
 						  		       , 0 AS APPL_MINUTE
-						  		    FROM DUAL
-						  		    UNION
+						  		    -- FROM DUAL
+						  		    -- UNION
 						  		  <if test="applMinutes!=null">
 						  		  <foreach collection="applMinutes" item="a" separator="UNION ">
 									SELECT #{a.ymd} AS YMD
 									     , #{a.applMinute} AS APPL_MINUTE
-									  FROM DUAL
+									  -- FROM DUAL
 								  </foreach>
 								  </if>
 								) S
