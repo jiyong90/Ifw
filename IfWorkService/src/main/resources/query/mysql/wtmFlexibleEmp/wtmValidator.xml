@@ -283,13 +283,13 @@
 						  		  FROM (
 						  		  SELECT NULL AS YMD
 						  		       , 0 AS APPL_MINUTE
-						  		    -- FROM DUAL
-						  		    -- UNION
+						  		     FROM DUAL
+						  		     UNION
 						  		  <if test="applMinutes!=null">
 						  		  <foreach collection="applMinutes" item="a" separator="UNION ">
 									SELECT #{a.ymd} AS YMD
 									     , #{a.applMinute} AS APPL_MINUTE
-									  -- FROM DUAL
+									  FROM DUAL
 								  </foreach>
 								  </if>
 								) S
