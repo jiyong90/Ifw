@@ -284,9 +284,9 @@
 						  		  SELECT NULL AS YMD
 						  		       , 0 AS APPL_MINUTE
 						  		     FROM DUAL
-						  		     UNION
 						  		  <if test="applMinutes!=null">
 						  		  <foreach collection="applMinutes" item="a" separator="UNION ">
+						  		     UNION
 									SELECT #{a.ymd} AS YMD
 									     , #{a.applMinute} AS APPL_MINUTE
 									  FROM DUAL
