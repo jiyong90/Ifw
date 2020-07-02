@@ -1332,7 +1332,7 @@
 			 WHERE E.TENANT_ID = #{tenantId}
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
-			   AND R.TIME_TYPE_CD <> 'GOBACK'
+			   AND R.TIME_TYPE_CD NOT IN ('GOBACK', 'LLA')
 			   AND C.YMD BETWEEN SUBSTR(#{sdate},1,8) AND SUBSTR(#{edate},1,8)
 			   AND (#{sdate} < F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate})
 			 UNION ALL
