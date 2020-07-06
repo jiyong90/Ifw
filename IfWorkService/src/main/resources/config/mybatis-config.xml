@@ -20,6 +20,5 @@
     	<typeAlias type="com.isu.ifw.vo.WtmFlexibleApplDetVO" alias="wtmFlexibleApplDet"/>
     	<typeAlias type="com.isu.ifw.vo.WtmGeneralVO" alias="wtmGeneral"/>
     	<typeAlias type="com.isu.ifw.vo.WtmFlexibleInfoVO" alias="wtmFlexibleInfo"/>
-    	
     </typeAliases>
 </configuration>
