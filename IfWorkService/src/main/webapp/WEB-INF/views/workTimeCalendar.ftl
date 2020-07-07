@@ -1220,7 +1220,7 @@
 					$("#eTime").val(moment(eYmd).format('HH:mm'));
 					
 					$this.overtime = $this.calcMinute(moment($this.workday).format('YYYYMMDD'), moment(sYmd).format('HHmm'), moment(eYmd).format('HHmm'));
-					
+	     			$this.otTime = $this.overtime.calcMinute;
 					//휴일근로신청의 경우 이전에 신청한 휴일 가져옴
 					/* if(Object.keys($this.result).length>0 && $this.result.hasOwnProperty('holidayYn')
 							&& $this.result.holidayYn!=null && $this.result.holidayYn=='Y') {

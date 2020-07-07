@@ -299,7 +299,7 @@ public class WtmInterfaceController {
 	}
 	
 	
-	
+	//배치돌면 db에 저장만 한다
 	@RequestMapping(value = "/workTimeBatch",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setTaaApplPPIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보

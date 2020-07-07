@@ -277,7 +277,7 @@ public class ViewController {
 			if(workday != null) {
 				WtmWorkCalendar cal = workCalendarRepo.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, empNo, workday);
 				//보상 마감 여부 
-				mv.addObject("workCloseYn", cal.getWorkCloseYn()==null?"N":cal.getWorkCloseYn());
+				mv.addObject("workCloseYn", (cal == null || cal.getWorkCloseYn()==null)?"N":cal.getWorkCloseYn());
 			}
 			
 			
