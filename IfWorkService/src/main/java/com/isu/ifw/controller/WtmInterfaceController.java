@@ -313,6 +313,20 @@ public class WtmInterfaceController {
 		return ;
 	}
 	
+	//저장된 내용 중 OK 아닌건만 실제 후처리
+	@RequestMapping(value = "/workTimeBatch/postProcess",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void setTaaApplPPIfPostProcess(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		try {
+//			Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+//			
+			wtmInterfaceService.setTaaApplBatchIfPostProcess(); //5분간격 근태정보 인터페이스
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return ;
+	}
+	
 	@RequestMapping(value = "/workTimeCloseIf",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setWorkTimeCloseIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
