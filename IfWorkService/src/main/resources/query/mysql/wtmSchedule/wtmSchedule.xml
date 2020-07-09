@@ -61,6 +61,81 @@
         ]]>
     </select>
     
+    <select id="getTaaLocalCode" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT MAX(CASE WHEN TAA_INFO_CD = 'LOCAL_IN' THEN TAA_CD ELSE NULL END) AS localIn
+			  , MAX(CASE WHEN TAA_INFO_CD = 'LOCAL_OUT' THEN TAA_CD ELSE NULL END) AS localOut
+		  FROM WTM_TAA_CODE
+		 WHERE TENANT_ID =  #{tenantId}
+		   AND TAA_INFO_CD IN ('LOCAL_OUT', 'LOCAL_IN')
+        ]]>
+    </select>
+    
+    <update id="setUpdateLocalOut" parameterType="map">
+		UPDATE WTM_WORK_CALENDAR X
+		 JOIN (
+		SELECT A.WORK_CALENDAR_ID, B.TENANT_ID, B.ENTER_CD, B.YMD, B.SABUN, MAX(B.PLAN_EDATE) AS END_DATE
+		  FROM WTM_WORK_CALENDAR A
+		 INNER JOIN WTM_WORK_DAY_RESULT B
+		    ON A.TENANT_ID = B.TENANT_ID
+		   AND A.ENTER_CD = B.ENTER_CD
+		   AND A.SABUN = B.SABUN
+		   AND A.YMD = B.YMD
+		   AND B.TIME_TYPE_CD = 'BASE'
+		 INNER JOIN (SELECT B.TENANT_ID, B.ENTER_CD, B.YMD, B.SABUN
+						  FROM WTM_WORK_DAY_RESULT B   
+						 WHERE B.TENANT_ID = 2
+						   AND B.YMD = #{ymd}
+						   AND B.TAA_CD = #{taaLocalOut}) C
+		    ON C.TENANT_ID = B.TENANT_ID
+		   AND C.ENTER_CD = B.ENTER_CD
+		   AND C.SABUN = B.SABUN
+		   AND C.YMD = B.YMD
+		 WHERE A.TENANT_ID = #{tenantId}
+		   AND A.YMD = #{ymd}
+		   AND A.ENTRY_EDATE IS NULL
+		   AND A.HOLIDAY_YN = 'N'
+		 GROUP BY A.WORK_CALENDAR_ID, B.TENANT_ID, B.ENTER_CD, B.YMD, B.SABUN
+		 ) XX
+		    ON X.WORK_CALENDAR_ID = XX.WORK_CALENDAR_ID
+		   SET X.ENTRY_EDATE = XX.END_DATE
+		     , X.ENTRY_ETYPE_CD = 'ETC'
+		     , X.UPDATE_DATE = NOW()
+		     , X.UPDATE_ID = 'LOCAL_OUT'
+	</update>
+	
+	<update id="setUpdateLocalIn" parameterType="map">
+		UPDATE WTM_WORK_CALENDAR X
+		  JOIN (	SELECT A.WORK_CALENDAR_ID, B.TENANT_ID, B.ENTER_CD, B.YMD, B.SABUN, MIN(B.PLAN_SDATE) AS START_DATE
+					  FROM WTM_WORK_CALENDAR A
+					 INNER JOIN WTM_WORK_DAY_RESULT B
+					    ON A.TENANT_ID = B.TENANT_ID
+					   AND A.ENTER_CD = B.ENTER_CD
+					   AND A.SABUN = B.SABUN
+					   AND A.YMD = B.YMD
+					   AND B.TIME_TYPE_CD = 'BASE'
+					 INNER JOIN (SELECT B.TENANT_ID, B.ENTER_CD, B.YMD, B.SABUN
+									  FROM WTM_WORK_DAY_RESULT B   
+									 WHERE B.TENANT_ID = 2
+									   AND B.YMD = #{nextYmd}
+									   AND B.TAA_CD = #{taaLocalIn}) C
+					    ON C.TENANT_ID = B.TENANT_ID
+					   AND C.ENTER_CD = B.ENTER_CD
+					   AND C.SABUN = B.SABUN
+					   AND C.YMD = B.YMD
+					 WHERE A.TENANT_ID = #{tenantId}
+					   AND A.YMD = #{nextYmd}
+					   AND A.ENTRY_SDATE IS NULL
+					   AND A.HOLIDAY_YN = 'N'
+					 GROUP BY A.WORK_CALENDAR_ID, B.TENANT_ID, B.ENTER_CD, B.YMD, B.SABUN
+		  ) XX
+		     ON X.WORK_CALENDAR_ID = XX.WORK_CALENDAR_ID
+		    SET X.ENTRY_SDATE = XX.START_DATE
+		      , X.ENTRY_STYPE_CD = 'ETC'
+		      , X.UPDATE_DATE = NOW()
+		      , X.UPDATE_ID = 'LOCAL_IN'
+	</update>
+    
     <select id="getWtmCloseDayUnplaned" parameterType="map" resultType="hashmap">
         <![CDATA[
         	 SELECT A.ENTER_CD AS enterCd, A.SABUN AS sabun, A.YMD AS ymd

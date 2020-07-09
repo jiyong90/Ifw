@@ -970,9 +970,12 @@ ORDER BY YMD, SABUN
     <select id="getStdMgrList" parameterType="map" resultType="hashmap">
         <![CDATA[
         SELECT F_WTM_NVL(B.UNPLANNED_YN, 'N') AS unplannedYn
+             , F_WTM_NVL(B.TAA_TIME_YN, 'N') AS taaTimeYn
+             , F_WTM_NVL(B.TAA_WORK_YN, 'N') AS taaWorkYn
 	  		 , DATE_FORMAT(F_WTM_TO_DATE(CONCAT(#{ymd}, D.WORK_SHM), 'YMDHIS'), '%Y%m%d%H%i%s') AS taaSdate
 			 , CASE WHEN D.WORK_SHM > D.WORK_EHM THEN DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(#{ymd}, D.WORK_EHM), 'YMDHIS'), 1, 'D'), '%Y%m%d%H%i%s')
 	         ELSE DATE_FORMAT(F_WTM_TO_DATE(CONCAT(#{ymd}, D.WORK_EHM), 'YMDHIS'), '%Y%m%d%H%i%s') END AS taaEdate
+	         , A.WORK_TYPE_CD AS workTypeCd
 		  FROM WTM_FLEXIBLE_EMP A
 		 INNER JOIN WTM_FLEXIBLE_STD_MGR B
 		    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
@@ -1207,7 +1210,7 @@ ORDER BY YMD, SABUN
 								   AND ENTER_CD = #{enterCd}
 								   AND (#{sabun} IS NULL OR #{sabun} = '' OR SABUN = #{sabun})
 								   AND YMD BETWEEN #{symd} AND #{eymd}
-								   AND TIME_TYPE_CD = 'BASE'
+								   AND TIME_TYPE_CD IN ('BASE', 'FIXOT')
 								   AND APPR_SDATE IS NOT NULL
 								   AND APPR_EDATE IS NOT NULL
 								   AND (APPR_SDATE <= F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(YMD, '060000'), 'YMDHIS'), 1, 'D')

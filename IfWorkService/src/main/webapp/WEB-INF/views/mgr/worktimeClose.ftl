@@ -202,7 +202,10 @@
 	}
 	
 	function setEndConfirm(worktimeCloseId, sabun){		
-		var row = sheet1.FindText("worktimeCloseId", worktimeCloseId, 0);		
+		// var row = sheet1.FindText("worktimeCloseId", worktimeCloseId, 0);
+		var worktimeCloseId2 = worktimeCloseId + "";
+		var row = sheet1.FindText("worktimeCloseId", worktimeCloseId2, 0);
+		
 		var sYmd = sheet1.GetCellValue(row, "symd");
 		var eYmd = sheet1.GetCellValue(row, "eymd");
 		
