@@ -82,7 +82,9 @@
                         <li :class="{active: curPageName=='orgEmpCalendarMgr'}" v-if="authRule.indexOf('FLEX_SETTING')==-1 && authRule.indexOf('FLEX_SUB')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/orgEmpCalendarMgr';">근무시간관리</a></li>
                         <li :class="{active: curPageName=='inoutMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutMgr';">출/퇴근시간 변경</a></li>
                         <li :class="{active: curPageName=='worktimeChangeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeChangeMgr';">근무시간 변경</a></li>
-                        <li :class="{active: curPageName=='inoutRawMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutRawMgr';">타각기록 확인</a></li>                      
+                        <li :class="{active: curPageName=='inoutRawMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutRawMgr';">타각기록 확인</a></li>
+                        <li :class="{active: curPageName=='workTimeApprList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workTimeApprList';">인정근무조회</a></li>                      
+                                              
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub6'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
@@ -90,6 +92,7 @@
                     <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub6'}" id="submenu-list6">
                         <li :class="{active: curPageName=='compMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compMgr';">보상휴가기준관리</a></li>
                         <li :class="{active: curPageName=='compCreateList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compCreateList';">보상휴가시간조회</a></li>
+                        <li :class="{active: curPageName=='compCreateHRList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/compCreateHRList';">보상휴가hr조회</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub7'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
