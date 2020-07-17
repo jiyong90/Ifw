@@ -24,9 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmApplCode;
+import com.isu.ifw.entity.WtmFlexibleAppl;
 import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
+import com.isu.ifw.repository.WtmFlexibleApplRepository;
 import com.isu.ifw.service.WtmApplLineService;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmAsyncService;
@@ -89,6 +91,8 @@ public class WtmApplController {
 	
 	@Autowired
 	WtmMsgService msgService;
+
+	@Autowired	private WtmFlexibleApplRepository flexApplRepository;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(@RequestParam Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
@@ -361,6 +365,11 @@ public class WtmApplController {
 				} else if("SUBS_CHG".equals(applCd)) {
 					wtmOtSubsChgApplService.delete(applId);
 				} else {
+					WtmFlexibleAppl appl = flexApplRepository.findByApplId(applId);
+					if(appl == null) {
+						throw new Exception("삭제할 정보를 찾을 수 없습니다. 화면을 갱신하시고 다시 시도해주세요.");
+					}
+					
 					flexibleApplService.delete(applId);
 					
 					String applStatusCd = null;

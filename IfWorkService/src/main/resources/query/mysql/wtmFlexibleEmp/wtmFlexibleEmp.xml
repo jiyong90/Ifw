@@ -576,6 +576,7 @@
 			   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
 			   AND D.APPR_SDATE < D.APPR_EDATE
+			   AND D.TIME_TYPE_CD NOT IN ('LLA')
 			 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE, D.APPR_EDATE
 			) XX
 			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
@@ -624,6 +625,7 @@
 						   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
 						   AND D.APPR_SDATE < D.APPR_EDATE
+			   			   AND D.TIME_TYPE_CD NOT IN ('LLA')
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 					 ) XZ
 	 			) XX
@@ -660,6 +662,7 @@
 						   AND (E.SABUN = #{sabun} OR #{sabun} = '' OR #{sabun} IS NULL)
 						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
 						   AND D.APPR_SDATE < D.APPR_EDATE
+			   			   AND D.TIME_TYPE_CD NOT IN ('LLA')
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 	 				) XX
 	 			ON X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID
@@ -2468,4 +2471,27 @@
 		   AND TIME_TYPE_CD IN ('BASE','FIXOT','OT', 'NIGHT', 'SUBS')
     </update>
     
+    <!-- 잔업시간 end 시간 가져오기 -->
+    <select id="getElasOtaHm" statementType="CALLABLE" parameterType="java.util.HashMap">
+  		{ call P_WTM_DATE_ADD_FOR_BREAK_MGR_T( 
+  				#{tenantId,  jdbcType=BIGINT,  mode=IN}
+			  , #{enterCd,   jdbcType=VARCHAR, mode=IN}
+			  , #{timeCd,    jdbcType=BIGINT,  mode=IN}
+			  , #{obDate,    jdbcType=VARCHAR, mode=IN}
+			  , #{addMinute, jdbcType=INTEGER, mode=IN}
+			  , #{retDate,    jdbcType=VARCHAR, mode=OUT}
+		) }
+  	</select>
+  	
+  	<!-- 잔업시간 start 시간 가져오기 -->
+  	<select id="getElasOtbHm" statementType="CALLABLE" parameterType="java.util.HashMap">
+  		{ call P_WTM_DATE_ADD_FOR_BREAK_MGR_T2( 
+  				#{tenantId, jdbcType=BIGINT,  mode=IN}
+			  , #{enterCd,  jdbcType=VARCHAR, mode=IN}
+			  , #{timeCd,   jdbcType=BIGINT,  mode=IN}
+			  , #{obDate,   jdbcType=VARCHAR, mode=IN}
+			  , #{addMinute,jdbcType=INTEGER, mode=IN}
+			  , #{retDate,   jdbcType=VARCHAR, mode=OUT}
+		) }
+  	</select>
 </mapper>
