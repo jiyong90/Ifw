@@ -148,6 +148,12 @@
     <select id="getWtmCloseDayUnplaned" parameterType="map" resultType="hashmap">
         <![CDATA[
         	 SELECT A.ENTER_CD AS enterCd, A.SABUN AS sabun, A.YMD AS ymd
+					, IFNULL((SELECT COUNT(*) FROM WTM_WORK_DAY_RESULT C 
+					           WHERE A.TENANT_ID = C.TENANT_ID
+								   AND A.ENTER_CD = C.ENTER_CD
+								   AND A.SABUN = C.SABUN
+								   AND A.YMD = C.YMD
+								   AND C.TIME_TYPE_CD = 'GOBACK'), 0) AS gooutCnt
 						  FROM WTM_WORK_CALENDAR A
 						  LEFT OUTER JOIN WTM_WORK_DAY_RESULT B
 						     ON A.TENANT_ID = B.TENANT_ID
@@ -168,6 +174,12 @@
 						 GROUP BY A.ENTER_CD, A.SABUN, A.YMD
 						 UNION
 						SELECT A.ENTER_CD, A.SABUN, A.YMD
+						     , IFNULL((SELECT COUNT(*) FROM WTM_WORK_DAY_RESULT C 
+					           WHERE A.TENANT_ID = C.TENANT_ID
+								   AND A.ENTER_CD = C.ENTER_CD
+								   AND A.SABUN = C.SABUN
+								   AND A.YMD = C.YMD
+								   AND C.TIME_TYPE_CD = 'GOBACK'), 0) AS gooutCnt
 						  FROM WTM_WORK_CALENDAR A
 						  JOIN WTM_WORK_DAY_RESULT B
 						     ON A.TENANT_ID = B.TENANT_ID
@@ -187,6 +199,30 @@
 		   ORDER BY YMD, SABUN
         ]]>
     </select>
+    
+    <select id="setCalcGobackList"  parameterType="map" resultType="hashmap">
+        <![CDATA[
+SELECT ENTER_CD AS enterCd
+	  , SABUN AS sabun
+	  , YMD AS ymd
+	  , TIME_TYPE_CD AS timeTypeCd
+	  , F_WTM_DATE_FORMAT(PLAN_SDATE, 'YMDHIS') AS planSdate
+	  , F_WTM_DATE_FORMAT(PLAN_EDATE, 'YMDHIS') AS planEdate
+	  , (SELECT TIME_CD_MGR_ID FROM WTM_WORK_CALENDAR B 
+	      WHERE A.TENANT_ID = B.TENANT_ID
+			  AND A.ENTER_CD = B.ENTER_CD
+			  AND A.SABUN = B.SABUN
+			  AND A.YMD = B.YMD) AS timeCdMgrId
+	  , WORK_DAY_RESULT_ID AS workDayResultId
+  FROM WTM_WORK_DAY_RESULT A
+ WHERE TENANT_ID = #{tenantId}
+   AND ENTER_CD = #{enterCd}
+   AND SABUN = #{sabun}
+	AND YMD = #{ymd} 
+	AND TIME_TYPE_CD = 'GOBACK'
+ ORDER BY PLAN_SDATE
+        ]]>
+    </select> 
 
 	<select id="getOtList" parameterType="map" resultType="hashmap">
 		<![CDATA[
@@ -216,6 +252,7 @@
 				AND H.EYMD >= #{ymd}
 			) X LEFT JOIN WTM_ORG_CONC O ON 
 				O.TENANT_ID = X.TENANT_ID 
+				
 				AND O.ENTER_CD = X.ENTER_CD 
 				AND O.ORG_CD = X.ORG_CD 
 				AND O.SYMD < #{ymd}  AND O.EYMD >= #{ymd} 
@@ -482,4 +519,44 @@
 				]]>
 			</if>
 	</select>
+	<select id="getTaaReset" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.TENANT_ID AS tenantId
+        	     , A.ENTER_CD AS enterCd
+        	     , B.SABUN AS sabun
+        	     , C.TAA_CD AS taaCd
+        	     , C.SYMD AS sYmd
+        	     , C.EYMD AS eYmd
+        	     , C.SHM AS sHm
+        	     , C.EHM AS eHm
+        	     , A.IF_APPL_NO AS ifApplNo 
+        	     , A.APPL_ID AS applId
+        	     , '99' AS status
+			  FROM WTM_APPL A
+			 INNER JOIN WTM_TAA_APPL B
+			    ON A.APPL_ID = B.APPL_ID
+			 INNER JOIN WTM_TAA_APPL_DET C
+			    ON B.TAA_APPL_ID = C.TAA_APPL_ID
+			 WHERE A.APPL_STATUS_CD = '00'
+        ]]>
+    </select>
+    
+    <update id="setDeleteTaaOld" parameterType="map">
+		DELETE A
+		  FROM WTM_WORK_DAY_RESULT A
+		 INNER JOIN (SELECT A.TENANT_ID, A.ENTER_CD, B.SABUN, C.TAA_CD, C.SYMD, C.EYMD, C.SHM, C.EHM, A.IF_APPL_NO, A.APPL_ID
+						  FROM WTM_APPL A
+						 INNER JOIN WTM_TAA_APPL B
+						    ON A.APPL_ID = B.APPL_ID
+						 INNER JOIN WTM_TAA_APPL_DET C
+						    ON B.TAA_APPL_ID = C.TAA_APPL_ID
+						 WHERE A.APPL_STATUS_CD = '00'
+						   AND A.APPL_ID = #{applId}) B
+		    ON A.TENANT_ID = B.TENANT_ID
+		   AND A.ENTER_CD = B.ENTER_CD
+		   AND A.SABUN = B.SABUN
+		   AND A.YMD BETWEEN B.SYMD AND B.EYMD
+		   AND A.APPL_ID = B.APPL_ID
+		 WHERE A.TIME_TYPE_CD IN ('TAA', 'REGA')
+	</update>
 </mapper>
