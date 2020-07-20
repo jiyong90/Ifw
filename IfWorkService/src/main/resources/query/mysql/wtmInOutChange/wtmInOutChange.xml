@@ -20,7 +20,7 @@
 					F_WTM_DATE_FORMAT(A.CHG_EDATE, 'YMDHI') as chgEdate,
 					A.REASON as reason,
 					A.UPDATE_ID as updateId,
-					A.UPDATE_DATE as updateDate,
+					F_WTM_DATE_FORMAT(A.UPDATE_DATE, 'YMDHIS') as updateDate,
 					A.ENTRY_DELETE_YN as entryDeleteYn
 				FROM WTM_INOUT_CHG_HIS A
 				 INNER JOIN WTM_EMP_HIS B

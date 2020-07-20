@@ -292,14 +292,23 @@
    	 <update id="updateEntryDateByAdmRow" parameterType="map">
 			UPDATE WTM_WORK_CALENDAR
 			SET 
-				<if test="chgSdate!=null and !chgSdate.equals('')">
-				ENTRY_SDATE=F_WTM_TO_DATE(#{chgSdate}, 'YMDHIS'), 
-				ENTRY_STYPE_CD = #{typeCd},
+				<if test='entryDeleteYn == "N"'>
+					<if test="chgSdate!=null and !chgSdate.equals('')">
+					ENTRY_SDATE=F_WTM_TO_DATE(#{chgSdate}, 'YMDHIS'), 
+					ENTRY_STYPE_CD = #{typeCd},
+					</if>
+					<if test="chgEdate!=null and !chgEdate.equals('')">
+					ENTRY_EDATE=F_WTM_TO_DATE(#{chgEdate}, 'YMDHIS'), 
+					ENTRY_ETYPE_CD = #{typeCd},
+					</if>
+				</if>				
+				<if test='entryDeleteYn == "Y"'>
+				ENTRY_SDATE = null,
+				ENTRY_EDATE = null,
+				ENTRY_STYPE_CD = null,
+				ENTRY_ETYPE_CD = null,
 				</if>
-				<if test="chgEdate!=null and !chgEdate.equals('')">
-				ENTRY_EDATE=F_WTM_TO_DATE(#{chgEdate}, 'YMDHIS'), 
-				ENTRY_ETYPE_CD = #{typeCd},
-				</if>
+				
 				UPDATE_DATE = now(),
 				UPDATE_ID = #{userId}  
 			WHERE TENANT_ID = #{tenantId} 
