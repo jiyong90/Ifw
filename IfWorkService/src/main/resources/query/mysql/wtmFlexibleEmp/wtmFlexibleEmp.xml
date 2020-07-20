@@ -2248,7 +2248,7 @@
 		   AND ENTER_CD = #{enterCd}
 		   AND SABUN = #{sabun}
 		   AND YMD = #{stdYmd}
-		   AND TIME_TYPE_CD != ('GOBACK')
+		   AND TIME_TYPE_CD NOT IN ('GOBACK', 'TAA', 'REGA')
 	</update>
 	
 	<select id="getResultBySabunAndYmdAndTimeTypeCds" parameterType="map" resultType="hashmap">
