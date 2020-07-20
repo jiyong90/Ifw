@@ -93,6 +93,9 @@ public class WtmTimeCdMgrController {
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;
+			} else if (cnt == -1) { //20.07.03 안흥규 삭제 시 체크
+				rp.setFail("해당 근무 유형은 사용 중입니다.");
+				return rp;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();

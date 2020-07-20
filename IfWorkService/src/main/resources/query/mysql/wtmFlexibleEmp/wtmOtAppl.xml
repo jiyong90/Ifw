@@ -405,4 +405,31 @@
 	        ]]>
     </select>
     
+    
+    <!-- 
+    	연장/휴일근무 신청내역조회 결재 상태 변경 2020.07.16 유충현
+     -->
+    <update id="saveApplSts" parameterType="Map">
+    	UPDATE WTM_APPL
+    	   SET APPL_STATUS_CD = #{applStatusCd}
+    	     , UPDATE_DATE = NOW()
+			 , UPDATE_ID = #{userId}
+    	 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND APPL_ID = #{applId}
+    </update>
+    
+    
+    <!-- 
+    	연장/휴일근무 신청내역조회 결재 상태 변경 후 결재랑인 상태 변경 2020.07.16 유충현
+     -->
+    <update id="saveApplLineSts" parameterType="Map">
+    	UPDATE WTM_APPL_LINE
+    	   SET APPR_STATUS_CD = #{appr_status_cd}
+    	     , UPDATE_DATE = NOW()
+			 , UPDATE_ID = #{userId}
+    	 WHERE APPL_ID = #{applId}
+		   AND (APPR_STATUS_CD IS NULL OR APPR_STATUS_CD = '10')
+    </update>
+    
 </mapper>

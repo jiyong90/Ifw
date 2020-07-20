@@ -20,7 +20,8 @@
 					F_WTM_DATE_FORMAT(A.CHG_EDATE, 'YMDHI') as chgEdate,
 					A.REASON as reason,
 					A.UPDATE_ID as updateId,
-					A.UPDATE_DATE as updateDate
+					F_WTM_DATE_FORMAT(A.UPDATE_DATE, 'YMDHIS') as updateDate,
+					A.ENTRY_DELETE_YN as entryDeleteYn
 				FROM WTM_INOUT_CHG_HIS A
 				 INNER JOIN WTM_EMP_HIS B
 				    ON A.TENANT_ID = B.TENANT_ID
@@ -88,6 +89,7 @@
 		ENTRY_STYPE_CD, 
 		ENTRY_EDATE, 
 		ENTRY_ETYPE_CD, 
+		ENTRY_DELETE_YN, 		   
 		CHG_SDATE, 
 		CHG_EDATE, 
 		REASON, 
@@ -102,6 +104,7 @@
 		#{entryStypeCd}, 
 		IF(#{entryEdate}= '', NULL, F_WTM_TO_DATE(#{entryEdate}, 'YMDHIS')),
 		#{entryEtypeCd}, 
+		#{entryDeleteYn}, 			
 		IF(#{chgSdate}= '', NULL, F_WTM_TO_DATE(#{chgSdate}, 'YMDHIS')), 
 		IF(#{chgEdate}='', NULL, F_WTM_TO_DATE(#{chgEdate}, 'YMDHIS')),
 		#{reason}, 
@@ -146,6 +149,18 @@
 			   )
 		    </if>
 			<![CDATA[
-		    ORDER BY H.SABUN, H.INOUT_DATE DESC
-		    ]]>	</select>
+		    ORDER BY H.INOUT_DATE DESC
+		    ]]>
+	</select>
+    
+    
+    <update id="updateResultApprDate" parameterType="hashmap">
+		UPDATE WTM_WORK_DAY_RESULT 
+		SET APPR_SDATE = NULL, APPR_EDATE = NULL, APPR_MINUTE = NULL
+		WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND YMD = #{stdYmd}
+		   AND TIME_TYPE_CD IN ('BASE','OT','FIXOT','NIGHT', 'GOBACK')
+	</update>
 </mapper>

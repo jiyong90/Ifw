@@ -575,6 +575,7 @@
 			   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
 			   AND C.YMD BETWEEN #{sYmd} AND #{eYmd}
 			   AND D.APPR_SDATE < D.APPR_EDATE
+			   AND D.TIME_TYPE_CD NOT IN ('LLA')
 			 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE, D.APPR_EDATE
 			) XX
 			ON (X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID)
@@ -623,6 +624,7 @@
 						   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
 						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
 						   AND D.APPR_SDATE < D.APPR_EDATE
+			   			   AND D.TIME_TYPE_CD NOT IN ('LLA')
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 					 ) XZ
 	 			) XX
@@ -660,6 +662,7 @@
 						   AND (E.SABUN = #{sabun, jdbcType=VARCHAR} OR #{sabun, jdbcType=VARCHAR} = '' OR #{sabun, jdbcType=VARCHAR} IS NULL)
 						   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
 						   AND D.APPR_SDATE < D.APPR_EDATE
+			   			   AND D.TIME_TYPE_CD NOT IN ('LLA')
 						 GROUP BY D.WORK_DAY_RESULT_ID, D.APPR_SDATE,D.APPR_EDATE
 	 				) XX
 	 			ON (X.WORK_DAY_RESULT_ID = XX.WORK_DAY_RESULT_ID)

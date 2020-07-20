@@ -88,6 +88,12 @@ public class WtmBaseWorkMgrController {
 			if(cnt > 0) {
 				rp.setSuccess("저장이 성공하였습니다.");
 				return rp;
+			} else if (cnt == -1) {
+				  rp.setFail("간주근무시간 혹은 인정근무단위시간이 비어있습니다. 근무제도관리에서 근무제기준을 작성해주세요."); 
+				  return rp;
+			} 
+			  else if (cnt == -2) {
+					rp.setFail("근무제에 등록된 패턴이 없습니다. 근무제패턴을 작성해 주세요.");
 			}
 		} catch(Exception e) {
 			e.printStackTrace();

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmInOutChangeService;
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.util.WtmUtil;
@@ -34,6 +35,8 @@ public class WtmInOutChangeController {
 	
 	@Autowired
 	WtmInoutService inoutService;
+	@Autowired
+	WtmFlexibleEmpService flexibleEmpService;
 
 	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
 	
@@ -78,9 +81,19 @@ public class WtmInOutChangeController {
 						saveMap.put("typeCd", "ADM");
 						saveMap.put("stdYmd", l.get("ymd").toString());
 						saveMap.put("userId", userId);
+						saveMap.put("entryDeleteYn", l.get("entryDeleteYn").toString());
+						
+						//근무일을 시작일 종료일로 지정
+						saveMap.put("symd", l.get("ymd").toString());
+						saveMap.put("eymd", l.get("ymd").toString());
 						// 저장하자
 						retMap = inOutChangeService.setInOutChange(saveMap);
 						// 이력저장, 캘린더 수정했으니깐 계산을 다시하자 출근/퇴근이 전부 있어야 호출할수있음.
+						if("Y".equals(l.get("entryDeleteYn").toString())) {
+							flexibleEmpService.calcApprDayInfo1(tenantId, enterCd, l.get("sabun").toString(), l.get("ymd").toString());
+							flexibleEmpService.createWorkTermtimeByEmployee(tenantId, enterCd, l.get("sabun").toString(), saveMap, userId);
+
+						}
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 						Date today = new Date();
 						String ymd = sdf.format(today);
