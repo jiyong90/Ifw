@@ -93,7 +93,7 @@
 		   AND B.TIME_TYPE_CD = 'BASE'
 		 INNER JOIN (SELECT B.TENANT_ID, B.ENTER_CD, B.YMD, B.SABUN
 						  FROM WTM_WORK_DAY_RESULT B   
-						 WHERE B.TENANT_ID = 2
+						 WHERE B.TENANT_ID = #{tenantId}
 						   AND B.YMD = #{ymd}
 						   AND B.TAA_CD = #{taaLocalOut}) C
 		    ON C.TENANT_ID = B.TENANT_ID
@@ -125,7 +125,7 @@
 					   AND B.TIME_TYPE_CD = 'BASE'
 					 INNER JOIN (SELECT B.TENANT_ID, B.ENTER_CD, B.YMD, B.SABUN
 									  FROM WTM_WORK_DAY_RESULT B   
-									 WHERE B.TENANT_ID = 2
+									 WHERE B.TENANT_ID = #{tenantId}
 									   AND B.YMD = #{nextYmd}
 									   AND B.TAA_CD = #{taaLocalIn}) C
 					    ON C.TENANT_ID = B.TENANT_ID
