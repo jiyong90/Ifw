@@ -451,8 +451,9 @@ SELECT ENTER_CD AS enterCd
 			WHERE R.TENANT_ID = #{tenantId} 
 				AND R.ENTER_CD = #{enterCd}
 				AND R.YMD BETWEEN T.WEEK_SDATE AND T.WEEK_EDATE
+				AND R.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT','NIGHT', 'REGA')
 				GROUP BY R.TENANT_ID, R.ENTER_CD, R.SABUN) X
-			WHERE X.WORK_MINUTE < #{stdOtTime} AND WORK_MINUTE >= #{stdOtTime2}
+			WHERE X.WORK_MINUTE <= #{stdOtTime} AND WORK_MINUTE > #{stdOtTime2}
 		]]>
 	</select>
 		
