@@ -71,7 +71,7 @@
 	};
 	
 	function minuteToHHMM(min, type) {
-		if(min!=null && min!=undefined && min!='') {
+		if(min!=null && min!=undefined && min!='' && min > 0) {
     		if(type==null || type=='')
 	   	    	type='short';
     		
@@ -95,7 +95,11 @@
 	   	    if(type=='short')
 	   	   		return hours+':'+minutes;
 		} else {
-			return '';
+			if(type=='detail') {
+				return '0분';
+			}else{
+				return '00:00';
+			}
 		}
    	};
 	

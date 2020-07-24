@@ -29,7 +29,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">출/퇴근 미타각자 조회</div>
+								<div class="float-left title">출/퇴근 미타각자 조회 &nbsp;<span id="Tooltip-entryCheckList" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
 								</ul>
@@ -55,6 +55,34 @@
 	    $("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
 	    $("#eYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
 		
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-entryCheckList',
+       	    target: '#Tooltip-entryCheckList',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '출/퇴근 미타각 대상자를 조회합니다.'
+   	    		+ '<br>● 근무기간내 근무일에 근무정보가 있으면서 타각을 누락한 대상자만 조회됩니다.'
+   	    		+ '<br>● 타각이 유효한 근무정보는 기본근무,연장근무, 휴일근무입니다. 연차, 간주근무 등 근무계획이 없으면 조회되지 않습니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};

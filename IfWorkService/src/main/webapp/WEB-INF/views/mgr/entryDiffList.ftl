@@ -43,7 +43,7 @@
 					<td>
 						<div class="inner">
 							<div class="sheet_title_wrap clearfix">
-								<div class="float-left title">출/퇴근 차이자 조회</div>
+								<div class="float-left title">출/퇴근 차이자 조회 &nbsp;<span id="Tooltip-entryDiffList" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
 								</ul>
@@ -69,6 +69,33 @@
 	    $("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
 	    $("#eYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
 		
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-entryDiffList',
+       	    target: '#Tooltip-entryDiffList',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무계획시간과 타각시간이 기준시간 차이자를 조회합니다.'
+   	    		+ '<br>● 근무일에 근무정보가 있으면서 타각을 누락하거나 계획시간과 타각시간이 다른경우 조회됩니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,MergeSheet:msHeaderOnly,Page:22,FrozenCol:0,DataRowMerge:0};

@@ -16,6 +16,8 @@
 			SELECT C.YMD AS ymd, 
 			       F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'YMDHIS') AS entrySdate, 
 			       F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'YMDHIS') AS entryEdate,
+			       C.ENTRY_SDATE AS entrySdateDate, 
+			       C.ENTRY_EDATE AS entryEdateDate,
 			       C.HOLIDAY_YN AS holydayYn,
 			       F_WTM_GET_EMP_DAY_OPTION(C.TENANT_ID, C.ENTER_CD, C.SABUN, LEFT(#{inoutDate},8), 'UNPLANNED_YN') as unplanned,
 			       X.pSdate, 
@@ -148,6 +150,7 @@
 	           	AND R.TENANT_ID = A.TENANT_ID
 	            AND R.SABUN = A.SABUN
 	            AND R.YMD = A.YMD 
+	            AND R.TIME_TYPE_CD NOT IN ('EXCEPT', 'GOBACK')
 	         LEFT JOIN WTM_TAA_CODE D 
 	            ON R.TAA_CD = D.TAA_CD
 	            AND D.TENANT_ID = R.TENANT_ID

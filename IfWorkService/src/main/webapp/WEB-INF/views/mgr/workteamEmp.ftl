@@ -75,7 +75,7 @@
        	    offset: {
        	      x: 25
        	    },
-       	    content: '근무조를 변경할 경우 종료일을 조정하여 저장한 후 새로 입력. 종료일을 과거로 저장할 경우 인정시간은 삭제됨 ',
+       	    content: '근무조를 변경할 경우 종료일을 조정하여 저장한 후 새로 입력합니다. 종료일을 과거로 저장할 경우 인정시간은 삭제되니 주의해주세요.',
        	    onOpen: function () {
        	      this.source.addClass('active');
        	    },
@@ -136,12 +136,12 @@
 			break;
 		case "Save":
 			if(!dupChk(sheet1,"tenantId|enterCd|sabun|workteamMgrId|symd|eymd", false, true)){break;}
-//			for(var i=1;i<sheet1.RowCount(); i++){
-//        		if(sheet1.GetCellValue(i, "symd") > sheet1.GetCellValue(i, "eymd")) {
-//        			alert("종료일은 시작일보다 늦어야 합니다.");
-//        			return;
-//        		}
-//        	}
+			for(var i=1;i<sheet1.RowCount(); i++){
+        		if(sheet1.GetCellValue(i, "symd") > sheet1.GetCellValue(i, "eymd")) {
+        			alert("종료일은 시작일보다 늦어야 합니다.");
+        			return;
+        		}
+        	}
 			
 			IBS_SaveName(document.sheetForm,sheet1);
 			sheet1.DoSave("${rc.getContextPath()}/workteam/save", $("#sheetForm").serialize()); break;

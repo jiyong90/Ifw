@@ -49,7 +49,7 @@
         ]]>
     </select>
     
-    <select id="getWtmOrg" parameterType="map" resultType="hashmap">
+    <select id="getWtmOrgbk" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 			     , DeptSeq AS ORG_CD
@@ -76,7 +76,7 @@
         ]]>
     </select>
     
-    <select id="getWtmOrgChart" parameterType="map" resultType="hashmap">
+    <select id="getWtmOrg" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT CompanySeq AS ENTER_CD
 				 , ''  AS ORG_TYPE
@@ -123,6 +123,7 @@
     <select id="getWtmEmpByEmpID" parameterType="map" resultType="hashmap">
         <![CDATA[ 
 			SELECT CompanySeq AS ENTER_CD
+				 , UserId AS USER_ID
 			     , EmpId AS SABUN
 			     , EmpName AS EMP_NM
 			     , EmpEngName AS EMP_ENG_NM
@@ -180,7 +181,9 @@
 				 , '' AS EHM
 				 , Seq AS APPL_SEQ
 				 , STATUS AS APPL_STATUS_CD
+				 , ERP_IF_DATE AS CHKDATE
 			  FROM KPXERP_TPRWkAbsEmp_ISU
+			  WHERE CONVERT(DATETIME ,  #{ifDate}) < ERP_IF_DATE
         ]]>
     </select>
     

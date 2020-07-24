@@ -299,7 +299,7 @@ public class WtmInterfaceController {
 	}
 	
 	
-	
+	//배치돌면 db에 저장만 한다
 	@RequestMapping(value = "/workTimeBatch",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setTaaApplPPIf(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
@@ -307,6 +307,20 @@ public class WtmInterfaceController {
 			Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
 			
 			wtmInterfaceService.setTaaApplBatchIf(tenantId); //5분간격 근태정보 인터페이스
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return ;
+	}
+	
+	//저장된 내용 중 OK 아닌건만 실제 후처리
+	@RequestMapping(value = "/workTimeBatch/postProcess",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void setTaaApplPPIfPostProcess(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 사원정보
+		try {
+//			Long tenantId = Long.parseLong(request.getParameter("tenantId").toString());
+//			
+			wtmInterfaceService.setTaaApplBatchIfPostProcess(); //5분간격 근태정보 인터페이스
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

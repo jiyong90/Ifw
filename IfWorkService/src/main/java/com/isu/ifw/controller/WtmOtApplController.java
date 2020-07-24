@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
+import com.isu.ifw.util.WtmUtil;
 
 
 @RestController
@@ -170,5 +171,46 @@ public class WtmOtApplController {
 		if(!paramKeySet.containsAll(params))
 			throw new InvalidParameterException("required parameter is not found.");
 		
+	}
+	
+	/**
+	 * 연장근무관리(관리자) 결재상태 변경
+	 * @param request
+	 * @param paramMap
+	 * @return
+	 */
+	@RequestMapping(value="/saveApplSts", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam saveApplSts(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) {
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		int cnt = 0;
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+
+		Map<String, Object> convertMap = WtmUtil.requestInParamsMultiDML(request,paramMap.get("s_SAVENAME").toString(),"");
+
+		try {
+			rp = otApplService.saveWtmApplSts(tenantId, enterCd, sabun, userId, convertMap);
+			
+			if(rp!=null && rp.getStatus()!=null && "FAIL".equals(rp.getStatus())) {
+				return rp;
+			}
+			if(cnt > 0) {
+				rp.setSuccess("저장이 성공하였습니다.");
+				return rp;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		
+		
+		return rp;
 	}
 }

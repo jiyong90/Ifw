@@ -35,7 +35,7 @@
 				<div class="col-6 pr-3">
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-							<div class="float-left title">보상휴가 시간조회</div>
+							<div class="float-left title">보상휴가 시간조회 &nbsp;<span id="Tooltip-compCreateList" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 						</div>
 					</div>
 					<script type="text/javascript"> createIBSheet("sheet1", "100%", fullsheetH, "kr"); </script>
@@ -43,7 +43,7 @@
 				<div class="col-6">
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-							<div class="float-left title">보상휴가 생성 상세내역</div>
+							<div class="float-left title">보상휴가 생성 상세내역 &nbsp;<span id="Tooltip-compCreateListDet" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 						</div>
 					</div>
 					<script type="text/javascript">createIBSheet("sheet2", "100%", fullsheetH,"kr"); </script>
@@ -58,6 +58,61 @@
    		//resize
    		$(window).smartresize(sheetResize);
    		
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-compCreateList',
+       	    target: '#Tooltip-compCreateList',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무마감시 보상휴가 발생내역을 조회합니다.'
+       	    	   + '<br>● 보상휴가가 조회년도에 발생된 대상자의 보상휴가 합산시간으로 조회됩니다.'
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
+   		
+   		new jBox('Tooltip', {
+       	    attach: '#Tooltip-compCreateListDet',
+       	    target: '#Tooltip-compCreateListDet',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '보상휴가 발생 대상자의 생성된 보상휴가 상세내역을 조회합니다.'
+    	    	   + '<br>● 사용기간내 잔여시간이 있는 경우 보상휴가 사용가능합니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});				  
 		var initdata1 = {};
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
 		initdata1.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};

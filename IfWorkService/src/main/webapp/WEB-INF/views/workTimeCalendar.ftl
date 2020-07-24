@@ -63,6 +63,7 @@
                                         <span class="time-wrap">
                                             <i class="fas fa-clock"></i>
                                             <span class="time" v-if="overtime.calcMinute">{{minuteToHHMM(overtime.calcMinute,'detail')}}</span>
+                                            <span class="time" v-else>{{minuteToHHMM(0,'detail')}}</span>
                                         </span>
                                     </div>
                                     <div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
@@ -383,6 +384,9 @@
                                         	<template v-if="overtimeAppl.otMinute">
                                         		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
                                         	</template>
+                                        	<template v-else>
+                                        		{{minuteToHHMM(0, 'detail')}}
+                                        	</template>
                                         </span>
                                     </span>
                                     <span class="date-wrap">
@@ -468,8 +472,8 @@
                         </div>
                         <div class="btn-wrap text-center" v-if="overtimeAppl.applSabun==overtimeAppl.sabun">
                         	<template v-if="(overtimeAppl.cancelYn==null||overtimeAppl.cancelYn==undefined||overtimeAppl.cancelYn!='Y') && overtimeAppl.applStatusCd=='99'">
-                            	<button type="button" class="btn btn-default rounded-0" v-if="result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
-                            	<button type="button" class="btn btn-default rounded-0" v-else data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
+                            	<button type="button" class="btn btn-default rounded-0" v-if="workCloseYn == 'N' && result.holidayYn!='Y'" data-toggle="modal" data-target="#cancelOpinionModal">연장근로신청 취소하기</button>
+                            	<button type="button" class="btn btn-default rounded-0" v-if="workCloseYn == 'N' && result.holidayYn =='Y'" data-toggle="modal" data-target="#cancelOpinionModal">휴일근로신청 취소하기</button>
                         	</template>
                         	<template v-else>
                             	<button type="button" id="recoveryBtn" class="btn btn-default rounded-0" style="display:none;" data-toggle="modal" data-target="#confirmModal">회수하기</button>
@@ -502,6 +506,9 @@
                                         <span class="time">
                                         	<template v-if="overtimeAppl.otMinute">
                                         		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
+                                        	</template>
+                                        	<template v-else>
+                                        		{{minuteToHHMM(0, 'detail')}}
                                         	</template>
                                         </span>
                                     </span>
@@ -611,6 +618,9 @@
                                         <span class="time">
                                         	<template v-if="overtimeAppl.otMinute">
                                         		{{minuteToHHMM(overtimeAppl.otMinute, 'detail')}}
+                                        	</template>
+                                        	<template v-else>
+                                        		{{minuteToHHMM(0, 'detail')}}
                                         	</template>
                                         </span>
                                     </span>
@@ -759,7 +769,8 @@
   		    	targets: {}, //대상자 잔여 연장근로시간
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    	chgSubsAppl: {}, //대체휴일 정정 데이터
-  		    	isOtUse:false //대체휴일 Div section사용 여부 기본근무에서 잔여 소정근로시간이 남았을 경우 잔여소정근로시간 선 소진 후 나머지 시간이 있을 경우 사용할 수 있
+  		    	isOtUse:false, //대체휴일 Div section사용 여부 기본근무에서 잔여 소정근로시간이 남았을 경우 잔여소정근로시간 선 소진 후 나머지 시간이 있을 경우 사용할 수 있
+  		    	workCloseYn: 'N'
   		    },
   		    computed: {
   		    	subsRequired: function(val, oldVal) {
@@ -771,6 +782,10 @@
   		    		this.workday = moment('${workday}').format('YYYY-MM-DD');
   		    	<#else>
   		    		this.workday = '${today}';
+  		    	</#if>
+
+  		    	<#if workCloseYn?? && workCloseYn!='' && workCloseYn?exists >
+  		    		this.workCloseYn = '${workCloseYn}';
   		    	</#if>
   		    	
   		    	<#if reasons?? && reasons!='' && reasons?exists >
@@ -1205,7 +1220,7 @@
 					$("#eTime").val(moment(eYmd).format('HH:mm'));
 					
 					$this.overtime = $this.calcMinute(moment($this.workday).format('YYYYMMDD'), moment(sYmd).format('HHmm'), moment(eYmd).format('HHmm'));
-					
+	     			$this.otTime = $this.overtime.calcMinute;
 					//휴일근로신청의 경우 이전에 신청한 휴일 가져옴
 					/* if(Object.keys($this.result).length>0 && $this.result.hasOwnProperty('holidayYn')
 							&& $this.result.holidayYn!=null && $this.result.holidayYn=='Y') {
@@ -1395,7 +1410,7 @@
   	         				//console.log(dayResults);
          					dayResults.map(function(vMap){
          						
-         						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='') {
+         						if(vMap.hasOwnProperty('taaCd') && vMap.taaCd!='' && vMap.taaCd != 'SUBS') {
 	  	         					//근태
 	  	         					classNames = [];
 									classNames.push('TAA');
@@ -1568,13 +1583,18 @@
 		   				}
 		     				
 		     			//var time = Number(moment(otEdate).diff(otSdate,'minutes'));
+
 		     			//var time = $this.overtime.calcMinute;
 		     			var time = $this.otTime; // 20200429 jyp 수정
+		     			if(time == null || time == undefined || time <= 0){
+		     				msg="신청가능한 연장근무 시간이 없습니다.";
+		     				isValid = false;
+		     			}  
 		       			// 신청 시간 단위
 		       			if(applCode.timeUnit!=null && applCode.timeUnit!=undefined && applCode.timeUnit!='') {
 		       				var timeUnit = Number(applCode.timeUnit);
 		       			
-			       			if(time % timeUnit != 0) {
+			       			if($this.overtime.calcMinute % timeUnit != 0) {
 			       				isValid = false;
 			       				msg = '근무시간은 '+timeUnit+'분 단위로 신청 가능합니다.';
 			       				$("#sTime").val('');
@@ -1607,7 +1627,7 @@
 			         			/* if($this.overtime.breakMinute!=null && $this.overtime.breakMinute!=undefined && $this.overtime.breakMinute!='')
 			         				time = time - Number($this.overtime.breakMinute); */
 			         			
-			         			if(time % holApplTypeCd != 0) {
+			         			if($this.overtime.calcMinute % holApplTypeCd != 0) {
 			         				isValid = false;
 				       				msg = '휴일 근무시간은 '+minuteToHHMM(holApplTypeCd,'detail')+' 단위로 신청 가능합니다.';
 				       				$("#sTime").val('');
@@ -1618,7 +1638,7 @@
 			         			if(applCode.holMaxMinute!=null && applCode.holMaxMinute!=undefined && applCode.holMaxMinute!='') {
 				         			var holMaxMinute = Number(applCode.holMaxMinute);
 				         			
-				         			if(time > holMaxMinute) {
+				         			if($this.overtime.calcMinute > holMaxMinute) {
 				         				isValid = false;
 					       				msg = '근무시간은 최대 '+minuteToHHMM(holMaxMinute,'detail')+' 까지 신청 가능합니다.';
 					       				$("#sTime").val('');
@@ -1883,7 +1903,8 @@
   	         		
   	         		var param = {
   	         			workDayResultId: $this.overtimeAppl.workDayResultId,
-  	         			applId: $this.overtimeAppl.otApplId,
+  	         			//applId: $this.overtimeAppl.otApplId,
+  	         			otApplId: $this.overtimeAppl.otApplId,
   	         			status: $this.overtimeAppl.applStatusCd,
         				workTypeCd : 'OT_CAN',
 	   		    		reason: $("#cancelOpinion").val()
@@ -2595,6 +2616,7 @@
    		
    				console.log(timeCalendarVue.targets['${empNo}']);
    				console.log(timeCalendarVue.overtime);
+   				timeCalendarVue.otTime = timeCalendarVue.overtime.calcMinute;
 	       		if( timeCalendarVue.targets['${empNo}'].restWorkMinute >= timeCalendarVue.overtime.calcMinute){
 	       			timeCalendarVue.isOtUse = false;
 	       		}else{

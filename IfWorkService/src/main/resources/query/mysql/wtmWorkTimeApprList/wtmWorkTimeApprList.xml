@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.isu.ifw.mapper.WtmWorkTimeApprListMapper">
+  	<select id="getWorkTimeApprList" parameterType="map" resultType="hashmap">
+  	
+  	SELECT BB.EMP_NM AS empNm,
+   		   F_WTM_GET_EMP_ORG_NM(AA.TENANT_ID, AA.ENTER_CD, AA.SABUN, AA.YMD) AS orgNm,
+   		   GROUP_CONCAT(CASE WHEN CC.TIME_TYPE_CD IN ('TAA','REGA','SUBS','LLA') THEN CC.TAA_NM ELSE NULL END ORDER BY CC.APPR_SDATE) AS taaNm,
+   		   AA.SABUN AS sabun,
+   		   AA.YMD as ymd,
+           AA.TIME_CD_MGR_ID AS timeCdMgrId,
+           AA.ENTRY_SDATE AS entrySdate,
+           AA.ENTRY_EDATE AS entryEdate,
+           AA.DIFF_MINUTE AS diffMinute,
+           AA.APPR_MINUTE AS apprMinute,
+           AA.PLAN_SDATE AS planSdate,
+           AA.PLAN_EDATE AS planEdate,
+           AA.OT_DIFF_MINUTE AS diffPlanDate,
+           AA.OT_APPR_MINUTE AS apprPlanDate
+  FROM (SELECT 
+           A.TENANT_ID,
+           A.ENTER_CD,
+           A.SABUN,
+           A.YMD,
+           A.TIME_CD_MGR_ID,
+           F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'HI') AS ENTRY_SDATE,
+           F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'HI') AS ENTRY_EDATE,
+           TIMESTAMPDIFF(minute,A.ENTRY_SDATE, A.ENTRY_EDATE) AS DIFF_MINUTE,
+           SUM(CASE WHEN D.TIME_TYPE_CD = 'BASE' THEN D.APPR_MINUTE ELSE 0 END) AS APPR_MINUTE,
+           F_WTM_DATE_FORMAT(MIN(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.PLAN_SDATE ELSE NULL END), 'HI') AS PLAN_SDATE,
+           F_WTM_DATE_FORMAT(MAX(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.PLAN_EDATE ELSE NULL END), 'HI') AS PLAN_EDATE,
+           SUM(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN TIMESTAMPDIFF(minute,D.PLAN_SDATE, D.PLAN_EDATE) ELSE 0 END) AS OT_DIFF_MINUTE,
+           SUM(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.APPR_MINUTE ELSE 0 END) AS OT_APPR_MINUTE
+   /*    (CASE WHEN D.TIME_TYPE_CD = 'BASE' THEN D.APPR_MINUTE ELSE NULL END + CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.APPR_MINUTE ELSE NULL END) AS sumApprDate*/  
+      FROM WTM_WORK_CALENDAR A
+      LEFT OUTER JOIN WTM_WORK_DAY_RESULT D
+        ON A.TENANT_ID = D.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN = D.SABUN AND A.YMD = D.YMD AND D.TIME_TYPE_CD IN ('BASE','OT', 'FIXOT', 'NIGHT')
+      WHERE A.YMD BETWEEN REPLACE (#{sYmd}, '-', '') AND REPLACE (#{eYmd}, '-', '')
+        AND A.TENANT_ID = #{tenantId}
+        AND A.ENTER_CD = #{enterCd}
+      GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, A.TIME_CD_MGR_ID, A.ENTRY_SDATE, A.ENTRY_EDATE
+  ) AA
+  INNER JOIN WTM_EMP_HIS BB
+   ON AA.TENANT_ID = BB.TENANT_ID
+   AND AA.ENTER_CD = BB.ENTER_CD 
+   AND AA.SABUN = BB.SABUN 
+   AND AA.YMD BETWEEN BB.SYMD AND BB.EYMD 
+      
+  LEFT OUTER JOIN (SELECT  R.*, T.TAA_NM
+        FROM WTM_WORK_DAY_RESULT R
+        LEFT OUTER JOIN WTM_TAA_CODE T
+         ON R.TENANT_ID = T.TENANT_ID 
+         AND R.ENTER_CD = T.ENTER_CD
+         AND R.TAA_CD = T.TAA_CD 
+        WHERE R.TENANT_ID = #{tenantId}
+         AND R.ENTER_CD = #{enterCd}
+         AND R.YMD BETWEEN REPLACE (#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '')
+ ) CC
+   ON AA.TENANT_ID = CC.TENANT_ID AND AA.ENTER_CD =CC.ENTER_CD AND AA.SABUN =CC.SABUN AND AA.YMD = CC.YMD
+   <if test="searchKeyword!=null and !searchKeyword.equals('')">
+   where AA.SABUN LIKE CONCAT('%', #{searchKeyword}, '%') OR BB.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+   </if>
+GROUP BY BB.EMP_NM ,AA.TENANT_ID, AA.ENTER_CD, AA.SABUN, AA.YMD, AA.TIME_CD_MGR_ID, AA.ENTRY_SDATE, AA.ENTRY_EDATE, AA.DIFF_MINUTE, AA.APPR_MINUTE, AA.PLAN_SDATE, AA.PLAN_EDATE, AA.OT_DIFF_MINUTE, AA.OT_APPR_MINUTE
+;
+  	</select>
+  </mapper>

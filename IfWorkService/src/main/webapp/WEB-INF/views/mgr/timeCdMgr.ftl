@@ -27,7 +27,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-							<div class="float-left title">근무유형관리</div>
+							<div class="float-left title">근무유형관리 &nbsp;<span id="Tooltip-timeCdMgrList" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 							<ul class="float-right btn-wrap">
 								<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
@@ -41,7 +41,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-						<div class="float-left title">휴식시간관리</div>
+						<div class="float-left title">휴식시간관리 &nbsp;<span id="Tooltip-timeCdMgrBreakList" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 							<ul class="float-right btn-wrap">
 								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
@@ -77,6 +77,66 @@
             language: 'ko'
         });
 		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-timeCdMgrList',
+       	    target: '#Tooltip-timeCdMgrList',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무시간표(또는 근무코드)는 근무 시간을 일괄로 통제하기 위해 미리 정의된 근무 시간 계획을 관리합니다.'
+       	    		+ '<br>● 휴일여부 체크시 근무시간표의 휴일로 정의됩니다.'
+       	    		+ '<br>● 휴일여부 미체크시 근무시간표의 평일(근무일)로 정의됩니다. 평일인 경우 공휴시 근무코드를 필수로 선택합니다.'
+       	    		+ '<br>● 근무제도 적용 이후 근무시간표 변경은 자동반영이 불가능합니다.'
+       	    		,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
+		
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-timeCdMgrBreakList',
+       	    target: '#Tooltip-timeCdMgrBreakList',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무유형에 따른 휴식시간을 관리합니다.'
+   	    		   + '<br>● 휴게시간차감기준이 휴식시간범위 인경우 휴식시간 범위를 등록하고 근무시간내 휴식시각이 표함된 경우 차감되어 근무시간계산됩니다.'
+   	    		   + '<br>● 휴게시간차감기준이 기준시간 초과시 휴식시간만큼 차감됩니다.'
+   	    		   + '<br> 단, 기준시간 < 근무시간 > 기준시간+휴식시간 인 근무시간은 기준시간으로 인정됩니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
         
 		var initdata1 = {};
 		
@@ -91,11 +151,11 @@
 			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"근무유형코드",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeCd",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"근무유형명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"근무유형명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"timeNm",			KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"시작일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"symd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
-			{Header:"종료일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"eymd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:1,   InsertEdit:1,   EditLen:100 },
-			{Header:"휴게시간\n차감기준",		Type:"Combo",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"breakTypeCd",    KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"휴일여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holYn",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"종료일",			Type:"Date",        Hidden:0,   Width:90,   Align:"Center", ColMerge:0, SaveName:"eymd",         	KeyField:1, Format:"Ymd",   PointCount:0,   UpdateEdit:0,   InsertEdit:1,   EditLen:100 },
+			{Header:"휴게시간\n차감기준",		Type:"Combo",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"breakTypeCd",    KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"휴일여부",		Type:"CheckBox",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holYn",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"공휴시\n근무코드",		Type:"Combo",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holTimeCdMgrId",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"기본근무\n시작시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workShm",			KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"기본근무\n종료시각",	Type:"Text",	    Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"workEhm",			KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },

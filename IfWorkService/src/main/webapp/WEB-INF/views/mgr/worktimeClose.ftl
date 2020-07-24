@@ -27,7 +27,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-						<div class="float-left title">마감기준관리</div>
+						<div class="float-left title">마감기준관리 &nbsp;<span id="Tooltip-worktimeClose" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 							<ul class="float-right btn-wrap">
 								<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
@@ -42,7 +42,7 @@
 				<td>
 					<div class="inner">
 						<div class="sheet_title_wrap clearfix">
-						<div class="float-left title">마감대상자조회</div>							
+						<div class="float-left title">마감대상자조회 &nbsp;<span id="Tooltip-worktimeCloseEmp" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>							
 						</div>
 					</div>
 					<script type="text/javascript">createIBSheet("sheet2", "100%", halfsheetH,"kr"); </script>
@@ -60,6 +60,66 @@
             language: 'ko'
         });
         
+		new jBox('Tooltip', {
+       	    attach: '#Tooltip-worktimeClose',
+       	    target: '#Tooltip-worktimeClose',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '근무내용을 마감 생성합니다.'
+       	    	   + '<br>● 마감기준명, 시작일, 종료일은 입력 후 수정이 불가능합니다.'
+       	    	   + '<br>● 마감 기준 저장 후 근무마감여부의 [마감] 버튼을 클릭합니다. 마감시 시작일~종료일 사이의 근무정보가 있는 직원의 근무시간을 합산합니다.'
+       	    	   + '<br>● 근무마감여부 "완료"된 마감기준은 삭제가 불가능합니다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
+   		
+   		new jBox('Tooltip', {
+       	    attach: '#Tooltip-worktimeCloseEmp',
+       	    target: '#Tooltip-worktimeCloseEmp',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '마감대상자를 조회합니다.'
+    	    	   + '<br>● 마감기준관리의 [마감] 버튼을 1회 이상 클릭 후 조회됩니다.'
+    	    	   + '<br>● 근무시간이 변동된 경우 대상자별 개별 재마감이 가능합니다.'
+    	    	   + '<br>● 근무마감이 완료된 경우, 대상자별 마감을 할 수 없습니다.'
+    	    	   ,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	}); 
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -142,7 +202,10 @@
 	}
 	
 	function setEndConfirm(worktimeCloseId, sabun){		
-		var row = sheet1.FindText("worktimeCloseId", worktimeCloseId, 0);		
+		// var row = sheet1.FindText("worktimeCloseId", worktimeCloseId, 0);
+		var worktimeCloseId2 = worktimeCloseId + "";
+		var row = sheet1.FindText("worktimeCloseId", worktimeCloseId2, 0);
+		
 		var sYmd = sheet1.GetCellValue(row, "symd");
 		var eYmd = sheet1.GetCellValue(row, "eymd");
 		
@@ -237,11 +300,13 @@
 			doAction2('Search');
 			
 			//20200228 추가
-			var workCloseYn = sheet1.GetCellValue( NewRow, "workCloseYn");
+			var workCloseYn = sheet1.GetCellValue( NewRow, "closeYn");
 			if( workCloseYn == "Y" ){
 				$("#optionBtn").hide();
+				sheet2.SetColHidden("endImg", 1);
 			} else {
 				$("#optionBtn").show();
+				sheet2.SetColHidden("endImg", 0);
 			}
 		}					
 	}
