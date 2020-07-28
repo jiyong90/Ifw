@@ -180,11 +180,16 @@
 						+ "&ymd=" + ymd;
 			var rtn = ajaxCall("${rc.getContextPath()}/calendar/dayInfoEntry", param ,false).DATA;
 			if(rtn != null && rtn != "") {
-				sheet1.SetCellValue(row, "entrySdate", rtn.entrySdate);
-				sheet1.SetCellValue(row, "entryStypeCd", rtn.entryStypeCd);
-				sheet1.SetCellValue(row, "entryEdate", rtn.entryEdate);
-				sheet1.SetCellValue(row, "entryEtypeCd", rtn.entryEtypeCd);
-				sheet1.SetCellValue(row, "msg", "OK");
+				// 마감여부를 확인해야함.
+				if(rtn.closeYn == "Y"){
+					sheet1.SetCellValue(row, "msg", "근무마감");
+				} else {
+					sheet1.SetCellValue(row, "entrySdate", rtn.entrySdate);
+					sheet1.SetCellValue(row, "entryStypeCd", rtn.entryStypeCd);
+					sheet1.SetCellValue(row, "entryEdate", rtn.entryEdate);
+					sheet1.SetCellValue(row, "entryEtypeCd", rtn.entryEtypeCd);
+					sheet1.SetCellValue(row, "msg", "OK");
+				}
 			} else {
 				//alert("입력한 "+sabun+" 사원의 근무시간이 존재하지 않습니다.");
 				sheet1.SetCellValue(row, "msg", "데이터없음");

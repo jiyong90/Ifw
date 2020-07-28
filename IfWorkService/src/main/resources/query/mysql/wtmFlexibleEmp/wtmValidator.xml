@@ -186,6 +186,7 @@
 								 WHERE D.TENANT_ID = ${tenantId} 
 								   AND D.ENTER_CD = #{enterCd}
 									AND D.SABUN = #{sabun}
+									AND D.TIME_TYPE_CD NOT IN ('LLA', 'GOBACK')
 							) R
 						  JOIN WTM_FLEXIBLE_EMP E
 						    ON R.TENANT_ID = E.TENANT_ID
