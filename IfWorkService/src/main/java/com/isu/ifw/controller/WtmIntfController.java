@@ -250,10 +250,10 @@ public class WtmIntfController extends TenantSecuredControl {
 				
 			List<Map<String, Object>> works = (List<Map<String, Object>>)paramMap.get("works");
 			
-			rp = validatorService.worktimeValid(tenantId, paramMap.get("enterCd").toString(), paramMap.get("applNo").toString(), works, applSabun);
-			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
+			//rp = validatorService.worktimeValid(tenantId, paramMap.get("enterCd").toString(), paramMap.get("applNo").toString(), works, applSabun);
+			//if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
 				interfaceService.setTaaApplArrIf(paramMap);
-			}
+			//}
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
