@@ -804,6 +804,14 @@
 				   AND C.YMD BETWEEN E.SYMD AND E.EYMD
 				  JOIN WTM_TIME_CD_MGR T
 				    ON C.TIME_CD_MGR_ID = T.TIME_CD_MGR_ID
+				  JOIN WTM_WORK_DAY_RESULT R
+				    ON C.TENANT_ID = R.TENANT_ID
+				   AND C.ENTER_CD = R.ENTER_CD
+				   AND C.SABUN = R.SABUN
+				   AND C.YMD = R.YMD
+				   AND R.TIME_TYPE_CD = 'BASE'
+				   AND R.PLAN_SDATE IS NOT NULL
+				   AND R.PLAN_EDATE IS NOT NULL
 				 WHERE C.TENANT_ID = #{tenantId}
 				   AND C.ENTER_CD = #{enterCd}
 				   AND C.YMD BETWEEN #{sYmd} AND #{eYmd} 
@@ -2251,7 +2259,7 @@
 		   AND ENTER_CD = #{enterCd}
 		   AND SABUN = #{sabun}
 		   AND YMD = #{stdYmd}
-		   AND TIME_TYPE_CD != ('GOBACK')
+		   AND TIME_TYPE_CD NOT IN ('GOBACK', 'TAA', 'REGA')
 	</update>
 	
 	<select id="getResultBySabunAndYmdAndTimeTypeCds" parameterType="map" resultType="hashmap">
