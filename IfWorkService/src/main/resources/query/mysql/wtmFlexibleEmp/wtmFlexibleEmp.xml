@@ -2373,11 +2373,12 @@
   	
     <select id="weekWorkTimeByEmp" parameterType="map" resultType="hashmap">
     	<![CDATA[
-    		SELECT X.TENANT_ID as tenantId, X.ENTER_CD as enterCd, X.SABUN as sabun, X.WORK_TYPE_CD as workTypeCd, X.SYMD as symd, X.EYMD as eymd
-			      , X.WEEK_SDATE as weekSdate
-			      , X.WEEK_EDATE as weekEdate
-			      , X.CC AS workDays
-			      , CAST(P.INFO_VALUE * 60 AS UNSIGNED) AS weekWorkMinute
+    		SELECT X.TENANT_ID as tenantId, X.ENTER_CD as enterCd, X.SABUN as sabun, X.WORK_TYPE_CD as workTypeCd
+    			  -- , X.SYMD as symd, X.EYMD as eymd
+			      , MIN(X.WEEK_SDATE) as weekSdate
+			      , MAX(X.WEEK_EDATE) as weekEdate
+			      , MAX(X.CC) AS workDays
+			      , MAX(CAST(P.INFO_VALUE * 60 AS UNSIGNED)) AS weekWorkMinute
 			      , CAST(SUM(CASE WHEN (X.TIME_TYPE_CD IN ('BASE', 'REGA')) OR (X.TIME_TYPE_CD IN ('TAA') AND X.TAA_TIME_YN = 'Y') THEN F_WTM_NVL(X.APPR_MINUTE,F_WTM_NVL(X.PLAN_MINUTE,0)) ELSE 0 END) AS UNSIGNED) AS workMinute
 			      , CAST(SUM(CASE WHEN X.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') AND X.HOLIDAY_YN = 'N' THEN F_WTM_NVL(X.APPR_MINUTE,F_WTM_NVL(X.PLAN_MINUTE,0)) ELSE 0 END) AS UNSIGNED) AS otMinute   
 			      , CAST(SUM(CASE WHEN X.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') AND X.HOLIDAY_YN = 'Y' THEN F_WTM_NVL(X.APPR_MINUTE,F_WTM_NVL(X.PLAN_MINUTE,0)) ELSE 0 END) AS UNSIGNED) AS holOtMinute   
@@ -2464,7 +2465,9 @@
 					   AND ENTER_CD = #{enterCd}
                  ) D ON 1=1
                  LEFT OUTER JOIN WTM_PROPERTIE P ON X.TENANT_ID = P.TENANT_ID AND X.ENTER_CD = P.ENTER_CD AND P.INFO_KEY = 'OPTION_MAX_WORKTIME_1WEEK'
-				GROUP BY X.TENANT_ID, X.ENTER_CD, X.SABUN, X.WORK_TYPE_CD, X.SYMD, X.EYMD, X.WEEK_SDATE,  X.WEEK_EDATE, X.TAA_TIME_YN
+				GROUP BY X.TENANT_ID, X.ENTER_CD, X.SABUN, X.WORK_TYPE_CD
+				-- , X.SYMD, X.EYMD, X.WEEK_SDATE,  X.WEEK_EDATE
+					, X.TAA_TIME_YN
     	]]>
     </select>
     
