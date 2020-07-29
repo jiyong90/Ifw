@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.logging.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ import com.isu.ifw.vo.ReturnParam;
 @RestController
 public class WtmWorktimeController {
 	
-	private final Logger logger = LoggerFactory.getLogger("ifwDBLog");
+	private final Logger logger = LoggerFactory.getLogger("ifwFileLog");
 	
 	@Autowired
 	WtmWorktimeService worktimeService;
@@ -42,12 +41,7 @@ public class WtmWorktimeController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		logger.debug("getWorkTimeCheckList Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-	
-		MDC.put("paramMap", paramMap.toString());
+		logger.debug("getWorkTimeCheckList Start " + paramMap.toString());
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> workTimeCheckList = null;
@@ -71,12 +65,7 @@ public class WtmWorktimeController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		logger.debug("getWorkTimeDetail Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-	
-		MDC.put("paramMap", paramMap.toString());
+		logger.debug("getWorkTimeDetail Start " + paramMap.toString());
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> getWorkTimeDetail = null;
@@ -101,12 +90,7 @@ public class WtmWorktimeController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		logger.debug("getEntryCheckList Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-	
-		MDC.put("paramMap", paramMap.toString());
+		logger.debug("getEntryCheckList Start " + paramMap.toString());
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> entryCheckList = null;
@@ -131,12 +115,7 @@ public class WtmWorktimeController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		logger.debug("getEntryDiffList Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-	
-		MDC.put("paramMap", paramMap.toString());
+		logger.debug("getEntryDiffList Start " + paramMap.toString());
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> entryDiffList = null;
@@ -161,12 +140,7 @@ public class WtmWorktimeController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun = sessionData.get("empNo").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		logger.debug("getWorkTimeChangeTarget Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-	
-		MDC.put("paramMap", paramMap.toString());
+		logger.debug("getWorkTimeChangeTarget Start " + paramMap.toString());
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> getWorkTimeChangeTarget = null;
@@ -190,12 +164,7 @@ public class WtmWorktimeController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		logger.debug("getWorkPlan Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-	
-		MDC.put("paramMap", paramMap.toString());
+		logger.debug("getWorkPlan Start " + paramMap.toString());
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> workplan = null;
@@ -222,12 +191,7 @@ public class WtmWorktimeController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String userId = sessionData.get("userId").toString();
 		
-		MDC.put("sessionId", request.getSession().getId());
-		MDC.put("logId", UUID.randomUUID().toString());
-		MDC.put("type", "C");
-		logger.debug("workTimeChangeTarget Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
-	
-		MDC.put("paramMap", paramMap.toString());
+		logger.debug("workTimeChangeTarget Start " + paramMap.toString());
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> getWorkTimeChangeTarget = null;

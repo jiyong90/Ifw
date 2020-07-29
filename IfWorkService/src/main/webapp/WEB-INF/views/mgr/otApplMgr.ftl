@@ -1,6 +1,6 @@
 <#include "/applLineComponent.ftl">
 <div id="otApplMgr" class="container-fluid bg-white mgr-wrap except70 overflow-hidden" v-cloak>
- 	<p class="page-title mb-2">연장근로신청 <span id="Tooltip-1" class="tooltip-st"><i class="far fa-question-circle"></i></p>
+	<p class="page-title mb-2">연장근로신청&nbsp;<span id="Tooltip-otApplMgr" class="tooltip-st"><i class="far fa-question-circle"></i></span></p>
  	<div class="row">
  		<div class="col-6">
  			<div class="page-sub-title bg-navy mb-1">연장근로 대상자 선택</div>
@@ -79,6 +79,9 @@
                                  <div class="form-row">
                                      <div class="d-sm-none d-lg-block ml-md-auto"></div>
                                      <div class="col col-md-3 col-lg-3" data-target-input="nearest">
+                                  		<input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="sYmd" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off" required>
+                                     </div>
+                                     <div class="col col-md-3 col-lg-3" data-target-input="nearest">
                                          <input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="sDate" data-toggle="datetimepicker" data-target="#sDate" placeholder="연도-월-일" autocomplete="off" required>
                                      </div>
                                      <div class="col col-md col-lg" data-target-input="nearest">
@@ -132,7 +135,7 @@
 </div>    
 <script type="text/javascript">
 	$(function () {
-		$('#sDate, #eDate').datetimepicker({
+		$('#sYmd, #sDate, #eDate').datetimepicker({
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
@@ -160,31 +163,37 @@
         }); 
         
         new jBox('Tooltip', {
-            attach: '#Tooltip-1',
-            target: '#Tooltip-1',
-            theme: 'TooltipBorder',
-            trigger: 'click',
-            adjustTracker: true,
-            closeOnClick: 'body',
-            closeButton: 'box',
-            animation: 'move',
-            position: {
-                x: 'left',
-                y: 'bottom'
-            },
-            outside: 'y',
-            pointer: 'left:20',
-            offset: {
-                x: 25
-            },
-            content: '대상자를 먼저 선택 후 연장근로를 신청합니다.',
-            onOpen: function () {
-                this.source.addClass('active');
-            },
-            onClose: function () {
-                this.source.removeClass('active');
-            }
-        });
+       	    attach: '#Tooltip-otApplMgr',
+       	    target: '#Tooltip-otApplMgr',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+            content: '대상자를 선택한 후 연장근무 시간을 입력합니다.'
+   	    		+ '<br>● 기준일은 연장근무가 귀속될 근무일입니다.'
+   	    		+ '<br>● 연장근무의 시작일, 종료일은 보통은 기준일과 동일하지만 자정을 넘어서는 경우, 교대근무의 경우 기준일과 다를 수 있습니다.'
+   	    		+ '<br>● 연장근무는 기준일의 전,후일 근무 계획시간 사이에 포함될 수 있습니다.'
+   	    		+ '<br>● 연장근무의 시작시각이 자정인 경우 당일의 00:00으로 선택합니다.'
+   	    		+ '<br>● 연장근무의 종료시각이 자정인 경우 익일의 00:00으로 선택합니다.'
+   	    		,
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	});
 	});
 
    	var otApplMgrVue = new Vue({
@@ -377,6 +386,8 @@
   	         			eYmd = moment(eYmd).add(1, 'hours');
   	         		}
 					
+					if($("#sYmd").val()=='')
+						$("#sYmd").val(moment(sYmd).format('YYYY-MM-DD'));
 					if($("#sDate").val()=='')
 						$("#sDate").val(moment(sYmd).format('YYYY-MM-DD'));
 					if($("#eDate").val()=='')
@@ -536,8 +547,10 @@
   	         		var $this = this;
   	         	
   	         		var ymd = moment(this.workday).format('YYYYMMDD');
-	    			if($("#sDate").val()!=null && $("#sDate").val()!="")
-	    				ymd = moment($("#sDate").val()).format('YYYYMMDD');
+	    			if($("#sYmd").val()!=null && $("#sYmd").val()!="")
+	    				ymd = moment($("#sYmd").val()).format('YYYYMMDD');
+//	    			if($("#sDate").val()!=null && $("#sDate").val()!="")
+//	    				ymd = moment($("#sDate").val()).format('YYYYMMDD');
 	    			
 	    			//휴일여부 체크는 선택된 연장근로 대상자 전체를 대상으로 하고,
 	    			//소정근로 선 소진 여부나 연장근무 가능한지는 대상자 선택할 때 선택된 대상자 1명을 대상으로 하면 됨
@@ -636,6 +649,7 @@
 	  	         			var holidayYn = $this.holidayYn;
 	  	         			
 	  	         			//신청하려는 ot시간이 소정근무시간에 해당되지 않는지 체크
+	  	         			var sYmd = $("#sYmd").val().replace(/-/gi,"");
 	  	         			var sDate = $("#sDate").val().replace(/-/gi,"");
 				   			var eDate = $("#eDate").val().replace(/-/gi,"");
 				   			var sTime = $("#sTime").val().replace(/:/gi,"");
@@ -835,16 +849,17 @@
    	});
 
    	//날짜,시간 변경 시 근로시간 계산
-   	$('#sDate, #eDate, #sTime, #eTime').off("change.datetimepicker").on("change.datetimepicker", function(e){
+   	$('#sYmd, #sDate, #eDate, #sTime, #eTime').off("change.datetimepicker").on("change.datetimepicker", function(e){
    		if($("#sDate").val()!='' && $("#eDate").val()!='' && $("#sTime").val()!='' && $("#eTime").val()!='') {
    			var sTime = $("#sTime").val().replace(/:/gi,"");
    			var eTime = $("#eTime").val().replace(/:/gi,"");
    			
-   			var date = moment($("#sDate").val()).format('YYYYMMDD');
+   			//var date = moment($("#sDate").val()).format('YYYYMMDD');
+   			var date = moment($("#sYmd").val()).format('YYYYMMDD');
    			otApplMgrVue.workday = date;
    			
    			//시작일자 변경될 때만 휴일여부 조회
-   			if($(this).get(0) === $("#sDate").get(0)) {
+   			if($(this).get(0) === $("#sYmd").get(0)) {
    				otApplMgrVue.getHolidayYn(date, otApplMgrVue.applSabuns);
    				otApplMgrVue.getRestOtMinute();
    			}

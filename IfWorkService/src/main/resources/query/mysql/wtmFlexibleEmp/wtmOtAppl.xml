@@ -432,4 +432,40 @@
 		   AND (APPR_STATUS_CD IS NULL OR APPR_STATUS_CD = '10')
     </update>
     
+        <select id="getCheckPlanDate" parameterType="Map" resultType="hashmap">
+        <![CDATA[
+        SELECT F_WTM_DATE_FORMAT(MIN(PLAN_DATE),'YMDHI') AS 'minPlan', F_WTM_DATE_FORMAT(MAX(PLAN_DATE),'YMDHI') AS 'maxPlan'
+		FROM (
+			SELECT 
+				CASE WHEN MIN(R.PLAN_SDATE) IS NULL THEN STR_TO_DATE(CONCAT(C.YMD, '000000'),'%Y%m%d%H%i%s') 
+					ELSE MIN(R.PLAN_SDATE) END AS PLAN_DATE 
+			FROM WTM_WORK_CALENDAR C
+			LEFT JOIN WTM_WORK_DAY_RESULT R
+				ON C.TENANT_ID = R.TENANT_ID
+				AND C.ENTER_CD = R.ENTER_CD 
+				AND C.SABUN = R.SABUN
+				AND C.YMD = R.YMD
+			WHERE C.TENANT_ID = #{tenantId}
+				AND C.ENTER_CD = #{enterCd}
+				AND C.SABUN = #{sabun}
+				AND C.YMD = DATE_ADD(STR_TO_DATE(#{ymd}, '%Y%m%d'), INTERVAL 1 DAY) 
+				GROUP BY R.YMD
+			UNION ALL
+			SELECT 
+				CASE WHEN MAX(R.PLAN_EDATE) IS NULL THEN STR_TO_DATE(CONCAT(C.YMD, '235900'),'%Y%m%d%H%i%s') 
+					ELSE MAX(R.PLAN_EDATE) END AS PLAN_DATE
+			FROM WTM_WORK_CALENDAR C
+			LEFT JOIN WTM_WORK_DAY_RESULT R
+				ON C.TENANT_ID = R.TENANT_ID
+				AND C.ENTER_CD = R.ENTER_CD 
+				AND C.SABUN = R.SABUN
+				AND C.YMD = R.YMD
+			WHERE C.TENANT_ID = #{tenantId}
+				AND C.ENTER_CD = #{enterCd}
+				AND C.SABUN = #{sabun}
+				AND C.YMD = DATE_SUB(STR_TO_DATE(#{ymd}, '%Y%m%d'), INTERVAL 1 DAY) 
+			GROUP BY R.YMD
+			) X
+	    ]]>
+    </select>
 </mapper>

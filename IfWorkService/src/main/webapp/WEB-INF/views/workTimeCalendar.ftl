@@ -1831,8 +1831,8 @@
   	         		var param = {
         				flexibleStdMgrId : calendarTopVue.flexibleStd.flexibleStdMgrId,
         				workTypeCd : 'OT',
-        				//ymd: moment($this.workday).format('YYYYMMDD'),
-        				ymd: moment($("#sDate").val()).format('YYYYMMDD'),
+        				ymd: moment($this.workday).format('YYYYMMDD'),
+        				//ymd: moment($("#sDate").val()).format('YYYYMMDD'),
         				otSdate : moment(otSdate).format('YYYYMMDDHHmm'),
         				otEdate : moment(otEdate).format('YYYYMMDDHHmm'),
 	   		    		reasonCd : $("#reasonCd").val(),

@@ -2502,4 +2502,19 @@
 			  , #{retDate,   jdbcType=VARCHAR, mode=OUT}
 		) }
   	</select>
+  	
+   	<select id="getPlanMinMaxDate" parameterType="map" resultType="hashmap">
+		 SELECT MIN(PLAN_SDATE) AS planSdate
+		      , MAX(PLAN_EDATE) AS planEdate
+		      , F_WTM_DATE_FORMAT( MIN(PLAN_SDATE), 'YMD') AS planSday
+		      , F_WTM_DATE_FORMAT( MAX(PLAN_EDATE), 'YMD') AS planEday
+		      , F_WTM_DATE_FORMAT(DATE_ADD(MIN(PLAN_SDATE), interval +1 day), 'YMD') AS tempEday
+		  FROM WTM_WORK_DAY_RESULT 
+		 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND YMD = #{ymd}
+		   AND TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'REGA', 'NIGHT')
+  	</select>
+  	
 </mapper>
