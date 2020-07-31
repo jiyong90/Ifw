@@ -93,22 +93,6 @@
         ]]>
     </select>
     
-    <update id="updateWtmInoutHis" parameterType="map">
-		UPDATE WTM_INOUT_HIS SET CANCEL_DATE = now(), 
-			CANCEL_TYPE_CD = #{inoutType} 
-		WHERE #{tenantId} = TENANT_ID 
-			AND #{enterCd} = ENTER_CD 
-			AND #{sabun} = SABUN 
-			<if test="inoutDate!=null">
-				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') = F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHIS')
-			</if>
-			<if test="inoutDate==null">
-				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMD') = #{ymd}
-			</if>
-			AND INOUT_TYPE_CD='OUT'
-			AND CANCEL_DATE IS NULL
-    </update>
-    
 	<update id="saveWtmInoutHis" parameterType="map">
         <![CDATA[ 
 			INSERT INTO WTM_INOUT_HIS
@@ -130,6 +114,17 @@
 				#{inoutDate},
 				#{entryNote}
 				)
+        ]]>
+    </update>
+    
+    <update id="updateWtmInoutHis" parameterType="map">
+        <![CDATA[ 
+			UPDATE WTM_INOUT_HIS SET CANCEL_DATE = now(), 
+				CANCEL_TYPE_CD = #{inoutType} 
+			WHERE #{tenantId} = TENANT_ID 
+				AND #{enterCd} = ENTER_CD 
+				AND #{sabun} = SABUN 
+				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') = F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHIS')
         ]]>
     </update>
     
@@ -220,14 +215,14 @@
 				F_WTM_DATE_FORMAT(X.ENTRY_SDATE, 'H:I') as caption_lb, 
 				F_WTM_DATE_FORMAT(X.ENTRY_EDATE, 'H:I') as caption_rb
 			FROM ( SELECT R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 
-						CASE WHEN R.TIME_TYPE_CD IN ('BASE', 'REGA') OR (F_WTM_GET_EMP_DAY_OPTION(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 'UNPLANNED_YN') = 'Y' AND R.TIME_TYPE_CD = 'TAA')
+						CASE WHEN R.TIME_TYPE_CD IN ('BASE', 'REGA') OR (F_WTM_GET_EMP_DAY_OPTION(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 'TAA_TIME_YN') = 'Y' AND R.TIME_TYPE_CD = 'TAA')
 						     THEN R.APPR_MINUTE
 							  ELSE 0 END AS WORK_HOUR,
 						CASE WHEN R.TIME_TYPE_CD IN ('OT', 'NIGHT', 'FIXOT') THEN R.APPR_MINUTE ELSE 0 END AS OT_HOUR,
 						CASE WHEN R.TIME_TYPE_CD = 'EXCEPT' THEN R.APPR_MINUTE ELSE 0 END AS BREAK_HOUR,
 						C.ENTRY_SDATE, C.ENTRY_EDATE
 					FROM WTM_WORK_DAY_RESULT R
-						JOIN WTM_WORK_CALENDAR C ON C.TENANT_ID=R.TENANT_ID AND C.ENTER_CD=R.ENTER_CD AND C.SABUN=R.SABUN AND C.YMD=R.YMD						
+						JOIN WTM_WORK_CALENDAR C ON C.TENANT_ID=R.TENANT_ID AND C.ENTER_CD=R.ENTER_CD AND C.SABUN=R.SABUN AND C.YMD=R.YMD				
 					WHERE R.TENANT_ID=#{tenantId} AND R.SABUN=#{sabun} AND R.ENTER_CD=#{enterCd} AND R.YMD >= #{sdate} AND R.YMD <= #{edate}
 				) X	
 			GROUP BY X.TENANT_ID, X.ENTER_CD, X.SABUN, X.YMD	
@@ -284,7 +279,7 @@
     
     <select id="getGoBackStatus" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT CASE WHEN INOUT_TYPE_CD = 'GO' THEN 'BACK' ELSE 'GO' END AS inoutType
+       	SELECT CASE WHEN INOUT_TYPE_CD = 'GO' THEN 'BACK' ELSE 'GO' END AS inoutType
 				, CONCAT(F_WTM_DATE_FORMAT(INOUT_DATE, "YMDHI"), '00') AS exceptSYmd
    	   		FROM WTM_INOUT_HIS 
        		WHERE TENANT_ID = #{tenantId} 
@@ -297,11 +292,9 @@
  
       <select id="getInoutMonitorList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
-			SELECT * FROM (
-				SELECT ENTER_CD as TITLE, SABUN as CAPTION_LB, INOUT_TYPE_CD as CAPTION_RB, TO_CHAR(YMD, 'MM-DD HH:MI') as STATUS
-					FROM WTM_INOUT_HIS 
-				ORDER BY INOUT_DATE DESC) 
-			WHERE ROWNUM <= 20 
+			SELECT ENTER_CD as title, SABUN as caption_lb, INOUT_TYPE_CD as caption_rb, F_WTM_DATE_FORMAT(YMD, 'M-D H:I') as status
+				FROM WTM_INOUT_HIS 
+			ORDER BY YMD DESC LIMIT 50
         ]]>
     </select>
 </mapper>

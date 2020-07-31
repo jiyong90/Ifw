@@ -603,7 +603,7 @@ SELECT 21 AS tenantId
   			  , #{eYmd, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{sHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{eHm, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
-  			  , #{ifApplNo, jdbcType=BIGINT, javaType=java.lang.Long, mode=IN}
+  			  , #{ifApplNo, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{status, jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
   			  , #{retCode,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
   			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
@@ -739,13 +739,9 @@ SELECT DISTINCT A.TENANT_ID AS tenantId
 	  , A.YMD AS ymd
 	  , 0 AS gooutCnt		
   FROM WTM_WORK_CALENDAR A
- WHERE A.TENANT_ID = 21
-   AND A.ENTER_CD = 'SAMHWACROWN'
-   AND TIME_CD_MGR_ID = 145
-   AND YMD > '20200301'
-   AND DATE_FORMAT(ENTRY_SDATE,'%H') >= '07' 
-   AND DATE_FORMAT(ENTRY_SDATE,'%i') > 50 
-  ORDER BY A.YMD, A.SABUN
+WHERE TENANT_ID = 10
+  and UPDATE_ID = 'HJ147'
+ ORDER BY A.YMD, A.SABUN
         ]]>
     </select>
     
@@ -945,8 +941,9 @@ ORDER BY YMD, SABUN
              , DATE_FORMAT(F_WTM_TO_DATE(CONCAT(C.YMD, B.SHM), 'YMDHIS'), '%Y%m%d%H%i%s') AS taaSdate
 			 , CASE WHEN B.SHM > B.EHM THEN DATE_FORMAT(F_WTM_DATE_ADD(F_WTM_TO_DATE(CONCAT(C.YMD, B.EHM), 'YMDHIS'), 1, 'D'), '%Y%m%d%H%i%s')
 	         ELSE DATE_FORMAT(F_WTM_TO_DATE(CONCAT(C.YMD, B.EHM), 'YMDHIS'), '%Y%m%d%H%i%s') END AS taaEdate
-             , CASE WHEN B.SHM IS NOT NULL AND B.EHM IS NOT NULL 
+             , CASE WHEN IFNULL(B.SHM, '') != '' AND IFNULL(B.EHM, '') != ''
 		 		  THEN timestampdiff(MINUTE, F_WTM_TO_DATE(CONCAT(C.YMD, B.SHM), 'YMDHI'), F_WTM_TO_DATE(CONCAT(C.YMD, B.EHM), 'YMDHI'))
+		 		  WHEN IFNULL(B.TAA_MINUTE,0) > 0 THEN B.TAA_MINUTE
 		 		  ELSE 0 END AS workMinute
              , C.TIME_CD_MGR_ID AS timeCdMgrId
              , C.HOLIDAY_YN AS holidayYn

@@ -41,4 +41,35 @@
 			 ORDER BY YMD
         ]]>
     </select>
+    <select id="getCompCreateHRList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT A.TENANT_ID AS tenantId
+				 , A.ENTER_CD AS enterCd
+				 , A.SABUN AS sabun
+				 , D.EMP_NM AS empNm
+				 , F_WTM_GET_EMP_ORG_NM(A.TENANT_ID, A.ENTER_CD, A.SABUN, F_WTM_DATE_FORMAT(NOW(),'YMD')) AS orgNm
+				 , A.SYMD AS symd
+				 , A.EYMD AS eymd
+				 , A.REST_MINUTE AS restMinute
+				 , TRUNCATE(A.ALLOW_MINUTE/60/8,2) AS compCnt
+			  FROM WTM_COMP_CREATE A
+			 INNER JOIN WTM_WORKTIME_CLOSE B
+			    ON A.TENANT_ID = B.TENANT_ID
+			   AND A.ENTER_CD = B.ENTER_CD
+			   AND A.YMD BETWEEN B.SYMD AND B.EYMD
+			 INNER JOIN WTM_PROPERTIE C
+			    ON A.TENANT_ID = C.TENANT_ID
+			   AND A.ENTER_CD = C.ENTER_CD
+			   AND C.INFO_KEY = 'OPTION_COMP_CODE'
+			 INNER JOIN WTM_EMP_HIS D
+				ON A.TENANT_ID = D.TENANT_ID
+			   AND A.ENTER_CD = D.ENTER_CD
+			   AND A.SABUN = D.SABUN
+			   AND D.EYMD = '29991231'
+			 WHERE B.WORKTIME_CLOSE_ID = #{worktimeCloseId} 			  
+        ]]>
+       	<if test="searchKeyword!=null and !searchKeyword.equals('')">
+			AND A.SABUN = #{searchKeyword} OR D.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')
+		</if>
+    </select>
 </mapper>
