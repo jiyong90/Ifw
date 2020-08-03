@@ -1029,6 +1029,16 @@ box-sizing: border-box;
   background-color: #d82bb0;
 }
 
+/* 보상휴가 */
+.notice-mark.COMP {
+  background-color: #7dbeff;
+  /* background-color: rgba(8, 8, 9,0.5); */
+}
+/* 보상휴가취소 */
+.notice-mark.COMP_CAN{
+  background-color: #f98695;
+}
+
 .notice-card .inner-wrap{
   float:left;
   line-height: 1;
