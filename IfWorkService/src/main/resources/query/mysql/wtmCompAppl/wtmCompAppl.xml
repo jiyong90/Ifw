@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmCompApplMapper">
+    
+    <!-- 
+    	보상휴가 신청 내역 조회
+     -->
+    <select id="getApplList" parameterType="map" resultType="map">
+        <![CDATA[
+       	SELECT A.COMP_APPL_ID     AS compApplId
+		     , A.APPL_ID          AS applId
+		     , A.SABUN            AS sabun
+		     , A.TAA_CD           AS taaCd
+		     , A.COMP_SYMD        AS compSymd
+		     , A.COMP_EYMD        AS compEymd
+		     , A.COMP_MINUTE      AS compMinute
+		     , A.REASON           AS reason
+		     , A.CANCEL_YN        AS cancleYn
+		     , B.COMP_CAN_APPL_ID AS compCanApplId
+		     , B.APPL_ID          AS canApplId
+		     , C.APPL_STATUS_CD   AS applStatusCd
+		     , D.APPL_STATUS_CD   AS canApplStatusCd
+		     , CASE
+		           WHEN F_WTM_NVL(A.CANCEL_YN, 'N') = 'N' AND C.APPL_STATUS_CD = '99' AND (D.APPL_STATUS_CD IS NULL OR D.APPL_STATUS_CD IN ('22', '32'))
+		           THEN CONCAT('<a class="basic" onClick="setCompCancel(', A.COMP_APPL_ID, ')">취소</a>')
+		           ELSE '' END AS endImg
+		  FROM WTM_COMP_APPL A
+		       LEFT OUTER JOIN (SELECT MAX(COMP_CAN_APPL_ID) AS COMP_CAN_APPL_ID, COMP_APPL_ID, APPL_ID, SABUN, REASON
+		                          FROM WTM_COMP_CAN_APPL
+		                         GROUP BY COMP_APPL_ID) B
+		         ON A.COMP_APPL_ID  = B.COMP_APPL_ID
+		       LEFT OUTER JOIN WTM_APPL C
+		         ON A.APPL_ID = C.APPL_ID
+		       LEFT OUTER JOIN WTM_APPL D
+		         ON B.APPL_ID = D.APPL_ID
+		      INNER JOIN (SELECT WCC.TENANT_ID
+		                       , WCC.ENTER_CD
+		                       , WCC.SABUN
+		                       , SUM(WCC.REST_MINUTE) AS REST_MINUTE
+		                       , MIN(WCC.SYMD) AS SYMD
+		                       , MAX(WCC.EYMD) AS EYMD
+		                    FROM WTM_COMP_CREATE WCC
+		                   WHERE #{ymd} BETWEEN WCC.SYMD AND WCC.EYMD
+		                   GROUP BY WCC.TENANT_ID, WCC.ENTER_CD, WCC.SABUN) E
+		         ON E.SABUN = A.SABUN
+		        AND E.SYMD <= A.COMP_SYMD
+		        AND E.EYMD >= A.COMP_EYMD
+		 WHERE C.APPL_STATUS_CD IN ('21','31','41','99')
+		   AND E.TENANT_ID = #{tenantId}
+		   AND E.ENTER_CD  = #{enterCd}
+		   AND E.SABUN     = #{sabun}
+        ]]>
+    </select>
+
+    <!-- 
+		보상휴가 신청 가능 시간 조회
+     -->
+    <select id="getPossibleUseTime" parameterType="map" resultType="map">
+        <![CDATA[
+       	SELECT WCC.TENANT_ID
+		     , WCC.ENTER_CD
+		     , WCC.SABUN
+		     , SUM(WCC.REST_MINUTE) AS REST_MINUTE
+		     , MIN(WCC.SYMD) AS SYMD
+		     , MAX(WCC.EYMD) AS EYMD
+		  FROM WTM_COMP_CREATE WCC
+		 WHERE TENANT_ID = #{tenantId}
+	       AND ENTER_CD  = #{enterCd}
+	       AND SABUN     = #{sabun}
+		   AND DATE_FORMAT(NOW(), '%Y%m%d') BETWEEN WCC.SYMD AND WCC.EYMD
+		 GROUP BY WCC.TENANT_ID, WCC.ENTER_CD, WCC.SABUN
+        ]]>
+    </select>
+    
+    <!-- 
+    	보상 휴가 신청
+     -->
+    <select id="saveApplRequest" statementType="CALLABLE">
+    	{ call P_WTM_COMP_APPL_REQUEST( 
+  				#{tenantId, 	 jdbcType=BIGINT,  javaType=java.lang.Long,   mode=IN}
+  			  , #{enterCd,  	 jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{sabun,    	 jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{applId,   	 jdbcType=BIGINT,  javaType=java.lang.Long,   mode=IN}
+  			  , #{applStatusCd,  jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{userId,		 jdbcType=VARCHAR, javaType=java.lang.String, mode=IN}
+  			  , #{compCanApplId, jdbcType=BIGINT,  javaType=java.lang.Long,   mode=IN}
+  			  , #{retCode,  	 jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  , #{retMsg,   	 jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
+  			  ) }
+  	</select>
+  	
+  	<!-- 
+  		휴일 근무를 제외한 근무 일수를 확인
+  	 -->
+  	<select id="getWorkDayCalendar" parameterType="map" resultType="map">
+  		SELECT COUNT(1) AS WORK_DAY 
+  		  FROM WTM_WORK_CALENDAR 
+		 WHERE TENANT_ID = #{tenantId}
+    	   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND YMD BETWEEN #{sDate} AND #{eDate}
+		   AND HOLIDAY_YN = 'N'
+  	</select>
+  	
+  	<!-- 
+    	신청내역이 있는지 여부 조사
+     -->
+    <select id="getCheckAppl" parameterType="map" resultType="map">
+       	SELECT WCA.COMP_APPL_ID
+		     , WCA.APPL_ID
+		     , WCA.SABUN
+		     , WCA.TAA_CD      AS taaCd
+		     , WCA.COMP_SYMD   AS compSymd
+		     , WCA.COMP_EYMD   AS compEymd
+		     , WCA.COMP_MINUTE AS compMinute
+		     , WCA.REASON      AS reason
+		     , WCA.CANCEL_YN   AS cancleYn
+		     , WCA.UPDATE_DATE
+		     , WCA.UPDATE_ID
+		  FROM WTM_COMP_APPL WCA
+		 WHERE WCA.CANCEL_YN = 'N'
+		   AND WCA.SABUN = #{sabun}
+		   AND (#{sDate} BETWEEN WCA.COMP_SYMD AND WCA.COMP_EYMD OR #{eDate} BETWEEN WCA.COMP_SYMD AND WCA.COMP_EYMD)
+		 ORDER BY WCA.COMP_APPL_ID DESC
+    </select>
+    
+    <select id="compApplfindByApplId" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT A.APPL_ID            AS applId
+			     , A.TENANT_ID          AS tenentId
+			     , A.ENTER_CD           AS enterCd
+			     , A.APPL_CD            AS applCd
+			     , A.APPL_SABUN         AS applSabun
+			     , A.APPL_YMD           AS applYmd
+			     , A.APPL_STATUS_CD     AS applStatusCd
+			     , B.COMP_APPL_ID       AS compApplId
+			     , B.SABUN              AS sabun
+			     , B.TAA_CD             AS taaCd
+			     , B.COMP_SYMD          AS symd
+			     , B.COMP_EYMD          AS eymd
+			     , B.REASON             AS reason
+			     , B.COMP_MINUTE        AS compMinute
+			     , C.TAA_NM             AS taaNm
+			     , B.CANCEL_YN          AS cancelYn
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+			     , SUM(CC.REST_MINUTE)  AS restMinute
+			FROM WTM_APPL A
+			         INNER JOIN WTM_COMP_APPL B
+			                    ON A.APPL_ID = B.APPL_ID
+			         LEFT OUTER JOIN WTM_TAA_CODE C
+			                         ON B.TAA_CD = C.TAA_CD
+			         LEFT OUTER JOIN WTM_COMP_CREATE CC
+                              	  ON CC.TENANT_ID = A.TENANT_ID
+                                 AND CC.ENTER_CD = A.ENTER_CD
+                                 AND CC.SABUN = B.SABUN
+                                 AND DATE_FORMAT(NOW(), '%Y%m%d') BETWEEN CC.SYMD AND CC.EYMD
+			WHERE 1 = 1
+			  AND A.APPL_ID = #{applId}
+			  AND (A.APPL_SABUN = #{sabun} OR B.SABUN IS NULL OR B.SABUN = #{sabun})
+			  AND (B.CANCEL_YN IS NULL OR B.CANCEL_YN <> 'Y' OR (B.CANCEL_YN = 'Y' AND A.APPL_STATUS_CD = '99'))
+			ORDER BY B.COMP_SYMD
+	        ]]>
+    </select>
+    
+    <select id="getCompApplList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+		SELECT B.TENANT_ID                     AS tenantId
+		     , B.ENTER_CD                      AS enterCd
+		     , A.SABUN                         AS sabun
+		     , A.TAA_CD                        AS taaCd
+		     , C.YMD                           AS ymd
+		     , A.COMP_SYMD                     AS symd
+		     , A.COMP_EYMD                     AS eymd
+		     , C.TIME_CD_MGR_ID                AS timeCdMgrId
+		     , C.HOLIDAY_YN                    AS holidayYn
+		     , A.APPL_ID                       AS applId
+		     , F_WTM_NVL(C.WORK_CLOSE_YN, 'N') AS closeYn
+		FROM WTM_COMP_APPL A
+		         INNER JOIN WTM_APPL B
+		                    ON A.APPL_ID = B.APPL_ID
+		                   AND A.SABUN = B.APPL_SABUN
+		         INNER JOIN WTM_WORK_CALENDAR C
+		                    ON B.TENANT_ID = C.TENANT_ID
+		                   AND B.ENTER_CD = C.ENTER_CD
+		                   AND B.APPL_SABUN = C.SABUN
+		                   AND A.SABUN = C.SABUN
+		                   AND C.YMD BETWEEN A.COMP_SYMD AND A.COMP_EYMD
+		WHERE B.TENANT_ID  = #{tenantId}
+		  AND B.ENTER_CD   = #{enterCd}
+		  AND B.APPL_SABUN = #{sabun}
+		  AND B.APPL_ID    = #{applId}	
+	    ]]>
+    </select>
+</mapper>

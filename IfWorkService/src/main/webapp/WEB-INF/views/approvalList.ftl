@@ -515,6 +515,89 @@
         </div>
     </div>
     <!-- 결재의견 modal end -->
+    
+    <!-- 보상휴가신청 상세보기 modal start -->
+    <div class="modal fade show" id="compAppl" tabindex="-1" role="dialog"  v-if="appl">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <template v-if="appl.applCd=='COMP_CAN'">
+                		<h5 class="modal-title">보상휴가 취소신청</h5>
+                	</template>
+                	<template v-else="">
+                		<h5 class="modal-title">보상휴가신청</h5>
+                	</template>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap">
+					            <template v-if="appl.applCd=='COMP'">
+				                	<p class="page-sub-title mb-0">잔여 보상휴가시간</p>
+				                    <span class="time-wrap">
+				                        <i class="fas fa-clock"></i><span class="time point">{{minuteToHHMM(appl.restMinute, 'detail')}}</span>
+				                    </span>
+				                    <hr class="separate-bar">
+					            </template>
+					            <div class="inner-wrap">
+	                                <div class="title">근태</div>
+	                                <div class="desc">
+	                                	<template v-if="appl.taaNm">
+	                                	{{appl.taaNm}}
+	                                	</template>
+	                                </div>
+	                            </div>
+	                            <div class="inner-wrap">
+	                                <div class="title">보상휴가시간</div>
+	                                <div class="desc">
+	                                    <span class="time-wrap">
+	                                        <i class="fas fa-clock"></i>
+	                                        <span class="time">
+	                                        	<template v-if="appl.compMinute">
+	                                        		{{minuteToHHMM(appl.compMinute, 'detail')}}
+	                                        	</template>
+	                                        </span>
+	                                    </span>
+	                                    <span class="date-wrap">
+	                                        <span class="start-date">
+	                                        	<template v-if="appl.symd">
+	                                        	{{moment(appl.symd).format('YYYY-MM-DD')}}
+	                                        	</template>
+	                                        </span>
+	                                        <span class="ml-1 mr-1">~</span>
+	                                        <span class="end-date">
+	                                        	<template v-if="appl.eymd">
+	                                        	{{moment(appl.eymd).format('YYYY-MM-DD')}}
+	                                        	</template>
+	                                        </span>
+	                                    </span>
+	                                </div>
+	                            </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">사유</div>
+                                <div class="desc">
+                                	<template v-if="appl.reason">
+                                	{{appl.reason}}
+                                	</template>
+                                </div>
+                            </div>
+                            <appl-line :bind-data="appl.applLine"></appl-line>
+                            <hr class="bar">
+                        </div>
+<!--                         <div class="btn-wrap text-center" v-if="applType=='01' && appl.applSabun == appl.sabun"> -->
+<!--                            	<button type="button" class="btn btn-default rounded-0" v-if="appl.recoveryYn" data-toggle="modal" data-target="#confirmModal">회수하기</button> -->
+<!--                         </div> -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 보상휴가신청 상세보기 modal end -->
+    
 	<div class="container-fluid mgr-wrap mgr-wrap-height">
 		<p class="page-title">결재 알림</p>
 		<ul class="nav approval-wrap nav-pills" role="tablist">
@@ -647,7 +730,6 @@
 	    			//선근제 신청서
 	    			this.getFlexibleSeleAppl(appr.applId);
 	    		} */
-	    		console.log(appr);
 	    		$this.appl = appr.appl;
 	    		$this.appl['applCd'] = appr.applCd;
 	    		
@@ -682,6 +764,9 @@
 	    			
 	    			//대체휴가 정정
 	    			$("#chgSubsModal").modal("show");
+	    		} else if(appr.applCd=='COMP' || appr.applCd=='COMP_CAN') {
+	    			//근태 사유서
+	    			$("#compAppl").modal("show");
 	    		}
 	    		
 	    	},
@@ -919,12 +1004,14 @@
 							$("#alertText").html("회수되었습니다.");
 							$("#alertModal").on('hidden.bs.modal',function(){
 								$("#alertModal").off('hidden.bs.modal');
+								
 								$("#confirmModal").modal("hide");
 								
-								if(appl.applCd == 'SUBS_CHG')
+								if(appl.applCd == 'SUBS_CHG') {
 									$("#chgSubsModal").modal("hide");
-								else
+								} else {
 									$("#otAppl").modal("hide");
+								}
 								$this.getApprovalList($this.applType);
 							});
 						} else {

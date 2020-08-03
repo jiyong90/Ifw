@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmCompCanApplMapper">
+    
+    <select id="compCanApplfindByApplId" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT A.APPL_ID            AS applId
+			     , A.TENANT_ID          AS tenantId
+			     , A.ENTER_CD           AS enterCd
+			     , A.APPL_CD            AS applCd
+			     , A.APPL_SABUN         AS applSabun
+			     , A.APPL_YMD           AS applYmd
+			     , A.APPL_STATUS_CD     AS applStatusCd
+			     , D.COMP_APPL_ID       AS compApplId
+			     , D.COMP_CAN_APPL_ID   AS compCanApplId
+			     , B.SABUN              AS sabun
+			     , B.TAA_CD             AS taaCd
+			     , B.COMP_SYMD          AS symd
+			     , B.COMP_EYMD          AS eymd
+			     , D.REASON             AS reason
+			     , B.COMP_MINUTE        AS compMinute
+			     , C.TAA_NM             AS taaNm
+			     , B.CANCEL_YN          AS cancelYn
+			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+			FROM WTM_APPL A
+			         INNER JOIN WTM_COMP_CAN_APPL D
+			                 ON A.APPL_ID = D.APPL_ID
+			         INNER JOIN WTM_COMP_APPL B
+			                 ON B.COMP_APPL_ID = D.COMP_APPL_ID
+			         INNER JOIN WTM_TAA_CODE C
+			                 ON A.TENANT_ID = C.TENANT_ID
+			                AND A.ENTER_CD  = C.ENTER_CD
+			                AND B.TAA_CD = C.TAA_CD
+			WHERE 1 = 1
+			  AND A.APPL_ID = #{applId}
+			  AND (A.APPL_SABUN = #{sabun} OR D.SABUN IS NULL OR D.SABUN = #{sabun})
+			ORDER BY B.COMP_SYMD
+	        ]]>
+    </select>
+    
+    <select id="getCompCanApplList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT B.TENANT_ID                     AS tenantId
+			     , B.ENTER_CD                      AS enterCd
+			     , A.SABUN                         AS sabun
+			     , A.TAA_CD                        AS taaCd
+			     , C.YMD                           AS ymd
+			     , A.COMP_SYMD                     AS symd
+			     , A.COMP_EYMD                     AS eymd
+			     , C.TIME_CD_MGR_ID                AS timeCdMgrId
+			     , C.HOLIDAY_YN                    AS holidayYn
+			     , A.APPL_ID                       AS applId
+			     , D.APPL_ID                       AS canApplId
+			     , F_WTM_NVL(C.WORK_CLOSE_YN, 'N') AS closeYn
+			FROM WTM_COMP_APPL A
+			         INNER JOIN WTM_APPL B
+		                     ON A.APPL_ID = B.APPL_ID
+		                    AND A.SABUN = B.APPL_SABUN
+			         INNER JOIN WTM_WORK_CALENDAR C
+		                     ON B.TENANT_ID = C.TENANT_ID
+		                    AND B.ENTER_CD = C.ENTER_CD
+		                    AND B.APPL_SABUN = C.SABUN
+		                    AND A.SABUN = C.SABUN
+		                    AND C.YMD BETWEEN A.COMP_SYMD AND A.COMP_EYMD
+			         INNER JOIN WTM_COMP_CAN_APPL D
+			                 ON A.COMP_APPL_ID = D.COMP_APPL_ID
+			WHERE B.TENANT_ID  = #{tenantId}
+			  AND B.ENTER_CD   = #{enterCd}
+			  AND B.APPL_SABUN = #{sabun}
+			  AND D.APPL_ID    = #{applId}
+	        ]]>
+    </select>
+    
+</mapper>
