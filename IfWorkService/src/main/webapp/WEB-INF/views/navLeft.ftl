@@ -83,7 +83,6 @@
                         <li :class="{active: curPageName=='inoutMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutMgr';">출/퇴근시간 변경</a></li>
                         <li :class="{active: curPageName=='worktimeChangeMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/worktimeChangeMgr';">근무시간 변경</a></li>
                         <li :class="{active: curPageName=='inoutRawMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/inoutRawMgr';">타각기록 확인</a></li>
-                        <li :class="{active: curPageName=='workTimeApprList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/workTimeApprList';">인정근무조회</a></li>                      
                                               
                     </ul>
                 </li>
