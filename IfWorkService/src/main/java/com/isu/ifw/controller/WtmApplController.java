@@ -73,6 +73,14 @@ public class WtmApplController {
 	WtmApplService wtmOtSubsChgApplService;
 	
 	@Autowired
+	@Qualifier("wtmCompApplService")
+	WtmApplService wtmCompApplService;
+	
+	@Autowired
+	@Qualifier("wtmCompCanApplService")
+	WtmApplService wtmCompCanApplService;
+	
+	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
 	@Autowired
@@ -236,6 +244,12 @@ public class WtmApplController {
 							
 						}
 					}
+				} else if("COMP".equals(applCd)) {
+					rp = wtmCompApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					
+				} else if("COMP_CAN".equals(applCd)) {
+					rp = wtmCompCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+					
 				} else {
 					isFlexAppl = true;
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
@@ -307,6 +321,10 @@ public class WtmApplController {
 			if(applCd!=null && !"".equals(applCd)) {
 				if("OT".equals(applCd)) {
 					wtmOtApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				} else if("COMP".equals(applCd)) {
+					wtmCompApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				} else if("COMP_CAN".equals(applCd)) {
+					wtmCompCanApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				} else {
 					applService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				}
@@ -364,6 +382,10 @@ public class WtmApplController {
 					wtmOtCanApplService.delete(applId);
 				} else if("SUBS_CHG".equals(applCd)) {
 					wtmOtSubsChgApplService.delete(applId);
+				} else if("COMP".equals(applCd)) {
+					wtmCompApplService.delete(applId);
+				} else if("COMP_CAN".equals(applCd)) {
+					wtmCompCanApplService.delete(applId);
 				} else {
 					WtmFlexibleAppl appl = flexApplRepository.findByApplId(applId);
 					if(appl == null) {

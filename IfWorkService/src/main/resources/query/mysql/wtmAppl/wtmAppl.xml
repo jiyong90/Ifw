@@ -134,6 +134,8 @@
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
                 		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+                		WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
+                		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'  
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -144,11 +146,16 @@
 			    ON A.APPL_ID = O.APPL_ID 
 			  LEFT OUTER JOIN (SELECT * FROM WTM_OT_CAN_APPL WHERE SABUN = #{empNo}) OC 
 			    ON A.APPL_ID = OC.APPL_ID 
+			  LEFT OUTER JOIN (SELECT * FROM WTM_COMP_APPL WHERE SABUN = #{empNo}) CA 
+			    ON A.APPL_ID = CA.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd} 
 			   AND (A.APPL_SABUN = #{empNo} 
 			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
-			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
+			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo})
+			    OR (A.APPL_CD = 'COMP' AND CA.SABUN = #{empNo})
+			    OR (A.APPL_CD = 'COMP_CAN' AND CA.SABUN = #{empNo})				    
+			    )
 			ORDER BY A.APPL_YMD DESC
 			]]>
 		   <if test="startPage!=null and !startPage.equals('')">
@@ -176,6 +183,8 @@
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
                    	    WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+                   	    WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
+                   	    WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -216,6 +225,8 @@
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View'
                    		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+                   		WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
+                   		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
                      ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -250,7 +261,9 @@
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
-                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+                		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View'
+                		WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
+                		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'  
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -261,12 +274,17 @@
 			    ON A.APPL_ID = O.APPL_ID 
 			  LEFT OUTER JOIN (SELECT * FROM WTM_OT_CAN_APPL WHERE SABUN = #{empNo}) OC 
 			    ON A.APPL_ID = OC.APPL_ID 
+			  LEFT OUTER JOIN (SELECT * FROM WTM_COMP_APPL WHERE SABUN = #{empNo}) CA 
+			    ON A.APPL_ID = CA.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
  			   AND A.ENTER_CD = #{enterCd} 
 			   AND (A.APPL_SABUN = #{empNo} 
 			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
-			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo}))
+			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo})
+			    OR (A.APPL_CD = 'COMP' AND CA.SABUN = #{empNo})	
+			    OR (A.APPL_CD = 'COMP_CAN' AND CA.SABUN = #{empNo})	 
+			    )
 			ORDER BY A.APPL_YMD DESC
 			]]>
 		   <if test="startPage!=null and !startPage.equals('')">
@@ -293,7 +311,9 @@
 			     , L.APPR_OPINION AS apprOpinion
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
-                   	    WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+                   	    WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View'
+                   	    WHEN A.APPL_CD = 'COMP' THEN 'view://W04View' 
+                   	    WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View' 
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -335,6 +355,8 @@
 				 , CONCAT(A.ENTER_CD, '@', A.APPL_CD, '@', A.APPL_ID, '@', #{typeCd}, '@', A.APPL_SABUN, '@WTM') AS applKey
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View'
                    		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
+                   		WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
+                   		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
                      ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
