@@ -37,7 +37,7 @@
 			AND A.YMD BETWEEN REPLACE(#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '')
 			</if>
 			<if test="searchKeyword!=null and !searchKeyword.equals('')">
-			AND B.SABUN = #{searchKeyword} OR B.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')
+			AND (B.SABUN = #{searchKeyword} OR B.EMP_NM LIKE CONCAT(#{searchKeyword}, '%'))
 			</if>
 		<![CDATA[
 			 ORDER BY A.SABUN, YMD
@@ -80,7 +80,7 @@
 			 WHERE C.WORKTIME_CLOSE_ID = ${worktimeCloseId}
 			]]>
 			<if test="searchKeyword!=null and !searchKeyword.equals('')">
-			AND B.SABUN = #{searchKeyword} OR B.EMP_NM LIKE CONCAT(#{searchKeyword}, '%')
+			AND (B.SABUN = #{searchKeyword} OR B.EMP_NM LIKE CONCAT(#{searchKeyword}, '%'))
 			</if>
 		<![CDATA[
 			 ORDER BY A.SABUN, A.SYMD
@@ -110,16 +110,21 @@
     
     <select id="getCloseEmpList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT A.WORKTIME_CLOSE_ID AS worktimeCloseId
+        	SELECT DISTINCT A.WORKTIME_CLOSE_ID AS worktimeCloseId
         	     , A.SABUN  AS sabun
         	     , B.EMP_NM AS empNm
         	     , B.ORG_CD AS orgCd
                  , F_WTM_GET_ORG_NM(B.TENANT_ID, B.ENTER_CD, B.ORG_CD, DATE_FORMAT(NOW(), '%Y%m%d')) AS orgNm
-                 , CONCAT('<a class="basic" onClick="setEndConfirm(', WORKTIME_CLOSE_ID, ",'", A.SABUN, "'" ')">재생성</a>') AS endImg
+                 , CONCAT('<a class="basic" onClick="setEndConfirm(',A.WORKTIME_CLOSE_ID, ",'", A.SABUN, "'" ')">재생성</a>') AS endImg
               FROM WTM_WORKTIME_MON_CLOSE A
+             INNER JOIN WTM_WORKTIME_CLOSE C
+                ON A.WORKTIME_CLOSE_ID = C.WORKTIME_CLOSE_ID
              INNER JOIN WTM_EMP_HIS B
-                ON A.SABUN = B.SABUN 
-             WHERE WORKTIME_CLOSE_ID = #{worktimeCloseId}
+                ON C.TENANT_ID = B.TENANT_ID
+               AND C.ENTER_CD = B.ENTER_CD
+               AND A.SABUN = B.SABUN
+               AND C.SYMD BETWEEN B.SYMD AND B.EYMD
+             WHERE A.WORKTIME_CLOSE_ID = #{worktimeCloseId}
              GROUP BY A.WORKTIME_CLOSE_ID, A.SABUN
         ]]>
     </select>     

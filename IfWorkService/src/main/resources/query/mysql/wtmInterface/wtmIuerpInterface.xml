@@ -490,7 +490,7 @@
 	
 	<select id="getInsertWtmEmpHis" parameterType="hashmap" resultType="map">
 		<![CDATA[
-		SELECT I.TENANT_ID AS tenantId
+		SELECT DISTINCT I.TENANT_ID AS tenantId
 		     , I.ENTER_CD AS enterCd
 		     , I.SABUN AS sabun
 		     , I.EMP_NM AS empNm
@@ -1024,4 +1024,31 @@
 		]]>
 	</update>
 	
+	<select id="getWtmIntfEmp" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SELECT DISTINCT I.TENANT_ID as tenantId
+	             , I.ENTER_CD as enterCd
+	             , I.SABUN as sabun
+	             , I.EMP_NM as empNm
+	             , I.EMP_ENG_NM as empEngNm
+	             , I.ORG_CD as orgCd
+	             , I.STATUS_CD as statusCd
+	             , I.LOCATION_CD as locationCd
+	             , I.DUTY_CD as dutyCd
+	             , I.POS_CD as posCd
+	             , I.CLASS_CD as classCd
+	             , I.JOB_GROUP_CD as jobGroupCd
+	             , I.JOB_CD as jobCd
+	             , I.PAY_TYPE_CD as payTypeCd
+	             , I.LEADER_YN as leaderYn
+	             , I.SYMD as symd
+			 	 , CASE WHEN I.EYMD IS NULL OR I.EYMD='' THEN '29991231' ELSE I.EYMD END as eymd 
+			 	 , F_WTM_AES_ENCRYPT(CONCAT(I.TENANT_ID, I.ENTER_CD, I.SABUN), #{encKey}) AS empId
+			  FROM WTM_INTF_EMP I
+			 WHERE 1=1 
+			   AND I.TENANT_ID = #{tenantId}
+			   AND I.YYYYMMDDHHMISS > #{ymdhis}
+			 ORDER BY I.YYYYMMDDHHMISS ASC, I.ENTER_CD, I.SABUN, I.SYMD
+        ]]>
+	</select>
 </mapper>

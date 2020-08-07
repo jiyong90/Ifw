@@ -27,7 +27,7 @@
 			   AND #{d} BETWEEN S.USE_SYMD AND S.USE_EYMD
 			   AND S.BASE_WORK_YN = 'N'
 			   AND S.APPL_YN = 'Y'
-			 ORDER BY S.USE_SYMD DESC
+			 ORDER BY S.USE_SYMD DESC, S.WORK_TYPE_CD, S.FLEXIBLE_NM
         ]]>
     </select>
     <select id="checkRequestDate" parameterType="map" resultType="map"> 
@@ -246,7 +246,7 @@
 						WHEN 7 THEN '토요일' END AS weekDay
 		      FROM DUAL 
         ]]>
-    </select> 
+    </select>
     
     <update id="mergeWtmDayPattByFlexibleStdMgrId" parameterType="map">
     	<![CDATA[
