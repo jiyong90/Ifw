@@ -206,45 +206,75 @@
     
     <!--해당 기간의 근무 정보 -->
   	<select id="getFlexibleRangeInfo" parameterType="map" resultType="map">
-  		SELECT E.FLEXIBLE_EMP_ID AS flexibleEmpId
-			  , E.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
-			  , M.FLEXIBLE_NM AS flexibleNm
-			  , M.WORK_TYPE_CD AS workTypeCd
-			  , M.BASE_WORK_YN AS baseWorkYn
-			  , M.UNIT_MINUTE AS unitMinute
-			  , E.SABUN AS sabun
-			  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END AS sYmd
-			  , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F','SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END AS eYmd
-			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
-			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'OT') AS totalOtMinute
-			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
-			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
-			  , T.AVL_MINUTE AS avlMinute
-			  , (SELECT A.APPL_ID 
-			       FROM WTM_APPL A 
-					 JOIN WTM_FLEXIBLE_APPL F 
-					   ON A.APPL_ID = F.APPL_ID 
-					WHERE A.TENANT_ID = E.TENANT_ID 
-					  AND A.ENTER_CD = E.ENTER_CD 
-					  AND A.APPL_SABUN = E.SABUN
-					  AND A.APPL_STATUS_CD = '99'
-					  AND F.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
-					  AND F.SYMD = E.SYMD
-					  AND F.EYMD = E.EYMD) AS applId
-		  FROM WTM_FLEXIBLE_EMP E
-		  JOIN WTM_FLEXIBLE_STD_MGR M
-			 ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
-		  LEFT OUTER JOIN WTM_WORK_TERM_TIME T
-		    ON E.TENANT_ID = T.TENANT_ID
-		   AND E.ENTER_CD = T.ENTER_CD
-		   AND E.SABUN = T.SABUN
-		   AND E.WORK_TYPE_CD = T.WORK_TYPE_CD
-		   AND #{ymd} BETWEEN T.FLEXIBLE_SDATE AND T.FLEXIBLE_EDATE
-		   AND #{ymd} BETWEEN T.WEEK_SDATE AND T.WEEK_EDATE
-		 WHERE E.TENANT_ID = #{tenantId}
-		   AND E.ENTER_CD = #{enterCd}
-		   AND E.SABUN = #{sabun}
-		   AND #{ymd} BETWEEN E.SYMD AND E.EYMD 
+  		SELECT XX.flexibleEmpId
+		     , XX.flexibleStdMgrId
+		     , XX.flexibleNm
+		     , XX.workTypeCd
+		     , XX.baseWorkYn
+		     , XX.unitMinute
+		     , XX.sabun
+		     , XX.sYmd
+		     , XX.eYmd
+		     , XX.totalWorkMinute
+		     , XX.totalOtMinute
+		     , XX.restWorkMinute
+		     , XX.restOtMinute
+		     , F_WTM_NVL(XX.totalApprMinute / XX.workDayCnt, 0) AS avlMinute
+		     , XX.totalApprMinute
+		     , XX.workDayCnt
+		     , XX.applId
+		  FROM (
+		           SELECT E.FLEXIBLE_EMP_ID AS flexibleEmpId
+		                , E.FLEXIBLE_STD_MGR_ID AS flexibleStdMgrId
+		                , M.FLEXIBLE_NM AS flexibleNm
+		                , M.WORK_TYPE_CD AS workTypeCd
+		                , M.BASE_WORK_YN AS baseWorkYn
+		                , M.UNIT_MINUTE AS unitMinute
+		                , E.SABUN AS sabun
+		                , E.TENANT_ID AS tenantId
+		                , E.ENTER_CD AS enterCd
+		                , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END AS sYmd
+		                , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END AS eYmd
+		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
+		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'OT') AS totalOtMinute
+		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
+		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
+		                , T.AVL_MINUTE AS avlMinute
+		                , (SELECT A.APPL_ID
+		                   FROM WTM_APPL A
+		                            JOIN WTM_FLEXIBLE_APPL F
+		                              ON A.APPL_ID = F.APPL_ID
+		                   WHERE A.TENANT_ID = E.TENANT_ID
+		                     AND A.ENTER_CD = E.ENTER_CD
+		                     AND A.APPL_SABUN = E.SABUN
+		                     AND A.APPL_STATUS_CD = '99'
+		                     AND F.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
+		                     AND F.SYMD = E.SYMD
+		                     AND F.EYMD = E.EYMD) AS applId
+		                , SUM(CASE WHEN (R.TIME_TYPE_CD IN ('BASE', 'REGA')) OR (R.TIME_TYPE_CD IN ('TAA') AND M.TAA_TIME_YN = 'Y') THEN APPR_MINUTE ELSE 0 END) AS totalApprMinute
+		                , SUM(CASE WHEN (R.TIME_TYPE_CD IN ('BASE', 'REGA')) OR (R.TIME_TYPE_CD IN ('TAA') AND M.TAA_TIME_YN = 'Y') THEN CASE WHEN APPR_MINUTE IS NOT NULL THEN 1 ELSE 0 END ELSE 0 END) AS workDayCnt
+		           FROM WTM_FLEXIBLE_EMP E
+		                    JOIN WTM_FLEXIBLE_STD_MGR M
+		                      ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
+		                    LEFT OUTER JOIN WTM_WORK_TERM_TIME T
+		                                 ON E.TENANT_ID = T.TENANT_ID
+		                                AND E.ENTER_CD = T.ENTER_CD
+		                                AND E.SABUN = T.SABUN
+		                                AND E.WORK_TYPE_CD = T.WORK_TYPE_CD
+		                                AND #{ymd} BETWEEN T.FLEXIBLE_SDATE AND T.FLEXIBLE_EDATE
+		                                AND #{ymd} BETWEEN T.WEEK_SDATE AND T.WEEK_EDATE
+		                    LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+		                                 ON E.TENANT_ID = R.TENANT_ID
+		                                AND E.ENTER_CD = R.ENTER_CD
+		                                AND E.SABUN = R.SABUN
+		                                AND R.YMD BETWEEN (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END)
+		                                              AND (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END)
+		
+		           WHERE E.TENANT_ID = #{tenantId}
+		             AND E.ENTER_CD = #{enterCd}
+		             AND E.SABUN = #{sabun}
+		             AND #{ymd} BETWEEN E.SYMD AND E.EYMD
+		       ) XX
   	</select>
   	
   	 <!--해당 일의 근무 정보 -->
@@ -2404,6 +2434,10 @@
 									AND O.HOLIDAY_YN = 'Y'
 									AND A.APPL_YMD BETWEEN X.WEEK_SDATE AND X.WEEK_EDATE
 									AND A.APPL_STATUS_CD = '21' ) AS applHolOtMinute 
+				  , CAST(SUM(CASE
+			                    WHEN (X.YMD >= DATE_FORMAT(NOW(), '%Y%m%d')) AND (X.TIME_TYPE_CD IN ('BASE', 'REGA')) AND (X.APPR_MINUTE IS NULL OR X.APPR_MINUTE = 0) OR (X.TIME_TYPE_CD IN ('TAA') AND X.TAA_TIME_YN = 'Y')
+			                        THEN IFNULL(X.PLAN_MINUTE, 0)
+			                    ELSE 0 END) AS UNSIGNED) AS exceptMinute
 				FROM (
 				SELECT CASE WHEN E.SYMD BETWEEN W.WEEK_SDATE AND W.WEEK_EDATE THEN E.SYMD
 										  WHEN W.WEEK_SDATE BETWEEN E.SYMD AND E.EYMD THEN W.WEEK_SDATE
