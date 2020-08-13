@@ -252,7 +252,21 @@
 		                     AND F.SYMD = E.SYMD
 		                     AND F.EYMD = E.EYMD) AS applId
 		                , SUM(CASE WHEN (R.TIME_TYPE_CD IN ('BASE', 'REGA')) OR (R.TIME_TYPE_CD IN ('TAA') AND M.TAA_TIME_YN = 'Y') THEN APPR_MINUTE ELSE 0 END) AS totalApprMinute
-		                , SUM(CASE WHEN (R.TIME_TYPE_CD IN ('BASE', 'REGA')) OR (R.TIME_TYPE_CD IN ('TAA') AND M.TAA_TIME_YN = 'Y') THEN CASE WHEN APPR_MINUTE IS NOT NULL THEN 1 ELSE 0 END ELSE 0 END) AS workDayCnt
+		                , (SELECT COUNT(DISTINCT YMD)
+		                     FROM WTM_WORK_DAY_RESULT A
+		                          JOIN WTM_FLEXIBLE_STD_MGR B
+		                               ON A.TENANT_ID =  B.TENANT_ID
+		                              AND A.ENTER_CD = B.ENTER_CD
+		                    WHERE A.TENANT_ID = E.TENANT_ID
+		                      AND A.ENTER_CD = E.ENTER_CD
+		                      AND A.SABUN = E.SABUN
+		                      AND (A.TIME_TYPE_CD IN ('BASE', 'REGA') OR (A.TIME_TYPE_CD IN ('TAA') AND B.TAA_TIME_YN = 'Y'))
+		                      AND B.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
+		                      <![CDATA[
+		                      AND A.APPR_MINUTE IS NOT NULL AND A.APPR_MINUTE <> 0
+		                      ]]>
+		                      AND A.YMD BETWEEN (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END)
+		                                    AND (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END)) AS workDayCnt
 		           FROM WTM_FLEXIBLE_EMP E
 		                    JOIN WTM_FLEXIBLE_STD_MGR M
 		                      ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
@@ -2553,6 +2567,16 @@
 		   AND SABUN = #{sabun}
 		   AND YMD = #{ymd}
 		   AND TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'REGA', 'NIGHT')
+  	</select>
+  	
+  	
+  	<select id="getWorkDayResultO" parameterType="map" resultType="hashmap">
+		 SELECT *
+		   FROM WTM_WORK_DAY_RESULT_O A
+		  WHERE A.TENANT_ID = #{tenantId}
+		    AND A.ENTER_CD = #{enterCd}
+			AND A.SABUN = #{sabun}
+		    AND A.YMD = #{ymd}
   	</select>
   	
 </mapper>
