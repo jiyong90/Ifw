@@ -957,7 +957,7 @@
 		  			alert("탄력근무제의 시작 요일은 "+arr[weekDay]+"요일 입니다.\n근무제 시작일을 다시 지정해 주세요.");
 					return false;
 		  		}
-			} else if(status=='D') {
+			} else if(status=='D' || status=='U') {
 				sheet1.SetCellValue( i, "endImg", "");
 			}
 		}
