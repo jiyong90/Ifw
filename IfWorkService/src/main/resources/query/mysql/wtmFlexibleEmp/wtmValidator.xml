@@ -102,22 +102,23 @@
   	<select id="checkDuplicateTaaAppl" parameterType="map" resultType="map">
   		<![CDATA[ 
 			SELECT #{sabun} AS sabun
-			     , F_WTM_GET_EMP_NM(${tenantId}, #{enterCd}, #{sabun}, #{symd}) AS empNm
+			     , F_WTM_GET_EMP_NM(#{tenantId}, #{enterCd}, #{sabun}, #{symd}) AS empNm
 			     , SUM(XX.CNT) AS cnt
 			  FROM ( 
 						SELECT COUNT(*) AS CNT
 						  FROM WTM_APPL A
 						  JOIN ( 
-						  		SELECT A.APPL_ID, A.TENANT_ID, A.ENTER_CD, A.SABUN, A.TAA_CD, A.SYMD, A.EYMD, A.SHM, A.EHM
-								     , CASE WHEN SHM IS NOT NULL AND SHM<>'' THEN F_WTM_TO_DATE(CONCAT(SYMD, SHM), 'YMDHIS') ELSE NULL END AS SDATE
-								     , CASE WHEN EHM IS NOT NULL AND EHM<>'' THEN F_WTM_TO_DATE(CONCAT(EYMD, EHM), 'YMDHIS') ELSE NULL END AS EDATE
+						  		SELECT A.APPL_ID, A.TENANT_ID, A.ENTER_CD, A.SABUN, D.TAA_CD, D.SYMD, D.EYMD, D.SHM, D.EHM
+								     , CASE WHEN D.SHM IS NOT NULL AND D.SHM<>'' THEN F_WTM_TO_DATE(CONCAT(D.SYMD, D.SHM), 'YMDHIS') ELSE NULL END AS SDATE
+								     , CASE WHEN D.EHM IS NOT NULL AND D.EHM<>'' THEN F_WTM_TO_DATE(CONCAT(D.EYMD, D.EHM), 'YMDHIS') ELSE NULL END AS EDATE
 								     , C.REQUEST_TYPE_CD
 						        FROM WTM_TAA_APPL A
+                                JOIN WTM_TAA_APPL_DET D ON A.TAA_APPL_ID = D.TAA_APPL_ID
 						        JOIN WTM_TAA_CODE C
 						          ON A.TAA_CD = C.TAA_CD
 						         AND A.TENANT_ID = C.TENANT_ID
 						         AND A.ENTER_CD = C.ENTER_CD
-								 WHERE A.TENANT_ID = ${tenantId} 
+								 WHERE A.TENANT_ID = #{tenantId} 
 								   AND A.ENTER_CD = #{enterCd}
 									AND A.SABUN = #{sabun}
 							 ) T
@@ -126,7 +127,7 @@
 										  	      , C.REQUEST_TYPE_CD
 										  	   FROM ( 
 									  					SELECT NULL AS APPL_ID
-									                         , ${tenantId} AS TENANT_ID
+									                         , #{tenantId} AS TENANT_ID
 														     , #{enterCd} AS ENTER_CD
 														     , #{taaCd} AS TAA_CD
 														     , #{sabun} AS SABUN
@@ -137,15 +138,15 @@
 														     , CASE WHEN #{shm} IS NOT NULL AND #{shm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{symd},#{shm}), 'YMDHIS') ELSE NULL END AS SDATE
 											     			  , CASE WHEN #{ehm} IS NOT NULL AND #{ehm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{eymd},#{ehm}), 'YMDHIS') ELSE NULL END AS EDATE
 														  FROM DUAL
-														 WHERE NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN, TAA_CD, SYMD, EYMD, SHM, EHM
-																					 FROM WTM_TAA_APPL
-																					WHERE APPL_ID = #{applId} )
+														 WHERE NOT EXISTS ( SELECT TT.TENANT_ID, TT.ENTER_CD, TT.SABUN, TD.TAA_CD, TD.SYMD, TD.EYMD, TD.SHM, TD.EHM
+																					 FROM WTM_TAA_APPL TT JOIN WTM_TAA_APPL_DET TD ON TT.TAA_APPL_ID = TD.TAA_APPL_ID
+																					WHERE TT.IF_APPL_NO = #{applId} )
 														UNION ALL
-														SELECT APPL_ID, TENANT_ID, ENTER_CD, TAA_CD, SABUN, SYMD, EYMD, SHM, EHM
-														     , CASE WHEN SHM IS NOT NULL AND SHM<>'' THEN F_WTM_TO_DATE(CONCAT(SYMD, SHM), 'YMDHIS') ELSE NULL END AS SDATE
-											     			  , CASE WHEN EHM IS NOT NULL AND EHM<>'' THEN F_WTM_TO_DATE(CONCAT(EYMD, EHM), 'YMDHIS') ELSE NULL END AS EDATE
-														  FROM WTM_TAA_APPL
-														 WHERE APPL_ID = #{applId} ) A
+														SELECT TT.APPL_ID, TT.TENANT_ID, TT.ENTER_CD, TD.TAA_CD, TT.SABUN, TD.SYMD, TD.EYMD, TD.SHM, TD.EHM
+														     , CASE WHEN TD.SHM IS NOT NULL AND TD.SHM<>'' THEN F_WTM_TO_DATE(CONCAT(TD.SYMD, TD.SHM), 'YMDHIS') ELSE NULL END AS SDATE
+											     			  , CASE WHEN TD.EHM IS NOT NULL AND TD.EHM<>'' THEN F_WTM_TO_DATE(CONCAT(TD.EYMD, TD.EHM), 'YMDHIS') ELSE NULL END AS EDATE
+														FROM WTM_TAA_APPL TT JOIN WTM_TAA_APPL_DET TD ON TT.TAA_APPL_ID = TD.TAA_APPL_ID
+													 	 WHERE TT.IF_APPL_NO = #{applId} ) A
 											  JOIN WTM_TAA_CODE C
 										        ON A.TAA_CD = C.TAA_CD
 										       AND A.TENANT_ID = C.TENANT_ID
@@ -154,7 +155,7 @@
 							 ON A.TENANT_ID = X.TENANT_ID
 							AND A.ENTER_CD = X.ENTER_CD
 							AND T.SABUN = X.SABUN
-						 WHERE A.TENANT_ID = ${tenantId} 
+						 WHERE A.TENANT_ID = #{tenantId} 
 						   AND A.ENTER_CD = #{enterCd}
 							AND T.SABUN = #{sabun}
 							AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')  
@@ -183,7 +184,7 @@
 						          ON D.TAA_CD = C.TAA_CD
 						         AND D.TENANT_ID = C.TENANT_ID
 						         AND D.ENTER_CD = C.ENTER_CD
-								 WHERE D.TENANT_ID = ${tenantId} 
+								 WHERE D.TENANT_ID = #{tenantId} 
 								   AND D.ENTER_CD = #{enterCd}
 									AND D.SABUN = #{sabun}
 									AND D.TIME_TYPE_CD NOT IN ('LLA', 'GOBACK')
@@ -199,7 +200,7 @@
 						  	  SELECT A.*
 						  	       , C.REQUEST_TYPE_CD
 						  	    FROM ( 
-									      SELECT ${tenantId} AS TENANT_ID
+									      SELECT #{tenantId} AS TENANT_ID
 											     , #{enterCd} AS ENTER_CD
 											     , #{taaCd} AS TAA_CD
 											     , #{sabun} AS SABUN
@@ -210,15 +211,15 @@
 											     , CASE WHEN #{shm} IS NOT NULL AND #{shm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{symd},#{shm}), 'YMDHIS') ELSE NULL END AS SDATE
 											     , CASE WHEN #{ehm} IS NOT NULL AND #{ehm}<>'' THEN F_WTM_TO_DATE(CONCAT(#{eymd},#{ehm}), 'YMDHIS') ELSE NULL END AS EDATE
 											   FROM DUAL
-											 WHERE NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, SABUN, TAA_CD, SYMD, EYMD, SHM, EHM
-																		 FROM WTM_TAA_APPL
-																		WHERE APPL_ID = #{applId} )
+											 WHERE NOT EXISTS ( SELECT TT.TENANT_ID, TT.ENTER_CD, TT.SABUN, TD.TAA_CD, TD.SYMD, TD.EYMD, TD.SHM, TD.EHM
+																 FROM WTM_TAA_APPL TT JOIN WTM_TAA_APPL_DET TD ON TT.TAA_APPL_ID = TD.TAA_APPL_ID
+																WHERE TT.IF_APPL_NO = #{applId} )
 											UNION ALL
-											SELECT TENANT_ID, ENTER_CD, TAA_CD, SABUN, SYMD, EYMD, SHM, EHM
-											     , CASE WHEN SHM IS NOT NULL AND SHM<>'' THEN F_WTM_TO_DATE(CONCAT(SYMD, SHM), 'YMDHIS') ELSE NULL END AS SDATE
-											     , CASE WHEN EHM IS NOT NULL AND EHM<>'' THEN F_WTM_TO_DATE(CONCAT(EYMD, EHM), 'YMDHIS') ELSE NULL END AS EDATE
-											  FROM WTM_TAA_APPL
-											 WHERE APPL_ID = #{applId}) A
+											SELECT  TT.TENANT_ID, TT.ENTER_CD, TD.TAA_CD, TT.SABUN, TD.SYMD, TD.EYMD, TD.SHM, TD.EHM
+											      , CASE WHEN TD.SHM IS NOT NULL AND TD.SHM<>'' THEN F_WTM_TO_DATE(CONCAT(TD.SYMD, TD.SHM), 'YMDHIS') ELSE NULL END AS SDATE
+								     			  , CASE WHEN TD.EHM IS NOT NULL AND TD.EHM<>'' THEN F_WTM_TO_DATE(CONCAT(TD.EYMD, TD.EHM), 'YMDHIS') ELSE NULL END AS EDATE
+											  FROM  WTM_TAA_APPL TT JOIN WTM_TAA_APPL_DET TD ON TT.TAA_APPL_ID = TD.TAA_APPL_ID
+																		WHERE TT.IF_APPL_NO = #{applId}) A
 								JOIN WTM_TAA_CODE C
 					              ON A.TAA_CD = C.TAA_CD
 					             AND A.TENANT_ID = C.TENANT_ID
@@ -250,9 +251,9 @@
 			SELECT SABUN AS sabun
 			    , F_WTM_GET_EMP_NM(TENANT_ID, ENTER_CD, SABUN, YMD) AS empNm
 			    , CASE WHEN SUM((CASE WHEN APPR_MINUTE IS NULL OR APPR_MINUTE=0 THEN CASE WHEN PLAN_MINUTE IS NULL OR PLAN_MINUTE=0 
-				 		  THEN 0 ELSE PLAN_MINUTE END ELSE APPR_MINUTE END )) - CAST(${applMinute} AS unsigned) < 0 THEN 'N' ELSE 'Y' END AS isValid 
+				 		  THEN 0 ELSE PLAN_MINUTE END ELSE APPR_MINUTE END )) - CAST(#{applMinute} AS unsigned) < 0 THEN 'N' ELSE 'Y' END AS isValid 
 			  FROM WTM_WORK_DAY_RESULT
-			 WHERE TENANT_ID = ${tenantId}
+			 WHERE TENANT_ID = #{tenantId}
 			   AND ENTER_CD = #{enterCd}
 			   AND SABUN = #{sabun}
 			   AND YMD = #{ymd}
@@ -299,7 +300,7 @@
 						  ON R.YMD = X.YMD
 						  
 			<![CDATA[ 
-						 WHERE E.TENANT_ID = ${tenantId}
+						 WHERE E.TENANT_ID = #{tenantId}
 						   AND E.ENTER_CD = #{enterCd}
 						   AND E.SABUN = #{sabun}
 						   AND #{symd} <= E.EYMD AND  #{eymd} >= E.SYMD
