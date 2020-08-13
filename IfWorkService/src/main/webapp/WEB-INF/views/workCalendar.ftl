@@ -246,7 +246,7 @@
                              </ul>
                         </li>
                         <li>
-                            <div class="sub-title">근로시간 산정 구간 평균 주간 근무시간</div>
+                            <div class="sub-title">근로시간 산정 구간 평균 근무시간</div>
                             <div class="sub-desc">
                             	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.avlMinute && rangeInfo.avlMinute!=0">
                             	{{minuteToHHMM(rangeInfo.avlMinute,'detail')}}
@@ -364,6 +364,14 @@
                                     <span class="sub-desc">
                                     	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.workHour">
 		                            	{{workDayInfo.workHour}}
+		                            	</template>
+                                    </span>
+                                </li>
+                                <li>
+                                	<span class="sub-title"><i class="fas fa-clock"></i>간주근로</span>
+                                    <span class="sub-desc">
+                                    	<template v-if="Object.keys(workDayInfo).length>0 && workDayInfo.regaHour">
+		                            	{{workDayInfo.regaHour}}
 		                            	</template>
                                     </span>
                                 </li>
