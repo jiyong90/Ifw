@@ -413,4 +413,49 @@
 	   ]]>
     </select>
     
+    <select id="getTeamDayResultListNotInLLA" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT H.EMP_NM as title,
+				A.YMD as ymd, 
+		      	F_WTM_DATE_FORMAT(F_WTM_NVL(B.APPR_SDATE, B.PLAN_SDATE), 'H:I') as caption_lb, 
+		      	F_WTM_DATE_FORMAT(F_WTM_NVL(B.APPR_EDATE, B.PLAN_EDATE), 'H:I') as caption_rb,
+                CASE WHEN D.TAA_NM IS NULL AND A.HOLIDAY_YN = 'Y' THEN '휴일'
+					       WHEN D.TAA_NM IS NULL AND A.HOLIDAY_YN = 'N'  AND B.TIME_TYPE_CD = 'GOBACK' THEN '휴식'
+				           WHEN D.TAA_NM IS NULL AND A.HOLIDAY_YN = 'N' THEN '정상근무'
+                           ELSE D.TAA_NM END AS status
+			FROM WTM_WORK_CALENDAR A 
+			JOIN WTM_EMP_HIS H  
+			 	    ON H.TENANT_ID = A.TENANT_ID 
+			 	    AND H.ENTER_CD = A.ENTER_CD 
+			 	    AND H.SABUN = A.SABUN 
+			 	    AND H.EYMD ='29991231' 
+			 	    AND H.STATUS_CD ='AA'
+			LEFT OUTER JOIN WTM_WORK_DAY_RESULT B
+				ON A.YMD = B.YMD 
+					AND A.TENANT_ID = B.TENANT_ID 
+					AND A.ENTER_CD = B.ENTER_CD 
+					AND A.SABUN = B.SABUN
+			 LEFT JOIN WTM_TAA_CODE D 
+	            ON B.TAA_CD = D.TAA_CD
+	            AND D.TENANT_ID = B.TENANT_ID
+	            AND D.ENTER_CD = B.ENTER_CD
+			WHERE A.YMD = #{ymd}
+				AND A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+                AND B.TIME_TYPE_CD NOT IN ('LLA')
+                AND F_WTM_NVL(B.APPR_MINUTE, B.PLAN_MINUTE) > 0 
+                AND F_WTM_NVL(B.APPR_MINUTE, B.PLAN_MINUTE) IS NOT NULL
+				 ]]>
+			<if test="orgList!=null">
+			   AND H.ORG_CD IN (NULL, 
+		       <foreach collection="orgList" item="org" separator=", ">
+				   #{org}
+			 </foreach>
+			   )
+			 </if>
+			  <![CDATA[
+			ORDER BY CASE WHEN H.LEADER_YN = 'Y' THEN 1 else 2 end, H.DUTY_CD, A.SABUN, B.PLAN_SDATE
+	   ]]>
+    </select>
+    
 </mapper>

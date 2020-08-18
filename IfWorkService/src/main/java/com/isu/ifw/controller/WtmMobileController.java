@@ -913,6 +913,52 @@ public class WtmMobileController {
 		return rp;
 	}
 	
+	@RequestMapping(value = "/mobile/{tenantId}/team/dayResult", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public @ResponseBody ReturnParam getTeamDayResultList(@PathVariable Long tenantId, 
+			@RequestParam(value = "tenantKey", required = true) String tenantKey,
+			@RequestParam(value="locale", required = true) String locale, 
+			@RequestParam(value="empKey", required = true) String empKey,
+			@RequestParam(value="id", required = true) String ymd,
+			HttpServletRequest request) throws Exception {		
+
+		ReturnParam rp = new ReturnParam();
+		rp.setFail("근무계획 조회 중 오류가 발생했습니다.");
+		String userToken = request.getParameter("userToken");
+		String enterCd = MobileUtil.parseDEmpKey(userToken, empKey, "enterCd");
+		String sabun = MobileUtil.parseDEmpKey(userToken, empKey, "sabun");
+		
+		WtmEmpHis emp = empRepository.findByTenantIdAndEnterCdAndSabunAndYmd(tenantId, enterCd, sabun,  WtmUtil.parseDateStr(new Date(), "yyyyMMdd"));
+		if(emp == null) {
+			rp.setFail("사용자 정보 조회 중 오류가 발생하였습니다.");
+			return rp;
+		}
+
+		logger.debug("/mobile/"+ tenantId+"/team/dayResult s " + WtmUtil.paramToString(request) + ", "+enterCd + ", " + sabun);
+		try {
+			Map<String, Object> paramMap = new HashMap();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("ymd", ymd);
+			
+			List<Map <String,Object>> l = mobileService.getTeamDayResultListNotInLLA(paramMap);
+			if(l == null || l.size() <= 0) {
+				rp.setFail("조회결과가 없습니다.");
+				return rp;
+			}
+			l = MobileUtil.parseMobileList(l);
+			
+			rp.setSuccess("");
+			rp.put("result", l);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 중 오류가 발생하였습니다.");
+		}
+		
+		logger.debug("/mobile/"+ tenantId+"/team/dayResult e " + rp.toString());
+		return rp;
+	}
+	
 	/**
 	 * 근무계획시간 변경
 	 * @param tenantKey
