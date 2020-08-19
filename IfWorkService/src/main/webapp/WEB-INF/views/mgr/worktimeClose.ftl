@@ -176,6 +176,12 @@
 			break;	
 		case "Save":
 			if(!dupChk(sheet1,"closeNm|symd", false, true)){break;}
+			for(var i=1; i<=sheet1.LastRow(); i++) {
+				var status = sheet1.GetCellValue( i, "sStatus");
+				if(status=='D' || status=='U') {
+					sheet1.SetCellValue( i, "endImg", "");
+				}
+			}
 			IBS_SaveName(document.sheetForm,sheet1);
 			sheet1.DoSave("${rc.getContextPath()}/worktimeClose/save", $("#sheetForm").serialize()); break;
 

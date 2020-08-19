@@ -1,5 +1,5 @@
 <div id="empListMgr">
- 	<div class="container-fluid mgr-wrap bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
 	 	<div class="ibsheet-wrapper">
 	 		<form id="sheetForm" name="sheetForm">
 				<div class="sheet_search outer">
@@ -13,6 +13,8 @@
 						<td>
 							<span class="label">기준일 </span>
 							<input type="text" id="sYmd" name="sYmd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
+							~
+							<input type="text" id="eYmd" name="eYmd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
 						</td>
 						<td>
 							<span class="label">사번/성명 </span>
@@ -51,12 +53,26 @@
    		//resize
 		$(window).smartresize(sheetResize);
    	
-   		$('#sYmd').datetimepicker({
+   		$('#sYmd, #eYmd').datetimepicker({
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
+        
    		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
-    
+   		$("#eYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
+
+   		$("#sYmd, #eYmd").off("change.datetimepicker").on("change.datetimepicker", function(e) {
+	    	var sYmd = $("#sYmd").val();
+	    	var eYmd = $("#eYmd").val();
+	    	if(sYmd != '' && eYmd != '') {
+		    	if(eYmd < sYmd) {
+					alert("시작일보다 크거나 같아야 합니다.");
+					$("#eYmd").val($("#sYmd").val());
+					return;
+				}
+		    }
+		});
+        
         new jBox('Tooltip', {
        	    attach: '#Tooltip-workTeamEmp',
        	    target: '#Tooltip-workTeamEmp',
@@ -136,13 +152,14 @@
 			break;
 		case "Save":
 			if(!dupChk(sheet1,"tenantId|enterCd|sabun|workteamMgrId|symd|eymd", false, true)){break;}
-			for(var i=1;i<sheet1.RowCount(); i++){
+			
+        	for(var i=1;i<sheet1.RowCount(); i++){
         		if(sheet1.GetCellValue(i, "symd") > sheet1.GetCellValue(i, "eymd")) {
         			alert("종료일은 시작일보다 늦어야 합니다.");
         			return;
         		}
         	}
-			
+        	
 			IBS_SaveName(document.sheetForm,sheet1);
 			sheet1.DoSave("${rc.getContextPath()}/workteam/save", $("#sheetForm").serialize()); break;
 			break;
@@ -158,9 +175,11 @@
 			if (StCode == 401) {
 				window.parent.location.href = loginUrl;
 			}
-			for(i=1;i<sheet1.RowCount()+2;i++){
+	   	    for(i=1;i<sheet1.RowCount()+2;i++){
+//	   	    	console.log(sheet1.GetCellValue(i, "sabun"));
 	   	  		sheet1.SetCellEditable(i, 1,0);
 		    }
+		   	  
 			if (Msg != "") {
 				alert(Msg);
 			}
@@ -182,6 +201,7 @@
 			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
+	
 	
 	function getReturnValue(returnValue) {
 		//var rv = $.parseJSON('{' + returnValue+ '}');
