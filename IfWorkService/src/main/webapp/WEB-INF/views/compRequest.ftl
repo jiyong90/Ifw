@@ -243,6 +243,16 @@
 	    			$('#eDate').val("");
 	    			return;
 	    		}
+
+	    		if($this.comptime.REST_MINUTE == 0) {
+	    			$("#alertText").html("신청가능한 보상휴가 시간이 없습니다.");
+  	         		$("#alertModal").on('hidden.bs.modal',function(){
+  	         			$("#alertModal").off('hidden.bs.modal');
+  	         		});
+  	         		$("#alertModal").modal("show"); 
+  	         		return;
+			    }
+			    
 	    		if($this.useTime == 0) {
 	    			$("#alertText").html("계획된 근무일이 없습니다.");
   	         		$("#alertModal").on('hidden.bs.modal',function(){

@@ -60,18 +60,21 @@
      -->
     <select id="getPossibleUseTime" parameterType="map" resultType="map">
         <![CDATA[
-       	SELECT WCC.TENANT_ID
-		     , WCC.ENTER_CD
-		     , WCC.SABUN
-		     , SUM(WCC.REST_MINUTE) AS REST_MINUTE
+		 SELECT WEH.TENANT_ID
+		     , WEH.ENTER_CD
+		     , WEH.SABUN
+		     , IFNULL(SUM(WCC.REST_MINUTE), 0) AS REST_MINUTE
 		     , MIN(WCC.SYMD) AS SYMD
 		     , MAX(WCC.EYMD) AS EYMD
-		  FROM WTM_COMP_CREATE WCC
-		 WHERE TENANT_ID = #{tenantId}
-	       AND ENTER_CD  = #{enterCd}
-	       AND SABUN     = #{sabun}
-		   AND DATE_FORMAT(NOW(), '%Y%m%d') BETWEEN WCC.SYMD AND WCC.EYMD
-		 GROUP BY WCC.TENANT_ID, WCC.ENTER_CD, WCC.SABUN
+		  FROM WTM_EMP_HIS WEH LEFT OUTER JOIN  WTM_COMP_CREATE WCC
+		                         ON WEH.TENANT_ID = WCC.TENANT_ID
+		                        AND WEH.ENTER_CD = WCC.ENTER_CD
+		                        AND WEH.SABUN = WCC.SABUN
+		                        AND DATE_FORMAT(NOW(), '%Y%m%d') BETWEEN WCC.SYMD AND WCC.EYMD
+		 WHERE WEH.TENANT_ID = #{tenantId}
+		   AND WEH.ENTER_CD  = #{enterCd}
+		   AND WEH.SABUN     = #{sabun}
+		 GROUP BY WEH.TENANT_ID, WEH.ENTER_CD, WEH.SABUN
         ]]>
     </select>
     
