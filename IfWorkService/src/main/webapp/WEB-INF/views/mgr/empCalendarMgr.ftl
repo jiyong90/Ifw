@@ -1,5 +1,5 @@
 <div id="empCalendarMgr">
- 	<div class="container-fluid bg-white mgr-wrap">
+ 	<div class="container-fluid bg-white mgr-wrap" >
  	<div class="ibsheet-wrapper">
  		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
@@ -13,8 +13,8 @@
 					<td>
 						<span class="label">근무기간 </span>
 						<input type="text" id="sYmd" name="sYmd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#sYmd" placeholder="연도-월-일" autocomplete="off"/>
-									~
-									<input type="text" id="eYmd" name="eYmd" class="date2 required datetimepicker-input" data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
+						~
+						<input type="text" id="eYmd" name="eYmd" class="date2 required datetimepicker-input"  data-toggle="datetimepicker" data-target="#eYmd" placeholder="연도-월-일" autocomplete="off"/>
 					</td>
 					<td>
 						<span class="label">사번/성명</span>
@@ -45,10 +45,17 @@
 			</tr>
 			<tr>
 				<td>
-					<div class="inner">
+					<div id="detailVue" class="inner">
 						<div class="sheet_title_wrap clearfix">
-						<div class="float-left title">근무상세결과 &nbsp;<span id="Tooltip-flexibleEmpCaldays" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
-							<ul class="float-right btn-wrap">
+						<div class="float-left title">근무상세결과 &nbsp;
+							<span id="Tooltip-flexibleEmpCaldays" class="tooltip-st"><i class="far fa-question-circle"></i></span> &nbsp;&nbsp;
+							<template v-if="flexibleNm">
+                    		<span>근무제도 : {{flexibleNm}} &nbsp;&nbsp; , 근무적용기간 : {{flexibleSymd}} ~ {{flexibleEymd}}</span>
+                    		</template>
+							
+						</div>
+							<ul class="float-right btn-wrap" id="optionBtn">
+								<li><a href="javascript:doAction2('finishDay')" class="basic authA">일마감</a></li>
 								<li><a href="javascript:doAction2('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction2('Save')" class="basic authA">저장</a></li>
 							</ul>
@@ -58,20 +65,212 @@
 				</td>
 			</tr>
 		</table>
+		<div id="finishDay">
+			<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+		        <div class="modal-dialog modal-lg" role="document">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <h5 class="modal-title">일마감</h5>
+		                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		                        <span aria-hidden="true">&times;</span>
+		                    </button>
+		                </div>
+		                <div class="modal-body">
+		                	<div class="modal-app-wrap">
+		                		<div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+		                			<div class="loading-spinner" style="display:none;"></div>
+									<div class="title" >근무제도</div>
+									<div class="main-desc">{{flexibleNm}}</div>
+								</div>
+		                		<div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+									<div class="title" >근무제도기간</div>
+									<div class="main-desc">{{flexibleSymd}} ~ {{flexibleEymd}}</div>
+								</div>
+								<div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+									<div class="title">일마감 기간</div>
+								</div>
+								<div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+									<div class="form-row">
+									<div class="d-sm-none d-lg-block ml-md-auto"></div>
+									<div class="col" data-target-input="nearest">
+									<input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="fsYmd" data-toggle="datetimepicker" data-target="#fsYmd" placeholder="연도-월-일" autocomplete="off" required readonly="readonly">
+									</div>
+									<span class="d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1">~</span>
+									<div class="col" data-target-input="nearest">
+									<input type="text" class="form-control datetimepicker-input form-control-sm mr-2" id="feYmd" data-toggle="datetimepicker" data-target="#feYmd" placeholder="연도-월-일" autocomplete="off" required>
+									</div>
+									</div>
+								</div>
+							</div>
+		                </div>
+		                <div class="modal-footer">
+		                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+		                    <button type="button" id="apprBtn" class="btn btn-default"  @click="confirmFinshDay">확인</button>
+		                </div>
+		            </div>
+		        </div>
+			</div>
+		</div>
 	</div>
 	</div>
 </div>
 
+		
+
+
 <script type="text/javascript">
+	var curRow = 0;
+	var detailVue = new Vue({
+			el: "#detailVue",
+	    data : {
+	    	selectedFlexibleEmpStd: {},
+	    	flexibleNm : '',
+	    	flexibleTerm : '',
+	    	flexibleSymd : '',
+	    	flexibleEymd : ''
+			},
+	    mounted: function(){
+	    	var $this = this;
+	    }
+	});
+	
+	var finishDayVue = new Vue({
+   		el: "#finishDay",
+	    data : {
+	    	selectedFlexibleEmpStd: {},
+	    	flexibleNm : '',
+	    	flexibleTerm : '',
+	    	flexibleSymd : '',
+	    	flexibleEymd : ''
+  		},
+	    mounted: function(){
+	    	var $this = this;
+	    },
+	    methods : {
+	    	getFlexibleEmpStd : function(){ //사용할 근무제 리스트
+	    		var $this = this;
+	    		var param = {
+	    				"sabun" 		   : sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun"),
+						"flexibleEmpId"    : sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleEmpId"),
+						"flexibleStdMgrId" : sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleStdMgrId"),
+						"ymd"              : sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd")
+	    	    		}
+	    		
+	    		Util.ajax({
+					url: "${rc.getContextPath()}/flexibleEmp/checkFinDay",
+					type: "POST",
+					contentType: 'application/json',
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: function(data) {
+						if(data!=null) {
+							$this.selectedFlexibleEmpStd = data;
+							$this.flexibleNm = data.flexibleNm;
+							$this.flexibleSymd = moment(data.sYmd).format('YYYY-MM-DD');
+							$this.flexibleEymd = moment(data.eYmd).format('YYYY-MM-DD');
+							
+							detailVue.selectedFlexibleEmpStd = data;
+							detailVue.flexibleNm = data.flexibleNm;
+							detailVue.flexibleSymd = $this.flexibleSymd;
+							detailVue.flexibleEymd = $this.flexibleEymd;
+						} 
+					},
+					error: function(e) {
+						 
+						return;
+					}
+				}); 
+		    },
+    		showRequest : function() {
+    			$('#requestModal').modal("show");
+		    },
+		    confirmFinshDay : function() {
+		    	if(!confirm("일마감 하시겠습니까?")) {
+					return;
+				}
+		    	var ymd = sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd");
+				var sabun = sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun");
+
+				var param = {
+							 "ymd" : ymd
+							,"sabun" : sabun
+							,"paramSdate" : moment($("#fsYmd").val()).format('YYYYMMDD')
+							,"paramEdate" : moment($("#feYmd").val()).format('YYYYMMDD')
+							}
+				$("#loading").show();
+
+				Util.ajax({
+					url: "${rc.getContextPath()}/flexibleEmp/finishDay",
+					type: "POST",
+					contentType: 'application/json',
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: function(data) {
+						$("#loading").hide();
+						if(data!=null) {
+							$("#alertText").html(data.message);
+							$("#alertModal").on('hidden.bs.modal',function(){
+								$("#alertModal").off('hidden.bs.modal');
+							});
+							$("#alertModal").modal("show");
+							curRow = sheet1.GetSelectRow();
+							doAction1("Search");
+													
+						} 
+					},
+					error: function(e) {
+						$("#loading").hide();
+						$("#alertText").html("일마감 처리중 오류가 발생하였습니다.");
+						$("#alertModal").on('hidden.bs.modal',function(){
+							$("#alertModal").off('hidden.bs.modal');
+						});
+						$("#alertModal").modal("show"); 
+					}
+				}); 
+				
+			}
+	    }
+   	});
+	
    	$(function() {
-   		$('#sYmd, #eYmd').datetimepicker({
+   		$('#sYmd, #eYmd, #fsYmd, #feYmd').datetimepicker({
             format: 'YYYY-MM-DD',
             language: 'ko'
         });
+        
    		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
 	    $("#eYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
-        
-		new jBox('Tooltip', {
+	    $("#fsYmd").val("");
+	    $("#feYmd").val("");
+
+	    $("#feYmd").off("change.datetimepicker").on("change.datetimepicker", function(e) {
+	    	var fsYmd = $("#fsYmd").val();
+	    	var feYmd = $("#feYmd").val();
+	    	if(fsYmd != '' && feYmd != '') {
+		    	if(feYmd < fsYmd) {
+					$("#alertText").html("일마감 시작일보다 크거나 같아야 합니다.");
+  	         		$("#alertModal").on('hidden.bs.modal',function(){
+  	         			$("#alertModal").off('hidden.bs.modal');
+  	         		});
+  	         		$("#alertModal").modal("show"); 
+  	         		$("#feYmd").val($("#fsYmd").val());
+  	         		return;
+			    }
+
+		    	if(finishDayVue.flexibleEymd < feYmd) {
+					$("#alertText").html("근무제도 기간보다 클 수 없습니다.");
+  	         		$("#alertModal").on('hidden.bs.modal',function(){
+  	         			$("#alertModal").off('hidden.bs.modal');
+  	         		});
+  	         		$("#alertModal").modal("show"); 
+  	         		$("#feYmd").val($("#fsYmd").val());
+  	         		return;
+			    }
+			    
+		    }
+		});
+
+	    new jBox('Tooltip', {
        	    attach: '#Tooltip-calendarAll',
        	    target: '#Tooltip-calendarAll',
        	    theme: 'TooltipBorder',
@@ -129,6 +328,7 @@
        	      this.source.removeClass('active');
        	    }
        	});
+   		
 		var initdata1 = {};
 		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -154,7 +354,8 @@
 			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
 			{Header:"코어시작시간",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"coreShm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"코어종료시간",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"coreEhm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"근무마감여부",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workCloseYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }			
+			{Header:"근무마감여부",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workCloseYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"유연근무대상자ID",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleEmpId",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },			
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -265,7 +466,7 @@
 						
 			        	var cores = sheet1.GetCellValue(row, "coreShm");
 			        	var coree = sheet1.GetCellValue(row, "coreEhm");
-	
+			        	
 			        	if(cores != "" && coree != ""){
 	
 				        	if(s <= cores && e >= coree) {
@@ -335,11 +536,15 @@
 			sheet2.SetCellValue(row, "ymd", sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd"));
 			sheet2.SetCellValue(row, "timeCdMgrId", sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId"));
 			break;
+			
+		case "finishDay":			
+			finishDayVue.showRequest();			
 		}
 	}
 	
 	// 조회 후 에러 메시지
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
+		sheet1.SetSelectRow(curRow);
 		try {
 			if (StCode == 401) {
 				window.parent.location.href = loginUrl;
@@ -377,14 +582,19 @@
 		if(OldRow != NewRow){
 			sheet2.RemoveAll();
 			doAction2('Search');
-//20200228 추가
+			
+			$("#fsYmd").val(moment(sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd")).format('YYYY-MM-DD'));
+			$("#feYmd").val(moment(sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd")).format('YYYY-MM-DD'));
+			
+			//20200228 추가
 			var workCloseYn = sheet1.GetCellValue( NewRow, "workCloseYn");
 			if( workCloseYn == "Y" ){
 				$("#optionBtn").hide();
 			} else {
 				$("#optionBtn").show();
 			}
-		}		
+			this.finishDayVue.getFlexibleEmpStd();
+		}					
 	}
 	
 	//셀 값변경 이벤트
@@ -398,4 +608,5 @@
 			}
 		}
 	}
+	
 </script>
