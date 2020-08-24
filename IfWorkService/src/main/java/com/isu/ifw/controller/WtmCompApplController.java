@@ -160,7 +160,11 @@ public class WtmCompApplController {
 		Map<String, Object> compList = null;
 		try {		
 			compList = wtmCompApplListService.getPossibleUseTime(tenantId, enterCd, null, paramMap, userId, sabun);
-			rp.put("comptime", compList);
+			if(compList.size() > 0) {
+				rp.put("comptime", compList);
+			} else {
+				rp.setFail("보상휴가 신청 가능시간이 없습니다.");
+			}
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;

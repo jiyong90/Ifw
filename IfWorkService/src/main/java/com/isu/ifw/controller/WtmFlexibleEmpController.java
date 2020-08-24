@@ -658,4 +658,67 @@ public class WtmFlexibleEmpController {
 		return rp;
 	}
 	
+	/**
+	 * 일마감
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/finishDay", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam saveWorkDayFinishResult(@RequestBody Map<String, Object> paramMap
+														, HttpServletRequest request) {
+		
+		validateParamMap(paramMap, "ymd", "sabun");
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		
+		try {
+			
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("empNo", empNo);
+			
+			rp = flexibleEmpService.finishDay((Map<String, Object>)paramMap, tenantId, enterCd, empNo, userId);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
+	
+	/**
+	 * 일마감
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/checkFinDay", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> checkFinDay(@RequestBody Map<String, Object> paramMap, HttpServletRequest request) throws Exception{
+		
+		validateParamMap(paramMap, "sabun", "flexibleEmpId", "flexibleStdMgrId", "ymd");
+		
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		
+		Map<String, Object> resultMap = flexibleEmpService.checkFinDay((Map<String, Object>)paramMap, tenantId, enterCd, empNo, userId);
+		
+		return resultMap;
+	}
+	
 }

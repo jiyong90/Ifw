@@ -557,6 +557,7 @@
    	
    	function showCompRequestPopup(){
 		$('#compRequestModal').modal("show");
+		this.setDateStatus();
    	}
 
 
