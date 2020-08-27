@@ -2586,22 +2586,24 @@
 		      , F_WTM_DATE_FORMAT( MIN(A.PLAN_SDATE), 'YMD') AS planSday
 		      , F_WTM_DATE_FORMAT( MAX(A.PLAN_EDATE), 'YMD') AS planEday
 		      , F_WTM_DATE_FORMAT(DATE_ADD(MIN(A.PLAN_SDATE), interval +1 day), 'YMD') AS tempEday
+		      , A.TIME_TYPE_CD as timeTypeCd
 		   FROM WTM_WORK_DAY_RESULT_O A
 		  WHERE A.TENANT_ID = #{tenantId}
 		    AND A.ENTER_CD = #{enterCd}
 			AND A.SABUN = #{sabun}
 		    AND A.YMD = #{ymd}
-		    AND A.TIME_TYPE_CD = 'BASE'
+		    AND A.TIME_TYPE_CD IN ('BASE', 'FIXOT')
+		  GROUP BY A.TIME_TYPE_CD
   	</select>
   	
-  	<select id="deleteWorkDayResultBase" parameterType="map">
+  	<select id="deleteWorkDayResultWorkType" parameterType="map">
 		 DELETE 
 		   FROM WTM_WORK_DAY_RESULT
 		  WHERE TENANT_ID = #{tenantId}
 		    AND ENTER_CD = #{enterCd}
 			AND SABUN = #{sabun}
 		    AND YMD = #{ymd}
-		    AND TIME_TYPE_CD = 'BASE'
+		    AND TIME_TYPE_CD = #{timeTypeCd}
   	</select>
   	
   	<insert id="insertWorkDayRtBaseMinMax" parameterType="map">
@@ -2627,7 +2629,7 @@
 		    AND ENTER_CD = #{enterCd}
 		    AND SABUN = #{sabun}
 		    AND YMD = #{ymd}
-		    AND TIME_TYPE_CD = 'BASE'
+		    AND TIME_TYPE_CD = #{timeTypeCd}
 		  GROUP BY TENANT_ID, ENTER_CD, YMD, SABUN, APPL_ID, TIME_TYPE_CD, TAA_CD, APPR_SDATE, APPR_EDATE, APPR_MINUTE, WORK_YN, UPDATE_DATE, UPDATE_ID
   	</insert>
   	
