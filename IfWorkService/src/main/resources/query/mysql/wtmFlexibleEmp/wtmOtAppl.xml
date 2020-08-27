@@ -432,7 +432,7 @@
 		   AND (APPR_STATUS_CD IS NULL OR APPR_STATUS_CD = '10')
     </update>
     
-        <select id="getCheckPlanDate" parameterType="Map" resultType="hashmap">
+    <select id="getCheckPlanDate" parameterType="Map" resultType="hashmap">
         <![CDATA[
         SELECT F_WTM_DATE_FORMAT(MIN(PLAN_DATE),'YMDHI') AS 'minPlan', F_WTM_DATE_FORMAT(MAX(PLAN_DATE),'YMDHI') AS 'maxPlan'
 		FROM (
@@ -466,6 +466,22 @@
 				AND C.YMD = DATE_SUB(STR_TO_DATE(#{ymd}, '%Y%m%d'), INTERVAL 1 DAY) 
 			GROUP BY R.YMD
 			) X
+	    ]]>
+    </select>
+    
+    
+    <!-- 
+    	연장근무 신청시 해당 시간에 계획된 시간이 없는지 확인
+     -->
+    <select id="getCheckPlanDateCnt" parameterType="Map" resultType="hashmap">
+        <![CDATA[
+        SELECT COUNT(1) as cnt
+		  FROM WTM_WORK_DAY_RESULT
+	  	 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND SABUN = #{sabun}
+		   AND F_WTM_DATE_FORMAT(PLAN_SDATE, 'YMDHI') >= #{sdate}
+		   AND F_WTM_DATE_FORMAT(PLAN_EDATE, 'YMDHI') <= #{edate}
 	    ]]>
     </select>
 </mapper>
