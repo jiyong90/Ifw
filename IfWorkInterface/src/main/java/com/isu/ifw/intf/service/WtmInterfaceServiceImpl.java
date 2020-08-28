@@ -45,6 +45,19 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	@Value("${ifw.taaappl-post}")
 	private String taaApplUrl;
 	
+	@Value("${ifw.hr-code-post}")
+	private String hrCodeUrl;
+	@Value("${ifw.hr-emp-post}")
+	private String hrEmpUrl;
+	@Value("${ifw.hr-appoint-post}")
+	private String hrAppointUrl;
+	@Value("${ifw.hr-org-post}")
+	private String hrOrgUrl;
+	@Value("${ifw.hr-orglevel-post}")
+	private String hrOrgLevelUrl;
+	@Value("${ifw.hr-orgconc-post}")
+	private String hrOrgConcUrl;
+	
 	@Autowired
 	WtmInterfaceMapper wtmInterfaceMapper;
 	
@@ -434,6 +447,57 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
             e.printStackTrace();
         }
 		return cnt;
+	}
+	
+	@Override
+	public void sendDataToHR(String T, Map<String, Object> paramMap) throws Exception{
+		System.out.println("WtmInterfaceServiceImpl getCode");
+		List<Map<String, Object>> dataList = null;
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println("================================");
+		System.out.println(mapper.writeValueAsString(paramMap));
+		
+		System.out.println("================================");
+		
+		String url = "";
+        try {
+        	if(T.equalsIgnoreCase("CODE")) {
+        		dataList = intfMapper.getWtmCode(paramMap);
+        		url = hrCodeUrl;
+        	}else if(T.equalsIgnoreCase("EMP")) {
+        		dataList = intfMapper.getWtmEmp(paramMap);
+        		url = hrEmpUrl;
+        	}else if(T.equalsIgnoreCase("APPOINT")) {
+        		dataList = intfMapper.getWtmEmp(paramMap);
+        		url = hrAppointUrl;
+        	}else if(T.equalsIgnoreCase("ORG")) {
+        		dataList = intfMapper.getWtmOrg(paramMap);
+        		url = hrOrgUrl;
+        	}else if(T.equalsIgnoreCase("ORGLEVEL")) {
+        		dataList = intfMapper.getWtmOrg(paramMap);
+        		url = hrOrgLevelUrl;
+        	}else if(T.equalsIgnoreCase("ORGCONC")) {
+        		dataList = intfMapper.getWtmOrgConc(paramMap);
+        		url = hrOrgConcUrl;
+        	}else {
+        		dataList = null;
+        	}
+        	if(dataList != null) {
+	        	Map<String, Object> eParam = new HashMap<>();
+	        	eParam.put("data", dataList);
+	    		System.out.println("================================");
+	    		System.out.println("url : " + url);
+	    		System.out.println("paramMap : " + mapper.writeValueAsString(eParam));
+	    		System.out.println("================================");
+	        	exchangeService.exchange(url, HttpMethod.POST, null, eParam);
+        	}else {
+        		System.out.println(T + " is no data. " + mapper.writeValueAsString(paramMap));
+        	}
+
+        } catch(Exception e){
+            e.printStackTrace(); 
+        }
+        
 	}
 	
 }

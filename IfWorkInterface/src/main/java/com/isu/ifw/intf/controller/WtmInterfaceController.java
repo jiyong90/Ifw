@@ -286,4 +286,18 @@ public class WtmInterfaceController {
 		
 	}
 	
+	@RequestMapping(value="/hr/data/{type}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void sendDataToHR(@PathVariable String type, @RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+	    try {
+	       //ObjectMapper mapper = new ObjectMapper();
+	       WtmInterfaceService.sendDataToHR(type, paramMap);
+	       //return mapper.writeValueAsString(resMap);
+	    } catch (Exception e) {
+	       // TODO Auto-generated catch block
+	       e.printStackTrace();
+	       //return e.getMessage();
+	    }
+	       
+	}
+	
 }

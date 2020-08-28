@@ -113,5 +113,12 @@ public interface WtmInterfaceService {
 	 */
 	public int setWorkTimeClose(String tenantId, List<Map<String, Object>> compList) throws Exception;
 
+	/**
+	 * 영림원 > HR로 인터페이스 
+	 * @param T
+	 * @param paramMap
+	 * @throws Exception
+	 */
+	public void sendDataToHR(String T, Map<String, Object> paramMap) throws Exception;
 	
 }
