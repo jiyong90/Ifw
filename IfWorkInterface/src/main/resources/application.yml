@@ -84,10 +84,26 @@ ifw:
   org-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/org
   #org-post: http://10.30.30.215/ifw/api/korgc/d/org
   orgconc-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/orgconc
+  orgchart-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/orgchart
   taaappl-post: https://cloudhr.pearbranch.com/ifw/api/korgc/d/taaappl
   #taaappl-post: http://10.30.30.215/ifw/api/korgc/d/taaappl
   #더존은 로그인 정보가 userId로도 사용할 수 있다 우리쪽 데이터는 사번정보로 내무 세션정보를 가지고 오고 있기 때문에 username을 다시 만들어주자
   username: korgc@##1##@##2##
+  url : https://cloudhr.pearbranch.com
+  #HR 인터페이스 (운영)
+  #hr-code-post: http://118.217.224.170/interface/korgInf/code_interface.jsp
+  #hr-emp-post: http://118.217.224.170/interface/korgInf/basicInfo_interface.jsp
+  #hr-appoint-post: http://118.217.224.170/interface/korgInf/appoint_interface.jsp
+  #hr-org-post: http://118.217.224.170/interface/korgInf/orgInfo_interface.jsp
+  #hr-orglevel-post: http://118.217.224.170/interface/korgInf/orgLevelInfo_interface.jsp
+  #hr-orgconc-post: http://118.217.224.170/interface/korgInf/orgConc_interface.jsp
+  #HR 인터페이스 (개발)
+  hr-code-post: https://isuhrd.servicezone.co.kr/interface/korgInf/code_interface.jsp
+  hr-emp-post: https://isuhrd.servicezone.co.kr/interface/korgInf/basicInfo_interface.jsp
+  hr-appoint-post: https://isuhrd.servicezone.co.kr/interface/korgInf/appoint_interface.jsp
+  hr-org-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgInfo_interface.jsp
+  hr-orglevel-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgLevelInfo_interface.jsp
+  hr-orgconc-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgConc_interface.jsp
  
 dzGateway:
   gateway-url: 
@@ -163,8 +179,8 @@ mybatis:
     map-underscore-to-camel-case: true
 
 ifw:
-  client-id: hdngv
-  secret: chWQsUbouLFXYYmy5F7k9UFYGprNH1F6uzqsOvt0K9s=
+  client-id: honda
+  secret: 2TMn5k+9iDk7L+KlAux8HF5odHzrQV76AZkA9kwjMhM=
   token-url: https://cloudhr.pearbranch.com/ifa/oauth/token
   login-post: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/certificate 
   valid-get: https://cloudhr.pearbranch.com/ifw/mobile/{{tsId}}/validate     
@@ -197,6 +213,13 @@ ifw:
   #더존은 로그인 정보가 userId로도 사용할 수 있다 우리쪽 데이터는 사번정보로 내무 세션정보를 가지고 오고 있기 때문에 username을 다시 만들어주자
   username: honda@##1##@##2##
   url : https://cloudhr.pearbranch.com
+  #HR 인터페이스(더존은 사용안함)
+  hr-code-post: 
+  hr-emp-post: 
+  hr-appoint-post: 
+  hr-org-post: 
+  hr-orglevel-post: 
+  hr-orgconc-post: 
  
 dzGateway:
   gateway-url: http://10.249.92.147:85/ErpuMobileGate/_gateway/
