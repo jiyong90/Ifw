@@ -1,8 +1,10 @@
 package com.isu.ifw.controller;
 
 import java.security.InvalidParameterException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -219,13 +221,20 @@ public class WtmApplController {
 					rp = wtmEntryApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
 					if(rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-						Map<String, Object> pMap = new HashMap<String, Object>();
-						pMap.put("tenantId", tenantId);
-						pMap.put("enterCd", enterCd);
-						pMap.put("stdYmd", rp.get("stdYmd")+"");
-						pMap.put("sabun", rp.get("sabun")+"");
-						
-						inoutService.inoutPostProcess(pMap);
+						// 20200827 이효정 결재갱신은 완료 과거이면 마감을 돌리자
+						String stdYmd = rp.get("stdYmd").toString();
+						Date today = new Date();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+						String ymd = sdf.format(today);
+						if(Integer.parseInt(ymd) > Integer.parseInt(stdYmd)){ 	// 소급이면 마감돌리기
+							Map<String, Object> pMap = new HashMap<String, Object>();
+							pMap.put("tenantId", tenantId);
+							pMap.put("enterCd", enterCd);
+							pMap.put("stdYmd", rp.get("stdYmd")+"");
+							pMap.put("sabun", rp.get("sabun")+"");
+							
+							inoutService.inoutPostProcess(pMap);
+						}
 					}
 					
 				} else if("SUBS_CHG".equals(applCd)){
