@@ -11,8 +11,8 @@
 			     , GRCODE_CD
 			     , CODE
 			     , CODE_NM
-			     , ISNULL(SYMD, '19000101')
-			     , ISNULL(EYMD, '29991231')
+			     , ISNULL(SYMD, '19000101') AS SYMD
+			     , ISNULL(EYMD, '29991231') AS EYMD
 			     , '' AS SEQ
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
@@ -68,7 +68,7 @@
 			SELECT CompanySeq AS ENTER_CD
 			     , EmpID AS SABUN
 			     , DeptSeq AS ORG_CD
-			     , DeptName AS ORG_CD
+			     , DeptName AS ORG_NM
 			     , OrdDate AS SYMD
 			     , CASE WHEN OrdEndDate = '99991231' then '29991231' ELSE OrdEndDate END AS EYMD
 			     , LastDateTime AS CHKDATE
@@ -110,6 +110,11 @@
 			     , UMPgSeq AS CLASS_CD
 			     , '' AS JOB_GROUP_CD
 			     , JobSeq AS JOB_CD
+			     , IsProd AS WORK_TYPE
+			     , WkTeamSeq AS BASE1_CD
+			     , WkTeamName AS BASE1_NM
+			     , WkDeptSeq AS BASE2_CD
+			     , WkDeptName AS BASE2_NM
 			     , '' AS PAY_TYPE_CD
 			     , CASE WHEN IsBoss = 1 THEN 'Y' ELSE 'N' END AS LEADER_YN
 			     , Remark AS NOTE
@@ -236,4 +241,5 @@
 				)
 		]]>
 	</insert>
+
 </mapper>

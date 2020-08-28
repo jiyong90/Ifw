@@ -203,24 +203,24 @@ public class WtmFlexibleApplyMgrController {
 			//반복기준조회
 			List<Map<String, Object>> ymdList = flexibleApplyService.getApplyYmdList(paramMap);
 			
+			WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_EMP_EXCEPT_TARGET");
+			
+			String ruleValue = null;
+			String ruleType = null;
+			if(propertie!=null && propertie.getInfoValue()!=null && !"".equals(propertie.getInfoValue())) {
+				WtmRule rule = ruleRepo.findByTenantIdAndEnterCdAndRuleNm(tenantId, enterCd, propertie.getInfoValue());
+				if(rule!=null && rule.getRuleValue()!=null && !"".equals(rule.getRuleValue())) {
+					ruleType = rule.getRuleType();
+					ruleValue = rule.getRuleValue();
+				}
+			}
+			
 			//오류체크까지 하고 리턴
 			int empCnt = 0;
 			for(int i=0; i < searchList.size(); i++) {
 				Map<String, Object> validateMap = new HashMap<>();
 				validateMap = searchList.get(i);
 				String sabun = validateMap.get("sabun").toString();
-				
-				WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_EMP_EXCEPT_TARGET");
-				
-				String ruleValue = null;
-				String ruleType = null;
-				if(propertie!=null && propertie.getInfoValue()!=null && !"".equals(propertie.getInfoValue())) {
-					WtmRule rule = ruleRepo.findByTenantIdAndEnterCdAndRuleNm(tenantId, enterCd, propertie.getInfoValue());
-					if(rule!=null && rule.getRuleValue()!=null && !"".equals(rule.getRuleValue())) {
-						ruleType = rule.getRuleType();
-						ruleValue = rule.getRuleValue();
-					}
-				}
 				
 				boolean isTarget = false;
 				if(ruleValue!=null) 

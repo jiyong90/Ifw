@@ -67,5 +67,10 @@ public interface WtmIntfMapper {
 	 * 조직도
 	 **/
 	public List<Map<String, Object>> getWtmOrgChart(Map<String, Object> paramMap);
+	
+	/**
+	 * 근무부서 조회 
+	 **/
+	public List<Map<String, Object>> getWorkOrgCodeForHR(Map<String, Object> paramMap);
 
 }
