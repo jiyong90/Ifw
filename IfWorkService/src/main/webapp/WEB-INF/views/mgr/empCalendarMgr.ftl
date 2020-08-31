@@ -79,6 +79,11 @@
 		                	<div class="modal-app-wrap">
 		                		<div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
 		                			<div class="loading-spinner" style="display:none;"></div>
+									<div class="title" >부서/성명/사번</div>
+									<div class="main-desc">{{orgNm}} / {{empNm}} / {{sabun}}</div>
+								</div>
+		                		<div class="col-sm-12 col-md-12 col-lg-10 mt-2 mt-lg-3 xl-mt-3 ">
+		                			<div class="loading-spinner" style="display:none;"></div>
 									<div class="title" >근무제도</div>
 									<div class="main-desc">{{flexibleNm}}</div>
 								</div>
@@ -127,7 +132,10 @@
 	    	flexibleNm : '',
 	    	flexibleTerm : '',
 	    	flexibleSymd : '',
-	    	flexibleEymd : ''
+	    	flexibleEymd : '',
+	    	orgNm : '',
+	    	sabun : '',
+	    	empNm : ''
 			},
 	    mounted: function(){
 	    	var $this = this;
@@ -141,7 +149,10 @@
 	    	flexibleNm : '',
 	    	flexibleTerm : '',
 	    	flexibleSymd : '',
-	    	flexibleEymd : ''
+	    	flexibleEymd : '',
+	    	orgNm : '',
+	    	sabun : '',
+	    	empNm : ''
   		},
 	    mounted: function(){
 	    	var $this = this;
@@ -168,11 +179,17 @@
 							$this.flexibleNm = data.flexibleNm;
 							$this.flexibleSymd = moment(data.sYmd).format('YYYY-MM-DD');
 							$this.flexibleEymd = moment(data.eYmd).format('YYYY-MM-DD');
+							$this.orgNm = sheet1.GetCellValue( sheet1.GetSelectRow(), "orgNm");
+							$this.sabun = sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun");
+							$this.empNm = sheet1.GetCellValue( sheet1.GetSelectRow(), "empNm");
 							
 							detailVue.selectedFlexibleEmpStd = data;
 							detailVue.flexibleNm = data.flexibleNm;
 							detailVue.flexibleSymd = $this.flexibleSymd;
 							detailVue.flexibleEymd = $this.flexibleEymd;
+							detailVue.orgNm = $this.orgNm;
+							detailVue.sabun = $this.sabun;
+							detailVue.empNm = $this.empNm;
 						} 
 					},
 					error: function(e) {
@@ -545,6 +562,7 @@
 	// 조회 후 에러 메시지
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		sheet1.SetSelectRow(curRow);
+		$('#requestModal').modal("hide");
 		try {
 			if (StCode == 401) {
 				window.parent.location.href = loginUrl;
