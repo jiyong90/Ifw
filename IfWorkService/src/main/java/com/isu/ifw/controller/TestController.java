@@ -16,15 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
-import com.isu.ifw.entity.WtmWorkDayResult;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
-import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmCalcService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmInterfaceService;
+import com.isu.ifw.vo.ReturnParam;
 
 @RestController
 public class TestController {
@@ -70,6 +69,60 @@ public class TestController {
 		paramMap.put("eymd", ymd);
 		empService.createWorkTermtimeByEmployee(tenantId, enterCd, sabun, paramMap, "JSP");
 		return m;
+	}
+	
+	@RequestMapping(value = "/login/reCalcAppr", method = RequestMethod.GET)
+	public Map<String, Object> testReCalcAppr(@RequestParam String enterCd,
+										@RequestParam Long tenantId,
+										@RequestParam String sabun,
+										@RequestParam String ymd,
+										HttpServletRequest request, 
+										HttpServletResponse response){
+		
+		Map<String, Object> m = new HashMap<String, Object>();
+		empService.resetCalcApprDayInfo(tenantId, enterCd, ymd, sabun, null);
+		empService.calcApprDayInfo(tenantId, enterCd, ymd, ymd, sabun);
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("pId", "JYP");
+		paramMap.put("symd", ymd);
+		paramMap.put("eymd", ymd);
+		empService.createWorkTermtimeByEmployee(tenantId, enterCd, sabun, paramMap, "JSP");
+		return m;
+	}
+	
+	@RequestMapping(value = "/login/finishDay", method = RequestMethod.GET)
+	public ReturnParam testfinishDay(@RequestParam String enterCd,
+										@RequestParam Long tenantId,
+										@RequestParam String sabun,
+										@RequestParam String symd,
+										@RequestParam String eymd,
+										HttpServletRequest request, 
+										HttpServletResponse response){
+		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		
+		
+		
+		try {
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("paramSdate", symd);
+			paramMap.put("paramEdate", eymd);
+			
+			rp = empService.finishDay((Map<String, Object>)paramMap, tenantId, enterCd, sabun, "JYP");
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		return rp;
 	}
 	
 	@RequestMapping(value = "/calcDayParam",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
