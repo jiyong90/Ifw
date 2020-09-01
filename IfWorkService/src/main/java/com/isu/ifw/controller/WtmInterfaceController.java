@@ -237,6 +237,14 @@ public class WtmInterfaceController {
 		return ;
 	}
 	
+	@RequestMapping(value = "/{tenantId}/taaAppl",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void intfTaaAppl(@PathVariable(name = "tenantId") Long tenantId){
+		try {
+			wtmInterfaceService.intfTaaAppl(tenantId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	@RequestMapping(value = "/workTimeParam",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void setTaaApplParma(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 사원정보
@@ -297,7 +305,6 @@ public class WtmInterfaceController {
 		System.out.println("workTimeArrIf : end");
 		return retMap;
 	}
-	
 	
 	//배치돌면 db에 저장만 한다
 	@RequestMapping(value = "/workTimeBatch",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
