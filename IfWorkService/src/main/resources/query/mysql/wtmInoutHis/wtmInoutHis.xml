@@ -119,12 +119,18 @@
     
     <update id="updateWtmInoutHis" parameterType="map">
         <![CDATA[ 
-			UPDATE WTM_INOUT_HIS SET CANCEL_DATE = now(), 
-				CANCEL_TYPE_CD = #{inoutType} 
-			WHERE #{tenantId} = TENANT_ID 
-				AND #{enterCd} = ENTER_CD 
-				AND #{sabun} = SABUN 
-				AND F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') = F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHIS')
+			UPDATE WTM_INOUT_HIS H
+				 SET H.CANCEL_DATE = now(), 
+					H.CANCEL_TYPE_CD = #{inoutType} 
+				  WHERE H.TENANT_ID = #{tenantId}
+				   AND H.SABUN = #{sabun} 
+				   AND H.ENTER_CD = #{enterCd}
+				   AND H.INOUT_DATE = (SELECT A.d FROM (SELECT MAX(INOUT_DATE) AS d
+				   FROM WTM_INOUT_HIS I 
+				   WHERE I.TENANT_ID = #{tenantId} 
+				   AND I.ENTER_CD = #{enterCd}
+				   AND I.SABUN = #{sabun} 
+				   AND I.INOUT_TYPE_CD = 'OUT') A ) 
         ]]>
     </update>
     
