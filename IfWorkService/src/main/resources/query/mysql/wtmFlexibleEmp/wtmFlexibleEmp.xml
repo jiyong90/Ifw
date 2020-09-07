@@ -251,7 +251,7 @@
 		                     AND F.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
 		                     AND F.SYMD = E.SYMD
 		                     AND F.EYMD = E.EYMD) AS applId
-		                , SUM(CASE WHEN (R.TIME_TYPE_CD IN ('BASE', 'REGA')) OR (R.TIME_TYPE_CD IN ('TAA') AND M.TAA_TIME_YN = 'Y') THEN APPR_MINUTE ELSE 0 END) AS totalApprMinute
+		                , SUM(CASE WHEN (R.TIME_TYPE_CD IN ('BASE', 'REGA', 'FIXOT')) OR (R.TIME_TYPE_CD IN ('TAA') AND M.TAA_TIME_YN = 'Y') THEN APPR_MINUTE ELSE 0 END) AS totalApprMinute
 		                , (SELECT COUNT(DISTINCT YMD)
 		                     FROM WTM_WORK_DAY_RESULT A
 		                          JOIN WTM_FLEXIBLE_STD_MGR B
@@ -260,7 +260,7 @@
 		                    WHERE A.TENANT_ID = E.TENANT_ID
 		                      AND A.ENTER_CD = E.ENTER_CD
 		                      AND A.SABUN = E.SABUN
-		                      AND (A.TIME_TYPE_CD IN ('BASE', 'REGA') OR (A.TIME_TYPE_CD IN ('TAA') AND B.TAA_TIME_YN = 'Y'))
+		                      AND (A.TIME_TYPE_CD IN ('BASE', 'REGA', 'FIXOT') OR (A.TIME_TYPE_CD IN ('TAA') AND B.TAA_TIME_YN = 'Y'))
 		                      AND B.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
 		                      <![CDATA[
 		                      AND A.APPR_MINUTE IS NOT NULL AND A.APPR_MINUTE <> 0
