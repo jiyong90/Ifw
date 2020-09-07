@@ -785,6 +785,14 @@
 	                            </div>
 	                        </li>
 	                        <li>
+	                            <div class="main-title">간주 근무시간</div>
+	                            <div class="main-desc">
+	                            	<template v-if="workTimeInfo.regaMinute">
+	                            	{{minuteToHHMM(workTimeInfo.regaMinute, 'detail')}}
+	                            	</template>
+	                            </div>
+	                        </li>
+	                        <li>
 	                            <div class="main-title">연장 근무시간</div>
 	                            <div class="main-desc">
 	                            	<template v-if="workTimeInfo.apprOtMinute">
