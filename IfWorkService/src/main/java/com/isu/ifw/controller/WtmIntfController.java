@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.isu.ifw.TenantSecuredControl;
 import com.isu.ifw.common.entity.CommTenantModule;
 import com.isu.ifw.common.repository.CommTenantModuleRepository;
+import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.service.WtmInterfaceService;
 import com.isu.ifw.service.WtmMobileService;
@@ -249,10 +250,21 @@ public class WtmIntfController extends TenantSecuredControl {
 			}
 				
 			List<Map<String, Object>> works = (List<Map<String, Object>>)paramMap.get("works");
-			
+			String status = paramMap.get("status")+"";
+			if(!status.equals(WtmApplService.APPL_STATUS_CANCEL)) {
+	    		
+	    		
+	    		rp = validatorService.worktimeValid(tenantId, paramMap.get("enterCd").toString(), paramMap.get("applNo").toString(), works,paramMap.get("applSabun").toString());
+	    		//ObjectMapper mm = new ObjectMapper();
+	    		logger.debug(rp.getStatus() + " : " + rp.get("message"));
+	    		if(rp!=null && rp.getStatus()!=null && !"OK".equals(rp.getStatus())) {
+					return rp;
+	    		}
+	    	}
 			//rp = validatorService.worktimeValid(tenantId, paramMap.get("enterCd").toString(), paramMap.get("applNo").toString(), works, applSabun);
 			//if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-				interfaceService.setTaaApplArrIf(paramMap);
+				//interfaceService.setTaaApplArrIf(paramMap);
+			interfaceService.taaResult(tenantId, paramMap.get("enterCd")+"", paramMap.get("applSabun")+"", paramMap.get("applNo")+"", paramMap.get("status")+"", works);	
 			//}
 		} catch(Exception e) {
 			e.printStackTrace();
