@@ -109,6 +109,10 @@ public class GreenMobileApiService {
 				listdata.add("leader");
 			}
 			
+			if(sessionData.containsKey("EMP_NM")) {
+				sessionData.put("empNm", sessionData.get("EMP_NM"));
+			}
+			
 			sessionData.put("authCode", listdata);
 			sessionData.put("accessToken", accessToken);
 			Map<String, Object> resultMap = new HashMap<String, Object>();

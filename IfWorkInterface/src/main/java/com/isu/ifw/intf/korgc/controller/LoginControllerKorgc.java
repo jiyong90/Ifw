@@ -178,11 +178,15 @@ public class LoginControllerKorgc {
 							String sabun = row.get("EmpID")+"";
 							String username = "korgc@"+enterCd+"@"+sabun ;
 							pMap.put("empKey", enterCd+"@"+ sabun);
-							
+							 
 							String accessToken = service.createAccessToken(enterCd, sabun);
 							pMap.put("EmpID", row.get("EmpID"));		
 							
 							Map<String, Object> sessionData = intfMapper.getWtmEmpByEmpID(pMap);
+							if(sessionData.containsKey("EMP_NM")) {
+								sessionData.put("empNm", sessionData.get("EMP_NM"));
+							}
+							
 							sessionData.put("userId", userId);
 							sessionData.put("accessToken", accessToken);
 							pMap.put("sessionData", sessionData);
