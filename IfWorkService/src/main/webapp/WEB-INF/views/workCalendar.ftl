@@ -97,7 +97,7 @@
 		                                    <div class="desc" v-if="i.sYmd && i.eYmd">
 		                                    	근무기간: {{moment(i.sYmd).format('YYYY-MM-DD')}} ~ {{moment(i.eYmd).format('YYYY-MM-DD')}}
 		                                    </div>
-		                                    <button type="button" class="delete" @click="calendarLeftVue.cancelFlexitime(i)">
+		                                    <button type="button" class="delete" @click="calendarLeftVue.cancelFlexitime(i, 'imsi')">
                                                 <span>삭제</span>
                                             </button>
 		                                </li>
@@ -1618,14 +1618,14 @@
 	         	//	$("#flexibleAppl").hide();
 	         	//}
 	        },
-	        cancelFlexitime: function(obj){ //근무제 적용 취소
+	        cancelFlexitime: function(obj, gubn){ //근무제 적용 취소
 	        	
 	        	var $this = this;
 	        
 	        	$("#loading").show();
 				
 				var param;
-				if(obj!=null) {
+				if(gubn!=null && gubn == 'imsi') {
 					param = obj;
 				} else {
 					param = $this.rangeInfo;
