@@ -1045,23 +1045,38 @@
     </insert>
     
     <select id="checkBaseWorktime" parameterType="Long" resultType="map">
-    	SELECT CASE WHEN P.INFO_VALUE = 'Y' THEN E.WORK_MINUTE + E.OT_MINUTE ELSE E.WORK_MINUTE END >= SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE ELSE F_WTM_NVL(R.PLAN_MINUTE,0) END) AS isValid
-    		, CASE WHEN P.INFO_VALUE = 'Y' THEN E.WORK_MINUTE + E.OT_MINUTE ELSE E.WORK_MINUTE END  as totalWorktime
-    	  FROM WTM_FLEXIBLE_EMP E
-		  JOIN WTM_WORK_CALENDAR C
-		    ON E.TENANT_ID = C.TENANT_ID
-		   AND E.ENTER_CD = C.ENTER_CD
-		   AND E.SABUN = C.SABUN
-		   AND C.YMD BETWEEN E.SYMD AND E.EYMD
-		  LEFT OUTER JOIN  WTM_WORK_DAY_RESULT R
-		    ON C.TENANT_ID = R.TENANT_ID
-		   AND C.ENTER_CD = R.ENTER_CD
-		   AND C.YMD = R.YMD
-		   AND C.SABUN = R.SABUN
-		  LEFT OUTER JOIN WTM_PROPERTIE P
-		    ON P.TENANT_ID = C.TENANT_ID AND P.ENTER_CD = C.ENTER_CD AND P.INFO_KEY = 'OPTION_MAX_WORKTIME_CHECK_ADD_OT_YN'
-		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
-         GROUP BY E.WORK_MINUTE, E.OT_MINUTE
+    	SELECT E.TOT_MINUTE >= SUM(CASE WHEN R.APPR_MINUTE IS NOT NULL AND R.APPR_MINUTE != '' THEN R.APPR_MINUTE
+                                ELSE F_WTM_NVL(R.PLAN_MINUTE, 0) END) AS isValid
+		     , E.TOT_MINUTE AS totalWorktime
+		  FROM (SELECT E.TENANT_ID
+		             , E.ENTER_CD
+		             , E.SABUN
+		             , E.SYMD
+		             , E.EYMD
+		             , P.INFO_VALUE
+		             , CASE WHEN P.INFO_VALUE = 'Y' THEN E.WORK_MINUTE + E.OT_MINUTE ELSE E.WORK_MINUTE END AS TOT_MINUTE
+		          FROM WTM_FLEXIBLE_EMP E
+		               JOIN WTM_PROPERTIE P
+		                 ON P.TENANT_ID = E.TENANT_ID 
+		                AND P.ENTER_CD = E.ENTER_CD 
+		                AND P.INFO_KEY = 'OPTION_MAX_WORKTIME_CHECK_ADD_OT_YN'
+		         WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
+		       ) E
+			   JOIN WTM_WORK_CALENDAR C
+			     ON E.TENANT_ID = C.TENANT_ID
+			    AND E.ENTER_CD = C.ENTER_CD
+			    AND E.SABUN = C.SABUN
+			    AND C.YMD BETWEEN E.SYMD AND E.EYMD
+			   LEFT OUTER JOIN WTM_WORK_DAY_RESULT R
+			     ON C.TENANT_ID = R.TENANT_ID
+			    AND C.ENTER_CD = R.ENTER_CD
+			    AND C.YMD = R.YMD
+			    AND C.SABUN = R.SABUN
+			    AND ((E.INFO_VALUE = 'Y' AND R.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT', 'REGA', 'TAA'))
+			          OR
+			         (E.INFO_VALUE = 'N' AND R.TIME_TYPE_CD IN ('BASE', 'REGA', 'TAA'))
+			        )
+		 GROUP BY E.TOT_MINUTE
     </select>
     
     <select id="checkBaseWorktimeMgr" parameterType="map" resultType="map">
