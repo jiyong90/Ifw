@@ -31,6 +31,7 @@
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , O.SABUN AS sabun
 			     , A.APPL_SABUN AS applSabun
+			     , A.APPL_YMD as applYmd
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_CAN_APPL C
 			    ON A.APPL_ID = C.APPL_ID

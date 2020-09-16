@@ -52,6 +52,7 @@
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
 			     , R.WORK_DAY_RESULT_ID AS workDayResultId
+			     , A.APPL_YMD AS applYmd
 			  FROM WTM_APPL A
 			  LEFT OUTER JOIN WTM_OT_SUBS_APPL S
 			    ON A.APPL_ID = S.APPL_ID
@@ -348,6 +349,7 @@
 			     , A.APPL_STATUS_CD AS applStatusCd
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
 			     , R.WORK_DAY_RESULT_ID AS workDayResultId
+			     , A.APPL_YMD AS applYmd
 			  FROM WTM_APPL A
 			  JOIN WTM_OT_SUBS_APPL S
 			    ON A.APPL_ID = S.APPL_ID
