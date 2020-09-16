@@ -274,8 +274,7 @@
 		     , H.PAY_YN = I.PAY_YN
 		     , H.UPDATE_DATE = NOW()
 		     , H.UPDATE_ID = #{updateId}
-		 WHERE H.TENANT_ID = ${tenantId} 
-		   AND H.ENTER_CD = #{enterCd}
+		 WHERE H.TENANT_ID = #{tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
 		   AND (H.HOLIDAY_NM<>I.HOLIDAY_NM OR H.FESTIVE_YN<>I.FESTIVE_YN OR H.PAY_YN<>I.PAY_YN) 
 		 ]]>
@@ -301,8 +300,7 @@
 		   AND I.ENTER_CD = M.ENTER_CD
 		   AND I.LOCATION_CD = M.BISINESS_PLACE_CD
 		   AND I.YMD = M.HOLIDAY_YMD
-		 WHERE I.TENANT_ID = ${tenantId} 
-		   AND I.ENTER_CD = #{enterCd}
+		 WHERE I.TENANT_ID = #{tenantId} 
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
 		   AND M.HOLIDAY_YMD IS NULL
 		 ORDER BY I.ENTER_CD, I.LOCATION_CD, I.YMD
@@ -316,10 +314,10 @@
 		    ON C.TENANT_ID = I.TENANT_ID
 		   	 AND C.ENTER_CD = I.ENTER_CD
 		   	 AND C.TAA_CD = I.GNT_CD
-		 WHERE C.TENANT_ID = ${tenantId} 
+		 WHERE C.TENANT_ID = #{tenantId} 
 		   AND I.INTF_ID IS NULL
 		   AND I.YYYYMMDDHHMISS > #{ymdhis}
-		   AND C.TAA_CD IN ( SELECT TAA_CD FROM WTM_INTF_GNT WHERE TENANT_ID=${tenantId} AND YYYYMMDDHHMISS > #{ymdhis}) 
+		   AND C.TAA_CD IN ( SELECT TAA_CD FROM WTM_INTF_GNT WHERE TENANT_ID=#{tenantId} AND YYYYMMDDHHMISS > #{ymdhis}) 
 		   AND NOT EXISTS ( SELECT TENANT_ID, ENTER_CD, TAA_CD
 				                     FROM (SELECT A.*
 											  FROM WTM_TAA_CODE A 
@@ -329,7 +327,7 @@
 											   AND B.GNT_CD = A.TAA_CD
 											   AND B.GNT_NM = A.TAA_NM
 											   AND B.YYYYMMDDHHMISS > #{ymdhis}
-											 WHERE B.TENANT_ID = ${tenantId} ) T )		                     
+											 WHERE B.TENANT_ID = #{tenantId} ) T )		                     
 		]]>
 	</update>
 	
@@ -629,23 +627,33 @@
 	<update id="insertWtmEmpAddr" parameterType="hashmap">
 		<![CDATA[
 		INSERT INTO WTM_EMP_ADDR(TENANT_ID, ENTER_CD, SABUN, EMAIL, HAND_PHONE, NOTE, UPDATE_DATE, UPDATE_ID)
-		SELECT DISTINCT I.TENANT_ID
-		     , I.ENTER_CD
-		     , I.SABUN
-			  , I.EMAIL
-			  , I.PHONE
-			  , I.NOTE
-			  , NOW() AS UPDATE_DATE
-			  , #{updateId} AS UPDATE_ID
-		  FROM WTM_INTF_EMP_ADDR I
-		  LEFT OUTER JOIN WTM_EMP_ADDR C
-		    ON I.TENANT_ID = C.TENANT_ID
-		   AND I.ENTER_CD = C.ENTER_CD
-		   AND I.SABUN = C.SABUN
-		 WHERE I.TENANT_ID = ${tenantId} 
-		   AND I.YYYYMMDDHHMISS > #{ymdhis}
-		   AND C.EMP_ADDR_ID IS NULL
-		 ORDER BY I.ENTER_CD, I.SABUN
+		SELECT X.TENANT_ID, X.ENTER_CD, X.SABUN, X.EMAIL, X.PHONE, X.NOTE, X.UPDATE_DATE, X.UPDATE_ID
+		FROM (
+		         SELECT DISTINCT I.TENANT_ID      AS TENANT_ID
+		                       , I.ENTER_CD       AS ENTER_CD
+		                       , I.SABUN          AS SABUN
+		                       , I.EMAIL          AS EMAIL
+		                       , I.PHONE          AS PHONE
+		                       , I.NOTE           AS NOTE
+		                       , NOW()            AS UPDATE_DATE
+		                       , 'INTF'           AS UPDATE_ID
+		                       , I.YYYYMMDDHHMISS AS YMDHIS
+		           FROM WTM_INTF_EMP_ADDR I
+		                    LEFT OUTER JOIN WTM_EMP_ADDR C
+		                                    ON I.TENANT_ID = C.TENANT_ID
+		                                        AND I.ENTER_CD = C.ENTER_CD
+		                                        AND I.SABUN = C.SABUN
+		
+		          WHERE I.TENANT_ID = ${tenantId} 
+		            AND I.YYYYMMDDHHMISS > #{ymdhis} 
+		            AND C.EMP_ADDR_ID IS NULL
+		          GROUP BY I.TENANT_ID
+		                 , I.ENTER_CD
+		                 , I.SABUN
+		                 , I.YYYYMMDDHHMISS
+		          ORDER BY I.YYYYMMDDHHMISS DESC
+		     ) X
+		GROUP BY X.TENANT_ID, X.ENTER_CD, X.SABUN
 		]]>
 	</update>
 	
