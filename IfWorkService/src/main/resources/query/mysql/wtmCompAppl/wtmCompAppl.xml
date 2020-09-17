@@ -32,11 +32,11 @@
 		                          FROM WTM_COMP_CAN_APPL
 		                         GROUP BY COMP_APPL_ID) B
 		         ON A.COMP_APPL_ID  = B.COMP_APPL_ID
-		       LEFT OUTER JOIN WTM_APPL C
+		       INNER JOIN WTM_APPL C
 		         ON A.APPL_ID = C.APPL_ID
 		       LEFT OUTER JOIN WTM_APPL D
 		         ON B.APPL_ID = D.APPL_ID
-		      INNER JOIN (SELECT WCC.TENANT_ID
+		      LEFT OUTER JOIN (SELECT WCC.TENANT_ID
 		                       , WCC.ENTER_CD
 		                       , WCC.SABUN
 		                       , SUM(WCC.REST_MINUTE) AS REST_MINUTE
@@ -48,10 +48,12 @@
 		         ON E.SABUN = A.SABUN
 		        AND E.SYMD <= A.COMP_SYMD
 		        AND E.EYMD >= A.COMP_EYMD
+		        AND E.TENANT_ID = C.TENANT_ID
+		        AND E.ENTER_CD = C.ENTER_CD
 		 WHERE C.APPL_STATUS_CD IN ('21','31','41','99')
-		   AND E.TENANT_ID = #{tenantId}
-		   AND E.ENTER_CD  = #{enterCd}
-		   AND E.SABUN     = #{sabun}
+		   AND C.TENANT_ID = #{tenantId}
+		   AND C.ENTER_CD  = #{enterCd}
+		   AND A.SABUN     = #{sabun}
         ]]>
     </select>
 
