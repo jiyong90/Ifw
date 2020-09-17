@@ -410,7 +410,7 @@ public class WtmApplController {
 					if((applStatusCd==null || !WtmApplService.APPL_STATUS_IMSI.equals(applStatusCd)) && paramMap.containsKey("sabun") && paramMap.containsKey("sYmd") && paramMap.containsKey("eYmd")) {
 						//wtmAsyncService.initWtmFlexibleEmpOfWtmWorkDayResult(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
 						//wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId);
-						wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("symd")+"", paramMap.get("eymd")+"", userId, true);
+						wtmAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, paramMap.get("sabun")+"", paramMap.get("sYmd")+"", paramMap.get("eYmd")+"", userId, true);
 					}
 					
 				}
