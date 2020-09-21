@@ -291,6 +291,7 @@
 								$("#loading").hide();
 								if(data!=null && data.status=='OK') {
 									$("#alertText").html("변경되었습니다.");
+									workPlanChangeMgrVue.getWorkPlanChangeTarget();
 								} else {
 									$("#alertText").html(data.message);
 								}
