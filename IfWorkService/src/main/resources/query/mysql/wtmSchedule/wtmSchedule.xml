@@ -303,7 +303,7 @@ SELECT ENTER_CD AS enterCd
 	
 	<select id="getIntfOtList" parameterType="map" resultType="hashmap">
 		<![CDATA[
-			SELECT MAX(OT_ID) AS OT_ID, CompanySeq, WkDate, EmpID, SUM(DTCnt) AS DTCnt, SUM(NTCnt) AS NTCnt, MAX(IsHoliApp) AS IsHoliApp, MIN(UPDATE_DATE) AS UPDATE_DATE 
+			SELECT MAX(OT_ID) AS OT_ID, CompanySeq, WkDate, EmpID, SUM(DTCnt) AS DTCnt, SUM(NTCnt) AS NTCnt, MAX(IsHoliApp) AS IsHoliApp, date_format(MIN(UPDATE_DATE), '%Y-%m-%d %H:%i:%s') AS UPDATE_DATE 
 			  FROM (
 			SELECT C.WORK_DAY_RESULT_ID AS OT_ID
 			      , C.ENTER_CD AS CompanySeq

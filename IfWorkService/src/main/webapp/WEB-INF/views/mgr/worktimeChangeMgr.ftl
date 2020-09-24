@@ -35,6 +35,7 @@
                                 <span class="group">{{t.orgNm}}</span>
                                 <span class="num">{{t.sabun}}</span>
                                 <span class="name">{{t.empNm}}</span>
+                                <span class="workTime">{{t.workTime}}</span>
                             </label>
                         </li>
                     </ul>
