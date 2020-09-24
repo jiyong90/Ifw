@@ -50,10 +50,13 @@ public class WtmWorktimeCloseController {
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String userId = sessionData.get("userId").toString();
+		Long worktimeCloseId = Long.valueOf(paramMap.get("worktimeCloseId").toString());
+		
 		
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
-		paramMap.put("userId", userId);				
+		paramMap.put("userId", userId);
+		paramMap.put("worktimeCloseId", worktimeCloseId);
 		
 		rp.setSuccess("");
 		int cnt = 0;

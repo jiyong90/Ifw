@@ -89,33 +89,33 @@
    		
 		var initdata1 = {};
 		
-		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
+		initdata1.Cfg = {SearchMode:smLazyLoad,MergeSheet:msPrevColumnMerge,Page:22};
 		initdata1.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
 
 		initdata1.Cols = [
 			{Header:"No",		Type:"Seq",			Hidden:Number("0"),	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"상태",		Type:"Status",		Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
+			{Header:"결재번호",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:1,	SaveName:"applId",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"결재상태",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:1,	SaveName:"applStatusCd",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"소속",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"orgNm"		,	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"사번",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sabun",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"성명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"empNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"결재상태",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"applStatusCd",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
 			{Header:"근무구분",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"applNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"근무일",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ymd",				KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"근무일",		Type:"Text",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"ymd",				KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"시작시각",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"otSdate",			KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"종료시각",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"otEdate",			KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"신청시간(분)",Type:"Text",		    Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"otMinute",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"신청시간(분)",Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"otMinute",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"사유코드",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"reasonCd",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"사유",		Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"reason",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"대체휴일시작시각",	Type:"Text",	Hidden:1,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"subsSdate",	    KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"대체휴일종료시각",	Type:"Text",	Hidden:1,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"subsEdate",		KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"결재번호",	Type:"Text",		Hidden:1,	Width:10,	Align:"Center",	ColMerge:0,	SaveName:"applId",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
+			{Header:"대체휴일시작시각",	Type:"Text",Hidden:1,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"subsSdate",	    KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"대체휴일종료시각",	Type:"Text",Hidden:1,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"subsEdate",		KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
 		sheet1.SetEditable(true);
 		sheet1.SetVisible(true);
 		sheet1.SetUnicodeByte(3);
-
+		
 		<#if subsYn?? && subsYn!='' && subsYn?exists >
 			if('${subsYn}'=='Y') {
 				sheet1.SetColHidden("subsSdate", 0);
@@ -170,7 +170,8 @@
 		   	  	} else {
 		   	  		sheet1.SetCellEditable(i, "applStatusCd", false);
 		   	  	}
-		   	  }
+		   	}
+			
 		} catch (ex) {
 			alert("OnSearchEnd Event Error " + ex);
 		}

@@ -23,23 +23,26 @@
   	
   	<select id="findByApplId" parameterType="Long" resultType="map">
   		<![CDATA[
-  		SELECT ENTRY_APPL_ID AS entryApplId
-  		     , APPL_ID AS applId
-  		     , YMD AS ymd
-  		     , F_WTM_DATE_FORMAT(YMD, 'Y.M.D') AS ymds
-  		     , CONCAT(IFNULL(F_WTM_DATE_FORMAT(PLAN_SDATE,'Y.M.D H:I:S'), ''), ' ~ ', IFNULL(F_WTM_DATE_FORMAT(PLAN_EDATE,'Y.M.D H:I:S'), '')) AS planDate
-  		     , CONCAT(IFNULL(F_WTM_DATE_FORMAT(ENTRY_SDATE,'Y.M.D H:I:S'), ''), ' ~ ', IFNULL(F_WTM_DATE_FORMAT(ENTRY_EDATE,'Y.M.D H:I:S'), '')) AS entryDate
-  		     , F_WTM_DATE_FORMAT(CHG_SDATE,'Y.M.D H:I:S') AS chgs
-  		     , F_WTM_DATE_FORMAT(CHG_EDATE,'Y.M.D H:I:S') AS chge
-  		     , F_WTM_DATE_FORMAT(PLAN_SDATE,'YMDHIS') AS planSdate
-  		     , F_WTM_DATE_FORMAT(PLAN_EDATE,'YMDHIS') AS planEdate
-  		     , F_WTM_DATE_FORMAT(ENTRY_SDATE,'YMDHIS') AS entrySdate
-  		     , F_WTM_DATE_FORMAT(ENTRY_EDATE,'YMDHIS') AS entryEdate
-  		     , F_WTM_DATE_FORMAT(CHG_SDATE,'YMDHIS') AS chgSdate
-  		     , F_WTM_DATE_FORMAT(CHG_EDATE,'YMDHIS') AS chgEdate
-  		     , reason
-  		  FROM WTM_ENTRY_APPL
-  		 WHERE APPL_ID = #{applId}
+  		SELECT A.ENTRY_APPL_ID AS entryApplId
+  		     , A.APPL_ID AS applId
+  		     , A.YMD AS ymd
+  		     , F_WTM_DATE_FORMAT(A.YMD, 'Y.M.D') AS ymds
+  		     , CONCAT(IFNULL(F_WTM_DATE_FORMAT(A.PLAN_SDATE,'Y.M.D H:I:S'), ''), ' ~ ', IFNULL(F_WTM_DATE_FORMAT(A.PLAN_EDATE,'Y.M.D H:I:S'), '')) AS planDate
+  		     , CONCAT(IFNULL(F_WTM_DATE_FORMAT(A.ENTRY_SDATE,'Y.M.D H:I:S'), ''), ' ~ ', IFNULL(F_WTM_DATE_FORMAT(A.ENTRY_EDATE,'Y.M.D H:I:S'), '')) AS entryDate
+  		     , F_WTM_DATE_FORMAT(A.CHG_SDATE,'Y.M.D H:I:S') AS chgs
+  		     , F_WTM_DATE_FORMAT(A.CHG_EDATE,'Y.M.D H:I:S') AS chge
+  		     , F_WTM_DATE_FORMAT(A.PLAN_SDATE,'YMDHIS') AS planSdate
+  		     , F_WTM_DATE_FORMAT(A.PLAN_EDATE,'YMDHIS') AS planEdate
+  		     , F_WTM_DATE_FORMAT(A.ENTRY_SDATE,'YMDHIS') AS entrySdate
+  		     , F_WTM_DATE_FORMAT(A.ENTRY_EDATE,'YMDHIS') AS entryEdate
+  		     , F_WTM_DATE_FORMAT(A.CHG_SDATE,'YMDHIS') AS chgSdate
+  		     , F_WTM_DATE_FORMAT(A.CHG_EDATE,'YMDHIS') AS chgEdate
+  		     , A.REASON AS reason
+             , B.APPL_YMD AS applYmd
+  		  FROM WTM_ENTRY_APPL A
+               LEFT OUTER JOIN WTM_APPL B
+               		   ON A.APPL_ID = B.APPL_ID
+  		 WHERE A.APPL_ID = #{applId}
 		]]>	
   	</select>
 </mapper>

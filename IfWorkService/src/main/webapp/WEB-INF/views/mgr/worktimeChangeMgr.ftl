@@ -35,6 +35,7 @@
                                 <span class="group">{{t.orgNm}}</span>
                                 <span class="num">{{t.sabun}}</span>
                                 <span class="name">{{t.empNm}}</span>
+                                <span class="workTime">{{t.workTime}}</span>
                             </label>
                         </li>
                     </ul>
@@ -291,6 +292,7 @@
 								$("#loading").hide();
 								if(data!=null && data.status=='OK') {
 									$("#alertText").html("변경되었습니다.");
+									workPlanChangeMgrVue.getWorkPlanChangeTarget();
 								} else {
 									$("#alertText").html(data.message);
 								}

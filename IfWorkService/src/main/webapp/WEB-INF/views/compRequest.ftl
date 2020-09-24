@@ -221,6 +221,7 @@
 	    mounted: function(){
 	    	var $this = this;
 	    	this.getPossibleUseTime();
+	    	this.getApplLine('COMP');
 	    },
 	    methods : {
 	    	showCompRequestPopup : function(){
@@ -566,7 +567,6 @@
 		switch (sAction) {
 		case "Search":
 			sheet1.DoSearch( "${rc.getContextPath()}/compAppl/list" , $("#sheetForm").serialize());
-			compModalVue.getApplLine('COMP');
 			break;
 		}
 	}
@@ -652,5 +652,5 @@
 			}
 		}
 	}
-	
+
 </script>

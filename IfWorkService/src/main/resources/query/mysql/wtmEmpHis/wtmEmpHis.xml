@@ -9,39 +9,44 @@
         <![CDATA[
         	SELECT *
         	  FROM (
-			        	SELECT EMP_HIS_ID AS empHisId
-							 , ENTER_CD AS enterCd
-							 , SABUN AS sabun
-							 , EMP_NM AS empNm
-							 , EMP_ENG_NM AS empEngNm
-							 , SYMD AS symd
-							 , EYMD AS eymd
-							 , STATUS_CD AS statusCd
-							 , ORG_CD AS orgCd
-							 , BUSINESS_PLACE_CD AS businessPlaceCd
-							 , DUTY_CD AS dutyCd
-							 , POS_CD AS posCd
-							 , CLASS_CD AS classCd
-							 , JOB_GROUP_CD AS jobGroupCd
-							 , JOB_CD AS jobCd
-							 , PAY_TYPE_CD AS payTypeCd
-							 , LEADER_YN AS leaderYn
-							 , NOTE AS note
-							 , F_WTM_GET_ORG_NM(TENANT_ID, ENTER_CD, ORG_CD, SYMD) AS orgNm
-							 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'DUTY_CD', DUTY_CD, SYMD) AS dutyNm
-							 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'POS_CD', POS_CD, SYMD) AS posNm
-							 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'CLASS_CD', CLASS_CD, SYMD) AS classNm
-							 , F_WTM_GET_CODE_NM(TENANT_ID, ENTER_CD, 'JOB_CD', JOB_CD, SYMD) AS jobNm
+			        	SELECT A.EMP_HIS_ID AS empHisId
+							 , A.ENTER_CD AS enterCd
+							 , A.SABUN AS sabun
+							 , A.EMP_NM AS empNm
+							 , A.EMP_ENG_NM AS empEngNm
+							 , A.SYMD AS symd
+							 , A.EYMD AS eymd
+							 , A.STATUS_CD AS statusCd
+							 , A.ORG_CD AS orgCd
+							 , A.BUSINESS_PLACE_CD AS businessPlaceCd
+							 , A.DUTY_CD AS dutyCd
+							 , A.POS_CD AS posCd
+							 , A.CLASS_CD AS classCd
+							 , A.JOB_GROUP_CD AS jobGroupCd
+							 , A.JOB_CD AS jobCd
+							 , A.PAY_TYPE_CD AS payTypeCd
+							 , A.LEADER_YN AS leaderYn
+							 , A.NOTE AS note
+							 , (SELECT MAX(WOC.ORG_NM)
+								  FROM WTM_ORG_CODE WOC
+								 WHERE WOC.TENANT_ID = A.TENANT_ID
+								   AND WOC.ENTER_CD = A.ENTER_CD
+								   AND WOC.ORG_CD = A.ORG_CD) AS orgNm
+							 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'DUTY_CD', A.DUTY_CD, A.SYMD) AS dutyNm
+							 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'POS_CD', A.POS_CD, A.SYMD) AS posNm
+							 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'CLASS_CD', A.CLASS_CD, A.SYMD) AS classNm
+							 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'JOB_CD', A.JOB_CD, A.SYMD) AS jobNm
 							 , EMP_ID AS empId
-						  FROM WTM_EMP_HIS
-						 WHERE TENANT_ID = #{tenantId}
-						   AND ENTER_CD = #{enterCd} 
+							 , TENANT_ID AS tenantId
+						  FROM WTM_EMP_HIS A
+						 WHERE A.TENANT_ID = #{tenantId}
+						   AND A.ENTER_CD = #{enterCd} 
 							AND CASE WHEN #{sYmd} = '' THEN F_WTM_DATE_FORMAT(now(),'YMD')
-							         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN SYMD AND EYMD
-							AND STATUS_CD <> 'RA'
+							         ELSE REPLACE(#{sYmd}, '-', '') END BETWEEN A.SYMD AND A.EYMD
+							AND A.STATUS_CD <> 'RA'
 			        ]]>
 			        		<if test="orgList!=null">
-						   AND ORG_CD IN (NULL, 
+						   AND A.ORG_CD IN (NULL, 
 					       <foreach collection="orgList" item="org" separator=", ">
 							   #{org}
 						   </foreach>
