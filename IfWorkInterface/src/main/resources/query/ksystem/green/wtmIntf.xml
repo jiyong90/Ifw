@@ -214,7 +214,7 @@
 				  , #{DTCnt}
 				  , #{NTCnt}
 				  , #{IsHoliApp}
-				  , #{UPDATE_DATE}
+				  , CONVERT (DATETIME, #{UPDATE_DATE})
 				)
 		]]>
 	</insert>
