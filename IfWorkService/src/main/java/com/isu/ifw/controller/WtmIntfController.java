@@ -88,7 +88,7 @@ public class WtmIntfController extends TenantSecuredControl {
 			CommTenantModule tm = tenantModuleRepo.findByApiKey(apiKey);
       
 			if(tm == null) {
-				rp.setFail("secret 불일치");
+				rp.setFail("apiKey 불일치");
 				return rp;
 			}
 
@@ -113,7 +113,11 @@ public class WtmIntfController extends TenantSecuredControl {
          
 			logger.debug("getParameter s2 " + request.getParameter("deviceKey") + " " + request.getParameter("emp") + " " + request.getParameter("time") + " " + request.getParameter("type"));
       
-			inoutService.updateTimecard2(paramMap);
+			if(tm.getTenantKey().equalsIgnoreCase("SAMHWACROWN")|| tm.getTenantKey().equalsIgnoreCase("SOLDEV")) {
+				inoutService.updEntryDate(tm.getTenantId(), request.getParameter("enterCd"), request.getParameter("emp"), request.getParameter("type"), request.getParameter("time"), request.getParameter("deviceKey"), "INTF");
+			}else {
+				inoutService.updateTimecard2(paramMap);
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
@@ -137,11 +141,10 @@ public class WtmIntfController extends TenantSecuredControl {
 			CommTenantModule tm = tenantModuleRepo.findByApiKey(apiKey);
 			logger.debug("tm " + tm.toString());
 			if(tm == null) {
-				rp.setFail("secret 불일치");
+				rp.setFail("apiKey 불일치");
 				return rp;
 			}
 
-			
 			String encryptCode = tm.getTenantKey().toString();
 			if(encryptCode.length() < 12) {
 				encryptCode = String.format("%12s", encryptCode).replaceAll(" ", "o");
@@ -164,7 +167,14 @@ public class WtmIntfController extends TenantSecuredControl {
 			
 			logger.debug("getParameter s2 " + params.get("deviceKey") + " " + params.get("emp") + " " + params.get("time") + " " + params.get("type"));
 		
-			inoutService.updateTimecard2(paramMap);
+			//삼화왕관 만 타각정보를 다르게 지정한다. 
+			//if(tm.getTenantId().equals(22)) {
+			if(tm.getTenantKey().equalsIgnoreCase("SAMHWACROWN") || tm.getTenantKey().equalsIgnoreCase("SOLDEV")){
+				inoutService.updEntryDate(tm.getTenantId(), params.get("enterCd")+"", params.get("emp")+"", params.get("type")+"", params.get("time") +"", params.get("deviceKey")+"", "INTF");
+			}else {
+				inoutService.updateTimecard2(paramMap);
+			}
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
