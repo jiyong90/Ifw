@@ -2675,4 +2675,19 @@
 			AND #{ymd} BETWEEN A.SYMD AND A.EYMD
   	</select>
   	
+  	<select id="getWeekStartEndYmd" parameterType="map" resultType="map">
+  		<![CDATA[
+	  		SELECT MIN(X.WEEK_SDATE) AS weekSymd, MAX(X.WEEK_EDATE) AS weekEymd
+			  FROM (
+				SELECT P.TENANT_ID, P.ENTER_CD, SUN_YMD AS WEEK_SDATE
+					, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(SUN_YMD, 6, 'D'), 'YMD') AS WEEK_EDATE   
+					 FROM WTM_DAY_MGR D
+					 JOIN WTM_PROPERTIE P
+					 ON 1=1
+					 AND P.TENANT_ID = #{tenantId} AND P.ENTER_CD = #{enterCd} AND P.INFO_KEY = 'OPTION_FIRSTDAY_OF_WEEK'
+					 WHERE D.DAY_NM = P.INFO_VALUE
+				) X
+		     WHERE #{ymd} <= WEEK_EDATE AND #{ymd} >= WEEK_SDATE
+	     ]]>
+  	</select>
 </mapper>
