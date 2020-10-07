@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isu.ifw.entity.WtmFlexibleEmp;
 import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.entity.WtmWorkCalendar;
 import com.isu.ifw.mapper.WtmFlexibleStdMapper;
 import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.repository.WtmWorkDayResultRepository;
 import com.isu.ifw.service.WtmCalcService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
@@ -50,6 +52,9 @@ public class TestController {
 	
 	@Autowired WtmWorkDayResultRepository workDayResultRepo;
 	
+	@Autowired WtmWorkCalendarRepository workCalendarRepo;
+	 
+	
 	@RequestMapping(value = "/login/calcAppr", method = RequestMethod.GET)
 	public Map<String, Object> testCalcAppr(@RequestParam String enterCd,
 										@RequestParam Long tenantId,
@@ -70,7 +75,28 @@ public class TestController {
 		empService.createWorkTermtimeByEmployee(tenantId, enterCd, sabun, paramMap, "JSP");
 		return m;
 	}
+	@RequestMapping(value = "/login/reCalcAppr2", method = RequestMethod.GET)
+	public Map<String, Object> rTestReCalcAppr(@RequestParam String enterCd,
+				@RequestParam Long tenantId,
+				@RequestParam String sYmd,
+				@RequestParam String eYmd,
+				HttpServletRequest request, 
+				HttpServletResponse response){
 	
+		Map<String, Object> m = new HashMap<String, Object>();
+		
+		List<WtmWorkCalendar> cals = workCalendarRepo.findByTenantIdAndEnterCdAndYmdBetweenOrderByYmd(tenantId, enterCd, sYmd, eYmd);
+		if(cals != null && cals.size() > 0) {
+			for(WtmWorkCalendar cal : cals) {
+				empService.resetCalcApprDayInfo(cal.getTenantId(), cal.getEnterCd(), cal.getYmd(), cal.getSabun(), null);
+				empService.calcApprDayInfo(cal.getTenantId(), cal.getEnterCd(), cal.getYmd(), cal.getYmd(), cal.getSabun());
+				calcService.P_WTM_FLEXIBLE_EMP_WORKTERM_C(cal.getTenantId(), cal.getEnterCd(), cal.getSabun(), cal.getYmd());
+			}
+		}
+		//
+		return m;
+	}
+		
 	@RequestMapping(value = "/login/reCalcAppr", method = RequestMethod.GET)
 	public Map<String, Object> testReCalcAppr(@RequestParam String enterCd,
 										@RequestParam Long tenantId,
@@ -90,6 +116,7 @@ public class TestController {
 		paramMap.put("symd", ymd);
 		paramMap.put("eymd", ymd);
 		empService.createWorkTermtimeByEmployee(tenantId, enterCd, sabun, paramMap, "JSP");
+		//calcService.P_WTM_FLEXIBLE_EMP_WORKTERM_C(tenantId, enterCd, sabun, ymd);
 		return m;
 	}
 	
