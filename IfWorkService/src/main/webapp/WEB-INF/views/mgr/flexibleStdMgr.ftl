@@ -671,6 +671,33 @@
        	    }
        	  });
         new jBox('Tooltip', {
+       	    attach: '#Tooltip-createOtIfOutOfPlanYn',
+       	    target: '#Tooltip-createOtIfOutOfPlanYn',
+       	    theme: 'TooltipBorder',
+       	    trigger: 'click',
+       	    adjustTracker: true,
+       	    closeOnClick: 'body',
+       	    closeButton: 'box',
+       	    animation: 'move',
+       	    position: {
+       	      x: 'left',
+       	      y: 'top'
+       	    },
+       	    outside: 'y',
+       	    pointer: 'left:20',
+       	    offset: {
+       	      x: 25
+       	    },
+       	    content: '기본근무 계획이 있을 경우,<br/>체크 시 계획된 기본근무 대비 타각시간으로 연장근무 정보를 생성한다.',
+       	    onOpen: function () {
+       	      this.source.addClass('active');
+       	    },
+       	    onClose: function () {
+       	      this.source.removeClass('active');
+       	    }
+       	  });
+
+        new jBox('Tooltip', {
        	    attach: '#Tooltip-todayPlanEditYn',
        	    target: '#Tooltip-todayPlanEditYn',
        	    theme: 'TooltipBorder',
@@ -839,6 +866,7 @@
 			{Header:"근태일근무여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"taaWorkYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"출근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayOpenType",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"퇴근자동처리",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"dayCloseType",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
+			{Header:"계획외연장근무생성",	Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"createOtIfOutOfPlanYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:1 },
 			{Header:"기준요일",			Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"baseDay",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"계획없음여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"unplannedYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
 			{Header:"신청여부",		Type:"Text",	Hidden:1,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"applYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:50 },
@@ -985,6 +1013,11 @@
 	        	sheet1.SetCellValue(row, "applyEntrySdateYn", applyEntrySdateYn);
 	        	sheet1.SetCellValue(row, "applyEntryEdateYn", applyEntryEdateYn);
 	        }
+
+	        if($('#trCreateOtIfOutOfPlanYn').is(':visible')){
+	        	var createOtIfOutOfPlanYn = getCheckYn("createOtIfOutOfPlanYn");
+	        	sheet1.SetCellValue(row, "createOtIfOutOfPlanYn", createOtIfOutOfPlanYn);
+	        }
 	        if($('#trUsedTerm').is(':visible')){
 	        	var usedTermArr = new Array();
 				$('input[name="usedTermOpt"]').each(function() {
@@ -1063,7 +1096,7 @@
 			break;
 		
 		case "Save":
-			if(!dupChk(sheet1,"flexibleStdMgrId|seq", false, true)){break;}													  
+			if(!dupChk(sheet1,"flexibleStdMgrId|seq", false, true)){break;}
 			IBS_SaveName(document.sheetForm,sheet2);
 			sheet2.DoSave("${rc.getContextPath()}/flexibleStd/savePatt", $("#sheetForm").serialize());
 			break;
@@ -1121,6 +1154,7 @@
 	// Cell select
 	function sheet1_OnSelectCell(OldRow, OldCol, NewRow, NewCol,isDelete) {
 		if(sheet1.GetCellValue( sheet1.GetSelectRow(), "sStatus") != "I"){
+			$('.layout_tabs').show();
 			$("#pattBtn").show();	// 패턴저장 버튼 숨김
 			$("#optionBtn").show(); //옵션저장 버튼 숨김
 			if(OldRow != NewRow){
@@ -1241,6 +1275,7 @@
 					if(workTypeCd == "SELE_C"){
 						$("#trCoreChk").hide();
 						$("#trUnplan").hide();
+						
 						// 20200521 부분선근제는 무조건 코어시간 체크해야함
 						// if(sheet1.GetCellValue( NewRow, "coreChkYn") == "Y"){
 							$("input:checkbox[name='coreChkYn']").prop("checked", true);
@@ -1266,11 +1301,11 @@
 						} else {
 							$("#coreShm").val("");
 							$("#coreEhm").val("");
-						}						
+						}				
 						
 					} else {
 						$("#trCoreChk").hide();
-						$("#trCoreTime").hide();												
+						$("#trCoreTime").hide();									
 						
 						$("#trApplyEntry").show();
 						if(sheet1.GetCellValue( NewRow, "applyEntrySdateYn") == "Y"){
@@ -1297,6 +1332,18 @@
 						$("input:checkbox[name='todayPlanEditYn']").prop("checked", true);
 					}
 					$("#trTodayPlanEdit").show();
+					
+					if(sheet1.GetCellValue( NewRow, "unplannedYn") == "Y"){
+						$("#trCreateOtIfOutOfPlanYn").hide();	
+						$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", false);
+					}else{
+						if(sheet1.GetCellValue( NewRow, "createOtIfOutOfPlanYn") == "Y"){
+							$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", true);
+						} else {
+							$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", false);
+						}
+					}
+					
 				} else {
 					$("#taaTimeYn").val("N");
 					$("#trWorkTime").hide();
@@ -1372,6 +1419,8 @@
 			
 			$("#optionBtn").hide(); //옵션저장 버튼 숨김
 			setOptionClear();	// 옵션항목 data 클리어
+			
+			$('.layout_tabs').hide();
 		}
 	}
 	
