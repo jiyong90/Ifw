@@ -21,8 +21,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.entity.WtmEmpHis;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
+import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.service.WtmAsyncService;
+import com.isu.ifw.service.WtmFlexibleEmpResetService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
@@ -43,6 +46,8 @@ public class WtmFlexibleEmpController {
 	@Autowired
 	private WtmFlexibleEmpMapper flexEmpMapper;
 	
+	@Autowired private WtmFlexibleEmpResetService flexibleEmpResetService;
+	@Autowired private WtmEmpHisRepository wtmEmpHisRepo;
 	/**
 	 * 해당 월의 근무제 정보 조회
 	 * @param paramMap
@@ -689,10 +694,89 @@ public class WtmFlexibleEmpController {
 			rp = flexibleEmpService.finishDay((Map<String, Object>)paramMap, tenantId, enterCd, empNo, userId);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
 		}
+		return rp;
+	}
+
+	/*
+		해당일 근무정보 조회
+	    AS-IS : API Merge
+			    1. getFlexibleWorkTimeInfo
+			    2. getDayResults
+			    3. getFlexibleRangeInfo
+			    4. getFlexibleDayInfo
+	 */
+	@RequestMapping(value="/monthlyDayInfo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam getMonthlyDayInfo(@RequestParam(required=true) String ymd, HttpServletRequest request) {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId")
+		                                    .toString());
+		String enterCd = sessionData.get("enterCd")
+		                            .toString();
+		String sabun = sessionData.get("empNo")
+		                          .toString();
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("ymd", ymd);
+
+		try{
+			rp.put("workTimeInfo", flexibleEmpService.getFlexibleWorkTimeInfo(tenantId, enterCd, sabun, paramMap));
+			rp.put("workDayResult", flexibleEmpService.getWorkDayResult(tenantId, enterCd, sabun, ymd, sabun));
+			rp.put("rangeInfo", flexibleEmpService.getFlexibleRangeInfo(tenantId, enterCd, sabun, paramMap));
+			rp.put("dayInfo", flexibleEmpService.getFlexibleDayInfo(tenantId, enterCd, sabun, paramMap));
+
+		}catch (Exception e){
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+
+		return rp;
+	}
+
+
+	/**
+	 * 전체사용자 리셋
+	 * @param ymd
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/empReset", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam empReset(@RequestParam(required=true) String ymd,HttpServletRequest request) {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId")
+		                                    .toString());
+		String enterCd = sessionData.get("enterCd")
+		                            .toString();
+		String sabun = sessionData.get("empNo")
+		                          .toString();
+
+
+		try{
+
+			List<WtmEmpHis> empList = wtmEmpHisRepo.findByTenantIdAndEnterCdAndYmdNotExistWtmFlexibleEmp(tenantId, enterCd, ymd);
+
+			for (WtmEmpHis empHis : empList){
+				flexibleEmpResetService.P_WTM_FLEXIBLE_EMP_RESET(tenantId, enterCd, empHis.getSabun(), ymd.substring(0,4)+"0101", ymd.substring(0,4)+"1231", empHis.getSabun());
+			}
+
+
+
+		}catch (Exception e){
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+
 		return rp;
 	}
 	

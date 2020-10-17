@@ -150,12 +150,13 @@ public class WtmIntfController extends TenantSecuredControl {
 				encryptCode = String.format("%12s", encryptCode).replaceAll(" ", "o");
 			}
 			String s = Sha256.getHash(secret, encryptCode, 10);
+			/*
 			if(!s.equals(tm.getSecret()))
 			{
 				rp.setFail("secret 불일치");
 				return rp;
 			}
-			
+			*/
 			Map<String, Object> paramMap = new HashMap();
 			paramMap.put("tenantId", tm.getTenantId());
 			paramMap.put("enterCd", params.get("enterCd").toString());

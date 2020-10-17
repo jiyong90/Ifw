@@ -20,6 +20,7 @@
 				  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'APPL_STATUS_CD', F.APPL_STATUS_CD, E.SYMD) AS applStatusNm 
 				  , M.BASE_WORK_YN AS baseWorkYn
 				   , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'WORK_TYPE_CD', E.WORK_TYPE_CD, E.SYMD) AS workTypeNm
+				 , M.FLEXIBLE_STD_MGR_ID  AS flexibleStdMgrId
 			  FROM WTM_FLEXIBLE_EMP E
 			  JOIN WTM_FLEXIBLE_STD_MGR M
 			    ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
@@ -62,6 +63,7 @@
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, FA.SYMD) AS applStatusNm
 				  , M.BASE_WORK_YN AS baseWorkYn
 				  , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'WORK_TYPE_CD', M.WORK_TYPE_CD, FA.SYMD) AS workTypeNm
+				 , M.FLEXIBLE_STD_MGR_ID  AS flexibleStdMgrId
 			 FROM WTM_APPL A
 			 JOIN WTM_FLEXIBLE_APPL FA
 			   ON A.APPL_ID = FA.APPL_ID
@@ -206,6 +208,7 @@
     
     <!--해당 기간의 근무 정보 -->
   	<select id="getFlexibleRangeInfo" parameterType="map" resultType="map">
+		<![CDATA[
   		SELECT XX.flexibleEmpId
 		     , XX.flexibleStdMgrId
 		     , XX.flexibleNm
@@ -266,11 +269,50 @@
 		                      AND A.SABUN = E.SABUN
 		                      AND (A.TIME_TYPE_CD IN ('BASE', 'REGA', 'FIXOT') OR (A.TIME_TYPE_CD IN ('TAA') AND B.TAA_TIME_YN = 'Y'))
 		                      AND B.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID
-		                      <![CDATA[
 		                      AND A.APPR_MINUTE IS NOT NULL AND A.APPR_MINUTE <> 0
-		                      ]]>
 		                      AND A.YMD BETWEEN (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END)
 		                                    AND (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END)) AS workDayCnt
+						, (SELECT COUNT(DISTINCT YMD)
+		                     FROM WTM_WORK_DAY_RESULT A
+		                          JOIN WTM_FLEXIBLE_STD_MGR B
+		                               ON A.TENANT_ID =  B.TENANT_ID
+		                              AND A.ENTER_CD = B.ENTER_CD
+		                    WHERE A.TENANT_ID = E.TENANT_ID
+		                      AND A.ENTER_CD = E.ENTER_CD
+		                      AND A.SABUN = E.SABUN
+		                      AND A.TIME_TYPE_CD = 'LLA'
+		                      AND B.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID 
+		                      AND A.APPR_MINUTE IS NOT NULL AND A.APPR_MINUTE <> 0 
+		                      AND A.YMD BETWEEN (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END)
+		                                    AND (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END)) AS llaCnt			
+						 , (SELECT COUNT(DISTINCT A.YMD)
+		                     FROM WTM_WORK_DAY_RESULT A
+                              JOIN WTM_WORK_CALENDAR C ON A.TENANT_ID = C.TENANT_ID AND A.ENTER_CD = C.ENTER_CD AND A.YMD = C.YMD AND A.SABUN = C.SABUN
+		                          JOIN WTM_FLEXIBLE_STD_MGR B
+		                               ON A.TENANT_ID =  B.TENANT_ID
+		                              AND A.ENTER_CD = B.ENTER_CD
+		                    WHERE A.TENANT_ID = E.TENANT_ID
+		                      AND A.ENTER_CD = E.ENTER_CD
+		                      AND A.SABUN = E.SABUN AND C.ENTRY_SDATE IS NULL AND C.YMD < F_WTM_DATE_FORMAT(now(), 'YMD')
+		                      AND (A.TIME_TYPE_CD IN ('BASE', 'REGA', 'FIXOT') OR (A.TIME_TYPE_CD IN ('TAA') AND B.TAA_TIME_YN = 'Y'))
+		                      AND B.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID 
+		                      AND A.APPR_MINUTE IS NOT NULL AND A.APPR_MINUTE <> 0 
+		                      AND A.YMD BETWEEN (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END)
+		                                    AND (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END)) AS nullEntryScnt	
+						 , (SELECT COUNT(DISTINCT A.YMD)
+		                     FROM WTM_WORK_DAY_RESULT A
+                              JOIN WTM_WORK_CALENDAR C ON A.TENANT_ID = C.TENANT_ID AND A.ENTER_CD = C.ENTER_CD AND A.YMD = C.YMD AND A.SABUN = C.SABUN
+		                          JOIN WTM_FLEXIBLE_STD_MGR B
+		                               ON A.TENANT_ID =  B.TENANT_ID
+		                              AND A.ENTER_CD = B.ENTER_CD
+		                    WHERE A.TENANT_ID = E.TENANT_ID
+		                      AND A.ENTER_CD = E.ENTER_CD
+		                      AND A.SABUN = E.SABUN AND C.ENTRY_EDATE IS NULL  AND C.YMD < F_WTM_DATE_FORMAT(now(), 'YMD')
+	                          AND (A.TIME_TYPE_CD IN ('BASE', 'REGA', 'FIXOT') OR (A.TIME_TYPE_CD IN ('TAA') AND B.TAA_TIME_YN = 'Y'))
+		                      AND B.FLEXIBLE_STD_MGR_ID = E.FLEXIBLE_STD_MGR_ID 
+		                      AND A.APPR_MINUTE IS NOT NULL AND A.APPR_MINUTE <> 0 
+		                      AND A.YMD BETWEEN (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_SDATE ELSE E.SYMD END)
+		                                    AND (CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.WEEK_EDATE ELSE E.EYMD END)) AS nullEntryEcnt
 		           FROM WTM_FLEXIBLE_EMP E
 		                    JOIN WTM_FLEXIBLE_STD_MGR M
 		                      ON E.FLEXIBLE_STD_MGR_ID = M.FLEXIBLE_STD_MGR_ID
@@ -293,6 +335,7 @@
 		             AND E.SABUN = #{sabun}
 		             AND #{ymd} BETWEEN E.SYMD AND E.EYMD
 		       ) XX
+		]]>
   	</select>
   	
   	 <!--해당 일의 근무 정보 -->
@@ -2690,4 +2733,70 @@
 		     WHERE #{ymd} <= WEEK_EDATE AND #{ymd} >= WEEK_SDATE
 	     ]]>
   	</select>
+
+	<select id="getAnnualUsed" parameterType="map" resultType="map">
+		<![CDATA[
+			SELECT
+				X.TOTAL_CNT as totalCnt,
+				X.USED_CNT as usedCnt,
+				(X.TOTAL_CNT - USED_CNT) AS noUsedCnt
+			FROM
+				(
+					select
+						(
+							SELECT
+								CREATE_CNT
+							FROM
+								WTM_ANNUAL_CREATE
+							WHERE
+								SABUN = #{sabun}
+								AND TENANT_ID = #{tenantId}
+								AND ENTER_CD = #{enterCd}
+						) as TOTAL_CNT,
+						IFNULL(SUM( CREATE_CNT ),0) as USED_CNT
+					from
+						WTM_ANNUAL_USED
+					where
+						YY = SUBSTRING( #{ymd}, 1, 4 )
+						AND TENANT_ID = #{tenantId}
+						AND ENTER_CD = #{enterCd}
+						and SABUN = #{sabun}
+				) X
+		]]>
+	</select>
+
+
+	<select id="getFlexibleEmpImsiList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+		SELECT C.TENANT_ID                            AS tenantId,
+			   C.ENTER_CD                             AS enterCd,
+			   C.APPL_SABUN                           AS sabun,
+			   B.YMD                                  AS ymd,
+			   F_WTM_DATE_FORMAT(B.PLAN_SDATE, 'H:I') AS shm,
+			   F_WTM_DATE_FORMAT(B.PLAN_EDATE, 'H:I') AS ehm,
+			   B.PLAN_MINUTE                          AS minute,
+			   'BASE'                                 AS timeTypeCd,
+			   ''                                     AS taaCd,
+			   ''                                     AS taaNm,
+			   E.HOLIDAY_YN                           AS holidayYn,
+			   D.TIME_NM                              AS timeNm
+		  FROM WTM_FLEXIBLE_APPL A
+			   INNER JOIN WTM_FLEXIBLE_APPL_DET B
+					   ON B.FLEXIBLE_APPL_ID = A.FLEXIBLE_APPL_ID
+			   INNER JOIN WTM_APPL C
+					   ON C.APPL_ID = A.APPL_ID
+			   INNER JOIN WTM_TIME_CD_MGR D
+			   		   ON D.TIME_CD_MGR_ID = B.TIME_CD_MGR_ID
+			   INNER JOIN WTM_WORK_CALENDAR E
+					   ON E.TENANT_ID = C.TENANT_ID
+					  AND E.ENTER_CD = C.ENTER_CD
+					  AND E.YMD = B.YMD
+					  AND E.SABUN = C.APPL_SABUN
+         WHERE C.TENANT_ID = #{tenantId}
+           AND C.ENTER_CD = #{enterCd}
+           AND C.APPL_SABUN = #{sabun}
+           AND A.APPL_ID = #{applId}
+		]]>
+    </select>
+
 </mapper>

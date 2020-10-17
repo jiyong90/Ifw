@@ -26,6 +26,7 @@ import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
 import com.isu.ifw.service.WtmApplService;
 import com.isu.ifw.service.WtmMsgService;
 import com.isu.ifw.vo.ReturnParam;
+import com.isu.ifw.vo.WtmFlexibleStdVO;
 
 
 @RestController
@@ -139,7 +140,7 @@ public class WtmFlexibleApplController {
 	}
 	
 	@RequestMapping(value="/list", method = RequestMethod.GET)
-	public @ResponseBody List<Map<String, Object>> getImsiFlexibleAppl(@RequestParam String applStatusCd
+	public @ResponseBody List<WtmFlexibleStdVO> getImsiFlexibleAppl(@RequestParam String applStatusCd
 																		,HttpServletRequest request) {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
@@ -152,7 +153,7 @@ public class WtmFlexibleApplController {
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("sabun", empNo);
 		paramMap.put("applStatusCd", applStatusCd);
-		
+
 		return flexibleApplMaper.getImsiFlexAppl(paramMap);
 	}
 	

@@ -414,6 +414,7 @@
 	   ]]>
     </select>
     
+    
     <select id="getTeamDayResultListNotInLLA" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT H.EMP_NM as title,

@@ -84,4 +84,86 @@
 		   )
 		   </if>
     </select>
+    
+    <select id="getTaaList" parameterType="map" resultType="map">
+        SELECT X.*, X.useDays - X.holCnt AS realCnt
+          FROM (
+                SELECT A.TAA_APPL_ID AS taaApplId,
+                       A.TENANT_ID AS tenantId,
+                       A.ENTER_CD AS enterCd,
+                       A.APPL_ID AS applId,
+                       F_WTM_GET_ORG_NM(A.TENANT_ID, A.ENTER_CD, C.ORG_CD, DATE_FORMAT(NOW(), '%Y%m%d')) AS orgNm,
+                       C.EMP_NM AS empNm,
+                       A.SABUN AS sabun,
+                       F.TAA_TYPE_CD AS taaTypeCd,
+                       G.CODE_NM AS taaTypeNm,
+                       B.TAA_CD AS taaCd,
+                       F.TAA_NM AS taaNm,
+                       D.APPL_YMD AS applYmd,
+                       B.SYMD AS taaSymd,
+                       B.EYMD AS taaEymd,
+                       B.SHM AS taaShm,
+                       B.EHM AS taaEhm,
+                       B.NOTE AS reason,
+                       B.TAA_MINUTE AS taaMinute,
+                       E.CODE_NM AS applStatusCd,
+                       (DATEDIFF(B.EYMD, B.SYMD) + 1) * (CASE WHEN F.REQUEST_TYPE_CD = 'D' THEN 1
+                                                              WHEN F.REQUEST_TYPE_CD = 'A' OR F.REQUEST_TYPE_CD = 'P' THEN 0.5
+                                                              WHEN F.REQUEST_TYPE_CD = 'N' THEN 0
+                                                              ELSE 1
+                                                          END) AS useDays,
+                       (SELECT COUNT(YMD)
+                          FROM WTM_WORK_CALENDAR WC
+                         WHERE WC.TENANT_ID = A.TENANT_ID
+                           AND WC.ENTER_CD = A.ENTER_CD
+                           AND WC.SABUN = A.SABUN
+                           AND WC.YMD BETWEEN B.SYMD AND B.EYMD
+                           AND WC.HOLIDAY_YN = 'Y') AS holCnt
+                  FROM WTM_TAA_APPL A
+                       INNER JOIN WTM_TAA_APPL_DET B
+                               ON B.TAA_APPL_ID = A.TAA_APPL_ID
+                       INNER JOIN WTM_EMP_HIS C
+                               ON A.TENANT_ID = C.TENANT_ID
+                              AND C.ENTER_CD = A.ENTER_CD
+                              AND C.SABUN = A.SABUN
+                       INNER JOIN WTM_APPL D
+                               ON D.TENANT_ID = A.TENANT_ID
+                              AND D.ENTER_CD = A.ENTER_CD
+                              AND D.APPL_ID = A.APPL_ID
+                       INNER JOIN WTM_CODE E
+                               ON E.TENANT_ID = A.TENANT_ID
+                              AND E.ENTER_CD = A.ENTER_CD
+                              AND E.CODE_CD = D.APPL_STATUS_CD
+                              AND E.GRP_CODE_CD = 'APPL_STATUS_CD'
+                       INNER JOIN WTM_TAA_CODE F
+                               ON F.TENANT_ID = A.TENANT_ID
+                              AND F.ENTER_CD = A.ENTER_CD
+                              AND F.TAA_CD = B.TAA_CD
+                       INNER JOIN WTM_CODE G
+                               ON G.TENANT_ID = A.TENANT_ID
+                              AND G.ENTER_CD = A.ENTER_CD
+                              AND G.CODE_CD = F.TAA_TYPE_CD
+                              AND G.GRP_CODE_CD = 'TAA_TYPE_CD'
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   <![CDATA[
+                   AND B.EYMD <= #{eYmd}
+                   AND B.SYMD >= #{sYmd}
+                   ]]>
+                   <if test="taaType != null and taaType!=''">
+                   AND F.TAA_TYPE_CD = #{taaType}
+                   </if>
+                   <if test="searchKeyword != null and  searchKeyword!=''">
+                   AND (C.SABUN = #{searchKeyword} OR C.EMP_NM LIKE CONCAT(#{searchKeyword}, '%'))
+                   </if>
+                   <if test="orgList!=null">
+                   AND C.ORG_CD IN (NULL,
+                    <foreach collection="orgList" item="org" separator=", ">
+                        #{org}
+                    </foreach>
+                    )
+                   </if>
+                ) X
+                ORDER BY X.applYmd DESC
+    </select>
 </mapper>

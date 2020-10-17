@@ -177,6 +177,7 @@
 				, TODAY_PLAN_EDIT_YN = #{item.todayPlanEditYn} 
 				, APPLY_ENTRY_SDATE_YN = #{item.applyEntrySdateYn} 
 				, APPLY_ENTRY_EDATE_YN = #{item.applyEntryEdateYn} 
+				, CREATE_OT_IF_OUT_OF_PLAN_YN = #{item.createOtIfOutOfPlanYn} 
 				, NOTE = #{item.note}  
 				, UPDATE_DATE = NOW()
 				, UPDATE_ID = #{item.userId}
