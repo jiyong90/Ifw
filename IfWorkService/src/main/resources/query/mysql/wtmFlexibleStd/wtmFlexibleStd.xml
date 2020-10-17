@@ -226,6 +226,7 @@
 				 , TODAY_PLAN_EDIT_YN AS todayPlanEditYn
 				 , APPLY_ENTRY_SDATE_YN AS applyEntrySdateYn
 				 , APPLY_ENTRY_EDATE_YN AS applyEntryEdateYn
+				 , CREATE_OT_IF_OUT_OF_PLAN_YN AS createOtIfOutOfPlanYn
 				 , NOTE AS note
 		      FROM WTM_FLEXIBLE_STD_MGR 
 		     WHERE TENANT_ID = #{tenantId}
