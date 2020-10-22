@@ -46,7 +46,7 @@
     
     <select id="getMonList" parameterType="map" resultType="hashmap">
         <![CDATA[
-        	SELECT F_WTM_GET_EMP_ORG_NM(B.TENANT_ID, B.ENTER_CD, A.SABUN, A.EYMD) AS orgNm
+        	SELECT F_WTM_GET_EMP_ORG_NM(B.TENANT_ID, B.ENTER_CD, A.SABUN, DATE_FORMAT(NOW(), '%Y%m%d')) AS orgNm
 				  , A.SABUN AS sabun
 				  , B.EMP_NM AS empNm
 				  , WORK_TYPE_CD AS workTypeCd

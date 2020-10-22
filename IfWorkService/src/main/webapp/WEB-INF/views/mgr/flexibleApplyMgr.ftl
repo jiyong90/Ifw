@@ -815,7 +815,7 @@
 			}
 		}
 		
-		if(colNm == "useSymd" || colNm == "repeatTypeCd" || colNm == "repeatCnt"){
+		if(colNm == "useSymd" || colNm == "useEymd" || colNm == "repeatTypeCd" || colNm == "repeatCnt"){
 			var symd = sheet1.GetCellValue(Row, "useSymd");
 			var repeatCnt = sheet1.GetCellValue(Row, "repeatCnt");
 			
@@ -830,6 +830,21 @@
 				}
 			}
 			
+		}
+
+		//탄력근무시 소정근무시간, 연장근무시간 조회하기
+		if((colNm == "flexibleStdMgrId" || colNm == "useSymd" || colNm == "useEymd") && status == "I"){
+			var workTypeCd = sheet1.GetCellValue( Row, "workTypeCd");
+			var flexibleStdMgrId = sheet1.GetCellValue(Row, "flexibleStdMgrId");
+
+			if(workTypeCd == "ELAS") {
+				var sYmd = sheet1.GetCellValue(Row, "useSymd");
+				var eYmd = sheet1.GetCellValue(Row, "useEymd");
+
+				if(sYmd != '' && eYmd != '') {
+					getFlexibleStdPatt(flexibleStdMgrId, sYmd, eYmd, Row);
+				}
+			}
 		}
 	}
 
@@ -920,6 +935,11 @@
 						sheet1.SetCellEditable( row, "repeatTypeCd", 0);
 						sheet1.SetCellEditable( row, "repeatCnt", 0);
 						sheet1.SetCellEditable( row, "useEymd", 1);
+					} else {
+						sheet1.SetCellValue( row, "repeatTypeCd", "YES");
+						sheet1.SetCellEditable( row, "repeatTypeCd", 1);
+						sheet1.SetCellEditable( row, "repeatCnt", 1);
+						sheet1.SetCellEditable( row, "useEymd", 0);					
 					}
 				}
 			},
@@ -963,5 +983,41 @@
 		}
 		
 		return isValid;
+	}
+
+
+
+
+	function getFlexibleStdPatt(flexibleStdMgrId, sYmd, eYmd, row) {
+		var paramMap = {
+				flexibleStdMgrId: flexibleStdMgrId,
+				sYmd: sYmd,
+				eYmd: eYmd
+			};
+			
+			Util.ajax({
+				url: "${rc.getContextPath()}/flexibleStd/sumDayPatt",
+				type: "POST",
+				contentType: 'application/json',
+				data: JSON.stringify(paramMap),
+				dataType: "json",
+				async: false,
+				success: function(data) {
+					var data = data.DATA;
+					if(data!=null) {
+						console.log(data);
+						sheet1.SetCellValue( row, "workMinute", data.planMinute);
+						sheet1.SetCellValue( row, "otMinute", data.otMinute);
+						sheet1.SetCellValue( row, "repeatCnt", data.repeatCnt);
+					} else {
+						sheet1.SetCellValue( row, "workMinute", "");
+						sheet1.SetCellValue( row, "otMinute", "");
+						sheet1.SetCellValue( row, "repeatCnt", "");
+					}
+				},
+				error: function(e) {
+					console.log(e);
+				}
+			});
 	}
 </script>

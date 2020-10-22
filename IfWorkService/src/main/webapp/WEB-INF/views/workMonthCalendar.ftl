@@ -530,7 +530,7 @@
     	   		if(flexStd.hasOwnProperty("usedTermOpt") && flexStd.usedTermOpt!=null) {
     	   			if(!flexStd.hasOwnProperty("applId") || flexStd.applId==null || flexStd.applId=='') {
     	   				//적용기간은 첫번째 항목으로 기본 세팅
-    	   				var workDateRangeItem = flexStd.usedTermOpt[0]; 
+    	   				var workDateRangeItem = flexStd.usedTermOpt; 
         	   			
         	   			if(workDateRangeItem.hasOwnProperty("value")&&workDateRangeItem.value!=null) {
         	   				calendarLeftVue.applInfo.workRange = workDateRangeItem.value;
@@ -544,7 +544,7 @@
     	   				if(flexStd.hasOwnProperty("eYmd")&&flexStd.eYmd!=null&&flexStd.eYmd!='') {
     	   					calendarLeftVue.applInfo.useEymd = moment(flexStd.eYmd).format('YYYY-MM-DD');
     	   					
-    	   					var usedTermOpt = JSON.parse(flexStd.usedTermOpt);
+    	   					var usedTermOpt = flexStd.usedTermOpt;
     	   					flexStd.usedTermOpt = usedTermOpt;
         	   				
     	   					usedTermOpt.map(function(u){

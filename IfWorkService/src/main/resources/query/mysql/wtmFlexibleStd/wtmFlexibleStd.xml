@@ -280,4 +280,28 @@
 		]]>
   	</update>
   	
+  	<select id="getSumWorkPatt" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        	SET @rownum := 0;
+        	
+			SELECT IFNULL(SUM(PLAN_MINUTE), 0) as planMinute
+			     , IFNULL(SUM(OTA_MINUTE), 0) as otaMinute
+			     , IFNULL(SUM(OTB_MINUTE), 0) as otbMinute
+			     , IFNULL(SUM(OTA_MINUTE), 0) + IFNULL(SUM(OTB_MINUTE), 0) as otMinute
+			     , IFNULL(SUM(CASE WHEN A.SEQ = 1 THEN 1 ELSE 0 END), 0) as repeatCnt
+			  FROM WTM_WORK_PATT_DET A
+			           INNER JOIN (SELECT CASE
+			                                  WHEN MOD(@rownum := @rownum + 1, (SELECT MAX(SEQ) FROM WTM_WORK_PATT_DET C WHERE C.FLEXIBLE_STD_MGR_ID = #{flexibleStdMgrId})) = 0
+			                                      THEN (SELECT MAX(SEQ) FROM WTM_WORK_PATT_DET C WHERE C.FLEXIBLE_STD_MGR_ID = #{flexibleStdMgrId})
+			                                  ELSE MOD(@rownum, (SELECT MAX(SEQ) FROM WTM_WORK_PATT_DET C WHERE C.FLEXIBLE_STD_MGR_ID = #{flexibleStdMgrId})) 
+			                                  END AS SEQ
+			                            , SUN_YMD
+			                         FROM WTM_DAY_MGR
+			                        WHERE SUN_YMD BETWEEN #{sYmd} AND #{eYmd}
+			                          AND (@rownum := 0) = 0) B
+			                   ON A.SEQ = B.SEQ
+			 WHERE A.FLEXIBLE_STD_MGR_ID = #{flexibleStdMgrId}
+        ]]>
+    </select>
+  	
 </mapper>
