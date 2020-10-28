@@ -220,7 +220,7 @@
 
 		
 		//성명
-        //setSheetAutocompleteEmp( "sheet2", "empNm", null, getSheet2EmpInfo);
+        setSheetAutocompleteEmp( "sheet2", "empNm", null, getSheet2EmpInfo);
 		
 		var initdata3 = {};
 		initdata3.Cfg = {SearchMode:smLazyLoad,Page:22};
@@ -273,7 +273,7 @@
 		sheet4.SetColProperty("operator", {ComboText:"|=|<>", ComboCode:"|=|<>"} );
 		
 		//성명
-        //setSheetAutocompleteEmp( "sheet3", "empNm", null, getSheet3EmpInfo);
+        setSheetAutocompleteEmp( "sheet3", "empNm", null, getSheet3EmpInfo);
 
 		sheetInit();
 		doAction1("Search");

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.logging.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -435,6 +436,27 @@ public class WtmFlexibleStdController {
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail("요일 조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		
+		return rp;
+	}
+	
+	@RequestMapping(value="/sumDayPatt", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getWorkDayPattList(HttpServletRequest request, @RequestBody Map<String, Object> paramMap ) throws Exception {
+		
+		ReturnParam rp = new ReturnParam();
+		
+		rp.setSuccess("");
+		
+		Map<String, Object> sumPatt = null;
+		try {		
+			sumPatt =  WtmFlexibleStdService.getSumWorkPatt(paramMap);
+			
+			rp.put("DATA", sumPatt);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
 		}
 		
