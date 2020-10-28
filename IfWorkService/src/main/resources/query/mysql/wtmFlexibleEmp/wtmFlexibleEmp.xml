@@ -2730,7 +2730,9 @@
 					 AND P.TENANT_ID = #{tenantId} AND P.ENTER_CD = #{enterCd} AND P.INFO_KEY = 'OPTION_FIRSTDAY_OF_WEEK'
 					 WHERE D.DAY_NM = P.INFO_VALUE
 				) X
-		     WHERE #{ymd} <= WEEK_EDATE AND #{ymd} >= WEEK_SDATE
+		     WHERE #{sYmd} <= WEEK_EDATE AND #{eYmd} >= WEEK_SDATE
+		     GROUP BY X.WEEK_SDATE
+		     ORDER BY X.WEEK_SDATE
 	     ]]>
   	</select>
 
