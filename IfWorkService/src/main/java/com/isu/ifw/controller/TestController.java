@@ -90,7 +90,7 @@ public class TestController {
 			for(WtmWorkCalendar cal : cals) {
 				empService.resetCalcApprDayInfo(cal.getTenantId(), cal.getEnterCd(), cal.getYmd(), cal.getSabun(), null);
 				empService.calcApprDayInfo(cal.getTenantId(), cal.getEnterCd(), cal.getYmd(), cal.getYmd(), cal.getSabun());
-				calcService.P_WTM_FLEXIBLE_EMP_WORKTERM_C(cal.getTenantId(), cal.getEnterCd(), cal.getSabun(), cal.getYmd());
+				calcService.P_WTM_FLEXIBLE_EMP_WORKTERM_C(cal.getTenantId(), cal.getEnterCd(), cal.getSabun(), cal.getYmd(), cal.getYmd());
 			}
 		}
 		//
@@ -115,10 +115,36 @@ public class TestController {
 		paramMap.put("pId", "JYP");
 		paramMap.put("symd", ymd);
 		paramMap.put("eymd", ymd);
-		empService.createWorkTermtimeByEmployee(tenantId, enterCd, sabun, paramMap, "JSP");
-		//calcService.P_WTM_FLEXIBLE_EMP_WORKTERM_C(tenantId, enterCd, sabun, ymd);
+		//empService.createWorkTermtimeByEmployee(tenantId, enterCd, sabun, paramMap, "JSP");
+		calcService.P_WTM_FLEXIBLE_EMP_WORKTERM_C(tenantId, enterCd, sabun, ymd, ymd);
 		return m;
 	}
+	
+
+	@RequestMapping(value = "/login/resetTaa", method = RequestMethod.GET)
+	public Map<String, Object> testResetTaaResult(@RequestParam String enterCd,
+										@RequestParam Long tenantId,
+										@RequestParam String sabun,
+										@RequestParam String ymd,
+										HttpServletRequest request, 
+										HttpServletResponse response){
+		
+		Map<String, Object> m = new HashMap<String, Object>();
+		empService.resetCalcApprDayInfo(tenantId, enterCd, ymd, sabun, null);
+		empService.calcApprDayInfo(tenantId, enterCd, ymd, ymd, sabun);
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("tenantId", tenantId);
+		paramMap.put("enterCd", enterCd);
+		paramMap.put("sabun", sabun);
+		paramMap.put("pId", "JYP");
+		paramMap.put("symd", ymd);
+		paramMap.put("eymd", ymd);
+		
+		interfaceService.resetTaaResult(tenantId, enterCd, sabun, ymd);
+		return m;
+	}
+	
+	
 	
 	@RequestMapping(value = "/login/finishDay", method = RequestMethod.GET)
 	public ReturnParam testfinishDay(@RequestParam String enterCd,
