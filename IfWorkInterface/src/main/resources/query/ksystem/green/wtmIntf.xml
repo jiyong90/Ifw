@@ -98,6 +98,7 @@
         <![CDATA[ 
 			SELECT CompanySeq AS ENTER_CD
 			     , EmpId AS SABUN
+			     , UserId AS USER_ID
 			     , EmpName AS EMP_NM
 			     , EmpEngName AS EMP_ENG_NM
 			     , EntDate AS SYMD
@@ -117,6 +118,9 @@
 			     , WkDeptName AS BASE2_NM
 			     , '' AS PAY_TYPE_CD
 			     , CASE WHEN IsBoss = 1 THEN 'Y' ELSE 'N' END AS LEADER_YN
+			     , BirthDate AS BIR_YMD
+			     , Extension AS EXTENSION
+			     , Email AS EMAIL
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VDAEmpInfo_ISU
@@ -144,6 +148,9 @@
 			     , JobSeq AS JOB_CD
 			     , '' AS PAY_TYPE_CD
 			     , CASE WHEN IsBoss = 1 OR #{EmpID} = '20170054' THEN 'Y' ELSE 'N' END AS LEADER_YN
+			     , BirthDate AS BIR_YMD
+			     , Extension AS EXTENSION
+			     , Email AS EMAIL
 			     , Remark AS NOTE
 			     , LastDateTime AS CHKDATE
 			  FROM KPXERP_VDAEmpInfo_ISU

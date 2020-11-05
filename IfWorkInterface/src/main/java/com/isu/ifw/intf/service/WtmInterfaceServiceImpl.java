@@ -49,6 +49,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	private String hrCodeUrl;
 	@Value("${ifw.hr-emp-post}")
 	private String hrEmpUrl;
+	@Value("${ifw.hr-empaddr-post}")
+	private String hrEmpAddrUrl;
 	@Value("${ifw.hr-appoint-post}")
 	private String hrAppointUrl;
 	@Value("${ifw.hr-org-post}")
@@ -458,7 +460,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		System.out.println(mapper.writeValueAsString(paramMap));
 		
 		System.out.println("================================");
-		
+		System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::: " + T);
 		String url = "";
         try {
         	if(T.equalsIgnoreCase("CODE")) {
@@ -467,6 +469,11 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	}else if(T.equalsIgnoreCase("EMP")) {
         		dataList = intfMapper.getWtmEmp(paramMap);
         		url = hrEmpUrl;
+        	}else if(T.equalsIgnoreCase("EMPADDR")) {
+        		System.out.println("EMPADDR :::::::::::::: ");
+        		dataList = intfMapper.getWtmEmpAddr(paramMap);
+        		url = hrEmpAddrUrl;
+        		System.out.println("url :::::::::::::: " + url);
         	}else if(T.equalsIgnoreCase("APPOINT")) {
         		dataList = intfMapper.getWtmEmp(paramMap);
         		url = hrAppointUrl;
