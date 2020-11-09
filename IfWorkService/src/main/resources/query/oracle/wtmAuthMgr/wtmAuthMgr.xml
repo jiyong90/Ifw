@@ -47,4 +47,15 @@
         ]]>
    </select>
     
+    <select id="findAuthByUserKey" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT U.AUTH_ID AS authId
+				 , R.rule_text AS ruleText
+			  FROM WTM_USER_AUTH U
+			  JOIN comm_auth_rule R
+			    ON U.AUTH_ID = R.auth_id
+			 WHERE USER_KEY = #{userKey}
+        ]]>
+   </select>
+   
 </mapper>
