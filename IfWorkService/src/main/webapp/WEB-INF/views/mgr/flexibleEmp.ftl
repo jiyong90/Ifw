@@ -164,6 +164,7 @@
        	      this.source.removeClass('active');
        	    }
        	});
+		
 		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
 		initdata1.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
 
@@ -181,6 +182,9 @@
 			{Header:"시작일",		Type:"Date",		Hidden:0,	Width:90,	Align:"Center",	ColMerge:0,	SaveName:"symd",		KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"종료일",		Type:"Date",		Hidden:0,	Width:90,	Align:"Center",	ColMerge:0,	SaveName:"eymd",		KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"근무변경/취소",		Type:"Html",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"modify",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"확정취소",		Type:"Html",		Hidden:0,	Width:80,	Align:"Center",	ColMerge:0, SaveName:"canclePerson",		  		KeyField:0,	Format:"",		PointCount:0,
+				UpdateEdit:0,
+				InsertEdit:1,	EditLen:100 },
 			{Header:"퇴직처리",		Type:"Html",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"retire",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 }
 		]; 
@@ -392,6 +396,51 @@
    		
 		}
 		
+	}
+
+	/**
+	 * 확정취소(개인)
+	 * @param flexibleApplyId
+	 */
+	function setCancleConfirmPersonal(flexibleEmpId){
+
+
+		if(!confirm("취소하시겠습니까?")) {
+			return;
+		}
+
+		$("#loading").show();
+		var param = {
+			flexibleEmpId: flexibleEmpId
+		};
+
+		$.ajax({
+			url: "${rc.getContextPath()}/flexibleApply/cancle/personal",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				$("#loading").hide();
+				console.log(data);
+				if(data!=null) {
+					if(data.status=='OK'){
+						isuAlert("근무 취소 완료되었습니다.");
+					} else {
+						isuAlert(data.message);
+					}
+
+					doAction1("Search");
+				}
+			},
+			error: function(e) {
+				$("#loading").hide();
+				isuAlert("취소할 내용이 없습니다.");
+				console.log(e);
+			}
+		});
+
+
 	}
 	
 </script>

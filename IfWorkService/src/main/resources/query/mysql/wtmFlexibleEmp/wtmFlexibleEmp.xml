@@ -1747,6 +1747,8 @@
 			  , CASE WHEN C.STATUS_CD IN ('CA','RA') AND C.SYMD IS NOT NULL AND C.EYMD IS NOT NULL 
 			  					AND ((A.SYMD <= C.SYMD AND C.SYMD< A.EYMD) OR (A.SYMD <= C.EYMD AND C.EYMD< A.EYMD)) THEN CONCAT('<a class="basic" onClick="setRetire(', FLEXIBLE_EMP_ID, ')">퇴직처리</a>')
 		 			   ELSE '' END AS retire
+			   , CASE WHEN B.WORK_TYPE_CD NOT IN ('BASE', 'WORKTEAM') THEN CONCAT('<a class="basic" onClick="setCancleConfirmPersonal(', FLEXIBLE_EMP_ID, ')">확정취소</a>')
+					    ELSE '' END AS canclePerson
 		  FROM WTM_FLEXIBLE_EMP A
 		 INNER JOIN WTM_FLEXIBLE_STD_MGR B
 		    ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
