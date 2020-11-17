@@ -198,7 +198,7 @@ public class WtmFlexibleApplyMgrController {
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("userId", userId);
 			
-			logger.debug("[setApply] ", paramMap.toString());
+			logger.debug("[setApply] " + paramMap.toString());
 			
 			String workTypeCd = paramMap.get("workTypeCd").toString();
 			Long flexibleApplyId = Long.valueOf(paramMap.get("flexibleApplyId").toString());
@@ -278,7 +278,7 @@ public class WtmFlexibleApplyMgrController {
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("userId", userId);
 
-			logger.debug("[setCancle] ", paramMap.toString());
+			logger.debug("[setCancle] " + paramMap.toString());
 
 			Long flexibleApplyId = Long.valueOf(paramMap.get("flexibleApplyId").toString());
 
