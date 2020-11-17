@@ -171,6 +171,8 @@
 											<ul class="float-right btn-wrap" id="sheet3Btn">
 												<li><a href="javascript:doAction3('Insert')" class="basic authA">입력</a></li>
 												<li><a href="javascript:doAction3('Save')" class="basic authA">저장</a></li>
+												<li><a href="javascript:doAction3('Upload')" class="basic authA">업로드</a></li>
+												<li><a href="javascript:doAction3('Down2Excel')" class="basic authA">다운로드</a></li>
 											</ul>
 										</div>
 										<script type="text/javascript">createIBSheet("sheet3", "100%", sheetH40, "kr"); </script>
@@ -309,9 +311,13 @@
 			{Header:"확정여부",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"applyYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
 			{Header:"확정상태",		Type:"Html", 		Hidden:0,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"endImg",  		KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:100   },
 			{Header:"확정상태",		Type:"Int", 		Hidden:1,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"cnt",  			KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,   InsertEdit:0,   EditLen:1    },
+			{Header:"확정취소",		Type:"Html", 		Hidden:0,  	Width:60,  	Align:"Center", ColMerge:0, SaveName:"cancleImg",  			KeyField:0, Format:"",      PointCount:0,   UpdateEdit:1,
+				InsertEdit:0,   EditLen:1    },
 			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Left",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"근무제시작요일",	Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"weekDay",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
-			{Header:"근무제유형",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"workTypeCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 }
+			{Header:"근무제유형",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"workTypeCd",		 "HeaderHtml": "<input type='button' value='버튼' " +
+						"onclick='confirmCancle();'/>",
+				KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -611,6 +617,16 @@
 			IBS_SaveName(document.sheetForm,sheet3);
 			sheet3.DoSave("${rc.getContextPath()}/flexibleApply/empSave", $("#sheetForm").serialize()); break;
 			break;
+
+		case "Upload":
+			var params = {Mode:"HeaderMatch", StartRow:1, WorkSheetNo:1, Append:1};
+			sheet3.LoadExcel(params);
+			break;
+		case "Down2Excel":
+			var downcol = makeHiddenSkipCol(sheet3);
+			var param  = {DownCols:downcol,SheetDesign:1,Merge:1};
+			sheet3.Down2Excel(param);
+			break;
 		}
 	}
 	
@@ -649,7 +665,7 @@
 				console.log(data);
 				if(data!=null) {
 					if(data.status=='OK'){
-						alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정완료 되었습니다.");
+						alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정 요청 되었습니다.");
 					} else { 
 						var msg = data.message;
 						if(msg == '') msg = "근무 확정처리 중 오류가 발생되었습니다.";
@@ -733,6 +749,8 @@
 				   	  		sheet1.SetCellEditable(i, "repeatCnt", 1);
 							sheet1.SetCellEditable(i, "useEymd", 0);
 			   	  		}
+
+			   	  		//	TODO : 확정취소 필드 display
 			   	  	}
 			   	}
 			}
@@ -815,7 +833,7 @@
 			}
 		}
 		
-		if(colNm == "useSymd" || colNm == "useEymd" || colNm == "repeatTypeCd" || colNm == "repeatCnt"){
+		if(colNm == "useSymd" || colNm == "repeatTypeCd" || colNm == "repeatCnt"){
 			var symd = sheet1.GetCellValue(Row, "useSymd");
 			var repeatCnt = sheet1.GetCellValue(Row, "repeatCnt");
 			
@@ -882,10 +900,16 @@
 			}
 			var applyYn = sheet1.GetCellValue( sheet1.GetSelectRow(), "applyYn");
 			setButten(applyYn, "sheet3");
+			ShowCancleBtn();
 			sheetResize();
 		} catch (ex) {
 			alert("OnSearchEnd Event Error : " + ex);
 		}
+	}
+
+	//	확정취소 버튼 Display
+	function ShowCancleBtn(){
+
 	}
 
 	// 저장 후 메시지
@@ -977,8 +1001,10 @@
 		  			alert("탄력근무제의 시작 요일은 "+arr[weekDay]+"요일 입니다.\n근무제 시작일을 다시 지정해 주세요.");
 					return false;
 		  		}
+
 			} else if(status=='D' || status=='U') {
 				sheet1.SetCellValue( i, "endImg", "");
+
 			}
 		}
 		
@@ -986,8 +1012,77 @@
 	}
 
 
+	/**
+	 * 엑셀에 로드 된 데이터 검증
+	 * @param result
+	 * @param code
+	 * @param msg
+	 */
+	function sheet3_OnLoadExcel(result, code, msg) {
+		console.log(result, code, msg);
+		var totalCnt = sheet3.RowCount();
+		var newRowCnt = sheet3.RowCount("I");
+		var newRowNum = totalCnt - newRowCnt + 1;
+
+		var _Row = sheet1.GetSelectionRows();
+		var _flexibleApplyId = sheet1.GetCellValue(_Row, "flexibleApplyId");
 
 
+
+		for(var i = newRowNum; i <= (newRowNum + newRowCnt); i++){
+			sheet3.SetCellValue(i, "flexibleApplyId", _flexibleApplyId);
+		}
+
+	}
+
+	/**
+	 * 확정취소
+	 * @param flexibleApplyId
+	 */
+	function setCancleConfirm(flexibleApplyId){
+
+		var row = sheet1.FindText(3, flexibleApplyId + "", 0);
+
+		if(!confirm("취소하시겠습니까?")) {
+			return;
+		}
+
+		$("#loading").show();
+		var param = {
+			flexibleApplyId: flexibleApplyId
+		};
+
+		$.ajax({
+			url: "${rc.getContextPath()}/flexibleApply/cancle",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				$("#loading").hide();
+				console.log(data);
+				if(data!=null) {
+					if(data.status=='OK'){
+						alert(sheet1.GetCellValue(row, "applyNm") + " 근무 취소 요청 되었습니다.");
+					} else {
+						var msg = data.message;
+						if(msg == '') msg = "근무 취소 중 오류가 발생되었습니다.";
+						alert(msg);
+					}
+
+					doAction1("Search");
+				}
+			},
+			error: function(e) {
+				$("#loading").hide();
+				alert("취소할 내용이 없습니다.");
+				console.log(e);
+			}
+		});
+
+
+	}
+	
 	function getFlexibleStdPatt(flexibleStdMgrId, sYmd, eYmd, row) {
 		var paramMap = {
 				flexibleStdMgrId: flexibleStdMgrId,
@@ -1020,4 +1115,5 @@
 				}
 			});
 	}
+
 </script>

@@ -331,6 +331,7 @@ public class WtmFlexibleStdController {
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
+			rp.setFail(e.getMessage());
 		}
 		
 		return rp;

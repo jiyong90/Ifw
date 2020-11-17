@@ -196,6 +196,13 @@
 													<label for="applyEntryEdateYn">체크시 퇴근 타각시간으로 인정</label> 
 												</td>
 											</tr>
+											<tr id="trCreateOtIfOutOfPlanYn">
+												<th>계획시간 외 연장생성<span id="Tooltip-createOtIfOutOfPlanYn" class="tooltip-st"><i class="far fa-question-circle"></i></span></th>
+												<td colspan="3">
+													<input type="checkbox" id="createOtIfOutOfPlanYn" name="createOtIfOutOfPlanYn" />
+													<label for="createOtIfOutOfPlanYn">체크시 계획시간 대비 타각시간 정보로 연장근무 시간을 만들어준다.</label> 
+												</td>
+											</tr>
 											<!-- 20200220 주석처리
 											<tr id="trApplTerm">
 												<th>신청기간지정</th>
@@ -670,6 +677,7 @@
        	      this.source.removeClass('active');
        	    }
        	  });
+        
         new jBox('Tooltip', {
        	    attach: '#Tooltip-createOtIfOutOfPlanYn',
        	    target: '#Tooltip-createOtIfOutOfPlanYn',
@@ -835,7 +843,7 @@
 
 		initdata1.Cols = [
 			{Header:"No",			Type:"Seq",			Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
-			{Header:"삭제",			Type:"DelCheck",	Hidden:1,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
+			{Header:"삭제",			Type:"DelCheck",	Hidden:0,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sDelete",	Sort:0 },
    			{Header:"상태",			Type:"Status",		Hidden:0 ,	Width:45,	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"id",				Type:"Text",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"flexibleStdMgrId",KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"tenantId",			Type:"Text",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
@@ -906,10 +914,10 @@
             {Header:"근무시간",  		Type:"Combo",     	Hidden:0,   Width:70,  Align:"Center",  ColMerge:0, SaveName:"timeCdMgrId",  KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:0,  InsertEdit:1,  EditLen:100  },
             {Header:"출근시각",		Type:"Text",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"planShm", 		KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"퇴근시각",		Type:"Text",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"planEhm",		KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"조출시간(분)",	Type:"AutoSum",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otbMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"잔업시간(분)",	Type:"AutoSum",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otaMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"조출시간(분)",	Type:"Int",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otbMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"잔업시간(분)",	Type:"Int",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otaMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"기본시간(분)",	Type:"AutoSum",     Hidden:1,  Width:80,   Align:"Center",  ColMerge:0, SaveName:"planMinute",  KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:3 , ExcludeEmpty:1},
-			{Header:"휴일시간(분)",	Type:"AutoSum",     	Hidden:1,  Width:80,   Align:"Center",  ColMerge:0, SaveName:"otMinute",   KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:3 , ExcludeEmpty:1},
+			{Header:"휴일시간(분)",	Type:"Int",     	Hidden:1,  Width:80,   Align:"Center",  ColMerge:0, SaveName:"otMinute",   KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:3 , ExcludeEmpty:1},
 			{Header:"비고",			Type:"Text",	 	Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 			
         ];
@@ -1083,6 +1091,8 @@
 			sheet1.DataInsert(-1) ;
 			break;
 		}
+
+
 	}
 	
 	//근무제패턴저장
@@ -1337,6 +1347,7 @@
 						$("#trCreateOtIfOutOfPlanYn").hide();	
 						$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", false);
 					}else{
+						$("#trCreateOtIfOutOfPlanYn").show();
 						if(sheet1.GetCellValue( NewRow, "createOtIfOutOfPlanYn") == "Y"){
 							$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", true);
 						} else {

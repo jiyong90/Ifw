@@ -22,8 +22,12 @@
         		 , '0' AS selectImg
         		 , CASE WHEN M.WORK_TYPE_CD='ELAS' THEN '1' ELSE NULL END AS planImg
         		 , B.APPLY_YN as applyYn
-			     , CASE WHEN F_WTM_NVL(B.APPLY_YN, 'N') = 'Y' THEN '완료'
+			     , CASE WHEN B.APPLY_YN = 'Y' THEN '완료'
+			     		WHEN B.APPLY_YN IN ('I', 'C') THEN '처리중'
 					    ELSE CONCAT('<a class="basic" onClick="setEndConfirm(', B.FLEXIBLE_APPLY_ID, ')">확정</a>') END AS endImg
+				 , CASE WHEN B.APPLY_YN = 'Y' THEN CONCAT('<a class="basic" onClick="setCancleConfirm(', B.FLEXIBLE_APPLY_ID, ')">취소</a>')
+			     		WHEN B.APPLY_YN IN ('I', 'C') THEN '처리중' ELSE ''
+					    END AS cancleImg
 			     , (SELECT COUNT(*) FROM WTM_FLEXIBLE_APPLY_EMP_TEMP A WHERE B.FLEXIBLE_APPLY_ID = A.FLEXIBLE_APPLY_ID) AS CNT
         		 , B.NOTE AS note
 			  FROM WTM_FLEXIBLE_APPLY B
@@ -83,6 +87,62 @@
 			 INNER JOIN WTM_FLEXIBLE_STD_MGR C
 			    ON A.FLEXIBLE_STD_MGR_ID = C.FLEXIBLE_STD_MGR_ID
 			 WHERE A.FLEXIBLE_APPLY_ID = #{flexibleApplyId}        ]]>
+    </select>
+    
+    <select id="getApplyConfirmCancelList" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			select
+				B.FLEXIBLE_EMP_ID as flexibleEmpId,
+				B.TENANT_ID as tenantId,
+				B.ENTER_CD as enterCd,
+				B.FLEXIBLE_STD_MGR_ID as flexibleStdMgrId,
+				B.SABUN as sabun,
+				B.SYMD as symd,
+				B.EYMD as eymd,
+				B.WORK_TYPE_CD as workTypeCd,
+				B.WORK_MINUTE as workMinute,
+				B.OT_MINUTE as otMinute,
+				B.FLEXIBLE_NM as flexibleNm,
+				B.NOTE as note,
+				B.UPDATE_DATE as updateDate,
+				B.UPDATE_ID as updateId
+			from
+				(
+					SELECT
+						DISTINCT A.USE_SYMD,
+						A.USE_EYMD,
+						B.SABUN,
+						C.WORK_TYPE_CD,
+						A.FLEXIBLE_APPLY_ID,
+						A.FLEXIBLE_STD_MGR_ID,
+						A.APPLY_NM,
+						A.TENANT_ID,
+						A.ENTER_CD,
+						A.NOTE,
+						B.FLEXIBLE_APPLY_TEMP_ID
+					FROM
+						WTM_FLEXIBLE_APPLY A
+					INNER JOIN WTM_FLEXIBLE_APPLY_EMP_TEMP B ON
+						A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+						AND B.APPLY_YN = 'Y'
+					INNER JOIN WTM_FLEXIBLE_STD_MGR C ON
+						A.FLEXIBLE_STD_MGR_ID = C.FLEXIBLE_STD_MGR_ID
+					WHERE
+						A.FLEXIBLE_APPLY_ID = #{flexibleApplyId}
+				) X
+			INNER JOIN WTM_FLEXIBLE_EMP B ON
+				X.TENANT_ID = B.TENANT_ID
+				and X.ENTER_CD = B.ENTER_CD
+				and X.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+				and X.USE_EYMD >= B.SYMD
+				and X.USE_SYMD <= B.EYMD
+				and X.SABUN = B.SABUN
+				and B.SYMD <= #{eymd}
+				and B.EYMD >= #{symd}
+		 ]]>
+		<if test="sabun!=null">
+			and X.SABUN = #{sabun}
+		</if>
     </select>
     
     <insert id="insertApplyEmp" parameterType="map" >
@@ -359,4 +419,87 @@
 			  , X.UPDATE_ID = 'FLEX_RE'
 		]]>
 	</update>
+	
+	<insert id="copyWtmApplyGroup" parameterType="map">
+		INSERT INTO WTM_FLEXIBLE_APPLY_GROUP
+			 ( FLEXIBLE_APPLY_ID
+			 , ORG_CD
+			 , JOB_CD
+			 , DUTY_CD
+			 , POS_CD
+			 , CLASS_CD
+			 , WORKTEAM_CD
+			 , NOTE
+			 , UPDATE_DATE
+			 , UPDATE_ID )
+		SELECT #{flexibleApplyId}
+		     , ORG_CD
+		     , JOB_CD
+		     , DUTY_CD
+		     , POS_CD
+		     , CLASS_CD
+		     , WORKTEAM_CD
+		     , #{note}
+		     , NOW()
+		     , #{userId}
+		FROM WTM_FLEXIBLE_APPLY_GROUP
+		WHERE FLEXIBLE_APPLY_ID = #{copyApplyId}
+	</insert>
+	
+	<insert id="copyWtmApplyEmp" parameterType="map">
+		INSERT INTO WTM_FLEXIBLE_APPLY_EMP
+		 	 ( FLEXIBLE_APPLY_ID
+			 , SABUN
+			 , NOTE
+			 , UPDATE_DATE
+			 , UPDATE_ID)			
+	    SELECT #{flexibleApplyId}
+		     , SABUN
+		     , NOTE
+		     , NOW()
+		     , #{userId}
+		  FROM WTM_FLEXIBLE_APPLY_EMP
+		 WHERE FLEXIBLE_APPLY_ID = #{copyApplyId}
+	</insert>
+	
+	<insert id="copyWtmApplyEmpTemp" parameterType="map">
+		INSERT INTO WTM_FLEXIBLE_APPLY_EMP_TEMP
+			 ( FLEXIBLE_APPLY_ID
+			 , TENANT_ID
+		     , ENTER_CD
+		     , SABUN
+			 , UPDATE_DATE
+			 , UPDATE_ID
+			 , APPLY_YN )			
+	    SELECT #{flexibleApplyId}
+	         , TENANT_ID
+	         , ENTER_CD
+	         , SABUN
+	         , NOW()
+	         , #{userId}
+	         , APPLY_YN
+	      FROM WTM_FLEXIBLE_APPLY_EMP_TEMP
+	     WHERE FLEXIBLE_APPLY_ID = #{copyApplyId}
+	</insert>
+
+	<select id="getExistCountBySymdAndEymd" parameterType="map" resultType="int">
+		select
+			COUNT( 1 )
+		from
+			WTM_FLEXIBLE_EMP
+		where
+			TENANT_ID = #{tenantId}
+			and ENTER_CD = #{enterCd}
+			and WORK_TYPE_CD != 'BASE'
+			and(
+				SYMD BETWEEN #{symd} AND #{eymd}
+				or EYMD BETWEEN #{symd} AND #{eymd}
+			)
+			AND SABUN IN
+		<foreach collection="searchList" item="item" open="(" close=")" separator=", ">
+			#{item.sabun}
+		</foreach>
+
+	</select>
+	
 </mapper>

@@ -79,7 +79,7 @@
 			WHERE A.TENANT_ID = #{tenantId}
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
-			  AND A.APPL_STATUS_CD NOT IN ('22','32','99')
+			  AND A.APPL_STATUS_CD NOT IN ('11', '22','32','99')
 			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			ORDER BY sYmd
         ]]>
@@ -222,6 +222,8 @@
              , XX.flexEymd
 		     , XX.totalWorkMinute
 		     , XX.totalOtMinute
+		     , XX.apprWorkMinute
+		     , XX.apprOtMinute
 		     , XX.restWorkMinute
 		     , XX.restOtMinute
 		     , F_WTM_NVL(XX.totalApprMinute / XX.workDayCnt, 0) AS avlMinute
@@ -244,6 +246,8 @@
 		                , CASE WHEN M.WORK_TYPE_CD NOT IN ('SELE_F', 'SELE_C') THEN T.FLEXIBLE_EDATE ELSE E.EYMD END AS flexEymd
 		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'WORK') AS totalWorkMinute
 		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'OT') AS totalOtMinute
+		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'U', 'WORK') AS apprWorkMinute
+		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'U', 'OT') AS apprOtMinute
 		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
 		                , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
 		                , T.AVL_MINUTE AS avlMinute
@@ -1182,7 +1186,7 @@
 		   AND E.ENTER_CD = A.ENTER_CD
 		   AND E.SABUN = A.APPL_SABUN
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
-		   AND A.APPL_STATUS_CD <> '99'
+		   AND A.APPL_STATUS_CD NOT IN ('11','99')
 		UNION ALL
     	SELECT C.YMD AS ymd
     	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, 'H:I') AS shm
@@ -1255,7 +1259,7 @@
 					AND E.TENANT_ID = A.TENANT_ID
 				   AND E.ENTER_CD = A.ENTER_CD
 				 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
-				   AND A.APPL_STATUS_CD <> '99'
+				   AND A.APPL_STATUS_CD NOT IN ('11','99')
 				   AND F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD') BETWEEN #{sYmd} AND #{eYmd}
 				   AND E.TENANT_ID = #{tenantId}
 				   AND E.ENTER_CD = #{enterCd}
@@ -1549,7 +1553,8 @@
 			   AND E.ENTER_CD = #{enterCd}
 			   AND E.SABUN = #{sabun} 
 			   AND R.TIME_TYPE_CD != 'BASE'
-			   AND ((F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') >= #{sdate} AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate} ) OR ( F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') > #{sdate} AND  F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') <= #{edate} ))
+  			   AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_SDATE, R.PLAN_SDATE),'YMDHI') < #{edate} 
+  			   AND F_WTM_DATE_FORMAT(F_WTM_NVL(R.APPR_EDATE, R.PLAN_EDATE),'YMDHI') > #{sdate}
 			 UNION ALL
 			SELECT 2 
 			  FROM WTM_APPL A
@@ -2839,8 +2844,7 @@
 			     , CASE WHEN XX.HOLIDAY_YN = 'Y' AND XX.SUB_YN = 0 THEN 0 ELSE XX.APPR_N_MINUTE END AS holNMinute
 			     , CASE WHEN XX.HOLIDAY_YN = 'Y' AND XX.SUB_YN = 0 THEN 0 ELSE XX.APPR_O_MINUTE + XX.APPR_EO_MINUTE END AS holSumOMinute
 			     , CASE WHEN XX.HOLIDAY_YN = 'Y' AND XX.SUB_YN = 0 THEN 0 ELSE XX.APPR_EN_MINUTE + XX.APPR_N_MINUTE END AS holSumNMinute
-			     , CASE WHEN XX.HOLIDAY_YN = 'Y' AND XX.SUB_YN = 0 THEN XX.APPR_EN_MINUTE + XX.APPR_EO_MINUTE + XX.APPR_O_MINUTE + XX.APPR_N_MINUTE ELSE 0 END AS holSumMinute
-			     , CASE WHEN XX.HOLIDAY_YN = 'Y' AND XX.SUB_YN = 0 THEN XX.APPR_EN_MINUTE + XX.APPR_EO_MINUTE + XX.APPR_O_MINUTE + XX.APPR_N_MINUTE ELSE 0 END AS holSumMinute1
+			     , CASE WHEN XX.HOLIDAY_YN = 'Y' AND XX.SUB_YN = 0 THEN XX.APPR_EN_MINUTE + XX.APPR_EO_MINUTE + XX.APPR_O_MINUTE + XX.APPR_N_MINUTE ELSE 0 END AS holSumMinute 
 			     , XX.APPR_WORK_MINUTE + XX.APPR_EN_MINUTE + XX.APPR_EO_MINUTE + XX.APPR_O_MINUTE + XX.APPR_N_MINUTE AS totalMinute
 			  FROM (
 				SELECT X.TENANT_ID, X.ENTER_CD, X.EMP_NM, X.SABUN, X.YMD, X.WORK_TYPE_CD, X.SYMD, X.EYMD, X.HOLIDAY_YN
@@ -2916,7 +2920,8 @@
 					) X
 			  	   GROUP BY X.TENANT_ID, X.ENTER_CD, X.EMP_NM, X.SABUN, X.WORK_TYPE_CD, X.SYMD, X.EYMD, X.YMD, X.TAA_TIME_YN, X.HOLIDAY_YN, X.WORK_TYPE_NM, X.ENTRY_SDATE, X.ENTRY_EDATE, X.ORG_NM
 			      ) XX 
-			 ORDER BY XX.SABUN, XX.YMD
+			 	  ) XXX
+			 ORDER BY XXX.SABUN, XXX.YMD
 		]]>
 	</select>
 	

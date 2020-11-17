@@ -35,6 +35,7 @@
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
 									<li><a href="javascript:doAction1('Upload')" class="basic authA">업로드</a></li>
 									<li><a href="javascript:doAction1('Down2Excel');" class="basic">다운로드</a></li>
+									<li><a href="javascript:doAction1('Rebuild');" class="basic">근무계획 재생성</a></li>
 								</ul>
 							</div>
 						</div>
@@ -69,10 +70,11 @@
    			{Header:"상태",		Type:"Status",		Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"tenantId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"tenantId",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"enterCd",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"enterCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"사업장",			Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"bisinessPlaceCd",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"공휴일",			Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holidayYmd",		KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"공휴일명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holidayNm",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"양력여부",		Type:"CheckBox",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sunYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"사업장",			Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"bisinessPlaceCd",	KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"공휴일",			Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holidayYmd",		KeyField:1,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
+			{Header:"공휴일명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"holidayNm",		KeyField:1,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"양력여부",		Type:"CheckBox",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sunYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,
+				InsertEdit:1,	EditLen:100 },
 			{Header:"명절여부",		Type:"CheckBox",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"festiveYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"유급여부",		Type:"CheckBox",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"payYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
@@ -110,7 +112,7 @@
 			sheet1.SetCellValue(row, "payYn", "Y");
 			break;
 		case "Upload":   
-			var params = {Mode:"HeaderMatch", StartRow:2, WorkSheetNo:1, Append:1}; 
+			var params = {Mode:"HeaderMatch", StartRow:1, WorkSheetNo:1, Append:1};
 			sheet1.LoadExcel(params);
             break;
 		case "Down2Excel":
@@ -118,6 +120,37 @@
 			var param  = {DownCols:downcol,SheetDesign:1,Merge:1};
 			sheet1.Down2Excel(param);
 			break;
+		case "Rebuild" :
+			var symdVal = moment($("#symd").val()).format("YYYY");
+			var eymdVal = moment($("#eymd").val()).format("YYYY");
+
+			if(symdVal != eymdVal){
+				isuAlert("조회 시작년도, 종료년도는 같아야합니다.");
+				break;
+			}
+
+			var param = "?ymd=" + $("#symd").val();
+
+			Util.ajax({
+				url: "${rc.getContextPath()}/flexibleEmp/empResetAsync" + param,
+				type: "GET",
+				contentType: 'application/json',
+				dataType: "json",
+				success: function(data) {
+					if(data!=null && data.status=='OK') {
+						isuAlert("근무계획 재작성 요청완료.");
+					}else {
+						isuAlert(data.message);
+					}
+
+				},
+				error: function(e) {
+					isuAlert("근무계획 재작성 에러 발생");
+				}
+			});
+
+			break;
+
 		}
 	}
 
@@ -150,7 +183,16 @@
 		}
 	}
 	
-	function sheet1_OnLoadExcel() {
+	function sheet1_OnLoadExcel(result, code, msg) {
+
+		var totalCnt = sheet1.RowCount();
+		var newRowCnt = sheet1.RowCount("I");
+		var newRowNum = totalCnt - newRowCnt + 1;
+
+		for(var i = newRowNum; i <= (newRowNum + newRowCnt); i++){
+			sheet1.SetCellValue(i, "sunYn", 'Y');
+		}
+
 		//빈 row 제거
 		var delRows = [];
 		for(var i=1; i<=sheet1.LastRow(); i++) {

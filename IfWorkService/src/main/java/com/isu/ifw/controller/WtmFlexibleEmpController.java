@@ -3,6 +3,7 @@ package com.isu.ifw.controller;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -22,8 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.entity.WtmFlexibleStdMgr;
+import com.isu.ifw.entity.WtmTimeCdMgr;
+import com.isu.ifw.entity.WtmWorkCalendar;
+import com.isu.ifw.mapper.WtmEmpHisMapper;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmEmpHisRepository;
+import com.isu.ifw.repository.WtmFlexibleStdMgrRepository;
+import com.isu.ifw.repository.WtmTimeCdMgrRepository;
+import com.isu.ifw.repository.WtmWorkCalendarRepository;
 import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleEmpResetService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
@@ -35,6 +45,9 @@ import com.isu.ifw.vo.WtmDayWorkVO;
 @RestController
 @RequestMapping(value="/flexibleEmp")
 public class WtmFlexibleEmpController {
+	
+	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
+	
 	
 	@Autowired
 	WtmAsyncService wymAsyncService;
@@ -48,6 +61,18 @@ public class WtmFlexibleEmpController {
 	
 	@Autowired private WtmFlexibleEmpResetService flexibleEmpResetService;
 	@Autowired private WtmEmpHisRepository wtmEmpHisRepo;
+
+	@Autowired
+	WtmWorkCalendarRepository workCalendarRepo;
+
+	@Autowired
+	WtmFlexibleStdMgrRepository flexibleStdMgrRepo;
+
+	@Autowired
+	WtmTimeCdMgrRepository timeCdMgrRepo;
+
+	@Autowired
+	WtmEmpHisMapper empHisMapper;
 	/**
 	 * 해당 월의 근무제 정보 조회
 	 * @param paramMap
@@ -742,43 +767,51 @@ public class WtmFlexibleEmpController {
 
 	/**
 	 * 전체사용자 리셋
+	 *
 	 * @param ymd
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/empReset", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ReturnParam empReset(@RequestParam(required=true) String ymd,HttpServletRequest request) {
+	@RequestMapping(value = "/empResetAsync",
+	                method = RequestMethod.GET,
+	                produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam empResetAsync(@RequestParam(required = true) String ymd, HttpServletRequest request) {
 
+		logger.debug("### empResetAsync start");
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId")
-		                                    .toString());
-		String enterCd = sessionData.get("enterCd")
-		                            .toString();
-		String sabun = sessionData.get("empNo")
-		                          .toString();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
 
 
-		try{
+		try {
 
-			List<WtmEmpHis> empList = wtmEmpHisRepo.findByTenantIdAndEnterCdAndYmdNotExistWtmFlexibleEmp(tenantId, enterCd, ymd);
+			ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
 
-			for (WtmEmpHis empHis : empList){
-				flexibleEmpResetService.P_WTM_FLEXIBLE_EMP_RESET(tenantId, enterCd, empHis.getSabun(), ymd.substring(0,4)+"0101", ymd.substring(0,4)+"1231", empHis.getSabun());
-			}
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("tenantId", tenantId);
+			map.put("enterCd", enterCd);
+			map.put("statusCd", "AA");
+			map.put("ymd", ymd);
 
+			List<WtmEmpHis> empList = empHisMapper.getWtmFlexibleEmp(map);
+			
+			logger.debug("empList size : " + empList.size());
+			
+			wymAsyncService.asyncFlexibleEmpRest(tenantId, enterCd, ymd, empList);
 
-
-		}catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
 		}
 
 		return rp;
 	}
+
 	
 	/**
 	 * 일마감
@@ -804,5 +837,87 @@ public class WtmFlexibleEmpController {
 		
 		return resultMap;
 	}
+	
+
+	/**
+	 * 초기화
+	 *
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/resetFinDay",
+	                method = RequestMethod.POST,
+	                produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	ReturnParam resetFinDay(@RequestBody Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("초기화 요청완료 되었습니다.");
+		validateParamMap(paramMap, "sabun", "flexibleEmpId", "flexibleStdMgrId", "ymd");
+
+
+		try {
+			Long                tenantId    = Long.valueOf(request.getAttribute("tenantId").toString());
+			Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+			String              enterCd     = sessionData.get("enterCd").toString();
+			String              empNo       = sessionData.get("empNo").toString();
+			String              userId      = sessionData.get("userId").toString();
+
+			String ymd              = paramMap.get("ymd").toString();
+			String sabun            = paramMap.get("sabun").toString();
+			Long   flexibleStdMgrId = Long.valueOf(paramMap.get("flexibleStdMgrId").toString());
+
+
+			WtmWorkCalendar   workCalendar   = workCalendarRepo.findByTenantIdAndEnterCdAndYmdAndSabun(tenantId, enterCd, ymd, sabun);
+			WtmFlexibleStdMgr flexibleStdMgr = flexibleStdMgrRepo.findByFlexibleStdMgrId(flexibleStdMgrId);
+
+			WtmTimeCdMgr timeCdMgr = timeCdMgrRepo.findById(workCalendar.getTimeCdMgrId()).get();
+
+			flexibleEmpResetService.P_WTM_WORK_DAY_RESULT_RESET(workCalendar, flexibleStdMgr, timeCdMgr, "ADM"); //  TODO : userId 는 추후 삭제예정 ADM 은 임시
+		} catch (Exception e) {
+			e.printStackTrace();
+			rp.setFail("초기화 요청시 오류가 발생했습니다.");
+		}
+
+		return rp;
+	}
+
+
+	/**
+	 * 초기화
+	 *
+	 * @param paramMap
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/newEmpReset",
+	                method = RequestMethod.POST,
+	                produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	ReturnParam newEmpReset(@RequestBody Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
+
+		//  TODO : 신규 입사자 초기화 처리
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("초기화 요청완료 되었습니다.");
+		validateParamMap(paramMap, "tenantId", "enterCd", "sabun", "ymd");
+
+
+		try {
+			Long   tenantId = Long.valueOf(paramMap.get("tenantId").toString());
+			String enterCd  = paramMap.get("enterCd").toString();
+			String ymd      = paramMap.get("ymd").toString();
+			String sabun    = paramMap.get("sabun").toString();
+
+
+			flexibleEmpResetService.P_WTM_FLEXIBLE_EMP_RESET(tenantId, enterCd, sabun, ymd.substring(0, 4) + "0101", ymd.substring(0, 4) + "1231", sabun);
+		} catch (Exception e) {
+			e.printStackTrace();
+			rp.setFail("초기화 요청시 오류가 발생했습니다.");
+		}
+
+		return rp;
+	}
+
 	
 }

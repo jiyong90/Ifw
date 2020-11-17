@@ -1,5 +1,5 @@
 <div id="timeCdMgr">
- 	<div class="container-fluid mgr-wrap bg-white">
+ 	<div class="container-fluid bg-white mgr-wrap">
  	<div class="ibsheet-wrapper">
  		<form id="sheetForm" name="sheetForm">
 			<div class="sheet_search outer">
@@ -77,6 +77,7 @@
             language: 'ko'
         });
 		$("#sYmd").val("${today?date("yyyy-MM-dd")?string("yyyy-MM-dd")}");
+		
 		new jBox('Tooltip', {
        	    attach: '#Tooltip-timeCdMgrList',
        	    target: '#Tooltip-timeCdMgrList',
@@ -242,7 +243,7 @@
 			break;
 			
 		case "Insert":
-			sheet1.DataInsert(0) ;
+			sheet1.DataInsert(0);
 			break;
 		}
 	}
@@ -416,14 +417,16 @@
 	}
 	
 	function setBerakSheet(breakTypeCd){
-		if(breakTypeCd == "MGR"){
-			$("#trBreakTime").hide();
-			$("#trBreakMgr").show();
-			doAction2("Search");
-		} else {
-			$("#trBreakMgr").hide();
-			$("#trBreakTime").show();
-			doAction3("Search");
+		if(breakTypeCd != ''){
+			if(breakTypeCd == "MGR"){
+				$("#trBreakTime").hide();
+				$("#trBreakMgr").show();
+				doAction2("Search");
+			} else {
+				$("#trBreakMgr").hide();
+				$("#trBreakTime").show();
+				doAction3("Search");
+			}
 		}
 	}
 </script>

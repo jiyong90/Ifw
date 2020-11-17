@@ -1,6 +1,6 @@
 package com.isu.ifw.controller;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.isu.ifw.entity.WtmPropertie;
-import com.isu.ifw.entity.WtmRule;
+import com.isu.ifw.entity.WtmFlexibleApply;
 import com.isu.ifw.mapper.WtmFlexibleApplyMgrMapper;
+import com.isu.ifw.repository.WtmFlexibleApplyRepository;
+import com.isu.ifw.repository.WtmFlexibleEmpRepository;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.repository.WtmRuleRepository;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmAsyncService;
 import com.isu.ifw.service.WtmFlexibleApplyMgrService;
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.util.WtmUtil;
@@ -50,6 +52,15 @@ public class WtmFlexibleApplyMgrController {
 	
 	@Autowired
 	WtmRuleRepository ruleRepo;
+	
+	@Autowired
+	WtmFlexibleApplyRepository flexibleApplyRepo;
+
+	@Autowired
+	WtmFlexibleEmpRepository flexibleEmpRepo;
+
+	@Autowired
+	WtmAsyncService wtmAsyncService;
 	
 	@Autowired
 	@Qualifier("flexibleEmpService")
@@ -173,7 +184,7 @@ public class WtmFlexibleApplyMgrController {
 	
 	@RequestMapping(value="/apply", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam setApply(HttpServletRequest request, @RequestBody Map<String, Object> paramMap ) throws Exception {
-		
+		logger.debug("[setApply] !!!!!!!!!!!!!!!!!!");
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("확정에 성공하였습니다.");
 		try {
@@ -182,6 +193,7 @@ public class WtmFlexibleApplyMgrController {
 			String enterCd = sessionData.get("enterCd").toString();
 			String empNo = sessionData.get("empNo").toString();
 			String userId = sessionData.get("userId").toString();
+			
 			paramMap.put("tenantId", tenantId);
 			paramMap.put("enterCd", enterCd);
 			paramMap.put("userId", userId);
@@ -190,74 +202,169 @@ public class WtmFlexibleApplyMgrController {
 			
 			String workTypeCd = paramMap.get("workTypeCd").toString();
 			Long flexibleApplyId = Long.valueOf(paramMap.get("flexibleApplyId").toString());
-			
+
+			WtmFlexibleApply wtmFlexibleApply = flexibleApplyRepo.findById(flexibleApplyId).get();
+
+
+			if(wtmFlexibleApply.getApplyYn().equals(WtmApplService.WTM_FLEXIBLE_APPLY_I)){
+				rp.setFail("확정 진행중입니다.");
+				return rp;
+			}
+
+			if(wtmFlexibleApply.getApplyYn().equals(WtmApplService.WTM_FLEXIBLE_APPLY_C)){
+				rp.setFail("취소 진행중입니다.");
+				return rp;
+			}
+
+
 			// 확정대상자 조회
 			List<Map<String, Object>> searchList =  wtmFlexibleApplyMgrMapper.getApplyConfirmList(paramMap);
 			if(searchList==null || searchList.size()==0) {
 				rp.setFail("확정 대상자가 없습니다.");
 				return rp;
 			}
-			
+
 			logger.debug("[setApply] 확정대상자 " + searchList.size());
-			
+
+			paramMap.put("symd", wtmFlexibleApply.getUseSymd());
+			paramMap.put("eymd", wtmFlexibleApply.getUseEymd());
+			paramMap.put("searchList", searchList);
+
+			int existCnt = wtmFlexibleApplyMgrMapper.getExistCountBySymdAndEymd(paramMap);
+			if(existCnt > 0) {
+				rp.setFail("이미 등록된 확정건이 있습니다.");
+				return rp;
+			}
+
 			//반복기준조회
 			List<Map<String, Object>> ymdList = flexibleApplyService.getApplyYmdList(paramMap);
-			
-			WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_FLEXIBLE_EMP_EXCEPT_TARGET");
-			
-			String ruleValue = null;
-			String ruleType = null;
-			if(propertie!=null && propertie.getInfoValue()!=null && !"".equals(propertie.getInfoValue())) {
-				WtmRule rule = ruleRepo.findByTenantIdAndEnterCdAndRuleNm(tenantId, enterCd, propertie.getInfoValue());
-				if(rule!=null && rule.getRuleValue()!=null && !"".equals(rule.getRuleValue())) {
-					ruleType = rule.getRuleType();
-					ruleValue = rule.getRuleValue();
-				}
-			}
-			
-			//오류체크까지 하고 리턴
-			int empCnt = 0;
-			for(int i=0; i < searchList.size(); i++) {
-				Map<String, Object> validateMap = new HashMap<>();
-				validateMap = searchList.get(i);
-				String sabun = validateMap.get("sabun").toString();
-				
-				boolean isTarget = false;
-				if(ruleValue!=null) 
-					isTarget = flexibleEmpService.isRuleTarget(tenantId, enterCd, sabun, ruleType, ruleValue);
-				
-				if(!isTarget) {
-					for(int j=0; j < ymdList.size(); j++) {
-						// 반복 구간별 밸리데이션 체크 및 유연근무기간 입력
-						paramMap.put("sYmd", ymdList.get(j).get("symd"));
-						paramMap.put("eYmd", ymdList.get(j).get("eymd"));
-						
-						//탄근제 validation 체크를 위한 param
-						paramMap.put("adminYn", "Y");
-						paramMap.put("flexibleApplyId", flexibleApplyId);
-						
-						rp = wtmApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
-						if(rp.getStatus().equals("FAIL")) {
-							return rp;
-						}
-						
-						validateMap.put("flexibleApplyId", flexibleApplyId);
-						validateMap.put("workTypeCd", workTypeCd);
-					}
-					empCnt++;
-				}
-			}
-			
-			//비동기로 확정처리
-			//flexibleApplyService.setApplyAsync(searchList, ymdList);
+
+			wtmFlexibleApply.setApplyYn(WtmApplService.WTM_FLEXIBLE_APPLY_I);
+			flexibleApplyRepo.save(wtmFlexibleApply);
+
 			//동기로 확정처리
-			int cnt = flexibleApplyService.setApply(searchList, ymdList);
-			rp.setMessage("총 " + empCnt + "명의 확정 대상자 중 " + cnt + "명의 확정에 성공하였습니다.");
+			//bithumbWtmflexibleApplyService.setApply(wtmFlexibleApply, searchList, ymdList);
+			flexibleApplyService.setApply(wtmFlexibleApply, searchList, ymdList);
 		} catch(Exception e) {
 			rp.setFail("확정 시 오류가 발생했습니다.");
-		} 
+		}
+
 
 		logger.debug("[setApply rp] " + rp.toString());
+		return rp;
+	}
+
+
+	/**
+	 * 확정취소
+	 * @param request
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/cancle", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam setCancle(HttpServletRequest request, @RequestBody Map<String, Object> paramMap ) throws Exception {
+		logger.debug("[setCancle] !!!!!!!!!!!!!!!!!!");
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("취소하였습니다.");
+		try {
+			Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+			Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+			String enterCd = sessionData.get("enterCd").toString();
+			String empNo = sessionData.get("empNo").toString();
+			String userId = sessionData.get("userId").toString();
+
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("userId", userId);
+
+			logger.debug("[setCancle] ", paramMap.toString());
+
+			Long flexibleApplyId = Long.valueOf(paramMap.get("flexibleApplyId").toString());
+
+			WtmFlexibleApply wtmFlexibleApply = flexibleApplyRepo.findById(flexibleApplyId).get();
+
+			if(wtmFlexibleApply.getApplyYn().equals(WtmApplService.WTM_FLEXIBLE_APPLY_I)){
+				rp.setFail("확정 진행중입니다.");
+				return rp;
+			}
+
+			if(wtmFlexibleApply.getApplyYn().equals(WtmApplService.WTM_FLEXIBLE_APPLY_C)){
+				rp.setFail("취소 진행중입니다.");
+				return rp;
+			}
+
+			paramMap.put("symd", wtmFlexibleApply.getUseSymd());
+			paramMap.put("eymd", wtmFlexibleApply.getUseEymd());
+
+			// 확정취소 대상자 조회
+			List<Map<String, Object>> searchList =  wtmFlexibleApplyMgrMapper.getApplyConfirmCancelList(paramMap);
+			if(searchList==null || searchList.size()==0) {
+				rp.setFail("확정취소 대상자가 없습니다.");
+				return rp;
+			}
+
+			logger.debug("[setCancle] 확정취소 대상자 " + searchList.size());
+
+
+			wtmFlexibleApply.setApplyYn(WtmApplService.WTM_FLEXIBLE_APPLY_C);
+			flexibleApplyRepo.save(wtmFlexibleApply);
+
+
+			List<Long> flexibleEmpIds = new ArrayList<Long>();
+
+			searchList.stream().forEach(x -> flexibleEmpIds.add(Long.valueOf(x.get("flexibleEmpId").toString())));
+
+			wtmAsyncService.cancelFlexibleEmpById(tenantId, enterCd, flexibleEmpIds, userId, wtmFlexibleApply);
+		} catch(Exception e) {
+			rp.setFail("취소 시 오류가 발생했습니다.");
+		}
+
+
+		logger.debug("[setCancle rp] " + rp.toString());
+		return rp;
+	}
+
+
+	/**
+	 * 확정취소(개인)
+	 * @param request
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/cancle/personal", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam setCanclePersonal(HttpServletRequest request, @RequestBody Map<String, Object> paramMap ) throws Exception {
+		logger.debug("[setCanclePersonal] !!!!!!!!!!!!!!!!!!");
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("취소하였습니다.");
+		try {
+			Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+			Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+			String enterCd = sessionData.get("enterCd").toString();
+			String empNo = sessionData.get("empNo").toString();
+			String userId = sessionData.get("userId").toString();
+
+			paramMap.put("tenantId", tenantId);
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("userId", userId);
+
+			Long flexibleEmpId = Long.valueOf(paramMap.get("flexibleEmpId").toString());
+
+			logger.debug("[setCanclePersonal] ", paramMap.toString());
+
+
+			List<Long> flexibleEmpIds = new ArrayList<Long>();
+			flexibleEmpIds.add(flexibleEmpId);
+
+			wtmAsyncService.cacelFlexibleByEmpId(tenantId, enterCd, flexibleEmpIds, userId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("취소 시 오류가 발생했습니다.");
+		}
+
+
+		logger.debug("[setCanclePersonal rp] " + rp.toString());
 		return rp;
 	}
 	
