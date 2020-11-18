@@ -1189,7 +1189,7 @@
 				$("#dayCloseType").val(sheet1.GetCellValue( NewRow, "dayCloseType")).prop("selected", true);
 				
 				$("#trApplyEntry").hide();
-				
+				$("#trCreateOtIfOutOfPlanYn").hide();
 				// 고정OT
 				if(workTypeCd == "ELAS"){
 					$("#trBase").hide();
@@ -1336,6 +1336,14 @@
 						} else {
 							$("input:checkbox[name='unplannedYn']").prop("checked", false);
 						}
+						
+						$("#trCreateOtIfOutOfPlanYn").show();
+						if(sheet1.GetCellValue( NewRow, "createOtIfOutOfPlanYn") == "Y"){
+							$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", true);
+						} else {
+							$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", false);
+						}
+						
 					}
 					
 					if(sheet1.GetCellValue( NewRow, "todayPlanEditYn") == "Y"){
@@ -1343,17 +1351,7 @@
 					}
 					$("#trTodayPlanEdit").show();
 					
-					if(sheet1.GetCellValue( NewRow, "unplannedYn") == "Y"){
-						$("#trCreateOtIfOutOfPlanYn").hide();	
-						$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", false);
-					}else{
-						$("#trCreateOtIfOutOfPlanYn").show();
-						if(sheet1.GetCellValue( NewRow, "createOtIfOutOfPlanYn") == "Y"){
-							$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", true);
-						} else {
-							$("input:checkbox[name='createOtIfOutOfPlanYn']").prop("checked", false);
-						}
-					}
+					
 					
 				} else {
 					$("#taaTimeYn").val("N");
