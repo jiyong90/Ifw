@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.isu.ifw.mapper.WtmAnnualCreateMapper">
+
+    <select id="getAnnualUseCodeList" parameterType="map" resultType="com.isu.ifw.vo.WtmCodeVo">
+        <![CDATA[
+        	SELECT * FROM WTM_CODE
+            WHERE GRP_CODE_CD = 'TAA_TYPE_CD'
+            AND TENANT_ID = #{tenantId}
+            AND ENTER_CD = #{enterCd}
+            AND CODE_CD IN (SELECT TAA_TYPE_CD
+                            FROM WTM_TAA_CODE
+                            WHERE REQUEST_TYPE_CD IN ('D', 'A', 'P')
+                            AND TENANT_ID = #{tenantId}
+				            AND ENTER_CD = #{enterCd}
+                            AND TAA_TYPE_CD IN ('10'))
+
+		]]>
+    </select>
+
+    <select id="getAnnualCreateCodeList" parameterType="map" resultType="com.isu.ifw.vo.WtmCodeVo">
+        <![CDATA[
+        	SELECT *
+        	  FROM WTM_CODE
+             WHERE GRP_CODE_CD = 'TAA_TYPE_CD'
+              AND TENANT_ID = #{tenantId}
+              AND ENTER_CD = #{enterCd}
+              AND CODE_CD IN (SELECT TAA_TYPE_CD
+                                FROM WTM_TAA_CODE
+                               WHERE REQUEST_TYPE_CD IN ('D', 'A', 'P')
+                                 AND TENANT_ID = #{tenantId}
+				                 AND ENTER_CD = #{enterCd}
+                                 AND TAA_TYPE_CD IN ('10'))
+		]]>
+    </select>
+
+	<select id="getAnnualCreateList" parameterType="map" resultType="com.isu.ifw.vo.WtmAnnualCreateVo">
+        <![CDATA[
+        	SELECT
+				A.*
+				, B.EMP_NM
+				, F_WTM_GET_ORG_NM(A.TENANT_ID, A.ENTER_CD, B.ORG_CD, B.SYMD) AS orgNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'DUTY_CD', B.DUTY_CD, B.SYMD) AS dutyNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'POS_CD', B.POS_CD, B.SYMD) AS posNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'CLASS_CD', B.CLASS_CD, B.SYMD) AS classNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'JOB_CD', B.JOB_CD, B.SYMD) AS jobNm
+				 ,(
+                    SELECT
+                        IFNULL(
+                            SUM( X.CREATE_CNT ),
+                            0
+                        )
+                    FROM
+                        WTM_ANNUAL_USED X
+                    WHERE
+                        A.TENANT_ID = X.TENANT_ID
+                        AND A.ENTER_CD = X.ENTER_CD
+                        AND A.SABUN = X.SABUN
+                        AND X.TAA_TYPE_CD IN(
+                            SELECT
+                                T.TAA_CD
+                            FROM
+                                WTM_TAA_CODE T
+                            WHERE
+                                T.TENANT_ID = #{tenantId}
+                                AND T.ENTER_CD = #{enterCd}
+                                AND T.TAA_TYPE_CD = A.TAA_TYPE_CD
+                        )
+                ) AS usedCnt
+			FROM
+				WTM_ANNUAL_CREATE A,
+				WTM_EMP_HIS B
+			WHERE
+				A.TENANT_ID = B.TENANT_ID
+				AND A.ENTER_CD = B.ENTER_CD
+				AND A.SABUN = B.SABUN
+				AND A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+				AND B.SYMD <= DATE_FORMAT(NOW(), '%Y%m%d')
+				AND B.EYMD >= DATE_FORMAT(NOW(), '%Y%m%d')
+			  	AND (A.SABUN LIKE CONCAT('%', #{searchKeyword}, '%')
+			    OR B.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%'))
+		]]>
+        <if test="searchType != null and !searchType.equals('')">
+            AND A.TAA_TYPE_CD = #{searchType}
+        </if>
+        <if test="sabun != null and !sabun.equals('')">
+            AND A.SABUN = #{sabun}
+        </if>
+    </select>
+
+    <select id="getAnnualUsedInfo" parameterType="map" resultType="com.isu.ifw.vo.WtmAnnualCreateVo">
+        <![CDATA[
+        	SELECT
+				A.*
+				, B.EMP_NM
+				, F_WTM_GET_ORG_NM(A.TENANT_ID, A.ENTER_CD, B.ORG_CD, B.SYMD) AS orgNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'DUTY_CD', B.DUTY_CD, B.SYMD) AS dutyNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'POS_CD', B.POS_CD, B.SYMD) AS posNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'CLASS_CD', B.CLASS_CD, B.SYMD) AS classNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'JOB_CD', B.JOB_CD, B.SYMD) AS jobNm
+				 ,(
+                    SELECT
+                        IFNULL(
+                            SUM( X.CREATE_CNT ),
+                            0
+                        )
+                    FROM
+                        WTM_ANNUAL_USED X
+                    WHERE
+                        A.TENANT_ID = X.TENANT_ID
+                        AND A.ENTER_CD = X.ENTER_CD
+                        AND A.SABUN = X.SABUN
+                        AND X.TAA_TYPE_CD IN(
+                            SELECT
+                                T.TAA_CD
+                            FROM
+                                WTM_TAA_CODE T
+                            WHERE
+                                T.TENANT_ID = #{tenantId}
+                                AND T.ENTER_CD = #{enterCd}
+                                AND T.TAA_TYPE_CD = A.TAA_TYPE_CD
+                        )
+                ) AS usedCnt
+			FROM
+				WTM_ANNUAL_CREATE A,
+				WTM_EMP_HIS B
+			WHERE
+				A.TENANT_ID = B.TENANT_ID
+				AND A.ENTER_CD = B.ENTER_CD
+				AND A.SABUN = B.SABUN
+				AND A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+				AND B.SYMD <= DATE_FORMAT(NOW(), '%Y%m%d')
+				AND B.EYMD >= DATE_FORMAT(NOW(), '%Y%m%d')
+			    AND A.TAA_TYPE_CD = #{taaTypeCd}
+			    AND A.SABUN = #{sabun}
+		]]>
+    </select>
+    
+    <select id="getMyAnnualInfo" parameterType="map" resultType="com.isu.ifw.vo.WtmAnnualCreateVo">
+        <![CDATA[
+        	SELECT
+				A.*
+				, B.EMP_NM
+				, F_WTM_GET_ORG_NM(A.TENANT_ID, A.ENTER_CD, B.ORG_CD, B.SYMD) AS orgNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'DUTY_CD', B.DUTY_CD, B.SYMD) AS dutyNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'POS_CD', B.POS_CD, B.SYMD) AS posNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'CLASS_CD', B.CLASS_CD, B.SYMD) AS classNm
+				 , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'JOB_CD', B.JOB_CD, B.SYMD) AS jobNm
+	    ]]>
+        <choose>
+            <when test="annualTaCd.equals('70') or annualTaCd.equals('10')">
+                ,(
+                    SELECT
+                        IFNULL(
+                            SUM( X.CREATE_CNT ),
+                            0
+                        )
+                    FROM
+                        WTM_ANNUAL_USED X
+                    WHERE
+                        A.TENANT_ID = X.TENANT_ID
+                    AND A.ENTER_CD = X.ENTER_CD
+                    AND A.SABUN = X.SABUN
+                    AND X.TAA_TYPE_CD IN(
+                                            SELECT
+                                                T.TAA_CD
+                                            FROM
+                                                WTM_TAA_CODE T
+                                            WHERE
+                                                T.TENANT_ID = #{tenantId}
+                                            AND T.ENTER_CD = #{enterCd}
+                                            AND T.TAA_TYPE_CD = A.TAA_TYPE_CD
+                                        )
+                ) AS usedCnt
+            </when>
+            <otherwise>
+               , 0 AS usedCnt
+            </otherwise>
+        </choose>
+        <![CDATA[
+			FROM
+				WTM_ANNUAL_CREATE A,
+				WTM_EMP_HIS B
+			WHERE
+				A.TENANT_ID = B.TENANT_ID
+				AND A.ENTER_CD = B.ENTER_CD
+				AND A.SABUN = B.SABUN
+				AND A.TENANT_ID = #{tenantId}
+				AND A.ENTER_CD = #{enterCd}
+			  	AND A.SABUN = #{sabun}
+			  	AND A.YY = #{yy}
+			  	AND B.SYMD <= DATE_FORMAT(NOW(), '%Y%m%d')
+				AND B.EYMD >= DATE_FORMAT(NOW(), '%Y%m%d')
+			  	AND
+		]]>
+        <choose>
+            <when test="annualTaCd.equals('70')">
+                A.TAA_TYPE_CD = #{annualTaCd}
+            </when>
+            <otherwise>
+                A.TAA_TYPE_CD = '10'
+            </otherwise>
+
+        </choose>
+    </select>
+
+
+    <!-- 연차 생성일 -->
+    <select id="getMyCreatCnt" parameterType="com.isu.ifw.vo.WtmAnnualCreateVo" resultType="com.isu.ifw.vo.WtmAnnualCreateVo">
+        select
+            sum(CREATE_CNT) CREATE_CNT
+        from
+            WTM_ANNUAL_CREATE
+        where
+            TENANT_ID = #{tenantId}
+            AND ENTER_CD = #{enterCd}
+            AND SABUN = #{sabun}
+            AND YY = #{yy}
+            AND DATE_FORMAT( NOW(), '%Y%m%d' ) BETWEEN SYMD AND EYMD
+            AND
+            <choose>
+                <when test="taaTypeCd.equals('70')">
+                    TAA_TYPE_CD = #{taaTypeCd}
+                </when>
+                <otherwise>
+                    TAA_TYPE_CD = '10'
+                </otherwise>
+
+            </choose>
+    </select>
+
+    <select id="getTaaType" parameterType="map" resultType="com.isu.ifw.entity.WtmTaaCode">
+        <![CDATA[
+            SELECT * FROM WTM_TAA_CODE
+            WHERE REQUEST_TYPE_CD IN ('D', 'A', 'P')
+            AND WORK_YN = 'N'
+            AND TENANT_ID = #{tenantId}
+            AND ENTER_CD = #{enterCd}
+            AND TAA_TYPE_CD NOT IN ('30', '40');
+        ]]>
+    </select>
+
+</mapper>
