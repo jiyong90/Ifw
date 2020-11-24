@@ -11,6 +11,127 @@
 </div>
 
 <script type="text/javascript">
+	var _dList;
+	var _annualCreateCnt = 0;
+	var _annualNotUsedCnt = 0;
+
+	$(function () {
+		//	휴가신청 Select 정보 조회
+		var taaTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/wtmAnnualCreate/getTaaCodelist2", ""), "선택");
+		$("#annualTaCd").html(taaTypeCdList[2]);
+
+		var modalTaaTypeList = stfConvCode(codeList("${rc.getContextPath()}/wtmTaa/getTaaCodelist", ""), "선택");
+		$("#taaTypeCd").html(modalTaaTypeList[2]);
+
+		//	휴가신청 변경 이벤트
+		$('#annualTaCd').on('change', function(){
+			modalCalendarVue.resetAnnualCreateModal();
+
+			var masterCd = $(this).val();
+			var taaTypeCdDetailList = stfConvCode(ajaxCall("${rc.getContextPath()}/wtmAnnualCreate/taaTypeCd", "taaTypeCd=" + masterCd,false).DATA, "전체");
+			_dList = ajaxCall("${rc.getContextPath()}/wtmAnnualCreate/taaTypeCd", "taaTypeCd=" + masterCd,false).DATA;
+			$("#annualTaDetailCd").html(taaTypeCdDetailList[2]);
+			$('#annualTotalCnt').val(0);
+
+		});
+
+		//	휴가신청 상세 변경 이벤트
+		$('#annualTaDetailCd').on('change', function(){
+
+			console.log('휴가신청 상세 변경 이벤트');
+			var _annualTaCd       = $('#annualTaCd').val();
+			var _annualTaDetailCd = $('#annualTaDetailCd').val();
+
+			//	연차 총일수 조회
+			var param = {
+				taCd : _annualTaCd,
+				taDetailCd : _annualTaDetailCd
+			}
+
+
+			Util.ajax({
+				url: "${rc.getContextPath()}/wtmAnnualUsed/myAnnualCreateCnt",
+				type: "POST",
+				contentType: 'application/json',
+				data: JSON.stringify(param),
+				dataType: "json",
+				success: function(data) {
+					if(data!=null && data.status=='OK') {
+
+						_annualCreateCnt = data.totalCnt;
+						_annualNotUsedCnt = data.noUsedCnt;
+
+						//	발생일수
+						$('#annualCreateCnt').val(_annualCreateCnt);
+						$('#annualNotUsedCnt').val(_annualNotUsedCnt);
+
+					}
+				},
+				complete : function(data){
+					var eq_sDt = '#annualInputSDate';
+					var eq_eDt = '#annualInputEDate';
+					var _length = $(eq_sDt).length;
+
+					if(_annualTaDetailCd == ''){
+						$('#annualDepList').hide();
+					}else{
+						$('#annualDepList').show();
+
+						if(_dList){
+							_dList.forEach(function(obj){
+								if(obj.code == _annualTaDetailCd){
+									switch (obj.requestTypeCd){
+										case "P":
+										case "A":
+											$(eq_sDt).attr('readonly', false);
+											$(eq_eDt).attr('readonly', true);
+											syncAnnualDate();
+											break;
+										case "D":
+											$(eq_sDt).attr('readonly', false);
+											$(eq_eDt).attr('readonly', false);
+											break;
+									}
+								}
+							});
+						}
+
+					}
+				},
+				error: function(e) {
+					isuAlert("휴가사용 일자가 없습니다");
+					return;
+				}
+			});
+
+
+
+
+		});
+
+
+		//	출장/비상근무 추가  button event
+		$('#addRowTaaBtn').on('click', function(){
+			modalCalendarVue.addTaaRow();
+		});
+
+		//	휴가신청 추가 button event
+		$('#addRowAnnualBtn').on('click', function(){
+			modalCalendarVue.addAnnualRow();
+		});
+
+		$('#sDate, #eDate').datetimepicker({
+			format: 'YYYY-MM-DD',
+			language: 'ko'
+		});
+
+		$('#annualInputSDate, #annualInputEDate').datetimepicker({
+			format: 'YYYY-MM-DD',
+			language: 'ko'
+		});
+	});
+
+
    	var monthCalendarVue = new Vue({
    		el: "#monthCalendar",
 		components : {
@@ -573,8 +694,8 @@
          	}
     	}
    	});
-   	
-   	$(document).on("click", "#startDaySelect", function() {
+
+	$(document).on("click", "#startDaySelect", function() {
 		$('.popover').remove();
 		
 		var selectedDay = $("#startDay").val();
@@ -598,6 +719,99 @@
 		}
 		
    	});
-   	
+
+	// 날짜 입력 변경 event
+	function syncAnnualDate(){
+		var _annualTaDetailCd = $('#annualTaDetailCd').val();
+		var _requestTypeCd = "";
+
+		if(_dList) {
+			_dList.forEach(function (obj) {
+				if (obj.code == _annualTaDetailCd) {
+					switch (obj.requestTypeCd) {
+						case "P":
+						case "A":
+							$('#annualInputEDate').val($('#annualInputSDate').val());
+							break;
+					}
+				}
+			});
+		}
+	}
+
+	//	휴가기간 정보 조회
+	function getMyAnnualInfo() {
+		console.log('getMyAnnualInfo');
+		var _annualTaDetailCd = $('#annualTaDetailCd').val();
+		var _requestTypeCd = "";
+
+		if(_dList) {
+			_dList.forEach(function (obj) {
+				if (obj.code == _annualTaDetailCd) {
+					switch (obj.requestTypeCd) {
+						case "P":
+						case "A":
+						case "D":
+							_requestTypeCd = obj.requestTypeCd;
+							break;
+					}
+				}
+			});
+		}
+
+		//	validation
+		var _sDateLen = $('input[name="annualCreateSDate"]').length;
+
+		if(_sDateLen == 0){
+
+			//	총일수
+			$('#annualTotalCnt').val(0);
+
+			//	사용일수
+			$('#annualUsedCnt').val(0);
+
+			//	잔여일수
+			$('#annualNotUsedCnt').val(_annualNotUsedCnt);
+
+			return;
+		}
+
+		//	요청
+		var $this = this;
+
+
+		var param = {
+			annualCreateSDate : $('input[name="annualCreateSDate"]').vals(),
+			annualCreateEDate : $('input[name="annualCreateEDate"]').vals(),
+			requestTypeCd : $('input[name="requestTypeCd"]').vals(),
+			annualTaCd : $('#annualTaCd').val()
+		}
+
+
+		Util.ajax({
+			url: "${rc.getContextPath()}/wtmAnnualUsed/myAnnualInfo",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				if(data!=null && data.status=='OK') {
+
+					//	총일수
+					$('#annualTotalCnt').val(data.totalCnt);
+
+					//	사용일수
+					$('#annualUsedCnt').val(data.usedCnt);
+
+					//	잔여일수
+					$('#annualNotUsedCnt').val(data.notUsedCnt);
+
+				}
+			},
+			error: function(e) {
+			}
+		});
+	}
+
 </script>
 

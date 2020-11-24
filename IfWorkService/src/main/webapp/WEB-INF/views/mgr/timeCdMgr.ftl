@@ -415,7 +415,7 @@
 			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
-	
+
 	function setBerakSheet(breakTypeCd){
 		if(breakTypeCd != ''){
 			if(breakTypeCd == "MGR"){

@@ -914,10 +914,10 @@
             {Header:"근무시간",  		Type:"Combo",     	Hidden:0,   Width:70,  Align:"Center",  ColMerge:0, SaveName:"timeCdMgrId",  KeyField:1,    Format:"",    PointCount:0,  UpdateEdit:0,  InsertEdit:1,  EditLen:100  },
             {Header:"출근시각",		Type:"Text",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"planShm", 		KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"퇴근시각",		Type:"Text",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"planEhm",		KeyField:0,	Format:"Hm",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"조출시간(분)",	Type:"Int",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otbMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"잔업시간(분)",	Type:"Int",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otaMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"조출시간(분)",	Type:"AutoSum",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otbMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"잔업시간(분)",	Type:"AutoSum",  		Hidden:1,	Width:100,	Align:"Center",	 ColMerge:0, SaveName:"otaMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"기본시간(분)",	Type:"AutoSum",     Hidden:1,  Width:80,   Align:"Center",  ColMerge:0, SaveName:"planMinute",  KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:3 , ExcludeEmpty:1},
-			{Header:"휴일시간(분)",	Type:"Int",     	Hidden:1,  Width:80,   Align:"Center",  ColMerge:0, SaveName:"otMinute",   KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:3 , ExcludeEmpty:1},
+			{Header:"휴일시간(분)",	Type:"AutoSum",     	Hidden:1,  Width:80,   Align:"Center",  ColMerge:0, SaveName:"otMinute",   KeyField:0, Format:"",      PointCount:0,   UpdateEdit:0,   InsertEdit:0,   EditLen:3 , ExcludeEmpty:1},
 			{Header:"비고",			Type:"Text",	 	Hidden:0,	Width:80,	Align:"Left",	 ColMerge:0, SaveName:"note",	 KeyField:0,	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 			
         ];

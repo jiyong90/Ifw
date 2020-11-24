@@ -135,6 +135,7 @@
 						<div class="sheet_title_wrap clearfix">
 							<div class="float-left title">근무제 적용 &nbsp;<span id="Tooltip-flexibleApplyMgr" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 							<ul class="float-right btn-wrap">
+								<li><a href="javascript:doAction1('Copy')" class="basic authA">복사</a></li>
 								<li><a href="javascript:doAction1('Insert')" class="basic authA">입력</a></li>
 								<li><a href="javascript:doAction1('Save')" class="basic authA">저장</a></li>
 							</ul>
@@ -167,7 +168,7 @@
 								<div id="tabs-2">
 									<div  class="layout_tabs">
 										<div class="inner sheet_title_wrap clearfix">
-											<div class="float-left title" id="searchAppText">개인별 대상자 관리</div>
+											<div class="float-left title" id="searchAppText">개인별 대상자 관리 &nbsp;<span id="Tooltip-flexibleApplyMgr3" class="tooltip-st"><i class="far fa-question-circle"></i></span></div>
 											<ul class="float-right btn-wrap" id="sheet3Btn">
 												<li><a href="javascript:doAction3('Insert')" class="basic authA">입력</a></li>
 												<li><a href="javascript:doAction3('Save')" class="basic authA">저장</a></li>
@@ -557,10 +558,42 @@
 		case "Insert":
 			sheet1.DataInsert(100) ;
 			break;
+		//20200720 안흥규 근무제 복사 기능 추가
+		case "Copy":
+			var status = sheet1.GetCellValue(sheet1.GetSelectRow(), "sStatus");
+			if (status != "I") {
+				var copyApplyId = sheet1.GetCellValue(sheet1.GetSelectRow(), "flexibleApplyId");
+				var Row = sheet1.DataCopy(1);
+				var flexibleStdMgrId = sheet1.GetCellValue(Row, "flexibleStdMgrId");
+				getFlexibleStd(Row, flexibleStdMgrId);
+
+				sheet1.SetCellEditable(Row, "flexibleStdMgrId", 0);
+
+				sheet1.SetCellValue(Row, "flexibleApplyId", "");
+				sheet1.SetCellValue(Row, "applyNm", "");
+				sheet1.SetCellValue(Row, "useSymd", "");
+				sheet1.SetCellValue(Row, "useEymd", "");
+				sheet1.SetCellValue(Row, "applyYn", "");
+				sheet1.SetCellValue(Row, "selectImg", "");
+				sheet1.SetCellValue(Row, "endImg", "");
+				sheet1.SetCellValue(Row, "planImg", "");
+				sheet1.SetCellValue(Row, "copyApplyId", copyApplyId);
+				sheet1.SetCellEditable(Row, "sDelete", "1");
+				sheet1.SetCellEditable(Row, "applyNm", "1");
+				sheet1.SetCellEditable(Row, "useSymd", "1");
+				sheet1.SetCellEditable(Row, "useEymd", "1");
+
+				break;
+			} else {
+				alert("기존 근무제를 복사해 주세요.");
+				break;
+			}
+
 		case "Save":
 			if(!dupChk(sheet1,"tenantId|enterCd|applyNm|useSymd", false, true)){break;}
 			
 			if(validateFlex()) {
+				if(sheet1.GetCellValue)
 				IBS_SaveName(document.sheetForm,sheet1);
 				sheet1.DoSave("${rc.getContextPath()}/flexibleApply/save", $("#sheetForm").serialize()); break;
 			}
@@ -833,7 +866,7 @@
 			}
 		}
 		
-		if(colNm == "useSymd" || colNm == "repeatTypeCd" || colNm == "repeatCnt"){
+		if(colNm == "useSymd" || colNm == "useEymd" || colNm == "repeatTypeCd" || colNm == "repeatCnt"){
 			var symd = sheet1.GetCellValue(Row, "useSymd");
 			var repeatCnt = sheet1.GetCellValue(Row, "repeatCnt");
 			

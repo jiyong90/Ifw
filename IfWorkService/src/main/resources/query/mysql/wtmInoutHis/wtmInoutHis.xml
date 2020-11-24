@@ -41,7 +41,8 @@
 			      AND C.ENTER_CD = #{enterCd}
 			      AND C.SABUN = #{sabun}
 			      AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
-				  OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
+				  OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d'))
+				  OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d') OR DATE_FORMAT(#{inoutDate}, '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
 			 ORDER BY C.YMD
         ]]>
     </select>

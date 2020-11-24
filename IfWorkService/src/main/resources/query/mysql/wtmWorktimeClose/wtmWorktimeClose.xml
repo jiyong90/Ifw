@@ -220,4 +220,21 @@
 		   WHERE WORKTIME_CLOSE_ID = ${worktimeCloseId}
         ]]>
     </select>
+
+	<select id="getdayCloseTarget" parameterType="map" resultType="hashmap">
+    	<![CDATA[
+		SELECT DISTINCT A.SABUN AS sabun
+		  FROM WTM_WORK_CALENDAR A
+		  JOIN WTM_FLEXIBLE_EMP B
+		    ON A.TENANT_ID = B.TENANT_ID
+		   AND A.ENTER_CD = B.ENTER_CD
+		   AND A.SABUN = B.SABUN
+		   AND A.YMD BETWEEN B.SYMD AND B.EYMD
+		 WHERE A.TENANT_ID = ${tenantId}
+		   AND A.ENTER_CD = #{enterCd}
+		   AND A.YMD BETWEEN #{symd} AND #{eymd}
+		   AND IFNULL(A.WORK_CLOSE_YN, 'N') = 'N'
+		   AND (#{sabun} IS NULL OR #{sabun} = '' OR A.SABUN = #{sabun})
+    	]]>
+    </select>
 </mapper>
