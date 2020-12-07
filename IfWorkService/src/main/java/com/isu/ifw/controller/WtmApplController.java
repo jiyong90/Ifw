@@ -1,29 +1,5 @@
 package com.isu.ifw.controller;
 
-import java.security.InvalidParameterException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmFlexibleAppl;
@@ -31,14 +7,20 @@ import com.isu.ifw.entity.WtmOtAppl;
 import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmFlexibleApplRepository;
-import com.isu.ifw.service.WtmApplLineService;
-import com.isu.ifw.service.WtmApplService;
-import com.isu.ifw.service.WtmAsyncService;
-import com.isu.ifw.service.WtmFlexibleEmpService;
-import com.isu.ifw.service.WtmInoutService;
-import com.isu.ifw.service.WtmMsgService;
+import com.isu.ifw.service.*;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.InvalidParameterException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 @RestController
@@ -81,7 +63,23 @@ public class WtmApplController {
 	@Autowired
 	@Qualifier("wtmCompCanApplService")
 	WtmApplService wtmCompCanApplService;
-	
+
+	@Autowired
+	@Qualifier("WtmTaaApplService")
+	WtmApplService wtmTaaApplService;
+
+	@Autowired
+	@Qualifier("WtmRegaApplService")
+	WtmApplService wtmRegaApplService;
+
+	@Autowired
+	@Qualifier("wtmRegaCanService")
+	WtmApplService wtmRegaCanService;
+
+	@Autowired
+	@Qualifier("wtmTaaCanService")
+	WtmTaaCanApplServiceImpl wtmTaaCanApplService;
+
 	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
@@ -259,7 +257,19 @@ public class WtmApplController {
 				} else if("COMP_CAN".equals(applCd)) {
 					rp = wtmCompCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
-				} else {
+				} else if("ANNUAL".equals(applCd)) {
+					rp = wtmTaaApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+
+				} else if("REGA".equals(applCd)) {
+					rp = wtmRegaApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+
+				} else if("ANNUAL_CAN".equals(applCd)) {
+					rp = wtmTaaCanApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+
+				} else if("REGA_CAN".equals(applCd)) {
+					rp = wtmRegaCanService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
+
+				}else {
 					isFlexAppl = true;
 					rp = flexibleApplService.apply(tenantId, enterCd, applId, apprSeq, paramMap, sabun, userId);
 					
@@ -334,6 +344,14 @@ public class WtmApplController {
 					wtmCompApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				} else if("COMP_CAN".equals(applCd)) {
 					wtmCompCanApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				} else if("ANNUAL".equals(applCd)) { //휴가신청
+					wtmTaaApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				} else if("ANNUAL_CAN".equals(applCd)) { //휴가취소신청
+					wtmTaaCanApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				} else if("REGA".equals(applCd)) { //출장신청
+					wtmRegaApplService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
+				} else if("REGA_CAN".equals(applCd)) { //출장신청취소
+					wtmRegaCanService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				} else {
 					applService.reject(tenantId, enterCd, applId, apprSeq, paramMap, empNo, userId);
 				}

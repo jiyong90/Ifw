@@ -518,9 +518,13 @@
 			 AND C.YMD = R.YMD
 			WHERE E.TENANT_ID = ${tenantId}
 			  AND E.ENTER_CD = #{enterCd}
-			  AND E.WORK_TYPE_CD NOT IN ('SELE_C','SELE_F','ELAS')
+			  <if test="tenantId != 4 " >
+			  	AND E.WORK_TYPE_CD NOT IN ('SELE_C','SELE_F','ELAS')
+			  </if>
 			  AND C.YMD = #{ymd}
+			  <if test="tenantId != 4 " >
 			  AND R.TIME_TYPE_CD = 'BASE'
+			  </if>
 			  AND E.SABUN IN ( NULL
 			   <if test="empList!=null">
 			   <foreach collection="empList" item="sabun" >
@@ -591,7 +595,7 @@
 										   AND TENANT_ID = #{tenantId}
 										   AND ENTER_CD = #{enterCd}
 										GROUP BY TENANT_ID, ENTER_CD, YMD, SABUN
-										HAVING SUM(CASE WHEN TIME_TYPE_CD NOT IN ('BASE','FIXOT') THEN 1 ELSE 0 END)=0 )
+										HAVING SUM(CASE WHEN TIME_TYPE_CD NOT IN ('BASE','FIXOT','OT') THEN 1 ELSE 0 END)=0 )
 						   
 				) T
 			WHERE 1=1

@@ -101,7 +101,7 @@
 				default : function(){
 					return {
 					    dayGrid: {
-					    	eventLimit: 2, //화면에 보여줄 이벤트 개수
+					    	eventLimit: 4, //화면에 보여줄 이벤트 개수
 					    	titleFormat: { year: 'numeric', month: '2-digit' }
 					    },
 					    timeGridDay: {

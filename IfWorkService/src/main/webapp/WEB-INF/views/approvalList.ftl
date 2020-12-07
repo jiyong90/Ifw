@@ -597,6 +597,189 @@
         </div>
     </div>
     <!-- 보상휴가신청 상세보기 modal end -->
+
+    <!-- 휴가신청 상세보기 modal start -->
+    <div class="modal fade show" id="taaAppl" tabindex="-1" role="dialog"  v-if="appl">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">휴가신청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap">
+                                <div class="inner-wrap">
+                                    <div class="title">휴가구분</div>
+                                    <div class="desc">
+                                        <template v-if="appl.taaNm">
+                                            {{appl.taaNm}}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title">휴가기간</div>
+                                    <template v-if = "taaApplDetList.length > 0">
+                                    <div class="desc" v-for = "det in taaApplDetList">
+	                                    <span class="date-wrap">
+	                                        <span class="start-date">
+	                                        	<template v-if="det.symd">
+	                                        	{{moment(det.symd).format('YYYY-MM-DD')}}
+	                                        	</template>
+	                                        </span>
+	                                        <span class="ml-1 mr-1">~</span>
+	                                        <span class="end-date">
+	                                        	<template v-if="det.eymd">
+	                                        	{{moment(det.eymd).format('YYYY-MM-DD')}}
+	                                        	</template>
+	                                        </span>
+	                                    </span>
+                                    </div>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">사유</div>
+                                <div class="desc">
+                                    <template v-if="taaApplDetList[0]">
+                                        {{taaApplDetList[0].note}}
+                                    </template>
+                                </div>
+                            </div>
+                            <appl-line :bind-data="appl.applLine"></appl-line>
+                            <hr class="bar">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 휴가신청 상세보기 modal end -->
+
+    <!-- 휴가취소신청 상세보기 modal start -->
+    <div class="modal fade show" id="taaCanAppl" tabindex="-1" role="dialog"  v-if="appl">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">휴가취소신청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap">
+                                <div class="inner-wrap">
+                                    <div class="title">휴가구분</div>
+                                    <div class="desc">
+                                        <template v-if="appl.taaNm">
+                                            {{appl.taaNm}}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title">휴가기간</div>
+                                    <template v-if = "taaApplDetList.length > 0">
+                                    <div class="desc" v-for = "det in taaApplDetList">
+	                                    <span class="date-wrap">
+	                                        <span class="start-date">
+	                                        	<template v-if="det.symd">
+	                                        	{{moment(det.symd).format('YYYY-MM-DD')}}
+	                                        	</template>
+	                                        </span>
+	                                        <span class="ml-1 mr-1">~</span>
+	                                        <span class="end-date">
+	                                        	<template v-if="det.eymd">
+	                                        	{{moment(det.eymd).format('YYYY-MM-DD')}}
+	                                        	</template>
+	                                        </span>
+	                                    </span>
+                                    </div>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">사유</div>
+                                <div class="desc">
+                                    <template v-if="wtmTaaCanAppl.note">
+                                        {{wtmTaaCanAppl.note}}
+                                    </template>
+                                </div>
+                            </div>
+                            <appl-line :bind-data="appl.applLine"></appl-line>
+                            <hr class="bar">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 휴가취소신청 상세보기 modal end -->
+
+    <!-- 출장신청 상세보기 modal start -->
+    <div class="modal fade show" id="regaAppl" tabindex="-1" role="dialog"  v-if="appl">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">출장신청</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap">
+                                <div class="inner-wrap">
+                                    <div class="title">간주시간 구분</div>
+                                    <div class="desc">
+                                        <template v-if="appl.taaNm">
+                                            {{appl.taaNm}}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="inner-wrap">
+                                    <div class="title">기간</div>
+                                    <template v-if = "taaApplDetList.length > 0">
+                                        <div class="desc" v-for = "det in taaApplDetList">
+	                                    <span class="date-wrap">
+	                                        <span class="start-date">
+	                                        	<template v-if="det.symd">
+	                                        	{{moment(det.symd).format('YYYY-MM-DD')}}
+	                                        	</template>
+	                                        </span>
+	                                        <span class="ml-1 mr-1">~</span>
+	                                        <span class="end-date">
+	                                        	<template v-if="det.eymd">
+	                                        	{{moment(det.eymd).format('YYYY-MM-DD')}}
+	                                        	</template>
+	                                        </span>
+	                                    </span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">사유</div>
+                                <div class="desc">
+                                    <template v-if="taaApplDetList[0]">
+                                        {{taaApplDetList[0].note}}
+                                    </template>
+                                </div>
+                            </div>
+                            <appl-line :bind-data="appl.applLine"></appl-line>
+                            <hr class="bar">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 출장신청 상세보기 modal end -->
     
 	<div class="container-fluid mgr-wrap mgr-wrap-height">
 		<p class="page-title">결재 알림</p>
@@ -621,12 +804,19 @@
 				<div class="inner-wrap">
 					<div class="title">{{a.applNm}}</div>
 					<div class="desc" v-if="a.appl">
-						<span class="sub-title">사용기한</span> 
+						<span class="sub-title" v-if="a.applCd=='ANNUAL_CAN'">사유</span>
+						<span class="sub-title" v-else>사용기한</span>
 						<span v-if="a.applCd=='OT'||a.applCd=='OT_CAN'||a.applCd=='SUBS_CHG'">
 							{{moment(a.appl.otSdate).format('YYYY.MM.DD')}}~{{moment(a.appl.otEdate).format('YYYY.MM.DD')}}
 						</span>
 						<span v-else-if="a.applCd=='ENTRY_CHG'">
 							{{moment(a.appl.ymd).format('YYYY.MM.DD')}}~{{moment(a.appl.ymd).format('YYYY.MM.DD')}}
+						</span>
+                        <span v-else-if="a.applCd=='ANNUAL' || a.applCd=='REGA'">
+							{{moment(a.appl.taaApplDetList[0].symd).format('YYYY.MM.DD')}}~{{moment(a.appl.taaApplDetList[a.appl.taaApplDetList.length -1].eymd).format('YYYY.MM.DD')}}
+						</span>
+                        <span v-else-if="a.applCd=='ANNUAL_CAN' || a.applCd=='REGA_CAN' ">
+                            {{moment(a.appl.taaApplDetList[0].symd).format('YYYY.MM.DD')}}~{{moment(a.appl.taaApplDetList[a.appl.taaApplDetList.length -1].eymd).format('YYYY.MM.DD')}}
 						</span>
 						<span v-else>
 							{{moment(a.appl.sYmd).format('YYYY.MM.DD')}}~{{moment(a.appl.eYmd).format('YYYY.MM.DD')}}
@@ -634,6 +824,9 @@
 						<template v-if="a.applCd=='OT_CAN'">
 						<span class="sub-desc" v-if="a.appl.cancelReason">{{a.appl.cancelReason}}</span>
 						</template>
+                        <template v-else-if="a.applCd=='ANNUAL_CAN' || a.applCd=='REGA_CAN'">
+                            <span class="sub-desc">{{a.appl.wtmTaaCanAppl.note}}</span>
+                        </template>
 						<template v-else>
 						<span class="sub-desc" v-if="a.appl.reason">{{a.appl.reason}}</span>
 						</template>
@@ -684,7 +877,12 @@
    			apprOpinion: '',
    			appl: {}, //신청서view 
    			appr: {}, //승인할 신청서
-   			chgSubsTarget: {} //대체휴일 정정 데이터
+   			chgSubsTarget: {}, //대체휴일 정정 데이터
+            taaAppl:{},
+            taaApplDetList:[],
+            wtmTaaCanAppl:{},
+            wtmTaaCode:{}
+
    		},
 	    mounted: function(){
 	    	this.getApprovalList(this.applType); //신청내역 조회
@@ -767,7 +965,33 @@
 	    		} else if(appr.applCd=='COMP' || appr.applCd=='COMP_CAN') {
 	    			//근태 사유서
 	    			$("#compAppl").modal("show");
-	    		}
+
+	    		//휴가신청
+	    		} else if(appr.applCd=='ANNUAL' || appr.applCd=='REGA' ) {
+                    $this.taaAppl = appr.appl.taaAppl;
+                    $this.taaApplDetList = appr.appl.taaApplDetList;
+                    $this.wtmTaaCode = appr.appl.wtmTaaCode;
+
+                    if(appr.applCd == 'ANNUAL') {
+                        $("#taaAppl").modal("show");
+                    } else if(appr.applCd == 'REGA') {
+                        $("#regaAppl").modal("show");
+                    }
+
+                } else if(appr.applCd=='ANNUAL_CAN') {
+                    //휴가취소신청
+                    $this.taaAppl = appr.appl.taaAppl;
+                    $this.taaApplDetList = appr.appl.taaApplDetList;
+                    $this.wtmTaaCanAppl = appr.appl.wtmTaaCanAppl;
+                    $("#taaCanAppl").modal("show");
+
+                } else if(appr.applCd=='REGA_CAN') {
+                    //출장취소신청
+                    $this.taaAppl = appr.appl.taaAppl;
+                    $this.taaApplDetList = appr.appl.taaApplDetList;
+                    $this.wtmTaaCanAppl = appr.appl.wtmTaaCanAppl;
+                    $("#taaCanAppl").modal("show");
+                }
 	    		
 	    	},
 	    	getOTAppl: function(applId){
@@ -883,7 +1107,12 @@
 	    					param['chgSdate'] = appr.appl.chgSdate;
 	    				if(appr.appl.chgEdate!=null && appr.appl.chgEdate!=undefined && appr.appl.chgEdate!='')
 	    					param['chgEdate'] = appr.appl.chgEdate;
-	    			}
+
+	    			} else if(appr.applCd=='ANNUAL') { // 휴가신청
+                        param['symd'] = moment(appr.appl.symd).format('YYYYMMDD');
+                        param['eymd'] = moment(appr.appl.eymd).format('YYYYMMDD');
+                        param['sabun'] = appr.appl.sabun;
+                    }
 	    			
     	    		Util.ajax({
     					url: "${rc.getContextPath()}/appl/"+$this.apprType,

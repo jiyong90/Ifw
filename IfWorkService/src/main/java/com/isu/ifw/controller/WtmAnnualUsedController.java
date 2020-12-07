@@ -58,29 +58,25 @@ public class WtmAnnualUsedController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/save",
-	                method = RequestMethod.POST,
-	                produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam save(HttpServletRequest request, @RequestBody JsonObject paramMap) throws Exception {
-
 		ReturnParam rp = new ReturnParam();
 		rp.setFail("저장 시 오류가 발생했습니다.");
 
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId")
-		                                    .toString());
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd")
-		                            .toString();
-		String sabun = sessionData.get("empNo")
-		                          .toString();
-		String userId = sessionData.get("userId")
-		                           .toString();
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+
+		Long applId = null;
+		if(paramMap.get("applId")!=null && !"".equals(paramMap.get("applId"))) {
+			applId = Long.valueOf(paramMap.get("applId").toString());
+		}
 
 		logger.debug("wtmAnnualUsed save param : " + paramMap.toString());
 
-
 		try {
-
 			List<String> symdArr          = (ArrayList<String>) paramMap.get("symd");
 			List<String> eymdArr          = (ArrayList<String>) paramMap.get("eymd");
 			List<String> requestTypeCdArr = (List<String>) paramMap.get("requestTypeCd");
@@ -99,22 +95,20 @@ public class WtmAnnualUsedController {
 
 			if( paramMap.containsKey("annualUsedCnt") && paramMap.get("annualUsedCnt") != null )
 				annualUsedCnt = paramMap.get("annualUsedCnt").toString();
-			
+
 			if( paramMap.containsKey("annualCreateCnt") && paramMap.get("annualCreateCnt") != null )
 				annualCreateCnt = paramMap.get("annualCreateCnt").toString();
-			
+
 			if( paramMap.containsKey("annualNotUsedCnt") && paramMap.get("annualNotUsedCnt") != null )
 				annualNotUsedCnt = paramMap.get("annualNotUsedCnt").toString();
-		
+
 			Map<String, Object> etcMap = new HashMap<String, Object>();
 			etcMap.put("annualTotalCnt", annualTotalCnt);
 			etcMap.put("annualUsedCnt", annualUsedCnt);
 			etcMap.put("annualCreateCnt", annualCreateCnt);
 			etcMap.put("annualNotUsedCnt", annualNotUsedCnt);
 			etcMap.put("annualTaCd", annualTaCd);
-			
-			
-			
+
 			Map<String, Object> valiMap = new HashMap<String, Object>();
 			valiMap.put("startYmdArr", symdArr);
 			valiMap.put("endYmdArr", eymdArr);
@@ -124,32 +118,10 @@ public class WtmAnnualUsedController {
 			valiMap.put("endHm", "");   //  validation 기본 키값
 			valiMap.put("note", note);
 
-			rp = taaApplService.validate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_TAA, valiMap);
+			rp = taaApplService.validate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_ANNUAL, valiMap);
 
 			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-				//  imsi
-				rp = taaApplService.imsi(tenantId, enterCd, (long) 0, null, valiMap,WtmApplService.APPL_STATUS_IMSI, sabun, userId);
-
-				if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-					//  Save 인터페이스
-					//Common.saveWtmIfAppl(tenantId, enterCd, Long.parseLong(rp.get("applId")+""), WtmApplService.TIME_TYPE_TAA, WtmApplService.APPL_STATUS_IMSI, sabun, userId, Long.parseLong(rp.get("applId")+""), etcMap);
-
-					rp.setSuccess("저장이 성공하였습니다.");
-
-					//WtmEmpHis empHis = Common.getEmpHis(tenantId, enterCd, sabun);
-
-					//  부서id:사용자id:yyyymmddhhMMss:연동키:폼아이디
-					String groupwareEncData = "";
-//							empHis.getOrgCd() + ":"
-//							+ sabun + ":"
-//							+ WtmUtil.parseDateStr(new Date(), "yyyyMMddHHmmss") + ":"
-//							+ rp.get("applId").toString() + ":"
-//							+ GroupwareInterface.FORM_ID_ANNUAL
-//							;
-
-//					rp.put("groupwareUrl", groupwareLineUrl + GroupwareAES.encryptAES(groupwareEncData));
-					rp.put("groupwareUrl", "");
-				}
+				rp = taaApplService.request(tenantId, enterCd, applId, WtmApplService.TIME_TYPE_TAA, valiMap, sabun, userId);
 
 			}
 
@@ -169,17 +141,17 @@ public class WtmAnnualUsedController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/myAnnualInfo",
-	                method = RequestMethod.POST,
-	                produces = MediaType.APPLICATION_JSON_VALUE)
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam getMyAnnualInfo(HttpServletRequest request
-							,@RequestBody Map<String, Object> paramMap
-							) throws Exception {
+			,@RequestBody Map<String, Object> paramMap
+	) throws Exception {
 
 		ReturnParam rp = new ReturnParam();
 		rp.setSuccess("");
 
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId")
-		                                    .toString());
+				.toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
 		String sabun   = sessionData.get("empNo").toString();
@@ -279,10 +251,10 @@ public class WtmAnnualUsedController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/cancle",
-	                method = RequestMethod.POST,
-	                produces = MediaType.APPLICATION_JSON_VALUE)
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam cancle(HttpServletRequest request,
-	                        @RequestBody Map<String, Object> paramMap) throws Exception {
+							  @RequestBody Map<String, Object> paramMap) throws Exception {
 
 		ReturnParam rp = new ReturnParam();
 		rp.setFail("저장 시 오류가 발생했습니다.");
@@ -354,8 +326,8 @@ public class WtmAnnualUsedController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/myAnnualCreateCnt",
-	                method = RequestMethod.POST,
-	                produces = MediaType.APPLICATION_JSON_VALUE)
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam myAnnualCreateCnt(HttpServletRequest request, @RequestBody Map<String, Object> paramMap) throws Exception {
 
 		ReturnParam rp = new ReturnParam();

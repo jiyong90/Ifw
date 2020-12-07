@@ -135,7 +135,15 @@
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
                 		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
                 		WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
-                		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'  
+                		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
+                	]]>
+                    <if test="tenantId!=null and !tenantId.equals('') and (tenantId == 4 || tenantId == 229) ">
+                        WHEN A.APPL_CD = 'ANNUAL' THEN 'view://W04View'
+                        WHEN A.APPL_CD = 'ANNUAL_CAN' THEN 'view://W04View'
+                        WHEN A.APPL_CD = 'REGA' THEN 'view://W04View'
+                        WHEN A.APPL_CD = 'REGA_CAN' THEN 'view://W04View'
+                    </if>
+                    <![CDATA[
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -148,13 +156,23 @@
 			    ON A.APPL_ID = OC.APPL_ID 
 			  LEFT OUTER JOIN (SELECT * FROM WTM_COMP_APPL WHERE SABUN = #{empNo}) CA 
 			    ON A.APPL_ID = CA.APPL_ID
+			  LEFT OUTER JOIN (SELECT * FROM WTM_TAA_APPL WHERE SABUN = #{empNo}) TA
+			    ON A.APPL_ID = TA.APPL_ID
+        	  LEFT OUTER JOIN WTM_TAA_CAN_APPL TAC
+			    ON A.APPL_ID = TAC.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd} 
 			   AND (A.APPL_SABUN = #{empNo} 
 			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
 			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo})
 			    OR (A.APPL_CD = 'COMP' AND CA.SABUN = #{empNo})
-			    OR (A.APPL_CD = 'COMP_CAN' AND CA.SABUN = #{empNo})				    
+			    OR (A.APPL_CD = 'COMP_CAN' AND CA.SABUN = #{empNo})
+			    ]]>
+		        <if test="tenantId!=null and !tenantId.equals('') and (tenantId == 4 || tenantId == 229) ">
+                    OR (A.APPL_CD IN ('REGA','ANNUAL') AND TA.SABUN = #{empNo})
+                    OR (A.APPL_CD IN ('REGA_CAN','ANNUAL_CAN') AND A.APPL_SABUN = #{empNo})
+		        </if>
+                <![CDATA[
 			    )
 			ORDER BY A.APPL_YMD DESC
 			]]>
@@ -185,6 +203,14 @@
                    	    WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
                    	    WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
                    	    WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
+                ]]>
+                <if test="tenantId!=null and !tenantId.equals('') and (tenantId == 4 || tenantId == 229) ">
+                        WHEN A.APPL_CD = 'ANNUAL' THEN 'view://W04View'
+                        WHEN A.APPL_CD = 'ANNUAL_CAN' THEN 'view://W04View'
+                        WHEN A.APPL_CD = 'REGA' THEN 'view://W04View'
+                        WHEN A.APPL_CD = 'REGA_CAN' THEN 'view://W04View'
+                </if>
+                <![CDATA[
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -227,6 +253,12 @@
                    		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
                    		WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
                    		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
+                 ]]>
+                    <if test="tenantId!=null and !tenantId.equals('') and (tenantId == 4 || tenantId == 229) ">
+                        WHEN A.APPL_CD IN ('ANNUAL', 'REGA') THEN 'view://W04View'
+                        WHEN A.APPL_CD IN ('ANNUAL_CAN', 'REGA_CAN') THEN 'view://W04View'
+                    </if>
+                 <![CDATA[
                      ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -263,7 +295,13 @@
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
                 		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View'
                 		WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
-                		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'  
+                		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
+                    ]]>
+                    <if test="tenantId!=null and !tenantId.equals('') and (tenantId == 4 || tenantId == 229) ">
+                        WHEN A.APPL_CD IN ('ANNUAL', 'REGA') THEN 'view://W04View'
+                        WHEN A.APPL_CD IN ('ANNUAL_CAN', 'REGA_CAN') THEN 'view://W04View'
+                    </if>
+                    <![CDATA[
              	     ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -276,14 +314,24 @@
 			    ON A.APPL_ID = OC.APPL_ID 
 			  LEFT OUTER JOIN (SELECT * FROM WTM_COMP_APPL WHERE SABUN = #{empNo}) CA 
 			    ON A.APPL_ID = CA.APPL_ID
+			  LEFT OUTER JOIN (SELECT * FROM WTM_TAA_APPL WHERE SABUN = #{empNo}) TA
+			    ON A.APPL_ID = TA.APPL_ID
+        	  LEFT OUTER JOIN WTM_TAA_CAN_APPL TAC
+			    ON A.APPL_ID = TAC.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
-			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
+			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG', 'ANNUAL', 'REGA')
  			   AND A.ENTER_CD = #{enterCd} 
 			   AND (A.APPL_SABUN = #{empNo} 
 			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
 			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo})
 			    OR (A.APPL_CD = 'COMP' AND CA.SABUN = #{empNo})	
-			    OR (A.APPL_CD = 'COMP_CAN' AND CA.SABUN = #{empNo})	 
+			    OR (A.APPL_CD = 'COMP_CAN' AND CA.SABUN = #{empNo})
+			    ]]>
+            <if test="tenantId!=null and !tenantId.equals('') and (tenantId == 4 || tenantId == 229) ">
+			    OR (A.APPL_CD IN ('ANNUAL', 'REGA') AND TA.SABUN = #{empNo})
+			    OR (A.APPL_CD IN ('ANNUAL_CAN', 'REGA_CAN') AND A.APPL_SABUN = #{empNo})
+            </if>
+            <![CDATA[
 			    )
 			ORDER BY A.APPL_YMD DESC
 			]]>
@@ -313,8 +361,14 @@
                  , CASE WHEN A.APPL_CD = 'OT' THEN 'view://W02View' 
                    	    WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View'
                    	    WHEN A.APPL_CD = 'COMP' THEN 'view://W04View' 
-                   	    WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View' 
-             	     ELSE NULL END AS urlLink 
+                   	    WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
+                   	]]>
+                    <if test="tenantId!=null and !tenantId.equals('') and (tenantId == 4 || tenantId == 229) ">
+                        WHEN A.APPL_CD IN ('ANNUAL', 'REGA') THEN 'view://W04View'
+                        WHEN A.APPL_CD IN ('ANNUAL_CAN', 'REGA_CAN') THEN 'view://W04View'
+                    </if>
+                    <![CDATA[
+             	        ELSE NULL END AS urlLink
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
 			    ON A.TENANT_ID = C.TENANT_ID
@@ -357,6 +411,12 @@
                    		WHEN A.APPL_CD = 'ENTRY_CHG' THEN 'view://W04View' 
                    		WHEN A.APPL_CD = 'COMP' THEN 'view://W04View'
                    		WHEN A.APPL_CD = 'COMP_CAN' THEN 'view://W04View'
+                   		]]>
+                        <if test="tenantId!=null and !tenantId.equals('') and (tenantId == 4 || tenantId == 229) ">
+                        WHEN A.APPL_CD IN ('ANNUAL', 'REGA') THEN 'view://W04View'
+                        WHEN A.APPL_CD IN ('ANNUAL_CAN', 'REGA_CAN') THEN 'view://W04View'
+                        </if>
+                        <![CDATA[
                      ELSE NULL END AS urlLink 
 			  FROM WTM_APPL A
 			  JOIN WTM_APPL_CODE C
@@ -366,7 +426,7 @@
 			  JOIN WTM_APPL_LINE L
 			    ON L.APPL_ID = A.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
-			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG')
+			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG', 'ANNUAL','REGA', 'ANNUAL_CAN', 'REGA_CAN')
 			   AND A.ENTER_CD = #{enterCd} 
 			   AND APPR_SABUN = #{empNo}
 			   AND L.APPR_DATE IS NOT NULL

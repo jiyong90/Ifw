@@ -20,7 +20,7 @@
 		var taaTypeCdList = stfConvCode(codeList("${rc.getContextPath()}/wtmAnnualCreate/getTaaCodelist2", ""), "선택");
 		$("#annualTaCd").html(taaTypeCdList[2]);
 
-		var modalTaaTypeList = stfConvCode(codeList("${rc.getContextPath()}/wtmTaa/getTaaCodelist", ""), "선택");
+		var modalTaaTypeList = stfConvCode(codeList("${rc.getContextPath()}/wtmRega/getTaaCodelist", ""), "선택");
 		$("#taaTypeCd").html(modalTaaTypeList[2]);
 
 		//	휴가신청 변경 이벤트

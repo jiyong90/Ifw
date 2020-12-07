@@ -318,7 +318,8 @@
 			{Header:"근무제시작요일",	Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"weekDay",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
 			{Header:"근무제유형",		Type:"Text",		Hidden:1,	Width:100,	Align:"Left",	ColMerge:0, SaveName:"workTypeCd",		 "HeaderHtml": "<input type='button' value='버튼' " +
 						"onclick='confirmCancle();'/>",
-				KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 }
+				KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:0,	EditLen:100 },
+			{Header:"copyApplyId",		Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0, SaveName:"copyApplyId",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);

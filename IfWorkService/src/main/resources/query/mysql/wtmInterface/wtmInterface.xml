@@ -637,25 +637,24 @@ SELECT 21 AS tenantId
   	
   	<select id="getTaaApplList"  parameterType="map" resultType="hashmap">
         <![CDATA[
-SELECT A.TENANT_ID AS tenantId
-     , A.ENTER_CD AS enterCd
-	  , A.SABUN AS sabun
-	  , A.TAA_CD AS taaCd
-	  , A.SYMD AS sYmd
-	  , A.EYMD AS eYmd
-	  , A.SHM AS sHm
-	  , A.EHM AS eHm
-	  , A.TAA_APPL_ID AS taaApplId
-	  , A.APPL_ID AS applId
-	  , B.APPL_STATUS_CD AS status 
-	  , '' AS oldStatus
-  FROM WTM_TAA_APPL A
- INNER JOIN WTM_APPL B
-    ON A.APPL_ID = B.APPL_ID
- WHERE A.TENANT_ID =  #{tenantId}
- AND A.ENTER_CD = #{enterCd}
- AND A.APPL_ID = 33772
- AND APPL_STATUS_CD = '99'
+		SELECT A.TENANT_ID AS tenantId
+			 , A.ENTER_CD AS enterCd
+			  , A.SABUN AS sabun
+			  , A.TAA_CD AS taaCd
+			  , A.SYMD AS sYmd
+			  , A.EYMD AS eYmd
+			  , A.SHM AS sHm
+			  , A.EHM AS eHm
+			  , A.TAA_APPL_ID AS taaApplId
+			  , A.APPL_ID AS applId
+			  , B.APPL_STATUS_CD AS status
+			  , '' AS oldStatus
+		  FROM WTM_TAA_APPL A
+		 INNER JOIN WTM_APPL B
+			ON A.APPL_ID = B.APPL_ID
+		 WHERE A.TENANT_ID =  #{tenantId}
+		 AND A.ENTER_CD = #{enterCd}
+		 AND A.APPL_ID = #{applId}
         ]]>
     </select>
   	
@@ -1252,5 +1251,137 @@ ORDER BY YMD, SABUN
   			  , #{retMsg,jdbcType=VARCHAR, javaType=java.lang.String, mode=OUT}
   			  ) }
   	</select>
-    
+
+
+	<select id="getClosedDayWorkInfo" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				WORK_TYPE_CD as workCd,
+				IFNULL(SUM( WORK_MINUTE ),0) nWorkMinute,
+				IFNULL(SUM( CASE WHEN HOLIDAY_YN = 'N' THEN OT_MINUTE ELSE 0 END ),0) nOtMinute,
+				IFNULL(SUM( CASE WHEN HOLIDAY_YN = 'N' THEN OTN_MINUTE ELSE 0 END ),0) nOtnMinute,
+				IFNULL(SUM( CASE WHEN HOLIDAY_YN = 'Y' AND IFNULL( SUB_YN, 'N' )= 'N' AND OT_MINUTE > 480 THEN 480 WHEN HOLIDAY_YN = 'Y' AND IFNULL( SUB_YN, 'N' )= 'N' AND OT_MINUTE <= 480 THEN OT_MINUTE ELSE 0 END ),0) nHolMinute,
+				IFNULL(SUM( CASE WHEN HOLIDAY_YN = 'Y' AND IFNULL( SUB_YN, 'N' )= 'N' AND OT_MINUTE > 480 THEN OTN_MINUTE +( OT_MINUTE - 480 ) WHEN HOLIDAY_YN = 'Y' THEN OTN_MINUTE -- 20200413 효정수정 심야근무는 그냥 보상에 포함되어야 함으로 SUNYN 체크 무시함
+			 				ELSE 0 END ),0) nHolOtMinute,
+				IFNULL(SUM( NONPAY_MINUTE ),0) nNonpayMinute,
+				IFNULL(SUM( PAY_MINUTE ),0) nPayMinute,
+				IFNULL(SUM( LATE_MINUTE ),0) nLateMinute,
+				IFNULL(SUM( LEAVE_MINUTE ),0) nLeaveMinute,
+				IFNULL(SUM( ABSENCE_MINUTE ),0) nAbsenceMinute,
+				IFNULL(SUM( CASE WHEN HOLIDAY_YN = 'Y' AND IFNULL( SUB_YN, 'N' )= 'Y' THEN OT_MINUTE ELSE 0 END ),0) nSubHolMinute
+			from
+				WTM_WORKTIME_DAY_CLOSE
+			where
+				WORKTIME_CLOSE_ID = #{worktimeCloseId}
+			and sabun = #{sabun}
+			and YMD BETWEEN #{sYmd} and #{eYmd}
+		]]>
+	</select>
+
+	<select id="getTargerMonthlyCloseUserList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT 	WORKTIME_CLOSE_ID worktimeCloseId
+					, SABUN sabun
+					, WORK_TYPE_CD workTypeCd
+			FROM 	WTM_WORKTIME_DAY_CLOSE
+			WHERE 	WORKTIME_CLOSE_ID = #{worktimeCloseId}
+			AND 	YMD BETWEEN #{sYmd} and #{eYmd}
+		]]>
+		<if test="sabun!=null and !sabun.equals('')">
+			AND 	SABUN = #{sabun}
+		</if>
+		GROUP BY WORKTIME_CLOSE_ID, SABUN, WORK_TYPE_CD
+		ORDER BY SABUN
+
+	</select>
+
+	<select id="getSubAddMinute" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT IFNULL(SUM(C.SUBS_MINUTE), 0) subsMinute
+			 FROM WTM_OT_APPL B
+			 INNER JOIN WTM_OT_SUBS_APPL C
+				ON B.OT_APPL_ID = C.OT_APPL_ID
+			   AND F_WTM_NVL(C.CANCEL_YN, 'N') = 'N'
+			 INNER JOIN WTM_APPL D
+				ON C.APPL_ID = D.APPL_ID
+			   AND D.APPL_STATUS_CD = '99'
+			 WHERE D.TENANT_ID = #{tenantId}
+			   AND D.ENTER_CD = #{enterCd}
+			   AND B.SABUN = #{sabun}
+			   AND F_WTM_NVL(B.CANCEL_YN, 'N') = 'N'
+			   AND B.YMD BETWEEN #{sYmd} AND #{eYmd}
+			   AND C.SUB_YMD BETWEEN #{sYmd} AND #{eYmd}
+		]]>
+	</select>
+
+
+	<delete id="deleteWorktimeMonthClose" parameterType="hashmap" >
+		<![CDATA[
+			DELETE FROM WTM_WORKTIME_MON_CLOSE
+			WHERE WORKTIME_CLOSE_ID = #{worktimeCloseId}
+			AND SABUN = #{sabun}
+			AND WORK_TYPE_CD = #{workTypeCd}
+		]]>
+	</delete>
+
+
+	<insert id="insertWorktimeMonthClose" parameterType="hashmap">
+		<![CDATA[
+			INSERT
+				INTO
+					WTM_WORKTIME_MON_CLOSE(
+						WORKTIME_CLOSE_ID,
+						SABUN,
+						WORK_TYPE_CD,
+						SYMD,
+						EYMD,
+						BASE_MINUTE,
+						BASE_OT_MINUTE,
+						FIX_OT_MINUTE,
+						WORK_MINUTE,
+						OT_MINUTE,
+						OTN_MINUTE,
+						HOL_MINUTE,
+						HOL_OT_MINUTE,
+						A_WORK_MINUTE,
+						A_OT_MINUTE,
+						A_OTN_MINUTE,
+						A_HOL_MINUTE,
+						A_HOL_OT_MINUTE,
+						A_NONPAY_MINUTE,
+						A_PAY_MINUTE,
+						ABSENCE_MINUTE,
+						LATE_MINUTE,
+						LEAVE_MINUTE,
+						UPDATE_ID
+					)
+				VALUES(
+					#{worktimeCloseId},
+					#{sabun},
+					#{workTypeCd},
+					#{symd},
+					#{eymd},
+					#{nBaseMinute},
+					#{nBaseOtMinute},
+					#{nFixOtMinute},
+					#{nWorkMinute},
+					#{nOtMinute},
+					#{nOtnMinute},
+					#{nHolMinute},
+					#{nHolOtMinute},
+					#{nAWorkMinute},
+					#{nAOtMinute},
+					#{nAOtnMinute},
+					#{nAHolMinute},
+					#{nAHolOtMinute},
+					#{nNonpayMinute},
+					#{nPayMinute},
+					#{nAbsenceMinute},
+					#{nLateMinute},
+					#{nLeaveMinute},
+					'worktimeMonthClose'
+				)
+		]]>
+	</insert>
+
 </mapper>

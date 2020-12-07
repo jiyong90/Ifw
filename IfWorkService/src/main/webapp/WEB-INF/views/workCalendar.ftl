@@ -137,10 +137,8 @@
 	                </div>
 	                <div v-if="'${calendar}'=='workMonthCalendar'" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
 	                    <div class="btn-wrap text-right">
-							<div v-if="'${tsId}'== 'dyc'" class="col-12">
-								<button type="button" id="annualApplBtn" class="btn btn-request mr-2">휴가 신청</button>
-								<button type="button" id="taaApplBtn" class="btn btn-request mr-2">출장/비상근무</button>
-							</div>
+							<button type="button" id="annualApplBtn" class="btn btn-request" v-if="'${tsId}'== 'dyc' || '${tsId}'== 'soldev'">휴가 신청</button>
+							<button type="button" id="taaApplBtn" class="btn btn-request" v-if="'${tsId}'== 'dyc' || '${tsId}'== 'soldev'">출장신청</button>
 	                    	<button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" data-target="#flexitimeModal" v-if="flexitimeList.length>0" >근무제 적용하기</button>
 	                        <!--  <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'" @click="getFlexitimeList">근무제 적용하기</button> -->
 	                    	<button type="button" id="planBtn" class="btn btn-write" style="display:none;">근무계획작성</button>
@@ -219,7 +217,7 @@
                     	{{moment(selectedDate).format("YYYY년 M월 D일")}}
                     	</template>
                     </div>
-                    <div class="main-desc">
+                    <div class="main-desc" style="color: yellow;">
                     	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.flexibleNm">
                     	{{rangeInfo.flexibleNm}}
                     	</template>
@@ -909,18 +907,21 @@
 													<label for="otReason">설명</label>
 												</div>
 												<div class="form-group col-9">
-									<textarea class="form-control" id="annualUsedNote" name="annualUsedNote" rows="3"
+												<textarea class="form-control" id="annualUsedNote" name="annualUsedNote" rows="3"
 											  placeholder="" required></textarea>
 												</div>
 											</div>
+										</div>
 									</section>
 								</div>
+								<appl-line :bind-data="applLine"></appl-line>
 							</div>
 							<div class="btn-wrap text-center">
 								<button type="button" class="btn btn-secondary rounded-0"
 										data-dismiss="modal">취소</button>
 								<button type="button" class="btn btn-default rounded-0" @click="saveAnnualCreate">신청</button>
 							</div>
+
 						</form>
 					</div>
 				</div>
@@ -928,18 +929,18 @@
 		</div>
 		<!-- 휴가신청  정정요청 modal end -->
 
-		<#-- 출장/비상근무 신청 modal start -->
+		<#-- 출장신청 modal start -->
 		<div class="modal fade show" id="taaApplModal" tabindex="-1" role="dialog"  data-backdrop="static" data-keyboard="false">
 			<div class="modal-dialog col-6" role="document">
 				<div class="modal-content rounded-0">
 					<div class="modal-header">
-						<h5 class="modal-title">출장/비상근무</h5>
+						<h5 class="modal-title">출장신청</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
 					<div class="modal-body">
-						<form class="needs-validation" id="taaFrm" novalidate>
+						<form class="needs-validation" id="regaFrm" novalidate>
 							<div class="modal-app-wrap">
 								<div class="form-row no-gutters">
 									<div class="form-row col-12 mt-2">
@@ -952,7 +953,6 @@
 											</select>
 										</div>
 									</div>
-
 
 									<div class="form-row col-12 mt-2">
 										<div class="form-group col-3 mt-2">
@@ -980,11 +980,11 @@
 										</div>
 									</div>
 								</div>
+								<appl-line :bind-data="applLine"></appl-line>
 							</div>
 							<div class="btn-wrap text-center">
-								<button type="button" class="btn btn-secondary rounded-0"
-										data-dismiss="modal">취소</button>
-								<button type="button" class="btn btn-default rounded-0" @click="saveTaa">신청</button>
+								<button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">취소</button>
+								<button type="button" class="btn btn-default rounded-0" @click="saveRega">신청</button>
 							</div>
 						</form>
 					</div>
@@ -1331,9 +1331,6 @@
    	
    	var calendarLeftVue = new Vue({
    		el: "#calendar_left",
-   		components : {
-			'appl-line': applLine
-	    },
 	    data : {
 	    	calendar: {},
 	    	rangeInfo: {}, //선택한 기간의 근무제 정보
@@ -1905,9 +1902,12 @@
 				$('#annualTaDetailCd').val('');
 
 				//	초기화
+				modalCalendarVue.applLine = calendarLeftVue.getApplLine('ANNUAL');
 				$("#annualCreateApplModal").modal("show");
 			},
 			viewTaaAppl : function(){	//	출장/비상근무 신청
+
+				modalCalendarVue.applLine = calendarLeftVue.getApplLine('ANNUAL');
 				console.log("viewTaaAppl >>> call");
 				$('#taaRowGroup').html(null);
 				$('#taaTypeCd').val('');
@@ -1951,6 +1951,9 @@
 
 	var modalCalendarVue = new Vue({
 		el: "#modalVue",
+		components : {
+			'appl-line': applLine
+		},
 		data : {
 			t: true,
 			vueNm : 'modalCalendarVue > ',
@@ -2008,13 +2011,13 @@
 						"   data-toggle=\"datetimepicker\"\n" +
 						"   id=\"taaSTime" + rowCnt + "\"\n" +
 						"   data-target=\"#taaSTime" + rowCnt + "\"\n" +
-						"   placeholder=\"00:00\" autocomplete=\"off\" required required style=\"display: inline-flex;\">\n" +
+						"   placeholder=\"00:00\" autocomplete=\"off\" required style=\"display: inline-flex;\">\n" +
 						"<span class=\"d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1 \" required style=\"display: inline-flex;\">~</span>\n" +
 						"<input type=\"text\" class=\"form-control datetimepicker-input form-control-sm col-2\" name=\"taaETime\"\n" +
 						"   data-toggle=\"datetimepicker\"\n" +
 						"   id=\"taaETime" + rowCnt + "\"\n" +
 						"   data-target=\"#taaETime" + rowCnt + "\"\n" +
-						"   placeholder=\"00:00\" autocomplete=\"off\" required required style=\"display: inline-flex;\">";
+						"   placeholder=\"00:00\" autocomplete=\"off\" required style=\"display: inline-flex;\">";
 
 				if(rowCnt > 0){
 					_rowHtml += "<button type=\"button\" class=\"btn btn-cancel delRowTaaBtn btn-flat btn-sm ml-1\" style='vertical-align: bottom;'>삭제</button>";
@@ -2126,16 +2129,13 @@
 
 
 			},
-			saveTaa : function(){	//	근태신청
-				var param = $('#taaFrm').serialize();
-
+			saveRega : function(){	//	근태신청
+				var param = $('#regaFrm').serialize();
 				var _taaTypeCd = $('#taaTypeCd').val();
-
 				if(_taaTypeCd == ''){
 					isuAlert("근무구분을 선택해주세요");
 					return;
 				}
-
 				var isTaaDate = true;
 				var isTaaSTime = true;
 				var isTaaETime = true;
@@ -2183,7 +2183,7 @@
 				};
 
 				Util.ajax({
-					url: "${rc.getContextPath()}/wtmTaa/save",
+					url: "${rc.getContextPath()}/wtmRega/save",
 					type: "POST",
 					contentType: 'application/json',
 					data: JSON.stringify(param),
@@ -2191,17 +2191,15 @@
 					success: function(data) {
 						if(data!=null && data.status=='OK') {
 							console.log(data.toString());
-
+							isuAlert(data.message);
 							$("#taaApplModal").modal("hide");
-
-							groupwareOpen(data.groupwareUrl);
 
 						}else{
 							isuAlert(data.message);
 						}
 					},
 					error: function(e) {
-						isuAlert("출장/비상근무 신청 오류가 발생했습니다..");
+						isuAlert("출장신청 오류가 발생했습니다..");
 					}
 				});
 			},
@@ -2257,10 +2255,10 @@
 						if(data!=null && data.status=='OK') {
 							console.log(data.toString());
 
+							isuAlert(data.message);
 							$("#annualCreateApplModal").modal("hide");
 
-							// isuAlert("휴가신청 완료.");
-							groupwareOpen(data.groupwareUrl);
+							//isuAlert("휴가신청 완료.");
 
 						}else{
 							isuAlert(data.message);
@@ -2329,6 +2327,10 @@
 					this.viewChgSubsAppl(info);
 				} else if(info.event.extendedProps.timeTypeCd=='SUBS_CHG') {
 					this.viewChgSubsApplDetail(info.event.extendedProps.applId, info);
+				} else if(info.event.extendedProps.timeTypeCd=='TAA') {
+					this.viewAnnualApplDetail(info.event.extendedProps.applId, info);
+				} else if(info.event.extendedProps.timeTypeCd=='REGA') {
+					this.viewRegaApplDetail(info.event.extendedProps.applId, info);
 				}
 			},
 			dateClickCallback : function(info){
@@ -2900,7 +2902,11 @@
 											start: vMap.sDate,
 											end: vMap.eDate,
 											editable: false,
-											classNames: classNames
+											classNames: classNames,
+											extendedProps: {
+												applId: vMap.applId,
+												timeTypeCd: vMap.timeTypeCd
+											}
 										};
 									}
 

@@ -1,43 +1,25 @@
 package com.isu.ifw.controller;
 
 
-import java.security.InvalidParameterException;
-import java.security.cert.CertificateException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.isu.ifw.TenantSecuredControl;
+import com.isu.ifw.common.entity.CommTenantModule;
+import com.isu.ifw.common.repository.CommTenantModuleRepository;
+import com.isu.ifw.service.*;
+import com.isu.ifw.util.Sha256;
+import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.ReturnParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.isu.ifw.TenantSecuredControl;
-import com.isu.ifw.common.entity.CommTenantModule;
-import com.isu.ifw.common.repository.CommTenantModuleRepository;
-import com.isu.ifw.service.WtmApplService;
-import com.isu.ifw.service.WtmInoutService;
-import com.isu.ifw.service.WtmInterfaceService;
-import com.isu.ifw.service.WtmMobileService;
-import com.isu.ifw.service.WtmValidatorService;
-import com.isu.ifw.util.Sha256;
-import com.isu.ifw.util.WtmUtil;
-import com.isu.ifw.vo.ReturnParam;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.security.InvalidParameterException;
+import java.security.cert.CertificateException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 @RestController
@@ -59,6 +41,9 @@ public class WtmIntfController extends TenantSecuredControl {
 	
 	@Autowired
 	private WtmInterfaceService interfaceService;
+
+	@Autowired
+	WtmInterfaceService wtmInterfaceService;
 	
 	@RequestMapping(value = "/intf/abcd", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
 	public void abcd(HttpServletRequest request) throws Exception {
@@ -445,6 +430,43 @@ public class WtmIntfController extends TenantSecuredControl {
 		} catch(Exception e) {
 			e.printStackTrace();
 			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
+
+
+	@RequestMapping(value = "/intf/workTimeCloseIf",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam setWorkTimeCloseIf(HttpServletRequest request, @RequestBody Map<String, Object> paramMap) throws Exception {
+		ReturnParam rp = new ReturnParam();
+		// 사원정보
+		try {
+//			Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+//			Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+//			String enterCd = sessionData.get("enterCd").toString();
+			Long tenantId = Long.valueOf(paramMap.get("tenantId").toString());
+			String enterCd = paramMap.get("enterCd").toString();
+
+			System.out.println("tenantId >>> "+tenantId);
+			System.out.println("enterCd >>> "+enterCd);
+			System.out.println("paramMap >>> "+paramMap.toString());
+			// paramMap >>> {worktimeCloseId=3, sYmd=20191230, eYmd=20200126}
+
+			Long worktimeCloseId = Long.parseLong(paramMap.get("worktimeCloseId").toString());
+
+			HashMap<String, Object> reqMap = new HashMap<>();
+			reqMap.put("tenantId", tenantId );
+			reqMap.put("enterCd", enterCd );
+			reqMap.put("worktimeCloseId", worktimeCloseId);
+			reqMap.put("sYmd", (String)paramMap.get("sYmd") );
+			reqMap.put("eYmd", (String)paramMap.get("eYmd") );
+			reqMap.put("sabun", (String)paramMap.get("sabun") );
+
+			//wtmInterfaceService.setCloseWorkIf(reqMap); //근무시간 마감생성 자바루프용 호출
+			//rp =
+			wtmInterfaceService.setCloseWorkIfN(reqMap); //근무시간 마감생성 자바루프용 호출
+
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		return rp;
 	}

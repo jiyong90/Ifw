@@ -57,6 +57,13 @@
                         <li :class="{active: curPageName=='flexibleEmp'}" v-if="authRule.indexOf('FLEX_SETTING')>-1"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/flexibleEmp';">개인별 근무제도 조회</a></li>
                     </ul>
                 </li>
+                <li :class="{active: curSubMenu=='sub9'}" v-if="authRule.indexOf('FLEX_SETTING')>-1">
+                    <a href="#submenu-list9" data-toggle="collapse" :aria-expanded="curSubMenu=='sub9'?true:false" class="dropdown-toggle"  @click="curSubMenu='sub9'">연차관리</a>
+                    <ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub9'}" id="submenu-list9">
+                        <li :class="{active: curPageName=='annualMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/annualMgr';">연차기준관리</a></li>
+                        <li :class="{active: curPageName=='annualMgrHis'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/annualMgrHis';">연차내역관리</a></li>
+                    </ul>
+                </li>
                 <li :class="{active: curSubMenu=='sub3'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1">
                 	<a href="#submenu-list3" data-toggle="collapse" :aria-expanded="curSubMenu=='sub3'?true:false" class="dropdown-toggle" @click="curSubMenu='sub3'">연장근로관리</a>
                 	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub3'}" id="submenu-list3">
@@ -202,7 +209,9 @@ function callLnb (obj) {
 				this.curSubMenu = 'sub7';
 			else if(pageName=='authMgr'||pageName=='ruleMgr')
 				this.curSubMenu = 'sub8';
-					
+            else if(pageName=='annualMgr'||pageName=='annualMgrHis')
+                this.curSubMenu = 'sub9';
+
 			this.curPageName = pageName;
 			
 			if(this.curSubMenu!='') 

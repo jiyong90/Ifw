@@ -9,22 +9,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * 출장/비상근무 신청
  */
-@RequestMapping("/wtmTaa")
+@RequestMapping("/wtmRega")
 @RestController
-public class WtmTaaController {
+public class WtmRegaController {
 
 	private static final Logger logger = LoggerFactory.getLogger("ifwFileLog");
 
@@ -44,6 +42,10 @@ public class WtmTaaController {
 	@Qualifier("WtmTaaApplService")
 	@Autowired
 	WtmApplService taaApplService;
+
+	@Qualifier("wtmRegaCanService")
+	@Autowired
+	WtmApplService wtmRegaCanService;
 	
 	@Qualifier("WtmTaaCanApplService") @Autowired WtmApplService taaCanApplService;
 
@@ -85,32 +87,29 @@ public class WtmTaaController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/save",
-	                method = RequestMethod.POST,
-	                produces = MediaType.APPLICATION_JSON_VALUE)
-	public ReturnParam save(HttpServletRequest request,
-	                        @RequestBody Map<String, Object> paramMap) throws Exception {
+	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ReturnParam save(HttpServletRequest request, @RequestBody Map<String, Object> paramMap) throws Exception {
 
 		ReturnParam rp = new ReturnParam();
 		rp.setFail("저장 시 오류가 발생했습니다.");
 
-		Long tenantId = Long.valueOf(request.getAttribute("tenantId")
-		                                    .toString());
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
-		String enterCd = sessionData.get("enterCd")
-		                            .toString();
-		String sabun = sessionData.get("empNo")
-		                          .toString();
-		String userId = sessionData.get("userId")
-		                           .toString();
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
 
-		logger.debug("wtmTaa save param : " + paramMap.toString());
+		Long applId = null;
+		if(paramMap.get("applId")!=null && !"".equals(paramMap.get("applId"))) {
+			applId = Long.valueOf(paramMap.get("applId").toString());
+		}
 
+		logger.debug("wtmRega save param : " + paramMap.toString());
 
 		try {
 
-			String              workTypeCd = paramMap.get("taaTypeCd").toString();
-			String              note       = paramMap.get("note").toString();
+			String workTypeCd = paramMap.get("taaTypeCd").toString();
+			String note       = paramMap.get("note").toString();
 
 			List<String> taaDateArr = (List<String>) paramMap.get("taaDate");
 			List<String> startHmArr = (List<String>) paramMap.get("taaSTime");
@@ -124,24 +123,18 @@ public class WtmTaaController {
 			valiMap.put("note", note);
 			valiMap.put("sabun", sabun);
 
-
-
 			//  출장/긴급근무 저장
 			rp = regaApplService.validate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_REGA, valiMap);
 
 			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
 
-				//  imsi
-				rp = regaApplService.imsi(tenantId, enterCd, (long) 0, workTypeCd, valiMap,WtmApplService.APPL_STATUS_IMSI, sabun, userId);
+				rp = regaApplService.request(tenantId, enterCd, applId, WtmApplService.TIME_TYPE_REGA, valiMap, sabun, userId);
 
 				if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
 
 					//  Save 인터페이스
 //					bithumbCommon.saveWtmIfAppl(tenantId, enterCd, Long.parseLong(rp.get("applId")+""), WtmApplService.TIME_TYPE_REGA, WtmApplService.APPL_STATUS_IMSI, sabun, userId, Long.parseLong(rp.get("applId")+""));
 					rp.setSuccess("저장이 성공하였습니다.");
-
-
-					rp.put("groupwareUrl", "");
 				}
 
 			}
@@ -234,4 +227,43 @@ public class WtmTaaController {
 		return rp;
 	}
 
+
+	@RequestMapping(value="/canRequest", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	ReturnParam regaCanApplRequest(@RequestBody Map<String, Object> paramMap, HttpServletRequest request) {
+
+		ReturnParam rp = new ReturnParam();
+		rp.setFail("");
+
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+
+		Long taaApplId = null;
+		if(paramMap.get("taaApplId")!=null && !"".equals(paramMap.get("taaApplId")))
+			taaApplId = Long.valueOf(paramMap.get("taaApplId").toString());
+
+		String status = null;
+		if(paramMap.get("status")!=null && !"".equals(paramMap.get("status")))
+			status = paramMap.get("status").toString();
+
+		String workTypeCd = null;
+		if(paramMap.get("workTypeCd")!=null && !"".equals(paramMap.get("workTypeCd")))
+			workTypeCd = paramMap.get("workTypeCd").toString();
+
+		try {
+			//rp = otCanApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
+			//if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
+			rp = wtmRegaCanService.request(tenantId, enterCd, taaApplId, workTypeCd, paramMap, sabun, userId);
+			//}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
 }

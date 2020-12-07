@@ -1,28 +1,21 @@
 package com.isu.ifw.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.isu.ifw.entity.WtmPropertie;
 import com.isu.ifw.repository.WtmPropertieRepository;
 import com.isu.ifw.service.WtmInterfaceService;
 import com.isu.ifw.service.WtmWorktimeCloseService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value="/worktimeClose")
@@ -83,7 +76,8 @@ public class WtmWorktimeCloseController {
 		
 	@RequestMapping(value = "/workTimeCloseIf",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ReturnParam setWorkTimeCloseIf(HttpServletRequest request, @RequestBody Map<String, Object> paramMap) throws Exception {
-		ReturnParam rp = new ReturnParam();		
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("마감을 요청하였습니다.");
 		// 사원정보
 		try {
 			Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());

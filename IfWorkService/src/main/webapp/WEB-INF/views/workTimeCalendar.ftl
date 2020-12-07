@@ -689,6 +689,249 @@
         </div>
     </div>
     <!-- 대체휴일 정정신청 상세보기 modal end -->
+
+    <!-- 휴가신청 상세보기 modal start -->
+    <div class="modal fade show" id="annualApplDetail" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" >휴가 신청내역</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap position-relative">
+                                <div class="loading-spinner" style="display:none;"></div>
+                                <p class="page-sub-title mb-0">휴가 구분</p>
+                                <div class="desc">
+                                     {{annualAppl.taaNm}}
+			                    </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">휴가기간</div>
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="annualAppl.sYmd">
+                                        	{{moment(annualAppl.sYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="annualAppl.eYmd">
+                                        	{{moment(annualAppl.eYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">설명</div>
+                                <div class="desc">
+                                    <template v-if="annualAppl.reason">
+                                        {{annualAppl.reason}}
+                                    </template>
+                                </div>
+                            </div>
+                            <appl-line :bind-data="applLine"></appl-line>
+                            <hr class="bar">
+                        </div>
+                        <div class="btn-wrap text-center" v-if="annualAppl.applSabun==annualAppl.sabun">
+                            <template v-if="annualAppl.applStatusCd=='99'">
+                                <button type="button" class="btn btn-default rounded-0" v-if="workCloseYn == 'N'" data-toggle="modal" data-dismiss="modal"  @click="annualCanShow">휴가 취소하기</button>
+                            </template>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 휴가신청 상세보기 modal end -->
+
+    <!-- 휴가취소 상세보기 modal start -->
+    <div class="modal fade show" id="cancelAnnualModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">휴가 신청취소</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap position-relative">
+                                <div class="loading-spinner" style="display:none;"></div>
+                                <p class="page-sub-title mb-0">휴가 구분</p>
+                                <div class="desc">
+                                    {{annualAppl.taaNm}}
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">휴가기간</div>
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="annualAppl.sYmd">
+                                        	{{moment(annualAppl.sYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="annualAppl.eYmd">
+                                        	{{moment(annualAppl.eYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="inner-wrap">
+                                <div class="title">사유</div>
+                                <div class="desc">
+									<textarea class="form-control" id="annualCanNote" name="annualCanNote" rows="3" placeholder="" required></textarea>
+                                </div>
+                            </div>
+                            <appl-line :bind-data="applLine"></appl-line>
+                        </div>
+                        <div class="btn-wrap text-center" v-if="annualAppl.applSabun==annualAppl.sabun">
+                            <template v-if="annualAppl.applStatusCd=='99'">
+                                <button type="button" class="btn btn-secondary rounded-0" data-toggle="modal" data-dismiss="modal">취소</button>
+                                <button type="button" class="btn btn-default rounded-0" v-if="workCloseYn == 'N'" data-toggle="modal" @click="annualCanApplRequest">취소 신청하기</button>
+                            </template>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 휴가취소 신청 modal end -->
+
+    <!-- 출장신청 상세보기 modal start -->
+    <div class="modal fade show" id="regaDetail" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" >출장 신청내역</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap position-relative">
+                                <div class="loading-spinner" style="display:none;"></div>
+                                <p class="page-sub-title mb-0">간주근무 구분</p>
+                                <div class="desc">
+                                    {{annualAppl.taaNm}}
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">기간</div>
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="annualAppl.sYmd">
+                                        	{{moment(annualAppl.sYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="annualAppl.eYmd">
+                                        	{{moment(annualAppl.eYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">설명</div>
+                                <div class="desc">
+                                    <template v-if="annualAppl.reason">
+                                        {{annualAppl.reason}}
+                                    </template>
+                                </div>
+                            </div>
+                            <appl-line :bind-data="applLine"></appl-line>
+                            <hr class="bar">
+                        </div>
+                        <div class="btn-wrap text-center" v-if="annualAppl.applSabun==annualAppl.sabun">
+                            <template v-if="annualAppl.applStatusCd=='99'">
+                                <button type="button" class="btn btn-default rounded-0" v-if="workCloseYn == 'N'" data-toggle="modal" data-dismiss="modal"  @click="regaCanShow">취소 신청하기</button>
+                            </template>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 출장신청 상세보기 modal end -->
+
+    <!-- 휴가취소 상세보기 modal start -->
+    <div class="modal fade show" id="cancelRegaModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title">출장 신청취소</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="modal-app-wrap">
+                            <div class="inner-wrap position-relative">
+                                <div class="loading-spinner" style="display:none;"></div>
+                                <p class="page-sub-title mb-0">간주근무 구분</p>
+                                <div class="desc">
+                                    {{annualAppl.taaNm}}
+                                </div>
+                            </div>
+                            <div class="inner-wrap">
+                                <div class="title">기간</div>
+                                <div class="desc">
+                                    <span class="date-wrap">
+                                        <span class="start-date">
+                                        	<template v-if="annualAppl.sYmd">
+                                        	{{moment(annualAppl.sYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                        <span class="ml-1 mr-1">~</span>
+                                        <span class="end-date">
+                                        	<template v-if="annualAppl.eYmd">
+                                        	{{moment(annualAppl.eYmd).format('YYYY-MM-DD')}}
+                                        	</template>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="inner-wrap">
+                                <div class="title">사유</div>
+                                <div class="desc">
+                                    <textarea class="form-control" id="annualCanNote" name="annualCanNote" rows="3" placeholder="" required></textarea>
+                                </div>
+                            </div>
+                            <appl-line :bind-data="applLine"></appl-line>
+                        </div>
+                        <div class="btn-wrap text-center" v-if="annualAppl.applSabun==annualAppl.sabun">
+                            <template v-if="annualAppl.applStatusCd=='99'">
+                                <button type="button" class="btn btn-secondary rounded-0" data-toggle="modal" data-dismiss="modal">취소</button>
+                                <button type="button" class="btn btn-default rounded-0" v-if="workCloseYn == 'N'" data-toggle="modal" @click="regaCanApplRequest">간주근무취소 신청</button>
+                            </template>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 휴가취소 신청 modal end -->
+
     <div id='calendar-container'>
 		<full-calendar ref="fullCalendar" :unselectauto="t" :custombuttons="customButtons" :header="header" :defaultview="view" :nowindicator="t" :scrolltime="moment(new Date()).format('HH:mm:ss')" @update="renderCallback" @datesrender="datesRenderCallback" @dateclick="dateClickCallback" @select="selectCallback" @eventclick="eventClickCallback"></full-calendar>
     </div>
@@ -769,6 +1012,8 @@
   		    	targets: {}, //대상자 잔여 연장근로시간
   		    	//prevOtSubs: [] //이전에 신청한 휴일
   		    	chgSubsAppl: {}, //대체휴일 정정 데이터
+  		    	annualAppl: {}, //휴가정정 데이터
+  		    	regaAppl: {}, //간주근무 데이터
   		    	isOtUse:false, //대체휴일 Div section사용 여부 기본근무에서 잔여 소정근로시간이 남았을 경우 잔여소정근로시간 선 소진 후 나머지 시간이 있을 경우 사용할 수 있
   		    	workCloseYn: 'N'
   		    },
@@ -853,7 +1098,11 @@
   		    			this.viewChgSubsAppl(info);
   		    		} else if(info.event.extendedProps.timeTypeCd=='SUBS_CHG') {
   		    			this.viewChgSubsApplDetail(info.event.extendedProps.applId, info);
-  		    		}
+  		    		} else if(info.event.extendedProps.timeTypeCd=='TAA') {
+                        this.viewAnnualApplDetail(info.event.extendedProps.applId, info);
+                    } else if(info.event.extendedProps.timeTypeCd=='REGA') {
+                        this.viewRegaApplDetail(info.event.extendedProps.applId, info);
+                    }
   		    	},
   		    	dateClickCallback : function(info){
   		    		//if(!info.allDay && moment('${today}').diff(this.workday)<=0)
@@ -1241,7 +1490,7 @@
   	         		
   	         		if(timeTypeCd=='OT_CAN')
   	         			url = "/otCanAppl";
-  	         		
+
   	         		var param = {
   	         			applId: applId	
   	         		};
@@ -1357,6 +1606,91 @@
 					});
 					
   	         	},
+                viewAnnualApplDetail: function(applId, info){
+
+  	         	   if('${tsId}' !='soldev' && '${tsId}' != 'dyc') {
+  	         	       return;
+                   }
+                    var $this = this;
+
+                    $this.annualAppl = {
+                        applId : applId,
+                        sDate : info.event.start,
+                        eDate : info.event.end
+                    };
+
+                    var param = {
+                        applId: applId
+                    };
+
+                    //휴가신청내역 조회
+                    Util.ajax({
+                        url: "${rc.getContextPath()}/taaCanAppl",
+                        type: "GET",
+                        contentType: 'application/json',
+                        data: param,
+                        dataType: "json",
+                        async: false,
+                        success: function(data) {
+                            if(data!=null) {
+                                $this.annualAppl = data.taaApplList[0];
+                                $this.applLine = data.applLine;
+                                $("#annualApplDetail").modal("show");
+                            }
+                        },
+                        error: function(e) {
+                            console.log(e);
+                            $this.overtimeAppl = {};
+                        }
+                    });
+
+                },
+                viewRegaApplDetail: function(applId, info){
+
+                    if('${tsId}' !='soldev' && '${tsId}' != 'dyc') {
+                        return;
+                    }
+
+                    var $this = this;
+
+                    $this.regaAppl = {
+                        applId : applId,
+                        sDate : info.event.start,
+                        eDate : info.event.end
+                    };
+
+                    var param = {
+                        applId: applId
+                    };
+
+                    Util.ajax({
+                        url: "${rc.getContextPath()}/taaCanAppl",
+                        type: "GET",
+                        contentType: 'application/json',
+                        data: param,
+                        dataType: "json",
+                        async: false,
+                        success: function(data) {
+                            if(data!=null) {
+                                $this.annualAppl = data.taaApplList[0];
+                                $this.applLine = data.applLine;
+
+                                if(data.recoveryYn) {
+                                    $("#recoveryBtn").show();
+                                } else {
+                                    $("#recoveryBtn").hide();
+                                }
+
+                                $("#regaDetail").modal("show");
+                            }
+                        },
+                        error: function(e) {
+                            console.log(e);
+                            $this.overtimeAppl = {};
+                        }
+                    });
+
+                },
   	         	viewDayResults: function(ymd){
   	         		var $this = this;
   	         		var classNames = [];
@@ -1432,7 +1766,11 @@
 		  	  	  								start: vMap.sDate,
 		  	  	  	  		  		        	end: vMap.eDate,
 		  	  	  	  		  		        	editable: false,
-		  	  	  		  		        		classNames: classNames
+		  	  	  		  		        		classNames: classNames,
+                                                extendedProps: {
+                                                    applId: vMap.applId,
+                                                    timeTypeCd: vMap.timeTypeCd
+                                                }
 		  	  	    	         			};
 										}
 		  	  	         					
@@ -2346,7 +2684,106 @@
 							$this.targets = {};
 						}
 					});
-  	         	}
+  	         	},
+                annualCanShow : function () {  //휴가 신청
+
+                    this.applLine = calendarLeftVue.getApplLine('ANNUAL');
+                    $("#cancelAnnualModal").modal("show");
+
+                },
+                annualCanApplRequest : function() {
+                    var $this = this;
+                    $("#loading").show();
+                    var param = {
+                        taaApplId :  this.annualAppl.applId,
+                        reason : $('#annualCanNote').val(),
+                        status : "21",
+                        workTypeCd : "ANNUAL_CAN"
+                    };
+
+                    $("#cancelAnnualModal").modal("hide");
+
+                    Util.ajax({
+                        url: "${rc.getContextPath()}/taaCanAppl/request",
+                        type: "POST",
+                        contentType: 'application/json',
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        success: function(data) {
+                            $("#loading").hide();
+                            if(data!=null && data.status=='OK') {
+                                $("#alertText").html("취소신청 되었습니다.");
+
+                            } else {
+                                $("#alertText").html(data.message);
+                                $("#alertModal").on('hidden.bs.modal',function(){
+                                    $("#alertModal").off('hidden.bs.modal');
+                                });
+                            }
+
+                            $("#alertModal").modal("show");
+                        },
+                        error: function(e) {
+                            $("#loading").hide();
+                            console.log(e);
+                            $("#alertText").html("신청시 오류가 발생했습니다.");
+                            $("#alertModal").on('hidden.bs.modal',function(){
+                                $("#alertModal").off('hidden.bs.modal');
+                            });
+                            $("#alertModal").modal("show");
+                        }
+                    });
+                },
+                regaCanShow : function () {  //출장취소 신청
+
+                    this.applLine = calendarLeftVue.getApplLine('REGA_CAN');
+                    $("#cancelRegaModal").modal("show");
+
+                },
+                regaCanApplRequest : function() {
+                    var $this = this;
+                    $("#loading").show();
+                    var param = {
+                        taaApplId :  this.annualAppl.applId,
+                        reason : $('#annualCanNote').val(),
+                        status : "21",
+                        workTypeCd : "REGA_CAN"
+                    };
+
+                    $("#cancelRegaModal").modal("hide");
+
+                    Util.ajax({
+                        url: "${rc.getContextPath()}/wtmRega/canRequest",
+                        type: "POST",
+                        contentType: 'application/json',
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        success: function(data) {
+                            $("#loading").hide();
+                            if(data!=null && data.status=='OK') {
+                                $("#alertText").html("취소신청 되었습니다.");
+
+                            } else {
+                                $("#alertText").html(data.message);
+                                $("#alertModal").on('hidden.bs.modal',function(){
+                                    $("#alertModal").off('hidden.bs.modal');
+                                });
+                            }
+
+                            $("#alertModal").modal("show");
+                        },
+                        error: function(e) {
+                            $("#loading").hide();
+                            console.log(e);
+                            $("#alertText").html("신청시 오류가 발생했습니다.");
+                            $("#alertModal").on('hidden.bs.modal',function(){
+                                $("#alertModal").off('hidden.bs.modal');
+                            });
+                            $("#alertModal").modal("show");
+                        }
+                    });
+                }
+
   		    }
    	});
    	
