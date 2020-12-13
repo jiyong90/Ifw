@@ -111,14 +111,13 @@ public class WtmRegaController {
 			String workTypeCd = paramMap.get("taaTypeCd").toString();
 			String note       = paramMap.get("note").toString();
 
-			List<String> taaDateArr = (List<String>) paramMap.get("taaDate");
-			List<String> startHmArr = (List<String>) paramMap.get("taaSTime");
-			List<String> endHmArr   = (List<String>) paramMap.get("taaETime");
+			List<String> taaSdateArr = (List<String>) paramMap.get("taaSdate");
+			List<String> taaEdateArr = (List<String>) paramMap.get("taaEdate");
+
 
 			Map<String, Object> valiMap = new HashMap<String, Object>();
-			valiMap.put("taaDateArr", taaDateArr);
-			valiMap.put("startHmArr", startHmArr);
-			valiMap.put("endHmArr", endHmArr);
+			valiMap.put("taaSdateArr", taaSdateArr);
+			valiMap.put("taaEdateArr", taaEdateArr);
 			valiMap.put("workTimeCode", workTypeCd);
 			valiMap.put("note", note);
 			valiMap.put("sabun", sabun);

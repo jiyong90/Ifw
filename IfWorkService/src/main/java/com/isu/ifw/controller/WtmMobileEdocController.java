@@ -1,27 +1,6 @@
 package com.isu.ifw.controller;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmEmpHis;
@@ -30,15 +9,20 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
-import com.isu.ifw.service.WtmApplService;
-import com.isu.ifw.service.WtmAsyncService;
-import com.isu.ifw.service.WtmFlexibleEmpService;
-import com.isu.ifw.service.WtmInoutService;
-import com.isu.ifw.service.WtmMobileService;
+import com.isu.ifw.service.*;
 import com.isu.ifw.util.MobileUtil;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 
 @RestController
@@ -89,6 +73,24 @@ public class WtmMobileEdocController {
 	@Autowired
 	@Qualifier("wtmApplService")
 	WtmApplService applService;
+
+	@Autowired
+	@Qualifier("WtmTaaApplService")
+	WtmApplService taaApplService;
+
+	@Autowired
+	@Qualifier("wtmRegaCanService")
+	WtmApplService regaCanApplService;
+
+	@Autowired
+	@Qualifier("WtmRegaApplService")
+	WtmApplService regaApplService;
+
+	@Autowired
+	@Qualifier("wtmTaaCanService")
+	WtmApplService taaCanApplService;
+
+
 	
 	@Autowired
 	WtmInoutService inoutService;
@@ -274,6 +276,14 @@ public class WtmMobileEdocController {
 							rp.setFail("신청서 상태에 오류가 발생했습니다.");
 							return rp;
 						}
+					} else if("ANNUAL".equals(applCd)) {
+						taaApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, sabun);
+					} else if("ANNUAL_CAN".equals(applCd)) {
+						taaCanApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, sabun);
+					} else if("REGA".equals(applCd)) {
+						regaApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, sabun);
+					} else if("REGA_CAN".equals(applCd)) {
+						regaCanApplService.apply(tenantId, enterCd, Long.parseLong(applId), apprSeq, paramMap, sabun, sabun);
 					} else {
 						logger.debug(":::::::: enterCd " + enterCd);
 						logger.debug(":::::::: applId " + applId);

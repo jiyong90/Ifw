@@ -14,8 +14,14 @@
 			    , E.NOTE as note
 			    , C.ORG_CD as orgCd
 			    , C.CLASS_CD as classCd
-			    , C.EMP_NM as empNm 
-			  FROM WTM_WORKTEAM_EMP E, WTM_EMP_HIS C 
+			    , C.EMP_NM as empNm
+            FROM WTM_WORKTEAM_MGR A
+                     INNER JOIN WTM_WORKTEAM_EMP E
+                                ON A.WORKTEAM_MGR_ID = E.WORKTEAM_MGR_ID
+                     INNER JOIN  WTM_EMP_HIS C
+                                 ON A.TENANT_ID = C.TENANT_ID
+                                     AND A.ENTER_CD = C.ENTER_CD
+                                     AND E.SABUN = C.SABUN
 			 WHERE C.TENANT_ID= #{tenantId} 
 			   AND E.SABUN = C.SABUN 
 			   AND C.SYMD <= #{eymd} 

@@ -1,28 +1,6 @@
 package com.isu.ifw.controller;
 
 
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.isu.ifw.common.service.TenantConfigManagerService;
 import com.isu.ifw.entity.WtmApplCode;
 import com.isu.ifw.entity.WtmEmpHis;
@@ -31,14 +9,24 @@ import com.isu.ifw.mapper.WtmFlexibleEmpMapper;
 import com.isu.ifw.repository.WtmApplCodeRepository;
 import com.isu.ifw.repository.WtmEmpHisRepository;
 import com.isu.ifw.repository.WtmWorkCalendarRepository;
-import com.isu.ifw.service.WtmApplService;
-import com.isu.ifw.service.WtmFlexibleEmpService;
-import com.isu.ifw.service.WtmMobileApplService;
-import com.isu.ifw.service.WtmMobileService;
+import com.isu.ifw.service.*;
 import com.isu.ifw.util.MobileUtil;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
+import com.isu.ifw.vo.WtmAnnualCreateVo;
 import com.isu.ifw.vo.WtmApplLineVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -77,7 +65,13 @@ public class WtmMobileApplController {
 
 	@Autowired
 	WtmMobileApplService mobileApplService;
-	
+
+	@Autowired
+	WtmAnnualUsedService annualUsedService;
+
+	@Autowired
+	WtmAnnualCreateService annualCreateService;
+
 	/**
 	 * 연장/휴일 신청서 
 	 * @param tenantKey
@@ -139,6 +133,37 @@ public class WtmMobileApplController {
 				if(!ymd.equals("") && ymd.length() == 8) {
 					dataMap = mobileApplService.init(tenantId, enterCd, sabun, paramMap);
 				}
+			} else if(applCd.equals("ANNUAL")) {
+				Map<String,Map<String,Object>> itemPropertiesMap = new HashMap();
+				itemPropertiesMap.put("gubun", mobileService.getTaaCodeList(tenantId, enterCd, "10"));
+				result.put("itemAttributesMap", itemPropertiesMap);
+
+				String yy = WtmUtil.parseDateStr(new Date(), "yyyy");
+				//  발생일수
+				WtmAnnualCreateVo annualInfo = annualUsedService.getMyCreatCnt(tenantId, enterCd, sabun, yy, "10");
+				Double totalCnt = 0.0d;
+				Double usedCnt = 0.0d;
+				Double noUsedCnt = 0.0d;
+
+				if (annualInfo != null) {
+					totalCnt = annualInfo.getCreateCnt().doubleValue();
+				}
+
+				WtmAnnualCreateVo usedInfo = annualCreateService.getByUserId(tenantId, enterCd, yy, sabun, "10");
+
+				if (usedInfo != null) {
+					usedCnt = usedInfo.getUsedCnt();
+				}
+
+				noUsedCnt = totalCnt - usedCnt;
+				dataMap.put("totalCnt", totalCnt.toString());
+				dataMap.put("usedCnt", usedCnt.toString());
+				dataMap.put("noUsedCnt", noUsedCnt.toString());
+
+			} else if(applCd.equals("REGA")) {
+				Map<String,Map<String,Object>> itemPropertiesMap = new HashMap();
+				itemPropertiesMap.put("gubun", mobileService.getTaaCodeList(tenantId, enterCd, "20"));
+				result.put("itemAttributesMap", itemPropertiesMap);
 			}
 			
 			result.put("apprLines", apprLines);
@@ -158,12 +183,11 @@ public class WtmMobileApplController {
 		logger.debug("/mobile/"+ tenantId+"/team/teamdetail s " + rp.toString());
 		return rp;
 	}
-	
+
 	/**
 	 * 연장/휴일 신청서 validation 체크
-	 * @param tenantKey
-	 * @param locale
-	 * @param empKey
+	 * @param tenantId
+	 * @param paramMap
 	 * @param request
 	 * @return
 	 * @throws Exception
@@ -197,6 +221,10 @@ public class WtmMobileApplController {
 				rp = mobileApplService.validateOtAppl(paramMap.get("eventSource").toString(), tenantId, enterCd, sabun, dataMap);
 			} else if("ENTRY_CHG".equals(dataMap.get("applCd").toString())) {
 				rp  = mobileApplService.validateEntryChgAppl(tenantId, enterCd, sabun, dataMap);
+			} else if("ANNUAL".equals(dataMap.get("applCd").toString())) {
+				rp  = mobileApplService.validateAnnualAppl(tenantId, enterCd, sabun, dataMap);
+			} else if("REGA".equals(dataMap.get("applCd").toString())) {
+				rp  = mobileApplService.validateRegaAppl(tenantId, enterCd, sabun, dataMap);
 			}
 		} catch(Exception e) {
 			logger.debug(e.getMessage());
@@ -208,9 +236,8 @@ public class WtmMobileApplController {
 	
 	/**
 	 * 연장/휴일 신청서 저장
-	 * @param tenantKey
-	 * @param locale
-	 * @param empKey
+	 * @param tenantId
+	 * @param paramMap
 	 * @param request
 	 * @return
 	 * @throws Exception
@@ -246,13 +273,17 @@ public class WtmMobileApplController {
 				dataMap.put("subYn", "");
 				dataMap.put("subsSymd", "");
 				rp = mobileApplService.requestEntryChgAppl(tenantId, enterCd, sabun, dataMap);
+			} else if("ANNUAL".equals(dataMap.get("applCd").toString())) {
+				rp  = mobileApplService.requestAnnualAppl(tenantId, enterCd, sabun, dataMap);
+			} else if("REGA".equals(dataMap.get("applCd").toString())) {
+				rp  = mobileApplService.requestRegaAppl(tenantId, enterCd, sabun, dataMap);
 			}
 			
 		} catch(Exception e) {
 			logger.debug(e.getMessage());
 			rp.setFail("신청 중 오류가 발생하였습니다.");
 		}
-		logger.debug("/mobile/"+ tenantId+"/apply/val e " + rp.toString());
+		logger.debug("/mobile/"+ tenantId+"/apply/req e " + rp.toString());
 		return rp;
 	}
 

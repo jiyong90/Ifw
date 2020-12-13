@@ -966,9 +966,6 @@
 										<div class="form-group col-3 mt-2">
 											<label for="reasonCd"></label>
 										</div>
-										<div class="form-group col-9">
-											<button type="button" id="addRowTaaBtn" class="btn btn-default btn-flat btn-sm mt-1">추가</button>
-										</div>
 									</div>
 									<div class="form-row col-12 mt-2">
 										<div class="form-group col-3 mt-2">
@@ -1999,29 +1996,20 @@
 		methods : {
 			addTaaRow : function(){
 
-				var rowCnt = $('input[name="taaDate"]').length;
+				var rowCnt = $('input[name="taaSdate"]').length;
 				var _rowHtml = "<div class=\"col-12 pl-0 pr-0 mb-1\" >\n" +
-						"<input type=\"text\" class=\"form-control datetimepicker-input form-control-sm col-4\" name=\"taaDate\"\n" +
-						"   id=\"taaDate" + rowCnt + "\"\n" +
-						"   data-target=\"#taaDate" + rowCnt + "\"\n" +
+						"<input type=\"text\" class=\"form-control datetimepicker-input form-control-sm col-4\" name=\"taaSdate\"\n" +
+						"   id=\"taaSdate" + rowCnt + "\"\n" +
+						"   data-target=\"#taaSdate" + rowCnt + "\"\n" +
 						"   data-toggle=\"datetimepicker\"\n" +
 						"   placeholder=\"연도-월-일\" autocomplete=\"off\" required style=\"display:inline-flex;\">\n" +
 						"<span class=\"d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1 \" required style=\"display: inline-flex;\">~</span>\n" +
-						"<input type=\"text\" class=\"form-control datetimepicker-input form-control-sm col-2\" name=\"taaSTime\"\n" +
+						"<input type=\"text\" class=\"form-control datetimepicker-input form-control-sm col-4\" name=\"taaEdate\"\n" +
+						"   id=\"taaEdate" + rowCnt + "\"\n" +
+						"   data-target=\"#taaEdate" + rowCnt + "\"\n" +
 						"   data-toggle=\"datetimepicker\"\n" +
-						"   id=\"taaSTime" + rowCnt + "\"\n" +
-						"   data-target=\"#taaSTime" + rowCnt + "\"\n" +
-						"   placeholder=\"00:00\" autocomplete=\"off\" required style=\"display: inline-flex;\">\n" +
-						"<span class=\"d-sm-block d-md-block d-lg-inline-block text-center pl-2 pr-2 mt-1 \" required style=\"display: inline-flex;\">~</span>\n" +
-						"<input type=\"text\" class=\"form-control datetimepicker-input form-control-sm col-2\" name=\"taaETime\"\n" +
-						"   data-toggle=\"datetimepicker\"\n" +
-						"   id=\"taaETime" + rowCnt + "\"\n" +
-						"   data-target=\"#taaETime" + rowCnt + "\"\n" +
-						"   placeholder=\"00:00\" autocomplete=\"off\" required style=\"display: inline-flex;\">";
+						"   placeholder=\"연도-월-일\" autocomplete=\"off\" required style=\"display:inline-flex;\">\n"
 
-				if(rowCnt > 0){
-					_rowHtml += "<button type=\"button\" class=\"btn btn-cancel delRowTaaBtn btn-flat btn-sm ml-1\" style='vertical-align: bottom;'>삭제</button>";
-				}
 
 				_rowHtml += "</div>";
 				$('#taaRowGroup').append(_rowHtml);
@@ -2031,7 +2019,12 @@
 					$(this).closest('div').remove();
 				});
 
-				$('input[name="taaDate"]').datetimepicker({
+				$('input[name="taaSdate"]').datetimepicker({
+					format: 'YYYY-MM-DD',
+					language: 'ko'
+				});
+
+				$('input[name="taaEdate"]').datetimepicker({
 					format: 'YYYY-MM-DD',
 					language: 'ko'
 				});
@@ -2136,49 +2129,40 @@
 					isuAlert("근무구분을 선택해주세요");
 					return;
 				}
-				var isTaaDate = true;
-				var isTaaSTime = true;
-				var isTaaETime = true;
+				var isTaaSdate = true;
+				var isTaaEdate = true;
 
-				$('input[name="taaDate"]').each(function(idx, obj){
+
+				$('input[name="taaSdate"]').each(function(idx, obj){
 					if(obj.value == ''){
-						isuAlert("신청일자를 입력해주세요");
+						isuAlert("신청시작일자를 입력해주세요");
 						$(obj).focus();
-						isTaaDate = false;
+						isTaaSdate = false;
 					}
 				});
 
-				$('input[name="taaSTime"]').each(function(idx, obj){
+				$('input[name="taaEdate"]').each(function(idx, obj){
 					if(obj.value == ''){
-						isuAlert("시작시간을 입력해주세요");
+						isuAlert("신청종료일자를 입력해주세요");
 						$(obj).focus();
-						isTaaSTime = false;
+						isTaaEdate = false;
 					}
 				});
 
-				$('input[name="taaETime"]').each(function(idx, obj){
-					if(obj.value == ''){
-						isuAlert("종료시간을 입력해주세요");
-						$(obj).focus();
-						isTaaETime = false;
-					}
-				});
 
-				if(!isTaaDate || !isTaaSTime || !isTaaETime){
+				if(!isTaaSdate || !isTaaEdate){
 					return;
 				}
 
-				var _taaDateArr = $('input[name="taaDate"]').vals();
-				var _taaSTimeArr = $('input[name="taaSTime"]').vals();
-				var _taaETimeArr = $('input[name="taaETime"]').vals();
+				var _taaSdateArr = $('input[name="taaSdate"]').vals();
+				var _taaEdateArr = $('input[name="taaEdate"]').vals();
 				var _taaNote = $('#taaNote').val();
 
 				//	요청
 				var param = {
 					taaTypeCd : _taaTypeCd,
-					taaDate : _taaDateArr,
-					taaSTime : _taaSTimeArr,
-					taaETime : _taaETimeArr,
+					taaSdate : _taaSdateArr,
+					taaEdate : _taaEdateArr,
 					note : _taaNote
 				};
 

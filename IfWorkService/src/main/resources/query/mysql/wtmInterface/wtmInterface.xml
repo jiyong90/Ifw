@@ -1384,4 +1384,16 @@ ORDER BY YMD, SABUN
 		]]>
 	</insert>
 
+	<select id="selectFixotMinute" parameterType="hashmap" resultType="hashmap">
+		SELECT A.FIXOT_USE_LIMIT AS n_fix_ot_minute
+		FROM WTM_FLEXIBLE_STD_MGR A
+				 INNER JOIN WTM_FLEXIBLE_EMP B
+							ON A.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+		WHERE B.TENANT_ID = #{tenantId}
+		  AND B.ENTER_CD = #{enterCd}
+		  AND B.SABUN = #{sabun}
+		  AND #{sYmd} BETWEEN B.SYMD AND B.EYMD
+		  AND B.WORK_TYPE_CD = #{workTypeCd}
+	</select>
+
 </mapper>

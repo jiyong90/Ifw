@@ -20,6 +20,9 @@
 			 WHERE A.TENANT_ID = #{tenantId}
 			   AND A.ENTER_CD = #{enterCd}
 			   AND SUBSTR(A.YMD,1,4) = #{sYy}
+			   <if test="sName != null and !sName.equals('')">
+			   AND A.SABUN = #{sName} OR D.EMP_NM LIKE CONCAT(#{sName}, '%')
+		       </if>
 			 GROUP BY orgNm, sabun, empNm
         ]]>
     </select>

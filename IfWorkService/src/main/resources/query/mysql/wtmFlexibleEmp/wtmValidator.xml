@@ -105,7 +105,8 @@
 				WHERE 	TENANT_ID = #{tenantId}
 				AND 	ENTER_CD = #{enterCd}
 				AND 	SABUN = #{sabun}
-				AND 	( #{startDt} BETWEEN PLAN_SDATE AND PLAN_EDATE  or  #{entDt} BETWEEN PLAN_SDATE AND PLAN_EDATE )
+				AND 	TIME_TYPE_CD = #{timeTypeCd}
+				AND     YMD BETWEEN #{startYmd} AND #{endYmd}
 		]]>
   	</select>
 

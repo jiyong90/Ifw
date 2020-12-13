@@ -175,7 +175,9 @@
   		    methods : {
   		    	getTargetList: function(){ //팀원 조회
   		    		var $this = this;
-  		    		
+					sheet1.RemoveAll();
+					this.allCheck(false);
+
   		    		$("#loading").show();
   		    	
   		    		$("#allChk").prop("checked",false);

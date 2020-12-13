@@ -5,65 +5,136 @@
   
   <mapper namespace="com.isu.ifw.mapper.WtmWorkTimeApprListMapper">
   	<select id="getWorkTimeApprList" parameterType="map" resultType="hashmap">
-  	
-  	SELECT BB.EMP_NM AS empNm,
-   		   F_WTM_GET_EMP_ORG_NM(AA.TENANT_ID, AA.ENTER_CD, AA.SABUN, AA.YMD) AS orgNm,
-   		   GROUP_CONCAT(CASE WHEN CC.TIME_TYPE_CD IN ('TAA','REGA','SUBS','LLA') THEN CC.TAA_NM ELSE NULL END ORDER BY CC.APPR_SDATE) AS taaNm,
-   		   AA.SABUN AS sabun,
-   		   AA.YMD as ymd,
-           AA.TIME_CD_MGR_ID AS timeCdMgrId,
-           AA.ENTRY_SDATE AS entrySdate,
-           AA.ENTRY_EDATE AS entryEdate,
-           AA.DIFF_MINUTE AS diffMinute,
-           AA.APPR_MINUTE AS apprMinute,
-           AA.PLAN_SDATE AS planSdate,
-           AA.PLAN_EDATE AS planEdate,
-           AA.OT_DIFF_MINUTE AS diffPlanDate,
-           AA.OT_APPR_MINUTE AS apprPlanDate
-  FROM (SELECT 
-           A.TENANT_ID,
-           A.ENTER_CD,
-           A.SABUN,
-           A.YMD,
-           A.TIME_CD_MGR_ID,
-           F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'HI') AS ENTRY_SDATE,
-           F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'HI') AS ENTRY_EDATE,
-           TIMESTAMPDIFF(minute,A.ENTRY_SDATE, A.ENTRY_EDATE) AS DIFF_MINUTE,
-           SUM(CASE WHEN D.TIME_TYPE_CD = 'BASE' THEN D.APPR_MINUTE ELSE 0 END) AS APPR_MINUTE,
-           F_WTM_DATE_FORMAT(MIN(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.PLAN_SDATE ELSE NULL END), 'HI') AS PLAN_SDATE,
-           F_WTM_DATE_FORMAT(MAX(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.PLAN_EDATE ELSE NULL END), 'HI') AS PLAN_EDATE,
-           SUM(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN TIMESTAMPDIFF(minute,D.PLAN_SDATE, D.PLAN_EDATE) ELSE 0 END) AS OT_DIFF_MINUTE,
-           SUM(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.APPR_MINUTE ELSE 0 END) AS OT_APPR_MINUTE
-   /*    (CASE WHEN D.TIME_TYPE_CD = 'BASE' THEN D.APPR_MINUTE ELSE NULL END + CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.APPR_MINUTE ELSE NULL END) AS sumApprDate*/  
-      FROM WTM_WORK_CALENDAR A
-      LEFT OUTER JOIN WTM_WORK_DAY_RESULT D
-        ON A.TENANT_ID = D.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN = D.SABUN AND A.YMD = D.YMD AND D.TIME_TYPE_CD IN ('BASE','OT', 'FIXOT', 'NIGHT')
-      WHERE A.YMD BETWEEN REPLACE (#{sYmd}, '-', '') AND REPLACE (#{eYmd}, '-', '')
-        AND A.TENANT_ID = #{tenantId}
-        AND A.ENTER_CD = #{enterCd}
-      GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, A.TIME_CD_MGR_ID, A.ENTRY_SDATE, A.ENTRY_EDATE
-  ) AA
-  INNER JOIN WTM_EMP_HIS BB
-   ON AA.TENANT_ID = BB.TENANT_ID
-   AND AA.ENTER_CD = BB.ENTER_CD 
-   AND AA.SABUN = BB.SABUN 
-   AND AA.YMD BETWEEN BB.SYMD AND BB.EYMD 
-      
-  LEFT OUTER JOIN (SELECT  R.*, T.TAA_NM
-        FROM WTM_WORK_DAY_RESULT R
-        LEFT OUTER JOIN WTM_TAA_CODE T
-         ON R.TENANT_ID = T.TENANT_ID 
-         AND R.ENTER_CD = T.ENTER_CD
-         AND R.TAA_CD = T.TAA_CD 
-        WHERE R.TENANT_ID = #{tenantId}
-         AND R.ENTER_CD = #{enterCd}
-         AND R.YMD BETWEEN REPLACE (#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '')
- ) CC
-   ON AA.TENANT_ID = CC.TENANT_ID AND AA.ENTER_CD =CC.ENTER_CD AND AA.SABUN =CC.SABUN AND AA.YMD = CC.YMD
-   <if test="searchKeyword!=null and !searchKeyword.equals('')">
-   where AA.SABUN LIKE CONCAT('%', #{searchKeyword}, '%') OR BB.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
-   </if>
-GROUP BY BB.EMP_NM ,AA.TENANT_ID, AA.ENTER_CD, AA.SABUN, AA.YMD, AA.TIME_CD_MGR_ID, AA.ENTRY_SDATE, AA.ENTRY_EDATE, AA.DIFF_MINUTE, AA.APPR_MINUTE, AA.PLAN_SDATE, AA.PLAN_EDATE, AA.OT_DIFF_MINUTE, AA.OT_APPR_MINUTE
-;
+        SELECT empNm
+            , orgNm
+            , taaNm
+            , sabun
+            , ymd
+            , timeCdMgrId
+            , entrySdate
+            , entryEdate
+            , diffMinuteNm
+            , apprMinuteNm
+            , diffMinute
+            , apprMinute
+            , planSdate
+            , planEdate
+            , diffPlanDate
+            , otDiffMinuteNm
+            , apprPlanDate
+            , otApprMinuteNm
+            , (apprMinute+apprPlanDate) AS sumApprDate
+            , TIME_FORMAT(SEC_TO_TIME(IFNULL(apprMinute+apprPlanDate, 0) * 60), '%H시간 %i분') AS sumApprDateNm
+            , TIME_FORMAT(SEC_TO_TIME(IFNULL(totalWorkMinute, 0) * 60), '%H시간 %i분') AS totalWorkMinute
+            , TIME_FORMAT(SEC_TO_TIME(IFNULL(totalOtMinute, 0) * 60), '%H시간 %i분') AS totalOtMinute
+            , TIME_FORMAT(SEC_TO_TIME(IFNULL(totalApprMinute, 0) * 60), '%H시간 %i분') AS totalApprMinute
+            , TIME_FORMAT(SEC_TO_TIME(IFNULL(totalApprOtMinute, 0) * 60), '%H시간 %i분') AS totalApprOtMinute
+            , TIME_FORMAT(SEC_TO_TIME(IFNULL(IFNULL(totalWorkMinute,0) - IFNULL(totalApprMinute,0), 0) * 60), '%H시간 %i분') AS restWorkMinute
+            , TIME_FORMAT(SEC_TO_TIME(IFNULL(IFNULL(totalOtMinute,0) - IFNULL(totalApprOtMinute,0), 0) * 60), '%H시간 %i분') AS restOtMinute
+            FROM (
+                    SELECT BB.EMP_NM AS empNm
+                         , F_WTM_GET_EMP_ORG_NM(AA.TENANT_ID, AA.ENTER_CD, AA.SABUN, AA.YMD) AS orgNm
+                         , GROUP_CONCAT(CASE WHEN CC.TIME_TYPE_CD IN ('TAA', 'REGA', 'SUBS', 'LLA') THEN CC.TAA_NM ELSE NULL END ORDER BY AA.YMD) AS taaNm
+                         , AA.SABUN AS sabun
+                         , AA.YMD as ymd
+                         , AA.TIME_CD_MGR_ID AS timeCdMgrId
+                         , AA.ENTRY_SDATE AS entrySdate
+                         , AA.ENTRY_EDATE AS entryEdate
+                         , TIME_FORMAT(SEC_TO_TIME(IFNULL(AA.DIFF_MINUTE, 0) * 60), '%H시간 %i분') AS diffMinuteNm
+                         , TIME_FORMAT(SEC_TO_TIME(IFNULL(AA.APPR_MINUTE, 0) * 60), '%H시간 %i분') AS apprMinuteNm
+                         , IFNULL(AA.DIFF_MINUTE, 0) AS diffMinute
+                         , IFNULL(AA.APPR_MINUTE, 0) AS apprMinute
+                         , AA.PLAN_SDATE AS planSdate
+                         , AA.PLAN_EDATE AS planEdate
+                         , AA.OT_DIFF_MINUTE AS diffPlanDate
+                         , AA.OT_APPR_MINUTE AS apprPlanDate
+                         , TIME_FORMAT(SEC_TO_TIME(IFNULL(AA.OT_DIFF_MINUTE, 0) * 60), '%H시간 %i분') AS otDiffMinuteNm
+                         , TIME_FORMAT(SEC_TO_TIME(IFNULL(AA.OT_APPR_MINUTE, 0) * 60), '%H시간 %i분') AS otApprMinuteNm
+                         , CASE
+                         WHEN DD.WORK_TYPE_CD IN ('SELE_C', 'SELE_F') THEN SUM(HH.PLAN_WORK_MINUTE)
+                         WHEN DD.WORK_TYPE_CD = 'ELAS' THEN HH.PLAN_WORK_MINUTE
+                         ELSE FF.INFO_VALUE * 60 END AS totalWorkMinute
+                         , CASE
+                         WHEN DD.WORK_TYPE_CD IN ('SELE_C', 'SELE_F') THEN SUM(HH.PLAN_OT_MINUTE)
+                         WHEN DD.WORK_TYPE_CD = 'ELAS' THEN HH.PLAN_OT_MINUTE
+                         ELSE GG.INFO_VALUE * 60 END AS totalOtMinute
+                         , CASE
+                         WHEN DD.WORK_TYPE_CD IN ('SELE_C', 'SELE_F') THEN SUM(HH.APPR_WORK_MINUTE)
+                         ELSE HH.APPR_WORK_MINUTE END AS totalApprMinute
+                         , CASE
+                         WHEN DD.WORK_TYPE_CD IN ('SELE_C', 'SELE_F') THEN SUM(HH.APPR_OT_MINUTE)
+                         ELSE HH.APPR_OT_MINUTE END AS totalApprOtMinute
+                      FROM (SELECT
+                               A.TENANT_ID,
+                               A.ENTER_CD,
+                               A.SABUN,
+                               A.YMD,
+                               A.TIME_CD_MGR_ID,
+                               F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'HI') AS ENTRY_SDATE,
+                               F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'HI') AS ENTRY_EDATE,
+                               TIMESTAMPDIFF(minute,A.ENTRY_SDATE, A.ENTRY_EDATE) AS DIFF_MINUTE,
+                               SUM(CASE WHEN D.TIME_TYPE_CD = 'BASE' THEN D.APPR_MINUTE ELSE 0 END) AS APPR_MINUTE,
+                               F_WTM_DATE_FORMAT(MIN(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.PLAN_SDATE ELSE NULL END), 'HI') AS PLAN_SDATE,
+                               F_WTM_DATE_FORMAT(MAX(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.PLAN_EDATE ELSE NULL END), 'HI') AS PLAN_EDATE,
+                               SUM(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN TIMESTAMPDIFF(minute,D.PLAN_SDATE, D.PLAN_EDATE) ELSE 0 END) AS OT_DIFF_MINUTE,
+                               SUM(CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.APPR_MINUTE ELSE 0 END) AS OT_APPR_MINUTE
+                       /*    (CASE WHEN D.TIME_TYPE_CD = 'BASE' THEN D.APPR_MINUTE ELSE NULL END + CASE WHEN D.TIME_TYPE_CD IN ('OT', 'FIXOT', 'NIGHT') THEN D.APPR_MINUTE ELSE NULL END) AS sumApprDate*/
+                          FROM WTM_WORK_CALENDAR A
+                          LEFT OUTER JOIN WTM_WORK_DAY_RESULT D
+                            ON A.TENANT_ID = D.TENANT_ID AND A.ENTER_CD=D.ENTER_CD AND A.SABUN = D.SABUN AND A.YMD = D.YMD AND D.TIME_TYPE_CD IN ('BASE','OT', 'FIXOT', 'NIGHT')
+                          WHERE A.YMD BETWEEN REPLACE (#{sYmd}, '-', '') AND REPLACE (#{eYmd}, '-', '')
+                            AND A.TENANT_ID = #{tenantId}
+                            AND A.ENTER_CD = #{enterCd}
+                          GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, A.TIME_CD_MGR_ID, A.ENTRY_SDATE, A.ENTRY_EDATE
+                      ) AA
+                      INNER JOIN WTM_EMP_HIS BB
+                              ON AA.TENANT_ID = BB.TENANT_ID
+                             AND AA.ENTER_CD = BB.ENTER_CD
+                             AND AA.SABUN = BB.SABUN
+                             AND AA.YMD BETWEEN BB.SYMD AND BB.EYMD
+                      LEFT OUTER JOIN (SELECT  R.*, T.TAA_NM
+                                         FROM WTM_WORK_DAY_RESULT R
+                                         LEFT OUTER JOIN WTM_TAA_CODE T
+                                                      ON R.TENANT_ID = T.TENANT_ID
+                                                     AND R.ENTER_CD = T.ENTER_CD
+                                                     AND R.TAA_CD = T.TAA_CD
+                                        WHERE R.TENANT_ID = #{tenantId}
+                                          AND R.ENTER_CD = #{enterCd}
+                                          AND R.YMD BETWEEN REPLACE (#{sYmd}, '-', '') AND REPLACE(#{eYmd}, '-', '')
+                     ) CC
+                                 ON AA.TENANT_ID = CC.TENANT_ID
+                                AND AA.ENTER_CD =CC.ENTER_CD
+                                AND AA.SABUN =CC.SABUN
+                                AND AA.YMD = CC.YMD
+                    LEFT OUTER JOIN WTM_FLEXIBLE_EMP DD
+                                 ON AA.TENANT_ID = DD.TENANT_ID
+                                AND AA.ENTER_CD = DD.ENTER_CD
+                                AND AA.SABUN = DD.SABUN
+                                AND AA.YMD BETWEEN DD.SYMD AND DD.EYMD
+                    LEFT OUTER JOIN WTM_WORK_TERM_TIME EE
+                                 ON AA.TENANT_ID = EE.TENANT_ID
+                                AND AA.ENTER_CD = EE.ENTER_CD
+                                AND AA.SABUN = EE.SABUN
+                                AND AA.YMD BETWEEN EE.WEEK_SDATE AND EE.WEEK_EDATE
+                    LEFT OUTER JOIN WTM_WORK_TERM_TIME HH
+                                 ON AA.TENANT_ID = HH.TENANT_ID
+                                AND AA.ENTER_CD = HH.ENTER_CD
+                                AND AA.SABUN = HH.SABUN
+                                AND AA.YMD BETWEEN HH.WEEK_SDATE AND HH.WEEK_EDATE
+                                AND AA.YMD BETWEEN HH.FLEXIBLE_SDATE AND HH.FLEXIBLE_EDATE
+                    LEFT OUTER JOIN WTM_PROPERTIE FF
+                                 ON AA.TENANT_ID = FF.TENANT_ID
+                                AND AA.ENTER_CD = FF.ENTER_CD
+                                AND FF.INFO_KEY = 'OPTION_MAX_WORKTIME_1WEEK'
+                    LEFT OUTER JOIN WTM_PROPERTIE GG
+                                 ON AA.TENANT_ID = GG.TENANT_ID
+                                AND AA.ENTER_CD = GG.ENTER_CD
+                                AND GG.INFO_KEY = 'OPTION_MAX_WORKTIME_1WEEK_OT'
+
+           <if test="searchKeyword!=null and !searchKeyword.equals('')">
+           where AA.SABUN LIKE CONCAT('%', #{searchKeyword}, '%') OR BB.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+           </if>
+        GROUP BY BB.EMP_NM ,AA.TENANT_ID, AA.ENTER_CD, AA.SABUN, AA.YMD, AA.TIME_CD_MGR_ID, AA.ENTRY_SDATE, AA.ENTRY_EDATE, AA.DIFF_MINUTE, AA.APPR_MINUTE, AA.PLAN_SDATE, AA.PLAN_EDATE, AA.OT_DIFF_MINUTE, AA.OT_APPR_MINUTE
+        ) ZZ
   	</select>
   </mapper>

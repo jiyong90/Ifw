@@ -143,7 +143,15 @@
  		     , UPDATE_DATE = now()
  		     , UPDATE_ID = #{userId}
     </update>
-    
+
+	<update id="setWorkTimeClose" parameterType="map">
+		UPDATE WTM_WORKTIME_CLOSE
+		SET CLOSE_YN = 'Y'
+		  , UPDATE_DATE = now()
+		  , UPDATE_ID = #{userId}
+		WHERE WORKTIME_CLOSE_ID = #{worktimeCloseId}
+	</update>
+
     <update id="insertCloseList" parameterType="hashmap">
 		INSERT INTO WTM_WORKTIME_CLOSE
                (TENANT_ID, 

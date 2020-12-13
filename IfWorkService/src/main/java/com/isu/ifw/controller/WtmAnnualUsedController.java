@@ -121,7 +121,7 @@ public class WtmAnnualUsedController {
 			rp = taaApplService.validate(tenantId, enterCd, sabun, WtmApplService.TIME_TYPE_ANNUAL, valiMap);
 
 			if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-				rp = taaApplService.request(tenantId, enterCd, applId, WtmApplService.TIME_TYPE_TAA, valiMap, sabun, userId);
+				rp = taaApplService.request(tenantId, enterCd, applId, WtmApplService.TIME_TYPE_ANNUAL, valiMap, sabun, userId);
 
 			}
 

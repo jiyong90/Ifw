@@ -89,7 +89,7 @@
    		
 		var initdata1 = {};
 		
-		initdata1.Cfg = {SearchMode:smLazyLoad,MergeSheet:msPrevColumnMerge,Page:22};
+		initdata1.Cfg = {SearchMode:smLazyLoad,MergeSheet:msPrevColumnMerge,Page:100};
 		initdata1.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
 
 		initdata1.Cols = [
@@ -171,6 +171,7 @@
 		   	  		sheet1.SetCellEditable(i, "applStatusCd", false);
 		   	  	}
 		   	}
+			sheet1.RenderSheet(2);
 			
 		} catch (ex) {
 			alert("OnSearchEnd Event Error " + ex);
