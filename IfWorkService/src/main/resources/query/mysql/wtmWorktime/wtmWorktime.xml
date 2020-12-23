@@ -519,12 +519,8 @@
 			WHERE E.TENANT_ID = ${tenantId}
 			  AND E.ENTER_CD = #{enterCd}
 			  AND C.YMD = #{ymd}
-			<if test="tenantId != 102 " >
-			  AND E.WORK_TYPE_CD NOT IN ('SELE_C','SELE_F','ELAS')
-			</if>
-			<if test="tenantId != 102 " >
+			  AND E.WORK_TYPE_CD NOT IN ('SELE_C','SELE_F')
 			  AND R.TIME_TYPE_CD = 'BASE'
-			</if>
 			  AND E.SABUN IN ( NULL
 			   <if test="empList!=null">
 			   <foreach collection="empList" item="sabun" >
