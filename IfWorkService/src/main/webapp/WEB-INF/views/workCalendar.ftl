@@ -137,7 +137,7 @@
 	                </div>
 	                <div v-if="'${calendar}'=='workMonthCalendar'" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
 	                    <div class="btn-wrap text-right">
-							<button type="button" id="annualApplBtn" class="btn btn-request" v-if="'${tsId}'== 'dyc' || '${tsId}'== 'soldev'">휴가 신청</button>
+<#--							<button type="button" id="annualApplBtn" class="btn btn-request" v-if="'${tsId}'== 'dyc' || '${tsId}'== 'soldev'">휴가 신청</button>-->
 							<button type="button" id="taaApplBtn" class="btn btn-request" v-if="'${tsId}'== 'dyc' || '${tsId}'== 'soldev'">출장신청</button>
 	                    	<button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" data-target="#flexitimeModal" v-if="flexitimeList.length>0" >근무제 적용하기</button>
 	                        <!--  <button type="button" id="applyBtn" class="btn btn-apply" data-toggle="modal" v-if="flexApplYn=='Y'" @click="getFlexitimeList">근무제 적용하기</button> -->

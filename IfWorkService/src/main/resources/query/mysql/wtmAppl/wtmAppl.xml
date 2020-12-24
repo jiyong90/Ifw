@@ -289,26 +289,10 @@
 			    ON A.TENANT_ID = C.TENANT_ID
 			   AND A.ENTER_CD = C.ENTER_CD
 			   AND A.APPL_CD = C.APPL_CD
-			  LEFT OUTER JOIN (SELECT * FROM WTM_OT_APPL WHERE SABUN = #{empNo}) O 
-			    ON A.APPL_ID = O.APPL_ID 
-			  LEFT OUTER JOIN (SELECT * FROM WTM_OT_CAN_APPL WHERE SABUN = #{empNo}) OC 
-			    ON A.APPL_ID = OC.APPL_ID 
-			  LEFT OUTER JOIN (SELECT * FROM WTM_COMP_APPL WHERE SABUN = #{empNo}) CA 
-			    ON A.APPL_ID = CA.APPL_ID
-			  LEFT OUTER JOIN (SELECT * FROM WTM_TAA_APPL WHERE SABUN = #{empNo}) TA
-			    ON A.APPL_ID = TA.APPL_ID
-        	  LEFT OUTER JOIN WTM_TAA_CAN_APPL TAC
-			    ON A.APPL_ID = TAC.APPL_ID
 			 WHERE A.TENANT_ID = #{tenantId}
-			   AND A.APPL_CD IN ('OT', 'ENTRY_CHG', 'ANNUAL', 'REGA')
+			   AND A.APPL_CD IN ('OT', 'OT_CAN', 'ENTRY_CHG', 'ANNUAL', 'REGA')
  			   AND A.ENTER_CD = #{enterCd} 
-			   AND (A.APPL_SABUN = #{empNo} 
-			    OR (A.APPL_CD = 'OT' AND O.SABUN = #{empNo})
-			    OR (A.APPL_CD = 'OT_CAN' AND OC.SABUN = #{empNo})
-			    OR (A.APPL_CD = 'COMP' AND CA.SABUN = #{empNo})	
-			    OR (A.APPL_CD = 'COMP_CAN' AND CA.SABUN = #{empNo})
-			    OR (A.APPL_CD IN ('ANNUAL', 'REGA') AND TA.SABUN = #{empNo})
-			    OR (A.APPL_CD IN ('ANNUAL_CAN', 'REGA_CAN') AND A.APPL_SABUN = #{empNo})
+			   AND (A.APPL_SABUN = #{empNo}
 			    )
 			ORDER BY A.APPL_YMD DESC
 			]]>
