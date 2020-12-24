@@ -1,5 +1,6 @@
 package com.isu.ifw.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -47,11 +48,20 @@ public class WtmTimeCdMgrController {
 		
 		rp.setSuccess("");
 		
-		List<Map<String, Object>> timeCdMgtList = null;
+		String ymd = null;
+		if(paramMap.get("sYmd")!=null && !"".equals(paramMap.get("sYmd"))) {
+			ymd = paramMap.get("sYmd").toString().replaceAll("-", "");
+		} else {
+			ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+		}
+		//List<Map<String, Object>> timeCdMgtList = null;
 		try {		
-			timeCdMgtList = timeCdMgrService.getTimeCdMgrList(tenantId, enterCd, paramMap);
+			//timeCdMgtList = timeCdMgrService.getTimeCdMgrList(tenantId, enterCd, paramMap);
 			
-			rp.put("DATA", timeCdMgtList);
+			
+			
+			
+			rp.put("DATA", timeCdMgrService.getTimeCdMgrList(tenantId, enterCd, ymd));
 		} catch(Exception e) {
 			rp.setFail("조회 시 오류가 발생했습니다.");
 			return rp;
