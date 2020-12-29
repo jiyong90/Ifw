@@ -2091,7 +2091,7 @@
 			  FROM (  SELECT YMD AS ymd
 							     , F_WTM_DATE_FORMAT(OTB_SDATE, 'H:I') AS shm
 							     , F_WTM_DATE_FORMAT(OTB_EDATE, 'H:I') AS ehm
-							     , OTB_MINUTE AS minute
+							     , D.OTB_MINUTE AS minute
 								  , 'OTB' AS timeTypeCd
 							     , NULL AS taaCd
 							     , NULL AS taaNm
@@ -2102,7 +2102,7 @@
 							  JOIN WTM_TIME_CD_MGR M
 							    ON D.TIME_CD_MGR_ID = M.TIME_CD_MGR_ID
 							 WHERE FLEXIBLE_APPL_ID = #{flexibleApplId}
-							   AND OTB_MINUTE IS NOT NULL 
+							   AND D.OTB_MINUTE IS NOT NULL 
 								AND OTB_SDATE < PLAN_SDATE 
 							UNION
 							SELECT YMD AS ymd
@@ -2123,7 +2123,7 @@
 							SELECT YMD AS ymd
 							     , F_WTM_DATE_FORMAT(OTA_SDATE, 'H:I') AS shm
 							     , F_WTM_DATE_FORMAT(OTA_EDATE, 'H:I') AS ehm
-							     , OTA_MINUTE AS minute
+							     , D.OTA_MINUTE AS minute
 								  , 'OTA' AS timeTypeCd
 							     , NULL AS taaCd
 							     , NULL AS taaNm
@@ -2134,7 +2134,7 @@
 							  JOIN WTM_TIME_CD_MGR M
 							    ON D.TIME_CD_MGR_ID = M.TIME_CD_MGR_ID
 							 WHERE FLEXIBLE_APPL_ID = #{flexibleApplId}
-							   AND OTA_MINUTE IS NOT NULL 
+							   AND D.OTA_MINUTE IS NOT NULL 
 								AND PLAN_EDATE < OTA_EDATE ) T
 			ORDER BY T.ymd, shm
     	]]>
