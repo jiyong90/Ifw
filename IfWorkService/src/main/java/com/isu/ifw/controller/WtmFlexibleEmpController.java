@@ -772,9 +772,7 @@ public class WtmFlexibleEmpController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/empResetAsync",
-	                method = RequestMethod.GET,
-	                produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/empResetAsync", method = RequestMethod.GET)
 	public @ResponseBody ReturnParam empResetAsync(@RequestParam(required = true) String ymd, HttpServletRequest request) {
 
 		logger.debug("### empResetAsync start");
@@ -790,16 +788,18 @@ public class WtmFlexibleEmpController {
 
 		try {
 
-			ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
-
+			//ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
+			ymd = ymd.replaceAll("-", "");
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("tenantId", tenantId);
 			map.put("enterCd", enterCd);
 			map.put("statusCd", "AA");
 			map.put("ymd", ymd);
-
-			List<WtmEmpHis> empList = empHisMapper.getWtmFlexibleEmp(map);
-			
+			ObjectMapper mapper = new ObjectMapper();
+			System.out.println(mapper.writeValueAsString(map));
+			//List<WtmEmpHis> empList = empHisMapper.getWtmFlexibleEmp(map);
+			List<WtmEmpHis> empList = empHisMapper.getWtmEmpHis(map);
+			System.out.println("empList.size() : " + empList.size());
 			logger.debug("empList size : " + empList.size());
 			
 			wymAsyncService.asyncFlexibleEmpRest(tenantId, enterCd, ymd, empList);

@@ -281,4 +281,43 @@
 		]]>
 	</select>
 	
+	
+	<select id="getWtmEmpHis" parameterType="map" resultType="com.isu.ifw.entity.WtmEmpHis">
+		<![CDATA[
+			SELECT
+				EMP_HIS_ID,
+				TENANT_ID,
+				ENTER_CD,
+				SABUN,
+				EMP_NM,
+				EMP_ENG_NM,
+				SYMD,
+				EYMD,
+				EMP_YMD,
+				STATUS_CD,
+				ORG_CD,
+				BUSINESS_PLACE_CD,
+				DUTY_CD,
+				POS_CD,
+				CLASS_CD,
+				JOB_GROUP_CD,
+				JOB_CD,
+				PAY_TYPE_CD,
+				ORG_PATH,
+				LEADER_YN,
+				NOTE,
+				EMP_ID,
+				UPDATE_DATE,
+				UPDATE_ID
+			FROM
+				WTM_EMP_HIS E
+			WHERE
+				E.TENANT_ID = #{tenantId}
+				AND E.ENTER_CD = #{enterCd}
+				AND E.STATUS_CD = #{statusCd}
+				AND E.EMP_YMD is not null
+				AND #{ymd} BETWEEN E.SYMD AND E.EYMD 
+		]]>
+	</select>
+	
 </mapper>
