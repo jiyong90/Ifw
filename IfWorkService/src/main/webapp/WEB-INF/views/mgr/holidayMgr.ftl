@@ -128,26 +128,28 @@
 				isuAlert("조회 시작년도, 종료년도는 같아야합니다.");
 				break;
 			}
-
+			var yyyy = $("#symd").val();
+			yyyy = yyyy.substring(0,4);
 			var param = "?ymd=" + $("#symd").val();
-
-			Util.ajax({
-				url: "${rc.getContextPath()}/flexibleEmp/empResetAsync" + param,
-				type: "GET",
-				contentType: 'application/json',
-				dataType: "json",
-				success: function(data) {
-					if(data!=null && data.status=='OK') {
-						isuAlert("근무계획 재작성 요청완료.");
-					}else {
-						isuAlert(data.message);
+			if(confirm(yyyy + "년 근무계획을 재생성 하시겠습니까?")){
+				Util.ajax({
+					url: "${rc.getContextPath()}/flexibleEmp/empResetAsync" + param,
+					type: "GET",
+					contentType: 'application/json',
+					dataType: "json",
+					success: function(data) {
+						if(data!=null && data.status=='OK') {
+							isuAlert("근무계획 재작성 요청완료.");
+						}else {
+							isuAlert(data.message);
+						}
+	
+					},
+					error: function(e) {
+						isuAlert("근무계획 재작성 에러 발생");
 					}
-
-				},
-				error: function(e) {
-					isuAlert("근무계획 재작성 에러 발생");
-				}
-			});
+				});
+			}
 
 			break;
 
