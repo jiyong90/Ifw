@@ -262,6 +262,7 @@
 			  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'POS_CD', E.POS_CD, E.SYMD) AS posNm
 			  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'CLASS_CD', E.CLASS_CD, E.SYMD) AS classNm
 			  , F_WTM_GET_CODE_NM(E.TENANT_ID, E.ENTER_CD, 'JOB_CD', E.JOB_CD, E.SYMD) AS jobNm
+			  , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'T', 'OT') AS totOtMinute
 		     , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'OT') AS restOtMinute
 		     , F_WTM_GET_WORK_MINUTE(E.TENANT_ID, E.ENTER_CD, E.SABUN, #{ymd}, 'R', 'WORK') AS restWorkMinute
              , C.HOLIDAY_YN as holidayYn, P.WORK_TYPE_CD as workTypeCd
