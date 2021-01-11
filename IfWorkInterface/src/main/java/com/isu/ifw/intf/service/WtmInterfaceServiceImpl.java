@@ -417,7 +417,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		List<Map<String, Object>> ifList = null;
         try {
         	//회사코드 조회
-        	enterCd = getEnterCd(tenantId);
+        	enterCd = getEnterCd(tenantId);otApplMgr
         	// if 데이터 조회
         	Map<String, Object> paramMap = new HashMap<>();
         	paramMap.put("enterCd", enterCd);

@@ -200,7 +200,7 @@
 	            AND S.SUB_YMD BETWEEN #{symd} AND #{eymd}
 	          WHERE A.APPL_STATUS_CD IN ('21','31')
 	            AND O.YMD BETWEEN #{symd} AND #{eymd}
-	            AND A.APPL_IN_SABUN = #{sabun}
+	            AND O.SABUN = #{sabun}
 	            AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '') 
 	          UNION ALL
 	         SELECT F_WTM_NVL(CASE WHEN YMD<F_WTM_DATE_FORMAT(NOW(), 'YMD') THEN F_WTM_NVL(R.APPR_MINUTE,0) ELSE CASE WHEN R.APPR_MINUTE IS NULL THEN R.PLAN_MINUTE ELSE R.APPR_MINUTE END END,0) AS OT_MINUTE
