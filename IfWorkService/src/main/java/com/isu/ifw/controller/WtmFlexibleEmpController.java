@@ -676,8 +676,11 @@ public class WtmFlexibleEmpController {
 			
 			//조회성 데이터는 비동기 호출하지 않음
 			//term을 만들고 해당 근무제의 약정 근로 시간과 계획 시간을 조회해야 하기 때문에
-			if(rp.containsKey("sabun") && rp.containsKey("symd") && rp.containsKey("eymd") && !"".equals(rp.get("symd")) && !"".equals(rp.get("eymd"))) {
-				wymAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", rp.get("symd").toString(), rp.get("eymd").toString(), userId, false);
+			if(rp.containsKey("sabun") && rp.containsKey("retireYmd") && !"".equals(rp.get("retireYmd"))) {
+				
+				String y = rp.get("retireYmd").toString();
+				y = y.substring(0,4);
+				wymAsyncService.createWorkTermtimeByEmployee(tenantId, enterCd, rp.get("sabun")+"", y+"0101", y+"1231", userId, false);
 			}
 			
 		} catch (Exception e) {
