@@ -1475,7 +1475,7 @@
 			  JOIN WTM_OT_APPL O
 			    ON A.APPL_ID = O.APPL_ID
 			 WHERE A.APPL_STATUS_CD IN ('21','31')
-			   AND A.APPL_IN_SABUN = #{sabun}
+			   AND O.SABUN = #{sabun}
 			   AND O.YMD BETWEEN #{symd} AND #{eymd}
 			   AND (A.APPL_ID <> #{applId} OR #{applId} IS NULL OR #{applId} = '') 
 			 ) X
@@ -2597,7 +2597,7 @@
 									ON A.APPL_ID = O.APPL_ID
 									WHERE A.TENANT_ID = #{tenantId}
 									AND A.ENTER_CD = #{enterCd}
-									AND A.APPL_SABUN = #{sabun}
+									AND O.SABUN = #{sabun}
 									AND O.HOLIDAY_YN = 'N'
 									AND A.APPL_YMD BETWEEN X.WEEK_SDATE AND X.WEEK_EDATE
 									AND A.APPL_STATUS_CD = '21' ) AS applOtMinute 
@@ -2607,7 +2607,7 @@
 									ON A.APPL_ID = O.APPL_ID
 									WHERE A.TENANT_ID = #{tenantId}
 									AND A.ENTER_CD = #{enterCd}
-									AND A.APPL_SABUN = #{sabun}
+									AND O.SABUN = #{sabun}
 									AND O.HOLIDAY_YN = 'Y'
 									AND A.APPL_YMD BETWEEN X.WEEK_SDATE AND X.WEEK_EDATE
 									AND A.APPL_STATUS_CD = '21' ) AS applHolOtMinute 
