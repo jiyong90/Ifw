@@ -142,7 +142,7 @@
 		sheetInit();
 		
 		//시간구분
-		var timeCd = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=N",false).DATA, "선택"); 
+		var timeCd = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=",false).DATA, "선택");
         $("#timeCd").append(timeCd[2]);
 		
 	});

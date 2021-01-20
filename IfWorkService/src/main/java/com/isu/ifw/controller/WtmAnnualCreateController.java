@@ -53,7 +53,7 @@ public class WtmAnnualCreateController {
 
 
 		try {
-			List<WtmAnnualCreateVo> list = wtmAnnualCreateService.getList(tenantId, enterCd, sYmd.replaceAll("-", ""), searchKeyword, searchType);
+			List<WtmAnnualCreateVo> list = wtmAnnualCreateService.getList(tenantId, enterCd, sYmd.replaceAll("[-.]", ""), searchKeyword, searchType);
 
 			rp.put("DATA", list);
 		} catch (Exception e) {

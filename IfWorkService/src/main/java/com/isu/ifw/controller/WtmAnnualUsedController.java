@@ -183,8 +183,8 @@ public class WtmAnnualUsedController {
 
 				String yy = symd.split("-")[0];
 
-				symd = symd.replaceAll("-", "");
-				eymd = eymd.replaceAll("-", "");
+				symd = symd.replaceAll("[-.]", "");
+				eymd = eymd.replaceAll("[-.]", "");
 
 				//  계산 해야함. totDays, holDays
 				Map<String, Integer> calMap = calcService.calcDayCnt(tenantId, enterCd, symd, eymd);

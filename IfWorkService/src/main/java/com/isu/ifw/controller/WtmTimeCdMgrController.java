@@ -1,26 +1,20 @@
 package com.isu.ifw.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.isu.ifw.service.WtmTimeCdMgrService;
+import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.ReturnParam;
 import org.jboss.logging.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.isu.ifw.service.WtmTimeCdMgrService;
-import com.isu.ifw.util.WtmUtil;
-import com.isu.ifw.vo.ReturnParam;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value="/timeCdMgr")
@@ -50,7 +44,7 @@ public class WtmTimeCdMgrController {
 		
 		String ymd = null;
 		if(paramMap.get("sYmd")!=null && !"".equals(paramMap.get("sYmd"))) {
-			ymd = paramMap.get("sYmd").toString().replaceAll("-", "");
+			ymd = paramMap.get("sYmd").toString().replaceAll("[-.]", "");
 		} else {
 			ymd = WtmUtil.parseDateStr(new Date(), "yyyyMMdd");
 		}

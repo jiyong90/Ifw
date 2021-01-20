@@ -1,28 +1,21 @@
 package com.isu.ifw.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmCompApplListService;
+import com.isu.ifw.service.WtmValidatorService;
+import com.isu.ifw.vo.ReturnParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.isu.ifw.service.WtmApplService;
-import com.isu.ifw.service.WtmCompApplListService;
-import com.isu.ifw.service.WtmValidatorService;
-import com.isu.ifw.vo.ReturnParam;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value="/compAppl")
@@ -58,7 +51,7 @@ public class WtmCompApplController {
 		String sabun = sessionData.get("empNo").toString();
 		
 		if(paramMap.get("ymd")!=null) {
-			paramMap.put("ymd", paramMap.get("ymd").toString().replaceAll("-", ""));
+			paramMap.put("ymd", paramMap.get("ymd").toString().replaceAll("[-.]", ""));
 		}
 		
 		rp.setSuccess("");

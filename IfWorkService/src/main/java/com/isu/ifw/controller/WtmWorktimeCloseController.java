@@ -85,23 +85,22 @@ public class WtmWorktimeCloseController {
 			String enterCd = sessionData.get("enterCd").toString();
 			
 			System.out.println("tenantId >>> "+tenantId);
-			System.out.println("enterCd >>> "+enterCd);			
+			System.out.println("enterCd >>> "+enterCd);
 			System.out.println("paramMap >>> "+paramMap.toString());
 			// paramMap >>> {worktimeCloseId=3, sYmd=20191230, eYmd=20200126}
 			
 			Long worktimeCloseId = Long.parseLong(paramMap.get("worktimeCloseId").toString());
-			
+
 			HashMap<String, Object> reqMap = new HashMap<>();			
 			reqMap.put("tenantId", tenantId );
-			reqMap.put("enterCd", enterCd );	
+			reqMap.put("enterCd", enterCd );
 			reqMap.put("worktimeCloseId", worktimeCloseId);
 			reqMap.put("sYmd", (String)paramMap.get("sYmd") );
 			reqMap.put("eYmd", (String)paramMap.get("eYmd") );			
 			reqMap.put("sabun", (String)paramMap.get("sabun") );
 									
 			//wtmInterfaceService.setCloseWorkIf(reqMap); //근무시간 마감생성 자바루프용 호출
-			//rp = 
-					wtmInterfaceService.setCloseWorkIfN(reqMap); //근무시간 마감생성 자바루프용 호출
+			rp = wtmInterfaceService.setCloseWorkIfN(reqMap); //근무시간 마감생성 자바루프용 호출
 			
 		} catch(Exception e) {
 			e.printStackTrace();

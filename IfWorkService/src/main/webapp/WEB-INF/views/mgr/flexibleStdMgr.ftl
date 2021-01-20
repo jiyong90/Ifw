@@ -254,6 +254,8 @@
 </div>
 
 <script type="text/javascript">
+	var timeCdMgrIdList;
+
    	$(function() {
    		//resize
 		$(window).smartresize(sheetResize);
@@ -927,7 +929,7 @@
 		sheet2.SetUnicodeByte(3);
 		
 		//근무시간
-		var timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=",false).DATA, "선택");
+		timeCdMgrIdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=",false).DATA, "선택");
 		sheet2.SetColProperty("timeCdMgrId", {ComboText:timeCdMgrIdList[0], ComboCode:timeCdMgrIdList[1]} );
 
 		sheetInit();

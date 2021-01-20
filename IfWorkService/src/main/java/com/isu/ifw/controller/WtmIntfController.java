@@ -259,8 +259,8 @@ public class WtmIntfController extends TenantSecuredControl {
 	    	}
 			//rp = validatorService.worktimeValid(tenantId, paramMap.get("enterCd").toString(), paramMap.get("applNo").toString(), works, applSabun);
 			//if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-				//interfaceService.setTaaApplArrIf(paramMap);
-			interfaceService.taaResult(tenantId, paramMap.get("enterCd")+"", paramMap.get("applSabun")+"", paramMap.get("applNo")+"", paramMap.get("status")+"", works);	
+			interfaceService.setTaaApplArrIf(paramMap);
+//			interfaceService.taaResult(tenantId, paramMap.get("enterCd")+"", paramMap.get("applSabun")+"", paramMap.get("applNo")+"", paramMap.get("status")+"", works);
 			//}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -463,7 +463,7 @@ public class WtmIntfController extends TenantSecuredControl {
 
 			//wtmInterfaceService.setCloseWorkIf(reqMap); //근무시간 마감생성 자바루프용 호출
 			//rp =
-			wtmInterfaceService.setCloseWorkIfN(reqMap); //근무시간 마감생성 자바루프용 호출
+			rp = wtmInterfaceService.setCloseWorkIfN(reqMap); //근무시간 마감생성 자바루프용 호출
 
 		} catch(Exception e) {
 			e.printStackTrace();

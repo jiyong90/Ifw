@@ -872,7 +872,7 @@
 			var repeatCnt = sheet1.GetCellValue(Row, "repeatCnt");
 			
 			if(symd != "") {
-				if(repeatTypeCd != "" && repeatCnt > 0){
+				if(repeatTypeCd != "NO" && repeatTypeCd != "" && repeatCnt > 0){
 					// 종료일 조회
 					var param = "symd=" + symd + "&repeatTypeCd=" + repeatTypeCd + "&repeatCnt=" + repeatCnt;
 					var rtn = ajaxCall("${rc.getContextPath()}/flexibleApply/getEymd", param ,false).DATA;
