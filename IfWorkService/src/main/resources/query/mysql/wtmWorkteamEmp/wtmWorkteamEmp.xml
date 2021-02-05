@@ -15,6 +15,7 @@
 			    , C.ORG_CD as orgCd
 			    , C.CLASS_CD as classCd
 			    , C.EMP_NM as empNm
+			    , CASE WHEN E.STATUS = 'I' THEN '근무계획생성중' WHEN E.STATUS = 'Y' THEN '근무계획생성완료' ELSE '' END AS STATUS
             FROM WTM_WORKTEAM_MGR A
                      INNER JOIN WTM_WORKTEAM_EMP E
                                 ON A.WORKTEAM_MGR_ID = E.WORKTEAM_MGR_ID

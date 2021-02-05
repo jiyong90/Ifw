@@ -37,6 +37,8 @@
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Insert');" class="basic authA">입력</a></li>
 									<li><a href="javascript:doAction1('Save');" class="basic authA">저장</a></li>
+<#--									<li><a href="javascript:doAction1('Upload')" class="basic authA">업로드</a></li>-->
+<#--									<li><a href="javascript:doAction1('Down2Excel')" class="basic authA">다운로드</a></li>-->
 								</ul>
 							</div>
 						</div>
@@ -118,8 +120,9 @@
 			{Header:"근무조|근무조",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"workteamMgrId",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"적용기간|시작일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"symd",			KeyField:1,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
 			{Header:"적용기간|종료일자",	Type:"Date",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"eymd",			KeyField:1,	Format:"Ymd",	PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
-			{Header:"비고|비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
-		]; 
+			{Header:"비고|비고",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"상태|상태",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"STATUS",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
+		];
 		
 		IBS_InitSheet(sheet1, initdata1);
 		sheet1.SetEditable(true);
@@ -166,6 +169,16 @@
 		case "Insert":
 			sheet1.DataInsert(0) ;
 			break;
+
+		case "Upload":
+			var params = {Mode:"HeaderMatch", StartRow:1, WorkSheetNo:1, Append:1};
+			sheet1.LoadExcel(params);
+			break;
+		case "Down2Excel":
+			var downcol = makeHiddenSkipCol(sheet1);
+			var param  = {DownCols:downcol,SheetDesign:1,Merge:1};
+			sheet1.Down2Excel(param);
+			break;
 		}
 	}
 
@@ -209,5 +222,22 @@
 		sheet1.SetCellValue(gPRow, "empNm",returnValue.empNm);
         sheet1.SetCellValue(gPRow, "orgCd",returnValue.orgCd);
         sheet1.SetCellValue(gPRow, "classCd",returnValue.classCd);
+	}
+
+
+	/**
+	 * 엑셀에 로드 된 데이터 검증
+	 * @param result
+	 * @param code
+	 * @param msg
+	 */
+	function sheet3_OnLoadExcel(result, code, msg) {
+		console.log(result, code, msg);
+		var totalCnt = sheet1.RowCount();
+		var newRowCnt = sheet1.RowCount("I");
+		var newRowNum = totalCnt - newRowCnt + 1;
+
+		var _Row = sheet1.GetSelectionRows();
+
 	}
 </script>
