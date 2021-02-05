@@ -79,7 +79,7 @@
 			WHERE A.TENANT_ID = #{tenantId}
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
-			  AND A.APPL_STATUS_CD NOT IN ('11', '22','32','99')
+			  AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')
 			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			ORDER BY sYmd
         ]]>
@@ -160,7 +160,7 @@
 			WHERE A.TENANT_ID = #{tenantId}
 			  AND A.ENTER_CD = #{enterCd}
 			  AND A.APPL_SABUN = #{sabun}
-			  AND A.APPL_STATUS_CD NOT IN ('22','32','99')
+			  AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')
 			  AND (F_WTM_TO_DATE(#{sYmd}, 'YMD') <= F_WTM_TO_DATE(FA.EYMD, 'YMD') AND F_WTM_TO_DATE(FA.SYMD, 'YMD') < F_WTM_TO_DATE(#{eYmd}, 'YMD'))
 			ORDER BY sYmd
         ]]>
@@ -191,7 +191,7 @@
 		   AND A.ENTER_CD = #{enterCd}
 		   AND (A.APPL_SABUN = #{sabun} OR O.SABUN = #{sabun})
 			AND O.YMD = #{ymd}
-			AND A.APPL_STATUS_CD <> '99'
+			AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')
 		UNION ALL
 		SELECT A.TENANT_ID AS tenantId
 		     , A.ENTER_CD AS enterCd
@@ -214,7 +214,7 @@
 		   AND A.ENTER_CD = #{enterCd}
 		   AND (A.APPL_SABUN = #{sabun} OR C.SABUN = #{sabun})
 			AND C.YMD = #{ymd}
-			AND A.APPL_STATUS_CD <> '99'
+			AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')
 		UNION ALL
 		SELECT A.TENANT_ID AS tenantId
 		     , A.ENTER_CD AS enterCd
@@ -243,7 +243,7 @@
 		   AND A.APPL_SABUN = #{sabun}
 		   AND A.APPL_CD = 'SUBS_CHG'
 			AND X.SUB_YMD = #{ymd}
-			AND A.APPL_STATUS_CD <> '99'
+			AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')
 		UNION ALL
 		SELECT C.TENANT_ID AS tenantId
 		     , C.ENTER_CD AS enterCd
@@ -1267,7 +1267,7 @@
 		   AND E.ENTER_CD = A.ENTER_CD
 		   AND E.SABUN = A.APPL_SABUN
 		 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
-		   AND A.APPL_STATUS_CD NOT IN ('11','99')
+		   AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')
 		UNION ALL
     	SELECT C.YMD AS ymd
     	     , F_WTM_DATE_FORMAT(CASE WHEN R.APPR_SDATE IS NOT NULL AND R.APPR_SDATE != '' THEN R.APPR_SDATE ELSE R.PLAN_SDATE END, 'H:I') AS shm
@@ -1340,7 +1340,7 @@
 					AND E.TENANT_ID = A.TENANT_ID
 				   AND E.ENTER_CD = A.ENTER_CD
 				 WHERE E.FLEXIBLE_EMP_ID = #{flexibleEmpId}
-				   AND A.APPL_STATUS_CD NOT IN ('11','99')
+				   AND A.APPL_STATUS_CD NOT IN ('11','22','44','32','99')
 				   AND F_WTM_DATE_FORMAT(O.OT_SDATE, 'YMD') BETWEEN #{sYmd} AND #{eYmd}
 				   AND E.TENANT_ID = #{tenantId}
 				   AND E.ENTER_CD = #{enterCd}

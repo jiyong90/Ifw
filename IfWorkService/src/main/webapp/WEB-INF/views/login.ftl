@@ -45,7 +45,7 @@
 	        <label for="inputEmail" class="sr-only">아이디를 입력해주세요.</label>
 	        <input type="text" id="loginUserId" name="loginUserId" class="form-control" v-model="form['loginUserId']" placeholder="아이디를 입력해주세요." required="" autofocus="">
 	        <label for="loginPassword" class="sr-only">비밀번호를 입력해주세요.</label>
-	        <input type="password" id="loginPassword" name="loginPassword" class="form-control" v-model="form['loginPassword']" placeholder="비밀번호를 입력해주세요." required="">
+	        <input type="password" id="loginPassword" name="loginPassword" class="form-control" v-model="form['loginPassword']" placeholder="비밀번호를 입력해주세요." required="" onkeyup="enterkey()" >
         </template>
         
         <input type="hidden" id="password" name="password" class="form-control" >
@@ -186,6 +186,13 @@
 				</#if>
     	    }
     	});
+
+    	
+    	function enterkey() { 
+    		if (window.event.keyCode == 13) { // 엔터키가 눌렸을 때
+    			$("#lForm").submit();
+    		} 
+    	}
     </script>
 </body>
 </html>
