@@ -1,25 +1,17 @@
 package com.isu.ifw.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jboss.logging.MDC;
+import com.isu.ifw.service.WtmWorkteamEmpService;
+import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.ReturnParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.isu.ifw.service.WtmWorkteamEmpService;
-import com.isu.ifw.util.WtmUtil;
-import com.isu.ifw.vo.ReturnParam;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -62,6 +54,9 @@ public class WtmWorkteamEmpController {
 	public @ResponseBody ReturnParam setWorkteamList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap) throws Exception {
 		
 		ReturnParam rp = new ReturnParam();
+
+		rp.setSuccess("근무조 생성을 요청하였습니다.");
+
 		
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
@@ -80,6 +75,9 @@ public class WtmWorkteamEmpController {
 
 		try {		
 			rp = workteamService.setWorkteamList(tenantId, enterCd, userId, convertMap);
+
+			workteamService.setApply(tenantId, enterCd, userId, (List<Map<String, Object>>) rp.get("returnParamMap"));
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
