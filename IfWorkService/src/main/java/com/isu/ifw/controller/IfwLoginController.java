@@ -1,19 +1,25 @@
 package com.isu.ifw.controller;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.common.entity.CommTenantModule;
+import com.isu.ifw.common.entity.OauthClientToken;
+import com.isu.ifw.common.mapper.CommUserMapper;
+import com.isu.ifw.common.repository.CommTenantModuleRepository;
+import com.isu.ifw.common.repository.OauthClientTokenRepository;
+import com.isu.ifw.common.service.TenantConfigManagerService;
+import com.isu.ifw.entity.WtmEmpHis;
+import com.isu.ifw.mapper.WtmEmpHisMapper;
+import com.isu.ifw.repository.WtmEmpHisRepository;
+import com.isu.ifw.service.LoginService;
+import com.isu.ifw.service.WtmAsyncService;
+import com.isu.ifw.service.WtmEmpMgrService;
+import com.isu.ifw.service.WtmMsgService;
+import com.isu.ifw.util.Aes256;
+import com.isu.ifw.util.CookieUtil;
+import com.isu.ifw.util.WtmUtil;
+import com.isu.ifw.vo.ReturnParam;
+import com.isu.ifw.vo.StringUtil;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -32,35 +38,20 @@ import org.springframework.security.oauth2.common.exceptions.InvalidTokenExcepti
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isu.ifw.common.entity.CommTenantModule;
-import com.isu.ifw.common.entity.OauthClientToken;
-import com.isu.ifw.common.mapper.CommUserMapper;
-import com.isu.ifw.common.repository.CommTenantModuleRepository;
-import com.isu.ifw.common.repository.OauthClientTokenRepository;
-import com.isu.ifw.common.service.TenantConfigManagerService;
-import com.isu.ifw.entity.WtmEmpHis;
-import com.isu.ifw.repository.WtmEmpHisRepository;
-import com.isu.ifw.service.LoginService;
-import com.isu.ifw.service.WtmEmpMgrService;
-import com.isu.ifw.service.WtmMsgService;
-import com.isu.ifw.util.Aes256;
-import com.isu.ifw.util.CookieUtil;
-import com.isu.ifw.util.WtmUtil;
-import com.isu.ifw.vo.ReturnParam;
-import com.isu.ifw.vo.StringUtil;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 public class IfwLoginController {
@@ -106,6 +97,12 @@ public class IfwLoginController {
 	
 	@Autowired
 	OauthClientTokenRepository oauthClientTokenRepo;
+
+	@Autowired
+	WtmEmpHisMapper empHisMapper;
+
+	@Autowired
+	WtmAsyncService wymAsyncService;
    
 	@RequestMapping(value = "/login/jyp/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView jypSsoLogin() {
@@ -224,6 +221,10 @@ public class IfwLoginController {
 		
 	    String tokenUri = tcms.getConfigValue(tenantId, "IFO.TOKEN.URI", true, "");
 	    String redirectUri = tcms.getConfigValue(tenantId, "IFO.REDIRECT.URI", true, "");
+		String redirectUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "")+request.getContextPath()+"/console/"+tsId;
+		if(redirectUrl.startsWith("http://") && redirectUrl.indexOf("localhost") == -1) {
+			redirectUrl = redirectUrl.replace("http://", "https://");
+		}
 		
 		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(); 
 		factory.setReadTimeout(3000); 
@@ -346,7 +347,8 @@ public class IfwLoginController {
 		} catch(Exception e) {
 			e.printStackTrace();
 			try {
-				response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+//				response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+				response.sendRedirect(redirectUrl);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -372,6 +374,11 @@ public class IfwLoginController {
 		
 	    String tokenUri = tcms.getConfigValue(tenantId, "IFO.TOKEN.URI", true, "");
 	    String redirectUri = tcms.getConfigValue(tenantId, "IFO.REDIRECT.URI", true, "");
+
+		String redirectUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "")+request.getContextPath()+"/console/"+tsId;
+		if(redirectUrl.startsWith("http://") && redirectUrl.indexOf("localhost") == -1) {
+			redirectUrl = redirectUrl.replace("http://", "https://");
+		}
 		
 		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(); 
 		factory.setReadTimeout(3000); 
@@ -438,7 +445,7 @@ public class IfwLoginController {
    				System.out.println("header :::::::");
    				while(k.hasMoreElements()) {
    					String key = k.nextElement();
-   					System.out.println(key + " : " + request.getHeader(key));
+   					System.out.println(String.valueOf(key) + " : " + request.getHeader(key));
    				}
    				System.out.println("header ::::::: END");
    				if(1==1) {
@@ -457,8 +464,9 @@ public class IfwLoginController {
    						 */
    				        //String token = JwtUtil.generateToken(signingKey, username);
    				        CookieUtil.create(response, jwtTokenCookieName, accessToken, false, -1, null);
-   				        
-   						response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+
+//						response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+   						response.sendRedirect(redirectUrl);
    						//return;
    					} catch (Exception e1) {
    						// TODO Auto-generated catch block
@@ -504,7 +512,8 @@ public class IfwLoginController {
 		} catch(Exception e) {
 			e.printStackTrace();
 			try {
-				response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+//				response.sendRedirect(request.getContextPath()+"/console/"+tsId);
+				response.sendRedirect(redirectUrl);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -690,7 +699,7 @@ public class IfwLoginController {
 			System.out.println("======================= loginPassword : " + loginPassword);
 			userData = loginService.getUserData(tenantId, loginEnterCd, loginUserId, loginPassword);
 			userData.put("client_id", tsId);
-			rp.put("username", tsId+"@"+loginEnterCd+"@"+loginUserId);
+			rp.put("username", String.valueOf(tsId)+"@"+loginEnterCd+"@"+loginUserId);
 			ObjectMapper mapper = new ObjectMapper();
 			System.out.println("======================= userData : " + mapper.writeValueAsString(userData));
 			
@@ -773,6 +782,32 @@ public class IfwLoginController {
 		}catch(Exception e){
 			e.printStackTrace();
 			rp.setFail("비밀번호 설정 시 오류가 발생했습니다.");
+		}
+		return rp;
+	}
+
+	@RequestMapping(value = {"/login/empResetAsync"}, method = {RequestMethod.GET})
+	@ResponseBody
+	public ReturnParam empReset(@RequestParam(required = true) Long tenantId, @RequestParam(required = true) String enterCd, @RequestParam(required = true) String ymd, HttpServletRequest request) {
+		this.logger.debug("### empResetAsync start");
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+		try {
+			ymd = ymd.replaceAll("-", "");
+			Map<String, Object> map = new HashMap<>();
+			map.put("tenantId", tenantId);
+			map.put("enterCd", enterCd);
+			map.put("statusCd", "AA");
+			map.put("ymd", ymd);
+			ObjectMapper mapper = new ObjectMapper();
+			System.out.println(mapper.writeValueAsString(map));
+			List<WtmEmpHis> empList = this.empHisMapper.getWtmEmpHis(map);
+			System.out.println("empList.size() : " + empList.size());
+			this.logger.debug("empList size : " + empList.size());
+			this.wymAsyncService.asyncFlexibleEmpRest(tenantId, enterCd, ymd, empList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
 		}
 		return rp;
 	}
