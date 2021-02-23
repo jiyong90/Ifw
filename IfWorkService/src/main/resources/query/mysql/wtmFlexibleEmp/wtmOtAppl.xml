@@ -490,4 +490,16 @@
 		   AND F_WTM_DATE_FORMAT(PLAN_EDATE, 'YMDHI') <= #{edate}
 	    ]]>
     </select>
+
+	<select id="getWeekSdateEdate" parameterType="Map" resultType="wtmGeneral">
+        SELECT DD.WEEK_SDATE AS weekSdate
+             , DD.WEEK_EDATE AS weekEdate
+		  FROM (
+				   SELECT SUN_YMD AS WEEK_SDATE
+						, F_WTM_DATE_FORMAT(F_WTM_DATE_ADD(SUN_YMD, 6, 'D'), 'YMD') AS WEEK_EDATE
+						, DAY_NM
+					 FROM WTM_DAY_MGR D) DD
+		 WHERE #{ymd} BETWEEN DD.WEEK_SDATE AND DD.WEEK_EDATE
+		   AND DD.DAY_NM = (SELECT INFO_VALUE FROM WTM_PROPERTIE WHERE TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND INFO_KEY = 'OPTION_FIRSTDAY_OF_WEEK')
+    </select>
 </mapper>
