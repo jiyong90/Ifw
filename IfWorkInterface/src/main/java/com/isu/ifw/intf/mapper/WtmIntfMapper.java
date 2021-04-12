@@ -73,4 +73,9 @@ public interface WtmIntfMapper {
 	 **/
 	public List<Map<String, Object>> getWorkOrgCodeForHR(Map<String, Object> paramMap);
 
+	/**
+	 * photo
+	 **/
+	public List<Map<String, Object>> getEmpPhoto(Map<String, Object> paramMap);
+	
 }
