@@ -1,26 +1,19 @@
 package com.isu.ifw.intf.service;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isu.ifw.intf.mapper.WtmInterfaceMapper;
+import com.isu.ifw.intf.mapper.WtmIntfMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isu.ifw.intf.mapper.WtmInterfaceMapper;
-import com.isu.ifw.intf.mapper.WtmIntfMapper;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class WtmInterfaceServiceImpl implements WtmInterfaceService {
@@ -417,7 +410,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		List<Map<String, Object>> ifList = null;
         try {
         	//회사코드 조회
-        	enterCd = getEnterCd(tenantId);otApplMgr
+        	enterCd = getEnterCd(tenantId);
         	// if 데이터 조회
         	Map<String, Object> paramMap = new HashMap<>();
         	paramMap.put("enterCd", enterCd);
