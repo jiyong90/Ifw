@@ -105,12 +105,19 @@ public class IfwLoginController {
 	WtmAsyncService wymAsyncService;
    
 	@RequestMapping(value = "/login/jyp/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ModelAndView jypSsoLogin() {
+	public ModelAndView jypSsoLogin(HttpServletRequest request, HttpServletResponse response) {
+
+		String username = "20110201"; // 고은해 근무담당자
+
+		if( request.getParameter("username") != null && !request.getParameter("username").isEmpty() && !request.getParameter("username").toString().equals("")) {
+			username = request.getParameter("username").toString();
+		}
+
 		ModelAndView mv = new ModelAndView("ssoLogin");
 		Map<String, Object>	requestMap = new HashMap<>();
 		requestMap.put("clientId", "hondasso");
-		requestMap.put("username", "honda@1000@13080103");
-		requestMap.put("loginUserId", "13080103");
+		requestMap.put("username", "honda@1000@"+username);
+		requestMap.put("loginUserId", username);
 		requestMap.put("loginEnterCd", "1000");
 		requestMap.put("password", "ssoCertificate");
 		 ObjectMapper mapper = new ObjectMapper();
@@ -120,10 +127,76 @@ public class IfwLoginController {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+
         mv.addObject("userAuthorizationUri", "https://cloudhr.pearbranch.com/ifa/login/hondasso/authorize");
 		return mv;
 	}
-	
+
+	@RequestMapping(value = "/login/jyp/sso2", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ModelAndView ychSsoLogin(HttpServletRequest request, HttpServletResponse response) {
+
+		String username = "2014850"; // 김민주 근무담당자
+
+		if( request.getParameter("username") != null && !request.getParameter("username").isEmpty() && !request.getParameter("username").toString().equals("")) {
+			username = request.getParameter("username").toString();
+		}
+
+		ModelAndView mv = new ModelAndView("ssoLogin");
+		Map<String, Object>	requestMap = new HashMap<>();
+		requestMap.put("clientId", "hdngvsso");
+		requestMap.put("username", "hdngv@1000@"+username);
+		requestMap.put("loginUserId", username);
+		requestMap.put("loginEnterCd", "1000");
+		requestMap.put("password", "ssoCertificate");
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mv.addObject("loginParam", mapper.writeValueAsString(requestMap));
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		mv.addObject("userAuthorizationUri", "https://cloudhr.pearbranch.com/ifa/login/hdngvsso/authorize");
+		return mv;
+	}
+	@RequestMapping(value = "/login/tenantId/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ModelAndView jypSsoLogin2(HttpServletRequest request, HttpServletResponse response) {
+
+		String username = "";
+		String clientId = "";
+		String client = "";
+		String enterCd = "";
+		String url = "https://cloudhr.pearbranch.com/ifa/login/hondasso/authorize";
+
+		if( request.getParameter("username") != null && !request.getParameter("username").isEmpty() && !request.getParameter("username").toString().equals("")) {
+			username = request.getParameter("username").toString();
+		}
+		if( request.getParameter("clientId") != null && !request.getParameter("clientId").isEmpty() && !request.getParameter("clientId").toString().equals("")) {
+			clientId = request.getParameter("clientId").toString();
+		}
+		if( request.getParameter("enterCd") != null && !request.getParameter("enterCd").isEmpty() && !request.getParameter("enterCd").toString().equals("")) {
+			enterCd = request.getParameter("enterCd").toString();
+		}
+		client = clientId.replace("sso", "");
+
+		ModelAndView mv = new ModelAndView("ssoLogin");
+		Map<String, Object>	requestMap = new HashMap<>();
+		requestMap.put("clientId", clientId); // "hdngvsso"
+		requestMap.put("username", client+"@"+enterCd+"@"+username);
+		requestMap.put("loginUserId", username);
+		requestMap.put("loginEnterCd", enterCd);
+		requestMap.put("password", "ssoCertificate");
+		url = "https://cloudhr.pearbranch.com/ifa/login/"+clientId+"/authorize";
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mv.addObject("loginParam", mapper.writeValueAsString(requestMap));
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		mv.addObject("userAuthorizationUri", url);
+		return mv;
+	}
 	
     @RequestMapping(value = "/login/{tsId}/sso", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView ssoLogin(@PathVariable String tsId,
