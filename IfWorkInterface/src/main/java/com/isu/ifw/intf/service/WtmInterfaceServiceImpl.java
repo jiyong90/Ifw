@@ -52,6 +52,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	private String hrOrgLevelUrl;
 	@Value("${ifw.hr-orgconc-post}")
 	private String hrOrgConcUrl;
+	@Value("${ifw.hr-empphoto-post}")
+	private String hrEmpPhotoUrl;
 	
 	@Autowired
 	WtmInterfaceMapper wtmInterfaceMapper;
@@ -479,10 +481,44 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	}else if(T.equalsIgnoreCase("ORGCONC")) {
         		dataList = intfMapper.getWtmOrgConc(paramMap);
         		url = hrOrgConcUrl;
+        	}else if(T.equalsIgnoreCase("EMPPHOTO")) {
+        		dataList = intfMapper.getEmpPhoto(paramMap);
+        		url = hrEmpPhotoUrl;
+        		
+        		Map<String, Object> eParam = new HashMap<>();
+	        	
+        		
+        		int cutSize = 10;
+        		
+        		if(dataList.size() <= cutSize) {
+        			eParam.put("data", dataList);
+        			exchangeService.exchange(url, HttpMethod.POST, null, eParam);
+        			
+        		} else {
+        			int totalSize = dataList.size();
+    				int loopCnt = 1;
+    				int startIdx = 0;
+    				boolean isLoop = true;
+    				
+    				while(isLoop) {
+    					int sendIdx = cutSize * loopCnt;
+    					if(sendIdx > totalSize) {
+    						isLoop = false;
+    						sendIdx = totalSize;
+    					}
+    					List<Map<String, Object>> targetList = dataList.subList(startIdx, sendIdx);
+    					eParam.put("data", targetList);
+    					exchangeService.exchange(url, HttpMethod.POST, null, eParam);
+    					
+    					startIdx = sendIdx;
+    					loopCnt++;
+    				}
+        		}
+        		
         	}else {
         		dataList = null;
         	}
-        	if(dataList != null) {
+        	if(dataList != null &&  !T.equalsIgnoreCase("EMPPHOTO")) {
 	        	Map<String, Object> eParam = new HashMap<>();
 	        	eParam.put("data", dataList);
 	    		System.out.println("================================");

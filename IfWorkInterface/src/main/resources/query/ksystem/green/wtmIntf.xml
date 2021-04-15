@@ -248,5 +248,17 @@
 				)
 		]]>
 	</insert>
+	
+	<select id="getEmpPhoto" parameterType="map" resultType="hashmap">
+		<![CDATA[ 
+			SELECT EmpId, Photo 
+			FROM _THRBasEmpPhoto A
+				JOIN KPXERP_VDAEmpInfo_ISU B
+					ON A.CompanySeq = B.CompanySeq
+					AND A.EmpSeq = B.EmpSeq
+			WHERE CONVERT(CHAR(8), GETDATE(), 12) BETWEEN EntDate And RetireDate 
+			  AND RTRIM(LTRIM(ISNULL(Photo,''))) <> ''
+		]]>
+	</select>
 
 </mapper>

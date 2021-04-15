@@ -91,19 +91,22 @@ ifw:
   username: korgc@##1##@##2##
   url : https://cloudhr.pearbranch.com
   #HR 인터페이스 (운영)
-  #hr-code-post: http://118.217.224.170/interface/korgInf/code_interface.jsp
-  #hr-emp-post: http://118.217.224.170/interface/korgInf/basicInfo_interface.jsp
-  #hr-appoint-post: http://118.217.224.170/interface/korgInf/appoint_interface.jsp
-  #hr-org-post: http://118.217.224.170/interface/korgInf/orgInfo_interface.jsp
-  #hr-orglevel-post: http://118.217.224.170/interface/korgInf/orgLevelInfo_interface.jsp
-  #hr-orgconc-post: http://118.217.224.170/interface/korgInf/orgConc_interface.jsp
+  hr-code-post: https://optihr.servicezone.co.kr/interface/korgInf/code_interface.jsp
+  hr-emp-post: https://optihr.servicezone.co.kr/interface/korgInf/basicInfo_interface.jsp
+  hr-empaddr-post: https://optihr.servicezone.co.kr/interface/korgInf/basicEtcInfo_interface.jsp
+  hr-appoint-post: https://optihr.servicezone.co.kr/interface/korgInf/appoint_interface.jsp
+  hr-org-post: https://optihr.servicezone.co.kr/interface/korgInf/orgInfo_interface.jsp
+  hr-orglevel-post: https://optihr.servicezone.co.kr/interface/korgInf/orgLevelInfo_interface.jsp
+  hr-orgconc-post: https://optihr.servicezone.co.kr/interface/korgInf/orgConc_interface.jsp
+  #hr-empphoto-post: https://optihr.servicezone.co.kr/interface/korgInf/empphoto_interface.jsp
   #HR 인터페이스 (개발)
-  hr-code-post: https://isuhrd.servicezone.co.kr/interface/korgInf/code_interface.jsp
-  hr-emp-post: https://isuhrd.servicezone.co.kr/interface/korgInf/basicInfo_interface.jsp
-  hr-appoint-post: https://isuhrd.servicezone.co.kr/interface/korgInf/appoint_interface.jsp
-  hr-org-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgInfo_interface.jsp
-  hr-orglevel-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgLevelInfo_interface.jsp
-  hr-orgconc-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgConc_interface.jsp
+  #hr-code-post: https://isuhrd.servicezone.co.kr/interface/korgInf/code_interface.jsp
+  #hr-emp-post: https://isuhrd.servicezone.co.kr/interface/korgInf/basicInfo_interface.jsp
+  #hr-appoint-post: https://isuhrd.servicezone.co.kr/interface/korgInf/appoint_interface.jsp
+  #hr-org-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgInfo_interface.jsp
+  #hr-orglevel-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgLevelInfo_interface.jsp
+  #hr-orgconc-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgConc_interface.jsp
+  hr-empphoto-post: https://isuhrd.servicezone.co.kr/interface/korgInf/empphoto_interface.jsp
  
 dzGateway:
   gateway-url: 
@@ -216,10 +219,12 @@ ifw:
   #HR 인터페이스(더존은 사용안함)
   hr-code-post: 
   hr-emp-post: 
+  hr-empaddr-post: 
   hr-appoint-post: 
   hr-org-post: 
   hr-orglevel-post: 
   hr-orgconc-post: 
+  hr-empphoto-post:
  
 dzGateway:
   gateway-url: http://10.249.92.147:85/ErpuMobileGate/_gateway/
