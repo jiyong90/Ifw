@@ -58,6 +58,7 @@
 		      AND X.ENTER_CD = H.ENTER_CD
 		      AND X.ORG_CD = H.ORG_CD
 		      AND H.LEADER_YN = 'Y'
+		      AND H.STATUS_CD = 'AA'
 		      AND #{d} BETWEEN H.SYMD AND H.EYMD
 		      LEFT OUTER JOIN WTM_ORG_CONC O
 		       ON X.TENANT_ID = O.TENANT_ID

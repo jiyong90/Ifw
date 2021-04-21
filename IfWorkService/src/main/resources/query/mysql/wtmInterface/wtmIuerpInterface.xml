@@ -341,9 +341,9 @@
 		   SET C.TAA_NM = I.GNT_NM
 			  , C.TAA_TYPE_CD = I.GNT_GUBUN_CD
 		     , C.HOL_INCL_YN = I.HOL_INCL_YN
-		     , C.REQUEST_TYPE_CD = I.REQ_USE_TYPE
-		     , C.WORK_YN = I.WORK_YN
-		     , C.PAY_YN = I.PAY_YN
+-- 		     , C.REQUEST_TYPE_CD = I.REQ_USE_TYPE
+-- 		     , C.WORK_YN = I.WORK_YN
+-- 		     , C.PAY_YN = I.PAY_YN
 		     , C.UPDATE_DATE = NOW()
 		     , C.UPDATE_ID = #{updateId}
 		 WHERE C.TENANT_ID = ${tenantId} 
@@ -391,8 +391,8 @@
 			  , C.TAA_TYPE_CD = I.GNT_GUBUN_CD
 		     , C.HOL_INCL_YN = I.HOL_INCL_YN
 		     -- , C.REQUEST_TYPE_CD = I.REQ_USE_TYPE
-		     , C.WORK_YN = I.WORK_YN
-		     , C.PAY_YN = I.PAY_YN
+-- 		     , C.WORK_YN = I.WORK_YN
+-- 		     , C.PAY_YN = I.PAY_YN
 		     , C.UPDATE_DATE = NOW()
 		     , C.UPDATE_ID = #{updateId}
 		 WHERE C.TENANT_ID = ${tenantId} 

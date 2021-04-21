@@ -477,7 +477,7 @@
 	         , SABUN
 	         , NOW()
 	         , #{userId}
-	         , APPLY_YN
+	         , 'N'
 	      FROM WTM_FLEXIBLE_APPLY_EMP_TEMP
 	     WHERE FLEXIBLE_APPLY_ID = #{copyApplyId}
 	</insert>
@@ -490,7 +490,7 @@
 		where
 			TENANT_ID = #{tenantId}
 			and ENTER_CD = #{enterCd}
-			and WORK_TYPE_CD != 'BASE'
+		    and WORK_TYPE_CD NOT IN ( 'BASE', 'WORKTEAM')
 			and(
 				SYMD BETWEEN #{symd} AND #{eymd}
 				or EYMD BETWEEN #{symd} AND #{eymd}
