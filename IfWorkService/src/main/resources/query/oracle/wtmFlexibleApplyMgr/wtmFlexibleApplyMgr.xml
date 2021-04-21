@@ -85,6 +85,62 @@
 			 WHERE A.FLEXIBLE_APPLY_ID = #{flexibleApplyId}
         ]]>
     </select>
+
+	<select id="getApplyConfirmCancelList" parameterType="map" resultType="wtmGeneral">
+		<![CDATA[
+			select
+				B.FLEXIBLE_EMP_ID,
+				B.TENANT_ID,
+				B.ENTER_CD ,
+				B.FLEXIBLE_STD_MGR_ID,
+				B.SABUN ,
+				B.SYMD,
+				B.EYMD,
+				B.WORK_TYPE_CD,
+				B.WORK_MINUTE,
+				B.OT_MINUTE,
+				B.FLEXIBLE_NM,
+				B.NOTE,
+				B.UPDATE_DATE,
+				B.UPDATE_ID
+			from
+				(
+					SELECT
+						DISTINCT A.USE_SYMD,
+						A.USE_EYMD,
+						B.SABUN,
+						C.WORK_TYPE_CD,
+						A.FLEXIBLE_APPLY_ID,
+						A.FLEXIBLE_STD_MGR_ID,
+						A.APPLY_NM,
+						A.TENANT_ID,
+						A.ENTER_CD,
+						A.NOTE,
+						B.FLEXIBLE_APPLY_TEMP_ID
+					FROM
+						WTM_FLEXIBLE_APPLY A
+					INNER JOIN WTM_FLEXIBLE_APPLY_EMP_TEMP B ON
+						A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+						AND B.APPLY_YN = 'Y'
+					INNER JOIN WTM_FLEXIBLE_STD_MGR C ON
+						A.FLEXIBLE_STD_MGR_ID = C.FLEXIBLE_STD_MGR_ID
+					WHERE
+						A.FLEXIBLE_APPLY_ID = #{flexibleApplyId}
+				) X
+			INNER JOIN WTM_FLEXIBLE_EMP B ON
+				X.TENANT_ID = B.TENANT_ID
+				and X.ENTER_CD = B.ENTER_CD
+				and X.FLEXIBLE_STD_MGR_ID = B.FLEXIBLE_STD_MGR_ID
+				and X.USE_EYMD >= B.SYMD
+				and X.USE_SYMD <= B.EYMD
+				and X.SABUN = B.SABUN
+				and B.SYMD <= #{eymd}
+				and B.EYMD >= #{symd}
+		 ]]>
+		<if test="sabun!=null">
+			and X.SABUN = #{sabun}
+		</if>
+	</select>
     
     <insert id="insertApplyEmp" parameterType="map" >
     	INSERT INTO WTM_FLEXIBLE_EMP (TENANT_ID, ENTER_CD, FLEXIBLE_STD_MGR_ID, SABUN, SYMD, EYMD, WORK_TYPE_CD, FLEXIBLE_NM, NOTE, UPDATE_DATE, UPDATE_ID)
@@ -255,6 +311,7 @@
 							 INNER JOIN WTM_FLEXIBLE_APPLY_GROUP B
 							    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
 							 WHERE A.FLEXIBLE_APPLY_ID = ${flexibleApplyId}
+							   AND NVL(B.WORKTEAM_CD, '') = ''
 							) BB
 		    ON AA.TENANT_ID = BB.TENANT_ID
 		   AND AA.ENTER_CD = BB.ENTER_CD
@@ -265,8 +322,24 @@
 			AND (BB.DUTY_CD IS NULL OR BB.DUTY_CD = '' OR AA.DUTY_CD = BB.DUTY_CD)
 			AND (BB.POS_CD IS NULL OR BB.POS_CD = '' OR AA.POS_CD = BB.POS_CD)
 			AND (BB.CLASS_CD IS NULL OR BB.CLASS_CD = '' OR AA.CLASS_CD = BB.CLASS_CD)
-		UNION ALL
+		UNION
 		SELECT A.FLEXIBLE_APPLY_ID, A.TENANT_ID, A.ENTER_CD, B.SABUN, SYSDATE, #{userId}
+		  FROM WTM_WORKTEAM_MGR A
+		 INNER JOIN WTM_WORKTEAM_EMP B
+		    ON A.WORKTEAM_MGR_ID = B.WORKTEAM_MGR_ID
+		 INNER JOIN (SELECT A.FLEXIBLE_APPLY_ID, A.TENANT_ID, A.ENTER_CD, A.USE_SYMD, B.ORG_CD, B.JOB_CD, B.DUTY_CD, B.POS_CD, B.CLASS_CD, B.WORKTEAM_CD
+						  FROM WTM_FLEXIBLE_APPLY A
+						 INNER JOIN WTM_FLEXIBLE_APPLY_GROUP B
+						    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+						 WHERE A.FLEXIBLE_APPLY_ID = ${flexibleApplyId}
+						   AND NVL(B.WORKTEAM_CD, '') != ''
+						) C
+		    ON A.TENANT_ID = C.TENANT_ID
+		   AND A.ENTER_CD = C.ENTER_CD
+		   AND A.WORKTEAM_MGR_ID = C.WORKTEAM_CD
+		   AND C.USE_SYMD BETWEEN B.SYMD AND B.EYMD
+		UNION
+		SELECT A.FLEXIBLE_APPLY_ID, A.TENANT_ID, A.ENTER_CD, B.SABUN, NOW(), #{userId}
 		  FROM WTM_FLEXIBLE_APPLY A
 		 INNER JOIN WTM_FLEXIBLE_APPLY_EMP B
 		    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
@@ -292,8 +365,29 @@
 			 WHERE A.FLEXIBLE_APPLY_ID =  #{flexibleApplyId}
         ]]>
     </select>
-    
-    <update id="updateFlexibleTaaReset" parameterType="Long">
+
+	<update id="updateFlexibleEmpTemp" parameterType="Long">
+		UPDATE WTM_FLEXIBLE_APPLY_EMP_TEMP SET
+			APPLY_YN = 'Y'
+ 		WHERE FLEXIBLE_APPLY_TEMP_ID = #{flexibleApplyTempId}
+	</update>
+
+
+	<update id="updateFlexibleApplyAll" parameterType="Long">
+	  	UPDATE WTM_FLEXIBLE_APPLY X
+			JOIN (
+			SELECT A.FLEXIBLE_APPLY_ID, CASE WHEN B.ALL_CNT = B.APPLY_CNT THEN 'Y' ELSE 'N' END AS APPLY_YN
+			  FROM WTM_FLEXIBLE_APPLY A
+			 INNER JOIN (SELECT MAX(FLEXIBLE_APPLY_ID) AS FLEXIBLE_APPLY_ID, SUM(1) AS ALL_CNT, SUM(CASE WHEN NVL(APPLY_YN, 'N') = 'Y' THEN 1 ELSE 0 END) AS APPLY_CNT
+			              FROM WTM_FLEXIBLE_APPLY_EMP_TEMP
+			             WHERE FLEXIBLE_APPLY_ID = #{flexibleApplyId}) B
+			    ON A.FLEXIBLE_APPLY_ID = B.FLEXIBLE_APPLY_ID
+			)XX
+			ON X.FLEXIBLE_APPLY_ID = XX.FLEXIBLE_APPLY_ID
+			SET X.APPLY_YN = XX.APPLY_YN
+	</update>
+
+	<update id="updateFlexibleTaaReset" parameterType="Long">
 		<![CDATA[
 	  	UPDATE WTM_APPL X
 			JOIN (
@@ -322,4 +416,86 @@
 			  , X.UPDATE_ID = 'FLEX_RE'
 		]]>
 	</update>
+
+	<insert id="copyWtmApplyGroup" parameterType="map">
+		INSERT INTO WTM_FLEXIBLE_APPLY_GROUP
+			 ( FLEXIBLE_APPLY_ID
+			 , ORG_CD
+			 , JOB_CD
+			 , DUTY_CD
+			 , POS_CD
+			 , CLASS_CD
+			 , WORKTEAM_CD
+			 , NOTE
+			 , UPDATE_DATE
+			 , UPDATE_ID )
+		SELECT #{flexibleApplyId}
+		     , ORG_CD
+		     , JOB_CD
+		     , DUTY_CD
+		     , POS_CD
+		     , CLASS_CD
+		     , WORKTEAM_CD
+		     , #{note}
+		     , SYSDATE
+		     , #{userId}
+		FROM WTM_FLEXIBLE_APPLY_GROUP
+		WHERE FLEXIBLE_APPLY_ID = #{copyApplyId}
+	</insert>
+
+	<insert id="copyWtmApplyEmp" parameterType="map">
+		INSERT INTO WTM_FLEXIBLE_APPLY_EMP
+		 	 ( FLEXIBLE_APPLY_ID
+			 , SABUN
+			 , NOTE
+			 , UPDATE_DATE
+			 , UPDATE_ID)
+	    SELECT #{flexibleApplyId}
+		     , SABUN
+		     , NOTE
+		     , SYSDATE
+		     , #{userId}
+		  FROM WTM_FLEXIBLE_APPLY_EMP
+		 WHERE FLEXIBLE_APPLY_ID = #{copyApplyId}
+	</insert>
+
+	<insert id="copyWtmApplyEmpTemp" parameterType="map">
+		INSERT INTO WTM_FLEXIBLE_APPLY_EMP_TEMP
+			 ( FLEXIBLE_APPLY_ID
+			 , TENANT_ID
+		     , ENTER_CD
+		     , SABUN
+			 , UPDATE_DATE
+			 , UPDATE_ID
+			 , APPLY_YN )
+	    SELECT #{flexibleApplyId}
+	         , TENANT_ID
+	         , ENTER_CD
+	         , SABUN
+	         , SYSDATE
+	         , #{userId}
+	         , 'N'
+	      FROM WTM_FLEXIBLE_APPLY_EMP_TEMP
+	     WHERE FLEXIBLE_APPLY_ID = #{copyApplyId}
+	</insert>
+
+	<select id="getExistCountBySymdAndEymd" parameterType="map" resultType="int">
+		select
+		COUNT( 1 )
+		from
+		WTM_FLEXIBLE_EMP
+		where
+		TENANT_ID = #{tenantId}
+		and ENTER_CD = #{enterCd}
+		and WORK_TYPE_CD NOT IN ( 'BASE', 'WORKTEAM')
+		and(
+		SYMD BETWEEN #{symd} AND #{eymd}
+		or EYMD BETWEEN #{symd} AND #{eymd}
+		)
+		AND SABUN IN
+		<foreach collection="searchList" item="item" open="(" close=")" separator=", ">
+			#{item.sabun}
+		</foreach>
+
+	</select>
 </mapper>
