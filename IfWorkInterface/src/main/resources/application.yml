@@ -98,7 +98,7 @@ ifw:
   hr-org-post: https://optihr.servicezone.co.kr/interface/korgInf/orgInfo_interface.jsp
   hr-orglevel-post: https://optihr.servicezone.co.kr/interface/korgInf/orgLevelInfo_interface.jsp
   hr-orgconc-post: https://optihr.servicezone.co.kr/interface/korgInf/orgConc_interface.jsp
-  #hr-empphoto-post: https://optihr.servicezone.co.kr/interface/korgInf/empphoto_interface.jsp
+  hr-empphoto-post: https://optihr.servicezone.co.kr/interface/korgInf/empphoto_interface.jsp
   #HR 인터페이스 (개발)
   #hr-code-post: https://isuhrd.servicezone.co.kr/interface/korgInf/code_interface.jsp
   #hr-emp-post: https://isuhrd.servicezone.co.kr/interface/korgInf/basicInfo_interface.jsp
@@ -106,7 +106,7 @@ ifw:
   #hr-org-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgInfo_interface.jsp
   #hr-orglevel-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgLevelInfo_interface.jsp
   #hr-orgconc-post: https://isuhrd.servicezone.co.kr/interface/korgInf/orgConc_interface.jsp
-  hr-empphoto-post: https://isuhrd.servicezone.co.kr/interface/korgInf/empphoto_interface.jsp
+  #hr-empphoto-post: https://isuhrd.servicezone.co.kr/interface/korgInf/empphoto_interface.jsp
  
 dzGateway:
   gateway-url: 
