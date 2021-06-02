@@ -1,28 +1,16 @@
 package com.isu.ifw.controller;
 
-import java.security.InvalidParameterException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.isu.ifw.service.WtmWorktimeService;
+import com.isu.ifw.vo.ReturnParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.isu.ifw.service.WtmWorktimeService;
-import com.isu.ifw.vo.ReturnParam;
+import javax.servlet.http.HttpServletRequest;
+import java.security.InvalidParameterException;
+import java.util.*;
 
 @RestController
 public class WtmWorktimeController {
@@ -232,6 +220,59 @@ public class WtmWorktimeController {
 		if(!paramKeySet.containsAll(params))
 			throw new InvalidParameterException("required parameter is not found.");
 		
+	}
+
+
+	@RequestMapping(value="/worktime/checkAll/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getWorkTimeCheckAllList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+
+		logger.debug("getWorkTimeCheckAllList Start " + paramMap.toString());
+		rp.setSuccess("");
+
+		List<Map<String, Object>> workTimeCheckAllList = null;
+		try {
+			workTimeCheckAllList = worktimeService.getWorktimeCheckAllList(tenantId, enterCd, sabun, paramMap);
+
+			rp.put("DATA", workTimeCheckAllList);
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		return rp;
+	}
+
+	@RequestMapping(value="/worktime/workCalendarList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getWorkCalendarList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap ) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String sabun = sessionData.get("empNo").toString();
+
+		paramMap.put("searchKeyword", sabun);
+
+		logger.debug("workCalendarList Start " + paramMap.toString());
+		rp.setSuccess("");
+
+		List<Map<String, Object>> workTimeCheckAllList = null;
+		try {
+			if(sabun != null && !"".equals(sabun)) {
+				workTimeCheckAllList = worktimeService.getWorktimeCheckAllList(tenantId, enterCd, sabun, paramMap);
+				rp.put("DATA", workTimeCheckAllList);
+			}
+
+		} catch(Exception e) {
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+		return rp;
 	}
 	
 }

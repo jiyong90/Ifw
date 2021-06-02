@@ -1,30 +1,20 @@
 package com.isu.ifw.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jboss.logging.MDC;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.isu.ifw.service.WtmFlexibleEmpService;
 import com.isu.ifw.service.WtmInOutChangeService;
 import com.isu.ifw.service.WtmInoutService;
 import com.isu.ifw.util.WtmUtil;
 import com.isu.ifw.vo.ReturnParam;
+import org.jboss.logging.MDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping(value="/inOutChange")
@@ -82,18 +72,20 @@ public class WtmInOutChangeController {
 						saveMap.put("stdYmd", l.get("ymd").toString());
 						saveMap.put("userId", userId);
 						saveMap.put("entryDeleteYn", l.get("entryDeleteYn").toString());
-						
+						saveMap.put("paramSdate", l.get("ymd").toString());
+						saveMap.put("paramEdate", l.get("ymd").toString());
+
 						//근무일을 시작일 종료일로 지정
 						saveMap.put("symd", l.get("ymd").toString());
 						saveMap.put("eymd", l.get("ymd").toString());
 						// 저장하자
 						retMap = inOutChangeService.setInOutChange(saveMap);
 						// 이력저장, 캘린더 수정했으니깐 계산을 다시하자 출근/퇴근이 전부 있어야 호출할수있음.
-						if("Y".equals(l.get("entryDeleteYn").toString())) {
-							flexibleEmpService.calcApprDayInfo1(tenantId, enterCd, l.get("sabun").toString(), l.get("ymd").toString());
-							flexibleEmpService.createWorkTermtimeByEmployee(tenantId, enterCd, l.get("sabun").toString(), saveMap, userId);
+//						if("Y".equals(l.get("entryDeleteYn").toString())) {
+//							flexibleEmpService.calcApprDayInfo(tenantId, enterCd, l.get("ymd").toString(), l.get("ymd").toString(), l.get("sabun").toString());
+//							flexibleEmpService.createWorkTermtimeByEmployee(tenantId, enterCd, l.get("sabun").toString(), saveMap, userId);
+//						}
 
-						}
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 						Date today = new Date();
 						String ymd = sdf.format(today);
@@ -101,7 +93,8 @@ public class WtmInOutChangeController {
 						   || (ymd.equals(l.get("ymd").toString()) && (!"".equals(l.get("chgSdate").toString()) || !"".equals(l.get("entrySdate").toString())) && (!"".equals(l.get("chgEdate").toString()) || !"".equals(l.get("entryEdate").toString())))	// 오늘인데 타각이 모두 있을경우 
 						) {
 							logger.debug("inoutChange s" + paramMap.toString());
-							inoutService.inoutPostProcess(saveMap);
+//							inoutService.inoutPostProcess(saveMap);
+							flexibleEmpService.finishDay(saveMap, tenantId, enterCd, empNo, userId);
 						}
 
 					} catch(Exception e) {

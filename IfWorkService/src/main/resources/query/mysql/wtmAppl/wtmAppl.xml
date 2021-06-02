@@ -94,6 +94,7 @@
 			     , L.APPR_STATUS_CD
 			     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPR_STATUS_CD', L.APPR_STATUS_CD, A.APPL_YMD) AS APPR_STATUS_NM
 			     , L.APPR_OPINION
+                 , DATE_FORMAT(L.APPR_DATE, '%Y-%m-%d %H:%i:%s') AS APPR_YMDHIS
 			  FROM WTM_APPL_LINE L
 			  JOIN WTM_APPL A
 			    ON L.APPL_ID = A.APPL_ID
@@ -551,5 +552,682 @@
 			   AND L.APPL_CODE_ID = ${applCodeId}
 		]]>
     </select>
-    
+
+
+    <select id="getApprovalApplList01" parameterType="map" resultType="hashmap">
+        SELECT T.applId
+             , T.applCd
+             , T.applSabun
+             , T.applNm
+             , T.empNm
+             , T.applYmd
+             , T.applInSabun
+             , T.applStatusCd
+             , T.applStatusNm
+             , T.ymd
+             , T.symd
+             , T.eymd
+             , T.reason
+             , F_WTM_GET_ORG_NM(T2.TENANT_ID, T2.ENTER_CD, T2.ORG_CD, DATE_FORMAT(NOW(), '%Y%m%d')) AS orgNm
+             , 0 AS applDetail
+             , CONCAT(T.enterCd, '@', T.applCd, '@', T.applId, '@', '01', '@', T.applSabun, '@WTM') AS applKey
+          FROM
+                (SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , B.YMD AS symd
+                     , B.YMD AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_ENTRY_APPL B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_SABUN = #{empNo}
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.OT_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.OT_EDATE,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN (SELECT DISTINCT  APPL_ID, OT_SDATE, OT_EDATE, REASON FROM WTM_OT_APPL ) B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_SABUN = #{empNo}
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.PLAN_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.PLAN_EDATE,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_SABUN = #{empNo}
+                 UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , C.SYMD AS symd
+                     , C.EYMD AS eymd
+                     , C.NOTE AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_TAA_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_TAA_APPL_DET C
+                               ON B.TAA_APPL_ID = C.TAA_APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_SABUN = #{empNo}
+                   AND A.APPL_CD IN ('REGA', 'ANNUAL')
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.SUBS_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.SUBS_EDATE,'YMD') AS eymd
+                     , C.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_OT_SUBS_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_OT_APPL C
+                               ON B.OT_APPL_ID = C.OT_APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_SABUN = #{empNo}
+                   AND A.APPL_CD = 'SUBS_CHG'
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.SYMD,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.EYMD,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_FLEXIBLE_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                  WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_SABUN = #{empNo}
+                ) T LEFT OUTER JOIN WTM_EMP_HIS T2
+                                 ON T.tenantId = T2.TENANT_ID
+                                AND T.enterCd = T2.ENTER_CD
+                                AND T.applSabun = T2.SABUN
+                                AND F_WTM_DATE_FORMAT(NOW(),'YMD') BETWEEN T2.SYMD AND T2.EYMD
+    WHERE 1=1
+        <if test="sYmd != null and !sYmd.equals('')">
+            <![CDATA[
+        AND T.applYmd >= #{sYmd}
+        ]]>
+        </if>
+        <if test="eYmd != null and !eYmd.equals('')">
+            <![CDATA[
+        AND T.applYmd <= #{eYmd}
+        ]]>
+        </if>
+        <if test="searchKeyword!=null and !searchKeyword.equals('')">
+            AND T.applSabun LIKE CONCAT('%', #{searchKeyword}, '%') OR T2.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+        </if>
+    ORDER BY T.ymd DESC, T.applId DESC
+    </select>
+
+
+    <select id="getApprovalApplList02" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT T.applId
+             , T.applCd
+             , T.applSabun
+             , T.applNm
+             , T.empNm
+             , T.applYmd
+             , T.applInSabun
+             , T.applStatusCd
+             , T.applStatusNm
+             , T.ymd
+             , T.symd
+             , T.eymd
+             , T.reason
+             , F_WTM_GET_ORG_NM(T2.TENANT_ID, T2.ENTER_CD, T2.ORG_CD, DATE_FORMAT(NOW(), '%Y%m%d')) AS orgNm
+             , 0 AS applDetail
+             , T.apprSeq
+             , T.apprSabun
+             , T.apprDate
+             , T.apprStatusCd
+             , T.apprTypeCd
+             , T.apprOpinion
+             , CONCAT(T.enterCd, '@', T.applCd, '@', T.applId, '@', '02', '@', T.applSabun, '@WTM') AS applKey
+             ,CONCAT('<a class="button">승인</a>') AS applyImg
+             ,CONCAT('<a class="basic">반려</a>') AS cancelImg
+        ]]>
+          FROM
+                (SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , B.YMD AS symd
+                     , B.YMD AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                     , L.APPR_SEQ AS apprSeq
+                     , L.APPR_SABUN AS apprSabun
+                     , L.APPR_DATE AS apprDate
+                     , L.APPR_STATUS_CD AS apprStatusCd
+                     , L.APPR_TYPE_CD AS apprTypeCd
+                     , L.APPR_OPINION AS apprOpinion
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_ENTRY_APPL B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                       INNER JOIN WTM_APPL_LINE L
+                               ON A.APPL_ID = L.APPL_ID
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND L.APPR_SABUN = #{empNo}
+                   AND L.APPR_STATUS_CD = '10'
+                   AND A.APPL_STATUS_CD IN ('21','31')
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.OT_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.OT_EDATE,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                     , L.APPR_SEQ AS apprSeq
+                     , L.APPR_SABUN AS apprSabun
+                     , L.APPR_DATE AS apprDate
+                     , L.APPR_STATUS_CD AS apprStatusCd
+                     , L.APPR_TYPE_CD AS apprTypeCd
+                     , L.APPR_OPINION AS apprOpinion
+                  FROM WTM_APPL A
+                       INNER JOIN (SELECT DISTINCT  APPL_ID, OT_SDATE, OT_EDATE, REASON FROM WTM_OT_APPL ) B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                       INNER JOIN WTM_APPL_LINE L
+                               ON A.APPL_ID = L.APPL_ID
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND L.APPR_SABUN = #{empNo}
+                   AND L.APPR_STATUS_CD = '10'
+                   AND A.APPL_STATUS_CD IN ('21','31')
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.PLAN_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.PLAN_EDATE,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                     , L.APPR_SEQ AS apprSeq
+                     , L.APPR_SABUN AS apprSabun
+                     , L.APPR_DATE AS apprDate
+                     , L.APPR_STATUS_CD AS apprStatusCd
+                     , L.APPR_TYPE_CD AS apprTypeCd
+                     , L.APPR_OPINION AS apprOpinion
+                  FROM WTM_APPL A
+                       INNER JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                       INNER JOIN WTM_APPL_LINE L
+                               ON A.APPL_ID = L.APPL_ID
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND L.APPR_SABUN = #{empNo}
+                   AND L.APPR_STATUS_CD = '10'
+                   AND A.APPL_STATUS_CD IN ('21','31')
+                 UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , C.SYMD AS symd
+                     , C.EYMD AS eymd
+                     , C.NOTE AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                     , L.APPR_SEQ AS apprSeq
+                     , L.APPR_SABUN AS apprSabun
+                     , L.APPR_DATE AS apprDate
+                     , L.APPR_STATUS_CD AS apprStatusCd
+                     , L.APPR_TYPE_CD AS apprTypeCd
+                     , L.APPR_OPINION AS apprOpinion
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_TAA_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_TAA_APPL_DET C
+                               ON B.TAA_APPL_ID = C.TAA_APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                       INNER JOIN WTM_APPL_LINE L
+                               ON A.APPL_ID = L.APPL_ID
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND L.APPR_SABUN = #{empNo}
+                   AND L.APPR_STATUS_CD = '10'
+                   AND A.APPL_STATUS_CD IN ('21','31')
+                   AND A.APPL_CD IN ('REGA', 'ANNUAL')
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.SUBS_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.SUBS_EDATE,'YMD') AS eymd
+                     , C.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                     , L.APPR_SEQ AS apprSeq
+                     , L.APPR_SABUN AS apprSabun
+                     , L.APPR_DATE AS apprDate
+                     , L.APPR_STATUS_CD AS apprStatusCd
+                     , L.APPR_TYPE_CD AS apprTypeCd
+                     , L.APPR_OPINION AS apprOpinion
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_OT_SUBS_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_OT_APPL C
+                               ON B.OT_APPL_ID = C.OT_APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                       INNER JOIN WTM_APPL_LINE L
+                               ON A.APPL_ID = L.APPL_ID
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND L.APPR_SABUN = #{empNo}
+                   AND L.APPR_STATUS_CD = '10'
+                   AND A.APPL_STATUS_CD IN ('21','31')
+                   AND A.APPL_CD = 'SUBS_CHG'
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.SYMD,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.EYMD,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                     , L.APPR_SEQ AS apprSeq
+                     , L.APPR_SABUN AS apprSabun
+                     , L.APPR_DATE AS apprDate
+                     , L.APPR_STATUS_CD AS apprStatusCd
+                     , L.APPR_TYPE_CD AS apprTypeCd
+                     , L.APPR_OPINION AS apprOpinion
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_FLEXIBLE_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                       INNER JOIN WTM_APPL_LINE L
+                               ON A.APPL_ID = L.APPL_ID
+                  WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND L.APPR_SABUN = #{empNo}
+                   AND L.APPR_STATUS_CD = '10'
+                   AND A.APPL_STATUS_CD IN ('21','31')
+                ) T LEFT OUTER JOIN WTM_EMP_HIS T2
+                                 ON T.tenantId = T2.TENANT_ID
+                                AND T.enterCd = T2.ENTER_CD
+                                AND T.applSabun = T2.SABUN
+                                AND F_WTM_DATE_FORMAT(NOW(),'YMD') BETWEEN T2.SYMD AND T2.EYMD
+    WHERE 1=1
+        <if test="sYmd != null and !sYmd.equals('')">
+            <![CDATA[
+        AND T.applYmd >= #{sYmd}
+        ]]>
+        </if>
+        <if test="eYmd != null and !eYmd.equals('')">
+            <![CDATA[
+        AND T.applYmd <= #{eYmd}
+        ]]>
+        </if>
+        <if test="searchKeyword!=null and !searchKeyword.equals('')">
+            AND T.applSabun LIKE CONCAT('%', #{searchKeyword}, '%') OR T2.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+        </if>
+    ORDER BY T.ymd DESC, T.applId DESC
+    </select>
+
+    <select id="getApprovalApplList03" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT T.applId
+             , T.applCd
+             , T.applSabun
+             , T.applNm
+             , T.empNm
+             , T.applYmd
+             , T.applInSabun
+             , T.applStatusCd
+             , T.applStatusNm
+             , T.ymd
+             , T.symd
+             , T.eymd
+             , T.reason
+             , F_WTM_GET_ORG_NM(T2.TENANT_ID, T2.ENTER_CD, T2.ORG_CD, DATE_FORMAT(NOW(), '%Y%m%d')) AS orgNm
+             , 0 AS applDetail
+             , CONCAT(T.enterCd, '@', T.applCd, '@', T.applId, '@', '01', '@', T.applSabun, '@WTM') AS applKey
+          FROM
+                (SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , B.YMD AS symd
+                     , B.YMD AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_ENTRY_APPL B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.OT_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.OT_EDATE,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN (SELECT DISTINCT  APPL_ID, OT_SDATE, OT_EDATE, REASON FROM WTM_OT_APPL ) B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.PLAN_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.PLAN_EDATE,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
+                                    ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                 UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , C.SYMD AS symd
+                     , C.EYMD AS eymd
+                     , C.NOTE AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_TAA_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_TAA_APPL_DET C
+                               ON B.TAA_APPL_ID = C.TAA_APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_CD IN ('REGA', 'ANNUAL')
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.SUBS_SDATE,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.SUBS_EDATE,'YMD') AS eymd
+                     , C.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_OT_SUBS_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_OT_APPL C
+                               ON B.OT_APPL_ID = C.OT_APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                 WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_CD = 'SUBS_CHG'
+                UNION ALL
+                SELECT A.APPL_ID AS applId
+                     , A.APPL_CD AS applCd
+                     , A.APPL_SABUN AS applSabun
+                     , Z.APPL_NM AS applNm
+                     , F_WTM_GET_EMP_NM(A.TENANT_ID, A.ENTER_CD, A.APPL_SABUN, A.APPL_YMD ) AS empNm
+                     , A.APPL_YMD AS applYmd
+                     , A.APPL_IN_SABUN AS applInSabun
+                     , A.APPL_STATUS_CD AS applStatusCd
+                     , F_WTM_GET_CODE_NM(A.TENANT_ID, A.ENTER_CD, 'APPL_STATUS_CD', A.APPL_STATUS_CD, A.APPL_YMD) AS applStatusNm
+                     , A.APPL_YMD AS ymd
+                     , F_WTM_DATE_FORMAT(B.SYMD,'YMD') AS symd
+                     , F_WTM_DATE_FORMAT(B.EYMD,'YMD') AS eymd
+                     , B.REASON AS reason
+                     , A.TENANT_ID AS tenantId
+                     , A.ENTER_CD AS enterCd
+                  FROM WTM_APPL A
+                       INNER JOIN WTM_FLEXIBLE_APPL B
+                               ON A.APPL_ID = B.APPL_ID
+                       INNER JOIN WTM_APPL_CODE Z
+                               ON A.TENANT_ID = Z.TENANT_ID
+                              AND A.ENTER_CD = Z.ENTER_CD
+                              AND A.APPL_CD = Z.APPL_CD
+                  WHERE A.TENANT_ID = #{tenantId}
+                   AND A.ENTER_CD = #{enterCd}
+                ) T LEFT OUTER JOIN WTM_EMP_HIS T2
+                                 ON T.tenantId = T2.TENANT_ID
+                                AND T.enterCd = T2.ENTER_CD
+                                AND T.applSabun = T2.SABUN
+                                AND F_WTM_DATE_FORMAT(NOW(),'YMD') BETWEEN T2.SYMD AND T2.EYMD
+                    INNER JOIN WTM_APPL_LINE L
+                            ON T.applId = L.APPL_ID
+    WHERE L.APPR_SABUN = #{empNo}
+      AND L.APPR_TYPE_CD <> 1
+      AND L.APPR_DATE IS NOT NULL
+      AND L.APPR_STATUS_CD IS NOT NULL
+      AND L.APPR_STATUS_CD IN ('20', '30')
+    ]]>
+        <if test="sYmd != null and !sYmd.equals('')">
+        <![CDATA[
+        AND T.applYmd >= #{sYmd}
+        ]]>
+        </if>
+        <if test="eYmd != null and !eYmd.equals('')">
+        <![CDATA[
+        AND T.applYmd <= #{eYmd}
+        ]]>
+        </if>
+        <if test="searchKeyword!=null and !searchKeyword.equals('')">
+        AND T.applSabun LIKE CONCAT('%', #{searchKeyword}, '%') OR T2.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+        </if>
+    ORDER BY T.ymd DESC, T.applId DESC
+    </select>
+
 </mapper>

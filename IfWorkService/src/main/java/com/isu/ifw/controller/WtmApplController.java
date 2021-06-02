@@ -81,6 +81,10 @@ public class WtmApplController {
 	WtmTaaCanApplServiceImpl wtmTaaCanApplService;
 
 	@Autowired
+	@Qualifier("wtmFlexibleApplService")
+	WtmApplService wtmFlexibleApplService;
+
+	@Autowired
 	WtmApplCodeRepository wtmApplCodeRepo;
 	
 	@Autowired
@@ -101,6 +105,9 @@ public class WtmApplController {
 	WtmMsgService msgService;
 
 	@Autowired	private WtmFlexibleApplRepository flexApplRepository;
+
+	@Autowired
+	WtmFlexibleEmpService flexibleEmpService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ReturnParam getApprList(@RequestParam Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
@@ -111,7 +118,7 @@ public class WtmApplController {
 		String enterCd = sessionData.get("enterCd").toString();
 		String empNo = sessionData.get("empNo").toString();
 		String userId = sessionData.get("userId").toString();
-		
+
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> apprList = null;
@@ -230,8 +237,13 @@ public class WtmApplController {
 							pMap.put("enterCd", enterCd);
 							pMap.put("stdYmd", rp.get("stdYmd")+"");
 							pMap.put("sabun", rp.get("sabun")+"");
-							
-							inoutService.inoutPostProcess(pMap);
+							pMap.put("paramSdate", rp.get("stdYmd")+"");
+							pMap.put("paramEdate", rp.get("stdYmd")+"");
+
+							// 근태사유서 신청한 날의 마감을 다시 돌려 주도록 한다.
+							// 주말근무시에는 마감을 다시 돌려줘야 보상휴가가 있을경우 다시 생성이 된다.
+							flexibleEmpService.finishDay((Map<String, Object>)pMap, tenantId, enterCd, rp.get("sabun")+"", userId);
+
 						}
 					}
 					
@@ -469,4 +481,128 @@ public class WtmApplController {
 			throw new InvalidParameterException("required parameter is not found.");
 		
 	}
+
+	@RequestMapping(value="/approvalApplList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getApprovalApplList(HttpServletRequest request, @RequestBody Map<String, Object> paramMap) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+
+		rp.setSuccess("");
+
+		List<Map<String, Object>> approvalApplList = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			System.out.println(">>>>>>>>>>>>>>>>["+empNo+"] approvalApplList applType: "+ paramMap.get("applType"));
+			logger.debug(">>>>>>>>>>>>>>>>["+empNo+"] approvalApplList applType: "+ paramMap.get("applType"));
+
+			approvalApplList = applService.getApprovalApplList(tenantId, enterCd, empNo, paramMap, userId);
+
+			System.out.println(" 22. apprList : " + mapper.writeValueAsString(approvalApplList));
+			rp.put("DATA", approvalApplList);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+
+		return rp;
+	}
+
+	@RequestMapping(value="/getApplDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam getApplDetail(@RequestBody Map<String, Object> paramMap, HttpServletRequest request) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+		String applCd = paramMap.get("applCd").toString();
+		String applSabun = paramMap.get("applSabun").toString();
+		Long applId = Long.parseLong(paramMap.get("applId").toString());
+
+		rp.setSuccess("");
+
+		Map<String, Object> appl = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+
+			if("OT".equals(applCd)
+					|| WtmApplService.TIME_TYPE_EARLY_OT .equals(applCd)
+					|| WtmApplService.TIME_TYPE_EARLY_NIGHT .equals(applCd)
+					|| WtmApplService.TIME_TYPE_NIGHT .equals(applCd)
+			) { //연장
+				appl = wtmOtApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("OT_CAN".equals(applCd)) { //연장 취소
+				appl = wtmOtCanApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("SUBS_CHG".equals(applCd)) { //대체휴가 정정
+				appl = wtmOtSubsChgApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("ENTRY_CHG".equals(applCd)) { //근태사유서
+				appl = wtmEntryApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("COMP".equals(applCd)) { //보상휴가
+				appl = wtmCompApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("COMP_CAN".equals(applCd)) { //보상휴가취소
+				appl = wtmCompCanApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("ANNUAL".equals(applCd)) { //휴가신청
+				appl = wtmTaaApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("REGA".equals(applCd)) { //출장신청
+				appl = wtmTaaApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("ANNUAL_CAN".equals(applCd)) { //휴가신청취소
+				appl = wtmTaaCanApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else if("REGA_CAN".equals(applCd)) { //출장취소신청
+				appl = wtmTaaCanApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			} else {
+				//유연근무제
+				appl = wtmFlexibleApplService.getAppl(tenantId, enterCd, applSabun, applId, userId);
+			}
+
+			System.out.println(" 22. apprList : " + mapper.writeValueAsString(appl));
+			if(appl != null) {
+				rp.put("applCd", applCd);
+			}
+			rp.put("appl", appl);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+
+		return rp;
+	}
+
+
+	@RequestMapping(value="/approvalApplGrList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ReturnParam approvalApplGrList(HttpServletRequest request, @RequestParam Map<String, Object> paramMap) throws Exception {
+
+		ReturnParam rp = new ReturnParam();
+		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
+		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
+		String enterCd = sessionData.get("enterCd").toString();
+		String empNo = sessionData.get("empNo").toString();
+		String userId = sessionData.get("userId").toString();
+
+		List<Map<String, Object>> approvalApplList = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			System.out.println(">>>>>>>>>>>>>>>>["+empNo+"] approvalApplList applType: "+ paramMap.get("applType"));
+			logger.debug(">>>>>>>>>>>>>>>>["+empNo+"] approvalApplList applType: "+ paramMap.get("applType"));
+
+			approvalApplList = applService.getApprovalApplList(tenantId, enterCd, empNo, paramMap, userId);
+
+			System.out.println(" 22. apprList : " + mapper.writeValueAsString(approvalApplList));
+			rp.put("DATA", approvalApplList);
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail("조회 시 오류가 발생했습니다.");
+			return rp;
+		}
+
+		return rp;
+	}
+
 }

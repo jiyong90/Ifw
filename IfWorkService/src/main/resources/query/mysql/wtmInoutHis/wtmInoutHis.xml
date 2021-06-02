@@ -24,7 +24,7 @@
 			       X.pEdate,
 			       F_WTM_DATE_FORMAT(X.pSdate,'YMD') AS pSymd, 
 			       F_WTM_DATE_FORMAT(X.pEdate,'YMD') AS pEymd,
-  			       (SELECT YMD FROM WTM_WORK_DAY_RESULT WHERE tenant_id=#{tenantId} and enter_cd=#{enterCd} and sabun = #{sabun} and 
+  			       (SELECT MAX(YMD) FROM WTM_WORK_DAY_RESULT WHERE tenant_id=#{tenantId} and enter_cd=#{enterCd} and sabun = #{sabun} and
                    #{inoutDate} BETWEEN DATE_FORMAT(PLAN_SDATE, '%Y%m%d%H%i%s') and DATE_FORMAT(PLAN_EDATE, '%Y%m%d%H%i%s') AND TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT') ) as cYmd
 			  FROM WTM_WORK_CALENDAR C
 			  LEFT OUTER JOIN (SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS pSdate, 
@@ -34,18 +34,45 @@
 			                           AND A.ENTER_CD = #{enterCd}
 			                           AND A.SABUN = #{sabun}
 			                           AND A.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT')
---                                        AND DATE_FORMAT(A.PLAN_SDATE, '%Y%m%d') >= LEFT(#{inoutDate}, '8')
 			                           GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
 			                           ORDER BY A.YMD) X
 						    ON X.YMD = C.YMD
 			 WHERE C.TENANT_ID = #{tenantId}
 			      AND C.ENTER_CD = #{enterCd}
 			      AND C.SABUN = #{sabun}
-			      AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
-				  OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d'))
-			          )
-			 ORDER BY C.YMD
-        ]]>
+			      ]]>
+			      <choose>
+			        <when test='inoutType == null and inoutType != ""'>
+                        AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
+                        OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d'))
+                        OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d') OR DATE_FORMAT(#{inoutDate}, '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test='inoutType.equals("NONE")'>
+                                AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
+                                OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d'))
+                                OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d') OR DATE_FORMAT(#{inoutDate}, '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
+                            </when>
+                            <otherwise>
+                                AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
+                                <if test='inoutType.equals("OUT")'>
+                                <![CDATA[
+                                OR ((DATE_FORMAT(X.pEdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d')) AND (STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') >= X.pSdate))
+                                ]]>
+                                </if>
+                                <if test='inoutType.equals("IN")'>
+                                <![CDATA[
+                                OR ((DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d')) AND (STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') <= X.pEdate))
+                                ]]>
+                                    )
+                                </if>
+                            </otherwise>
+                        </choose>
+
+                    </otherwise>
+			      </choose>
+			 ORDER BY C.YMD DESC
     </select>
     
     <select id="getInoutStatusIntf" parameterType="map" resultType="hashmap">
@@ -122,17 +149,18 @@
     <update id="updateWtmInoutHis" parameterType="map">
         <![CDATA[ 
 			UPDATE WTM_INOUT_HIS H
-				 SET H.CANCEL_DATE = now(), 
-					H.CANCEL_TYPE_CD = #{inoutType} 
-				  WHERE H.TENANT_ID = #{tenantId}
-				   AND H.SABUN = #{sabun} 
-				   AND H.ENTER_CD = #{enterCd}
-				   AND H.INOUT_DATE = (SELECT A.d FROM (SELECT MAX(INOUT_DATE) AS d
-				   FROM WTM_INOUT_HIS I 
-				   WHERE I.TENANT_ID = #{tenantId} 
-				   AND I.ENTER_CD = #{enterCd}
-				   AND I.SABUN = #{sabun} 
-				   AND I.INOUT_TYPE_CD = 'OUT') A ) 
+               SET H.CANCEL_DATE = now()
+                 , H.CANCEL_TYPE_CD = #{inoutType}
+             WHERE H.TENANT_ID = #{tenantId}
+               AND H.SABUN = #{sabun}
+               AND H.ENTER_CD = #{enterCd}
+               AND H.INOUT_DATE = (SELECT A.d
+                                     FROM (SELECT MAX(INOUT_DATE) AS d
+                                             FROM WTM_INOUT_HIS I
+                                            WHERE I.TENANT_ID = #{tenantId}
+                                              AND I.ENTER_CD = #{enterCd}
+                                              AND I.SABUN = #{sabun}
+                                              AND I.INOUT_TYPE_CD = 'OUT') A )
         ]]>
     </update>
     

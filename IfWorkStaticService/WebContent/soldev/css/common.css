@@ -1052,6 +1052,26 @@ box-sizing: border-box;
   background-color: #f98695;
 }
 
+/* 휴가신청  */
+.notice-mark.ANNUAL{
+    background-color: #f81942;
+}
+
+/* 휴가취소신청  */
+.notice-mark.ANNUAL_CAN{
+    background-color: #c429d9;
+}
+
+/* 출장신청  */
+.notice-mark.REGA{
+    background-color: #719cd1;
+}
+
+/* 출장취소신청  */
+.notice-mark.REGA_CAN{
+    background-color: #7fe61e;
+}
+
 .notice-card .inner-wrap{
   float:left;
   line-height: 1;
