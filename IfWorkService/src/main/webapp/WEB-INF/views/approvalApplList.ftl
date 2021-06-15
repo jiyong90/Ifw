@@ -102,8 +102,8 @@
 								<appl-line :bind-data="appl.applLine"></appl-line>
 							</div>
 							<div class="text-center" v-if="applType=='02'">
-								<button type="button" class="btn btn-approval cancel" @click="approval(a,'reject')">반송</button>
-								<button type="button" class="btn btn-approval sign" @click="approval(a,'apply')">승인</button>
+								<button type="button" class="btn btn-approval cancel" @click="approval('reject')">반송</button>
+								<button type="button" class="btn btn-approval sign" @click="approval('apply')">승인</button>
 							</div>
 						</form>
 					</div>
@@ -396,8 +396,8 @@
 								<appl-line :bind-data="appl.applLine"></appl-line>
 							</div>
 							<div class="text-center" v-if="applType=='02'">
-								<button type="button" class="btn btn-approval cancel" @click="approval(a,'reject')">반송</button>
-								<button type="button" class="btn btn-approval sign" @click="approval(a,'apply')">승인</button>
+								<button type="button" class="btn btn-approval cancel" @click="approval('reject')">반송</button>
+								<button type="button" class="btn btn-approval sign" @click="approval('apply')">승인</button>
 							</div>
 						</form>
 					</div>
@@ -490,8 +490,8 @@
 								<button type="button" class="btn btn-default rounded-0" v-if="appl.recoveryYn" data-toggle="modal" data-target="#confirmModal">회수하기</button>
 							</div>
 							<div class="text-center" v-if="applType=='02'">
-								<button type="button" class="btn btn-approval cancel" @click="approval(a,'reject')">반송</button>
-								<button type="button" class="btn btn-approval sign" @click="approval(a,'apply')">승인</button>
+								<button type="button" class="btn btn-approval cancel" @click="approval('reject')">반송</button>
+								<button type="button" class="btn btn-approval sign" @click="approval('apply')">승인</button>
 							</div>
 						</form>
 					</div>
@@ -598,8 +598,8 @@
 								<hr class="bar">
 							</div>
 							<div class="text-center" v-if="applType=='02'">
-								<button type="button" class="btn btn-approval cancel" @click="approval(a,'reject')">반송</button>
-								<button type="button" class="btn btn-approval sign" @click="approval(a,'apply')">승인</button>
+								<button type="button" class="btn btn-approval cancel" @click="approval('reject')">반송</button>
+								<button type="button" class="btn btn-approval sign" @click="approval('apply')">승인</button>
 							</div>
 						</form>
 					</div>
@@ -663,8 +663,8 @@
 								<hr class="bar">
 							</div>
 							<div class="text-center" v-if="applType=='02'">
-								<button type="button" class="btn btn-approval cancel" @click="approval(a,'reject')">반송</button>
-								<button type="button" class="btn btn-approval sign" @click="approval(a,'apply')">승인</button>
+								<button type="button" class="btn btn-approval cancel" @click="approval('reject')">반송</button>
+								<button type="button" class="btn btn-approval sign" @click="approval('apply')">승인</button>
 							</div>
 						</form>
 					</div>
@@ -728,8 +728,8 @@
 								<hr class="bar">
 							</div>
 							<div class="text-center" v-if="applType=='02'">
-								<button type="button" class="btn btn-approval cancel" @click="approval(a,'reject')">반송</button>
-								<button type="button" class="btn btn-approval sign" @click="approval(a,'apply')">승인</button>
+								<button type="button" class="btn btn-approval cancel" @click="approval('reject')">반송</button>
+								<button type="button" class="btn btn-approval sign" @click="approval('apply')">승인</button>
 							</div>
 						</form>
 					</div>
@@ -793,8 +793,8 @@
 								<hr class="bar">
 							</div>
 							<div class="text-center" v-if="applType=='02'">
-								<button type="button" class="btn btn-approval cancel" @click="approval(a,'reject')">반송</button>
-								<button type="button" class="btn btn-approval sign" @click="approval(a,'apply')">승인</button>
+								<button type="button" class="btn btn-approval cancel" @click="approval('reject')">반송</button>
+								<button type="button" class="btn btn-approval sign" @click="approval('apply')">승인</button>
 							</div>
 						</form>
 					</div>
@@ -1530,8 +1530,8 @@
 				if(applStatusCd == "21"){
 					sheet2.SetCellFontBold(i, "applStatusCd", 1);
 				}else if(applStatusCd == "22" || applStatusCd == "32"){
+					sheet2.SetCellFontColor(i, "applStatusCd","#ee6a65");
 					sheet2.SetCellFontBold(i, "applStatusCd", 1);
-					sheet2.SetCellFontColor(i,"#ee6a65");
 				}
 			}
 			sheet2.RenderSheet(2);
@@ -1553,8 +1553,8 @@
 				if(applStatusCd == "21"){
 					sheet3.SetCellFontBold(i, "applStatusCd", 1);
 				}else if(applStatusCd == "22" || applStatusCd == "32"){
+					sheet3.SetCellFontColor(i, "applStatusCd","#ee6a65");
 					sheet3.SetCellFontBold(i, "applStatusCd", 1);
-					sheet3.SetCellFontColor(i,"#ee6a65");
 				}
 			}
 			sheet3.RenderSheet(2);
@@ -1638,6 +1638,7 @@
 							// approvalVue.appl = data.appl;
 							data.applId = applId;
 							data.apprSeq = apprSeq;
+							data.applSabun = applSabun;
 							approvalVue.appr = data;
 							if(colName == "applyImg" ) {
 								approvalVue.approval("apply");

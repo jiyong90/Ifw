@@ -152,6 +152,23 @@
 		try {
 			if (StCode == 401) {
 				window.parent.location.href = loginUrl;
+			} else {
+				for(i=2;i<=sheet1.RowCount()+1;i++){
+					var diffSminute = sheet1.GetCellValue(i, "diffSminute");
+					var diffEminute = sheet1.GetCellValue(i, "diffEminute");
+					if(diffSminute != null && diffSminute != ""){
+						if(parseFloat(diffSminute) > 0) {
+							sheet1.SetCellFontColor(i, "diffSminute","#ee6a65");
+							sheet1.SetCellFontBold(i, "diffSminute", 1);
+						}
+					}
+					if(diffEminute != null && diffEminute != ""){
+						if(parseFloat(diffEminute) < 0) {
+							sheet1.SetCellFontColor(i, "diffEminute","#ee6a65");
+							sheet1.SetCellFontBold(i, "diffEminute", 1);
+						}
+					}
+				}
 			}
 		} catch (ex) {
 			alert("OnSearchEnd Event Error " + ex);
