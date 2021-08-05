@@ -85,7 +85,7 @@ $(document).ready(function(){
 						}
 					}
 					
-				}, error: function(data) { alert(data.message); }
+				}, error: function(data) { swtAlert(data.message); }
 			})
 		},
 		methods : {
@@ -98,7 +98,7 @@ $(document).ready(function(){
 					$this.inboxCount = 1;
 					$this.title = data.title;
 					$this.contents = data.contents;
-					alert("알림도착 : " + $this.title);
+					swtAlert("알림도착 : " + $this.title);
 				}
 			}
 		}

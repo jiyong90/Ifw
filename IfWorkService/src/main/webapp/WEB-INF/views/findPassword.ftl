@@ -133,7 +133,7 @@
 	    				} 
 	    			},
 	    			error:function(e){
-	    				alert(e.responseText);
+	    				swtAlert(e.responseText);
 	    			}
 	    		});
    			
@@ -172,7 +172,7 @@
         				
         			},
 	    			error:function(e){
-	    				alert(e.responseText);
+	    				swtAlert(e.responseText);
 	    			}
 	    		});
 			},
@@ -254,7 +254,7 @@
 	       				}
 	       			},
 	    			error:function(e){
-	    				alert(e.responseText);
+	    				swtAlert(e.responseText);
 	    			}
 	    		});
 			},

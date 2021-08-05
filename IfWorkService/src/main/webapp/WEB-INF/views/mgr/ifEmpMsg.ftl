@@ -98,12 +98,12 @@
 				window.parent.location.href = loginUrl;
 			}
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			swtAlert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -111,11 +111,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 </script>

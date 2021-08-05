@@ -1514,7 +1514,7 @@
 			sheet1.RenderSheet(2);
 
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -1537,7 +1537,7 @@
 			sheet2.RenderSheet(2);
 
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -1560,7 +1560,7 @@
 			sheet3.RenderSheet(2);
 
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 	
@@ -1600,7 +1600,7 @@
 			}
 		}catch(ex){
 			$("#loading").hide();
-			alert("OnClick Event Error : " + ex);
+			swtAlert("OnClick Event Error : " + ex);
 		}
 	}
 
@@ -1657,7 +1657,7 @@
 			}
 		}catch(ex){
 			$("#loading").hide();
-			alert("OnClick Event Error : " + ex);
+			swtAlert("OnClick Event Error : " + ex);
 		}
 	}
 
@@ -1696,7 +1696,7 @@
 			}
 		}catch(ex){
 			$("#loading").hide();
-			alert("OnClick Event Error : " + ex);
+			swtAlert("OnClick Event Error : " + ex);
 		}
 	}
 

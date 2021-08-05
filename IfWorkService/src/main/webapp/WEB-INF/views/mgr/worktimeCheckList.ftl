@@ -295,7 +295,7 @@
 			}
 			
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 	
@@ -314,7 +314,7 @@
 				$("#worktimeDetailModal").modal("show");
 			}
 		}catch(ex){
-			alert("OnClick Event Error : " + ex);
+			swtAlert("OnClick Event Error : " + ex);
 		}
 	}
 </script>

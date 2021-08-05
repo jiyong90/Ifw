@@ -146,7 +146,7 @@
 				window.parent.location.href = loginUrl;
 			}
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 	

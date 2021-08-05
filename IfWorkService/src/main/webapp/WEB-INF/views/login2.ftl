@@ -107,17 +107,17 @@
     		  var password = $("#loginPassword").val();
     		  var username = "${tsId}@"+loginEnterCd+"@"+loginUserId;
     		 
-    		  alert("1");
+    		  swtAlert("1");
     		  
     		  $("#password").val($("#loginPassword").val());
     		  $("#username").val(username);
 
-    		  alert("2");
+    		  swtAlert("2");
     		  var action = "${userAuthorizationUri}?client_id=${tsId}&redirect_uri=${redirect_uri}&response_type=code&scope=read";
     		  
-    		  alert("3");
+    		  swtAlert("3");
 
-    		  alert(action);
+    		  swtAlert(action);
 
     		  $("#lForm").attr("action", action);
 

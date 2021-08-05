@@ -171,7 +171,7 @@
 				}
 			}
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 	

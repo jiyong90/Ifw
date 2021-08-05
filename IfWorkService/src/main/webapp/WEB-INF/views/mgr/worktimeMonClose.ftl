@@ -141,37 +141,38 @@ var closeList = {};
 			sheet1.DoSearch( "${rc.getContextPath()}/worktimeClose/monList" , $("#sheetForm").serialize());
 			break;
 		case "CloseConfirm":	
-			if(!confirm("확정하시겠습니까?")) {
-				return;
-			}	
-			var worktimeCloseId = $("#worktimeCloseId").val();
-			$("#loading").show();
-			var param = {
-					worktimeCloseId: worktimeCloseId
-				};
-			console.log(param);
-			$.ajax({
-				url: "${rc.getContextPath()}/worktimeClose/save/confirm",
-				type: "POST",
-				contentType: 'application/json',
-				data: JSON.stringify(param),
-				dataType: "json",
-				success: function(data) {
-					$("#loading").hide();
-					console.log(data);
-					if(data!=null) {
-						if(data.message != '')
-							alert(data.message);
-						else 
-							alert("근무마감 확정 완료되었습니다.");
-						
-						doAction1("Search");
-					}
-				},
-				error: function(e) {
-					$("#loading").hide();
-					alert("근무마감 확정 완료되었습니다.");
-					console.log(e);
+			swtConfirm("확정하시겠습니까?", function(result){
+				if(result){
+					var worktimeCloseId = $("#worktimeCloseId").val();
+					$("#loading").show();
+					var param = {
+							worktimeCloseId: worktimeCloseId
+						};
+					console.log(param);
+					$.ajax({
+						url: "${rc.getContextPath()}/worktimeClose/save/confirm",
+						type: "POST",
+						contentType: 'application/json',
+						data: JSON.stringify(param),
+						dataType: "json",
+						success: function(data) {
+							$("#loading").hide();
+							console.log(data);
+							if(data!=null) {
+								if(data.message != '')
+									swtAlert(data.message);
+								else 
+									swtAlert("근무마감 확정 완료되었습니다.");
+								
+								doAction1("Search");
+							}
+						},
+						error: function(e) {
+							$("#loading").hide();
+							swtAlert("근무마감 확정 완료되었습니다.");
+							console.log(e);
+						}
+					});
 				}
 			});
 			break;
@@ -187,7 +188,7 @@ var closeList = {};
 			}
 			
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 	

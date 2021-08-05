@@ -1066,19 +1066,19 @@
 	        }
 	        */
 	        if($("#dayOpenType").val() == "" || $("#dayOpenType").val() == "null" || $("#dayOpenType").val() === null){
-				alert("출근자동처리기준을 선택하세요");
+				swtAlert("출근자동처리기준을 선택하세요");
 				return;
 			} else {
 				sheet1.SetCellValue(row, "dayOpenType", $("#dayOpenType").val());
 			}
 			if($("#dayCloseType").val() == "" || $("#dayCloseType").val() == "null" || $("#dayCloseType").val() === null){
-				alert("퇴근자동처리기준을 선택하세요");
+				swtAlert("퇴근자동처리기준을 선택하세요");
 				return;
 			} else {
 				sheet1.SetCellValue(row, "dayCloseType", $("#dayCloseType").val());
 			}
 	        if($("#regardTimeCdId").val() == "" || $("#regardTimeCdId").val() == "null" || $("#regardTimeCdId").val() === null){
-				alert("간주근무시간을 선택하세요");
+				swtAlert("간주근무시간을 선택하세요");
 				return;
 			} else {
 				sheet1.SetCellValue(row, "regardTimeCdId", $("#regardTimeCdId").val());
@@ -1116,7 +1116,7 @@
 		case "Insert":
 			var flexibleStdMgrId = sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleStdMgrId");
 			if(flexibleStdMgrId == ""){
-				alert("근무제도 저장 후 근무제패턴을 입력하셔야 합니다");
+				swtAlert("근무제도 저장 후 근무제패턴을 입력하셔야 합니다");
 			} else {
 				var row = sheet2.DataInsert(-1) ;
 				sheet2.SetCellValue(row, "flexibleStdMgrId" , flexibleStdMgrId);
@@ -1135,7 +1135,7 @@
 			}
 			
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			$(".innertab").show();
 			sheet2.RemoveAll();
@@ -1147,7 +1147,7 @@
 			}
 
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			swtAlert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -1155,11 +1155,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
@@ -1442,12 +1442,12 @@
 				window.parent.location.href = loginUrl;
 			}
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			swtAlert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -1455,11 +1455,11 @@
 	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction2("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
@@ -1502,7 +1502,7 @@
         $("#tabs-1 .required").each(function(index){
             //if($(this).val() == null || $(this).val() == ""){
             if($(this).parent().next().children().val() == null || $(this).parent().next().children().val() == ""){
-                alert($(this).parent().text()+"은 필수값입니다.");
+                swtAlert($(this).parent().text()+"은 필수값입니다.");
                 $(this).focus();
                 ch =  false;
                 return false;

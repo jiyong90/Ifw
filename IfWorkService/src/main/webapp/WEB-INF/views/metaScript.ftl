@@ -43,6 +43,10 @@
 <!-- main guide slide -->
 <script src="${rc.getContextPath()}/bxslider-4-master/src/js/jquery.bxslider.js"></script>
 
+<!-- Sweet Alert -->
+<script src="${rc.getContextPath()}/sweetalert2/dist/sweetalert2.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="${rc.getContextPath()}/sweetalert2/dist/sweetalert2.min.css"/>
+
 <script type="text/javascript">
 
     var Util = {
@@ -238,6 +242,48 @@
     function groupwareOpen(url){
         window.open(url, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=200,width=1150,height=985");
     }
+    
+    /**
+     * sweet alert
+     * @param msg : 화면에 보여줄 내용
+     */
+    function swtAlert (msg) {
+        swal.fire({
+            text : msg,
+            type : "info", //type : 아이콘 구조 (ex : error, success, warning, info)
+            customClass : 'sweet-size',
+            showCloseButton: true, // alert창 상단 x 닫기 버튼 유무
+            showCancelButton: false, // 취소 버튼 유무
+            showConfirmButton: true, // 확인 버튼 유무
+        });
+    }
+    
+    /**
+     * sweet confirm
+     * @param msg : 화면에 보여줄 내용
+     *        callback : true, false
+     */
+    function swtConfirm (msg, callback) {
+        swal.fire({
+            text : msg,
+            type : "warning", // 아이콘 구조 : error, success, warning, info
+            confirmButtonText : "예",
+            cancelButtonText : "아니오",
+            closeOnConfirm : true,
+            closeOnCancel : true,
+            showCancelButton : true,
+            showConfirmButton: true,
+            confirmButtonClass : "btn-danger",
+            buttons : {confirm : "Yes", cancel : "No"}
+        }).then((result) => {
+            if(result.value){
+                callback(true);
+            }else{
+                callback(false);
+            }
+        })
+    }
+    
 </script>
 <script type="text/javascript">
     var sheetH40   = "calc(50vh - 180px)";

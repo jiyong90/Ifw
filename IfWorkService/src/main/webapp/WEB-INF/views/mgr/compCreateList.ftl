@@ -178,12 +178,12 @@
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			swtAlert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 	
@@ -199,12 +199,12 @@
 	function sheet2_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			swtAlert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 </script>

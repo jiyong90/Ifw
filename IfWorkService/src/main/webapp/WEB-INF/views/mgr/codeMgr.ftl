@@ -160,7 +160,7 @@
 		case "Insert":
 			var grpCodeCd = sheet1.GetCellValue( sheet1.GetSelectRow(), "grpCodeCd");
 			if(grpCodeCd == ""){
-				alert("그룹코드 저장 후 공통코드를 입력하셔야 합니다");
+				swtAlert("그룹코드 저장 후 공통코드를 입력하셔야 합니다");
 			} else {
 				var row = sheet2.DataInsert(0) ;
 				sheet2.SetCellValue(row, "grpCodeCd" , grpCodeCd);
@@ -187,7 +187,7 @@
 	   	  	}
 	   	  }
        } catch (ex) {
-			alert(ex);
+			swtAlert(ex);
        }
 	}
 	// 저장 후 메시지
@@ -197,11 +197,11 @@
 				window.parent.location.href = loginUrl;
 			}
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
@@ -227,7 +227,7 @@
 				window.parent.location.href = loginUrl;
 			}
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -238,11 +238,11 @@
 				window.parent.location.href = loginUrl;
 			}
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction2("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 </script>

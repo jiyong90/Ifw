@@ -202,49 +202,49 @@
     			$('#requestModal').modal("show");
 		    },
 		    confirmFinshDay : function() {
-		    	if(!confirm("일마감 하시겠습니까?")) {
-					return;
-				}
-		    	var ymd = sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd");
-				var sabun = sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun");
-
-				var param = {
-							 "ymd" : ymd
-							,"sabun" : sabun
-							,"paramSdate" : moment($("#fsYmd").val()).format('YYYYMMDD')
-							,"paramEdate" : moment($("#feYmd").val()).format('YYYYMMDD')
+				swtConfirm("일마감 하시겠습니까?", function(result){
+					if(result){
+						var ymd = sheet1.GetCellValue( sheet1.GetSelectRow(), "ymd");
+						var sabun = sheet1.GetCellValue( sheet1.GetSelectRow(), "sabun");
+		
+						var param = {
+									 "ymd" : ymd
+									,"sabun" : sabun
+									,"paramSdate" : moment($("#fsYmd").val()).format('YYYYMMDD')
+									,"paramEdate" : moment($("#feYmd").val()).format('YYYYMMDD')
+									}
+						$("#loading").show();
+		
+						Util.ajax({
+							url: "${rc.getContextPath()}/flexibleEmp/finishDay",
+							type: "POST",
+							contentType: 'application/json',
+							data: JSON.stringify(param),
+							dataType: "json",
+							success: function(data) {
+								$("#loading").hide();
+								if(data!=null) {
+									$("#alertText").html(data.message);
+									$("#alertModal").on('hidden.bs.modal',function(){
+										$("#alertModal").off('hidden.bs.modal');
+									});
+									$("#alertModal").modal("show");
+									curRow = sheet1.GetSelectRow();
+									doAction1("Search");
+															
+								} 
+							},
+							error: function(e) {
+								$("#loading").hide();
+								$("#alertText").html("일마감 처리중 오류가 발생하였습니다.");
+								$("#alertModal").on('hidden.bs.modal',function(){
+									$("#alertModal").off('hidden.bs.modal');
+								});
+								$("#alertModal").modal("show"); 
 							}
-				$("#loading").show();
-
-				Util.ajax({
-					url: "${rc.getContextPath()}/flexibleEmp/finishDay",
-					type: "POST",
-					contentType: 'application/json',
-					data: JSON.stringify(param),
-					dataType: "json",
-					success: function(data) {
-						$("#loading").hide();
-						if(data!=null) {
-							$("#alertText").html(data.message);
-							$("#alertModal").on('hidden.bs.modal',function(){
-								$("#alertModal").off('hidden.bs.modal');
-							});
-							$("#alertModal").modal("show");
-							curRow = sheet1.GetSelectRow();
-							doAction1("Search");
-													
-						} 
-					},
-					error: function(e) {
-						$("#loading").hide();
-						$("#alertText").html("일마감 처리중 오류가 발생하였습니다.");
-						$("#alertModal").on('hidden.bs.modal',function(){
-							$("#alertModal").off('hidden.bs.modal');
-						});
-						$("#alertModal").modal("show"); 
+						}); 
 					}
-				}); 
-				
+				});
 			}
 	    }
    	});
@@ -488,19 +488,19 @@
 	
 				        	if(s <= cores && e >= coree) {
 				        	} else {
-				        		alert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
+				        		swtAlert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
 				        		return;
 				        	}
 			        	}
 	        		}
 	        		if(sheet2.GetCellValue(i, "timeTypeCd") == "OT") {
 						if(s > "2200" || s < "0600"){
-							alert("연장근무시간은 06:00 ~ 22:00시 사이에 등록가능합니다.");
+							swtAlert("연장근무시간은 06:00 ~ 22:00시 사이에 등록가능합니다.");
 							sheet2.SetCellValue(i, "planSdate", "");
 							return;
 						}
 						if(e > "2200" || e < "0600"){
-							alert("연장근무시간은 06:00 ~ 22:00시 사이에 등록가능합니다.");
+							swtAlert("연장근무시간은 06:00 ~ 22:00시 사이에 등록가능합니다.");
 							sheet2.SetCellValue(i, "planEdate", "");
 							return;
 						}
@@ -515,12 +515,12 @@
 	        			console.log("symd : " + symd);
 	        			console.log("eymd : " + eymd);
 						if((ymd == symd && s < "2200") || (ymd != symd && s > "0600")){
-							alert("야간근무시간은 22:00 ~ 익일 06:00시 사이에 등록가능합니다.");
+							swtAlert("야간근무시간은 22:00 ~ 익일 06:00시 사이에 등록가능합니다.");
 							sheet2.SetCellValue(i, "planSdate", "");
 							return;
 						}
 						if((ymd == eymd && e < "2200") || (ymd != eymd && e > "0600")){
-							alert("야간근무시간은 22:00 ~ 익일 06:00시 사이에 등록가능합니다.");
+							swtAlert("야간근무시간은 22:00 ~ 익일 06:00시 사이에 등록가능합니다.");
 							sheet2.SetCellValue(i, "planEdate", "");
 							return;
 						}
@@ -536,11 +536,11 @@
 			/*
 			for(var i=sheet2.HeaderRows(); i < sheet2.RowCount()+sheet2.HeaderRows(); i++){
  	            if(sheet2.GetCellValue(i, "timeTypeCd") == "BASE") {
-	            	alert("관리자는 기본 근무만 추가할 수 있습니다. 이미 해당일에 기본근무가 존재합니다.");
+	            	swtAlert("관리자는 기본 근무만 추가할 수 있습니다. 이미 해당일에 기본근무가 존재합니다.");
 	            	return;
  	            }
  	            if(sheet2.GetCellValue(i, "taaCd") == "") {
-	            	alert("근태코드로 인해 기본 근무를 추가할 수 없습니다.");
+	            	swtAlert("근태코드로 인해 기본 근무를 추가할 수 없습니다.");
 	            	return;
  	            }
             }
@@ -568,7 +568,7 @@
 				window.parent.location.href = loginUrl;
 			}
 		} catch (ex) {
-			alert("OnSearchEnd Event Error " + ex);
+			swtAlert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -576,11 +576,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 
@@ -588,11 +588,11 @@
 	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
@@ -622,7 +622,7 @@
 			// 근무시간구분 선택시 체크(기본근무, 연장근무, 야간근무만 입력할수 있음)
 			if(Value != "BASE" && Value != "OT" && Value != "NIGHT"){
 				sheet2.SetCellValue(Row, Col, "", 0);
-				alert("근무시간 변경은 기본근무/연장근무/야간근무만 등록 가능합니다.");
+				swtAlert("근무시간 변경은 기본근무/연장근무/야간근무만 등록 가능합니다.");
 			}
 		}
 	}

@@ -207,22 +207,22 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
 	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	

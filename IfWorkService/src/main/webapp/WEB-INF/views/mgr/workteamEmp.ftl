@@ -68,7 +68,7 @@
 	    	var eYmd = $("#eYmd").val();
 	    	if(sYmd != '' && eYmd != '') {
 		    	if(eYmd < sYmd) {
-					alert("시작일보다 크거나 같아야 합니다.");
+					swtAlert("시작일보다 크거나 같아야 합니다.");
 					$("#eYmd").val($("#sYmd").val());
 					return;
 				}
@@ -158,7 +158,7 @@
 			
         	for(var i=1;i<sheet1.RowCount(); i++){
         		if(sheet1.GetCellValue(i, "symd") > sheet1.GetCellValue(i, "eymd")) {
-        			alert("종료일은 시작일보다 늦어야 합니다.");
+        			swtAlert("종료일은 시작일보다 늦어야 합니다.");
         			return;
         		}
         	}
@@ -194,12 +194,12 @@
 		    }
 		   	  
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			alert("OnSearchEnd Event Error : " + ex);
+			swtAlert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -207,11 +207,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				alert(Msg);
+				swtAlert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			alert("OnSaveEnd Event Error " + ex);
+			swtAlert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	

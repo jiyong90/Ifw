@@ -249,7 +249,7 @@ page import="com.ibleaders.ibsheet7.util.IBPacketParser" %><%
 	        response.setCharacterEncoding("utf-8");
 	        response.setHeader("Content-Disposition", "");
 
-            out.println("<script>alert('엑셀 다운로드중 에러가 발생하였습니다.[Server Busy]'); </script>");
+            out.println("<script>swtAlert('엑셀 다운로드중 에러가 발생하였습니다.[Server Busy]'); </script>");
         }
 
 	} catch (Exception e) {
@@ -258,7 +258,7 @@ page import="com.ibleaders.ibsheet7.util.IBPacketParser" %><%
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Disposition", "");
 
-        out.println("<script>alert('엑셀 다운로드중 에러가 발생하였습니다.');</script>");
+        out.println("<script>swtAlert('엑셀 다운로드중 에러가 발생하였습니다.');</script>");
         out.flush();
 
 		e.printStackTrace();
@@ -268,7 +268,7 @@ page import="com.ibleaders.ibsheet7.util.IBPacketParser" %><%
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Disposition", "");
 
-		out.println("<script>alert('엑셀 다운로드중 에러가 발생하였습니다.');</script>");
+		out.println("<script>swtAlert('엑셀 다운로드중 에러가 발생하였습니다.');</script>");
         out.flush();
 
 		e.printStackTrace();
