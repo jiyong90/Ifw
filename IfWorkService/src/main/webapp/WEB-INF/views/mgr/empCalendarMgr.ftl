@@ -18,7 +18,7 @@
 					</td>
 					<td>
 						<span class="label">사번/성명</span>
-						<input id="searchKeyword"  name="searchKeyword"  type="text" class="text" />
+						<input id="searchKeyword"  name="searchKeyword" onkeydown="javascript:Enter_Check();" type="text" class="text" />
 					</td>
 					<td>
 						<a href="javascript:doAction1('Search');" class="button">조회</a>
@@ -436,6 +436,14 @@
 		sheetInit();
 		doAction1("Search");
 	});
+
+	//검색시 엔터키
+   	function Enter_Check(){ 
+		if(event.keyCode == 13){
+			doAction1("Search");
+			return;
+		}
+	}
 
    	function doAction1(sAction) {
 		switch (sAction) {
