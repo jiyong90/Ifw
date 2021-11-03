@@ -470,4 +470,61 @@ public class WtmIntfController extends TenantSecuredControl {
 		}
 		return rp;
 	}
+	
+	@RequestMapping (value="/intf/allWorkTimeCheck", method=RequestMethod.POST)
+	public @ResponseBody ReturnParam allWorkTimeCheck(HttpServletRequest request)throws Exception{
+
+		System.out.println("/intf/allWorkTimeCheck : requestParam type");
+		ReturnParam rp = new ReturnParam();
+		rp.setSuccess("");
+
+		Map<String, Object> paramMap = new HashMap();
+		List<Map<String, Object>> allWorkTimeList = new ArrayList();
+		logger.debug("/intf/allWorkTimeCheck s " + WtmUtil.paramToString(request));
+		try {
+			
+			String apiKey = request.getParameter("apiKey");
+			String secret = request.getParameter("secret");
+
+			CommTenantModule tm = tenantModuleRepo.findByApiKey(apiKey);
+      
+			if(tm == null) {
+				rp.setFail("apiKey 불일치");
+				return rp;
+			}
+
+			String encryptCode = tm.getTenantKey().toString();
+			if(encryptCode.length() < 12) {
+				encryptCode = String.format("%12s", encryptCode).replaceAll(" ", "o");
+			}
+			String s = Sha256.getHash(secret, encryptCode, 10);
+			if(!s.equals(tm.getSecret()))
+			{
+				rp.setFail("secret 불일치");
+				return rp;
+			}
+			
+			Long tenantId = tm.getTenantId();
+			String enterCd = request.getParameter("enterCd").toString();
+			String sabun = request.getParameter("sabun").toString();
+			String symd = request.getParameter("symd").toString();
+			String eymd = request.getParameter("eymd").toString();
+			
+			paramMap.put("tenantId", tm.getTenantId());
+			paramMap.put("enterCd", enterCd);
+			paramMap.put("sabun", sabun);
+			paramMap.put("symd", symd);
+			paramMap.put("eymd", eymd);
+			
+			allWorkTimeList =  wtmInterfaceService.allWorkTimeCheck(tenantId, enterCd, sabun, symd, eymd);
+			rp.put("DATA", allWorkTimeList);
+			rp.put("message", "");
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			rp.setFail(e.getMessage());
+		}
+		return rp;
+	}
+
 }
