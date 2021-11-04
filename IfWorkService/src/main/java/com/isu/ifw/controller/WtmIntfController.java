@@ -506,7 +506,10 @@ public class WtmIntfController extends TenantSecuredControl {
 			
 			Long tenantId = tm.getTenantId();
 			String enterCd = request.getParameter("enterCd").toString();
-			String sabun = request.getParameter("sabun").toString();
+			String sabun = "";
+			if(request.getParameter("sabun") != null) {
+				sabun = request.getParameter("sabun").toString();
+			}
 			String symd = request.getParameter("symd").toString();
 			String eymd = request.getParameter("eymd").toString();
 			
