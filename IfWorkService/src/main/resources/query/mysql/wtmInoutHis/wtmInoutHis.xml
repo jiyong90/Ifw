@@ -333,4 +333,42 @@
 			ORDER BY YMD DESC LIMIT 50
         ]]>
     </select>
+
+    <select id="getCalData" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT WCA.TENANT_ID AS tenantId
+             , WCA.ENTER_CD AS enterCd
+             , WCA.YMD AS ymd
+             , WCA.SABUN AS sabun
+             , F_WTM_NVL(F_WTM_DATE_FORMAT(WCA.ENTRY_SDATE, 'YMDHIS'), '') AS entrySdate
+             , F_WTM_NVL(F_WTM_DATE_FORMAT(WCA.ENTRY_EDATE, 'YMDHIS'), '') AS entryEdate
+             , F_WTM_NVL(F_WTM_DATE_FORMAT(MIN(PLAN_SDATE), 'YMDHIS'), '') AS planSdate
+             , F_WTM_NVL(F_WTM_DATE_FORMAT(MAX(PLAN_EDATE), 'YMDHIS'), '') AS planEdate
+             , WCA.HOLIDAY_YN AS holidaYn
+             , WCA.TIME_CD_MGR_ID AS timeCdMgrId
+             , WFSM.UNPLANNED_YN AS unplannedYn
+        FROM WTM_WORK_CALENDAR WCA
+
+                 LEFT OUTER JOIN WTM_WORK_DAY_RESULT WWDR
+                                 on WCA.TENANT_ID = WWDR.TENANT_ID
+                                     AND WCA.ENTER_CD = WWDR.ENTER_CD
+                                     AND WCA.YMD = WWDR.YMD
+                                     AND WCA.SABUN = WWDR.SABUN
+
+                 LEFT OUTER JOIN WTM_FLEXIBLE_EMP WFE
+                                 ON WCA.TENANT_ID = WFE.TENANT_ID
+                                     AND WCA.ENTER_CD = WFE.ENTER_CD
+                                     AND WCA.YMD BETWEEN WFE.SYMD AND WFE.EYMD
+                                     AND WCA.SABUN = WFE.SABUN
+
+                 LEFT OUTER JOIN WTM_FLEXIBLE_STD_MGR WFSM
+                                 ON WFE.TENANT_ID = WFSM.TENANT_ID
+                                     AND WFE.ENTER_CD = WFSM.ENTER_CD
+                                     AND WFE.FLEXIBLE_STD_MGR_ID = WFSM.FLEXIBLE_STD_MGR_ID
+        WHERE WCA.TENANT_ID = #{tenantId}
+          AND WCA.ENTER_CD = #{enterCd}
+          AND WCA.SABUN = #{sabun}
+          AND WCA.YMD = #{ymd}
+        ]]>
+    </select>
 </mapper>

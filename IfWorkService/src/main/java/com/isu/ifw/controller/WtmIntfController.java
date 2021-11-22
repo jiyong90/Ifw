@@ -101,7 +101,17 @@ public class WtmIntfController extends TenantSecuredControl {
 			if(tm.getTenantKey().equalsIgnoreCase("SAMHWACROWN")|| tm.getTenantKey().equalsIgnoreCase("SOLDEV")) {
 				inoutService.updEntryDate(tm.getTenantId(), request.getParameter("enterCd"), request.getParameter("emp"), request.getParameter("type"), request.getParameter("time"), request.getParameter("deviceKey"), "INTF");
 			}else {
-				inoutService.updateTimecard2(paramMap);
+				String stdYmd = inoutService.updateTimecard3(paramMap);
+
+				if(stdYmd != null && "".equals(stdYmd)) {
+					paramMap.put("stdYmd", stdYmd);
+				}
+
+				logger.debug("/intf/inoutCheck rp : " + rp.toString());
+				if(request.getParameter("type").toString().equals("OUT")) {
+					//퇴근일때만 인정시간 계산
+					inoutService.inoutPostProcess(paramMap);
+				}
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -158,7 +168,17 @@ public class WtmIntfController extends TenantSecuredControl {
 			if(tm.getTenantKey().equalsIgnoreCase("SAMHWACROWN") || tm.getTenantKey().equalsIgnoreCase("SOLDEV")){
 				inoutService.updEntryDate(tm.getTenantId(), params.get("enterCd")+"", params.get("emp")+"", params.get("type")+"", params.get("time") +"", params.get("deviceKey")+"", "INTF");
 			}else {
-				inoutService.updateTimecard2(paramMap);
+				String stdYmd = inoutService.updateTimecard3(paramMap);
+
+				if(stdYmd != null && "".equals(stdYmd)) {
+					paramMap.put("stdYmd", stdYmd);
+				}
+
+				logger.debug("/intf/inoutCheck rp : " + rp.toString());
+				if(request.getParameter("type").toString().equals("OUT")) {
+					//퇴근일때만 인정시간 계산
+					inoutService.inoutPostProcess(paramMap);
+				}
 			}
 			
 		} catch(Exception e) {
@@ -338,7 +358,7 @@ public class WtmIntfController extends TenantSecuredControl {
 			paramMap.put("inoutType", "IN");
 			paramMap.put("entryNote", "TEST");
 			paramMap.put("entryType", "INTF");
-         	inoutService.updateTimecard2(paramMap);
+         	inoutService.updateTimecard3(paramMap);
 			if(request.getParameter("enterCd").equals("ISU_ST")) {
 				inoutService.sendErp(request.getParameter("enterCd"), request.getParameter("emp"), paramMap);
 			}
@@ -368,7 +388,7 @@ public class WtmIntfController extends TenantSecuredControl {
 			paramMap.put("inoutType", "OUT");
 			paramMap.put("entryNote", "TEST");
 			paramMap.put("entryType", "INTF");
-         	inoutService.updateTimecard2(paramMap);
+         	inoutService.updateTimecard3(paramMap);
          	inoutService.inoutPostProcess(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
