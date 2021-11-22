@@ -167,7 +167,7 @@ public class WtmInoutController {
 			paramMap.put("entryType", "MO");
 			
 			logger.debug("getParameter s " + paramMap.toString());
-			inoutService.updateTimecard2(paramMap);
+			inoutService.updateTimecard3(paramMap);
 			logger.debug("getParameter s2 " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 
 		} catch(Exception e) {
@@ -217,7 +217,7 @@ public class WtmInoutController {
 			paramMap.put("entryType", "MO");
 			
 			logger.debug("getParameter s " + paramMap.toString());
-			inoutService.updateTimecard2(paramMap);
+			inoutService.updateTimecard3(paramMap);
 			logger.debug("getParameter s2 " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 		} catch(Exception e) {
 			logger.debug("outexception : " + e.getMessage() + paramMap.toString());
