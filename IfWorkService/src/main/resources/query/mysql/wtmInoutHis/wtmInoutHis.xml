@@ -10,95 +10,67 @@
 			SELECT F_WTM_GET_EMP_DAY_OPTION(#{tenantId} , #{enterCd}, #{sabun}, #{stdYmd}, 'UNPLANNED_YN') as unplannedYn 
         ]]>
     </select>
-    
-	<select id="getInoutStatus" parameterType="map" resultType="hashmap">
-        <![CDATA[
-			SELECT C.YMD AS ymd, 
-			       F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'YMDHIS') AS entrySdate, 
-			       F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'YMDHIS') AS entryEdate,
-			       C.ENTRY_SDATE AS entrySdateDate, 
-			       C.ENTRY_EDATE AS entryEdateDate,
-			       C.HOLIDAY_YN AS holydayYn,
-			       F_WTM_GET_EMP_DAY_OPTION(C.TENANT_ID, C.ENTER_CD, C.SABUN, LEFT(#{inoutDate},8), 'UNPLANNED_YN') as unplanned,
-			       X.pSdate, 
-			       X.pEdate,
-			       F_WTM_DATE_FORMAT(X.pSdate,'YMD') AS pSymd, 
-			       F_WTM_DATE_FORMAT(X.pEdate,'YMD') AS pEymd,
-  			       (SELECT MAX(YMD) FROM WTM_WORK_DAY_RESULT WHERE tenant_id=#{tenantId} and enter_cd=#{enterCd} and sabun = #{sabun} and
-                   #{inoutDate} BETWEEN DATE_FORMAT(PLAN_SDATE, '%Y%m%d%H%i%s') and DATE_FORMAT(PLAN_EDATE, '%Y%m%d%H%i%s') AND TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT') ) as cYmd
-			  FROM WTM_WORK_CALENDAR C
-			  LEFT OUTER JOIN (SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS pSdate, 
-			                           MAX(A.PLAN_EDATE) AS pEdate
-			                        FROM WTM_WORK_DAY_RESULT A 
-			                        WHERE A.TENANT_ID = #{tenantId}
-			                           AND A.ENTER_CD = #{enterCd}
-			                           AND A.SABUN = #{sabun}
-			                           AND A.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT')
-			                           GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
-			                           ORDER BY A.YMD) X
-						    ON X.YMD = C.YMD
-			 WHERE C.TENANT_ID = #{tenantId}
-			      AND C.ENTER_CD = #{enterCd}
-			      AND C.SABUN = #{sabun}
-			      ]]>
-			      <choose>
-			        <when test='inoutType == null and inoutType != ""'>
-                        AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
-                        OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d'))
-                        OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d') OR DATE_FORMAT(#{inoutDate}, '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
-                    </when>
-                    <otherwise>
-                        <choose>
-                            <when test='inoutType.equals("NONE")'>
-                                AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
-                                OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d'))
-                                OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d') OR DATE_FORMAT(#{inoutDate}, '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
-                            </when>
-                            <otherwise>
-                                AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
-                                <if test='inoutType.equals("OUT")'>
-                                <![CDATA[
-                                OR ((DATE_FORMAT(X.pEdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d')) AND (STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') >= X.pSdate))
-                                ]]>
-                                </if>
-                                <if test='inoutType.equals("IN")'>
-                                <![CDATA[
-                                OR ((DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d')) AND (STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') <= X.pEdate))
-                                ]]>
-                                    )
-                                </if>
-                            </otherwise>
-                        </choose>
 
-                    </otherwise>
-			      </choose>
-			 ORDER BY C.YMD DESC
+    <select id="getInoutStatus" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT C.YMD AS ymd,
+               F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'YMDHIS') AS entrySdate,
+               F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'YMDHIS') AS entryEdate,
+               C.ENTRY_SDATE AS entrySdateDate,
+               C.ENTRY_EDATE AS entryEdateDate,
+               C.HOLIDAY_YN AS holydayYn,
+               F_WTM_GET_EMP_DAY_OPTION(C.TENANT_ID, C.ENTER_CD, C.SABUN, LEFT(#{inoutDate},8), 'UNPLANNED_YN') as unplanned,
+               X.pSdate,
+               X.pEdate,
+               F_WTM_DATE_FORMAT(X.pSdate,'YMD') AS pSymd,
+               F_WTM_DATE_FORMAT(X.pEdate,'YMD') AS pEymd,
+               (SELECT MAX(YMD) FROM WTM_WORK_DAY_RESULT WHERE tenant_id=#{tenantId} and enter_cd=#{enterCd} and sabun = #{sabun} and
+                   STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') BETWEEN DATE_FORMAT(PLAN_SDATE, '%Y%m%d%H%i%s') and DATE_FORMAT(PLAN_EDATE, '%Y%m%d%H%i%s') AND TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT') ) as cYmd
+        FROM WTM_WORK_CALENDAR C
+                 LEFT OUTER JOIN (SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS pSdate,
+                                         MAX(A.PLAN_EDATE) AS pEdate
+                                  FROM WTM_WORK_DAY_RESULT A
+                                  WHERE A.TENANT_ID = #{tenantId}
+                                    AND A.ENTER_CD = #{enterCd}
+                                    AND A.SABUN = #{sabun}
+                                    AND A.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT')
+                                  GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
+                                  ORDER BY A.YMD) X
+                                 ON X.YMD = C.YMD
+        WHERE C.TENANT_ID = #{tenantId}
+          AND C.ENTER_CD = #{enterCd}
+          AND C.SABUN = #{sabun}
+          AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
+            OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d'))
+            OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d') OR DATE_FORMAT(#{inoutDate}, '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
+        ORDER BY C.YMD
+        ]]>
     </select>
-    
+
     <select id="getInoutStatusIntf" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT X.YMD AS ymd, 
-				X.P_SDATE AS pSdate, 
-				X.P_EDATE AS pEdate, 
-				F_WTM_DATE_FORMAT(X.P_SDATE,'YMD') AS pSymd, 
-				F_WTM_DATE_FORMAT(X.P_EDATE,'YMD') AS pEymd, 
-				C.ENTRY_SDATE AS entrySdate, 
-				C.ENTRY_EDATE AS entryEdate 
-			FROM 
+			SELECT X.YMD AS ymd,
+				X.P_SDATE AS pSdate,
+				X.P_EDATE AS pEdate,
+				F_WTM_DATE_FORMAT(X.P_SDATE,'YMD') AS pSymd,
+				F_WTM_DATE_FORMAT(X.P_EDATE,'YMD') AS pEymd,
+				C.ENTRY_SDATE AS entrySdate,
+				C.ENTRY_EDATE AS entryEdate
+			FROM
 				(SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS P_SDATE, MAX(A.PLAN_EDATE) AS P_EDATE
-					FROM WTM_WORK_DAY_RESULT A 
+					FROM WTM_WORK_DAY_RESULT A
 					WHERE A.TENANT_ID = #{tenantId}
 						AND A.ENTER_CD = #{enterCd}
 						AND A.SABUN = #{sabun}
-						AND A.TIME_TYPE_CD IN ('BASE', 'OT') 
+						AND A.TIME_TYPE_CD IN ('BASE', 'OT')
 						GROUP BY YMD
 						ORDER BY YMD) AS X
 				JOIN WTM_WORK_CALENDAR C ON C.TENANT_ID = X.TENANT_ID AND C.ENTER_CD = X.ENTER_CD AND C.SABUN = X.SABUN AND C.YMD = X.YMD
-				WHERE (F_WTM_DATE_FORMAT(X.P_SDATE, 'YMD') = F_WTM_DATE_FORMAT(now(),'YMD') 
+				WHERE (F_WTM_DATE_FORMAT(X.P_SDATE, 'YMD') = F_WTM_DATE_FORMAT(now(),'YMD')
 					OR F_WTM_DATE_FORMAT(X.P_EDATE, 'YMD') = F_WTM_DATE_FORMAT(now(),'YMD'))
         ]]>
     </select>
-    
+
     <select id="getContext" parameterType="map" resultType="hashmap">
         <![CDATA[
 			(SELECT F_WTM_DATE_FORMAT(INOUT_DATE,'Y-M-D H:I') as inoutDate, INOUT_DATE as iDate, INOUT_TYPE_CD as inoutTypeCd
@@ -107,13 +79,13 @@
         		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
         	    AND DATE_FORMAT(INOUT_DATE, "%Y%c%d") = DATE_FORMAT(now(), "%Y%c%d")
         		ORDER BY INOUT_DATE DESC LIMIT 1)
-        	UNION ALL 
+        	UNION ALL
         	(SELECT F_WTM_DATE_FORMAT(ENTRY_SDATE,'Y-M-D H:I') as inoutDate, ENTRY_SDATE as iDate, 'IN' as inoutTypeCd
         	FROM WTM_WORK_CALENDAR
         	WHERE ENTRY_SDATE IS NOT NULL
         		AND TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun}
         		ORDER BY YMD DESC LIMIT 1)
-        	UNION ALL 
+        	UNION ALL
         	(SELECT F_WTM_DATE_FORMAT(ENTRY_EDATE,'Y-M-D H:I') as inoutDate, ENTRY_EDATE as iDate, 'OUT' as inoutTypeCd
         	FROM WTM_WORK_CALENDAR
         	WHERE ENTRY_EDATE IS NOT NULL
@@ -121,9 +93,9 @@
         		ORDER BY YMD DESC LIMIT 1)
         ]]>
     </select>
-    
+
 	<update id="saveWtmInoutHis" parameterType="map">
-        <![CDATA[ 
+        <![CDATA[
 			INSERT INTO WTM_INOUT_HIS
 				(TENANT_ID,
 				ENTER_CD,
@@ -139,15 +111,15 @@
 				#{sabun} ,
 				#{inoutType} ,
 				#{entryType} ,
-				now(), 
+				now(),
 				#{inoutDate},
 				#{entryNote}
 				)
         ]]>
     </update>
-    
+
     <update id="updateWtmInoutHis" parameterType="map">
-        <![CDATA[ 
+        <![CDATA[
 			UPDATE WTM_INOUT_HIS H
                SET H.CANCEL_DATE = now()
                  , H.CANCEL_TYPE_CD = #{inoutType}
@@ -163,26 +135,26 @@
                                               AND I.INOUT_TYPE_CD = 'OUT') A )
         ]]>
     </update>
-    
+
     <select id="getMyInoutList" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT A.YMD as key2, 
-				RIGHT(A.YMD, 2) as title, 
-				F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'H:I') as caption_lb, 
-				F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'H:I') as caption_rb, 
+			SELECT A.YMD as key2,
+				RIGHT(A.YMD, 2) as title,
+				F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'H:I') as caption_lb,
+				F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'H:I') as caption_rb,
 				T.TIME_NM as status2,
-				CASE WHEN GROUP_CONCAT(TAA_NM) IS NULL AND A.HOLIDAY_YN ='Y' THEN '휴일' 
+				CASE WHEN GROUP_CONCAT(TAA_NM) IS NULL AND A.HOLIDAY_YN ='Y' THEN '휴일'
 					WHEN GROUP_CONCAT(TAA_NM) IS NULL AND A.HOLIDAY_YN ='N' THEN '정상근무' ELSE GROUP_CONCAT(TAA_NM) END AS status
-			FROM WTM_WORK_CALENDAR A 
+			FROM WTM_WORK_CALENDAR A
 				JOIN WTM_TIME_CD_MGR T
-			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID	
+			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID
 			 LEFT JOIN WTM_WORK_DAY_RESULT R
 	            ON R.ENTER_CD = A.ENTER_CD
 	           	AND R.TENANT_ID = A.TENANT_ID
 	            AND R.SABUN = A.SABUN
-	            AND R.YMD = A.YMD 
+	            AND R.YMD = A.YMD
 	            AND R.TIME_TYPE_CD NOT IN ('EXCEPT', 'GOBACK')
-	         LEFT JOIN WTM_TAA_CODE D 
+	         LEFT JOIN WTM_TAA_CODE D
 	            ON R.TAA_CD = D.TAA_CD
 	            AND D.TENANT_ID = R.TENANT_ID
 	            AND D.ENTER_CD = R.ENTER_CD
@@ -194,31 +166,31 @@
 			ORDER BY A.YMD
 	        ]]>
     </select>
-    
+
     <select id="getTeamInoutList" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT A.YMD as key2, 
-				H.EMP_NM as title, 
-				F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'H:I') as caption_lb, 
-				F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'H:I') as caption_rb, 
+			SELECT A.YMD as key2,
+				H.EMP_NM as title,
+				F_WTM_DATE_FORMAT(A.ENTRY_SDATE, 'H:I') as caption_lb,
+				F_WTM_DATE_FORMAT(A.ENTRY_EDATE, 'H:I') as caption_rb,
 				T.TIME_NM as status2,
-				CASE WHEN GROUP_CONCAT(TAA_NM) IS NULL AND A.HOLIDAY_YN ='Y' THEN '휴일' 
+				CASE WHEN GROUP_CONCAT(TAA_NM) IS NULL AND A.HOLIDAY_YN ='Y' THEN '휴일'
 					WHEN GROUP_CONCAT(TAA_NM) IS NULL AND A.HOLIDAY_YN ='N' THEN '정상근무' ELSE GROUP_CONCAT(TAA_NM) END AS status
-			FROM WTM_WORK_CALENDAR A 
+			FROM WTM_WORK_CALENDAR A
 				JOIN WTM_TIME_CD_MGR T
-			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID	
-			 	JOIN WTM_EMP_HIS H  
-			 	    ON H.TENANT_ID = A.TENANT_ID 
-			 	    AND H.ENTER_CD = A.ENTER_CD 
-			 	    AND H.SABUN = A.SABUN 
-			 	    AND H.EYMD ='29991231' 
-			 	    AND H.STATUS_CD ='AA'
+			 		ON T.TIME_CD_MGR_ID = A.TIME_CD_MGR_ID
+			 	JOIN WTM_EMP_HIS H
+			 	    ON H.TENANT_ID = A.TENANT_ID
+			 	    AND H.ENTER_CD = A.ENTER_CD
+			 	    AND H.SABUN = A.SABUN
+			 	    AND H.EYMD ='29991231'
+			 	    AND H.STATUS_CD IN ('AA', 'AB')
 			 LEFT JOIN WTM_WORK_DAY_RESULT R
 	            ON R.ENTER_CD = A.ENTER_CD
 	           	AND R.TENANT_ID = A.TENANT_ID
 	            AND R.SABUN = A.SABUN
-	            AND R.YMD = A.YMD 
-	         LEFT JOIN WTM_TAA_CODE D 
+	            AND R.YMD = A.YMD
+	         LEFT JOIN WTM_TAA_CODE D
 	            ON R.TAA_CD = D.TAA_CD
 	            AND D.TENANT_ID = R.TENANT_ID
 	            AND D.ENTER_CD = R.ENTER_CD
@@ -232,7 +204,7 @@
 				AND A.YMD = #{ymd}
 				 ]]>
 			<if test="orgList!=null">
-			   AND H.ORG_CD IN (NULL, 
+			   AND H.ORG_CD IN (NULL,
 		       <foreach collection="orgList" item="org" separator=", ">
 				   #{org}
 			 </foreach>
@@ -243,14 +215,14 @@
 			ORDER BY C.ORG_TYPE, C.ORG_CD, POS_CD
 	   ]]>
     </select>
-    
+
      <select id="getInoutListTerm" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT RIGHT(X.YMD, 2) AS title,
 				TIME_FORMAT(SEC_TO_TIME((SUM(WORK_HOUR) + SUM(OT_HOUR) - SUM(BREAK_HOUR)) * 60), '%H:%i')    as status,
-				F_WTM_DATE_FORMAT(X.ENTRY_SDATE, 'H:I') as caption_lb, 
+				F_WTM_DATE_FORMAT(X.ENTRY_SDATE, 'H:I') as caption_lb,
 				F_WTM_DATE_FORMAT(X.ENTRY_EDATE, 'H:I') as caption_rb
-			FROM ( SELECT R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 
+			FROM ( SELECT R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD,
 						CASE WHEN R.TIME_TYPE_CD IN ('BASE', 'REGA') OR (F_WTM_GET_EMP_DAY_OPTION(R.TENANT_ID, R.ENTER_CD, R.SABUN, R.YMD, 'TAA_TIME_YN') = 'Y' AND R.TIME_TYPE_CD = 'TAA')
 						     THEN R.APPR_MINUTE
 							  ELSE 0 END AS WORK_HOUR,
@@ -258,17 +230,17 @@
 						CASE WHEN R.TIME_TYPE_CD = 'EXCEPT' THEN R.APPR_MINUTE ELSE 0 END AS BREAK_HOUR,
 						C.ENTRY_SDATE, C.ENTRY_EDATE
 					FROM WTM_WORK_DAY_RESULT R
-						JOIN WTM_WORK_CALENDAR C ON C.TENANT_ID=R.TENANT_ID AND C.ENTER_CD=R.ENTER_CD AND C.SABUN=R.SABUN AND C.YMD=R.YMD				
+						JOIN WTM_WORK_CALENDAR C ON C.TENANT_ID=R.TENANT_ID AND C.ENTER_CD=R.ENTER_CD AND C.SABUN=R.SABUN AND C.YMD=R.YMD
 					WHERE R.TENANT_ID=#{tenantId} AND R.SABUN=#{sabun} AND R.ENTER_CD=#{enterCd} AND R.YMD >= #{sdate} AND R.YMD <= #{edate}
-				) X	
-			GROUP BY X.TENANT_ID, X.ENTER_CD, X.SABUN, X.YMD	
+				) X
+			GROUP BY X.TENANT_ID, X.ENTER_CD, X.SABUN, X.YMD
 			ORDER BY X.YMD
 	    ]]>
     </select>
-    
+
     <select id="getMyInoutHistory" parameterType="map" resultType="hashmap">
         <![CDATA[
-			SELECT CONCAT_WS('@',F_WTM_DATE_FORMAT(A.INOUT_DATE, 'YMDHIS'),A.INOUT_TYPE_CD) AS key2,  
+			SELECT CONCAT_WS('@',F_WTM_DATE_FORMAT(A.INOUT_DATE, 'YMDHIS'),A.INOUT_TYPE_CD) AS key2,
 				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'INOUT_TYPE_CD', IF(A.CANCEL_TYPE_CD IS NULL, A.INOUT_TYPE_CD, A.CANCEL_TYPE_CD), #{ymd}) AS title,
 			 	F_WTM_DATE_FORMAT(A.INOUT_DATE, 'H:I') as caption_lb,
 			 	F_WTM_GET_CODE_NM(#{tenantId},#{enterCd}, 'ENTRY_TYPE_CD', A.ENTRY_TYPE_CD, #{ymd}) AS caption_rb
@@ -280,17 +252,17 @@
 				ORDER BY A.INOUT_DATE DESC
 	        ]]>
     </select>
-    
+
     <select id="getMyInoutDetail" parameterType="map" resultType="hashmap">
-        <![CDATA[ 
+        <![CDATA[
 			SELECT F_WTM_DATE_FORMAT(INOUT_DATE, 'Y.M.D') as ymd,
 				IF(CANCEL_TYPE_CD IS NULL, INOUT_TYPE_CD, CANCEL_TYPE_CD) as inoutTypeCd,
 				F_WTM_GET_CODE_NM(#{tenantId},#{enterCd},'INOUT_TYPE_CD', IF(CANCEL_TYPE_CD IS NULL, INOUT_TYPE_CD, CANCEL_TYPE_CD), F_WTM_DATE_FORMAT(INOUT_DATE, 'YMD')) AS inoutType,
-				CASE WHEN CANCEL_TYPE_CD = 'OUTC' AND CANCEL_DATE IS NOT NULL 
+				CASE WHEN CANCEL_TYPE_CD = 'OUTC' AND CANCEL_DATE IS NOT NULL
 					THEN CONCAT('퇴근 ', F_WTM_DATE_FORMAT(CANCEL_DATE, 'H:I:S'), ' 취소 ', F_WTM_DATE_FORMAT(INOUT_DATE, 'H:I:S'))
 				 	ELSE F_WTM_DATE_FORMAT(INOUT_DATE, 'H:I:S') END as inoutDate,
 				F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS') AS id
-			FROM WTM_INOUT_HIS 
+			FROM WTM_INOUT_HIS
 			WHERE TENANT_ID = #{tenantId}
 				AND ENTER_CD = #{enterCd}
 				AND SABUN = #{sabun}
@@ -298,38 +270,38 @@
 				AND F_WTM_DATE_FORMAT(#{inoutDate}, 'YMDHIS') = F_WTM_DATE_FORMAT(INOUT_DATE, 'YMDHIS');
 	        ]]>
     </select>
-    
+
    	<select id="getEntryStatus" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT DATE_FORMAT(A.ENTRY_SDATE, "%Y%c%d%H%i%s") as entrySdate
 				, DATE_FORMAT(A.ENTRY_EDATE, "%Y%c%d%H%i%s") as entryEdate
 				, DATE_FORMAT((SELECT max(PLAN_EDATE) as ymd
-					FROM WTM_WORK_DAY_RESULT 
-					WHERE TENANT_ID = P_TENANT_ID AND ENTER_CD = P_ENTER_CD AND SABUN = P_SABUN 
+					FROM WTM_WORK_DAY_RESULT
+					WHERE TENANT_ID = P_TENANT_ID AND ENTER_CD = P_ENTER_CD AND SABUN = P_SABUN
 					AND YMD = DATE_SUB(STR_TO_DATE(_ymd,"%Y%c%d"), interval 1 day)),"%Y%c%d")  AS SUB_YMD
 			FROM WTM_WORK_CALENDAR A
 			WHERE TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND SABUN = #{sabun} AND YMD =LEFT(#{inoutDate}, 8);
-	
+
         ]]>
     </select>
-    
+
     <select id="getGoBackStatus" parameterType="map" resultType="hashmap">
         <![CDATA[
        	SELECT CASE WHEN INOUT_TYPE_CD = 'GO' THEN 'BACK' ELSE 'GO' END AS inoutType
 				, CONCAT(F_WTM_DATE_FORMAT(INOUT_DATE, "YMDHI"), '00') AS exceptSYmd
-   	   		FROM WTM_INOUT_HIS 
-       		WHERE TENANT_ID = #{tenantId} 
-            	AND ENTER_CD = #{enterCd} 
+   	   		FROM WTM_INOUT_HIS
+       		WHERE TENANT_ID = #{tenantId}
+            	AND ENTER_CD = #{enterCd}
                 AND SABUN =  #{sabun}
                 AND DATE_FORMAT(INOUT_DATE, "%Y%c%d") = DATE_FORMAT(#{inoutDate}, "%Y%c%d")
                 AND INOUT_TYPE_CD IN ('GO', 'BACK') ORDER BY INOUT_DATE DESC LIMIT 1
         ]]>
     </select>
- 
+
       <select id="getInoutMonitorList" parameterType="map" resultType="wtmGeneral">
         <![CDATA[
 			SELECT ENTER_CD as title, SABUN as caption_lb, INOUT_TYPE_CD as caption_rb, F_WTM_DATE_FORMAT(YMD, 'M-D H:I') as status
-				FROM WTM_INOUT_HIS 
+				FROM WTM_INOUT_HIS
 			ORDER BY YMD DESC LIMIT 50
         ]]>
     </select>
@@ -344,7 +316,7 @@
              , F_WTM_NVL(F_WTM_DATE_FORMAT(WCA.ENTRY_EDATE, 'YMDHIS'), '') AS entryEdate
              , F_WTM_NVL(F_WTM_DATE_FORMAT(MIN(PLAN_SDATE), 'YMDHIS'), '') AS planSdate
              , F_WTM_NVL(F_WTM_DATE_FORMAT(MAX(PLAN_EDATE), 'YMDHIS'), '') AS planEdate
-             , WCA.HOLIDAY_YN AS holidaYn
+             , WCA.HOLIDAY_YN AS holidayYn
              , WCA.TIME_CD_MGR_ID AS timeCdMgrId
              , WFSM.UNPLANNED_YN AS unplannedYn
         FROM WTM_WORK_CALENDAR WCA

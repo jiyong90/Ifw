@@ -176,7 +176,7 @@ public class WtmApiController{
 			paramMap.put("entryType", "API");
 			
 			logger.debug("getParameter in " + paramMap.toString());
-			inoutService.updateTimecard2(paramMap);
+			inoutService.updateTimecard3(paramMap);
 			logger.debug("getParameter in2" + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 		} catch(Exception e) {
 			logger.debug("inexception : " + e.getMessage());
@@ -232,7 +232,7 @@ public class WtmApiController{
 			paramMap.put("entryType", "API");
 			
 			logger.debug("getParameter out " + paramMap.toString());
-			inoutService.updateTimecard2(paramMap);
+			inoutService.updateTimecard3(paramMap);
 			logger.debug("getParameter out2 " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 			
 		} catch(Exception e) {
@@ -385,7 +385,7 @@ public class WtmApiController{
 					data.put("tenantId", tm.getTenantId());
 					data.put("entryType", "AWS");
 					data.put("inoutDate", inoutDate);
-					inoutService.updateTimecard2(data);
+					inoutService.updateTimecard3(data);
 				}
 			}
 			
