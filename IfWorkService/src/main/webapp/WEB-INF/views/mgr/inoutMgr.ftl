@@ -204,7 +204,7 @@
 			break;
 		case "Search":
 			if($("#sYmd").val() == '' || $("#eYmd").val() == '') {
-				swtAlert("근무기간을 입력하세요."); 
+				alert("근무기간을 입력하세요."); 
 				reuturn;
 			}
 			sheet1.DoSearch( "${rc.getContextPath()}/inOutChange/list" , $("#sheetForm").serialize());
@@ -227,37 +227,37 @@
 			if(sheet1.GetCellValue(i, "sStatus") == "I") {
 
 				if((sheet1.GetCellValue(i,"empNm") == "" && sheet1.GetCellValue(i,"sabun") == "") ){
-					swtAlert("사원정보가 없습니다. 사원 이름을 다시 검색해 주세요.");
+					alert("사원정보가 없습니다. 사원 이름을 다시 검색해 주세요.");
 					sheet1.SelectCell(i, "empNm");
 					return saveYn;
 				}
 				
 				if(sheet1.GetCellValue(i,"ymd") == ""){
-					swtAlert("근무일이 비었습니다.");
+					alert("근무일이 비었습니다.");
 					sheet1.SelectCell(i, "ymd");
 					return saveYn;
 				}
 
 				if(sheet1.GetCellValue(i,"entryDeleteYn") == "N" && sheet1.GetCellValue(i,"chgSdate") == "" && sheet1.GetCellValue(i,"chgEdate") == ""){
-					swtAlert("근무시간이 없습니다. 근무시간 등록 후 입력바랍니다.");
+					alert("근무시간이 없습니다. 근무시간 등록 후 입력바랍니다.");
 					sheet1.SelectCell(i, "chgSdate");
 					return saveYn;
 				}
 
 				if(((sheet1.GetCellValue(i,"chgSdate") != "" && sheet1.GetCellValue(i,"chgEdate") != "")) 
 						&& (sheet1.GetCellValue(i,"chgSdate") > sheet1.GetCellValue(i,"chgEdate"))){
-					swtAlert("출근시간은 퇴근시간보다 이전이어야 합니다.");
+					alert("출근시간은 퇴근시간보다 이전이어야 합니다.");
 					sheet1.SelectCell(i, "chgSdate");
 					return saveYn;
 				}
 
 				if(sheet1.GetCellValue(i, "msg") != 'OK') {
-					swtAlert(sheet1.GetCellValue(i, "sabun")+" 사번의 " + sheet1.GetCellValue(i, "ymd") + " 항목을 저장할 수 없습니다.");
+					alert(sheet1.GetCellValue(i, "sabun")+" 사번의 " + sheet1.GetCellValue(i, "ymd") + " 항목을 저장할 수 없습니다.");
 					return saveYn;
 				}
 
 				if(sheet1.GetCellValue(i,"reason") == ""){
-					swtAlert("변경사유가 없습니다. 변경사유를 입력해 주세요.");
+					alert("변경사유가 없습니다. 변경사유를 입력해 주세요.");
 					sheet1.SelectCell(i, "reason");
 					return saveYn;
 				}
@@ -282,7 +282,7 @@
 				}
 			
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -294,11 +294,11 @@
 			console.log("3" + StCode);
 			console.log("4" + StMsg);
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	

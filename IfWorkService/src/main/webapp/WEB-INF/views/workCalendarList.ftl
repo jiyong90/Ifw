@@ -116,7 +116,7 @@
 				window.parent.location.href = loginUrl;
 			}
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -125,7 +125,7 @@
 		try{
 
 		}catch(ex){
-			swtAlert("OnClick Event Error : " + ex);
+			alert("OnClick Event Error : " + ex);
 		}
 	}
 
@@ -160,7 +160,7 @@
 			// sheet1.RangeBackColor(0, 0, sheet1.RowCount(), 1, "#f7f7fa");
 			sheet1.RenderSheet(2);
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 </script>

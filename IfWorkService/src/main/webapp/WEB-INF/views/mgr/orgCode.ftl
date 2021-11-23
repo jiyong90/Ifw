@@ -131,7 +131,7 @@
 				window.parent.location.href = loginUrl;
 			}
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -139,11 +139,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 </script>

@@ -309,7 +309,7 @@
 			if(status!=-1 && status=='R')
 				sheet2.DataInsert(-1) ;
 			else 
-				swtAlert("규칙관리를 저장 후 대상자를 입력하셔야 합니다.");
+				alert("규칙관리를 저장 후 대상자를 입력하셔야 합니다.");
 			break;
 		case "SaveIncludeTarget":
 			var saveJson = sheet2.GetSaveJson(1);
@@ -408,7 +408,7 @@
 			if(status!=-1 && status=='R')
 				sheet3.DataInsert(-1) ;
 			else 
-				swtAlert("규칙관리를 저장 후 대상자를 입력하셔야 합니다.");
+				alert("규칙관리를 저장 후 대상자를 입력하셔야 합니다.");
 			
 			break;	
 		case "SaveExcludeTarget":
@@ -487,7 +487,7 @@
 			if(status!=-1 && status=='R')
 				sheet4.DataInsert(-1) ;
 			else 
-				swtAlert("규칙관리를 저장 후 조건 항목을 입력하셔야 합니다.");
+				alert("규칙관리를 저장 후 조건 항목을 입력하셔야 합니다.");
 			break;
 			
 			break;
@@ -514,12 +514,12 @@
 			}
 			
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			
 			getSql(1);
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -527,11 +527,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	

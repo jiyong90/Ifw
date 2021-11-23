@@ -586,7 +586,7 @@
 
 				break;
 			} else {
-				swtAlert("기존 근무제를 복사해 주세요.");
+				alert("기존 근무제를 복사해 주세요.");
 				break;
 			}
 
@@ -617,7 +617,7 @@
 		case "Insert":
 			var flexibleApplyId = sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleApplyId");
 			if(flexibleApplyId == ""){
-				swtAlert("근무제도 기준을 저장후 대상자를 입력하셔야 합니다");
+				alert("근무제도 기준을 저장후 대상자를 입력하셔야 합니다");
 			} else {
 				var row = sheet2.DataInsert(0) ;
 				sheet2.SetCellValue(row, "flexibleApplyId" , flexibleApplyId);
@@ -638,7 +638,7 @@
 		case "Insert":
 			var flexibleApplyId = sheet1.GetCellValue( sheet1.GetSelectRow(), "flexibleApplyId");
 			if(flexibleApplyId == ""){
-				swtAlert("근무제도 기준을 저장후 대상자를 입력하셔야 합니다");
+				alert("근무제도 기준을 저장후 대상자를 입력하셔야 합니다");
 			} else {
 				var row = sheet3.DataInsert(0) ;
 				sheet3.SetCellValue(row, "flexibleApplyId" , flexibleApplyId);
@@ -678,43 +678,44 @@
 		var row = sheet1.FindText(3, flexibleApplyId2, 0);
 		var workTypeCd = sheet1.GetCellValue(row, "workTypeCd");
 		
-		swtConfirm("확정하시겠습니까?", function(result){
-			if(result){
-				$("#loading").show();
-				var param = {
-					flexibleApplyId: flexibleApplyId
-					, workTypeCd: workTypeCd
-				};
-				
-				$.ajax({
-					url: "${rc.getContextPath()}/flexibleApply/apply",
-					type: "POST",
-					contentType: 'application/json',
-					data: JSON.stringify(param),
-					dataType: "json",
-					success: function(data) {
-						$("#loading").hide();
-						console.log(data);
-						if(data!=null) {
-							if(data.status=='OK'){
-								swtAlert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정 요청 되었습니다.");
-							} else { 
-								var msg = data.message;
-								if(msg == '') msg = "근무 확정처리 중 오류가 발생되었습니다.";
-								swtAlert(msg);
-							}
-							
-							doAction1("Search");
-						}
-					},
-					error: function(e) {
-						$("#loading").hide();
-						swtAlert("확정할 내용이 없습니다.");
-						console.log(e);
+		if(!confirm("확정하시겠습니까?")) {
+			return;
+		}
+		
+		$("#loading").show();
+		var param = {
+			flexibleApplyId: flexibleApplyId
+			, workTypeCd: workTypeCd
+		};
+		
+		$.ajax({
+			url: "${rc.getContextPath()}/flexibleApply/apply",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				$("#loading").hide();
+				console.log(data);
+				if(data!=null) {
+					if(data.status=='OK'){
+						alert(sheet1.GetCellValue(row, "applyNm") + " 근무 확정 요청 되었습니다.");
+					} else { 
+						var msg = data.message;
+						if(msg == '') msg = "근무 확정처리 중 오류가 발생되었습니다.";
+						alert(msg);
 					}
-				});
+					
+					doAction1("Search");
+				}
+			},
+			error: function(e) {
+				$("#loading").hide();
+				alert("확정할 내용이 없습니다.");
+				console.log(e);
 			}
 		});
+		
 	}
 	
 	function getReturnValue(returnValue) {
@@ -764,7 +765,7 @@
 	function sheet1_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			} else {
 				for(i=1;i<=sheet1.RowCount();i++){
 			   	  	// 확정완료는 수정불가
@@ -789,7 +790,7 @@
 			}
 			sheetResize();
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 	
@@ -797,11 +798,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
@@ -837,7 +838,7 @@
 				
 			}
 		}catch(ex){
-			swtAlert("OnClick Event Error : " + ex);
+			alert("OnClick Event Error : " + ex);
 		}
 	}
 	
@@ -904,13 +905,13 @@
 	function sheet2_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			var applyYn = sheet1.GetCellValue( sheet1.GetSelectRow(), "applyYn");
 			setButten(applyYn, "sheet2");
 			sheetResize();
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -918,25 +919,25 @@
 	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction2("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	// 조회 후 에러 메시지
 	function sheet3_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			var applyYn = sheet1.GetCellValue( sheet1.GetSelectRow(), "applyYn");
 			setButten(applyYn, "sheet3");
 			ShowCancleBtn();
 			sheetResize();
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -949,23 +950,23 @@
 	function sheet3_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction3("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	// 조회 후 에러 메시지
 	function sheet4_OnSearchEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 	
@@ -1026,12 +1027,12 @@
 				
 				if( moment(useEymd).format('YYYYMMDD') < moment(minYmd).format('YYYYMMDD')
 						|| moment(maxYmd).format('YYYYMMDD') < moment(useEymd).format('YYYYMMDD')) {
-					swtAlert("탄력근무제는 2주 이내, 3개월 이내만 시행 가능합니다.\n근무제 종료일을 다시 지정해 주세요.");
+					alert("탄력근무제는 2주 이내, 3개월 이내만 시행 가능합니다.\n근무제 종료일을 다시 지정해 주세요.");
 					return false;
 				} 
 				
 		  		if(moment(useSymd).day() != weekDay) {
-		  			swtAlert("탄력근무제의 시작 요일은 "+arr[weekDay]+"요일 입니다.\n근무제 시작일을 다시 지정해 주세요.");
+		  			alert("탄력근무제의 시작 요일은 "+arr[weekDay]+"요일 입니다.\n근무제 시작일을 다시 지정해 주세요.");
 					return false;
 		  		}
 
@@ -1076,40 +1077,40 @@
 
 		var row = sheet1.FindText(3, flexibleApplyId + "", 0);
 
-		swtConfirm("취소하시겠습니까?", function(result){
-			if(result){
-				$("#loading").show();
-				var param = {
-					flexibleApplyId: flexibleApplyId
-				};
-		
-				$.ajax({
-					url: "${rc.getContextPath()}/flexibleApply/cancle",
-					type: "POST",
-					contentType: 'application/json',
-					data: JSON.stringify(param),
-					dataType: "json",
-					success: function(data) {
-						$("#loading").hide();
-						console.log(data);
-						if(data!=null) {
-							if(data.status=='OK'){
-								swtAlert(sheet1.GetCellValue(row, "applyNm") + " 근무 취소 요청 되었습니다.");
-							} else {
-								var msg = data.message;
-								if(msg == '') msg = "근무 취소 중 오류가 발생되었습니다.";
-								swtAlert(msg);
-							}
-		
-							doAction1("Search");
-						}
-					},
-					error: function(e) {
-						$("#loading").hide();
-						swtAlert("취소할 내용이 없습니다.");
-						console.log(e);
+		if(!confirm("취소하시겠습니까?")) {
+			return;
+		}
+
+		$("#loading").show();
+		var param = {
+			flexibleApplyId: flexibleApplyId
+		};
+
+		$.ajax({
+			url: "${rc.getContextPath()}/flexibleApply/cancle",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				$("#loading").hide();
+				console.log(data);
+				if(data!=null) {
+					if(data.status=='OK'){
+						alert(sheet1.GetCellValue(row, "applyNm") + " 근무 취소 요청 되었습니다.");
+					} else {
+						var msg = data.message;
+						if(msg == '') msg = "근무 취소 중 오류가 발생되었습니다.";
+						alert(msg);
 					}
-				});
+
+					doAction1("Search");
+				}
+			},
+			error: function(e) {
+				$("#loading").hide();
+				alert("취소할 내용이 없습니다.");
+				console.log(e);
 			}
 		});
 	}

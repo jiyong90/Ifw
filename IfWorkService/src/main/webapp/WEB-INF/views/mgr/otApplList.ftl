@@ -174,7 +174,7 @@
 			sheet1.RenderSheet(2);
 			
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 	
@@ -186,7 +186,7 @@
 			
 			if(org_applStatusCd == "21") { //결재처리중 > 1.결재반려 2.결재완료
 				if(applStatusCd != "21" && applStatusCd != "22" && applStatusCd != "99") {
-					swtAlert("변경할 수 없는 상태 값("+applStatusCd+") 입니다.");
+					alert("변경할 수 없는 상태 값("+applStatusCd+") 입니다.");
 					sheet1.SelectCell(Row, "applStatusCd");
 					//조회시 최초의 값으로 변경
 					sheet1.SetCellValue(Row, "applStatusCd", org_applStatusCd);
@@ -194,7 +194,7 @@
 				}
 			} else if(org_applStatusCd == "99") { //결재완료 > 1.취소처리완료 
 				if(applStatusCd != "99" && applStatusCd != "44") {
-					swtAlert("변경할 수 없는 상태 값("+applStatusCd+") 입니다.");
+					alert("변경할 수 없는 상태 값("+applStatusCd+") 입니다.");
 					sheet1.SelectCell(Row, "applStatusCd");
 					//조회시 최초의 값으로 변경
 					sheet1.SetCellValue(Row, "applStatusCd", org_applStatusCd);
@@ -212,11 +212,11 @@
 			console.log("3" + StCode);
 			console.log("4" + StMsg);
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 		 

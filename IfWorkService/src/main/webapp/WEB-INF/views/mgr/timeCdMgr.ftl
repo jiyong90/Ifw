@@ -265,7 +265,7 @@
 		case "Insert":
 			var timeCdMgrId = sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
 			if(timeCdMgrId == ""){
-				swtAlert("근무유형 저장 후 휴식시간을 입력하셔야 합니다");
+				alert("근무유형 저장 후 휴식시간을 입력하셔야 합니다");
 			} else {
 				var row = sheet2.DataInsert(0) ;
 				sheet2.SetCellValue(row, "timeCdMgrId" , timeCdMgrId);
@@ -291,7 +291,7 @@
 		case "Insert":
 			var timeCdMgrId = sheet1.GetCellValue( sheet1.GetSelectRow(), "timeCdMgrId");
 			if(timeCdMgrId == ""){
-				swtAlert("근무유형 저장 후 휴식시간을 입력하셔야 합니다");
+				alert("근무유형 저장 후 휴식시간을 입력하셔야 합니다");
 			} else {
 				var row = sheet3.DataInsert(0) ;
 				sheet3.SetCellValue(row, "timeCdMgrId" , timeCdMgrId);
@@ -307,7 +307,7 @@
 				window.parent.location.href = loginUrl;
 			}
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			if(sheet1.SearchRows() > 0) {
 				// 하단 화면을 보여줘야함.
@@ -321,7 +321,7 @@
 			sheet2.RemoveAll();
 			sheetResize();
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -329,14 +329,14 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			// 휴일코드가 추가되면 재갱신이 필요함
 			var timeCdList = stfConvCode(ajaxCall("${rc.getContextPath()}/timeCdMgr/timeCodeList", "holYn=Y",false).DATA, "");
 			sheet1.SetColProperty("holTimeCdMgrId", 	{ComboText:"|"+timeCdList[0], ComboCode:"|"+timeCdList[1]} );
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
@@ -369,12 +369,12 @@
 				window.parent.location.href = loginUrl;
 			}
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -382,11 +382,11 @@
 	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction2("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
@@ -397,12 +397,12 @@
 				window.parent.location.href = loginUrl;
 			}
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -410,11 +410,11 @@
 	function sheet3_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction3("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 

@@ -224,7 +224,7 @@
 				window.parent.location.href = loginUrl;
 			}
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 	// 팝업오픈
@@ -265,91 +265,88 @@
 			msg1 = msg1 + "취소하시겠습니까?";
 		}
 		
-		swtConfirm(msg1, function(result){
-			if(result){
-				var param = {
-					  flexibleEmpId : modifyFlexibleEmpId
-		 			, flexibleStdMgrId : flexibleStdMgrId
-					, changeType : changeType
-					, sabun : sabun
-		 			, sYmd : chgSymd
-		 			, eYmd : chgEymd
-		 			, orgSymd : orgSymd
-		 			, orgEymd : orgEymd
-		 		};
-				console.log(param);
-		    	Util.ajax({
-					url: "${rc.getContextPath()}/flexibleEmp/changeChk",
-					type: "POST",
-					contentType: 'application/json',
-					data: JSON.stringify(param),
-					dataType: "json",
-					success: function(data) {
-						console.log(data);					
-						if(data!=null) {
-							if(data.data.retType == "END"){
-								swtAlert("적용완료되었습니다.");
-								$("#flexibleModifyPopModal").modal("hide");
-								doAction1("Search");
-								// 팝업닫고 재조회
-							} else if(data.data.retType == "MSG"){
-								// 안내할 메시지가 있음 반영여부 확인
-								swtConfirm(data.data.retMsg, function(result){
-									if(result){
-										// 오류가 있어도 반영한다면 다시 부르자 갱신로직
-										if(changeType == "DEL"){
-											chgSymd = orgSymd;
-											chgEymd = orgEymd;
-										}
-										var param2 = {
-											  flexibleEmpId : modifyFlexibleEmpId
-								 			, flexibleStdMgrId : flexibleStdMgrId
-											, changeType : changeType
-											, sabun : sabun
-								 			, symd : chgSymd
-								 			, eymd : chgEymd
-								 			, orgSymd : orgSymd
-								 			, orgEymd : orgEymd
-								 			, hisId : data.data.retId
-								 		};
-										console.log(param2);
-										Util.ajax({
-											url: "${rc.getContextPath()}/flexibleEmp/changeFlexible",
-											type: "POST",
-											contentType: 'application/json',
-											data: JSON.stringify(param2),
-											dataType: "json",
-											success: function(data) {
-												if(data!=null) {
-													if(data.data.retType == "END"){
-														swtAlert("적용완료되었습니다.");
-														// 팝업닫고 재조회
-														$("#flexibleModifyPopModal").modal("hide");
-														doAction1("Search");
-													} else {
-														swtAlert(data.data.retMsg);
-													}
-												}
-											},error: function(e) {
-												console.log(e);
-												swtAlert("근무적용중 오류가 발생하였습니다.");
+		if(confirm(msg1)){
+
+			var param = {
+				  flexibleEmpId : modifyFlexibleEmpId
+	 			, flexibleStdMgrId : flexibleStdMgrId
+				, changeType : changeType
+				, sabun : sabun
+	 			, sYmd : chgSymd
+	 			, eYmd : chgEymd
+	 			, orgSymd : orgSymd
+	 			, orgEymd : orgEymd
+	 		};
+			console.log(param);
+	    	Util.ajax({
+				url: "${rc.getContextPath()}/flexibleEmp/changeChk",
+				type: "POST",
+				contentType: 'application/json',
+				data: JSON.stringify(param),
+				dataType: "json",
+				success: function(data) {
+					console.log(data);					
+					if(data!=null) {
+						if(data.data.retType == "END"){
+							alert("적용완료되었습니다.");
+							$("#flexibleModifyPopModal").modal("hide");
+							doAction1("Search");
+							// 팝업닫고 재조회
+						} else if(data.data.retType == "MSG"){
+							// 안내할 메시지가 있음 반영여부 확인 
+							if(confirm(data.data.retMsg)){
+								// 오류가 있어도 반영한다면 다시 부르자 갱신로직
+								if(changeType == "DEL"){
+									chgSymd = orgSymd;
+									chgEymd = orgEymd;
+								}
+								var param2 = {
+									  flexibleEmpId : modifyFlexibleEmpId
+						 			, flexibleStdMgrId : flexibleStdMgrId
+									, changeType : changeType
+									, sabun : sabun
+						 			, symd : chgSymd
+						 			, eymd : chgEymd
+						 			, orgSymd : orgSymd
+						 			, orgEymd : orgEymd
+						 			, hisId : data.data.retId
+						 		};
+								console.log(param2);
+								Util.ajax({
+									url: "${rc.getContextPath()}/flexibleEmp/changeFlexible",
+									type: "POST",
+									contentType: 'application/json',
+									data: JSON.stringify(param2),
+									dataType: "json",
+									success: function(data) {
+										if(data!=null) {
+											if(data.data.retType == "END"){
+												alert("적용완료되었습니다.");
+												// 팝업닫고 재조회
+												$("#flexibleModifyPopModal").modal("hide");
+												doAction1("Search");
+											} else {
+												alert(data.data.retMsg);
 											}
-										});
+										}
+									},error: function(e) {
+										console.log(e);
+										alert("근무적용중 오류가 발생하였습니다.");
 									}
 								});
 							}
-						} else {
-							swtAlert("근무적용검증중 오류가 발생하였습니다.");
 						}
-						
-					},
-					error: function(e) {
-						console.log(e);
-						swtAlert("근무변경정보 조회에 오류가 발생하였습니다.");
+					} else {
+						alert("근무적용검증중 오류가 발생하였습니다.");
 					}
-				}); 
-			}
-		});
+					
+				},
+				error: function(e) {
+					console.log(e);
+					alert("근무변경정보 조회에 오류가 발생하였습니다.");
+				}
+			}); 
+		}
 	}
 	
 	$("#changeType").change(function(){
@@ -364,41 +361,41 @@
 	
 	function setRetire(flexibleEmpId){
 		
-		swtConfirm("퇴직처리 시 퇴직일 이후 근무 데이터가 모두 삭제됩니다.\n진행하시겠습니까?", function(result){
-			if(result){
-				$("#loading").show();
-				
-				var param = {
-					flexibleEmpId: flexibleEmpId
-		   		};
-		   		
-		   		Util.ajax({
-					url: "${rc.getContextPath()}/flexibleEmp/retire",
-					type: "POST",
-					contentType: 'application/json',
-					data: JSON.stringify(param),
-					dataType: "json",
-					success: function(data) {
-						$("#loading").hide();
-						
-						if(data!=null && data.status=='OK') {
-							$("#alertText").html("퇴직 처리되었습니다.");
-						} else {
-							$("#alertText").html(data.message);
-						}
-						
-						$("#alertModal").on('hidden.bs.modal',function(){
-		         			$("#alertModal").off('hidden.bs.modal');
-		         			doAction1("Search");
-		         		});
-		         		$("#alertModal").modal("show"); 
-					},
-					error: function(e) {
-						$("#loading").hide();
+		if(confirm("퇴직처리 시 퇴직일 이후 근무 데이터가 모두 삭제됩니다.\n진행하시겠습니까?")){
+			$("#loading").show();
+			
+			var param = {
+				flexibleEmpId: flexibleEmpId
+	   		};
+	   		
+	   		Util.ajax({
+				url: "${rc.getContextPath()}/flexibleEmp/retire",
+				type: "POST",
+				contentType: 'application/json',
+				data: JSON.stringify(param),
+				dataType: "json",
+				success: function(data) {
+					$("#loading").hide();
+					
+					if(data!=null && data.status=='OK') {
+						$("#alertText").html("퇴직 처리되었습니다.");
+					} else {
+						$("#alertText").html(data.message);
 					}
-				});
-			}
-		});
+					
+					$("#alertModal").on('hidden.bs.modal',function(){
+	         			$("#alertModal").off('hidden.bs.modal');
+	         			doAction1("Search");
+	         		});
+	         		$("#alertModal").modal("show"); 
+				},
+				error: function(e) {
+					$("#loading").hide();
+				}
+			});
+   		
+		}
+		
 	}
 
 	/**
@@ -407,40 +404,41 @@
 	 */
 	function setCancleConfirmPersonal(flexibleEmpId){
 
-		swtConfirm("취소하시겠습니까?", function(result){
-			if(result){
-				$("#loading").show();
-				var param = {
-					flexibleEmpId: flexibleEmpId
-				};
-		
-				$.ajax({
-					url: "${rc.getContextPath()}/flexibleApply/cancle/personal",
-					type: "POST",
-					contentType: 'application/json',
-					data: JSON.stringify(param),
-					dataType: "json",
-					success: function(data) {
-						$("#loading").hide();
-						console.log(data);
-						if(data!=null) {
-							if(data.status=='OK'){
-								isuAlert("근무 취소 완료되었습니다.");
-							} else {
-								isuAlert(data.message);
-							}
-		
-							doAction1("Search");
-						}
-					},
-					error: function(e) {
-						$("#loading").hide();
-						isuAlert("취소할 내용이 없습니다.");
-						console.log(e);
+		if(!confirm("취소하시겠습니까?")) {
+			return;
+		}
+
+		$("#loading").show();
+		var param = {
+			flexibleEmpId: flexibleEmpId
+		};
+
+		$.ajax({
+			url: "${rc.getContextPath()}/flexibleApply/cancle/personal",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				$("#loading").hide();
+				console.log(data);
+				if(data!=null) {
+					if(data.status=='OK'){
+						isuAlert("근무 취소 완료되었습니다.");
+					} else {
+						isuAlert(data.message);
 					}
-				});
+
+					doAction1("Search");
+				}
+			},
+			error: function(e) {
+				$("#loading").hide();
+				isuAlert("취소할 내용이 없습니다.");
+				console.log(e);
 			}
 		});
+
 
 	}
 	

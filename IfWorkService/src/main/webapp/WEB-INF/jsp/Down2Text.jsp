@@ -53,11 +53,11 @@
 		out = pageContext.pushBody();
 
 	} catch (Exception e) {
-		out.println("<script>swtAlert('텍스트 다운로드중 에러가 발생하였습니다.'); history.back();</script>");
+		out.println("<script>alert('텍스트 다운로드중 에러가 발생하였습니다.'); history.back();</script>");
 		
 		e.printStackTrace();
 	} catch (Error e) {
-		out.println("<script>swtAlert('텍스트 다운로드중 에러가 발생하였습니다.'); history.back();</script>");
+		out.println("<script>alert('텍스트 다운로드중 에러가 발생하였습니다.'); history.back();</script>");
 
 		e.printStackTrace();
 	}

@@ -192,7 +192,7 @@
 		        	if(s <= cores && e >= coree) {
 		        		
 		        	} else {
-		        		swtAlert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
+		        		alert("기본 근무시간에는 코어 시간이 포함되어야 합니다. (코어시간 " + cores.substring(0,2) + ":" + cores.substring(2,4) + "~" + coree.substring(0,2) + ":" + coree.substring(2,4) + ")");
 		        		return;
 		        	}
         		}
@@ -204,11 +204,11 @@
 		case "Insert":
 			for(var i=sheet2.HeaderRows(); i < sheet2.RowCount()+sheet2.HeaderRows(); i++){
  	            if(sheet2.GetCellValue(i, "timeTypeCd") == "BASE") {
-	            	swtAlert("관리자는 기본 근무만 추가할 수 있습니다. 이미 해당일에 기본근무가 존재합니다.");
+ 	            	alert("관리자는 기본 근무만 추가할 수 있습니다. 이미 해당일에 기본근무가 존재합니다.");
 	            	return;
  	            }
  	            if(sheet2.GetCellValue(i, "taaCd") == "") {
-	            	swtAlert("근태코드로 인해 기본 근무를 추가할 수 없습니다.");
+ 	            	alert("근태코드로 인해 기본 근무를 추가할 수 없습니다.");
 	            	return;
  	            }
             }
@@ -226,7 +226,7 @@
 				window.parent.location.href = loginUrl;
 			}
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -234,11 +234,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 
@@ -246,11 +246,11 @@
 	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	

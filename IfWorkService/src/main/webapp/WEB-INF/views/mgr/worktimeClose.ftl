@@ -214,40 +214,39 @@
 		
 		var sYmd = sheet1.GetCellValue(row, "symd");
 		var eYmd = sheet1.GetCellValue(row, "eymd");
-		swtConfirm("마감하시겠습니까?", function(result){
-			if(result){
-				$("#loading").show();
-				var param = {
-						worktimeCloseId: worktimeCloseId
-						, sYmd: sYmd
-						, eYmd: eYmd
-						, sabun: sabun
-					};
-				console.log(param);
-				$.ajax({
-					url: "${rc.getContextPath()}/worktimeClose/workTimeCloseIf",
-					type: "POST",
-					contentType: 'application/json',
-					data: JSON.stringify(param),
-					dataType: "json",
-					success: function(data) {
-						$("#loading").hide();
-						console.log(data);
-						if(data!=null) {
-							if(data.message != '')
-								swtAlert(data.message);
-							else 
-								swtAlert(sheet1.GetCellValue(row, "closeNm") + " 근무마감 완료되었습니다.");
-							
-							doAction1("Search");
-						}
-					},
-					error: function(e) {
-						$("#loading").hide();
-						swtAlert("마감할 내용이 없습니다.");
-						console.log(e);
-					}
-				});
+		if(!confirm("마감하시겠습니까?")) {
+			return;
+		}
+		$("#loading").show();
+		var param = {
+				worktimeCloseId: worktimeCloseId
+				, sYmd: sYmd
+				, eYmd: eYmd
+				, sabun: sabun
+			};
+		console.log(param);
+		$.ajax({
+			url: "${rc.getContextPath()}/worktimeClose/workTimeCloseIf",
+			type: "POST",
+			contentType: 'application/json',
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: function(data) {
+				$("#loading").hide();
+				console.log(data);
+				if(data!=null) {
+					if(data.message != '')
+						alert(data.message);
+					else 
+						alert(sheet1.GetCellValue(row, "closeNm") + " 근무마감 완료되었습니다.");
+					
+					doAction1("Search");
+				}
+			},
+			error: function(e) {
+				$("#loading").hide();
+				alert("마감할 내용이 없습니다.");
+				console.log(e);
 			}
 		});
 	}
@@ -272,7 +271,7 @@
 			}
 			
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -280,11 +279,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 
@@ -292,11 +291,11 @@
 	function sheet2_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	

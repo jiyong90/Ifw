@@ -54,7 +54,7 @@
 	        response.setCharacterEncoding("utf-8");
 	        response.setHeader("Content-Disposition", "");
 	        
-         out.println("<script>swtAlert('파일 다운로드중 에러가 발생하였습니다.[Server Busy]'); </script>");
+         out.println("<script>alert('파일 다운로드중 에러가 발생하였습니다.[Server Busy]'); </script>");
      }
 
 	} catch (Exception e) {

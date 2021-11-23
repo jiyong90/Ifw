@@ -424,13 +424,13 @@
 								}
 								
 							} else {
-								swtAlert("보상휴가 신청시 오류가 발생하였습니다.");
+								alert("보상휴가 신청시 오류가 발생하였습니다.");
 							}
 							
 						},
 						error: function(e) {
 							console.log(e);
-							swtAlert("보상휴가 신청시 오류가 발생하였습니다.");
+							alert("보상휴가 신청시 오류가 발생하였습니다.");
 						}
 					});
 	    	},
@@ -580,7 +580,7 @@
 				compModalVue.getPossibleUseTime();
 			}
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -588,11 +588,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
    	

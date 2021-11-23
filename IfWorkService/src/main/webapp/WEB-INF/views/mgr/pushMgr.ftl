@@ -228,14 +228,14 @@
 				for(var i=sheet1.HeaderRows();i<sheet1.RowCount()+sheet1.HeaderRows(); i++) {
 					if(sheet1.GetCellValue(i, "sStatus") == "I"){
 						if(sheet1.GetCellValue(i, "stdMinute") == "" || sheet1.GetCellValue(i, "stdMinute2")== "" ) {
-							swtAlert("기준시간 이상/미만 값을 입력해주세요.");
+							alert("기준시간 이상/미만 값을 입력해주세요.");
 							return;
 						}
 						var e = sheet1.GetCellValue(i, "stdMinute");
 						var s = sheet1.GetCellValue(i, "stdMinute2");
 
 						if(e <= s) {
-							swtAlert("기준시간 미만 값은 이상 값보다 커야합니다.");
+							alert("기준시간 미만 값은 이상 값보다 커야합니다.");
 							return;
 						}
 					}
@@ -307,7 +307,7 @@
 
 			}
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 
@@ -315,11 +315,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 
@@ -327,7 +327,7 @@
 		try{
 			if(Row > 0 && sheet1.ColSaveName(Col) == "pushDetail"){
 				if(sheet1.GetCellValue(Row, "sStatus") == "I"){
-					swtAlert("저장 후 알림 내용 등록 및 수정 하시기 바랍니다.");
+					alert("저장 후 알림 내용 등록 및 수정 하시기 바랍니다.");
 					return;
 				} else {
 					var pushMsg = sheet1.GetCellValue( sheet1.GetSelectRow(), "pushMsg");
@@ -337,7 +337,7 @@
 
 			}
 		}catch(ex){
-			swtAlert("OnClick Event Error : " + ex);
+			alert("OnClick Event Error : " + ex);
 		}
 	}
 
