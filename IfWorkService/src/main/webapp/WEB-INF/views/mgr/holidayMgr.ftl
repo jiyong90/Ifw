@@ -36,6 +36,7 @@
 									<li><a href="javascript:doAction1('Upload')" class="basic authA">업로드</a></li>
 									<li><a href="javascript:doAction1('Down2Excel');" class="basic">다운로드</a></li>
 									<li><a href="javascript:doAction1('Rebuild');" class="basic">근무계획 재생성</a></li>
+									<li><a href="javascript:doAction1('Reholiday');" class="basic">공휴일 적용</a></li> 
 								</ul>
 							</div>
 						</div>
@@ -76,6 +77,7 @@
 			{Header:"양력여부",		Type:"CheckBox",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sunYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,
 				InsertEdit:1,	EditLen:100 },
 			{Header:"명절여부",		Type:"CheckBox",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"festiveYn",		KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
+			{Header:"휴일생성",		Type:"CheckBox",	Hidden:Number("0"),	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"editYn",		    KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"유급여부",		Type:"CheckBox",	Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"payYn",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 },
 			{Header:"비고",			Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"note",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:1,	InsertEdit:1,	EditLen:100 }
 		]; 
@@ -93,17 +95,45 @@
 		doAction1("Search");
 	});
 
-   	function doAction1(sAction) {
+	function doAction1(sAction) {
 		switch (sAction) {
 		case "Search":
 			sheet1.DoSearch( "${rc.getContextPath()}/holiday/list" , $("#sheetForm").serialize());
 			break;
 		
 		case "Save":
-			if(!dupChk(sheet1,"tenantId|enterCd|bisinessPlaceCd|holidayYmd", false, true)){break;}
-			IBS_SaveName(document.sheetForm,sheet1);
-			sheet1.DoSave("${rc.getContextPath()}/holiday/save", $("#sheetForm").serialize()); break;
-
+			// 체크된 로우 검색
+			var cnt1 = sheet1.CheckedRows(1); //삭제체크
+			var cnt2 = sheet1.CheckedRows(10); // 휴일생성 체크
+			
+			if(cnt2 >= 1  ){
+				alert("공휴일 적용은 휴일생성 버튼을 이용하시기 바랍니다.");
+				return;
+			}
+			
+			if(cnt1 >= 1){
+				//삭제 저장
+				if(confirm("공휴일 적용을 하셨을경우 해당일은 기본근무로 돌아갑니다.")){
+				
+				if(!dupChk(sheet1,"tenantId|enterCd|bisinessPlaceCd|holidayYmd", false, true)){break;}
+				IBS_SaveName(document.sheetForm,sheet1);
+				sheet1.DoSave("${rc.getContextPath()}/holiday/save", $("#sheetForm").serialize()); break;
+				
+				
+				}else{
+					return;
+				}
+			}else{
+				//신규 및 업데이트 저장
+				
+				
+				if(!dupChk(sheet1,"tenantId|enterCd|bisinessPlaceCd|holidayYmd", false, true)){break;}
+				IBS_SaveName(document.sheetForm,sheet1);
+				sheet1.DoSave("${rc.getContextPath()}/holiday/save", $("#sheetForm").serialize()); break;
+				
+				alert("bye");
+			}
+			
 			break;
 		case "Insert":
 			var row = sheet1.DataInsert(0);
@@ -114,7 +144,7 @@
 		case "Upload":   
 			var params = {Mode:"HeaderMatch", StartRow:1, WorkSheetNo:1, Append:1};
 			sheet1.LoadExcel(params);
-            break;
+			break;
 		case "Down2Excel":
 			var downcol = makeHiddenSkipCol(sheet1);
 			var param  = {DownCols:downcol,SheetDesign:1,Merge:1};
@@ -123,7 +153,7 @@
 		case "Rebuild" :
 			var symdVal = moment($("#symd").val()).format("YYYY");
 			var eymdVal = moment($("#eymd").val()).format("YYYY");
-
+			
 			if(symdVal != eymdVal){
 				isuAlert("조회 시작년도, 종료년도는 같아야합니다.");
 				break;
@@ -131,30 +161,39 @@
 			var yyyy = $("#symd").val();
 			yyyy = yyyy.substring(0,4);
 			var param = "?ymd=" + $("#symd").val();
-			swtConfirm(yyyy + "년 근무계획을 재생성 하시겠습니까?", function(result){
-				if(result){
-					Util.ajax({
-						url: "${rc.getContextPath()}/flexibleEmp/empResetAsync" + param,
-						type: "GET",
-						contentType: 'application/json',
-						dataType: "json",
-						success: function(data) {
-							if(data!=null && data.status=='OK') {
-								isuAlert("근무계획 재작성 요청완료.");
-							}else {
-								isuAlert(data.message);
-							}
-		
-						},
-						error: function(e) {
-							isuAlert("근무계획 재작성 에러 발생");
+			if(confirm(yyyy + "년 근무계획을 재생성 하시겠습니까?")){
+				Util.ajax({
+					url: "${rc.getContextPath()}/flexibleEmp/empResetAsync" + param,
+					type: "GET",
+					contentType: 'application/json',
+					dataType: "json",
+					success: function(data) {
+						if(data!=null && data.status=='OK') {
+							isuAlert("근무계획 재작성 요청완료.");
+						}else {
+							isuAlert(data.message);
 						}
-					});
-				}
-			});
-
+	
+					},
+					error: function(e) {
+						isuAlert("근무계획 재작성 에러 발생");
+					}
+				});
+			}
 			break;
-
+		case "Reholiday" :
+			
+			var cnt1 = sheet1.CheckedRows(10); // 휴일생성 체크
+			
+			if(cnt1 < 1 ){
+				alert("공휴일 적용만 가능합니다.");
+				return;
+			}
+			
+			if(!dupChk(sheet1,"tenantId|enterCd|bisinessPlaceCd|holidayYmd", false, true)){break;}
+			IBS_SaveName(document.sheetForm,sheet1);
+			sheet1.DoSave("${rc.getContextPath()}/holiday/change"  , $("#sheetForm").serialize()); break;
+			break;
 		}
 	}
 
@@ -166,12 +205,12 @@
 			}
 			
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 
 			sheetResize();
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error : " + ex);
+			alert("OnSearchEnd Event Error : " + ex);
 		}
 	}
 
@@ -179,11 +218,11 @@
 	function sheet1_OnSaveEnd(Code, Msg, StCode, StMsg) {
 		try {
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 	
