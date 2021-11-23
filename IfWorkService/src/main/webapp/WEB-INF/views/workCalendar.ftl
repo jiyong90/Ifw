@@ -209,7 +209,7 @@
         <div class="row no-gutters">
             <div id="calendar_left" class="col-12 col-md-3 pr-md-3" v-cloak>
                 <div id="workRangeInfo" class="work-info-wrap mb-3" style="display:none;">
-                    <div class="main-title">
+                    <div v-if="'${tsId}' != 'hdngv'" class="main-title">
                     	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.sYmd && rangeInfo.eYmd">
                     	{{moment(rangeInfo.sYmd).format("YYYY년 M월 D일")}} ~ {{moment(rangeInfo.eYmd).format("YYYY년 M월 D일")}}
                     	</template>
@@ -217,12 +217,12 @@
                     	{{moment(selectedDate).format("YYYY년 M월 D일")}}
                     	</template>
                     </div>
-                    <div class="main-desc" style="color: yellow;">
+                    <div v-if="'${tsId}' != 'hdngv'" class="main-desc" style="color: yellow;">
                     	<template v-if="Object.keys(rangeInfo).length>0 && rangeInfo.flexibleNm">
                     	{{rangeInfo.flexibleNm}}
                     	</template>
                     </div>
-                    <ul class="sub-wrap">
+                    <ul v-if="'${tsId}' != 'hdngv'"class="sub-wrap">
                         <li>
                             <div class="sub-title">총 계획 근무시간</div>
                             <div class="time-graph plan">
