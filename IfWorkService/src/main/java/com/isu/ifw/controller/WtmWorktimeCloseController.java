@@ -45,7 +45,7 @@ public class WtmWorktimeCloseController {
 		String userId = sessionData.get("userId").toString();
 		Long worktimeCloseId = Long.valueOf(paramMap.get("worktimeCloseId").toString());
 		
-		
+
 		paramMap.put("tenantId", tenantId);
 		paramMap.put("enterCd", enterCd);
 		paramMap.put("userId", userId);
@@ -62,6 +62,11 @@ public class WtmWorktimeCloseController {
 					WtmPropertie propertie = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "OPTION_COMP_USED");
 					if(propertie!=null && "HR".equalsIgnoreCase(propertie.getInfoValue())) {
 						wtmInterfaceService.sendCompCnt((HashMap) paramMap);
+					}
+
+					WtmPropertie propertie2 = propertieRepo.findByTenantIdAndEnterCdAndInfoKey(tenantId, enterCd, "CLOSE_INTF_DATA_USED");
+					if(propertie2!=null && "Y".equalsIgnoreCase(propertie2.getInfoValue())) {
+						wtmInterfaceService.sendCloseData((HashMap) paramMap);
 					}
 				}
 				rp.setSuccess("저장이 성공하였습니다.");
@@ -138,7 +143,7 @@ public class WtmWorktimeCloseController {
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
 		String enterCd = sessionData.get("enterCd").toString();
-		
+
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> codeList = null;
@@ -249,7 +254,7 @@ public class WtmWorktimeCloseController {
 		MDC.put("type", "C");
 		logger.debug("getTimeCdList Controller Start", MDC.get("sessionId"), MDC.get("logId"), MDC.get("type"));
 		*/
-		
+
 		rp.setSuccess("");
 		
 		List<Map<String, Object>> WorktimeCloseList = null;
