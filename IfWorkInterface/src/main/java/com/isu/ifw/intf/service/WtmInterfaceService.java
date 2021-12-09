@@ -11,7 +11,7 @@ import java.util.Map;
 public interface WtmInterfaceService {
 
 	public void sendData(String T, Map<String, Object> paramMap) throws Exception;
-	
+
 	public void receiveData(String T, Map<String, Object> paramMap) throws Exception;
 
 	/**
@@ -114,11 +114,14 @@ public interface WtmInterfaceService {
 	public int setWorkTimeClose(String tenantId, List<Map<String, Object>> compList) throws Exception;
 
 	/**
-	 * 영림원 > HR로 인터페이스 
+	 * 영림원 > HR로 인터페이스
 	 * @param T
 	 * @param paramMap
 	 * @throws Exception
 	 */
 	public void sendDataToHR(String T, Map<String, Object> paramMap) throws Exception;
-	
+
+
+	public void worktimeClose(Map<String, Object> paramMap) throws Exception;
+
 }

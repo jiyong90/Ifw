@@ -57,7 +57,7 @@ public interface WtmIntfMapper {
 	 * OT내역
 	 **/
 	public int saveIntfOtData(Map<String, Object> paramMap);
-	
+
 	/**
 	 * 보상휴가내역
 	 **/
@@ -77,5 +77,11 @@ public interface WtmIntfMapper {
 	 * photo
 	 **/
 	public List<Map<String, Object>> getEmpPhoto(Map<String, Object> paramMap);
-	
+
+	/**
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	public int saveIntfWorktimeClose(Map<String, Object> paramMap);
 }
