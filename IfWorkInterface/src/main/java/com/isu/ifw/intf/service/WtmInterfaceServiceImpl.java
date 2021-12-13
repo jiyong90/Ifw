@@ -33,11 +33,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 	private String orgUrl;
 	@Value("${ifw.orgconc-post}")
 	private String orgConcUrl;
-	@Value("${ifw.orgchart-post}")
-	private String orgChartUrl;
+
 	@Value("${ifw.taaappl-post}")
 	private String taaApplUrl;
-	
+
+	@Value("${ifw.orgchart-post}")
+	private String orgChartUrl;
 	@Value("${ifw.hr-code-post}")
 	private String hrCodeUrl;
 	@Value("${ifw.hr-emp-post}")
@@ -103,7 +104,8 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         		dataList = intfMapper.getWtmOrgConc(paramMap);
         		url = orgConcUrl;
         	}else if(T.equalsIgnoreCase("TAAAPPL")) {
-        		paramMap.put("ifDate", "2020-01-01 00:00");
+
+				paramMap.put("ifDate", "2020-01-01 00:00");
         		//디비 읽기전에 파일
         		try {
        	        	FileReader rw = new FileReader("./intfTime.txt");
@@ -113,21 +115,23 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     	            	System.out.println("========= a " + readLine);
     	            	paramMap.put("ifDate", readLine);
     	            }
-        		} catch(Exception e) {System.out.println(e.getMessage());}    
-        		
+        		} catch(Exception e) {System.out.println(e.getMessage());}
+
         		SimpleDateFormat format = new SimpleDateFormat ( "yyyy-MM-dd HH:mm", Locale.KOREA );
          		String ifDate = format.format(new Date());
-         		
+
          		//시간 미리 조회해놓고 db쿼리
         		dataList = intfMapper.getWtmTaaAppl(paramMap);
-        		
+
+
         		FileWriter fw = new FileWriter("./intfTime.txt");
                 BufferedWriter bw = new BufferedWriter( fw );
-                bw.write(ifDate); 
+                bw.write(ifDate);
                 bw.flush();
 	            System.out.println("========= b " + ifDate);
- 
+
                 url = taaApplUrl;
+
         	}else if(T.equalsIgnoreCase("ORGCHART")) {
         		dataList = intfMapper.getWtmOrgChart(paramMap);
         		url = orgChartUrl;
@@ -445,7 +449,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         }
 		return cnt;
 	}
-	
+
 	@Override
 	public void sendDataToHR(String T, Map<String, Object> paramMap) throws Exception{
 		System.out.println("WtmInterfaceServiceImpl getCode");
@@ -453,7 +457,7 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println("================================");
 		System.out.println(mapper.writeValueAsString(paramMap));
-		
+
 		System.out.println("================================");
 		System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::: " + T);
 		String url = "";
@@ -484,22 +488,22 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	}else if(T.equalsIgnoreCase("EMPPHOTO")) {
         		dataList = intfMapper.getEmpPhoto(paramMap);
         		url = hrEmpPhotoUrl;
-        		
+
         		Map<String, Object> eParam = new HashMap<>();
-	        	
-        		
+
+
         		int cutSize = 10;
-        		
+
         		if(dataList.size() <= cutSize) {
         			eParam.put("data", dataList);
         			exchangeService.exchange(url, HttpMethod.POST, null, eParam);
-        			
+
         		} else {
         			int totalSize = dataList.size();
     				int loopCnt = 1;
     				int startIdx = 0;
     				boolean isLoop = true;
-    				
+
     				while(isLoop) {
     					int sendIdx = cutSize * loopCnt;
     					if(sendIdx > totalSize) {
@@ -509,12 +513,12 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
     					List<Map<String, Object>> targetList = dataList.subList(startIdx, sendIdx);
     					eParam.put("data", targetList);
     					exchangeService.exchange(url, HttpMethod.POST, null, eParam);
-    					
+
     					startIdx = sendIdx;
     					loopCnt++;
     				}
         		}
-        		
+
         	}else {
         		dataList = null;
         	}
@@ -531,9 +535,46 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
         	}
 
         } catch(Exception e){
-            e.printStackTrace(); 
+            e.printStackTrace();
         }
-        
+
+	}
+
+
+	@Override
+	public void worktimeClose(Map<String, Object> paramMap) throws Exception{
+		System.out.println("WtmInterfaceServiceImpl getCode");
+		List<Map<String, Object>> dataList = null;
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println("================================");
+		System.out.println(mapper.writeValueAsString(paramMap));
+		System.out.println("================================");
+
+		String url = "";
+		int cnt = 0;
+		try {
+
+			dataList = (List<Map<String, Object>>) paramMap.get("data");
+			if(dataList != null) {
+				for(Map<String, Object> data : dataList) {
+					int temp = 0;
+					temp = intfMapper.saveIntfWorktimeClose(data);
+
+					if(temp == 0) {
+						System.out.println("intf fail : " + data.toString());
+					} else {
+						cnt += temp ;
+						System.out.println("intf success : " + data.toString());
+					}
+				}
+			}else {
+				System.out.println("No data. " + mapper.writeValueAsString(paramMap));
+			}
+
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+
 	}
 	
 }

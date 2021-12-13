@@ -186,4 +186,53 @@
 			   AND CD_COMPANY = #{cdCompany} 
         ]]>
     </select>
+
+
+
+    <insert id="saveIntfWorktimeClose" parameterType="hashmap">
+		<![CDATA[
+        INSERT INTO HR_WTMTOT
+        (
+            CD_COMPANY
+        , CD_BIZAREA
+        , NO_EMP
+        , YM
+        , CD_WCODE
+        , DY_MOR
+        , DY_NORMAL
+        , DY_EVENING
+        , DY_NIGHT
+        , DY_MIDNIGHT
+        , DY_ALLNIG
+        , TM_MOR
+        , TM_NORMAL
+        , TM_EVENING
+        , TM_NIGHT
+        , TM_MIDNIGHT
+        , TM_ALLING
+        , DY_USE
+        )
+        VALUES
+            (
+                #{cdCompany}
+            , #{cdBizarea}
+            , #{noEmp}
+            , #{ym}
+            , #{cdWcode}
+            , #{dyMor}
+            , #{dyNormal}
+            , #{dyEvening}
+            , #{dyNigth}
+            , #{dyMidnight}
+            , #{dyAlling}
+            , #{tmMor}
+            , #{tmNormal}
+            , #{tmEvening}
+            , #{tmNight}
+            , #{tmMidnight}
+            , #{tmAlling}
+            , #{dyUse}
+            )
+        ]]>
+	</insert>
 </mapper>
