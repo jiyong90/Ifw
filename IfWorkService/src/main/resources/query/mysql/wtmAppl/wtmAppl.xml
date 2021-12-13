@@ -752,6 +752,7 @@
         <if test="searchKeyword!=null and !searchKeyword.equals('')">
             AND T.applSabun LIKE CONCAT('%', #{searchKeyword}, '%') OR T2.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
         </if>
+    GROUP BY T.applId
     ORDER BY T.ymd DESC, T.applId DESC
     </select>
 
@@ -1024,6 +1025,7 @@
         <if test="searchKeyword!=null and !searchKeyword.equals('')">
             AND T.applSabun LIKE CONCAT('%', #{searchKeyword}, '%') OR T2.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
         </if>
+    GROUP BY T.applId
     ORDER BY T.ymd DESC, T.applId DESC
     </select>
 
@@ -1227,6 +1229,7 @@
         <if test="searchKeyword!=null and !searchKeyword.equals('')">
         AND T.applSabun LIKE CONCAT('%', #{searchKeyword}, '%') OR T2.EMP_NM LIKE CONCAT('%', #{searchKeyword}, '%')
         </if>
+    GROUP BY T.applId
     ORDER BY T.ymd DESC, T.applId DESC
     </select>
 
