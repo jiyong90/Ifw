@@ -2,6 +2,7 @@ package com.isu.ifw.intf.filter;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,6 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import com.isu.ifw.intf.wrapper.ResponseWrapper;
@@ -70,11 +72,27 @@ public class EncryptFilter implements Filter {
 		}else{
 			chain.doFilter(request, response);
 		}
+		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+		addSameSite(httpServletResponse , "None");
 	}
 
 	@Override
 	public void destroy() {
 
+	}
+
+	private void addSameSite(HttpServletResponse response, String sameSite) {
+
+		Collection<String> headers = response.getHeaders(HttpHeaders.SET_COOKIE);
+		boolean firstHeader = true;
+		for (String header : headers) { // there can be multiple Set-Cookie attributes
+			if (firstHeader) {
+				response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; Secure; %s", header, "SameSite=" + sameSite));
+				firstHeader = false;
+				continue;
+			}
+			response.addHeader(HttpHeaders.SET_COOKIE, String.format("%s; Secure; %s", header, "SameSite=" + sameSite));
+		}
 	}
 
 }
