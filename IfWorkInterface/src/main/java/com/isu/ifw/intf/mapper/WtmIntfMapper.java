@@ -84,4 +84,5 @@ public interface WtmIntfMapper {
 	 * @return
 	 */
 	public int saveIntfWorktimeClose(Map<String, Object> paramMap);
+	public int deleteIntfWorktimeClose(Map<String, Object> paramMap);
 }

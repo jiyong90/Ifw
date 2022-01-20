@@ -1,8 +1,8 @@
 package org.tempuri;
 
-public class SitemapWSSoapProxy implements org.tempuri.SitemapWSSoap {
+public class SitemapWSSoapProxy implements SitemapWSSoap {
   private String _endpoint = null;
-  private org.tempuri.SitemapWSSoap sitemapWSSoap = null;
+  private SitemapWSSoap sitemapWSSoap = null;
   
   public SitemapWSSoapProxy() {
     _initSitemapWSSoapProxy();
@@ -15,7 +15,7 @@ public class SitemapWSSoapProxy implements org.tempuri.SitemapWSSoap {
   
   private void _initSitemapWSSoapProxy() {
     try {
-      sitemapWSSoap = (new org.tempuri.SitemapWSLocator()).getSitemapWSSoap();
+      sitemapWSSoap = (new SitemapWSLocator()).getSitemapWSSoap();
       if (sitemapWSSoap != null) {
         if (_endpoint != null)
           ((javax.xml.rpc.Stub)sitemapWSSoap)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
@@ -38,37 +38,37 @@ public class SitemapWSSoapProxy implements org.tempuri.SitemapWSSoap {
     
   }
   
-  public org.tempuri.SitemapWSSoap getSitemapWSSoap() {
+  public SitemapWSSoap getSitemapWSSoap() {
     if (sitemapWSSoap == null)
       _initSitemapWSSoapProxy();
     return sitemapWSSoap;
   }
   
-  public java.lang.String getPlainText(java.lang.String strEncID, java.lang.String strCompanyCode, java.lang.String strEncText) throws java.rmi.RemoteException{
+  public String getPlainText(String strEncID, String strCompanyCode, String strEncText) throws java.rmi.RemoteException{
     if (sitemapWSSoap == null)
       _initSitemapWSSoapProxy();
     return sitemapWSSoap.getPlainText(strEncID, strCompanyCode, strEncText);
   }
   
-  public java.lang.String getEncText2(java.lang.String strEncID, java.lang.String strCompanyCode, java.lang.String strPlainText) throws java.rmi.RemoteException{
+  public String getEncText2(String strEncID, String strCompanyCode, String strPlainText) throws java.rmi.RemoteException{
     if (sitemapWSSoap == null)
       _initSitemapWSSoapProxy();
     return sitemapWSSoap.getEncText2(strEncID, strCompanyCode, strPlainText);
   }
   
-  public java.lang.String getEncText(java.lang.String strEncText) throws java.rmi.RemoteException{
+  public String getEncText(String strEncText) throws java.rmi.RemoteException{
     if (sitemapWSSoap == null)
       _initSitemapWSSoapProxy();
     return sitemapWSSoap.getEncText(strEncText);
   }
   
-  public java.lang.String autowayEncryption(java.lang.String strEncID, java.lang.String strCompanyCode, java.lang.String strPlainText) throws java.rmi.RemoteException{
+  public String autowayEncryption(String strEncID, String strCompanyCode, String strPlainText) throws java.rmi.RemoteException{
     if (sitemapWSSoap == null)
       _initSitemapWSSoapProxy();
     return sitemapWSSoap.autowayEncryption(strEncID, strCompanyCode, strPlainText);
   }
   
-  public java.lang.String autowayDecryption(java.lang.String strEncID, java.lang.String strCompanyCode, java.lang.String strEncText, java.lang.String isCheckTime) throws java.rmi.RemoteException{
+  public String autowayDecryption(String strEncID, String strCompanyCode, String strEncText, String isCheckTime) throws java.rmi.RemoteException{
     if (sitemapWSSoap == null)
       _initSitemapWSSoapProxy();
     return sitemapWSSoap.autowayDecryption(strEncID, strCompanyCode, strEncText, isCheckTime);

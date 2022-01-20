@@ -8,9 +8,9 @@
 package org.tempuri;
 
 public interface SitemapWSSoap extends java.rmi.Remote {
-    public java.lang.String getPlainText(java.lang.String strEncID, java.lang.String strCompanyCode, java.lang.String strEncText) throws java.rmi.RemoteException;
-    public java.lang.String getEncText2(java.lang.String strEncID, java.lang.String strCompanyCode, java.lang.String strPlainText) throws java.rmi.RemoteException;
-    public java.lang.String getEncText(java.lang.String strEncText) throws java.rmi.RemoteException;
-    public java.lang.String autowayEncryption(java.lang.String strEncID, java.lang.String strCompanyCode, java.lang.String strPlainText) throws java.rmi.RemoteException;
-    public java.lang.String autowayDecryption(java.lang.String strEncID, java.lang.String strCompanyCode, java.lang.String strEncText, java.lang.String isCheckTime) throws java.rmi.RemoteException;
+    public String getPlainText(String strEncID, String strCompanyCode, String strEncText) throws java.rmi.RemoteException;
+    public String getEncText2(String strEncID, String strCompanyCode, String strPlainText) throws java.rmi.RemoteException;
+    public String getEncText(String strEncText) throws java.rmi.RemoteException;
+    public String autowayEncryption(String strEncID, String strCompanyCode, String strPlainText) throws java.rmi.RemoteException;
+    public String autowayDecryption(String strEncID, String strCompanyCode, String strEncText, String isCheckTime) throws java.rmi.RemoteException;
 }

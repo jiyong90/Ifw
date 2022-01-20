@@ -556,6 +556,11 @@ public class WtmInterfaceServiceImpl implements WtmInterfaceService {
 
 			dataList = (List<Map<String, Object>>) paramMap.get("data");
 			if(dataList != null) {
+				if(dataList.get(0) != null) {
+					Map<String, Object> map = dataList.get(0);
+					System.out.println("map::::" + map);
+					intfMapper.deleteIntfWorktimeClose(map);
+				}
 				for(Map<String, Object> data : dataList) {
 					int temp = 0;
 					temp = intfMapper.saveIntfWorktimeClose(data);

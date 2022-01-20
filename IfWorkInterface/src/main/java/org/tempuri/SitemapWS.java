@@ -8,9 +8,9 @@
 package org.tempuri;
 
 public interface SitemapWS extends javax.xml.rpc.Service {
-    public java.lang.String getSitemapWSSoapAddress();
+    public String getSitemapWSSoapAddress();
 
-    public org.tempuri.SitemapWSSoap getSitemapWSSoap() throws javax.xml.rpc.ServiceException;
+    public SitemapWSSoap getSitemapWSSoap() throws javax.xml.rpc.ServiceException;
 
-    public org.tempuri.SitemapWSSoap getSitemapWSSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+    public SitemapWSSoap getSitemapWSSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
 }

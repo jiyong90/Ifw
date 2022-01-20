@@ -7,7 +7,7 @@
 
 package org.tempuri;
 
-public class SitemapWSLocator extends org.apache.axis.client.Service implements org.tempuri.SitemapWS {
+public class SitemapWSLocator extends org.apache.axis.client.Service implements SitemapWS {
 
     public SitemapWSLocator() {
     }
@@ -17,29 +17,29 @@ public class SitemapWSLocator extends org.apache.axis.client.Service implements 
         super(config);
     }
 
-    public SitemapWSLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
+    public SitemapWSLocator(String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
         super(wsdlLoc, sName);
     }
 
     // Use to get a proxy class for SitemapWSSoap
-    private java.lang.String SitemapWSSoap_address = "http://autoway.hyundai.net/Webservices/Common/SitemapWSF/SitemapWS.asmx";
+    private String SitemapWSSoap_address = "http://autoway.hyundai.net/Webservices/Common/SitemapWSF/SitemapWS.asmx";
 
-    public java.lang.String getSitemapWSSoapAddress() {
+    public String getSitemapWSSoapAddress() {
         return SitemapWSSoap_address;
     }
 
     // The WSDD service name defaults to the port name.
-    private java.lang.String SitemapWSSoapWSDDServiceName = "SitemapWSSoap";
+    private String SitemapWSSoapWSDDServiceName = "SitemapWSSoap";
 
-    public java.lang.String getSitemapWSSoapWSDDServiceName() {
+    public String getSitemapWSSoapWSDDServiceName() {
         return SitemapWSSoapWSDDServiceName;
     }
 
-    public void setSitemapWSSoapWSDDServiceName(java.lang.String name) {
+    public void setSitemapWSSoapWSDDServiceName(String name) {
         SitemapWSSoapWSDDServiceName = name;
     }
 
-    public org.tempuri.SitemapWSSoap getSitemapWSSoap() throws javax.xml.rpc.ServiceException {
+    public SitemapWSSoap getSitemapWSSoap() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
             endpoint = new java.net.URL(SitemapWSSoap_address);
@@ -50,9 +50,9 @@ public class SitemapWSLocator extends org.apache.axis.client.Service implements 
         return getSitemapWSSoap(endpoint);
     }
 
-    public org.tempuri.SitemapWSSoap getSitemapWSSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+    public SitemapWSSoap getSitemapWSSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
-            org.tempuri.SitemapWSSoapStub _stub = new org.tempuri.SitemapWSSoapStub(portAddress, this);
+            SitemapWSSoapStub _stub = new SitemapWSSoapStub(portAddress, this);
             _stub.setPortName(getSitemapWSSoapWSDDServiceName());
             return _stub;
         }
@@ -61,7 +61,7 @@ public class SitemapWSLocator extends org.apache.axis.client.Service implements 
         }
     }
 
-    public void setSitemapWSSoapEndpointAddress(java.lang.String address) {
+    public void setSitemapWSSoapEndpointAddress(String address) {
         SitemapWSSoap_address = address;
     }
 
@@ -72,13 +72,13 @@ public class SitemapWSLocator extends org.apache.axis.client.Service implements 
      */
     public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
-            if (org.tempuri.SitemapWSSoap.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.tempuri.SitemapWSSoapStub _stub = new org.tempuri.SitemapWSSoapStub(new java.net.URL(SitemapWSSoap_address), this);
+            if (SitemapWSSoap.class.isAssignableFrom(serviceEndpointInterface)) {
+                SitemapWSSoapStub _stub = new SitemapWSSoapStub(new java.net.URL(SitemapWSSoap_address), this);
                 _stub.setPortName(getSitemapWSSoapWSDDServiceName());
                 return _stub;
             }
         }
-        catch (java.lang.Throwable t) {
+        catch (Throwable t) {
             throw new javax.xml.rpc.ServiceException(t);
         }
         throw new javax.xml.rpc.ServiceException("There is no stub implementation for the interface:  " + (serviceEndpointInterface == null ? "null" : serviceEndpointInterface.getName()));
@@ -93,7 +93,7 @@ public class SitemapWSLocator extends org.apache.axis.client.Service implements 
         if (portName == null) {
             return getPort(serviceEndpointInterface);
         }
-        java.lang.String inputPortName = portName.getLocalPart();
+        String inputPortName = portName.getLocalPart();
         if ("SitemapWSSoap".equals(inputPortName)) {
             return getSitemapWSSoap();
         }
@@ -121,7 +121,7 @@ public class SitemapWSLocator extends org.apache.axis.client.Service implements 
     /**
     * Set the endpoint address for the specified port name.
     */
-    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+    public void setEndpointAddress(String portName, String address) throws javax.xml.rpc.ServiceException {
         
 if ("SitemapWSSoap".equals(portName)) {
             setSitemapWSSoapEndpointAddress(address);
@@ -135,7 +135,7 @@ if ("SitemapWSSoap".equals(portName)) {
     /**
     * Set the endpoint address for the specified port name.
     */
-    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+    public void setEndpointAddress(javax.xml.namespace.QName portName, String address) throws javax.xml.rpc.ServiceException {
         setEndpointAddress(portName.getLocalPart(), address);
     }
 
