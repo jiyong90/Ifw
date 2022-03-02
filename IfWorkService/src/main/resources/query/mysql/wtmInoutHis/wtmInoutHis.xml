@@ -25,7 +25,26 @@
                F_WTM_DATE_FORMAT(X.pSdate,'YMD') AS pSymd,
                F_WTM_DATE_FORMAT(X.pEdate,'YMD') AS pEymd,
                (SELECT MAX(YMD) FROM WTM_WORK_DAY_RESULT WHERE tenant_id=#{tenantId} and enter_cd=#{enterCd} and sabun = #{sabun} and
-                   STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') BETWEEN DATE_FORMAT(PLAN_SDATE, '%Y%m%d%H%i%s') and DATE_FORMAT(PLAN_EDATE, '%Y%m%d%H%i%s') AND TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT') ) as cYmd
+                   STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') BETWEEN DATE_FORMAT(PLAN_SDATE, '%Y%m%d%H%i%s') and DATE_FORMAT(PLAN_EDATE, '%Y%m%d%H%i%s') AND TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT') ) as cYmd,
+               ( SELECT CASE WHEN WC.HOLIDAY_YN !='Y' AND WR.PLAN_SDATE IS NOT NULL AND STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') <=  DATE_ADD( DATE_FORMAT(WR.PLAN_SDATE, '%Y%m%d') , INTERVAL 6 HOUR)
+                        THEN REPLACE(DATE_SUB( DATE_FORMAT(WR.PLAN_SDATE, '%Y%m%d') ,  INTERVAL 1 DAY) , '-', '')
+                        WHEN WC.HOLIDAY_YN ='Y' AND STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') <= DATE_ADD( STR_TO_DATE(#{inoutDate}, '%Y%m%d') , INTERVAL 6 HOUR)
+                        THEN REPLACE(DATE_SUB( DATE_FORMAT(#{inoutDate}, '%Y%m%d') ,  INTERVAL 1 DAY) , '-', '')
+                        ELSE WC.YMD
+                         END AS diffYmd
+                        FROM WTM_WORK_CALENDAR WC
+                        LEFT JOIN WTM_WORK_DAY_RESULT WR
+                          ON WR.TENANT_ID = WC.TENANT_ID
+                        AND WR.ENTER_CD = WC.ENTER_CD
+                        AND WR.SABUN = WC.SABUN
+                        AND WR.YMD = WC.YMD
+                      WHERE WC.tenant_id= #{tenantId}
+                        AND WC.enter_cd= #{enterCd}
+                        AND WC.sabun = #{sabun}
+                        AND WC.YMD = LEFT(#{inoutDate},8)
+                      ORDER BY WR.ymd ASC
+                      LIMIT 1
+               ) AS diffYmd
         FROM WTM_WORK_CALENDAR C
                  LEFT OUTER JOIN (SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS pSdate,
                                          MAX(A.PLAN_EDATE) AS pEdate
