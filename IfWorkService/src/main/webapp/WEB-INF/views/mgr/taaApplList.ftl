@@ -36,7 +36,7 @@
 								<div class="float-left title">근태 신청내역조회 </div>
 								<ul class="float-right btn-wrap">
 									<li><a href="javascript:doAction1('Save')" class="basic">저장</a></li>
-									<li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li>
+									<!-- <li><a href="javascript:doAction1('Down2Excel')" class="basic authR">다운로드</a></li> -->
 								</ul>
 							</div>
 						</div>
@@ -78,7 +78,7 @@
        	    offset: {
        	      x: 25
        	    },
-       	    content: '근무일별 개인 연장근무 신청 내역을 조회합니다.',
+       	    content: '근무일별 개인 근태 신청 내역을 조회합니다.',
        	    onOpen: function () {
        	      this.source.addClass('active');
        	    },
@@ -89,22 +89,23 @@
    		
 		var initdata1 = {};
 		
-		initdata1.Cfg = {SearchMode:smLazyLoad,MergeSheet:msPrevColumnMerge,Page:100};
+		initdata1.Cfg = {SearchMode:smLazyLoad,Page:22};
 		initdata1.HeaderMode = {Sort:1,ColMove:1,ColResize:1,HeaderCheck:0};
 
 		initdata1.Cols = [
 			{Header:"No",		Type:"Seq",			Hidden:Number("0"),	Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sNo" },
 			{Header:"상태",		Type:"Status",		Hidden:Number("0"),Width:"45",	Align:"Center",	ColMerge:0,	SaveName:"sStatus",	Sort:0 },
 			{Header:"결재번호",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:1,	SaveName:"applId",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"결재상세번호",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:1,	SaveName:"taaApplId",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"결재상태",	Type:"Combo",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:1,	SaveName:"applStatusCd",	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"소속",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"orgNm"		,	KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"사번",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"sabun",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 			{Header:"성명",		Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"empNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"근태구분",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"applNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:1,	EditLen:100 },
-			{Header:"시작일",		Type:"Text",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"symd",				KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"시작시각",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"otSdate",			KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"종료일",		Type:"Text",	Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"eymd",				KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
-			{Header:"종료시각",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"otEdate",			KeyField:0,	Format:"YmdHm",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 }
+			{Header:"근태구분",	Type:"Text",		Hidden:0,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"taaNm",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"근태코드",	Type:"Text",		Hidden:1,	Width:100,	Align:"Center",	ColMerge:0,	SaveName:"taaCd",			KeyField:0,	Format:"",		PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"계획시작일",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"taaSdate",		KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"계획종료일",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"taaEdate",		KeyField:0,	Format:"Ymd",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
+			{Header:"신청시간(분)",	Type:"Text",		Hidden:0,	Width:120,	Align:"Center",	ColMerge:0,	SaveName:"apprMinute",		KeyField:0,	Format:"",	PointCount:0,	UpdateEdit:0,	InsertEdit:0,	EditLen:100 },
 		]; 
 		
 		IBS_InitSheet(sheet1, initdata1);
@@ -130,7 +131,7 @@
    	function doAction1(sAction) {
 		switch (sAction) {
 		case "Search":
-			sheet1.DoSearch( "${rc.getContextPath()}/applList/taaList" , $("#sheetForm").serialize());
+			sheet1.DoSearch( "${rc.getContextPath()}/taaApplList/taaList" , $("#sheetForm").serialize());
 			break;
 		case "Down2Excel":
 			var downcol = makeHiddenSkipCol(sheet1);
@@ -139,7 +140,7 @@
 			break;
 		case "Save":
 			IBS_SaveName(document.sheetForm,sheet1);
-			sheet1.DoSave( "${rc.getContextPath()}/taaAppl/saveApplSts", $("#sheetForm").serialize());
+			sheet1.DoSave( "${rc.getContextPath()}/taaApplList/saveTaaSts", $("#sheetForm").serialize());
 			break;
 		}
 	}
@@ -168,7 +169,7 @@
 			sheet1.RenderSheet(2);
 			
 		} catch (ex) {
-			swtAlert("OnSearchEnd Event Error " + ex);
+			alert("OnSearchEnd Event Error " + ex);
 		}
 	}
 	
@@ -180,7 +181,7 @@
 			
 			if(org_applStatusCd == "21") { //결재처리중 > 1.결재반려 2.결재완료
 				if(applStatusCd != "21" && applStatusCd != "22" && applStatusCd != "99") {
-					swtAlert("변경할 수 없는 상태 값("+applStatusCd+") 입니다.");
+					alert("변경할 수 없는 상태 값("+applStatusCd+") 입니다.");
 					sheet1.SelectCell(Row, "applStatusCd");
 					//조회시 최초의 값으로 변경
 					sheet1.SetCellValue(Row, "applStatusCd", org_applStatusCd);
@@ -188,7 +189,7 @@
 				}
 			} else if(org_applStatusCd == "99") { //결재완료 > 1.취소처리완료 
 				if(applStatusCd != "99" && applStatusCd != "44") {
-					swtAlert("변경할 수 없는 상태 값("+applStatusCd+") 입니다.");
+					alert("변경할 수 없는 상태 값("+applStatusCd+") 입니다.");
 					sheet1.SelectCell(Row, "applStatusCd");
 					//조회시 최초의 값으로 변경
 					sheet1.SetCellValue(Row, "applStatusCd", org_applStatusCd);
@@ -206,11 +207,11 @@
 			console.log("3" + StCode);
 			console.log("4" + StMsg);
 			if (Msg != "") {
-				swtAlert(Msg);
+				alert(Msg);
 			}
 			doAction1("Search");
 		} catch (ex) {
-			swtAlert("OnSaveEnd Event Error " + ex);
+			alert("OnSaveEnd Event Error " + ex);
 		}
 	}
 		 
