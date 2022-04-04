@@ -65,6 +65,7 @@
                 	<ul class="collapse list-unstyled" :class="{show: curSubMenu=='sub3'}" id="submenu-list3">
                         <li :class="{active: curPageName=='otApplMgr'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/otApplMgr';">연장근로신청(관리자)</a></li>
                         <li :class="{active: curPageName=='otApplList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/otApplList';">연장근로 신청내역조회(관리자)</a></li>
+                        <li v-if="'${tsId}' =='honda'" :class="{active: curPageName=='taaApplList'}"><a href="#" onclick="location.href='${rc.getContextPath()}/console/${tsId}/views/mgr/taaApplList';">근태사유서 신청내역조회</a></li>
                     </ul>
                 </li>
                 <li :class="{active: curSubMenu=='sub4'}" v-if="authRule.indexOf('FLEX_SETTING')>-1 || authRule.indexOf('FLEX_SUB')>-1">
@@ -180,7 +181,7 @@ function callLnb (obj) {
 				this.curSubMenu = 'sub1';
 			else if(pageName=='timeCdMgr'||pageName=='baseWorkMgr'||pageName=='workteamMgr'||pageName=='workteamEmp'||pageName=='flexibleStdMgr'||pageName=='flexibleApplyMgr'||pageName=='flexibleEmp')
 				this.curSubMenu = 'sub2';
-			else if(pageName=='otApplMgr'||pageName=='otApplList')
+			else if(pageName=='otApplMgr'||pageName=='otApplList'|| pageName=='taaApplList')
 				this.curSubMenu = 'sub3';
 			else if(pageName=='worktimeCheckList'||pageName=='entryCheckList'||pageName=='entryDiffList')
 				this.curSubMenu = 'sub4';
