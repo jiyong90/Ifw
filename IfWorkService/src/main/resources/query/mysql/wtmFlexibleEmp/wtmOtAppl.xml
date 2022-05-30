@@ -210,7 +210,7 @@
 	          WHERE R.TENANT_ID = #{tenantId}
 	            AND R.ENTER_CD = #{enterCd}
 	            AND R.YMD BETWEEN #{symd} AND #{eymd}
-	            AND R.TIME_TYPE_CD IN ('OT','FIXOT')
+	            AND R.TIME_TYPE_CD IN ('OT','FIXOT','NIGHT')
 	            AND R.SABUN = #{sabun}
 	      ) X
 
@@ -501,5 +501,51 @@
 					 FROM WTM_DAY_MGR D) DD
 		 WHERE #{ymd} BETWEEN DD.WEEK_SDATE AND DD.WEEK_EDATE
 		   AND DD.DAY_NM = (SELECT INFO_VALUE FROM WTM_PROPERTIE WHERE TENANT_ID = #{tenantId} AND ENTER_CD = #{enterCd} AND INFO_KEY = 'OPTION_FIRSTDAY_OF_WEEK')
+    </select>
+    
+    <!--
+    	대체휴일 신청서가 result에 들어가 있는지
+     -->
+    <select id="otSubsResultExist" parameterType="Map" resultType="hashmap">
+		<![CDATA[
+		SELECT COUNT(*) as cnt
+		  FROM WTM_WORK_DAY_RESULT
+	  	 WHERE TENANT_ID = #{tenantId}
+		   AND ENTER_CD = #{enterCd}
+		   AND APPL_ID = #{applId}
+		   AND TAA_CD = #{taaCd}
+	    ]]>
+    </select>
+    
+     <!--
+    	처음 신청된 대체휴일 신청서가 subs에 들어가 있는지
+     -->
+    <select id="otSubsApplExist" parameterType="Map" resultType="hashmap">
+		<![CDATA[
+		SELECT COUNT(APPL_ID) AS cnt
+			 , CASE WHEN APPL_ID  IS NULL OR APPL_ID = '' THEN 0
+					ELSE APPL_ID END  AS applId
+		  FROM WTM_OT_SUBS_APPL
+		 WHERE OT_APPL_ID = #{otApplId}
+		   AND OLD_SUBS_APPL_ID IS NULL
+		   AND CANCEL_YN = 'Y' 
+	    ]]>
+    </select>
+    
+    <!--
+    	하나의 applId를 가지고 대체휴일을 두개로 나눴을 때
+     -->
+    <select id="otSubsChgAppl" parameterType="Map" resultType="hashmap">
+		<![CDATA[
+		SELECT DISTINCT(A.appl_id) as applId
+		  FROM WTM_OT_SUBS_APPL A
+		  LEFT OUTER JOIN WTM_OT_APPL B
+			ON A.OT_APPL_ID = B.OT_APPL_ID
+		  JOIN WTM_APPL C
+			ON A.APPL_ID = C.APPL_ID
+		 WHERE A.OT_APPL_ID = #{otApplId}
+		   AND A.OLD_SUBS_APPL_ID IS NOT NULL
+		   AND A.CANCEL_YN IS NULL
+	    ]]>
     </select>
 </mapper>
