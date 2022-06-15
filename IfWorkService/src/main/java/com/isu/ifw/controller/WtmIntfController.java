@@ -175,7 +175,7 @@ public class WtmIntfController extends TenantSecuredControl {
 				}
 
 				logger.debug("/intf/inoutCheck rp : " + rp.toString());
-				if(request.getParameter("type").toString().equals("OUT")) {
+				if(params.get("type").toString().equals("OUT")) {
 					//퇴근일때만 인정시간 계산
 					inoutService.inoutPostProcess(paramMap);
 				}
@@ -358,7 +358,8 @@ public class WtmIntfController extends TenantSecuredControl {
 			paramMap.put("inoutType", "IN");
 			paramMap.put("entryNote", "TEST");
 			paramMap.put("entryType", "INTF");
-         	inoutService.updateTimecard3(paramMap);
+         	//inoutService.updateTimecard3(paramMap); 2022-03-17 혼다 퇴근타각 문제로 2번으로 변경
+         	inoutService.updateTimecard2(paramMap);
 			if(request.getParameter("enterCd").equals("ISU_ST")) {
 				inoutService.sendErp(request.getParameter("enterCd"), request.getParameter("emp"), paramMap);
 			}
@@ -388,7 +389,8 @@ public class WtmIntfController extends TenantSecuredControl {
 			paramMap.put("inoutType", "OUT");
 			paramMap.put("entryNote", "TEST");
 			paramMap.put("entryType", "INTF");
-         	inoutService.updateTimecard3(paramMap);
+         	//inoutService.updateTimecard3(paramMap); 2022-03-17 혼다 퇴근타각 문제로 2번으로 변경
+         	inoutService.updateTimecard2(paramMap);
          	inoutService.inoutPostProcess(paramMap);
 		} catch(Exception e) {
 			e.printStackTrace();
