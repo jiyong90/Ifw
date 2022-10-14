@@ -537,7 +537,7 @@
      -->
     <select id="otSubsChgAppl" parameterType="Map" resultType="hashmap">
 		<![CDATA[
-		SELECT DISTINCT(A.appl_id) as applId
+		SELECT A.appl_id as applId
 		  FROM WTM_OT_SUBS_APPL A
 		  LEFT OUTER JOIN WTM_OT_APPL B
 			ON A.OT_APPL_ID = B.OT_APPL_ID

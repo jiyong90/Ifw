@@ -167,7 +167,8 @@ public class WtmInoutController {
 			paramMap.put("entryType", "MO");
 			
 			logger.debug("getParameter s " + paramMap.toString());
-			inoutService.updateTimecard3(paramMap);
+			//inoutService.updateTimecard3(paramMap); 2022-03-17 혼다 퇴근타각 문제로 2번으로 변경
+			inoutService.updateTimecard2(paramMap);
 			logger.debug("getParameter s2 " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 
 		} catch(Exception e) {
@@ -217,7 +218,8 @@ public class WtmInoutController {
 			paramMap.put("entryType", "MO");
 			
 			logger.debug("getParameter s " + paramMap.toString());
-			inoutService.updateTimecard3(paramMap);
+			//inoutService.updateTimecard3(paramMap); 2022-03-17 혼다 퇴근타각 문제로 2번으로 변경
+			inoutService.updateTimecard2(paramMap);
 			logger.debug("getParameter s2 " + tenantId + "," + enterCd + "," + sabun + "," + rp.toString());
 		} catch(Exception e) {
 			logger.debug("outexception : " + e.getMessage() + paramMap.toString());

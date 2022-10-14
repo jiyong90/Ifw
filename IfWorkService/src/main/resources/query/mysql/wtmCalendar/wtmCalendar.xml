@@ -456,7 +456,8 @@
 			   )
 			 </if>
 			  <![CDATA[
-			ORDER BY CASE WHEN H.LEADER_YN = 'Y' THEN 1 else 2 end, H.DUTY_CD, A.SABUN, B.PLAN_SDATE
+			ORDER BY CASE WHEN H.LEADER_YN = 'Y' THEN 1 else 2 end,
+					 H.ORG_CD, H.DUTY_CD, H.EMP_NM
 	   ]]>
     </select>
     

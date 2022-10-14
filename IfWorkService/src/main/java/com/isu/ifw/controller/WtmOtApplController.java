@@ -10,6 +10,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isu.ifw.service.WtmApplService;
+import com.isu.ifw.service.WtmMsgService;
 import com.isu.ifw.vo.ReturnParam;
 import com.isu.ifw.vo.WtmApplLineVO;
 import com.isu.ifw.util.WtmUtil;
@@ -34,6 +37,9 @@ public class WtmOtApplController {
 	@Autowired
 	@Qualifier("wtmOtApplService")
 	WtmApplService otApplService;
+	
+	@Autowired
+	WtmMsgService msgService;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getOtAppl(@RequestParam Long applId
@@ -92,7 +98,9 @@ public class WtmOtApplController {
 		validateParamMap(paramMap, "workTypeCd", "otSdate", "otEdate", "reasonCd", "reason");
 		
 		ReturnParam rp = new ReturnParam();
+		ReturnParam rp2 = new ReturnParam();
 		rp.setSuccess("");
+		
 		
 		Long tenantId = Long.valueOf(request.getAttribute("tenantId").toString());
 		Map<String, Object> sessionData = (Map<String, Object>) request.getAttribute("sessionData");
@@ -118,13 +126,14 @@ public class WtmOtApplController {
 				if(applSabuns!=null && applSabuns.keySet().size()>0) {
 					for(String applSabun : applSabuns.keySet()) {
 						rp = otApplService.validate(tenantId, enterCd, applSabun, workTypeCd, paramMap);
-						
+						System.out.println("ydh 1 : ");
 						if(rp!=null && rp.getStatus()!=null && "FAIL".equals(rp.getStatus())) {
 							return rp;
 						}
 					}
-					
-					otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+					System.out.println("ydh 8 : " +rp2);
+					rp2 = otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+					System.out.println("ydh 2 : " +rp2);
 				} else {
 					rp.setFail("대상자를 선택해 주세요.");
 					return rp;
@@ -132,11 +141,24 @@ public class WtmOtApplController {
 			} else {
 				rp = otApplService.validate(tenantId, enterCd, sabun, workTypeCd, paramMap);
 				if(rp!=null && rp.getStatus()!=null && "OK".equals(rp.getStatus())) {
-					otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+					rp2 = otApplService.request(tenantId, enterCd, applId, workTypeCd, paramMap, sabun, userId);
+					System.out.println("ydh 3 : " + rp2);
 				}
 				
 			}
 			
+			System.out.println("ydh 4 : ");
+			System.out.println("ydh 5 : " + rp2.get("to"));
+			//메일 전송
+			if(rp2.getStatus()!=null && "OK".equals(rp2.getStatus()) 
+					&& rp2.containsKey("from") && rp2.get("from")!=null && !"".equals(rp2.get("from")) 
+					&& rp2.containsKey("to") && rp2.get("to")!=null && !"".equals(rp2.get("to"))) {
+				List<String> toSabuns = (List<String>)rp2.get("to");
+				
+				System.out.println("toSabuns : " + mapper.writeValueAsString(toSabuns));
+				
+				msgService.sendMailForAppl(tenantId, enterCd, rp2.get("from").toString(), toSabuns, "FLEX", "APPR");
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

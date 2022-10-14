@@ -488,7 +488,8 @@
 				      AND T.SDATE = #{sdate}
 				      AND T.WORK_TYPE_CD = #{workTypeCd}
 				GROUP BY T.TENANT_ID, T.ENTER_CD, T.SABUN, H.EMP_NM, T.WORK_TYPE_CD, T.SDATE, T.EDATE
-				ORDER BY H.ORG_CD, H.EMP_NM
+				ORDER BY CASE WHEN H.LEADER_YN = 'Y' THEN 1 else 2 end,
+						 H.ORG_CD, H.DUTY_CD, H.EMP_NM
         ]]>
     </select>
 
