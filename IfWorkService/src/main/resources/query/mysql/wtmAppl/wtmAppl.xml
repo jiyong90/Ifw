@@ -640,7 +640,7 @@
                      , A.TENANT_ID AS tenantId
                      , A.ENTER_CD AS enterCd
                   FROM WTM_APPL A
-                       INNER JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
+                       LEFT JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
                                     ON A.APPL_ID = B.APPL_ID
                        INNER JOIN WTM_APPL_CODE Z
                                ON A.TENANT_ID = Z.TENANT_ID
@@ -649,6 +649,7 @@
                  WHERE A.TENANT_ID = #{tenantId}
                    AND A.ENTER_CD = #{enterCd}
                    AND A.APPL_SABUN = #{empNo}
+                   AND A.APPL_CD = 'OT_CAN'
                  UNION ALL
                 SELECT A.APPL_ID AS applId
                      , A.APPL_CD AS applCd
@@ -879,7 +880,7 @@
                      , L.APPR_TYPE_CD AS apprTypeCd
                      , L.APPR_OPINION AS apprOpinion
                   FROM WTM_APPL A
-                       INNER JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
+                       LEFT JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
                                     ON A.APPL_ID = B.APPL_ID
                        INNER JOIN WTM_APPL_CODE Z
                                ON A.TENANT_ID = Z.TENANT_ID
@@ -892,6 +893,7 @@
                    AND L.APPR_SABUN = #{empNo}
                    AND L.APPR_STATUS_CD = '10'
                    AND A.APPL_STATUS_CD IN ('21','31')
+                   AND A.APPL_CD = 'OT_CAN'
                  UNION ALL
                 SELECT A.APPL_ID AS applId
                      , A.APPL_CD AS applCd
@@ -1114,7 +1116,7 @@
                      , A.TENANT_ID AS tenantId
                      , A.ENTER_CD AS enterCd
                   FROM WTM_APPL A
-                       INNER JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
+                       LEFT JOIN (SELECT APPL_ID, MIN(PLAN_SDATE) AS PLAN_SDATE, MAX(PLAN_EDATE) AS PLAN_EDATE,  REASON FROM WTM_OT_CAN_APPL GROUP BY APPL_ID, REASON) B
                                     ON A.APPL_ID = B.APPL_ID
                        INNER JOIN WTM_APPL_CODE Z
                                ON A.TENANT_ID = Z.TENANT_ID
@@ -1122,6 +1124,7 @@
                               AND A.APPL_CD = Z.APPL_CD
                  WHERE A.TENANT_ID = #{tenantId}
                    AND A.ENTER_CD = #{enterCd}
+                   AND A.APPL_CD = 'OT_CAN'
                  UNION ALL
                 SELECT A.APPL_ID AS applId
                      , A.APPL_CD AS applCd
