@@ -10,6 +10,22 @@
 			SELECT F_WTM_GET_EMP_DAY_OPTION(#{tenantId} , #{enterCd}, #{sabun}, #{stdYmd}, 'UNPLANNED_YN') as unplannedYn 
         ]]>
     </select>
+    
+	<select id="getMyRegaPlannedYn" parameterType="map" resultType="hashmap">
+        <![CDATA[
+			SELECT CASE WHEN TAA_CD IN ('G28','G29','G30') THEN 'Y'
+					ELSE 'N'
+					 END AS isRegaYn
+			 FROM WTM_WORK_DAY_RESULT
+			WHERE TENANT_ID = #{tenantId}
+			  AND ENTER_CD = #{enterCd}
+			  AND SABUN = #{sabun}
+			  AND YMD = STR_TO_DATE(#{inoutDate}, '%Y%m%d')
+			  AND TIME_TYPE_CD = #{timeTypeCd}
+			  AND TAA_CD IN ('G28','G29','G30')
+			  GROUP BY isRegaYn
+        ]]>
+    </select>
 
     <select id="getInoutStatus" parameterType="map" resultType="hashmap">
         <![CDATA[
@@ -65,7 +81,72 @@
         ORDER BY C.YMD
         ]]>
     </select>
-
+    
+    <select id="getInoutStatusNgv" parameterType="map" resultType="hashmap">
+        <![CDATA[
+        SELECT C.YMD AS ymd,
+               F_WTM_DATE_FORMAT(C.ENTRY_SDATE, 'YMDHIS') AS entrySdate,
+               F_WTM_DATE_FORMAT(C.ENTRY_EDATE, 'YMDHIS') AS entryEdate,
+               C.ENTRY_SDATE AS entrySdateDate,
+               C.ENTRY_EDATE AS entryEdateDate,
+               C.HOLIDAY_YN AS holydayYn,
+               F_WTM_GET_EMP_DAY_OPTION(C.TENANT_ID, C.ENTER_CD, C.SABUN, LEFT(#{inoutDate},8), 'UNPLANNED_YN') as unplanned,
+               X.pSdate,
+               X.pEdate,
+               F_WTM_DATE_FORMAT(X.pSdate,'YMD') AS pSymd,
+               F_WTM_DATE_FORMAT(X.pEdate,'YMD') AS pEymd,
+               (SELECT MAX(YMD) FROM WTM_WORK_DAY_RESULT WHERE tenant_id=#{tenantId} and enter_cd=#{enterCd} and sabun = #{sabun} and
+                   STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') BETWEEN DATE_FORMAT(PLAN_SDATE, '%Y%m%d%H%i%s') and DATE_FORMAT(PLAN_EDATE, '%Y%m%d%H%i%s') AND TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT','REGA') ) as cYmd,
+               ( SELECT CASE WHEN WC.HOLIDAY_YN !='Y' AND WR.PLAN_SDATE IS NOT NULL AND STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') <=  DATE_ADD( DATE_FORMAT(WR.PLAN_SDATE, '%Y%m%d') , INTERVAL 6 HOUR)
+                        THEN REPLACE(DATE_SUB( DATE_FORMAT(WR.PLAN_SDATE, '%Y%m%d') ,  INTERVAL 1 DAY) , '-', '')
+                        WHEN WC.HOLIDAY_YN ='Y' AND STR_TO_DATE(#{inoutDate}, '%Y%m%d%H%i%s') <= DATE_ADD( STR_TO_DATE(#{inoutDate}, '%Y%m%d') , INTERVAL 6 HOUR)
+                        THEN REPLACE(DATE_SUB( DATE_FORMAT(#{inoutDate}, '%Y%m%d') ,  INTERVAL 1 DAY) , '-', '')
+                        ELSE WC.YMD
+                         END AS diffYmd
+                        FROM WTM_WORK_CALENDAR WC
+                        LEFT JOIN WTM_WORK_DAY_RESULT WR
+                          ON WR.TENANT_ID = WC.TENANT_ID
+                        AND WR.ENTER_CD = WC.ENTER_CD
+                        AND WR.SABUN = WC.SABUN
+                        AND WR.YMD = WC.YMD
+                      WHERE WC.tenant_id= #{tenantId}
+                        AND WC.enter_cd= #{enterCd}
+                        AND WC.sabun = #{sabun}
+                        AND WC.YMD = LEFT(#{inoutDate},8)
+                      ORDER BY WR.ymd ASC
+                      LIMIT 1
+               ) AS diffYmd,
+               ( SELECT TAA_CD
+                   FROM WTM_WORK_DAY_RESULT
+                  WHERE TENANT_ID = #{tenantId}
+                    AND ENTER_CD = #{enterCd}
+                    AND SABUN = #{sabun}
+                    AND STR_TO_DATE(#{inoutDate}, '%Y%m%d') BETWEEN DATE_FORMAT(PLAN_SDATE, '%Y%m%d') AND DATE_FORMAT(PLAN_EDATE, '%Y%m%d')
+                    AND TIME_TYPE_CD IN ('REGA')
+                    AND TAA_CD IN ('G29','G28','G30')
+                  GROUP BY TAA_CD
+                ) as taaCd
+        FROM WTM_WORK_CALENDAR C
+                 LEFT OUTER JOIN (SELECT A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD, MIN(A.PLAN_SDATE) AS pSdate,
+                                         MAX(A.PLAN_EDATE) AS pEdate
+                                  FROM WTM_WORK_DAY_RESULT A
+                                  WHERE A.TENANT_ID = #{tenantId}
+                                    AND A.ENTER_CD = #{enterCd}
+                                    AND A.SABUN = #{sabun}
+                                    AND A.TIME_TYPE_CD IN ('BASE', 'OT', 'FIXOT', 'NIGHT','REGA')
+                                  GROUP BY A.TENANT_ID, A.ENTER_CD, A.SABUN, A.YMD
+                                  ORDER BY A.YMD) X
+                                 ON X.YMD = C.YMD
+        WHERE C.TENANT_ID = #{tenantId}
+          AND C.ENTER_CD = #{enterCd}
+          AND C.SABUN = #{sabun}
+          AND ((X.pSdate is null AND X.pEdate is null AND DATE_FORMAT(#{inoutDate}, '%Y%m%d') = C.YMD )
+            OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = LEFT(#{inoutDate},8) OR LEFT(#{inoutDate},8) = DATE_FORMAT(X.pEdate, '%Y%m%d'))
+            OR (DATE_FORMAT(X.pSdate, '%Y%m%d') = DATE_FORMAT(#{inoutDate}, '%Y%m%d') OR DATE_FORMAT(#{inoutDate}, '%Y%m%d') = DATE_FORMAT(X.pEdate, '%Y%m%d')) )
+        ORDER BY C.YMD
+        ]]>
+    </select>
+    
     <select id="getInoutStatusIntf" parameterType="map" resultType="hashmap">
         <![CDATA[
 			SELECT X.YMD AS ymd,
