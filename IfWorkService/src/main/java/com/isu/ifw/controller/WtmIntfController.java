@@ -69,7 +69,11 @@ public class WtmIntfController extends TenantSecuredControl {
 		try {
 			String apiKey = request.getParameter("apiKey");
 			String secret = request.getParameter("secret");
-
+			// 세콤 타각이용하는 고객사에서 인터페이스 되는 날짜 데이터가 뒤에 공백을 포함해서 넘어옴
+			String time = request.getParameter("time").toString().trim();
+			if(time.length() <= 12) {
+				time = request.getParameter("time").toString()+"00";
+			}
 			CommTenantModule tm = tenantModuleRepo.findByApiKey(apiKey);
       
 			if(tm == null) {
@@ -91,15 +95,15 @@ public class WtmIntfController extends TenantSecuredControl {
 			paramMap.put("tenantId", tm.getTenantId());
 			paramMap.put("enterCd", request.getParameter("enterCd"));
 			paramMap.put("sabun", request.getParameter("emp"));
-			paramMap.put("inoutDate", request.getParameter("time"));
+			paramMap.put("inoutDate", time);
 			paramMap.put("inoutType", request.getParameter("type"));
 			paramMap.put("entryNote", request.getParameter("deviceKey"));
 			paramMap.put("entryType", "INTF");
          
-			logger.debug("getParameter s2 " + request.getParameter("deviceKey") + " " + request.getParameter("emp") + " " + request.getParameter("time") + " " + request.getParameter("type"));
+			logger.debug("getParameter s2 " + request.getParameter("deviceKey") + " " + request.getParameter("emp") + " " + time + " " + request.getParameter("type"));
       
 			if(tm.getTenantKey().equalsIgnoreCase("SAMHWACROWN")|| tm.getTenantKey().equalsIgnoreCase("SOLDEV")) {
-				inoutService.updEntryDate(tm.getTenantId(), request.getParameter("enterCd"), request.getParameter("emp"), request.getParameter("type"), request.getParameter("time"), request.getParameter("deviceKey"), "INTF");
+				inoutService.updEntryDate(tm.getTenantId(), request.getParameter("enterCd"), request.getParameter("emp"), request.getParameter("type"), time, request.getParameter("deviceKey"), "INTF");
 			}else {
 				String stdYmd = inoutService.updateTimecard3(paramMap);
 
@@ -132,7 +136,12 @@ public class WtmIntfController extends TenantSecuredControl {
 		try {
 			String apiKey = params.get("apiKey").toString();
 			String secret = params.get("secret").toString();
-
+			// 세콤 타각이용하는 고객사에서 인터페이스 되는 날짜 데이터가 뒤에 공백을 포함해서 넘어옴
+			String time = params.get("time").toString().trim();
+			if(time.length() <= 12) {
+				time = params.get("time").toString()+"00";
+			}
+			
 			CommTenantModule tm = tenantModuleRepo.findByApiKey(apiKey);
 			logger.debug("tm " + tm.toString());
 			if(tm == null) {
@@ -156,17 +165,17 @@ public class WtmIntfController extends TenantSecuredControl {
 			paramMap.put("tenantId", tm.getTenantId());
 			paramMap.put("enterCd", params.get("enterCd").toString());
 			paramMap.put("sabun", params.get("emp"));
-			paramMap.put("inoutDate", params.get("time"));
+			paramMap.put("inoutDate", time);
 			paramMap.put("inoutType", params.get("type"));
 			paramMap.put("entryNote", params.get("deviceKey"));
 			paramMap.put("entryType", "INTF");
 			
-			logger.debug("getParameter s2 " + params.get("deviceKey") + " " + params.get("emp") + " " + params.get("time") + " " + params.get("type"));
+			logger.debug("getParameter s2 " + params.get("deviceKey") + " " + params.get("emp") + " " + time + " " + params.get("type"));
 		
 			//삼화왕관 만 타각정보를 다르게 지정한다. 
 			//if(tm.getTenantId().equals(22)) {
 			if(tm.getTenantKey().equalsIgnoreCase("SAMHWACROWN") || tm.getTenantKey().equalsIgnoreCase("SOLDEV")){
-				inoutService.updEntryDate(tm.getTenantId(), params.get("enterCd")+"", params.get("emp")+"", params.get("type")+"", params.get("time") +"", params.get("deviceKey")+"", "INTF");
+				inoutService.updEntryDate(tm.getTenantId(), params.get("enterCd")+"", params.get("emp")+"", params.get("type")+"", time+"", params.get("deviceKey")+"", "INTF");
 			}else {
 				String stdYmd = inoutService.updateTimecard3(paramMap);
 
